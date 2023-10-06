@@ -462,6 +462,7 @@ const BA_A0041W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
+    setPage(initialPageState);
     setMainDataResult(process([], mainDataState));
   };
 

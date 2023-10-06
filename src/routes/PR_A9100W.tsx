@@ -1,74 +1,75 @@
-import React, { useEffect, useState } from "react";
-import * as ReactDOM from "react-dom";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
   GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
   GridFooterCellProps,
   GridItemChangeEvent,
-  GridCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import FilterContainer from "../components/Containers/FilterContainer";
+import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import React, { useEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-  Title,
+  ButtonContainer,
+  ButtonInInput,
   FilterBox,
   GridContainer,
   GridTitle,
-  TitleContainer,
-  ButtonContainer,
   GridTitleContainer,
-  ButtonInInput,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
-import { Input } from "@progress/kendo-react-inputs";
-import { useApi } from "../hooks/api";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import TopButtons from "../components/Buttons/TopButtons";
+import YearCalendar from "../components/Calendars/YearCalendar";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import NumberCell from "../components/Cells/NumberCell";
+import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  UsePermissions,
   chkScrollHandler,
   convertDateToStr,
   findMessage,
   getGridItemChangedData,
   getItemQuery,
-  setDefaultDate,
-  UseBizComponent,
-  UseCustomOption,
-  UseMessages,
-  UsePermissions,
   handleKeyPressSearch,
-  UseParaPc,
-  UseGetValueFromSessionItem,
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import TopButtons from "../components/Buttons/TopButtons";
-import { gridList } from "../store/columns/PR_A9100W_C";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWindow";
-import { IItemData } from "../hooks/interfaces";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import YearCalendar from "../components/Calendars/YearCalendar";
-import NumberCell from "../components/Cells/NumberCell";
+import FilterContainer from "../components/Containers/FilterContainer";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import ItemsMultiWindow from "../components/Windows/CommonWindows/ItemsMultiWindow";
+import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import { useApi } from "../hooks/api";
+import { IItemData } from "../hooks/interfaces";
 import { isLoading, sessionItemState } from "../store/atoms";
-import { bytesToBase64 } from "byte-base64";
+import { gridList } from "../store/columns/PR_A9100W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 //그리드 별 키 필드값
-const DATA_ITEM_KEY = "idx";
+const DATA_ITEM_KEY = "num";
 let deletedRows: any[] = [];
+let targetRowIndex: null | number = null;
 let temp = 0;
 let temp2 = 0;
 const requiredField = ["itemcd", "lotnum", "qty"];
@@ -143,7 +144,22 @@ const PR_A9100W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
 
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -176,21 +192,21 @@ const PR_A9100W: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
   //그리드 데이터 결과값
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
   //선택 상태
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
-  //그리드 별 페이지 넘버
-  const [mainPgNum, setMainPgNum] = useState(1);
-
-  const [isInitSearch, setIsInitSearch] = useState(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
   const [itemMultiWindowVisible, setItemMultiWindowVisible] =
     useState<boolean>(false);
@@ -207,61 +223,89 @@ const PR_A9100W: React.FC = () => {
 
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
   const setItemData = (data: IItemData) => {
-    if (editIndex === undefined) {
-      // 조회조건 세팅
-      setFilters((prev) => ({
-        ...prev,
-        itemcd: data.itemcd,
-        itemnm: data.itemnm,
-      }));
-    } else {
-      // 그리드 행 세팅
-      setMainDataResult((prev) => {
-        const newData = prev.data.map((item, idx) =>
-          idx === editIndex
-            ? {
-                ...item,
-                rowstatus: item.rowstatus === "N" ? item.rowstatus : "U",
-                itemcd: data.itemcd,
-                itemnm: data.itemnm,
-                itemlvl1: data.itemlvl1,
-                itemlvl2: data.itemlvl2,
-                itemlvl3: data.itemlvl3,
-                insiz: data.insiz,
-                bnatur: data.bnatur,
-                invunit: data.invunit,
-                wgtunit: data.wgtunit,
-                itemacnt: data.itemacnt,
-              }
-            : item
-        );
-
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    }
+    setFilters((prev) => ({
+      ...prev,
+      itemcd: data.itemcd,
+      itemnm: data.itemnm,
+    }));
   };
+
   const addItemData = (data: IItemData[]) => {
     mainDataResult.data.map((item) => {
-      if(item.num > temp2){
-        temp2 = item.num
+      if (item.num > temp2) {
+        temp2 = item.num;
       }
-  })
-    const newData = data.map((item, idx) => ({
-      ...item,
-      idx: ++temp2,
-      rowstatus: "N",
-      qty: 0,
-      totwgt: 0,
-    }));
+    });
 
-    setMainDataResult((prev) => {
-      return {
-        data: [...newData, ...prev.data],
-        total: prev.total + data.length,
-      };
+    data.map((item) => {
+      // const newDataItem = {
+      //   [DATA_ITEM_KEY]: ++temp,
+      //   amt: 0,
+      //   amtunit: filters.amtunit,
+      //   baseamt: 0,
+      //   bf_qty: 0,
+      //   bnatur: item.bnatur,
+      //   chk: true,
+      //   custcd: filters.custcd,
+      //   custnm: filters.custnm,
+      //   dlramt: 0,
+      //   dlvdt: filters.dlvdt,
+      //   dwgno: item.dwgno,
+      //   finyn: "N",
+      //   heatno: "",
+      //   insiz: item.insiz,
+      //   itemacnt: item.itemacnt,
+      //   itemcd: item.itemcd,
+      //   itemlvl1: item.itemlvl1,
+      //   itemlvl2: item.itemlvl2,
+      //   itemlvl3: item.itemlvl3,
+      //   itemnm: item.itemnm,
+      //   itemno: item.itemno,
+      //   len: 0,
+      //   length: 0,
+      //   lenunit: "",
+      //   location: "01",
+      //   model: item.model,
+      //   orddt: filters.orddt,
+      //   ordkey: "",
+      //   ordnum: ordnum,
+      //   orgdiv: "01",
+      //   out_qty: 0,
+      //   pac: "",
+      //   poregseq: 0,
+      //   purcustcd: "",
+      //   purcustnm: "",
+      //   purkey: "",
+      //   qty: 1,
+      //   qtyunit: item.invunit,
+      //   rcvcustcd: filters.rcvcustcd,
+      //   remark: item.remark,
+      //   sale_qty: 0,
+      //   specialunp: 0,
+      //   specialamt: 0,
+      //   taxamt: 0,
+      //   thickness: 0,
+      //   totamt: 0,
+      //   totlen: 0,
+      //   totwgt: 0,
+      //   unitwgt: item.unitwgt,
+      //   unp: 0,
+      //   unpcalmeth: "Q",
+      //   uschgrat: filters.uschgrat,
+      //   wgtunit: "",
+      //   width: 0,
+      //   wonamt: 0,
+      //   wonchgrat: filters.wonchgrat,
+      //   rowstatus: "N",
+      // };
+      // setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+
+      // setMainDataResult((prev) => {
+      //   return {
+      //     data: [newDataItem, ...prev.data],
+      //     total: prev.total + 1,
+      //   };
+      // });
     });
   };
 
@@ -298,12 +342,20 @@ const PR_A9100W: React.FC = () => {
     lotnum: "",
     cboLocation: "",
     insiz: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
   });
+  let gridRef: any = useRef(null);
 
-  //조회조건 파라미터
+  //그리드 데이터 조회
+  const fetchMainGrid = async (filters: any) => {
+    if (!permissions?.view) return;
+    let data: any;
+     //조회조건 파라미터
   const parameters: Iparameters = {
     procedureName: "P_PR_A9100W_Q",
-    pageNumber: mainPgNum,
+    pageNumber: filters.pgNum,
     pageSize: filters.pgSize,
     parameters: {
       "@p_work_type": filters.work_type,
@@ -318,13 +370,9 @@ const PR_A9100W: React.FC = () => {
       "@p_lotnum": filters.lotnum,
       "@p_location": filters.cboLocation,
       "@p_insiz": filters.insiz,
+      "@p_find_row_value": filters.find_row_value,
     },
   };
-
-  //그리드 데이터 조회
-  const fetchMainGrid = async () => {
-    if (!permissions?.view) return;
-    let data: any;
     setLoading(true);
     try {
       data = await processApi<any>("procedure", parameters);
@@ -334,37 +382,85 @@ const PR_A9100W: React.FC = () => {
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
-        ...row,
-        idx: idx,
-      }));
+      const rows = data.tables[0].Rows;
+      if (filters.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row.itemcd + "-" + row.proccd + "-" + row.lotnum == filters.find_row_value
+          );
+          targetRowIndex = findRowIndex;
+        }
 
-      if (totalRowCnt > 0)
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
         });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef.current) {
+          targetRowIndex = 0;
+        }
+      }
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find((row: any) => row.itemcd == filters.find_row_value);
+
+        if (selectedRow != undefined) {
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
+      }
     } else {
-      console.log("[에러발생]");
+      console.log("[오류 발생]");
       console.log(data);
     }
-
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (bizComponentData !== null && customOptionData !== null) {
-      fetchMainGrid();
+    if (filters.isSearch && permissions !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
     }
-  }, [mainPgNum]);
+  }, [filters, permissions]);
+
+  useEffect(() => {
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [mainDataResult]);
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
+    setPage(initialPageState);
     setMainDataResult(process([], mainDataState));
   };
+
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
   const onMainSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -385,12 +481,6 @@ const PR_A9100W: React.FC = () => {
     }
   };
 
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
-  };
-
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
@@ -398,9 +488,15 @@ const PR_A9100W: React.FC = () => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -409,14 +505,6 @@ const PR_A9100W: React.FC = () => {
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-
-  // 최초 한번만 실행
-  useEffect(() => {
-    if (isInitSearch === false && permissions !== null) {
-      fetchMainGrid();
-      setIsInitSearch(true);
-    }
-  }, [filters, permissions]);
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
     getGridItemChangedData(
@@ -428,85 +516,250 @@ const PR_A9100W: React.FC = () => {
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: field,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
-
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-
-    let index = 0;
-    mainDataResult.data.forEach((item, idx) => {
-      if (item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]) {
-        index = idx;
+    if (field == "rowstatus") {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
       }
-    });
-
-    setEditIndex(index);
-    if (field) setEditedField(field);
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult((prev) => {
+        return {
+          data: mainDataResult.data,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const exitEdit = () => {
-    const newData = mainDataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
+    if (tempResult.data != mainDataResult.data) {
+      if (editedField !== "itemcd") {
+        const newData = mainDataResult.data.map((item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
 
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
+        setTempResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else {
+        mainDataResult.data.map((item: { [x: string]: any; itemcd: any }) => {
+          if (editIndex == item[DATA_ITEM_KEY]) {
+            fetchItemData(item.itemcd);
+          }
+        });
+      }
+    } else {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const fetchItemData = React.useCallback(
+    async (itemcd: string) => {
+      let data: any;
+      const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
       };
-    });
 
-    mainDataResult.data.forEach((item, index) => {
-      if (editedField === "itemcd" && editIndex === index) {
-        const queryStr = getItemQuery({ itemcd: item.itemcd, itemnm: "" });
-
-        fetchItemData(queryStr);
-        return false;
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
       }
-    });
-  };
 
-  const fetchItemData = async (queryStr: string) => {
-    let data: any;
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
 
-    const bytes = require("utf8-bytes");
-    const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-    let query = {
-      query: convertedQueryStr,
-    };
-
-    try {
-      data = await processApi<any>("query", query);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows;
-      const rowCount = data.tables[0].RowCount;
-
-      if (rowCount > 0) {
-        setItemData(rows[0]);
+        if (rowCount > 0) {
+          const {
+            itemcd,
+            itemno,
+            itemnm,
+            insiz,
+            model,
+            itemacnt,
+            itemacntnm,
+            bnatur,
+            spec,
+            invunit,
+            invunitnm,
+            unitwgt,
+            wgtunit,
+            wgtunitnm,
+            maker,
+            dwgno,
+            remark,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+            extra_field1,
+            extra_field2,
+            extra_field7,
+            extra_field6,
+            extra_field8,
+            packingsiz,
+            unitqty,
+            color,
+            gubun,
+            qcyn,
+            outside,
+            itemthick,
+            itemlvl4,
+            itemlvl5,
+            custitemnm,
+          } = rows[0];
+          // setItemInfo({
+          //   itemcd,
+          //   itemno,
+          //   itemnm,
+          //   insiz,
+          //   model,
+          //   itemacnt,
+          //   itemacntnm,
+          //   bnatur,
+          //   spec,
+          //   invunit,
+          //   invunitnm,
+          //   unitwgt,
+          //   wgtunit,
+          //   wgtunitnm,
+          //   maker,
+          //   dwgno,
+          //   remark,
+          //   itemlvl1,
+          //   itemlvl2,
+          //   itemlvl3,
+          //   extra_field1,
+          //   extra_field2,
+          //   extra_field7,
+          //   extra_field6,
+          //   extra_field8,
+          //   packingsiz,
+          //   unitqty,
+          //   color,
+          //   gubun,
+          //   qcyn,
+          //   outside,
+          //   itemthick,
+          //   itemlvl4,
+          //   itemlvl5,
+          //   custitemnm,
+          // });
+        } else {
+          const newData = mainDataResult.data.map((item: any) =>
+            item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+              ? {
+                  ...item,
+                  itemcd: item.itemcd,
+                  itemno: "",
+                  itemnm: "",
+                  insiz: "",
+                  model: "",
+                  itemacnt: "",
+                  itemacntnm: "",
+                  bnatur: "",
+                  spec: "",
+                  invunit: "",
+                  invunitnm: "",
+                  unitwgt: "",
+                  wgtunit: "",
+                  wgtunitnm: "",
+                  maker: "",
+                  dwgno: "",
+                  remark: "",
+                  itemlvl1: "",
+                  itemlvl2: "",
+                  itemlvl3: "",
+                  extra_field1: "",
+                  extra_field2: "",
+                  extra_field7: "",
+                  extra_field6: "",
+                  extra_field8: "",
+                  packingsiz: "",
+                  unitqty: "",
+                  color: "",
+                  gubun: "",
+                  qcyn: "",
+                  outside: "",
+                  itemthick: "",
+                  itemlvl4: "",
+                  itemlvl5: "",
+                  custitemnm: "",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
       }
-    }
-  };
+    },
+    [mainDataResult]
+  );
 
   const customCellRender = (td: any, props: any) => (
     <CellRender
@@ -528,53 +781,59 @@ const PR_A9100W: React.FC = () => {
 
   const onAddClick = () => {
     mainDataResult.data.map((item) => {
-      if(item.idx > temp){
-        temp = item.idx
+      if (item.num > temp) {
+        temp = item.num;
       }
-  })
-    const idx: number =
-      Number(Object.getOwnPropertyNames(selectedState)[0]) ??
-      //Number(planDataResult.data[0].idx) ??
-      null;
-    if (idx === null) return false;
-    const selectedRowData = mainDataResult.data.find(
-      (item) => item.idx === idx
-    );
-
-    const newDataItem = {
-      [DATA_ITEM_KEY]: ++temp,
-      rowstatus: "N",
-      qty: 0,
-      totwgt: 0,
-    };
-    setMainDataResult((prev) => {
-      return {
-        data: [newDataItem, ...prev.data],
-        total: prev.total + 1,
-      };
     });
+
+    // const newDataItem = {
+    //   [DATA_ITEM_KEY]: ++temp,
+    //   rowstatus: "N",
+    //   qty: 0,
+    //   totwgt: 0,
+    // };
+
+    // setMainDataResult((prev) => {
+    //   return {
+    //     data: [newDataItem, ...prev.data],
+    //     total: prev.total + 1,
+    //   };
+    // });
   };
 
   const onRemoveClick = () => {
-    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
     let newData: any[] = [];
-
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
     mainDataResult.data.forEach((item: any, index: number) => {
       if (!selectedState[item[DATA_ITEM_KEY]]) {
         newData.push(item);
+        Object2.push(index);
       } else {
-        deletedRows.push(item);
+       if(!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedRows.push(newData2);
+        }
+        Object.push(index);
       }
     });
-
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult.data[Math.min(...Object) - 1];
+    }
     //newData 생성
     setMainDataResult((prev) => ({
       data: newData,
-      total: newData.length,
+      total: prev.total - Object.length,
     }));
-
-    //선택 상태 초기화
-    setSelectedState({});
+    setSelectedState({
+      [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
+    });
   };
 
   const onSaveClick = async () => {
@@ -750,34 +1009,18 @@ const PR_A9100W: React.FC = () => {
   }, [paraData]);
 
   const search = () => {
+    deletedRows = [];
     resetAllGrid();
-    fetchMainGrid();
+    setPage(initialPageState); // 페이지 초기화
+    setFilters((prev: any) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
   };
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
-  const [editedRowData, setEditedRowData] = useState<any>({});
-
-  const ItemBtnCell = (props: GridCellProps) => {
-    const { dataIndex } = props;
-
-    const onRowItemWndClick = () => {
-      setEditIndex(dataIndex);
-      setEditedRowData(props.dataItem);
-      setItemWindowVisible(true);
-    };
-
-    return (
-      <td className="k-command-cell required">
-        <Button
-          type={"button"}
-          className="k-grid-save-command"
-          onClick={onRowItemWndClick}
-          icon="more-horizontal"
-          //disabled={isInEdit ? false : true}
-        />
-      </td>
-    );
-  };
 
   return (
     <>
@@ -927,7 +1170,7 @@ const PR_A9100W: React.FC = () => {
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="minus"
-                  title="행 삭제" 
+                  title="행 삭제"
                   disabled={permissions.save ? false : true}
                 ></Button>
                 <Button
@@ -944,7 +1187,7 @@ const PR_A9100W: React.FC = () => {
           <Grid
             style={{ height: "74.5vh" }}
             data={process(
-              mainDataResult.data.map((row, idx) => ({
+              mainDataResult.data.map((row, num) => ({
                 ...row,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
@@ -963,7 +1206,7 @@ const PR_A9100W: React.FC = () => {
             //스크롤 조회 기능
             fixedScroll={true}
             total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
+        
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}
@@ -985,10 +1228,10 @@ const PR_A9100W: React.FC = () => {
             />
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"].map(
-                (item: any, idx: number) =>
+                (item: any, num: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
-                      key={idx}
+                      key={num}
                       headerCell={
                         requiredField.includes(item.fieldName)
                           ? RequiredHeader
@@ -1002,8 +1245,6 @@ const PR_A9100W: React.FC = () => {
                           ? NumberCell
                           : comboBoxField.includes(item.fieldName)
                           ? CustomComboBoxCell
-                          : item.fieldName === "item_btn"
-                          ? ItemBtnCell
                           : undefined
                       }
                       editable={
