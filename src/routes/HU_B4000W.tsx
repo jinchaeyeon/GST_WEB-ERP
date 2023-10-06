@@ -1041,6 +1041,10 @@ const HU_B4000W: React.FC = () => {
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
+    setPage2({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
   };
 
   const commutePageChange = (event: GridPageChangeEvent) => {
@@ -1050,6 +1054,10 @@ const HU_B4000W: React.FC = () => {
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
+    setPage3({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
   };
 
   const journalPageChange = (event: GridPageChangeEvent) => {
@@ -1059,6 +1067,10 @@ const HU_B4000W: React.FC = () => {
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
+    setPage4({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
   };
 
   const adjPageChange = (event: GridPageChangeEvent) => {
@@ -1068,6 +1080,10 @@ const HU_B4000W: React.FC = () => {
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
+    setPage5({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
   };
 
   //그리드 리셋
@@ -1301,6 +1317,10 @@ const HU_B4000W: React.FC = () => {
         } else {
           resetAllGrid();
           setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+          setPage(initialPageState); // 페이지 초기화
+          setPage2(initialPageState); 
+          setPage3(initialPageState); 
+          setPage4(initialPageState); 
         }
       } catch (e) {
         alert(e);
@@ -1315,6 +1335,7 @@ const HU_B4000W: React.FC = () => {
         } else {
           resetAllGrid2();
           setAdjFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+          setPage5(initialPageState); // 페이지 초기화
         }
       } catch (e) {
         alert(e);
