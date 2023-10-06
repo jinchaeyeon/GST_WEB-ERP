@@ -20,13 +20,13 @@ import {
   GridDataStateChangeEvent,
   GridExpandChangeEvent,
   GridFooterCellProps,
-  GridHeaderSelectionChangeEvent,
+  GridHeaderCellProps,
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input } from "@progress/kendo-react-inputs";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -43,6 +43,7 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
@@ -76,11 +77,11 @@ import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioG
 import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import PlanWindow from "../components/Windows/PR_A1100W_Window";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A1100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import PlanWindow from "../components/Windows/PR_A1100W_Window";
 
 // 그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -429,7 +430,7 @@ const PR_A1100W: React.FC = () => {
   });
 
   const [materialFilters, setMaterialFilters] = useState({
-    pgSize: 10,
+    pgSize: PAGE_SIZE,
     orgdiv: "01",
     plankey: "",
     find_row_value: "",
@@ -879,6 +880,8 @@ const PR_A1100W: React.FC = () => {
             pgNum: 1,
           }));
         }
+      } else {
+        setMaterialDataResult(process([], detailDataState));
       }
     } else {
       console.log("[오류 발생]");
@@ -985,6 +988,8 @@ const PR_A1100W: React.FC = () => {
         } else {
           setMaterialSelectedState({ [rows[0][MATERIAL_DATA_ITEM_KEY]]: true });
         }
+      } else {
+        setMaterialDataResult(process([], detailDataState));
       }
     } else {
       console.log("[오류 발생]");
@@ -1119,40 +1124,6 @@ const PR_A1100W: React.FC = () => {
     collapsedIds: collapsedState2,
   });
 
-  const onHeaderSelectionChange = React.useCallback(
-    (event: GridHeaderSelectionChangeEvent) => {
-      const checkboxElement: any = event.syntheticEvent.target;
-      const checked = checkboxElement.checked;
-      const newSelectedState: {
-        [id: string]: boolean | number[];
-      } = {};
-
-      event.dataItems.forEach((item) => {
-        newSelectedState[planIdGetter(item)] = checked;
-      });
-
-      setPlanSelectedState(newSelectedState);
-    },
-    []
-  );
-
-  const onMeterialHeaderSelectionChange = React.useCallback(
-    (event: GridHeaderSelectionChangeEvent) => {
-      const checkboxElement: any = event.syntheticEvent.target;
-      const checked = checkboxElement.checked;
-      const newSelectedState: {
-        [id: string]: boolean | number[];
-      } = {};
-
-      event.dataItems.forEach((item) => {
-        newSelectedState[materialIdGetter(item)] = checked;
-      });
-
-      setMaterialSelectedState(newSelectedState);
-    },
-    []
-  );
-
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -1272,84 +1243,131 @@ const PR_A1100W: React.FC = () => {
   };
 
   const onPlanAddClick = () => {
-    planDataResult.data.map((item) => {
-      if (item.num > temp) {
-        temp = item.num;
-      }
-    });
-    let planseq = 1;
-    if (planDataResult.total > 0) {
-      planDataResult.data.forEach((item) => {
-        if (item["planseq"] > planseq) {
-          planseq = item["planseq"];
+    const data = planDataResult.data.filter(
+      (item) =>
+        item[PLAN_DATA_ITEM_KEY] ==
+        Object.getOwnPropertyNames(planSelectedState)[0]
+    )[0];
+
+    if (data == undefined) {
+      alert("생산계획정보가 없습니다.");
+    } else {
+      planDataResult.data.map((item) => {
+        if (item.num > temp) {
+          temp = item.num;
         }
       });
-      planseq++;
-    }
 
-    let selectedRowData: any[] = [];
-    planDataResult.data.forEach((item: any, index: number) => {
-      if (planSelectedState[index]) {
-        selectedRowData.push(item);
-      }
-    });
-
-    if (selectedRowData.length === 0) return false;
-
-    const selectedFirstRowData = selectedRowData[0];
-
-    const newDataItem = {
-      ...selectedFirstRowData,
-      [PLAN_DATA_ITEM_KEY]: ++temp,
-      planno: selectedFirstRowData.planno,
-      planseq: planseq,
-      procseq: 0,
-      proccd: COM_CODE_DEFAULT_VALUE,
-      plankey: "",
-      plandt: convertDateToStr(new Date()),
-      finexpdt: convertDateToStr(new Date()),
-      rowstatus: "N",
-    };
-
-    setPlanDataResult((prev) => {
-      return {
-        data: [newDataItem, ...prev.data],
-        total: prev.total + 1,
+      const newDataItem = {
+        [PLAN_DATA_ITEM_KEY]: ++temp,
+        chk: "",
+        custnm: data.custnm,
+        finexpdt: data.finexpdt,
+        groupId: data.groupId,
+        group_category_name: data.group_category_name,
+        insiz: data.insiz,
+        itemcd: data.itemcd,
+        itemlvl1: data.itemlvl1,
+        itemlvl2: data.itemlvl2,
+        itemlvl3: data.itemlvl3,
+        itemnm: data.itemnm,
+        itemno: data.itemno,
+        orddt: "",
+        ordkey: "",
+        ordnum: data.ordnum,
+        ordseq: data.ordseq,
+        outprocyn: data.outprocyn,
+        plandt: data.plandt,
+        plankey: "",
+        planno: data.planno,
+        planseq: 0,
+        poregnum: "",
+        prntitemcd: data.prntitemcd,
+        proccd: data.proccd,
+        procqty: data.procqty,
+        procseq: data.procseq,
+        prodemp: data.prodemp,
+        prodmac: data.prodmac,
+        purtype: "",
+        qty: data.qty,
+        qtyunit: data.qtyunit,
+        remark: data.remark,
+        transfertYN: "",
+        urgencyyn: "",
+        rowstatus: "N",
       };
-    });
+
+      setPage2((prev) => ({
+        ...prev,
+        skip: 0,
+        take: prev.take + 1,
+      }));
+      setPlanDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+      setTempResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+      const newResult = [newDataItem, ...planDataResult.data];
+      setTotal2(total2 + 1);
+      const newDataState = processWithGroups(newResult, group2);
+      setResultState2(newDataState);
+      setPlanSelectedState({ [newDataItem[PLAN_DATA_ITEM_KEY]]: true });
+    }
   };
 
   const onMtrAddClick = () => {
-    materialDataResult.data.map((item) => {
-      if (item.num > temp2) {
-        temp2 = item.idx;
-      }
-    });
-    const idx: number =
-      Number(Object.getOwnPropertyNames(planSelectedState)[0]) ??
-      //Number(planDataResult.data[0].idx) ??
-      null;
-    if (idx === null) return false;
-    const selectedRowData = planDataResult.data.find(
-      (item) => item.idx === idx
-    );
+    const data = planDataResult.data.filter(
+      (item) =>
+        item[PLAN_DATA_ITEM_KEY] ==
+        Object.getOwnPropertyNames(planSelectedState)[0]
+    )[0];
 
-    const newDataItem = {
-      [MATERIAL_DATA_ITEM_KEY]: ++temp2,
-      planno: selectedRowData.planno,
-      planseq: selectedRowData.planseq,
-      proccd: selectedRowData.proccd,
-      procqty: 0,
-      unitqty: 0,
-      //  inEdit: true,
-      rowstatus: "N",
-    };
-    setMaterialDataResult((prev) => {
-      return {
-        data: [newDataItem, ...prev.data],
-        total: prev.total,
+    if (data == undefined) {
+      alert("생산계획정보가 없습니다.");
+    } else if (data.rowstauts == "N") {
+      alert("해당 행을 저장한 후에 다시 시도해주세요.");
+    } else {
+      materialDataResult.data.map((item) => {
+        if (item.num > temp2) {
+          temp2 = item.num;
+        }
+      });
+
+      const newDataItem = {
+        [MATERIAL_DATA_ITEM_KEY]: ++temp2,
+        chlditemcd: "",
+        chlditemnm: "",
+        outgb: "",
+        planno: data.planno,
+        planseq: data.planseq,
+        proccd: "",
+        procqty: 1,
+        qtyunit: "",
+        seq: 0,
+        unitqty: 1,
+        rowstatus: "N",
       };
-    });
+
+      setMaterialDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+      setPage3((prev) => ({
+        ...prev,
+        skip: 0,
+        take: prev.take + 1,
+      }));
+      setMaterialSelectedState({ [newDataItem[MATERIAL_DATA_ITEM_KEY]]: true });
+    }
   };
 
   const onCustWndClick = () => {
@@ -1360,48 +1378,81 @@ const PR_A1100W: React.FC = () => {
     setItemWindowVisible(true);
   };
 
-  const onRemovePlanClick = () => {
-    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
+  const onRemovePlanClick = (e: any) => {
     let newData: any[] = [];
-
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
     planDataResult.data.forEach((item: any, index: number) => {
-      if (!planSelectedState[item.idx]) {
+      if (item.chk != true) {
         newData.push(item);
+        Object2.push(index);
       } else {
-        deletedPlanRows.push(item);
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedPlanRows.push(newData2);
+        }
+        Object.push(index);
       }
     });
-
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = planDataResult.data[Math.min(...Object2)];
+    } else {
+      data = planDataResult.data[Math.min(...Object) - 1];
+    }
     //newData 생성
     setPlanDataResult((prev) => ({
       data: newData,
-      total: newData.length,
+      total: prev.total - Object.length,
     }));
-
-    //선택 상태 초기화
-    setPlanSelectedState({});
+    const newDataState = processWithGroups(newData, group);
+    setResultState2(newDataState);
+    setTotal2(total2 - Object.length);
+    if (Object.length > 0) {
+      setPlanSelectedState({
+        [data != undefined ? data[PLAN_DATA_ITEM_KEY] : newData[0]]: true,
+      });
+    }
   };
 
   const onRemoveMaterialClick = () => {
-    //삭제 안 할 데이터 newData에 push, 삭제 데이터 deletedRows에 push
     let newData: any[] = [];
-
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
     materialDataResult.data.forEach((item: any, index: number) => {
-      if (!materialSelectedState[index]) {
+      if (item.chk != true) {
         newData.push(item);
+        Object2.push(index);
       } else {
-        deletedMaterialRows.push(item);
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMaterialRows.push(newData2);
+        }
+        Object.push(index);
       }
     });
-
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = materialDataResult.data[Math.min(...Object2)];
+    } else {
+      data = materialDataResult.data[Math.min(...Object) - 1];
+    }
     //newData 생성
     setMaterialDataResult((prev) => ({
       data: newData,
-      total: newData.length,
+      total: prev.total - Object.length,
     }));
-
-    //선택 상태 초기화
-    setMaterialSelectedState({});
+    if (Object.length > 0) {
+      setMaterialSelectedState({
+        [data != undefined ? data[MATERIAL_DATA_ITEM_KEY] : newData[0]]: true,
+      });
+    }
   };
 
   const fetchToDelete = async () => {
@@ -1623,7 +1674,7 @@ const PR_A1100W: React.FC = () => {
         );
       }
     );
-    if (dataItem.length === 0) return false;
+    if (dataItem.length === 0 && deletedMaterialRows.length === 0) return false;
 
     type TMaterialArr = {
       rowstatus_s: string[];
@@ -1729,8 +1780,67 @@ const PR_A1100W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      resetAllGrid();
+      if (paraDataPlanSaved.work_type == "INLIST") {
+        const isLastDataDeleted =
+          materialDataResult.data.length == 0 && materialFilters.pgNum > 0;
 
+        if (isLastDataDeleted) {
+          setPage3({
+            skip:
+              materialFilters.pgNum == 1 || materialFilters.pgNum == 0
+                ? 0
+                : PAGE_SIZE * (materialFilters.pgNum - 2),
+            take: PAGE_SIZE,
+          });
+          setMaterialFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
+            isSearch: true,
+          }));
+        } else {
+          setMaterialFilters((prev: any) => ({
+            ...prev,
+            find_row_value: data.returnString,
+            pgNum: prev.pgNum,
+            isSearch: true,
+          }));
+        }
+      } else {
+        const isLastDataDeleted =
+          planDataResult.data.length == 0 && filters.pgNum > 0;
+        resetAllGrid();
+        if (isLastDataDeleted) {
+          setPage2({
+            skip:
+              filters.pgNum == 1 || filters.pgNum == 0
+                ? 0
+                : PAGE_SIZE * (filters.pgNum - 2),
+            take: PAGE_SIZE,
+          });
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
+            isSearch: true,
+          }));
+        } else {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: data.returnString,
+            pgNum: prev.pgNum,
+            isSearch: true,
+          }));
+        }
+      }
       deletedPlanRows = [];
       deletedMaterialRows = [];
     } else {
@@ -1994,29 +2104,58 @@ const PR_A1100W: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    const newData = planDataResult.data.map((item) =>
-      item[PLAN_DATA_ITEM_KEY] === dataItem[PLAN_DATA_ITEM_KEY]
-        ? {
-            ...item,
-            [EDIT_FIELD]: field,
-          }
-        : { ...item, [EDIT_FIELD]: undefined }
-    );
+    if (
+      field != "planno" &&
+      field != "prntitemcd" &&
+      field != "ordnum" &&
+      field != "ordseq" &&
+      field != "itemcd" &&
+      field != "itemnm" &&
+      field != "itemlvl1" &&
+      field != "itemlvl2" &&
+      field != "itemlvl3" &&
+      field != "custnm" &&
+      field != "orddt" &&
+      field != "ordkey" &&
+      field != "plankey" &&
+      field != "poregnum" &&
+      field != "planseq" &&
+      field != "purtype" &&
+      field != "transfertYN" &&
+      field != "urgencyyn" &&
+      field != "rowstatus"
+    ) {
+      const newData = planDataResult.data.map((item) =>
+        item[PLAN_DATA_ITEM_KEY] === dataItem[PLAN_DATA_ITEM_KEY]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
 
-    setPlanDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-    setTempResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-    const newDataState = processWithGroups(newData, group);
-    setResultState2(newDataState);
+      setPlanDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      const newDataState = processWithGroups(newData, group);
+      setResultState2(newDataState);
+    } else {
+      setTempResult((prev) => {
+        return {
+          data: planDataResult.data,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const exitEdit = () => {
@@ -2090,27 +2229,42 @@ const PR_A1100W: React.FC = () => {
   );
 
   const materialEnterEdit = (dataItem: any, field: string) => {
-    const newData = materialDataResult.data.map((item) =>
-      item[MATERIAL_DATA_ITEM_KEY] === dataItem[MATERIAL_DATA_ITEM_KEY]
-        ? {
-            ...item,
-            [EDIT_FIELD]: field,
-          }
-        : { ...item, [EDIT_FIELD]: undefined }
-    );
+    if (
+      field != "rowstatus" &&
+      field != "planno" &&
+      field != "planseq" &&
+      field != "chlditemnm" &&
+      field != "proccd"
+    ) {
+      const newData = materialDataResult.data.map((item) =>
+        item[MATERIAL_DATA_ITEM_KEY] === dataItem[MATERIAL_DATA_ITEM_KEY]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
 
-    setMaterialDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-    setTempResult2((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+      setMaterialDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setTempResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult2((prev) => {
+        return {
+          data: materialDataResult.data,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const materialExitEdit = () => {
@@ -2353,6 +2507,100 @@ const PR_A1100W: React.FC = () => {
 
       return width;
     }
+  };
+
+  const [values2, setValues2] = React.useState<boolean>(false);
+  const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
+    const changeCheck = () => {
+      const newData = planDataResult.data.map((item) => ({
+        ...item,
+        chk: !values2,
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
+        [EDIT_FIELD]: props.field,
+      }));
+      setValues2(!values2);
+      setPlanDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      const newDataState = processWithGroups(newData, group);
+      setResultState2(newDataState);
+    };
+
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Checkbox value={values2} onClick={changeCheck}></Checkbox>
+      </div>
+    );
+  };
+
+  const [values, setValues] = React.useState<boolean>(false);
+  const CustomCheckBoxCell = (props: GridHeaderCellProps) => {
+    const changeCheck = () => {
+      const newData = materialDataResult.data.map((item) => ({
+        ...item,
+        chk: !values,
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
+        [EDIT_FIELD]: props.field,
+      }));
+      setValues(!values);
+      setMaterialDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
+
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Checkbox value={values} onClick={changeCheck}></Checkbox>
+      </div>
+    );
+  };
+
+  const CustomCheckBoxCell3 = (props: GridCellProps) => {
+    const { ariaColumnIndex, columnIndex, dataItem, field } = props;
+    if (props.rowType === "groupHeader") {
+      return null;
+    }
+
+    const handleChange = () => {
+      const newData = planDataResult.data.map((item) =>
+        item[PLAN_DATA_ITEM_KEY] == dataItem[PLAN_DATA_ITEM_KEY]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              chk:
+                typeof item.chk == "boolean"
+                  ? !item.chk
+                  : item.chk == "Y"
+                  ? false
+                  : true,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      const newDataState = processWithGroups(newData, group);
+      setResultState2(newDataState);
+      setPlanDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
+
+    return (
+      <td style={{ textAlign: "center" }}>
+        <Checkbox value={dataItem["chk"]} onClick={handleChange}></Checkbox>
+      </td>
+    );
   };
 
   return (
@@ -2737,7 +2985,6 @@ const PR_A1100W: React.FC = () => {
                     mode: "multiple",
                   }}
                   onSelectionChange={onPlanSelectionChange}
-                  onHeaderSelectionChange={onHeaderSelectionChange}
                   //그룹기능
                   group={group2}
                   groupable={true}
@@ -2760,13 +3007,11 @@ const PR_A1100W: React.FC = () => {
                   id="grdList2"
                 >
                   <GridColumn
-                    field={SELECTED_FIELD}
+                    field="chk"
+                    title=" "
                     width="45px"
-                    headerSelectionValue={
-                      planDataResult.data.findIndex(
-                        (item: any) => !planSelectedState[planIdGetter(item)]
-                      ) === -1
-                    }
+                    headerCell={CustomCheckBoxCell2}
+                    cell={CustomCheckBoxCell3}
                   />
                   <GridColumn
                     field="rowstatus"
@@ -2852,7 +3097,6 @@ const PR_A1100W: React.FC = () => {
                   mode: "multiple",
                 }}
                 onSelectionChange={onMaterialSelectionChange}
-                onHeaderSelectionChange={onMeterialHeaderSelectionChange}
                 //스크롤 조회 기능
                 fixedScroll={true}
                 total={materialDataResult.total}
@@ -2877,14 +3121,11 @@ const PR_A1100W: React.FC = () => {
                 id="grdList3"
               >
                 <GridColumn
-                  field={SELECTED_FIELD}
+                  field="chk"
+                  title=" "
                   width="45px"
-                  headerSelectionValue={
-                    materialDataResult.data.findIndex(
-                      (item: any) =>
-                        !materialSelectedState[materialIdGetter(item)]
-                    ) === -1
-                  }
+                  headerCell={CustomCheckBoxCell}
+                  cell={CheckBoxCell}
                 />
                 <GridColumn
                   field="rowstatus"
