@@ -331,20 +331,46 @@ const HU_B4000W: React.FC = () => {
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (tabSelected == 0) {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    } else if (tabSelected == 1) {
+      setAdjFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const ComboBoxChange = (e: any) => {
     const { name, value } = e;
 
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (tabSelected == 0) {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    } else if (tabSelected == 1) {
+      if (name == "prsnnum_adj") {
+        setAdjFilters((prev) => ({
+          ...prev,
+          cboPrsnnum: value,
+        }));
+      } else if (name == "adjdiv") {
+        setAdjFilters((prev) => ({
+          ...prev,
+          adjnm: value,
+        }));
+      } else {
+        setAdjFilters((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+      }
+    }
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
@@ -1141,38 +1167,47 @@ const HU_B4000W: React.FC = () => {
 
   // 사용자별 연차집계 수량
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = "";
+    let sum = 0;
     userAdjDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
 
-    var parts = parseInt(sum).toString().split(".");
-    return parts[0] != "NaN" ? (
-      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-      </td>
-    ) : (
-      <td></td>
-    );
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
   };
 
   // 연차조정 수량
   const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
-    let sum = "";
+    let sum = 0;
     adjDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
+    console.log(props.field);
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
 
-    var parts = parseInt(sum).toString().split(".");
-    return parts[0] != "NaN" ? (
-      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-      </td>
-    ) : (
-      <td></td>
-    );
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -1254,38 +1289,36 @@ const HU_B4000W: React.FC = () => {
   };
 
   const search = () => {
-    deletedMainRows = [];
-    try {
-      if (
-        convertDateToStr(filters.ymdFrdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.ymdFrdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.ymdFrdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.ymdFrdt).substring(6, 8).length != 2
-      ){
-        throw findMessage(messagesData, "HU_B4000W_001");
-      } else {
-        resetAllGrid();
-        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    if (tabSelected == 0) {
+      try {
+        if (
+          convertDateToStr(filters.ymdFrdt).substring(0, 4) < "1997" ||
+          convertDateToStr(filters.ymdFrdt).substring(6, 8) > "31" ||
+          convertDateToStr(filters.ymdFrdt).substring(6, 8) < "01" ||
+          convertDateToStr(filters.ymdFrdt).substring(6, 8).length != 2
+        ){
+          throw findMessage(messagesData, "HU_B4000W_001");
+        } else {
+          resetAllGrid();
+          setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+        }
+      } catch (e) {
+        alert(e);
       }
-    } catch (e) {
-      alert(e);
-    }
-  };
-
-  // 연차조정 조회
-  const search2 = () => {
-    deletedMainRows = [];
-    try {
-      if (
-        convertDateToStr(adjfilters.yyyy).substring(0, 4) < "1997"
-      ){
-        throw findMessage(messagesData, "HU_B4000W_001");
-      } else {
-        resetAllGrid2();
-        setAdjFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    } else if (tabSelected == 1) {
+      deletedMainRows = [];
+      try {
+        if (
+          convertDateToStr(adjfilters.yyyy).substring(0, 4) < "1997"
+        ){
+          throw findMessage(messagesData, "HU_B4000W_001");
+        } else {
+          resetAllGrid2();
+          setAdjFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+        }
+      } catch (e) {
+        alert(e);
       }
-    } catch (e) {
-      alert(e);
     }
   };
 
@@ -2252,7 +2285,7 @@ const HU_B4000W: React.FC = () => {
         </TabStripTab>
         <TabStripTab title="연차조정">
           <FilterContainer>
-            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search2)}>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
                   <th>기준년도</th>
