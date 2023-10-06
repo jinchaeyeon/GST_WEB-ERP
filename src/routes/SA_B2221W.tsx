@@ -806,7 +806,7 @@ const SA_B2221: React.FC = () => {
                   <ChartCategoryAxisItem
                     categories={allChartDataResult.companies}
                   >
-                    <ChartCategoryAxisTitle text="업체" />
+                    <ChartCategoryAxisTitle text="품목" />
                   </ChartCategoryAxisItem>
                 </ChartCategoryAxis>
                 <ChartSeries>
