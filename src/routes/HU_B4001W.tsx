@@ -94,7 +94,7 @@ const HU_B4001W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         cboPrsnnum: prsnnum === "" || prsnnum === undefined ? userId : prsnnum,
-        isSearch: false
+        isSearch: true
       }));
     }
   }, [customOptionData]);
