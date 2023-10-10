@@ -439,7 +439,7 @@ const MA_B7000: React.FC = () => {
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
-
+//
       if (totalRowCnt > 0) {
         const selectedRow =
           filters.find_row_value == ""
