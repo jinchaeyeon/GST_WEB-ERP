@@ -8,34 +8,26 @@ import {
   GridColumn,
   GridDataStateChangeEvent,
   GridEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import {
-  Input,
-  InputChangeEvent,
-  TextArea,
+  Input
 } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
   FilterBox,
-  FormBox,
-  FormBoxWrap,
   GridContainer,
   GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import DateCell from "../components/Cells/DateCell";
@@ -61,7 +53,6 @@ import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
-
 const DATA_ITEM_KEY = "prsnnum";
 const dateField = ["regorgdt", "rtrdt"];
 
@@ -75,10 +66,8 @@ const HU_A1000W: React.FC = () => {
 
   let grdList: any = useRef(null);
   let targetRowIndex: null | number = null;
-  
-  const [workType, setWorkType] = useState<"N" | "U">("N");
-  const [isCopy, setIsCopy] = useState(false);
 
+  const [workType, setWorkType] = useState<"N" | "U">("N");
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
 
@@ -92,25 +81,20 @@ const HU_A1000W: React.FC = () => {
     prsnnum: "",
     prsnnm: "",
     rtrchk: "", // 재직여부
-
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
-
-    pgGap: 0,
-    scrollDirrection: "down",
     pgSize: PAGE_SIZE,
   });
 
   //조회조건 초기값
-  const [detailFilters, setDetailFilters] = useState({   
+  const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
     prsnnum: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
   });
-
 
   // 요약정보
   const [grdListDataState, setGrdListDataState] = useState<State>({
@@ -242,38 +226,6 @@ const HU_A1000W: React.FC = () => {
     }));
   };
 
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
-    let pgNumWithGap =
-      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
-
-    // 스크롤 최하단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "down",
-        pgNum: pgNumWithGap + 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-      return false;
-    }
-
-    pgNumWithGap =
-      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
-    // 스크롤 최상단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "up",
-        pgNum: pgNumWithGap - 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-    }
-  };
-
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -283,8 +235,6 @@ const HU_A1000W: React.FC = () => {
     });
 
     setSelectedState(newSelectedState);
-
-    setPage(initialPageState);
   };
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
@@ -332,7 +282,7 @@ const HU_A1000W: React.FC = () => {
         "@p_find_row_value": filters.find_row_value,
       },
     };
-    
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -404,9 +354,7 @@ const HU_A1000W: React.FC = () => {
   };
 
   const CommandCell = (props: GridCellProps) => {
-    
     const onEditClick = () => {
-
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
       setSelectedState({ [rowData.DATA_ITEM_KEY]: true });
@@ -416,7 +364,6 @@ const HU_A1000W: React.FC = () => {
         prsnnum: rowData.prsnnum,
       }));
 
-      setIsCopy(false);
       setWorkType("U");
 
       setDetailWindowVisible(true);
@@ -435,10 +382,22 @@ const HU_A1000W: React.FC = () => {
     );
   };
 
+  const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = grdListDataResult.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {grdListDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
 
   // 신규등록
   const onAddClick = () => {
-   // setIsCopy(false);
     setWorkType("N");
     setDetailWindowVisible(true);
   };
@@ -529,7 +488,6 @@ const HU_A1000W: React.FC = () => {
             <Button
               onClick={onAddClick}
               themeColor={"primary"}
-              fillMode="outline"
               icon="file-add"
             >
               신규등록
@@ -576,9 +534,9 @@ const HU_A1000W: React.FC = () => {
           take={page.take}
           pageable={true}
           onPageChange={pageChange}
-          onScroll={onMainScrollHandler}
-          // //원하는 행 위치로 스크롤 기능
+          //원하는 행 위치로 스크롤 기능
           ref={grdList}
+          rowHeight={30}
           //정렬기능
           sortable={true}
           //컬럼순서조정
@@ -587,7 +545,7 @@ const HU_A1000W: React.FC = () => {
           resizable={true}
           id="grdList"
         >
-           <GridColumn cell={CommandCell} width="50px" />
+          <GridColumn cell={CommandCell} width="50px" />
           {customOptionData !== null &&
             customOptionData.menuCustomColumnOptions["grdList"].map(
               (item: any, idx: number) =>
@@ -601,7 +559,9 @@ const HU_A1000W: React.FC = () => {
                     cell={
                       dateField.includes(item.fieldName) ? DateCell : undefined
                     }
-                    //footerCell={grdTotalFooterCell}
+                    footerCell={
+                      item.sortOrder == 0 ? mainTotalFooterCell : undefined
+                    }
                   />
                 )
             )}
@@ -623,9 +583,8 @@ const HU_A1000W: React.FC = () => {
       {detailWindowVisible && (
         <DetailWindow
           getVisible={setDetailWindowVisible}
-          workType={workType} //신규 : N, 수정 : U 
+          workType={workType} //신규 : N, 수정 : U
           prsnnum={detailFilters.prsnnum}
-          isCopy={isCopy}
           reloadData={(returnString: string) => {
             setFilters((prev) => ({
               ...prev,
@@ -633,6 +592,7 @@ const HU_A1000W: React.FC = () => {
               isSearch: true,
             }));
           }}
+          modal={true}
         />
       )}
     </>
