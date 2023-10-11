@@ -87,14 +87,13 @@ const HU_B4001W: React.FC = () => {
     if (customOptionData !== null) {
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
 
-      let prsnnum = defaultOption.find(
-        (item: any) => item.id === "cboPrsnnum"
-      ).valueCode;
+      let prsnnum = defaultOption.find((item: any) => item.id === "cboPrsnnum")
+      .valueCode;
 
       setFilters((prev) => ({
         ...prev,
-        cboPrsnnum: prsnnum === "" || prsnnum === undefined ? userId : prsnnum,
-        isSearch: true
+        cboPrsnnum:  prsnnum === "" || prsnnum === undefined ? userId : prsnnum,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -126,7 +125,7 @@ const HU_B4001W: React.FC = () => {
       fetchQuery(personQueryStr, setPersonListData);
       fetchQuery(adjdivQueryStr, setAdjdivListData);
     };
-  });
+  }, [bizComponentData]);
 
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
@@ -374,7 +373,7 @@ const HU_B4001W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
+    
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -535,28 +534,29 @@ const HU_B4001W: React.FC = () => {
     }
   }, [filters]);
 
-  // //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
-  // useEffect(() => {
-  //   if (usefilters.isSearch) {
-  //     const _ = require("lodash");
-  //     const deepCopiedFilters = _.cloneDeep(usefilters);
-  //     setUseFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
-  //     fetchUseGrid(deepCopiedFilters);
-  //   }
-  // }, [usefilters]);
+  //페이지 Change할 때 필요
+  useEffect(() => {
+    if (usefilters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(usefilters);
+      setUseFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchUseGrid(deepCopiedFilters);
+    }
+  }, [usefilters]);
 
-  // //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
-  // useEffect(() => {
-  //   if (adjfilters.isSearch) {
-  //     const _ = require("lodash");
-  //     const deepCopiedFilters = _.cloneDeep(adjfilters);
-  //     setAdjFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
-  //     fetchAdjGrid(deepCopiedFilters);
-  //   }
-  // }, [adjfilters]);
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  //페이지 Change할 때 필요
+  useEffect(() => {
+    if (adjfilters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(adjfilters);
+      setAdjFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchAdjGrid(deepCopiedFilters);
+    }
+  }, [adjfilters]);
 
   useEffect(() => {
-    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    // useTargetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
     if (useTargetRowIndex !== null && grdUse.current) {
       grdUse.current.scrollIntoView({ rowIndex: useTargetRowIndex });
       useTargetRowIndex = null;
@@ -564,7 +564,7 @@ const HU_B4001W: React.FC = () => {
   }, [useDataResult]);
 
   useEffect(() => {
-    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    // adjTargetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
     if (adjTargetRowIndex !== null && grdAdj.current) {
       grdUse.current.scrollIntoView({ rowIndex: adjTargetRowIndex });
       adjTargetRowIndex = null;
@@ -651,19 +651,19 @@ const HU_B4001W: React.FC = () => {
         ...prev,
         pgNum: 1,
         find_row_value: "",
-        isSearch: true
+        isSearch: true,
       }));
       setUseFilters((prev: any) => ({
         ...prev,
         pgNum: 1,
         find_row_value: "",
-        isSearch: true
+        isSearch: true,
       }));
       setAdjFilters((prev: any) => ({
         ...prev,
         pgNum: 1,
         find_row_value: "",
-        isSearch: true
+        isSearch: true,
       }));
 
     } catch (e) {
