@@ -305,19 +305,18 @@ const HU_B4001W: React.FC = () => {
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const row = data.tables[0].Rows[0];
-
+      const row = data.tables[0].Rows;
       if (totalRowCnt > 0) {
         setUserInfo({
-          prsnnum: row.prsnnum,
-          prsnnm: row.prsnnm,
-          regorgdt: isValidDate(row.regorgdt)
-            ? dateformat2(row.regorgdt)
-            : null,
-          rtrdt: isValidDate(row.rtrdt) ? dateformat2(row.rtrdt) : null,
-          totalday: row.totalday,
-          usedday: row.usedday,
-          ramainday: row.ramainday,
+          prsnnum: row[0].prsnnum == undefined ? "" : row[0].prsnnum,
+          prsnnm: row[0].prsnnm == undefined ? "" : row[0].prsnnm,
+          regorgdt: isValidDate(row[0].regorgdt)
+            ? dateformat2(row[0].regorgdt)
+            : "",
+          rtrdt: isValidDate(row[0].rtrdt) ? dateformat2(row[0].rtrdt) : "",
+          totalday: row[0].totalday == undefined ? 0 : row[0].totalday,
+          usedday: row[0].usedday == undefined ? 0 : row[0].usedday,
+          ramainday: row[0].ramainday == undefined ? 0 : row[0].ramainday,
         });
       } else {
         // 사원정보
@@ -679,6 +678,98 @@ const HU_B4001W: React.FC = () => {
     }
   };
 
+  
+  const minGridWidth = React.useRef<number>(0);
+  const minGridWidth2 = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const grid2 = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+  const [gridCurrent2, setGridCurrent2] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdUse");
+      grid2.current = document.getElementById("grdAdj");
+
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdUse"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current
+      );
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdAdj"].map(
+        (item: TColumn) =>
+          item.width !== undefined
+            ? (minGridWidth2.current += item.width)
+            : minGridWidth2.current
+      );
+
+      if (grid.current) {
+        setGridCurrent(grid.current.clientWidth);
+      }
+      if (grid2.current) {
+        setGridCurrent2(grid2.current.clientWidth);
+      }
+      if (grid.current) {
+        setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
+      }
+      if (grid2.current) {
+        setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
+      }
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (grid.current) {
+      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
+        setApplyMinWidth(true);
+      } else if (grid.current.clientWidth > minGridWidth.current) {
+        setGridCurrent(grid.current.clientWidth);
+        setApplyMinWidth(false);
+      }
+    }
+    if (grid2.current) {
+      if (
+        grid2.current.clientWidth < minGridWidth2.current &&
+        !applyMinWidth2
+      ) {
+        setApplyMinWidth2(true);
+      } else if (grid2.current.clientWidth > minGridWidth2.current) {
+        setGridCurrent2(grid2.current.clientWidth);
+        setApplyMinWidth2(false);
+      }
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+    if (grid.current && Name == "grdUserAdj") {
+      let width = applyMinWidth
+        ? minWidth
+        : minWidth +
+          (gridCurrent - minGridWidth.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    }
+    if (grid2.current && Name == "grdAdjDetail") {
+      let width = applyMinWidth2
+        ? minWidth
+        : minWidth +
+          (gridCurrent2 - minGridWidth2.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    }
+  };
+
   return (
     <>
       <TitleContainer>
@@ -725,8 +816,8 @@ const HU_B4001W: React.FC = () => {
                     value={filters.cboPrsnnum}
                     customOptionData={customOptionData}
                     changeData={ComboBoxChange}
-                    textField="user_name"
-                    valueField="user_id"
+                    textField="prsnnm"
+                    valueField="prsnnum"
                     className="required"
                   />
                 )}
@@ -870,7 +961,7 @@ const HU_B4001W: React.FC = () => {
                       id={item.id}
                       field={item.fieldName}
                       title={item.caption}
-                      width={item.width}
+                      width={setWidth("grdUse", item.width)}
                       cell={
                         DateField.includes(item.fieldName)
                           ? DateCell
@@ -931,6 +1022,7 @@ const HU_B4001W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
+            id="grdAdj"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdAdj"].map(
@@ -941,7 +1033,7 @@ const HU_B4001W: React.FC = () => {
                       id={item.id}
                       field={item.fieldName}
                       title={item.caption}
-                      width={item.width}
+                      width={setWidth("grdAdj", item.width)}
                       cell={
                         NumberField.includes(item.fieldName)
                           ? NumberCell
