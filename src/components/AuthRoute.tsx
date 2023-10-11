@@ -158,6 +158,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "QC_A2500_603W" ||
       link == "SA_A1000_603W" ||
       link == "SA_A1100_603W" ||
+      link == "SA_B1000W_603" ||
       link == "Error"
     ) {
       return false;

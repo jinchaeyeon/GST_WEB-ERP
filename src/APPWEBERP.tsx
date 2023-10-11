@@ -175,6 +175,7 @@ import SY_A0120W from "./routes/SY_A0120W";
 import SY_A0125W from "./routes/SY_A0125W";
 import SY_A0500W from "./routes/SY_A0500W";
 import TO_B0011W from "./routes/TO_B0011W";
+import SA_B1000W_603 from "./routes/SA_B1000W_603";
 import {
   colors,
   isMobileMenuOpendState,
@@ -645,6 +646,11 @@ const AppInner: React.FC = () => {
                   <AuthRoute
                     path="/SA_A1000_603W"
                     component={SA_A1000_603W}
+                    exact
+                  />
+                     <AuthRoute
+                    path="/SA_B1000W_603"
+                    component={SA_B1000W_603}
                     exact
                   />
                   {/* 에러페이지 */}

@@ -11,11 +11,11 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -43,7 +43,7 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -57,7 +57,7 @@ import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A2070W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -136,6 +136,9 @@ const HU_A2070W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -325,7 +328,7 @@ const HU_A2070W: React.FC = () => {
         "@p_todt": convertDateToStr(filters.todt),
         "@p_latechk": filters.latechk,
         "@p_dptcd": filters.dptcd,
-        "@p_find_row_value": filters.find_row_value
+        "@p_find_row_value": filters.find_row_value,
       },
     };
     try {
@@ -591,7 +594,8 @@ const HU_A2070W: React.FC = () => {
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
             ? {
                 ...item,
-                rowstatus: item.rowstatus === "N1" || item.rowstatus == "N" ? "N" : "U",
+                rowstatus:
+                  item.rowstatus === "N1" || item.rowstatus == "N" ? "N" : "U",
                 [EDIT_FIELD]: undefined,
               }
             : {
@@ -842,7 +846,7 @@ const HU_A2070W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert(data.resultMessage)
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -1168,10 +1172,14 @@ const HU_A2070W: React.FC = () => {
           }}
         >
           <GridTitleContainer>
-            <GridTitle>
-              출퇴근 조회(8시반 출근자: 검은색/ 9시 출근자: 파란색 / 주말:
-              빨간색)
-            </GridTitle>
+            {companyCode == "2309DA41" ? (
+              <GridTitle>출퇴근 조회</GridTitle>
+            ) : (
+              <GridTitle>
+                출퇴근 조회(8시반 출근자: 검은색/ 9시 출근자: 파란색 / 주말:
+                빨간색)
+              </GridTitle>
+            )}
             <ButtonContainer>
               <Button
                 onClick={onAddClick}
