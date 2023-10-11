@@ -12,6 +12,12 @@ code {
     monospace;
 }
 
+/*스플린터*/
+.pane-content {
+  padding: 0 10px;
+  height: 100%;
+}
+
 /* 드래그 디자인 */
 *::-webkit-scrollbar {
   width: 0px;

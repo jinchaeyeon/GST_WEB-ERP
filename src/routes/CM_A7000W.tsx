@@ -29,6 +29,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -72,6 +73,8 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import RichEditor from "../components/RichEditor";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -91,8 +94,6 @@ import {
   TGrid,
   TPermissions,
 } from "../store/types";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import RichEditor from "../components/RichEditor";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -122,7 +123,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
   const { setAttdatnum, setFiles } = useContext(FormContext);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
- 
+
   const handleChange = (e: InputChangeEvent) => {
     if (onChange) {
       onChange({
@@ -531,6 +532,20 @@ const CM_A7000W: React.FC = () => {
       [name]: value == false ? "N" : "Y",
     }));
   };
+  const history = useHistory();
+  const location = useLocation();
+  /* 푸시 알림 클릭시 이동 테스트 코드 */
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    if (queryParams.has("go")) {
+      history.replace({}, "");
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        findRowValue: queryParams.get("go") as string,
+      }));
+    }
+  }, []);
 
   // 조회조건 초기값
   const [filters, setFilters] = useState({
@@ -568,7 +583,7 @@ const CM_A7000W: React.FC = () => {
     attdatnum_private: "",
     files_private: "",
   });
-
+  
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
@@ -608,7 +623,8 @@ const CM_A7000W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.orgdiv + "_" + row.meetingnum == filters.find_row_value
+            (row: any) =>
+              row.orgdiv + "_" + row.meetingnum == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -636,7 +652,10 @@ const CM_A7000W: React.FC = () => {
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.orgdiv + "_" + row.meetingnum == filters.find_row_value);
+            : rows.find(
+                (row: any) =>
+                  row.orgdiv + "_" + row.meetingnum == filters.find_row_value
+              );
 
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -651,7 +670,6 @@ const CM_A7000W: React.FC = () => {
         setWorkType("");
         resetAllGrid();
       }
-      
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -678,7 +696,7 @@ const CM_A7000W: React.FC = () => {
     const selectedRowData = mainDataResult.data.find(
       (item) => item[DATA_ITEM_KEY] == mainDataId
     );
-    
+
     const id = orgdiv + "_" + selectedRowData["meetingnum"];
 
     const para = {
@@ -691,7 +709,7 @@ const CM_A7000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    
+
     if (data !== null && data.document !== "") {
       const reference = data.document;
 
@@ -699,7 +717,6 @@ const CM_A7000W: React.FC = () => {
       if (refEditorRef.current) {
         refEditorRef.current.setHtml(reference);
       }
-      
     } else {
       console.log("[에러발생]");
       console.log(data);
@@ -859,7 +876,7 @@ const CM_A7000W: React.FC = () => {
         convertDateToStr(information.recdt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "CM_A7000W_001");
-      } else if ( information.custcd == "" ) {
+      } else if (information.custcd == "") {
         throw findMessage(messagesData, "CM_A7000W_002");
       }
     } catch (e) {
@@ -935,11 +952,11 @@ const CM_A7000W: React.FC = () => {
         "@p_contents": paraDataSaved.contents,
         "@p_userid": userId,
         "@p_pc": pc,
-        "@p_form_id": "CM_A7000W"
+        "@p_form_id": "CM_A7000W",
       },
       fileBytes: paraDataSaved.fileBytes,
-    }
-  
+    };
+
     try {
       data = await processApi<any>("meeting-save", para);
     } catch (error) {
@@ -952,7 +969,7 @@ const CM_A7000W: React.FC = () => {
       } else {
         setTabSelected(1);
       }
-      
+
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
@@ -961,7 +978,6 @@ const CM_A7000W: React.FC = () => {
         isSearch: true,
       }));
       fetchDetail();
-
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1049,15 +1065,11 @@ const CM_A7000W: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
-  
-  const enterEdit = (dataItem: any, field: string) => {
-   
-  };
 
-  const exitEdit = () => {
-   
-  };
-  
+  const enterEdit = (dataItem: any, field: string) => {};
+
+  const exitEdit = () => {};
+
   return (
     <>
       <TitleContainer>
@@ -1503,7 +1515,9 @@ const CM_A7000W: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
             </GridContainer>
-            <GridContainer style = {{ width: `calc(70% - ${GAP}px)`, height: "80vh" }}>
+            <GridContainer
+              style={{ width: `calc(70% - ${GAP}px)`, height: "80vh" }}
+            >
               <GridTitleContainer>
                 <GridTitle>참고자료</GridTitle>
               </GridTitleContainer>

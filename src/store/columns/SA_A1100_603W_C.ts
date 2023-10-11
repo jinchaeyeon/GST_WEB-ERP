@@ -4,18 +4,7 @@ export const gridList: Array<TGrid> = [
   {
     // 요약정보
     gridName: "grdList",
-    columns: [  
-        {
-        id: "col_quonum_list",
-        field: "quonum",
-        caption: "견적번호",
-        width: 0,
-      },{
-        id: "col_quorev_list",
-        field: "quorev",
-        caption: "견적순번",
-        width: 0,
-      },
+    columns: [ 
       {
         id: "col_quokey_list",
         field: "quokey",
@@ -26,38 +15,37 @@ export const gridList: Array<TGrid> = [
         id: "col_quotype_list",
         field: "quotype",
         caption: "견적형태",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_quosts_list",
         field: "quosts",
         caption: "견적상태",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_person_list",
         field: "person",
         caption: "담당자",
-        width: 100,
+        width: 120,
       },
-
       {
         id: "col_dptcd_list",
         field: "dptcd",
         caption: "부서",
-        width: 70,
+        width: 120,
       },
       {
         id: "col_chkperson_list",
         field: "chkperson",
         caption: "CS담당자",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_custcd_list",
         field: "custcd",
         caption: "업체코드",
-        width: 100,
+        width: 150,
       },
       {
         id: "col_custnm_list",
@@ -69,7 +57,7 @@ export const gridList: Array<TGrid> = [
         id: "col_materialtype_list",
         field: "materialtype",
         caption: "물질분류",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_materialnm_list",
@@ -81,27 +69,14 @@ export const gridList: Array<TGrid> = [
         id: "col_materialindt_list",
         field: "materialindt",
         caption: "물질입고예상일",
-        width: 150,
+        width: 120,
       },
-      
     ],
   },
   {
     // 시험리스트
-    gridName: "grdDetail",
+    gridName: "grdList2",
     columns: [
-      {
-        id: "col_quonum_detail",
-        field: "quonum",
-        caption: "견적번호",
-        width: 0,
-      },
-      {
-        id: "col_quorev_detail",
-        field: "quorev",
-        caption: "견적순번",
-        width: 0,
-      }, 
       {
         id: "col_testnum_detail",
         field: "testnum",
@@ -131,31 +106,19 @@ export const gridList: Array<TGrid> = [
 
   {
     // 코멘트
-    gridName: "grdComment",
+    gridName: "grdList3",
     columns: [
-      {
-        id: "col_id_com",
-        field: "id",
-        caption: "id",
-        width: 0,
-      },
-      {
-        id: "col_seq_com",
-        field: "seq",
-        caption: "순번",
-        width: 0,
-      },
       {
         id: "col_recdt_com",
         field: "recdt",
         caption: "작성일",
-        width: 70,
+        width: 120,
       },
       {
         id: "col_insert_userid_com",
         field: "insert_userid",
         caption: "작성자",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_comment_com",
@@ -167,7 +130,7 @@ export const gridList: Array<TGrid> = [
   },
   {
     // 기존 거래내역
-    gridName: "grdSale",
+    gridName: "grdList4",
     columns: [
       {
         id: "col_quokey_sale",
@@ -203,31 +166,31 @@ export const gridList: Array<TGrid> = [
   },
   {
     // 회의록
-    gridName: "grdmeet",
+    gridName: "grdList5",
     columns: [
       {
         id: "col_meetingnum_meet",
         field: "meetingnum",
         caption: "회의록번호",
-        width: 100,
+        width: 150,
       },
       {
         id: "col_recdt_meet",
         field: "recdt",
         caption: "회의일",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_person_meet",
         field: "person",
         caption: "작성자",
-        width: 100,
+        width: 120,
       },   
       {
         id: "col_title_meet",
         field: "title",
         caption: "제목",
-        width: 100,
+        width: 150,
       },        
     ],
   },

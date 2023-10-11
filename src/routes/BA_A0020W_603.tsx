@@ -286,7 +286,7 @@ const BA_A0020_603: React.FC = () => {
       }));
       setInfomation((prev) => ({
         ...prev,
-        raduseyn2: defaultOption.find((item: any) => item.id === "raduseyn2")
+        useyn: defaultOption.find((item: any) => item.id === "useyn")
           .valueCode,
       }));
     }
@@ -586,8 +586,6 @@ const BA_A0020_603: React.FC = () => {
       },
     };
 
-    console.log(parameters);
-
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -827,7 +825,7 @@ const BA_A0020_603: React.FC = () => {
           efaxnum: "",
           email: "",
           taxortnm: "",
-          useyn: "N",
+          useyn: "Y",
           scmyn: "N",
           pariodyn: "",
           attdatnum: "",
@@ -1386,7 +1384,7 @@ const BA_A0020_603: React.FC = () => {
       efaxnum: "",
       email: "",
       taxortnm: "",
-      useyn: "N",
+      useyn: "Y",
       scmyn: "N",
       pariodyn: "",
       attdatnum: "",
@@ -3262,6 +3260,17 @@ const BA_A0020_603: React.FC = () => {
                         </td>
                       </tr>
                       <tr>
+                        <th style={{ width: "15%" }}>사업자등록번호</th>
+                        <td>
+                          <Input
+                            name="bizregnum"
+                            type="text"
+                            value={infomation.bizregnum}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
                         <th style={{ width: "15%" }}>주소</th>
                         <td>
                           <Input
@@ -3304,7 +3313,7 @@ const BA_A0020_603: React.FC = () => {
                         <td>
                           {customOptionData !== null && (
                             <CustomOptionRadioGroup
-                              name="raduseyn2"
+                              name="useyn"
                               customOptionData={customOptionData}
                               changeData={RadioChange}
                             />
