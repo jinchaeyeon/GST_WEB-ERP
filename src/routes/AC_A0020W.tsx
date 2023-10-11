@@ -50,6 +50,7 @@ import {
   UseParaPc,
   UsePermissions,
   findMessage,
+  getAcntQuery,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -220,8 +221,8 @@ const FormContext2 = createContext<{
   setAcntcd2: (d: any) => void;
   acntnm2: string;
   setAcntnm2: (d: any) => void;
-  mainDataState: State;
-  setMainDataState: (d: any) => void;
+  mainDataState6: State;
+  setMainDataState6: (d: any) => void;
 }>({} as any);
 
 const FormContext3 = createContext<{
@@ -229,8 +230,8 @@ const FormContext3 = createContext<{
   setAcntcd3: (d: any) => void;
   acntnm3: string;
   setAcntnm3: (d: any) => void;
-  mainDataState: State;
-  setMainDataState: (d: any) => void;
+  mainDataState6: State;
+  setMainDataState6: (d: any) => void;
 }>({} as any);
 
 const FormContext4 = createContext<{
@@ -238,8 +239,8 @@ const FormContext4 = createContext<{
   setAcntcd4: (d: any) => void;
   acntnm4: string;
   setAcntnm4: (d: any) => void;
-  mainDataState: State;
-  setMainDataState: (d: any) => void;
+  mainDataState6: State;
+  setMainDataState6: (d: any) => void;
 }>({} as any);
 
 const FormContext5 = createContext<{
@@ -247,8 +248,17 @@ const FormContext5 = createContext<{
   setAcntcd5: (d: any) => void;
   acntnm5: string;
   setAcntnm5: (d: any) => void;
-  mainDataState: State;
-  setMainDataState: (d: any) => void;
+  mainDataState6: State;
+  setMainDataState6: (d: any) => void;
+}>({} as any);
+
+const FormContext6 = createContext<{
+  acntcd6: string;
+  setAcntcd6: (d: any) => void;
+  acntnm6: string;
+  setAcntnm6: (d: any) => void;
+  mainDataState5: State;
+  setMainDataState5: (d: any) => void;
 }>({} as any);
 
 const ColumnCommandCell = (props: GridCellProps) => {
@@ -326,6 +336,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
         <AccountWindow
           setVisible={setAccountWindowVisible}
           setData={setAcntData}
+          modal={true}
         />
       )}
     </>
@@ -347,8 +358,8 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
     acntnm2,
     setAcntcd2,
     setAcntnm2,
-    mainDataState,
-    setMainDataState,
+    mainDataState6,
+    setMainDataState6,
   } = useContext(FormContext2);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
@@ -407,6 +418,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
         <AccountWindow
           setVisible={setAccountWindowVisible}
           setData={setAcntData}
+          modal={true}
         />
       )}
     </>
@@ -428,8 +440,8 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
     acntnm3,
     setAcntcd3,
     setAcntnm3,
-    mainDataState,
-    setMainDataState,
+    mainDataState6,
+    setMainDataState6,
   } = useContext(FormContext3);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
@@ -488,6 +500,7 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
         <AccountWindow
           setVisible={setAccountWindowVisible}
           setData={setAcntData}
+          modal={true}
         />
       )}
     </>
@@ -509,8 +522,8 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
     acntnm4,
     setAcntcd4,
     setAcntnm4,
-    mainDataState,
-    setMainDataState,
+    mainDataState6,
+    setMainDataState6,
   } = useContext(FormContext4);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
@@ -569,6 +582,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
         <AccountWindow
           setVisible={setAccountWindowVisible}
           setData={setAcntData}
+          modal={true}
         />
       )}
     </>
@@ -590,8 +604,8 @@ const ColumnCommandCell5 = (props: GridCellProps) => {
     acntnm5,
     setAcntcd5,
     setAcntnm5,
-    mainDataState,
-    setMainDataState,
+    mainDataState6,
+    setMainDataState6,
   } = useContext(FormContext5);
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
@@ -650,6 +664,89 @@ const ColumnCommandCell5 = (props: GridCellProps) => {
         <AccountWindow
           setVisible={setAccountWindowVisible}
           setData={setAcntData}
+          modal={true}
+        />
+      )}
+    </>
+  );
+};
+
+const ColumnCommandCell6 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const {
+    acntcd6,
+    acntnm6,
+    setAcntcd6,
+    setAcntnm6,
+    mainDataState5,
+    setMainDataState5,
+  } = useContext(FormContext6);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+  const [accountWindowVisible, setAccountWindowVisible] =
+    useState<boolean>(false);
+
+  const onAccountWndClick = () => {
+    setAccountWindowVisible(true);
+  };
+
+  const setAcntData = (data: IAccountData) => {
+    setAcntcd6(data.acntcd);
+    setAcntnm6(data.acntnm);
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {isInEdit ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
+      <ButtonInInput>
+        <Button
+          onClick={onAccountWndClick}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {accountWindowVisible && (
+        <AccountWindow
+          setVisible={setAccountWindowVisible}
+          setData={setAcntData}
+          modal={true}
         />
       )}
     </>
@@ -677,7 +774,9 @@ const AC_A0020W: React.FC = () => {
   const [acntcd4, setAcntcd4] = useState<string>("");
   const [acntnm4, setAcntnm4] = useState<string>("");
   const [acntcd5, setAcntcd5] = useState<string>("");
+  const [acntcd6, setAcntcd6] = useState<string>("");
   const [acntnm5, setAcntnm5] = useState<string>("");
+  const [acntnm6, setAcntnm6] = useState<string>("");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -828,6 +927,7 @@ const AC_A0020W: React.FC = () => {
             acntcd: acntcd,
             acntnm: acntnm,
             rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
           }
         : {
             ...item,
@@ -849,6 +949,7 @@ const AC_A0020W: React.FC = () => {
             cracntcd: acntcd2,
             cracntnm: acntnm2,
             rowstatus: item.rowstatus === "N" ? "N" : "U",
+                [EDIT_FIELD]: undefined,
           }
         : {
             ...item,
@@ -870,6 +971,7 @@ const AC_A0020W: React.FC = () => {
             dracntcd: acntcd3,
             dracntnm: acntnm3,
             rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
           }
         : {
             ...item,
@@ -891,6 +993,7 @@ const AC_A0020W: React.FC = () => {
             socracntcd: acntcd4,
             socracntnm: acntnm4,
             rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
           }
         : {
             ...item,
@@ -912,6 +1015,7 @@ const AC_A0020W: React.FC = () => {
             sodracntcd: acntcd5,
             sodracntnm: acntnm5,
             rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
           }
         : {
             ...item,
@@ -924,6 +1028,28 @@ const AC_A0020W: React.FC = () => {
       };
     });
   }, [acntcd5, acntnm5]);
+
+  useEffect(() => {
+    const newData = mainDataResult5.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState5)[0])
+        ? {
+            ...item,
+            acntcd: acntcd6,
+            acntnm: acntnm6,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+          }
+    );
+    setMainDataResult5((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [acntcd6, acntnm6]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -1053,7 +1179,12 @@ const AC_A0020W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
   const [tabSelected, setTabSelected] = React.useState(0);
-
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
+  const [editIndex2, setEditIndex2] = useState<number | undefined>();
+  const [editedField2, setEditedField2] = useState("");
+  const [editIndex3, setEditIndex3] = useState<number | undefined>();
+  const [editedField3, setEditedField3] = useState("");
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -1197,7 +1328,7 @@ const AC_A0020W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.itemcd == filters.find_row_value
+            (row: any) => row.mngitemcd == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -1223,7 +1354,7 @@ const AC_A0020W: React.FC = () => {
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.itemcd == filters.find_row_value);
+            : rows.find((row: any) => row.mngitemcd == filters.find_row_value);
 
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -1278,7 +1409,7 @@ const AC_A0020W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef2.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.itemcd == filters2.find_row_value
+            (row: any) => row.acntgrpcd == filters2.find_row_value
           );
           targetRowIndex2 = findRowIndex;
         }
@@ -1306,7 +1437,7 @@ const AC_A0020W: React.FC = () => {
         const selectedRow =
           filters2.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.itemcd == filters2.find_row_value);
+            : rows.find((row: any) => row.acntgrpcd == filters2.find_row_value);
 
         if (selectedRow != undefined) {
           setSelectedState2({ [selectedRow[DATA_ITEM_KEY2]]: true });
@@ -1372,7 +1503,7 @@ const AC_A0020W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef3.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.itemcd == detailfilters2.find_row_value
+            (row: any) => row.acntgrpcd == detailfilters2.find_row_value
           );
           targetRowIndex3 = findRowIndex;
         }
@@ -1401,7 +1532,7 @@ const AC_A0020W: React.FC = () => {
           detailfilters2.find_row_value == ""
             ? rows[0]
             : rows.find(
-                (row: any) => row.itemcd == detailfilters2.find_row_value
+                (row: any) => row.acntgrpcd == detailfilters2.find_row_value
               );
 
         if (selectedRow != undefined) {
@@ -1470,7 +1601,7 @@ const AC_A0020W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef4.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.itemcd == detailfilters2_1.find_row_value
+            (row: any) => row.acntgrpcd == detailfilters2_1.find_row_value
           );
           targetRowIndex4 = findRowIndex;
         }
@@ -1497,7 +1628,7 @@ const AC_A0020W: React.FC = () => {
           detailfilters2_1.find_row_value == ""
             ? rows[0]
             : rows.find(
-                (row: any) => row.itemcd == detailfilters2_1.find_row_value
+                (row: any) => row.acntgrpcd == detailfilters2_1.find_row_value
               );
 
         if (selectedRow != undefined) {
@@ -1553,7 +1684,7 @@ const AC_A0020W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef5.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.itemcd == filters3.find_row_value
+            (row: any) => row.stdrmkcd == filters3.find_row_value
           );
           targetRowIndex5 = findRowIndex;
         }
@@ -1581,7 +1712,7 @@ const AC_A0020W: React.FC = () => {
         const selectedRow =
           filters3.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.itemcd == filters3.find_row_value);
+            : rows.find((row: any) => row.stdrmkcd == filters3.find_row_value);
 
         if (selectedRow != undefined) {
           setSelectedState5({ [selectedRow[DATA_ITEM_KEY5]]: true });
@@ -1636,7 +1767,8 @@ const AC_A0020W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef6.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.itemcd == filters4.find_row_value
+            (row: any) =>
+              row.itemacnt + "-" + row.doexdiv == filters4.find_row_value
           );
           targetRowIndex6 = findRowIndex;
         }
@@ -1662,7 +1794,10 @@ const AC_A0020W: React.FC = () => {
         const selectedRow =
           filters4.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.itemcd == filters4.find_row_value);
+            : rows.find(
+                (row: any) =>
+                  row.itemacnt + "-" + row.doexdiv == filters4.find_row_value
+              );
 
         if (selectedRow != undefined) {
           setSelectedState6({ [selectedRow[DATA_ITEM_KEY6]]: true });
@@ -2376,7 +2511,10 @@ const AC_A0020W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
-
+      setEditIndex(dataItem[DATA_ITEM_KEY4]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult3((prev: { total: any }) => {
         return {
           data: newData,
@@ -2401,31 +2539,40 @@ const AC_A0020W: React.FC = () => {
 
   const exitEdit3 = () => {
     if (tempResult3.data != mainDataResult4.data) {
-      const newData = mainDataResult4.data.map(
-        (item: { [x: string]: string; rowstatus: string }) =>
-          item[DATA_ITEM_KEY4] == Object.getOwnPropertyNames(selectedState4)[0]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "U",
-                [EDIT_FIELD]: undefined,
-              }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-      );
-      setTempResult3((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult4((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+      if (editedField !== "acntcd") {
+        const newData = mainDataResult4.data.map(
+          (item: { [x: string]: string; rowstatus: string }) =>
+            item[DATA_ITEM_KEY4] ==
+            Object.getOwnPropertyNames(selectedState4)[0]
+              ? {
+                  ...item,
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+        );
+        setTempResult3((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult4((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else {
+        mainDataResult4.data.map((item: { [x: string]: any; acntcd: any }) => {
+          if (editIndex == item[DATA_ITEM_KEY4]) {
+            fetchAcntData(item.acntcd);
+          }
+        });
+      }
     } else {
       const newData = mainDataResult4.data.map((item: any) => ({
         ...item,
@@ -2486,7 +2633,10 @@ const AC_A0020W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
-
+      setEditIndex3(dataItem[DATA_ITEM_KEY5]);
+      if (field) {
+        setEditedField3(field);
+      }
       setTempResult4((prev: { total: any }) => {
         return {
           data: newData,
@@ -2511,31 +2661,40 @@ const AC_A0020W: React.FC = () => {
 
   const exitEdit4 = () => {
     if (tempResult4.data != mainDataResult5.data) {
-      const newData = mainDataResult5.data.map(
-        (item: { [x: string]: string; rowstatus: string }) =>
-          item[DATA_ITEM_KEY5] == Object.getOwnPropertyNames(selectedState5)[0]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "U",
-                [EDIT_FIELD]: undefined,
-              }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-      );
-      setTempResult4((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult5((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+      if (editedField3 !== "acntcd") {
+        const newData = mainDataResult5.data.map(
+          (item: { [x: string]: string; rowstatus: string }) =>
+            item[DATA_ITEM_KEY5] ==
+            Object.getOwnPropertyNames(selectedState5)[0]
+              ? {
+                  ...item,
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+        );
+        setTempResult4((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult5((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else {
+        mainDataResult5.data.map((item: { [x: string]: any; acntcd: any }) => {
+          if (editIndex3 == item[DATA_ITEM_KEY5]) {
+            fetchAcntData2(item.acntcd);
+          }
+        });
+      }
     } else {
       const newData = mainDataResult5.data.map((item: any) => ({
         ...item,
@@ -2605,6 +2764,11 @@ const AC_A0020W: React.FC = () => {
             }
       );
 
+        setEditIndex2(dataItem[DATA_ITEM_KEY6]);
+        if (field) {
+          setEditedField2(field);
+        }
+
       setTempResult5((prev: { total: any }) => {
         return {
           data: newData,
@@ -2629,6 +2793,7 @@ const AC_A0020W: React.FC = () => {
 
   const exitEdit5 = () => {
     if (tempResult5.data != mainDataResult6.data) {
+      if (editedField2 !== "dracntcd" && editedField2 !== "cracntcd" && editedField2 !== "socracntcd" && editedField2 !== "sodracntcd") {
       const newData = mainDataResult6.data.map(
         (item: { [x: string]: string; rowstatus: string }) =>
           item[DATA_ITEM_KEY6] == Object.getOwnPropertyNames(selectedState6)[0]
@@ -2654,6 +2819,31 @@ const AC_A0020W: React.FC = () => {
           total: prev.total,
         };
       });
+    } else if(editedField2 == "cracntcd") {
+      mainDataResult6.data.map((item: { [x: string]: any; acntcd: any }) => {
+        if (editIndex2 == item[DATA_ITEM_KEY6]) {
+          fetchAcntData3(item.cracntcd);
+        }
+      });
+    } else if(editedField2 == "dracntcd") {
+      mainDataResult6.data.map((item: { [x: string]: any; acntcd: any }) => {
+        if (editIndex2 == item[DATA_ITEM_KEY6]) {
+          fetchAcntData4(item.dracntcd);
+        }
+      });
+    } else if(editedField2 == "socracntcd") {
+      mainDataResult6.data.map((item: { [x: string]: any; acntcd: any }) => {
+        if (editIndex2 == item[DATA_ITEM_KEY6]) {
+          fetchAcntData5(item.socracntcd);
+        }
+      });
+    } else if(editedField2 == "sodracntcd") {
+      mainDataResult6.data.map((item: { [x: string]: any; acntcd: any }) => {
+        if (editIndex2 == item[DATA_ITEM_KEY6]) {
+          fetchAcntData6(item.sodracntcd);
+        }
+      });
+    }
     } else {
       const newData = mainDataResult6.data.map((item: any) => ({
         ...item,
@@ -3814,6 +4004,7 @@ const AC_A0020W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -3828,34 +4019,68 @@ const AC_A0020W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const isLastDataDeleted =
-        mainDataResult3.data.length == 0 && detailfilters2.pgNum > 0;
-      if (isLastDataDeleted) {
-        setPage3({
-          skip:
-            detailfilters2.pgNum == 1 || detailfilters2.pgNum == 0
-              ? 0
-              : PAGE_SIZE * (detailfilters2.pgNum - 2),
-          take: PAGE_SIZE,
-        });
-        setDetailFilter2((prev: any) => ({
-          ...prev,
-          find_row_value: "",
-          pgNum: isLastDataDeleted
-            ? prev.pgNum != 1
-              ? prev.pgNum - 1
-              : prev.pgNum
-            : prev.pgNum,
-          isSearch: true,
-        }));
+      if (ParaData2.acntcd_s.length == 0) {
+        const isLastDataDeleted =
+          mainDataResult3.data.length == 0 && detailfilters2.pgNum > 0;
+        if (isLastDataDeleted) {
+          setPage3({
+            skip:
+              detailfilters2.pgNum == 1 || detailfilters2.pgNum == 0
+                ? 0
+                : PAGE_SIZE * (detailfilters2.pgNum - 2),
+            take: PAGE_SIZE,
+          });
+          setDetailFilter2((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
+            isSearch: true,
+          }));
+        } else {
+          setDetailFilter2((prev: any) => ({
+            ...prev,
+            find_row_value: data.returnString,
+            pgNum: prev.pgNum,
+            isSearch: true,
+          }));
+        }
       } else {
-        setDetailFilter2((prev: any) => ({
-          ...prev,
-          find_row_value: data.returnString,
-          pgNum: prev.pgNum,
-          isSearch: true,
-        }));
+        const isLastDataDeleted =
+          mainDataResult4.data.length == 0 && detailfilters2_1.pgNum > 0;
+        setPage4(initialPageState);
+        setMainDataResult4(process([], mainDataState4));
+        if (isLastDataDeleted) {
+          setPage4({
+            skip:
+              detailfilters2_1.pgNum == 1 || detailfilters2_1.pgNum == 0
+                ? 0
+                : PAGE_SIZE * (detailfilters2_1.pgNum - 2),
+            take: PAGE_SIZE,
+          });
+          setDetailFilter2_1((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
+            isSearch: true,
+          }));
+        } else {
+          setDetailFilter2_1((prev: any) => ({
+            ...prev,
+            find_row_value: data.returnString,
+            pgNum: prev.pgNum,
+            isSearch: true,
+          }));
+        }
       }
+
       setParaData2({
         pgSize: PAGE_SIZE,
         workType: "FIN1",
@@ -3888,6 +4113,7 @@ const AC_A0020W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -3903,16 +4129,16 @@ const AC_A0020W: React.FC = () => {
 
     if (data.isSuccess === true) {
       const isLastDataDeleted =
-        mainDataResult5.data.length == 0 && filters4.pgNum > 0;
+        mainDataResult5.data.length == 0 && filters3.pgNum > 0;
       if (isLastDataDeleted) {
-        setPage4({
+        setPage5({
           skip:
-            filters4.pgNum == 1 || filters4.pgNum == 0
+            filters3.pgNum == 1 || filters3.pgNum == 0
               ? 0
-              : PAGE_SIZE * (filters4.pgNum - 2),
+              : PAGE_SIZE * (filters3.pgNum - 2),
           take: PAGE_SIZE,
         });
-        setFilters4((prev: any) => ({
+        setFilters3((prev: any) => ({
           ...prev,
           find_row_value: "",
           pgNum: isLastDataDeleted
@@ -3923,7 +4149,7 @@ const AC_A0020W: React.FC = () => {
           isSearch: true,
         }));
       } else {
-        setFilters4((prev: any) => ({
+        setFilters3((prev: any) => ({
           ...prev,
           find_row_value: data.returnString,
           pgNum: prev.pgNum,
@@ -3945,6 +4171,7 @@ const AC_A0020W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -3962,7 +4189,7 @@ const AC_A0020W: React.FC = () => {
       const isLastDataDeleted =
         mainDataResult6.data.length == 0 && filters4.pgNum > 0;
       if (isLastDataDeleted) {
-        setPage({
+        setPage6({
           skip:
             filters4.pgNum == 1 || filters4.pgNum == 0
               ? 0
@@ -4109,6 +4336,322 @@ const AC_A0020W: React.FC = () => {
     return array;
   };
 
+  const fetchAcntData = React.useCallback(
+    async (acntcd: string) => {
+      let data: any;
+      const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
+
+        if (rowCount > 0) {
+          const { acntcd, acntnm } = rows[0];
+          setAcntcd(acntcd);
+          setAcntnm(acntnm);
+        } else {
+          const newData = mainDataResult4.data.map((item: any) =>
+            item[DATA_ITEM_KEY4] ==
+            Object.getOwnPropertyNames(selectedState4)[0]
+              ? {
+                  ...item,
+                  acntcd: item.acntcd,
+                  acntnm: "",
+                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult4((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+    },
+    [mainDataResult4]
+  );
+  const fetchAcntData2 = React.useCallback(
+    async (acntcd: string) => {
+      let data: any;
+      const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
+
+        if (rowCount > 0) {
+          const { acntcd, acntnm } = rows[0];
+          setAcntcd6(acntcd);
+          setAcntnm6(acntnm);
+        } else {
+          const newData = mainDataResult5.data.map((item: any) =>
+            item[DATA_ITEM_KEY5] ==
+            Object.getOwnPropertyNames(selectedState5)[0]
+              ? {
+                  ...item,
+                  acntcd: item.acntcd,
+                  acntnm: "",
+                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult5((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+    },
+    [mainDataResult5]
+  );
+
+  const fetchAcntData3 = React.useCallback(
+    async (acntcd: string) => {
+      let data: any;
+      const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
+
+        if (rowCount > 0) {
+          const { acntcd, acntnm } = rows[0];
+          setAcntcd2(acntcd);
+          setAcntnm2(acntnm);
+        } else {
+          const newData = mainDataResult6.data.map((item: any) =>
+            item[DATA_ITEM_KEY6] ==
+            Object.getOwnPropertyNames(selectedState6)[0]
+              ? {
+                  ...item,
+                  cracntcd: item.acntcd,
+                  cracntnm: "",
+                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult6((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+    },
+    [mainDataResult6]
+  );
+
+  const fetchAcntData4 = React.useCallback(
+    async (acntcd: string) => {
+      let data: any;
+      const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
+
+        if (rowCount > 0) {
+          const { acntcd, acntnm } = rows[0];
+          setAcntcd3(acntcd);
+          setAcntnm3(acntnm);
+        } else {
+          const newData = mainDataResult6.data.map((item: any) =>
+            item[DATA_ITEM_KEY6] ==
+            Object.getOwnPropertyNames(selectedState6)[0]
+              ? {
+                  ...item,
+                  dracntcd: item.acntcd,
+                  dracntnm: "",
+                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult6((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+    },
+    [mainDataResult6]
+  );
+
+  const fetchAcntData5 = React.useCallback(
+    async (acntcd: string) => {
+      let data: any;
+      const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
+
+        if (rowCount > 0) {
+          const { acntcd, acntnm } = rows[0];
+          setAcntcd4(acntcd);
+          setAcntnm4(acntnm);
+        } else {
+          const newData = mainDataResult6.data.map((item: any) =>
+            item[DATA_ITEM_KEY6] ==
+            Object.getOwnPropertyNames(selectedState6)[0]
+              ? {
+                  ...item,
+                  socracntcd: item.acntcd,
+                  socracntnm: "",
+                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult6((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+    },
+    [mainDataResult6]
+  );
+
+  const fetchAcntData6 = React.useCallback(
+    async (acntcd: string) => {
+      let data: any;
+      const queryStr = getAcntQuery({ acntcd: acntcd, acntnm: "" });
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
+
+        if (rowCount > 0) {
+          const { acntcd, acntnm } = rows[0];
+          setAcntcd5(acntcd);
+          setAcntnm5(acntnm);
+        } else {
+          const newData = mainDataResult6.data.map((item: any) =>
+            item[DATA_ITEM_KEY6] ==
+            Object.getOwnPropertyNames(selectedState6)[0]
+              ? {
+                  ...item,
+                  sodracntcd: item.acntcd,
+                  sodracntnm: "",
+                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult6((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+    },
+    [mainDataResult6]
+  );
   const minGridWidth = React.useRef<number>(0);
   const minGridWidth2 = React.useRef<number>(0);
   const minGridWidth3 = React.useRef<number>(0);
@@ -4748,100 +5291,117 @@ const AC_A0020W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
-          <GridContainer width="100%">
-            <GridTitleContainer>
-              <GridTitle></GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onAddClick4}
-                  themeColor={"primary"}
-                  icon="plus"
-                  title="행 추가"
-                ></Button>
-                <Button
-                  onClick={onDeleteClick4}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="minus"
-                  title="행 삭제"
-                ></Button>
-                <Button
-                  onClick={onSaveClick3}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                  title="저장"
-                ></Button>
-              </ButtonContainer>
-            </GridTitleContainer>
-            <Grid
-              style={{ height: "73vh" }}
-              data={process(
-                mainDataResult5.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedState5[idGetter5(row)],
-                })),
-                mainDataState5
-              )}
-              {...mainDataState5}
-              onDataStateChange={onMainDataStateChange5}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY5}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult5.total}
-              skip={page5.skip}
-              take={page5.take}
-              pageable={true}
-              onPageChange={pageChange5}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef5}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange5}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              onItemChange={onMainItemChange4}
-              cellRender={customCellRender4}
-              rowRender={customRowRender4}
-              editField={EDIT_FIELD}
-              id="grdList4"
-            >
-              <GridColumn field="rowstatus" title=" " width="50px" />
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList4"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={setWidth("grdList4", item.width)}
-                        headerCell={
-                          requiredField.includes(item.fieldName)
-                            ? RequiredHeader
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder === 0
-                            ? mainTotalFooterCell5
-                            : undefined
-                        }
-                      />
-                    )
+          <FormContext6.Provider
+            value={{
+              acntcd6,
+              acntnm6,
+              setAcntcd6,
+              setAcntnm6,
+              mainDataState5,
+              setMainDataState5,
+              // fetchGrid,
+            }}
+          >
+            <GridContainer width="100%">
+              <GridTitleContainer>
+                <GridTitle></GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick4}
+                    themeColor={"primary"}
+                    icon="plus"
+                    title="행 추가"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick4}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                  ></Button>
+                  <Button
+                    onClick={onSaveClick3}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    title="저장"
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: "73vh" }}
+                data={process(
+                  mainDataResult5.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedState5[idGetter5(row)],
+                  })),
+                  mainDataState5
                 )}
-            </Grid>
-          </GridContainer>
+                {...mainDataState5}
+                onDataStateChange={onMainDataStateChange5}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY5}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult5.total}
+                skip={page5.skip}
+                take={page5.take}
+                pageable={true}
+                onPageChange={pageChange5}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef5}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange5}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange4}
+                cellRender={customCellRender4}
+                rowRender={customRowRender4}
+                editField={EDIT_FIELD}
+                id="grdList4"
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList4"].map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={setWidth("grdList4", item.width)}
+                          headerCell={
+                            requiredField.includes(item.fieldName)
+                              ? RequiredHeader
+                              : undefined
+                          }
+                          cell={
+                            customField.includes(item.fieldName)
+                              ? ColumnCommandCell6
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder === 0
+                              ? mainTotalFooterCell5
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </GridContainer>
+          </FormContext6.Provider>
         </TabStripTab>
         <TabStripTab title="자동전표기준">
           <FilterContainer>
@@ -4871,8 +5431,8 @@ const AC_A0020W: React.FC = () => {
                 acntnm2,
                 setAcntcd2,
                 setAcntnm2,
-                mainDataState,
-                setMainDataState,
+                mainDataState6,
+                setMainDataState6,
                 // fetchGrid,
               }}
             >
@@ -4882,8 +5442,8 @@ const AC_A0020W: React.FC = () => {
                   acntnm3,
                   setAcntcd3,
                   setAcntnm3,
-                  mainDataState,
-                  setMainDataState,
+                  mainDataState6,
+                  setMainDataState6,
                   // fetchGrid,
                 }}
               >
@@ -4893,8 +5453,8 @@ const AC_A0020W: React.FC = () => {
                     acntnm4,
                     setAcntcd4,
                     setAcntnm4,
-                    mainDataState,
-                    setMainDataState,
+                    mainDataState6,
+                    setMainDataState6,
                     // fetchGrid,
                   }}
                 >
@@ -4904,8 +5464,8 @@ const AC_A0020W: React.FC = () => {
                       acntnm5,
                       setAcntcd5,
                       setAcntnm5,
-                      mainDataState,
-                      setMainDataState,
+                      mainDataState6,
+                      setMainDataState6,
                       // fetchGrid,
                     }}
                   >

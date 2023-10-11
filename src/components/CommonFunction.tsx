@@ -604,6 +604,17 @@ export const getItemQuery = (para: any) => {
   );
 };
 
+export const getAcntQuery = (para: any) => {
+  return (
+    "SELECT acntcd, acntnm FROM AC019T WHERE acntcd = '" +
+    para.acntcd +
+    "' AND acntnm LIKE '" +
+    para.acntnm +
+    "%'"
+  );
+};
+
+
 //선택된 드롭다운리스트 값 (ex. {sub_code: "test", code_name:"test"} )을 인자로 받아서 빈 값(ex. {sub_code: "", code_name: ""} )인지 체크
 //=> 빈 값인 경우 false 반환
 export const checkIsDDLValid = (value: object) => {
