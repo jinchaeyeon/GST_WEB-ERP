@@ -18,6 +18,10 @@ code {
   height: 100%;
 }
 
+.k-splitter {
+  border-color: rgba(0,0,0,0) !important;
+}
+
 /* 드래그 디자인 */
 *::-webkit-scrollbar {
   width: 0px;
@@ -115,11 +119,6 @@ code {
 
   border-radius: 50%;
   background-color: #ffffff;
-}
-
-.pane-content {
-  padding: 0 10px;
-  height: 100%;
 }
 
 .page-404 .outer .middle .inner .inner-circle i {

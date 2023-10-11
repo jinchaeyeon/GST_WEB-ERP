@@ -31,6 +31,7 @@ import {
   GridContainer,
   GridContainerWrap,
   GridTitle,
+  GridTitleContainer,
   Title,
   TitleContainer,
 } from "../CommonStyled";
@@ -41,6 +42,7 @@ import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UsePermissions,
+  convertDateToStr,
   getGridItemChangedData,
   getQueryFromBizComponent,
 } from "../components/CommonFunction";
@@ -57,7 +59,7 @@ import {
   COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
   PAGE_SIZE,
-  SELECTED_FIELD
+  SELECTED_FIELD,
 } from "../components/CommonString";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -84,6 +86,7 @@ const NumberField = [
   "janamt",
 ];
 const customField = ["insert_userid"];
+let temp = 0;
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
@@ -1739,13 +1742,82 @@ const SA_A1100_603W: React.FC = () => {
   const onLinkChange = (event: GridRowDoubleClickEvent) => {
     const selectedRowData = event.dataItem;
     const origin = window.location.origin;
-    window.open(origin + `/CM_A7000W?go=` + selectedRowData.orgdiv + "_" + selectedRowData.meetingnum)
-  }
+    window.open(
+      origin +
+        `/CM_A7000W?go=` +
+        selectedRowData.orgdiv +
+        "_" +
+        selectedRowData.meetingnum
+    );
+  };
+
+  const onAddClick = () => {
+    mainDataResult3.data.map((item) => {
+      if (item[DATA_ITEM_KEY3] > temp) {
+        temp = item[DATA_ITEM_KEY3];
+      }
+    });
+
+    const newDataItem = {
+      [DATA_ITEM_KEY3]: ++temp,
+      comment: "",
+      id: "",
+      insert_userid: userId,
+      recdt: convertDateToStr(new Date()),
+      seq: 0,
+      rowstatus: "N",
+    };
+    setSelectedState3({ [newDataItem[DATA_ITEM_KEY3]]: true });
+    setMainDataResult3((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onDeleteClick = (e: any) => {
+    let newData: any[] = [];
+    let Object3: any[] = [];
+    let Object2: any[] = [];
+    let data;
+    mainDataResult3.data.forEach((item: any, index: number) => {
+      if (!selectedState3[item[DATA_ITEM_KEY3]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows.push(newData2);
+        }
+        Object3.push(index);
+      }
+    });
+
+    if (Math.min(...Object3) < Math.min(...Object2)) {
+      data = mainDataResult3.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult3.data[Math.min(...Object3) - 1];
+    }
+
+    setMainDataResult3((prev) => ({
+      data: newData,
+      total: prev.total - Object3.length,
+    }));
+    if (Object3.length > 0) {
+      setSelectedState3({
+        [data != undefined ? data[DATA_ITEM_KEY3] : newData[0]]: true,
+      });
+    }
+  };
 
   return (
     <>
       <TitleContainer>
-        <Title style={{ height: "10%" }}>계약관리</Title>
+        <Title>계약관리</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons
@@ -1897,7 +1969,18 @@ const SA_A1100_603W: React.FC = () => {
             <Splitter panes={panes} onChange={onChange}>
               <div className="pane-content">
                 <GridContainer>
-                  <GridTitle>계약내용</GridTitle>
+                  <GridTitleContainer>
+                    <GridTitle>계약내용</GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        //onClick={onDeleteClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                        title="저장"
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
                   <FormBoxWrap border={true}>
                     <FormBox>
                       <tbody>
@@ -1951,7 +2034,18 @@ const SA_A1100_603W: React.FC = () => {
                     </FormBox>
                   </FormBoxWrap>
                   <GridContainer>
-                    <GridTitle>시험리스트</GridTitle>
+                    <GridTitleContainer>
+                      <GridTitle>시험리스트</GridTitle>
+                      <ButtonContainer>
+                        <Button
+                          //onClick={onDeleteClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="save"
+                          title="저장"
+                        ></Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
                     <Grid
                       style={{ height: "54vh" }}
                       data={process(
@@ -2030,7 +2124,31 @@ const SA_A1100_603W: React.FC = () => {
                 <GridContainerWrap>
                   <GridContainer>
                     <GridContainer>
-                      <GridTitle>계약에 대한 코멘트</GridTitle>
+                      <GridTitleContainer>
+                        <GridTitle>계약에 대한 코멘트</GridTitle>
+                        <ButtonContainer>
+                          <Button
+                            onClick={onAddClick}
+                            themeColor={"primary"}
+                            icon="plus"
+                            title="행 추가"
+                          ></Button>
+                          <Button
+                            onClick={onDeleteClick}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="minus"
+                            title="행 삭제"
+                          ></Button>
+                          <Button
+                            //onClick={onDeleteClick}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                            icon="save"
+                            title="저장"
+                          ></Button>
+                        </ButtonContainer>
+                      </GridTitleContainer>
                       <Grid
                         style={{ height: "30vh" }}
                         data={process(
@@ -2103,7 +2221,9 @@ const SA_A1100_603W: React.FC = () => {
                       </Grid>
                     </GridContainer>
                     <GridContainer>
-                      <GridTitle>기존거래내역</GridTitle>
+                      <GridTitleContainer>
+                        <GridTitle>기존거래내역</GridTitle>
+                      </GridTitleContainer>
                       <FormBoxWrap border={true}>
                         <FormBox>
                           <tbody>
@@ -2218,7 +2338,9 @@ const SA_A1100_603W: React.FC = () => {
                     </GridContainer>
                   </GridContainer>
                   <GridContainer>
-                    <GridTitle>회의록 리스트</GridTitle>
+                    <GridTitleContainer>
+                      <GridTitle>회의록 리스트</GridTitle>
+                    </GridTitleContainer>
                     <Grid
                       style={{ height: "78vh" }}
                       data={process(

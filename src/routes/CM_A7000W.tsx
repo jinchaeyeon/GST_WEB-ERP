@@ -367,13 +367,25 @@ const CM_A7000W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
+      const queryParams = new URLSearchParams(location.search);
       const defaultOption = customOptionData.menuCustomDefaultOptions.query;
-      setFilters((prev) => ({
-        ...prev,
-        frdt: setDefaultDate(customOptionData, "frdt"),
-        todt: setDefaultDate(customOptionData, "todt"),
-        isSearch: true,
-      }));
+      if (queryParams.has("go")) {
+        history.replace({}, "");
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: true,
+          frdt: setDefaultDate(customOptionData, "frdt"),
+          todt: setDefaultDate(customOptionData, "todt"),
+          find_row_value: queryParams.get("go") as string,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          frdt: setDefaultDate(customOptionData, "frdt"),
+          todt: setDefaultDate(customOptionData, "todt"),
+          isSearch: true,
+        }));
+      }
     }
   }, [customOptionData]);
 
@@ -534,18 +546,6 @@ const CM_A7000W: React.FC = () => {
   };
   const history = useHistory();
   const location = useLocation();
-  /* 푸시 알림 클릭시 이동 테스트 코드 */
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    if (queryParams.has("go")) {
-      history.replace({}, "");
-      setFilters((prev) => ({
-        ...prev,
-        isSearch: true,
-        findRowValue: queryParams.get("go") as string,
-      }));
-    }
-  }, []);
 
   // 조회조건 초기값
   const [filters, setFilters] = useState({
@@ -562,7 +562,7 @@ const CM_A7000W: React.FC = () => {
     person: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [information, setInformation] = useState({
