@@ -37,7 +37,8 @@ import {
   convertDateToStr,
   findMessage,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -88,7 +89,7 @@ const AC_B5000W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),

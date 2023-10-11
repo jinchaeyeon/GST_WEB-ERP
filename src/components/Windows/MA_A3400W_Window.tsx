@@ -44,6 +44,7 @@ import {
   getGridItemChangedData,
   findMessage,
   convertDateToStr,
+  GetPropertyValueByName,
 } from "../CommonFunction";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -115,7 +116,7 @@ const CopyWindow = ({ workType, data, setVisible, setData }: IWindow) => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
       setFilters((prev) => ({
         ...prev,
         cboLocation:

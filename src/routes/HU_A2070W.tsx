@@ -44,6 +44,7 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -169,7 +170,7 @@ const HU_A2070W: React.FC = () => {
 
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
 
       setFilters((prev) => ({
         ...prev,

@@ -35,7 +35,8 @@ import {
   dateformat,
   getGridItemChangedData,
   toDate,
- } from "../components/CommonFunction";
+   GetPropertyValueByName,
+} from "../components/CommonFunction";
 import TopButtons from "../components/Buttons/TopButtons";
 import { ExcelExport, ExcelExportColumn } from "@progress/kendo-react-excel-export";
 import { useEffect, useRef, useState } from "react";
@@ -107,7 +108,7 @@ const PS_A0060_301W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
       setFilters((prev) => ({
         ...prev,
         orgdiv: defaultOption.find((item: any) => item.id === "orgdiv")

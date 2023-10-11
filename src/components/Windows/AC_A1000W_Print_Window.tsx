@@ -15,6 +15,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import {
   UseCustomOption,
   UseMessages,
+  GetPropertyValueByName,
 } from "../CommonFunction";
 import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
 import { useSetRecoilState } from "recoil";
@@ -65,7 +66,7 @@ const CopyWindow = ({ data, setVisible, modal = false }: IWindow) => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
       setFilters((prev) => ({
         ...prev,
         print: defaultOption.find((item: any) => item.id === "print").valueCode,

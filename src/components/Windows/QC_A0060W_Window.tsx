@@ -50,6 +50,7 @@ import {
   getQueryFromBizComponent,
   setDefaultDate,
   toDate,
+  GetPropertyValueByName,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -182,7 +183,7 @@ const CopyWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U" && workType != "R") {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.new;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "new");
       setFilters((prev) => ({
         ...prev,
         proccd: defaultOption.find((item: any) => item.id === "proccd")

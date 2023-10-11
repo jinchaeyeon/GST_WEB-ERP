@@ -47,6 +47,7 @@ import {
   findMessage,
   handleKeyPressSearch,
   setDefaultDate,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   PAGE_SIZE,
@@ -112,7 +113,7 @@ const App: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
       setDataFilters((prev) => ({
         ...prev,
         cboViewType: defaultOption.find(

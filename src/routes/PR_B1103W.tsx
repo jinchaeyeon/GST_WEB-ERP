@@ -9,6 +9,7 @@ import {
   toDate2,
   UseBizComponent,
   UseCustomOption,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { colors, isLoading } from "../store/atoms";
@@ -94,7 +95,7 @@ const PR_B1103W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
 
       setFilters((prev) => ({
         ...prev,

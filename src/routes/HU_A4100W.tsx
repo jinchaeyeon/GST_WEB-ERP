@@ -52,6 +52,7 @@ import {
   findMessage,
   UseMessages,
   getQueryFromBizComponent,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import {
@@ -239,7 +240,7 @@ const HU_A4100W: React.FC = () => {
 
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
 
       setFilters((prev) => ({
         ...prev,

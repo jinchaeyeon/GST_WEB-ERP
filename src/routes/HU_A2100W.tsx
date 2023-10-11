@@ -36,6 +36,7 @@ import {
   UsePermissions,
   getGridItemChangedData,
   handleKeyPressSearch,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -138,7 +139,7 @@ const HU_A2100W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
 
       setFilters((prev) => ({
         ...prev,

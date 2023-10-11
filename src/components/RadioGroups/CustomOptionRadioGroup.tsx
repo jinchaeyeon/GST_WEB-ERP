@@ -4,6 +4,7 @@ import {
   RadioGroupChangeEvent,
 } from "@progress/kendo-react-inputs";
 import { RADIO_GROUP_DEFAULT_DATA } from "../CommonString";
+import { GetPropertyValueByName } from "../CommonFunction";
 
 type TCustomOptionRadioGroup = {
   type?:"new" | "query" ;
@@ -22,7 +23,7 @@ const CustomOptionRadioGroup = ({
   //커스텀 옵션에 저장된 값으로 디폴트 값
   const dataList =
     customOptionData !== null
-      ? customOptionData.menuCustomDefaultOptions[type]
+      ? GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, type)
       : null;
 
   let defaultValue = "";

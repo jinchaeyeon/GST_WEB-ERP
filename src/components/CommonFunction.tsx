@@ -287,6 +287,15 @@ export const UseMessages = (pathname: string, setListData: any) => {
   }, []);
 };
 
+export const GetPropertyValueByName = (target: any, name:string) => {
+  const findName = name.toLowerCase();
+
+  const propertyName = Object.keys(target).find((x) => x.toLowerCase() == findName)
+  const propertyValue = propertyName ? target[propertyName] : undefined;
+
+  return propertyValue;
+}
+
 //현재 경로를 받아서 커스텀 옵션 조회 후 결과값을 반환
 export const UseCustomOption = (pathname: string, setListData: any) => {
   const processApi = useApi();
@@ -318,8 +327,11 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
       data = null;
     }
 
-    const queryOptionsData = data.menuCustomDefaultOptions.query;
-    const newOptionsData = data.menuCustomDefaultOptions.new;
+    // const queryOptionsData = data.menuCustomDefaultOptions.query;
+
+    const queryOptionsData = GetPropertyValueByName(data.menuCustomDefaultOptions, "QUERY");
+
+    const newOptionsData = GetPropertyValueByName(data.menuCustomDefaultOptions, "new");
 
     if (data !== null) {
       // sessionItem 데이터 있고 지정된 value 값이 없는 경우, 세션 값 참조하여 value 업데이트
@@ -359,8 +371,8 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
     }
 
     let bizComponentIdArr = [];
-    const queryOptionsData = customOptionData.menuCustomDefaultOptions.query;
-    const newOptionsData = customOptionData.menuCustomDefaultOptions.new;
+    const queryOptionsData = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+    const newOptionsData = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "new");
 
     if (queryOptionsData) {
       bizComponentIdArr.push(
@@ -682,7 +694,7 @@ export const getGridItemChangedData = (
 
 //Date 디폴트 값 반환
 export const setDefaultDate = (customOptionData: any, id: string) => {
-  const date = customOptionData.menuCustomDefaultOptions.query.find(
+  const date = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query").find(
     (item: any) => item.id === id,
   );
 

@@ -3,6 +3,7 @@ import {
   MultiColumnComboBox,
   ComboBoxChangeEvent,
 } from "@progress/kendo-react-dropdowns";
+import { GetPropertyValueByName } from "../CommonFunction";
 
 type TCustomOptionComboBox = {
   type?: "new" | "query";
@@ -24,7 +25,7 @@ const CustomOptionComboBox = ({
   valueField = "sub_code",
   className = "",
 }: TCustomOptionComboBox) => {
-  const dataList = customOptionData.menuCustomDefaultOptions[type];
+  const dataList = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, type);
   const dataItem = dataList.find((item: any) => item.id === name);
   const listData = dataItem.Rows;
 

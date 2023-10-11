@@ -63,6 +63,7 @@ import {
   setDefaultDate,
   toDate,
   useSysMessage,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -368,7 +369,7 @@ const CM_A7000W: React.FC = () => {
   useEffect(() => {
     if (customOptionData !== null) {
       const queryParams = new URLSearchParams(location.search);
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
       if (queryParams.has("go")) {
         history.replace({}, "");
         setFilters((prev) => ({

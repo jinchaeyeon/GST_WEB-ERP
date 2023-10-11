@@ -62,6 +62,7 @@ import {
   UseGetValueFromSessionItem,
   UseParaPc,
   getItemQuery,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import NumberCell from "../components/Cells/NumberCell";
@@ -331,7 +332,7 @@ const MA_A7000W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
 
       setFilters((prev) => ({
         ...prev,

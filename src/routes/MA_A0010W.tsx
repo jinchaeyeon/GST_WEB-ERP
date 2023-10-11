@@ -38,6 +38,7 @@ import {
   UseGetValueFromSessionItem,
   UseParaPc,
   UseCustomOption,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import NumberCell from "../components/Cells/NumberCell";
 import { SELECTED_FIELD, EDIT_FIELD } from "../components/CommonString";
@@ -83,7 +84,7 @@ const MA_A0010W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
 
       setFilters((prev) => ({
         ...prev,

@@ -28,6 +28,7 @@ import {
   convertDateToStr,
   dateformat,
   setDefaultDate,
+  GetPropertyValueByName,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";

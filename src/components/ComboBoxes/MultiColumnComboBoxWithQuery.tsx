@@ -55,7 +55,7 @@ const MultiColumnComboBoxWithQuery = ({
       setListData(rows); //리스트 세팅
     }
   }, []);
-  // const columns = customOptionData.menuCustomDefaultOptions.query.find(
+  // const columns = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query").find(
   //   (item: any) => item.id === name
   // ).bizComponentItems;
 

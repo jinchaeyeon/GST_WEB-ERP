@@ -39,6 +39,7 @@ import {
   dateformat,
   getGridItemChangedData,
   handleKeyPressSearch,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -122,7 +123,7 @@ const CM_A1710W: React.FC = () => {
 
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
 
       setFilters((prev) => ({
         ...prev,

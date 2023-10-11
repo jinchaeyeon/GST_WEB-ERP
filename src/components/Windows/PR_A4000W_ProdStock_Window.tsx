@@ -12,7 +12,8 @@ import {
   UseMessages, 
   chkScrollHandler, 
   getQueryFromBizComponent, 
-  handleKeyPressSearch
+  handleKeyPressSearch,
+  GetPropertyValueByName,
 } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { bytesToBase64 } from "byte-base64";
@@ -86,7 +87,7 @@ const ProdStockWindow = ({ setVisible, setData}: IWindow) => {
    //customOptionData 조회 후 디폴트 값 세팅
    useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
       setFilters((prev) => ({
         ...prev,
         div: defaultOption.find((item: any) => item.id === "div").valueCode,

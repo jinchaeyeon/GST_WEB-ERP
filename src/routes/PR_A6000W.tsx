@@ -45,6 +45,7 @@ import {
   rowsOfDataResult,
   rowsWithSelectedDataResult,
   convertDateToStrWithTime2,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import DetailWindow from "../components/Windows/PR_A6000W_Window";
 import NumberCell from "../components/Cells/NumberCell";
@@ -89,7 +90,7 @@ const PR_A6000W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
 
       setFilters((prev) => ({
         ...prev,

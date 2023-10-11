@@ -1,9 +1,10 @@
 import React from "react";
 import Grid from "@mui/material/Grid";
 import { Dropdown } from "primereact/dropdown";
+import { GetPropertyValueByName } from "../../../../src/components/CommonFunction";
 
 const ComboBox = (props) => {
-  const dataList = props.option.menuCustomDefaultOptions["query"];
+  const dataList = GetPropertyValueByName(props.option.menuCustomDefaultOptions, "query"); //props.option.menuCustomDefaultOptions["query"];
   const dataItem = dataList.find((item) => item.id === props.id);
   const listData = dataItem.Rows;
   const textField = props.textField == undefined ? "code_name" : props.textField;

@@ -26,6 +26,7 @@ import {
   convertDateToStr,
   dateformat,
   findMessage,
+  GetPropertyValueByName,
 } from "../CommonFunction";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 
@@ -167,7 +168,7 @@ const KendoWindow = ({
   // //customOptionData 조회 후 디폴트 값 세팅
   // useEffect(() => {
   //   if (customOptionData !== null && workType == "N") {
-  //     const defaultOption = customOptionData.menuCustomDefaultOptions.new;
+  //     const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "new");
   //     setInitialVal((prev) => ({
   //       ...prev,
   //     }));

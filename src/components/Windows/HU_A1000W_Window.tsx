@@ -24,6 +24,7 @@ import {
   dateformat,
   findMessage,
   isValidDate,
+  GetPropertyValueByName,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 
@@ -199,7 +200,7 @@ const KendoWindow = ({
   useEffect(() => {
     if (workType === "N") {
       if (customOptionData !== null) {
-        const defaultOption = customOptionData.menuCustomDefaultOptions.new;
+        const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "new");
 
         setFilters((prev) => ({
           ...prev,

@@ -1,11 +1,12 @@
 import React from "react";
 import Grid from "@mui/material/Grid";
 import { RadioButton } from "primereact/radiobutton";
+import { GetPropertyValueByName } from "../../../../src/components/CommonFunction";
 
 const Radio = (props) => {
   const dataList =
     props.option !== null
-      ? props.option.menuCustomDefaultOptions["query"]
+      ? GetPropertyValueByName(props.option.menuCustomDefaultOptions, "query")//props.option.menuCustomDefaultOptions["query"]
       : null;
   const dataItem = dataList.find((item) => item.id === props.id);
   const listData = dataItem.Rows;

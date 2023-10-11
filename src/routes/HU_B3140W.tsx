@@ -42,6 +42,7 @@ import {
   handleKeyPressSearch,
   rowsOfDataResult,
   rowsWithSelectedDataResult,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import NumberCell from "../components/Cells/NumberCell";
 import {
@@ -108,7 +109,7 @@ const HU_B3140W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
       const DATE = new Date();
       const DATE2 = new Date();
       //현재년도 1월, 12월 set

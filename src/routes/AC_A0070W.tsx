@@ -50,6 +50,7 @@ import {
   toDate,
   findMessage,
   UseMessages,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   PAGE_SIZE,
@@ -300,7 +301,7 @@ const AC_A0070W: React.FC = () => {
   useEffect(() => {
     if (customOptionData !== null 
       && bizComponentData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
 
       const bizComponent = bizComponentData?.find(
         (item: any) => item.bizComponentId === "L_AC061" // 회기

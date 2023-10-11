@@ -48,6 +48,7 @@ import {
   setDefaultDate,
   toDate,
   useSysMessage,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -96,7 +97,7 @@ const CM_A1000W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
@@ -204,7 +205,7 @@ const CM_A1000W: React.FC = () => {
     const { value, name } = e.target;
 
     if (name == "custcd") {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
 
       setInfomation((prev) => ({
         ...prev,
@@ -249,7 +250,7 @@ const CM_A1000W: React.FC = () => {
     const { name, value } = e;
 
     if (name == "custnm") {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
 
       setInfomation((prev) => ({
         ...prev,

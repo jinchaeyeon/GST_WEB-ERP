@@ -40,6 +40,7 @@ import {
   UseMessages,
   findMessage,
   convertDateToStr,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import TopButtons from "../components/Buttons/TopButtons";
@@ -174,7 +175,7 @@ const CM_B1101W: React.FC = () => {
   UseMessages(pathname, setMessagesData);
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
 
       setFilters((prev) => ({
         ...prev,

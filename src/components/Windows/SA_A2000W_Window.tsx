@@ -49,6 +49,7 @@ import {
   getQueryFromBizComponent,
   isValidDate,
   getGridItemChangedData,
+  GetPropertyValueByName,
 } from "../CommonFunction";
 import { Button } from "@progress/kendo-react-buttons";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
@@ -746,7 +747,7 @@ const KendoWindow = ({
 
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.new;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "new");
       setFilters((prev) => {
         return {
           ...prev,

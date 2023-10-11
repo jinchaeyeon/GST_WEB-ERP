@@ -39,6 +39,7 @@ import {
   isValidDate,
   getQueryFromBizComponent,
   convertDateToStrWithTime2,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import { gridList } from "../store/columns/HU_B4001W_C";
 import DateCell from "../components/Cells/DateCell";
@@ -85,7 +86,7 @@ const HU_B4001W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
 
       let prsnnum = defaultOption.find((item: any) => item.id === "cboPrsnnum")
       .valueCode;

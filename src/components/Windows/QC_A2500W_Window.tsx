@@ -31,6 +31,7 @@ import {
   findMessage,
   isValidDate,
   toDate,
+  GetPropertyValueByName,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
@@ -126,7 +127,7 @@ const CopyWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
       setFilters((prev) => ({
         ...prev,
         causedcd: defaultOption.find((item: any) => item.id === "causedcd")

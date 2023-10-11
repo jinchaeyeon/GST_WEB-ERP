@@ -48,6 +48,7 @@ import {
   handleKeyPressSearch,
   isValidDate,
   setDefaultDate,
+  GetPropertyValueByName,
 } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
@@ -113,7 +114,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm }: IWindow) => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),

@@ -55,6 +55,7 @@ import {
   UseParaPc,
   UseGetValueFromSessionItem,
   getItemQuery,
+  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -455,7 +456,7 @@ const BA_A0080: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = customOptionData.menuCustomDefaultOptions.query;
+      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
       setSubFilters((prev) => ({
         ...prev,
         unpitem: defaultOption.find((item: any) => item.id === "unpitem")
