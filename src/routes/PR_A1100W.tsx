@@ -299,7 +299,6 @@ const PR_A1100W: React.FC = () => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
-      setSelectedState({ [rowData.ordkey]: true });
 
       setOrdkey(rowData.ordkey);
       setItemcd(rowData.itemcd);
@@ -3171,6 +3170,13 @@ const PR_A1100W: React.FC = () => {
         <PlanWindow
           getVisible={setPlanWindowVisible}
           workType={workType} //신규 : N, 수정 : U
+          reloadData={(str) => {
+            setFilters((prev) => ({
+              ...prev,
+              find_row_value: str,
+              isSearch: true
+            }))
+          }}
           ordkey={ordkey}
           itemcd={itemcd}
           modal={true}
