@@ -357,7 +357,7 @@ const HU_A1000W: React.FC = () => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
-      setSelectedState({ [rowData.DATA_ITEM_KEY]: true });
+      setSelectedState({ [rowData.prsnnum]: true });
 
       setDetailFilters((prev) => ({
         ...prev,
