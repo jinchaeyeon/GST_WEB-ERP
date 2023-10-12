@@ -1320,18 +1320,19 @@ const QC_A2000: React.FC = () => {
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "QC_A2000W_001");
+      } else {
+        resetAllGrid();
+        setTabSelected(0);
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: true,
+          find_row_value: "",
+          pgNum: 1,
+        }));
       }
     } catch (e) {
       alert(e);
     }
-    resetAllGrid();
-    setTabSelected(0);
-    setFilters((prev) => ({
-      ...prev,
-      isSearch: true,
-      find_row_value: "",
-      pgNum: 1,
-    }));
   };
 
   const [ParaData, setParaData] = useState({

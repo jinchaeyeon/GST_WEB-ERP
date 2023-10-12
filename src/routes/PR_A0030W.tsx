@@ -1,70 +1,70 @@
-import React, { useEffect, useState, useRef } from "react";
-import * as ReactDOM from "react-dom";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
-  GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
   GridFooterCellProps,
   GridItemChangeEvent,
-  GridCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Icon, getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
+import { Input, TextArea } from "@progress/kendo-react-inputs";
+import React, { useEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-  Title,
-  FilterBox,
-  GridContainer,
-  GridTitle,
-  TitleContainer,
   ButtonContainer,
-  GridTitleContainer,
+  FilterBox,
   FormBox,
   FormBoxWrap,
+  GridContainer,
   GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import FilterContainer from "../components/Containers/FilterContainer";
-import { Button } from "@progress/kendo-react-buttons";
-import { Input, TextArea } from "@progress/kendo-react-inputs";
-import { useApi } from "../hooks/api";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { gridList } from "../store/columns/PR_A0030W_C";
-import {
-  chkScrollHandler,
-  UseBizComponent,
-  UseCustomOption,
-  UseMessages,
-  UsePermissions,
-  handleKeyPressSearch,
-  getGridItemChangedData,
-  UseParaPc,
-  UseGetValueFromSessionItem,
-  getCodeFromValue,
-  useSysMessage,
-  GetPropertyValueByName,
-} from "../components/CommonFunction";
+import TopButtons from "../components/Buttons/TopButtons";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
-  PAGE_SIZE,
-  SELECTED_FIELD,
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  UsePermissions,
+  getGridItemChangedData,
+  handleKeyPressSearch,
+  useSysMessage,
+} from "../components/CommonFunction";
+import {
   EDIT_FIELD,
   GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD,
 } from "../components/CommonString";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/Buttons/TopButtons";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import FilterContainer from "../components/Containers/FilterContainer";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
+import { gridList } from "../store/columns/PR_A0030W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
-const SUB_DATA_ITEM_KEY = "num";
-const SUB_DATA_ITEM_KEY2 = "sub_code";
+const SUB_DATA_ITEM_KEY = "sub_code";
+const SUB_DATA_ITEM_KEY2 = "num";
 let temp = 0;
 let deletedMainRows: object[] = [];
+let targetRowIndex: null | number = null;
+let targetRowIndex2: null | number = null;
+let targetRowIndex3: null | number = null;
 
 const CustomComboField = [
   "proccd",
@@ -127,8 +127,59 @@ type TdataArr = {
 const PR_A0030W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
-  const idGetter2 = getter(SUB_DATA_ITEM_KEY2);
-  const idGetter3 = getter(SUB_DATA_ITEM_KEY);
+  const idGetter2 = getter(SUB_DATA_ITEM_KEY);
+  const idGetter3 = getter(SUB_DATA_ITEM_KEY2);
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const [page2, setPage2] = useState(initialPageState);
+  const [page3, setPage3] = useState(initialPageState);
+
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setsubFilters2((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+    }));
+    setPage3(initialPageState);
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: page.skip / page.take + 1,
+      isSearch: true,
+    }));
+    setPage({
+      ...event.page,
+    });
+  };
+  const pageChange2 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setPage2({
+      ...event.page,
+    });
+
+    setsubFilters((prev) => ({
+      ...prev,
+      pgNum: page.skip / page.take + 1,
+      isSearch: true,
+    }));
+  };
+
+  const pageChange3 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setsubFilters2((prev) => ({
+      ...prev,
+      pgNum: page.skip / page.take + 1,
+      isSearch: true,
+    }));
+
+    setPage3({
+      ...event.page,
+    });
+  };
+
   const processApi = useApi();
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -136,7 +187,7 @@ const PR_A0030W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const [workType, setWorkType] = useState<"U" | "N">("U");
+  const [workType, setWorkType] = useState<"U" | "N">("N");
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -148,7 +199,10 @@ const PR_A0030W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         proccd: defaultOption.find((item: any) => item.id === "proccd")
@@ -158,8 +212,10 @@ const PR_A0030W: React.FC = () => {
       }));
     }
   }, [customOptionData]);
+
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
+
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -171,7 +227,9 @@ const PR_A0030W: React.FC = () => {
   const [subData2State, setSubData2State] = useState<State>({
     sort: [],
   });
-
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -183,7 +241,9 @@ const PR_A0030W: React.FC = () => {
   const [subData2Result, setSubData2Result] = useState<DataResult>(
     process([], subData2State)
   );
-
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -195,11 +255,6 @@ const PR_A0030W: React.FC = () => {
   const [selectedsubData2State, setSelectedsubData2State] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
-  const [sub2PgNum, setSub2PgNum] = useState(1);
-
-  const [ifSelectFirstRow2, setIfSelectFirstRow2] = useState(true);
-  const [ifSelectFirstRow3, setIfSelectFirstRow3] = useState(true);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -224,7 +279,7 @@ const PR_A0030W: React.FC = () => {
   //Form정보 Change
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    setsubFilters2((prev) => ({
+    setsubFilters((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -260,10 +315,8 @@ const PR_A0030W: React.FC = () => {
     proccd: "",
     proccd2: "",
     find_row_value: "",
-    scrollDirrection: "down",
     pgNum: 1,
     isSearch: true,
-    pgGap: 0,
   });
 
   //조회조건 초기값
@@ -274,78 +327,50 @@ const PR_A0030W: React.FC = () => {
     remark: "",
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_PR_A0030W_Q",
-    pageNumber: filters.pgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": filters.workType,
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_pattern_id": filters.pattern_id,
-      "@p_pattern_name": filters.pattern_name,
-      "@p_proccd2": filters.proccd2,
-      "@p_proccd": filters.proccd,
-      "@p_find_row_value": filters.find_row_value,
-    },
-  };
-
-  const [subfilters2, setsubFilters2] = useState({
+  const [subfilters, setsubFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "PRODLIST",
     proccd2: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
   });
 
-  //조회조건 파라미터
-  const subparameters: Iparameters = {
-    procedureName: "P_PR_A0030W_Q",
-    pageNumber: sub2PgNum,
-    pageSize: subfilters2.pgSize,
-    parameters: {
-      "@p_work_type": subfilters2.workType,
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_pattern_id": filters.pattern_id,
-      "@p_pattern_name": filters.pattern_name,
-      "@p_proccd2": subfilters2.proccd2,
-      "@p_proccd": filters.proccd,
-      "@p_find_row_value": filters.find_row_value,
-    },
-  };
-
-  const [subfilters, setsubFilters] = useState({
+  const [subfilters2, setsubFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "DETAIL",
     pattern_id: "",
     find_row_value: "",
-    scrollDirrection: "down",
     pgNum: 1,
     isSearch: true,
-    pgGap: 0,
   });
 
-  const subparameters2: Iparameters = {
-    procedureName: "P_PR_A0030W_Q",
-    pageNumber: subfilters.pgNum,
-    pageSize: subfilters.pgSize,
-    parameters: {
-      "@p_work_type": subfilters.workType,
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_pattern_id": subfilters.pattern_id,
-      "@p_pattern_name": filters.pattern_name,
-      "@p_proccd2": filters.proccd2,
-      "@p_proccd": filters.proccd,
-      "@p_find_row_value": filters.find_row_value,
-    },
-  };
-
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+    setsubFilters((prev) => ({
+      ...prev,
+      isSearch: true,
+      pgNum: 1,
+    }));
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_PR_A0030W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.workType,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_pattern_id": filters.pattern_id,
+        "@p_pattern_name": filters.pattern_name,
+        "@p_proccd2": filters.proccd2,
+        "@p_proccd": filters.proccd,
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -355,48 +380,113 @@ const PR_A0030W: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
+      if (filters.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row.pattern_id == filters.find_row_value
+          );
+          targetRowIndex = findRowIndex;
+        }
 
-      if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
         });
-        if (filters.find_row_value === "" && filters.pgNum === 1) {
-          // 첫번째 행 선택하기
-          const firstRowData = rows[0];
-          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef.current) {
+          targetRowIndex = 0;
+        }
+      }
+      setMainDataResult({
+        data: rows,
+        total: totalRowCnt == -1 ? 0 : totalRowCnt,
+      });
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters.find_row_value === ""
+            ? rows[0]
+            : rows.find(
+                (row: any) =>
+                  row.pattern_id == filters.find_row_value
+              );
+        if (selectedRow != undefined) {
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          setWorkType("U");
           setInfomation((prev) => ({
             ...prev,
-            pattern_id: firstRowData.pattern_id,
-            pattern_name: firstRowData.pattern_name,
-            location: firstRowData.location,
-            remark: firstRowData.remark,
+            pattern_id: selectedRow.pattern_id,
+            pattern_name: selectedRow.pattern_name,
+            location: selectedRow.location,
+            remark: selectedRow.remark,
           }));
-          setsubFilters((prev) => ({
+          setsubFilters2((prev) => ({
             ...prev,
-            pattern_id: firstRowData.pattern_id,
+            pattern_id: selectedRow.pattern_id,
             isSearch: true,
-            pgNum: 1,
+          }));
+        } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          setWorkType("U");
+          setInfomation((prev) => ({
+            ...prev,
+            pattern_id: rows[0].pattern_id,
+            pattern_name: rows[0].pattern_name,
+            location: rows[0].location,
+            remark: rows[0].remark,
+          }));
+          setsubFilters2((prev) => ({
+            ...prev,
+            pattern_id: rows[0].pattern_id,
+            isSearch: true,
           }));
         }
+      } else {
+        setInfomation({
+          pattern_id: "",
+          pattern_name: "",
+          location: "",
+          remark: "",
+        });
+        setWorkType("N");
       }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+    // 필터 isSearch false처리, pgNum 세팅
     setFilters((prev) => ({
       ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
       isSearch: false,
     }));
     setLoading(false);
   };
 
-  const fetchSubGrid2 = async () => {
+  const fetchSubGrid = async (subfilters: any) => {
     //if (!permissions?.view) return;
     let data: any;
-
+    //조회조건 파라미터
+    const subparameters: Iparameters = {
+      procedureName: "P_PR_A0030W_Q",
+      pageNumber: subfilters.pgNum,
+      pageSize: subfilters.pgSize,
+      parameters: {
+        "@p_work_type": subfilters.workType,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_pattern_id": filters.pattern_id,
+        "@p_pattern_name": filters.pattern_name,
+        "@p_proccd2": subfilters.proccd2,
+        "@p_proccd": filters.proccd,
+        "@p_find_row_value": "",
+      },
+    };
     setLoading(true);
     try {
       data = await processApi<any>("procedure", subparameters);
@@ -407,26 +497,50 @@ const PR_A0030W: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
+      setSubDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
 
       if (totalRowCnt > 0) {
-        setSubData2Result((prev) => {
-          return {
-            data: rows,
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
+        setSelectedsubDataState({ [rows[0][SUB_DATA_ITEM_KEY]]: true });
       }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+    // 필터 isSearch false처리, pgNum 세팅
+    setsubFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
-  const fetchSubGrid = async () => {
+  const fetchSubGrid2 = async (subfilters2: any) => {
     //if (!permissions?.view) return;
     let data: any;
-
+    const subparameters2: Iparameters = {
+      procedureName: "P_PR_A0030W_Q",
+      pageNumber: subfilters2.pgNum,
+      pageSize: subfilters2.pgSize,
+      parameters: {
+        "@p_work_type": subfilters2.workType,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_pattern_id": subfilters2.pattern_id,
+        "@p_pattern_name": filters.pattern_name,
+        "@p_proccd2": filters.proccd2,
+        "@p_proccd": filters.proccd,
+        "@p_find_row_value": subfilters2.find_row_value,
+      },
+    };
     setLoading(true);
     try {
       data = await processApi<any>("procedure", subparameters2);
@@ -437,26 +551,55 @@ const PR_A0030W: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
+      if (subfilters2.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef3.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row.seq == subfilters2.find_row_value
+          );
+          targetRowIndex3 = findRowIndex;
+        }
 
-      if (totalRowCnt > 0) {
-        setSubDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage3({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
         });
-        if (subfilters.find_row_value === "" && subfilters.pgNum === 1) {
-          // 첫번째 행 선택하기
-          const firstRowData = rows[0];
-          setSelectedsubDataState({ [firstRowData.num]: true });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef3.current) {
+          targetRowIndex3 = 0;
+        }
+      }
+      setSubData2Result({
+        data: rows,
+        total: totalRowCnt == -1 ? 0 : totalRowCnt,
+      });
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          subfilters2.find_row_value === ""
+            ? rows[0]
+            : rows.find(
+                (row: any) =>
+                  row.seq == subfilters2.find_row_value
+              );
+        if (selectedRow != undefined) {
+          setSelectedsubData2State({ [selectedRow[SUB_DATA_ITEM_KEY2]]: true });
+        } else {
+          setSelectedsubData2State({ [rows[0][SUB_DATA_ITEM_KEY2]]: true });
         }
       }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
-    setsubFilters((prev) => ({
+    // 필터 isSearch false처리, pgNum 세팅
+    setsubFilters2((prev) => ({
       ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
       isSearch: false,
     }));
     setLoading(false);
@@ -464,103 +607,80 @@ const PR_A0030W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData != null && filters.isSearch && permissions !== null) {
-      setFilters((prev) => ({ ...prev, isSearch: false }));
-      fetchMainGrid();
+    if (customOptionData != null && filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
+
+      fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters]);
 
   useEffect(() => {
-    fetchSubGrid2();
-  }, []);
+    if (customOptionData != null && subfilters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(subfilters);
 
-  let gridRef : any = useRef(null); 
+      setsubFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      }));
 
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    if (customOptionData !== null) {
-      // 저장 후, 선택 행 스크롤 유지 처리
-      if (filters.find_row_value !== "" && mainDataResult.total > 0) {
-        const ROW_HEIGHT = 35.56;
-        const idx = mainDataResult.data.findIndex(
-          (item) => idGetter(item) === filters.find_row_value
-        );
-
-        const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.container.scroll(0, scrollHeight);
-
-        //초기화
-        setFilters((prev) => ({
-          ...prev,
-          find_row_value: "",
-          tab: 0,
-        }));
-      }
-      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
-      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
-      else if (filters.scrollDirrection === "up") {
-        gridRef.container.scroll(0, 20);
-      }
-    }
-  }, [mainDataResult]);
-
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    if (customOptionData !== null) {
-      // 저장 후, 선택 행 스크롤 유지 처리
-      if (subfilters.find_row_value !== "" && subDataResult.total > 0) {
-        const ROW_HEIGHT = 35.56;
-        const idx = subDataResult.data.findIndex(
-          (item) => idGetter(item) === subfilters.find_row_value
-        );
-
-        const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.container.scroll(0, scrollHeight);
-
-        //초기화
-        setsubFilters((prev) => ({
-          ...prev,
-          find_row_value: "",
-          tab: 0,
-        }));
-      }
-      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
-      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
-      else if (subfilters.scrollDirrection === "up") {
-        gridRef.container.scroll(0, 20);
-      }
-    }
-  }, [subDataResult]);
-
-  useEffect(() => {
-    if (ifSelectFirstRow3) {
-      if (subData2Result.total > 0) {
-        const firstRowData = subData2Result.data[0];
-        setSelectedsubData2State({ [firstRowData.sub_code]: true });
-
-        setIfSelectFirstRow3(false);
-      }
-    }
-  }, [subData2Result]);
-
-  useEffect(() => {
-    if (customOptionData !== null && subfilters.isSearch) {
-      setsubFilters((prev) => ({ ...prev, isSearch: false }));
-      fetchSubGrid();
+      fetchSubGrid(deepCopiedFilters);
     }
   }, [subfilters]);
 
   useEffect(() => {
-    if (customOptionData !== null) {
-      fetchSubGrid2();
+    if (customOptionData != null && subfilters2.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(subfilters2);
+
+      setsubFilters2((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      }));
+
+      fetchSubGrid2(deepCopiedFilters);
     }
-  }, [sub2PgNum]);
+  }, [subfilters2]);
+
+  let gridRef: any = useRef(null);
+  let gridRef2: any = useRef(null);
+  let gridRef3: any = useRef(null);
+
+  useEffect(() => {
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [mainDataResult]);
+  useEffect(() => {
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex2 !== null && gridRef2.current) {
+      gridRef2.current.scrollIntoView({ rowIndex: targetRowIndex2 });
+      targetRowIndex2 = null;
+    }
+  }, [subDataResult]);
+
+  useEffect(() => {
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex3 !== null && gridRef3.current) {
+      gridRef3.current.scrollIntoView({ rowIndex: targetRowIndex3 });
+      targetRowIndex3 = null;
+    }
+  }, [subData2Result]);
 
   //그리드 리셋
   const resetAllGrid = () => {
+    setPage(initialPageState);
+    setPage2(initialPageState);
+    setPage3(initialPageState);
+    deletedMainRows = [];
     setMainDataResult(process([], mainDataState));
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-    setSub2PgNum(1);
     setSubDataResult(process([], subDataState));
     setSubData2Result(process([], subData2State));
   };
@@ -583,14 +703,13 @@ const PR_A0030W: React.FC = () => {
       location: selectedRowData.location,
       remark: selectedRowData.remark,
     }));
-    setSubDataResult(process([], subDataState));
-    setsubFilters((prev) => ({
+
+    setsubFilters2((prev) => ({
       ...prev,
       pattern_id: selectedRowData.pattern_id,
       isSearch: true,
       pgNum: 1,
     }));
-    setIfSelectFirstRow2(true);
   };
 
   const onSubDataSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -602,16 +721,25 @@ const PR_A0030W: React.FC = () => {
     setSelectedsubDataState(newSelectedState);
   };
 
+  const onSubDataSelectionChange2 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedsubData2State,
+      dataItemKey: SUB_DATA_ITEM_KEY2,
+    });
+    setSelectedsubData2State(newSelectedState);
+  };
+
   const onAddRow = () => {
     let proseq = 1;
     let valid = true;
-    if (subDataResult.total > 0) {
-      const data = subData2Result.data.filter(
+    if (subData2Result.total > 0) {
+      const data = subDataResult.data.filter(
         (item: any) =>
-          item.sub_code == Object.getOwnPropertyNames(selectedsubData2State)[0]
+          item.sub_code == Object.getOwnPropertyNames(selectedsubDataState)[0]
       )[0];
 
-      subDataResult.data.forEach((item) => {
+      subData2Result.data.forEach((item) => {
         if (item.procseq >= proseq) {
           proseq = item.procseq + 1;
         }
@@ -624,14 +752,14 @@ const PR_A0030W: React.FC = () => {
 
     if (valid != true) alert("동일한 공정이 존재합니다.");
     else {
-      subDataResult.data.map((item) => {
-        if(item.num > temp){
-          temp = item.num
+      subData2Result.data.map((item) => {
+        if (item.num > temp) {
+          temp = item.num;
         }
-    })
-      setIfSelectFirstRow2(false);
+      });
+
       const newDataItem = {
-        [SUB_DATA_ITEM_KEY]: ++temp,
+        [SUB_DATA_ITEM_KEY2]: ++temp,
         chlditemcd: "",
         chlditemnm: "",
         custcd: "",
@@ -640,7 +768,7 @@ const PR_A0030W: React.FC = () => {
         outgb: "",
         outprocyn: "N",
         prntitemcd: Object.getOwnPropertyNames(selectedState)[0],
-        proccd: Object.getOwnPropertyNames(selectedsubData2State)[0],
+        proccd: Object.getOwnPropertyNames(selectedsubDataState)[0],
         procitemcd: Object.getOwnPropertyNames(selectedState)[0],
         procqty: 1,
         procseq: proseq,
@@ -654,24 +782,20 @@ const PR_A0030W: React.FC = () => {
         unitqty: 0,
         rowstatus: "N",
       };
-      setSelectedsubDataState({ [newDataItem.num]: true });
+      setSelectedsubData2State({ [newDataItem.num]: true });
 
-      setSubDataResult((prev) => {
+      setSubData2Result((prev) => {
         return {
           data: [newDataItem, ...prev.data],
           total: prev.total + 1,
         };
       });
+      setPage3((prev) => ({
+        ...prev,
+        skip: 0,
+        take: prev.take + 1,
+      }));
     }
-  };
-  const onSubData2SelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedsubData2State,
-      dataItemKey: SUB_DATA_ITEM_KEY2,
-    });
-
-    setSelectedsubData2State(newSelectedState);
   };
 
   //엑셀 내보내기
@@ -680,76 +804,6 @@ const PR_A0030W: React.FC = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();
     }
-  };
-
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
-    let pgNumWithGap =
-      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
-
-    // 스크롤 최하단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "down",
-        pgNum: pgNumWithGap + 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-      return false;
-    }
-
-    pgNumWithGap =
-      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
-    // 스크롤 최상단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "up",
-        pgNum: pgNumWithGap - 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-    }
-  };
-
-  const onSubScrollHandler = (event: GridEvent) => {
-    if (subfilters.isSearch) return false; // 한꺼번에 여러번 조회 방지
-    let pgNumWithGap =
-      subfilters.pgNum +
-      (subfilters.scrollDirrection === "up" ? subfilters.pgGap : 0);
-
-    // 스크롤 최하단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
-      setsubFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "down",
-        pgNum: pgNumWithGap + 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-      return false;
-    }
-
-    pgNumWithGap =
-      subfilters.pgNum -
-      (subfilters.scrollDirrection === "down" ? subfilters.pgGap : 0);
-    // 스크롤 최상단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
-      setsubFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "up",
-        pgNum: pgNumWithGap - 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-    }
-  };
-
-  const onSub2ScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, sub2PgNum, PAGE_SIZE))
-      setSub2PgNum((prev) => prev + 1);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -815,15 +869,21 @@ const PR_A0030W: React.FC = () => {
 
   const search = () => {
     resetAllGrid();
-    fetchSubGrid2();
-    setWorkType("U");
-    deletedMainRows = [];
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: true,
+      find_row_value: "",
+      pgNum: 1,
+    }));
   };
 
   const search2 = () => {
-    setSub2PgNum(1);
-    setSubData2Result(process([], subData2State));
-    fetchSubGrid2();
+    setsubFilters((prev) => ({
+      ...prev,
+      isSearch: true,
+      find_row_value: "",
+      pgNum: 1,
+    }));
   };
 
   const onSubItemChange = (event: GridItemChangeEvent) => {
@@ -899,7 +959,7 @@ const PR_A0030W: React.FC = () => {
       location: "01",
       remark: "",
     });
-    setSubDataResult(process([], subDataState));
+    setSubData2Result(process([], subData2State));
     setWorkType("N");
   };
 
@@ -917,17 +977,21 @@ const PR_A0030W: React.FC = () => {
       return false;
     }
 
-    const datas = mainDataResult.data.filter(
-      (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-    )[0];
+    if (mainDataResult.data.length == 0) {
+      alert("데이터가 없습니다.");
+    } else {
+      const datas = mainDataResult.data.filter(
+        (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
 
-    setParaDataDeleted((prev) => ({
-      ...prev,
-      work_type: "D",
-      pattern_id: datas.pattern_id,
-      pattern_name: datas.pattern_name,
-      location: datas.location,
-    }));
+      setParaDataDeleted((prev) => ({
+        ...prev,
+        work_type: "D",
+        pattern_id: datas.pattern_id,
+        pattern_name: datas.pattern_name,
+        location: datas.location,
+      }));
+    }
   };
 
   const paraDeleted: Iparameters = {
@@ -967,8 +1031,41 @@ const PR_A0030W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      resetAllGrid();
-      fetchSubGrid2();
+      const isLastDataDeleted =
+        mainDataResult.data.length === 1 && filters.pgNum > 0;
+      const findRowIndex = mainDataResult.data.findIndex(
+        (row: any) =>
+          row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      );
+      if (isLastDataDeleted) {
+        setPage({
+          skip:
+            filters.pgNum == 1 || filters.pgNum == 0
+              ? 0
+              : PAGE_SIZE * (filters.pgNum - 2),
+          take: PAGE_SIZE,
+        });
+
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: isLastDataDeleted
+            ? prev.pgNum != 1
+              ? prev.pgNum - 1
+              : prev.pgNum
+            : prev.pgNum,
+          isSearch: true,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value:
+            mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
+              .pattern_id + "|0",
+          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+          isSearch: true,
+        }));
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -983,25 +1080,38 @@ const PR_A0030W: React.FC = () => {
 
   const onDeleteClick2 = (e: any) => {
     let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
 
-    subDataResult.data.forEach((item: any, index: number) => {
-      if (!selectedsubDataState[item[SUB_DATA_ITEM_KEY]]) {
+    subData2Result.data.forEach((item: any, index: number) => {
+      if (!selectedsubData2State[item[SUB_DATA_ITEM_KEY2]]) {
         newData.push(item);
+        Object2.push(index);
       } else {
-        const newData2 = {
-          ...item,
-          rowstatus: "D",
-        };
-
-        deletedMainRows.push(newData2);
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows.push(newData2);
+        }
+        Object.push(index);
       }
     });
-    setSubDataResult((prev) => ({
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = subData2Result.data[Math.min(...Object2)];
+    } else {
+      data = subData2Result.data[Math.min(...Object) - 1];
+    }
+    setSubData2Result((prev) => ({
       data: newData,
-      total: newData.length,
+      total: prev.total - Object.length,
     }));
 
-    setSubData2State({});
+    setSelectedsubData2State({
+      [data != undefined ? data[SUB_DATA_ITEM_KEY2] : newData[0]]: true,
+    });
   };
 
   const [paraData, setParaData] = useState({
@@ -1064,14 +1174,14 @@ const PR_A0030W: React.FC = () => {
       return false;
     }
 
-    const dataItem = subDataResult.data.filter((item: any) => {
+    const dataItem = subData2Result.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (subDataResult.data.length == 0) {
+    if (subData2Result.total == 0) {
       alert("데이터가 없습니다.");
       valid = false;
       return false;
@@ -1108,22 +1218,20 @@ const PR_A0030W: React.FC = () => {
         dataArr.procseq_s.push(procseq);
         dataArr.outprocyn_s.push(outprocyn);
       });
-      if (workType == "U") {
-        deletedMainRows.forEach((item: any, idx: number) => {
-          const {
-            rowstatus = "",
-            seq = "",
-            proccd = "",
-            procseq = "",
-            outprocyn = "",
-          } = item;
-          dataArr.rowstatus_s.push(rowstatus);
-          dataArr.seq_s.push(seq);
-          dataArr.proccd_s.push(proccd);
-          dataArr.procseq_s.push(procseq);
-          dataArr.outprocyn_s.push(outprocyn);
-        });
-      }
+      deletedMainRows.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          proccd = "",
+          procseq = "",
+          outprocyn = "",
+        } = item;
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.seq_s.push(seq);
+        dataArr.proccd_s.push(proccd);
+        dataArr.procseq_s.push(procseq);
+        dataArr.outprocyn_s.push(outprocyn);
+      });
       setParaData((prev) => ({
         ...prev,
         workType: "U",
@@ -1150,8 +1258,32 @@ const PR_A0030W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      resetAllGrid();
-      setWorkType("U");
+      setWorkType("N");
+      if (data.returnString.split("|")[1] == "0") {
+        setPage3((prev) => ({
+          skip:
+            subfilters2.pgNum == 1 || subfilters2.pgNum == 0
+              ? 0
+              : PAGE_SIZE * (subfilters2.pgNum - 2),
+          take: PAGE_SIZE,
+        }));
+        setsubFilters2((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: prev.pgNum - 1,
+        }));
+      } else {
+        setsubFilters2((prev) => ({
+          ...prev,
+          find_row_value: data.returnString.split("|")[1],
+        }));
+      }
+
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: data.returnString.split("|")[0],
+        isSearch: true,
+      }));
       setParaData({
         workType: "",
         pgSize: PAGE_SIZE,
@@ -1170,11 +1302,12 @@ const PR_A0030W: React.FC = () => {
         form_id: "PR_A0030W",
         company_code: companyCode,
       });
-      fetchSubGrid2();
+
       deletedMainRows = [];
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -1200,10 +1333,10 @@ const PR_A0030W: React.FC = () => {
   };
 
   const arrowBtnClickPara = {
-    SUB_DATA_ITEM_KEY: SUB_DATA_ITEM_KEY,
-    selectedsubDataState: selectedsubDataState,
-    dataResult: subDataResult,
-    setDataResult: setSubDataResult,
+    SUB_DATA_ITEM_KEY: SUB_DATA_ITEM_KEY2,
+    selectedsubDataState: selectedsubData2State,
+    dataResult: subData2Result,
+    setDataResult: setSubData2Result,
   };
 
   const onArrowsBtnClick = (para: TArrowBtnClick) => {
@@ -1302,6 +1435,128 @@ const PR_A0030W: React.FC = () => {
     }
   };
 
+  const minGridWidth = React.useRef<number>(0);
+  const minGridWidth2 = React.useRef<number>(0);
+  const minGridWidth3 = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const grid2 = React.useRef<any>(null);
+  const grid3 = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
+  const [applyMinWidth3, setApplyMinWidth3] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+  const [gridCurrent2, setGridCurrent2] = React.useState(0);
+  const [gridCurrent3, setGridCurrent3] = React.useState(0);
+
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdList");
+      grid2.current = document.getElementById("grdList2");
+      grid3.current = document.getElementById("grdList3");
+
+      window.addEventListener("resize", handleResize);
+
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
+        item.width !== undefined
+          ? (minGridWidth.current += item.width)
+          : minGridWidth.current
+      );
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList2"].map(
+        (item: TColumn) =>
+          item.width !== undefined
+            ? (minGridWidth2.current += item.width)
+            : minGridWidth2.current
+      );
+      customOptionData.menuCustomColumnOptions["grdList3"].map(
+        (item: TColumn) =>
+          item.width !== undefined
+            ? (minGridWidth3.current += item.width)
+            : minGridWidth3.current
+      );
+      minGridWidth3.current += 50;
+      if (grid.current) {
+        setGridCurrent(grid.current.clientWidth);
+        setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
+      }
+      if (grid2.current) {
+        setGridCurrent2(grid2.current.clientWidth);
+        setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
+      }
+      if (grid3.current) {
+        setGridCurrent3(grid3.current.clientWidth);
+        setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
+      }
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (grid.current) {
+      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
+        setApplyMinWidth(true);
+      } else if (grid.current.clientWidth > minGridWidth.current) {
+        setGridCurrent(grid.current.clientWidth);
+        setApplyMinWidth(false);
+      }
+    }
+    if (grid2.current) {
+      if (
+        grid2.current.clientWidth < minGridWidth2.current &&
+        !applyMinWidth2
+      ) {
+        setApplyMinWidth2(true);
+      } else if (grid2.current.clientWidth > minGridWidth2.current) {
+        setGridCurrent2(grid2.current.clientWidth);
+        setApplyMinWidth2(false);
+      }
+    }
+    if (grid3.current) {
+      if (
+        grid3.current.clientWidth < minGridWidth3.current &&
+        !applyMinWidth3
+      ) {
+        setApplyMinWidth3(true);
+      } else if (grid3.current.clientWidth > minGridWidth3.current) {
+        setGridCurrent3(grid3.current.clientWidth);
+        setApplyMinWidth3(false);
+      }
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+    if (grid.current && Name == "grdList") {
+      let width = applyMinWidth
+        ? minWidth
+        : minWidth +
+          (gridCurrent - minGridWidth.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    }
+    if (grid2.current && Name == "grdList2") {
+      let width = applyMinWidth2
+        ? minWidth
+        : minWidth +
+          (gridCurrent2 - minGridWidth2.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    }
+    if (grid3.current && Name == "grdList3") {
+      let width = applyMinWidth3
+        ? minWidth
+        : minWidth +
+          (gridCurrent3 - minGridWidth3.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    }
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1371,7 +1626,7 @@ const PR_A0030W: React.FC = () => {
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "82vh" }}
+            style={{ height: "80vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1392,7 +1647,13 @@ const PR_A0030W: React.FC = () => {
             //스크롤 조회 기능
             fixedScroll={true}
             total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}
@@ -1400,6 +1661,7 @@ const PR_A0030W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
+            id="grdList"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"].map(
@@ -1410,7 +1672,7 @@ const PR_A0030W: React.FC = () => {
                       id={item.id}
                       field={item.fieldName}
                       title={item.caption}
-                      width={item.width}
+                      width={setWidth("grdList", item.width)}
                       footerCell={
                         item.sortOrder === 0 ? mainTotalFooterCell : undefined
                       }
@@ -1524,7 +1786,7 @@ const PR_A0030W: React.FC = () => {
                         <Input
                           name="proccd2"
                           type="text"
-                          value={subfilters2.proccd2}
+                          value={subfilters.proccd2}
                           onChange={InputChange}
                         />
                       </td>
@@ -1540,34 +1802,41 @@ const PR_A0030W: React.FC = () => {
               <Grid
                 style={{ height: "55vh" }}
                 data={process(
-                  subData2Result.data.map((row) => ({
+                  subDataResult.data.map((row) => ({
                     ...row,
-                    [SELECTED_FIELD]: selectedsubData2State[idGetter2(row)],
+                    [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
                   })),
-                  subData2State
+                  subDataState
                 )}
-                {...subData2State}
-                onDataStateChange={onSubData2StateChange}
+                {...subDataState}
+                onDataStateChange={onSubDataStateChange}
                 //선택 기능
-                dataItemKey={SUB_DATA_ITEM_KEY2}
+                dataItemKey={SUB_DATA_ITEM_KEY}
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
                   mode: "multiple",
                 }}
-                onSelectionChange={onSubData2SelectionChange}
+                onSelectionChange={onSubDataSelectionChange}
                 //스크롤 조회 기능
                 fixedScroll={true}
-                total={subData2Result.total}
-                onScroll={onSub2ScrollHandler}
+                total={subDataResult.total}
+                skip={page2.skip}
+                take={page2.take}
+                pageable={true}
+                onPageChange={pageChange2}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef2}
+                rowHeight={30}
                 //정렬기능
                 sortable={true}
-                onSortChange={onSubData2SortChange}
+                onSortChange={onSubDataSortChange}
                 //컬럼순서조정
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
                 onRowDoubleClick={onAddRow}
+                id="grdList2"
               >
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdList2"].map(
@@ -1578,10 +1847,10 @@ const PR_A0030W: React.FC = () => {
                           id={item.id}
                           field={item.fieldName}
                           title={item.caption}
-                          width={item.width}
+                          width={setWidth("grdList2", item.width)}
                           footerCell={
                             item.sortOrder === 0
-                              ? sub2TotalFooterCell
+                              ? subTotalFooterCell
                               : undefined
                           }
                         />
@@ -1633,9 +1902,9 @@ const PR_A0030W: React.FC = () => {
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "58vh" }}
+                  style={{ height: "62vh" }}
                   data={process(
-                    subDataResult.data.map((row) => ({
+                    subData2Result.data.map((row) => ({
                       ...row,
                       rowstatus:
                         row.rowstatus == null ||
@@ -1643,12 +1912,12 @@ const PR_A0030W: React.FC = () => {
                         row.rowstatus == undefined
                           ? ""
                           : row.rowstatus,
-                      [SELECTED_FIELD]: selectedsubDataState[idGetter3(row)],
+                      [SELECTED_FIELD]: selectedsubData2State[idGetter3(row)],
                     })),
-                    subDataState
+                    subData2State
                   )}
-                  {...subDataState}
-                  onDataStateChange={onSubDataStateChange}
+                  {...subData2State}
+                  onDataStateChange={onSubData2StateChange}
                   //선택 기능
                   dataItemKey={SUB_DATA_ITEM_KEY2}
                   selectedField={SELECTED_FIELD}
@@ -1656,14 +1925,20 @@ const PR_A0030W: React.FC = () => {
                     enabled: true,
                     mode: "multiple",
                   }}
-                  onSelectionChange={onSubDataSelectionChange}
+                  onSelectionChange={onSubDataSelectionChange2}
                   //스크롤 조회 기능
                   fixedScroll={true}
-                  total={subDataResult.total}
-                  onScroll={onSubScrollHandler}
+                  total={subData2Result.total}
+                  skip={page3.skip}
+                  take={page3.take}
+                  pageable={true}
+                  onPageChange={pageChange3}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef3}
+                  rowHeight={30}
                   //정렬기능
                   sortable={true}
-                  onSortChange={onSubDataSortChange}
+                  onSortChange={onSubData2SortChange}
                   //컬럼순서조정
                   reorderable={true}
                   //컬럼너비조정
@@ -1672,6 +1947,7 @@ const PR_A0030W: React.FC = () => {
                   cellRender={customCellRender}
                   rowRender={customRowRender}
                   editField={EDIT_FIELD}
+                  id="grdList3"
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
@@ -1683,7 +1959,7 @@ const PR_A0030W: React.FC = () => {
                             id={item.id}
                             field={item.fieldName}
                             title={item.caption}
-                            width={item.width}
+                            width={setWidth("grdList3", item.width)}
                             cell={
                               CustomComboField.includes(item.fieldName)
                                 ? CustomComboBoxCell
@@ -1693,7 +1969,7 @@ const PR_A0030W: React.FC = () => {
                             }
                             footerCell={
                               item.sortOrder === 0
-                                ? subTotalFooterCell
+                                ? sub2TotalFooterCell
                                 : undefined
                             }
                           />
