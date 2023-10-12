@@ -42,13 +42,16 @@ type IWindow = {
   data: barcode[];
   setVisible(t: boolean): void;
   total: number;
+  modal? :boolean;
 };
 
-const CopyWindow = ({ setVisible, data, total }: IWindow) => {
+const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 800,
+    width: isMobile == true ? deviceWidth : 800,
     height: 900,
   });
   const [loginResult] = useRecoilState(loginResultState);
@@ -96,6 +99,7 @@ const CopyWindow = ({ setVisible, data, total }: IWindow) => {
       "@p_finyn": "",
       "@p_lotnum_s": barcodeFilters.lotnum_s,
       "@p_prntqty_s": barcodeFilters.prntqty_s,
+      "@p_find_row_value": "",
       "@p_company_code": companyCode,
     },
   };
@@ -145,21 +149,21 @@ const CopyWindow = ({ setVisible, data, total }: IWindow) => {
       setPosition((prev: any) => ({
         left: 300,
         top: 100,
-        width: 800,
+        width: isMobile == true ? deviceWidth : 800,
         height: 900,
       }));
     } else if (total > 1) {
       setPosition((prev: any) => ({
         left: 300,
         top: 100,
-        width: 800,
+        width: isMobile == true ? deviceWidth : 800,
         height: 720,
       }));
     } else {
       setPosition((prev: any) => ({
         left: 300,
         top: 100,
-        width: 800,
+        width: isMobile == true ? deviceWidth : 800,
         height: 500,
       }));
     }
@@ -174,7 +178,7 @@ const CopyWindow = ({ setVisible, data, total }: IWindow) => {
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
-        modal={true}
+        modal={modal}
       >
         <ButtonContainer>
           <ReactToPrint

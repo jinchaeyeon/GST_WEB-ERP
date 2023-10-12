@@ -3171,6 +3171,7 @@ const PR_A1100W: React.FC = () => {
           getVisible={setPlanWindowVisible}
           workType={workType} //신규 : N, 수정 : U
           reloadData={(str) => {
+            setTabSelected(1);
             setFilters((prev) => ({
               ...prev,
               find_row_value: str,

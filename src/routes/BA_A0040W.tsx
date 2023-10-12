@@ -930,7 +930,7 @@ const BA_A0040: React.FC = () => {
     setyn(true);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-    console.log(selectedRowData)
+
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "U",
@@ -1007,7 +1007,7 @@ const BA_A0040: React.FC = () => {
   const onSubData2SelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
-      selectedState: selectedState,
+      selectedState: selectedsubData2State,
       dataItemKey: SUB_DATA_ITEM_KEY2,
     });
     setSelectedsubData2State(newSelectedState);
@@ -1986,7 +1986,7 @@ const BA_A0040: React.FC = () => {
         setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
       }
     }
-  }, [customOptionData]);
+  }, [customOptionData, tabSelected]);
 
   const handleResize = () => {
     if (grid.current) {

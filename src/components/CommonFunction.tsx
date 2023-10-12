@@ -772,7 +772,7 @@ export const getCustinfoQuery = (custcd: string) => {
 
 export const getCustDataQuery = (custcd: string) => {
   return `
-  SELECT custcd, address, phonenum 
+  SELECT custcd, address, phonenum, custnm 
     FROM ba020t 
     WHERE BA020T.custcd =  '${custcd}'    
       `;

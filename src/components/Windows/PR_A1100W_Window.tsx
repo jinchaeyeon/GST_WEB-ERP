@@ -12,14 +12,16 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input } from "@progress/kendo-react-inputs";
+import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { Label } from "@progress/kendo-react-labels";
+import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
+  ButtonInGridInput,
   GridContainer,
   GridContainerWrap,
   GridTitle,
@@ -46,6 +48,7 @@ import {
   convertDateToStr,
   findMessage,
   getGridItemChangedData,
+  getItemQuery,
   getSelectedFirstData,
 } from "../CommonFunction";
 import {
@@ -56,6 +59,7 @@ import {
   SELECTED_FIELD,
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
 import CopyWindow2 from "./CommonWindows/PatternWindow";
 
 const DATA_ITEM_KEY = "num";
@@ -135,6 +139,273 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 };
 
+export const FormContext = createContext<{
+  itemInfo: TItemInfo;
+  setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
+}>({} as any);
+
+type TItemInfo = {
+  itemcd: string;
+  itemno: string;
+  itemnm: string;
+  insiz: string;
+  model: string;
+  itemacnt: string;
+  itemacntnm: string;
+  bnatur: string;
+  spec: string;
+  invunit: string;
+  invunitnm: string;
+  unitwgt: string;
+  wgtunit: string;
+  wgtunitnm: string;
+  maker: string;
+  dwgno: string;
+  remark: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
+  extra_field1: string;
+  extra_field2: string;
+  extra_field7: string;
+  extra_field6: string;
+  extra_field8: string;
+  packingsiz: string;
+  unitqty: string;
+  color: string;
+  gubun: string;
+  qcyn: string;
+  outside: string;
+  itemthick: string;
+  itemlvl4: string;
+  itemlvl5: string;
+  custitemnm: string;
+};
+
+const defaultItemInfo = {
+  itemcd: "",
+  itemno: "",
+  itemnm: "",
+  insiz: "",
+  model: "",
+  itemacnt: "",
+  itemacntnm: "",
+  bnatur: "",
+  spec: "",
+  invunit: "",
+  invunitnm: "",
+  unitwgt: "",
+  wgtunit: "",
+  wgtunitnm: "",
+  maker: "",
+  dwgno: "",
+  remark: "",
+  itemlvl1: "",
+  itemlvl2: "",
+  itemlvl3: "",
+  extra_field1: "",
+  extra_field2: "",
+  extra_field7: "",
+  extra_field6: "",
+  extra_field8: "",
+  packingsiz: "",
+  unitqty: "",
+  color: "",
+  gubun: "",
+  qcyn: "",
+  outside: "",
+  itemthick: "",
+  itemlvl4: "",
+  itemlvl5: "",
+  custitemnm: "",
+};
+
+interface IItemData {
+  itemcd: string;
+  itemno: string;
+  itemnm: string;
+  insiz: string;
+  model: string;
+  itemacnt: string;
+  itemacntnm: string;
+  bnatur: string;
+  spec: string;
+  invunit: string;
+  invunitnm: string;
+  unitwgt: string;
+  wgtunit: string;
+  wgtunitnm: string;
+  maker: string;
+  dwgno: string;
+  remark: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
+  extra_field1: string;
+  extra_field2: string;
+  extra_field7: string;
+  extra_field6: string;
+  extra_field8: string;
+  packingsiz: string;
+  unitqty: string;
+  color: string;
+  gubun: string;
+  qcyn: string;
+  outside: string;
+  itemthick: string;
+  itemlvl4: string;
+  itemlvl5: string;
+  custitemnm: string;
+}
+
+const ColumnCommandCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setItemInfo } = useContext(FormContext);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
+
+  const onItemWndClick2 = () => {
+    setItemWindowVisible2(true);
+  };
+
+  const setItemData2 = (data: IItemData) => {
+    const {
+      itemcd,
+      itemno,
+      itemnm,
+      insiz,
+      model,
+      itemacnt,
+      itemacntnm,
+      bnatur,
+      spec,
+      invunit,
+      invunitnm,
+      unitwgt,
+      wgtunit,
+      wgtunitnm,
+      maker,
+      dwgno,
+      remark,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+      extra_field1,
+      extra_field2,
+      extra_field7,
+      extra_field6,
+      extra_field8,
+      packingsiz,
+      unitqty,
+      color,
+      gubun,
+      qcyn,
+      outside,
+      itemthick,
+      itemlvl4,
+      itemlvl5,
+      custitemnm,
+    } = data;
+    setItemInfo({
+      itemcd,
+      itemno,
+      itemnm,
+      insiz,
+      model,
+      itemacnt,
+      itemacntnm,
+      bnatur,
+      spec,
+      invunit,
+      invunitnm,
+      unitwgt,
+      wgtunit,
+      wgtunitnm,
+      maker,
+      dwgno,
+      remark,
+      itemlvl1,
+      itemlvl2,
+      itemlvl3,
+      extra_field1,
+      extra_field2,
+      extra_field7,
+      extra_field6,
+      extra_field8,
+      packingsiz,
+      unitqty,
+      color,
+      gubun,
+      qcyn,
+      outside,
+      itemthick,
+      itemlvl4,
+      itemlvl5,
+      custitemnm,
+    });
+  };
+  //BA_A0080W에만 사용
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {isInEdit ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onItemWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {itemWindowVisible2 && (
+        <ItemsWindow
+          setVisible={setItemWindowVisible2}
+          workType={"ROW_ADD"}
+          setData={setItemData2}
+        />
+      )}
+    </>
+  );
+};
+
 type TKendoWindow = {
   getVisible(t: boolean): void;
   workType: string;
@@ -152,9 +423,12 @@ const KendoWindow = ({
   itemcd,
   modal = false,
 }: TKendoWindow) => {
+  const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   const pathname: string = window.location.pathname.replace("/", "");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -250,6 +524,223 @@ const KendoWindow = ({
   const [selectedState2, setSelectedState2] = useState<{
     [id: string]: boolean | number[];
   }>({});
+
+  useEffect(() => {
+    const newData = mainDataResult2.data.map((item) =>
+      item[DATA_ITEM_KEY2] ==
+      parseInt(Object.getOwnPropertyNames(selectedState2)[0])
+        ? {
+            ...item,
+            chlditemcd: itemInfo.itemcd,
+            chlditemnm: itemInfo.itemnm,
+            itemcd: itemInfo.itemcd,
+            itemno: itemInfo.itemno,
+            itemnm: itemInfo.itemnm,
+            insiz: itemInfo.insiz,
+            model: itemInfo.model,
+            bnatur: itemInfo.bnatur,
+            spec: itemInfo.spec,
+            //invunit
+            qtyunit: itemInfo.invunit,
+            invunitnm: itemInfo.invunitnm,
+            unitwgt: itemInfo.unitwgt,
+            wgtunit: itemInfo.wgtunit,
+            wgtunitnm: itemInfo.wgtunitnm,
+            maker: itemInfo.maker,
+            dwgno: itemInfo.dwgno,
+            remark: itemInfo.remark,
+            itemlvl1: itemInfo.itemlvl1,
+            itemlvl2: itemInfo.itemlvl2,
+            itemlvl3: itemInfo.itemlvl3,
+            extra_field1: itemInfo.extra_field1,
+            extra_field2: itemInfo.extra_field2,
+            extra_field7: itemInfo.extra_field7,
+            extra_field6: itemInfo.extra_field6,
+            extra_field8: itemInfo.extra_field8,
+            packingsiz: itemInfo.packingsiz,
+            unitqty: itemInfo.unitqty,
+            color: itemInfo.color,
+            gubun: itemInfo.gubun,
+            qcyn: itemInfo.qcyn,
+            outside: itemInfo.outside,
+            itemthick: itemInfo.itemthick,
+            itemlvl4: itemInfo.itemlvl4,
+            itemlvl5: itemInfo.itemlvl5,
+            custitemnm: itemInfo.custitemnm,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+
+    setMainDataResult2((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [itemInfo]);
+
+  const fetchItemData = React.useCallback(
+    async (itemcd: string) => {
+      let data: any;
+      const queryStr = getItemQuery({ itemcd: itemcd, itemnm: "" });
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        const rowCount = data.tables[0].RowCount;
+
+        if (rowCount > 0) {
+          const {
+            itemcd,
+            itemno,
+            itemnm,
+            insiz,
+            model,
+            itemacnt,
+            itemacntnm,
+            bnatur,
+            spec,
+            invunit,
+            invunitnm,
+            unitwgt,
+            wgtunit,
+            wgtunitnm,
+            maker,
+            dwgno,
+            remark,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+            extra_field1,
+            extra_field2,
+            extra_field7,
+            extra_field6,
+            extra_field8,
+            packingsiz,
+            unitqty,
+            color,
+            gubun,
+            qcyn,
+            outside,
+            itemthick,
+            itemlvl4,
+            itemlvl5,
+            custitemnm,
+          } = rows[0];
+          setItemInfo({
+            itemcd,
+            itemno,
+            itemnm,
+            insiz,
+            model,
+            itemacnt,
+            itemacntnm,
+            bnatur,
+            spec,
+            invunit,
+            invunitnm,
+            unitwgt,
+            wgtunit,
+            wgtunitnm,
+            maker,
+            dwgno,
+            remark,
+            itemlvl1,
+            itemlvl2,
+            itemlvl3,
+            extra_field1,
+            extra_field2,
+            extra_field7,
+            extra_field6,
+            extra_field8,
+            packingsiz,
+            unitqty,
+            color,
+            gubun,
+            qcyn,
+            outside,
+            itemthick,
+            itemlvl4,
+            itemlvl5,
+            custitemnm,
+          });
+        } else {
+          const newData = mainDataResult2.data.map((item: any) =>
+            item[DATA_ITEM_KEY2] ==
+            Object.getOwnPropertyNames(selectedState2)[0]
+              ? {
+                  ...item,
+                  chlditemcd: item.itemcd,
+                  chlditemnm: "",
+                  itemcd: "",
+                  itemno: "",
+                  itemnm: "",
+                  insiz: "",
+                  model: "",
+                  itemacnt: "",
+                  itemacntnm: "",
+                  bnatur: "",
+                  spec: "",
+                  invunit: "",
+                  invunitnm: "",
+                  unitwgt: "",
+                  wgtunit: "",
+                  wgtunitnm: "",
+                  maker: "",
+                  dwgno: "",
+                  remark: "",
+                  itemlvl1: "",
+                  itemlvl2: "",
+                  itemlvl3: "",
+                  extra_field1: "",
+                  extra_field2: "",
+                  extra_field7: "",
+                  extra_field6: "",
+                  extra_field8: "",
+                  packingsiz: "",
+                  unitqty: "",
+                  color: "",
+                  gubun: "",
+                  qcyn: "",
+                  outside: "",
+                  itemthick: "",
+                  itemlvl4: "",
+                  itemlvl5: "",
+                  custitemnm: "",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+          );
+          setMainDataResult2((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      }
+    },
+    [mainDataResult2]
+  );
 
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
@@ -722,7 +1213,10 @@ const KendoWindow = ({
               [EDIT_FIELD]: undefined,
             }
       );
-
+      setEditIndex(dataItem[DATA_ITEM_KEY2]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult2((prev: { total: any }) => {
         return {
           data: newData,
@@ -748,31 +1242,42 @@ const KendoWindow = ({
 
   const exitEdit2 = () => {
     if (tempResult2.data != mainDataResult2.data) {
-      const newData = mainDataResult2.data.map(
-        (item: { [x: string]: string; rowstatus: string }) =>
-          item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "U",
-                [EDIT_FIELD]: undefined,
-              }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-      );
-      setTempResult2((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult2((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+      if (editedField !== "chlditemcd") {
+        const newData = mainDataResult2.data.map(
+          (item: { [x: string]: string; rowstatus: string }) =>
+            item[DATA_ITEM_KEY2] ==
+            Object.getOwnPropertyNames(selectedState2)[0]
+              ? {
+                  ...item,
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+        );
+        setTempResult2((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult2((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else {
+        mainDataResult2.data.map(
+          (item: { [x: string]: any; chlditemcd: any }) => {
+            if (editIndex === item[DATA_ITEM_KEY2]) {
+              fetchItemData(item.chlditemcd);
+            }
+          }
+        );
+      }
     } else {
       const newData = mainDataResult2.data.map((item: any) => ({
         ...item,
@@ -806,7 +1311,9 @@ const KendoWindow = ({
           temp = item.num;
         }
       });
-
+      if (data[i].procseq > maxprocseq) {
+        maxprocseq = data[i].procseq + 1;
+      }
       const newDataItem = {
         [DATA_ITEM_KEY]: ++temp,
         finexpdt: convertDateToStr(new Date()),
@@ -820,7 +1327,7 @@ const KendoWindow = ({
         prntitemcd: Information.itemcd,
         proccd: data[i].proccd,
         procqty: 1,
-        procseq: data[i].procseq,
+        procseq: maxprocseq,
         prodemp: "",
         prodmac: "",
         qty: 0,
@@ -841,9 +1348,6 @@ const KendoWindow = ({
         take: prev.take + 1,
       }));
       setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
-      if (data[i].procseq > maxprocseq) {
-        maxprocseq = data[i].procseq;
-      }
     }
   };
 
@@ -867,7 +1371,7 @@ const KendoWindow = ({
       prntitemcd: Information.itemcd,
       proccd: "",
       procqty: 1,
-      procseq: 0,
+      procseq: maxprocseq + 1,
       prodemp: "",
       prodmac: "",
       qty: 0,
@@ -1011,26 +1515,12 @@ const KendoWindow = ({
 
   const onSave = () => {
     let valid = true;
-    const dataItem = mainDataResult.data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
-
-    const dataItem2 = mainDataResult2.data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
-
     try {
       if (Information2.planqty < 1) {
         throw findMessage(messagesData, "PR_A1100W_006");
       }
-      dataItem.forEach((item: any, idx: number) => {
-        dataItem.forEach((chkItem: any, chkIdx: number) => {
+      mainDataResult.data.forEach((item: any, idx: number) => {
+        mainDataResult.data.forEach((chkItem: any, chkIdx: number) => {
           if (
             (item.proccd === chkItem.proccd ||
               item.procseq === chkItem.procseq) &&
@@ -1078,7 +1568,7 @@ const KendoWindow = ({
       proccd: [],
     };
 
-    dataItem.forEach((item: any, idx: number) => {
+    mainDataResult.data.forEach((item: any, idx: number) => {
       const {
         proccd,
         planseq,
@@ -1104,7 +1594,7 @@ const KendoWindow = ({
       processArr.prodmac.push(prodmac);
     });
 
-    dataItem2.forEach((item: any, idx: number) => {
+    mainDataResult2.data.forEach((item: any, idx: number) => {
       const { unitqty, outgb, chlditemcd, qtyunit, proccd } = item;
       materialArr.seq.push("0");
       materialArr.unitqty.push(unitqty);
@@ -1174,7 +1664,7 @@ const KendoWindow = ({
       purtype: "",
       urgencyyn: "",
       service_id: "20190218001",
-      form_id: "PR_A1100W",
+      form_id: "PR_A11.00W",
     }));
   };
 
@@ -1312,7 +1802,7 @@ const KendoWindow = ({
   useEffect(() => {
     if (paraData.work_type !== "") fetchGridSaved();
   }, [paraData]);
-  
+
   const fetchGridSaved = async () => {
     let data: any;
 
@@ -1515,114 +2005,122 @@ const KendoWindow = ({
                 />
               </Grid>
             </GridContainer>
-            <GridContainer>
-              <GridTitleContainer>
-                <GridTitle>자재</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    type={"button"}
-                    themeColor={"primary"}
-                    onClick={onAddClick2}
-                    title="행 추가"
-                    icon="add"
-                  ></Button>
-                  <Button
-                    type={"button"}
-                    themeColor={"primary"}
-                    fillMode="outline"
-                    onClick={onDeleteClick2}
-                    title="행 삭제"
-                    icon="minus"
-                  ></Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <Grid
-                style={{ height: "30vh" }}
-                data={process(
-                  mainDataResult2.data.map((row) => ({
-                    ...row,
-                    rowstatus:
-                      row.rowstatus == null ||
-                      row.rowstatus == "" ||
-                      row.rowstatus == undefined
-                        ? ""
-                        : row.rowstatus,
-                    [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
-                  })),
-                  mainDataState2
-                )}
-                onDataStateChange={onMainDataStateChange2}
-                {...mainDataState2}
-                //선택 subDataState
-                dataItemKey={DATA_ITEM_KEY2}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSelectionChange2}
-                //스크롤 조회기능
-                fixedScroll={true}
-                total={mainDataResult2.total}
-                skip={page2.skip}
-                take={page2.take}
-                pageable={true}
-                onPageChange={pageChange2}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange2}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange2}
-                cellRender={customCellRender2}
-                rowRender={customRowRender2}
-                editField={EDIT_FIELD}
-              >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                <GridColumn
-                  field="proccd"
-                  title="공정"
-                  width="130px"
-                  cell={CustomComboBoxCell}
-                />
-                <GridColumn
-                  field="chlditemcd"
-                  title="소요자재코드"
-                  width="160px"
-                />
-                <GridColumn
-                  field="chlditemnm"
-                  title="소요자재명"
-                  width="180px"
-                />
-                <GridColumn
-                  field="outgb"
-                  title="자재사용구분"
-                  width="120px"
-                  cell={CustomComboBoxCell}
-                />
-                <GridColumn
-                  field="unitqty"
-                  title="소요량"
-                  width="120px"
-                  cell={NumberCell}
-                />
-                <GridColumn
-                  field="procqty"
-                  title="재공생산량"
-                  width="120px"
-                  cell={NumberCell}
-                />
-                <GridColumn
-                  field="qtyunit"
-                  title="수량단위"
-                  width="100px"
-                  cell={CustomComboBoxCell}
-                />
-              </Grid>
-            </GridContainer>
+            <FormContext.Provider
+              value={{
+                itemInfo,
+                setItemInfo,
+              }}
+            >
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>자재</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      type={"button"}
+                      themeColor={"primary"}
+                      onClick={onAddClick2}
+                      title="행 추가"
+                      icon="add"
+                    ></Button>
+                    <Button
+                      type={"button"}
+                      themeColor={"primary"}
+                      fillMode="outline"
+                      onClick={onDeleteClick2}
+                      title="행 삭제"
+                      icon="minus"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: "30vh" }}
+                  data={process(
+                    mainDataResult2.data.map((row) => ({
+                      ...row,
+                      rowstatus:
+                        row.rowstatus == null ||
+                        row.rowstatus == "" ||
+                        row.rowstatus == undefined
+                          ? ""
+                          : row.rowstatus,
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                    })),
+                    mainDataState2
+                  )}
+                  onDataStateChange={onMainDataStateChange2}
+                  {...mainDataState2}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange2}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult2.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange2}
+                  cellRender={customCellRender2}
+                  rowRender={customRowRender2}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="proccd"
+                    title="공정"
+                    width="130px"
+                    cell={CustomComboBoxCell}
+                  />
+                  <GridColumn
+                    field="chlditemcd"
+                    title="소요자재코드"
+                    width="160px"
+                    cell={ColumnCommandCell}
+                  />
+                  <GridColumn
+                    field="chlditemnm"
+                    title="소요자재명"
+                    width="180px"
+                  />
+                  <GridColumn
+                    field="outgb"
+                    title="자재사용구분"
+                    width="120px"
+                    cell={CustomComboBoxCell}
+                  />
+                  <GridColumn
+                    field="unitqty"
+                    title="소요량"
+                    width="120px"
+                    cell={NumberCell}
+                  />
+                  <GridColumn
+                    field="procqty"
+                    title="재공생산량"
+                    width="120px"
+                    cell={NumberCell}
+                  />
+                  <GridColumn
+                    field="qtyunit"
+                    title="수량단위"
+                    width="100px"
+                    cell={CustomComboBoxCell}
+                  />
+                </Grid>
+              </GridContainer>
+            </FormContext.Provider>
           </GridContainer>
         </GridContainerWrap>
         <BottomContainer>
