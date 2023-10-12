@@ -93,7 +93,6 @@ const Page: React.FC = () => {
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
-  const [usedUserCnt, setUsedUserCnt] = useState(0);
   const [group, setGroup] = React.useState(initialGroup);
   const [total, setTotal] = useState(0);
 

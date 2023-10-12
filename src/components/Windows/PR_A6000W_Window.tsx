@@ -1,80 +1,39 @@
-import { useEffect, useState, useCallback } from "react";
-import * as React from "react";
+import { Button } from "@progress/kendo-react-buttons";
+import { DateTimePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import {
-  Grid,
-  GridColumn,
-  GridFooterCellProps,
-  GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridDataStateChangeEvent,
-  GridItemChangeEvent,
-  GridCellProps,
-} from "@progress/kendo-react-grid";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
-import { TextArea } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
-import CopyWindow2 from "./MA_A2500W_Order_Window";
-import { useApi } from "../../hooks/api";
+import { Input, TextArea } from "@progress/kendo-react-inputs";
+import * as React from "react";
+import { useEffect, useState } from "react";
 import {
   BottomContainer,
   ButtonContainer,
-  GridContainer,
-  Title,
-  TitleContainer,
-  ButtonInInput,
-  GridTitleContainer,
-  FormBoxWrap,
   FormBox,
-  GridTitle,
+  FormBoxWrap,
 } from "../../CommonStyled";
-import { useRecoilState } from "recoil";
-import { Input } from "@progress/kendo-react-inputs";
-import { Iparameters } from "../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
+import { IWindowPosition } from "../../hooks/interfaces";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
-  chkScrollHandler,
-  UseBizComponent,
+  GetPropertyValueByName,
   UseCustomOption,
-  UseMessages,
-  getQueryFromBizComponent,
+  UseGetValueFromSessionItem,
   UseParaPc,
   convertDateToStrWithTime2,
-  convertDateToStr,
-  getGridItemChangedData,
-  dateformat,
-  isValidDate,
-  findMessage,
   toDate2,
-  GetPropertyValueByName,
 } from "../CommonFunction";
-import { CellRender, RowRender } from "../Renderers/Renderers";
-import { DatePicker, DateTimePicker } from "@progress/kendo-react-dateinputs";
-import { loginResultState } from "../../store/atoms";
-import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
+import { PAGE_SIZE } from "../CommonString";
+import { Iparameters } from "../../store/types";
 import { useSetRecoilState } from "recoil";
+import { useApi } from "../../hooks/api";
 import { isLoading } from "../../store/atoms";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import ItemsWindow from "./CommonWindows/ItemsWindow";
-import NumberCell from "../Cells/NumberCell";
-import DateCell from "../Cells/DateCell";
-import { FormComboBoxCell, FormComboBox } from "../Editors";
-import ComboBoxCell from "../Cells/ComboBoxCell";
-import { NumberInput } from "adaptivecards";
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
   setVisible(t: boolean): void;
-  setData(filter: object): void;
-  reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
+  setData(str: string): void;
   prodmac: Idata2[];
   stopcd: Idata3[];
   prodemp: Idata4[];
+  modal?: boolean;
 };
 
 type Idata = {
@@ -107,30 +66,25 @@ const CopyWindow = ({
   data,
   setVisible,
   setData,
-  reload,
   prodmac,
   stopcd,
   prodemp,
+  modal = false,
 }: IWindow) => {
+  const setLoading = useSetRecoilState(isLoading);
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1600,
+    width: isMobile == true ? deviceWidth : 1600,
     height: 350,
   });
-  const [loginResult] = useRecoilState(loginResultState);
-  const userId = loginResult ? loginResult.userId : "";
   const [pc, setPc] = useState("");
+  const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
-  const DATA_ITEM_KEY = "num";
-
-  const idGetter = getter(DATA_ITEM_KEY);
-  const setLoading = useSetRecoilState(isLoading);
-  //메시지 조회
+  const processApi = useApi();
   const pathname: string = window.location.pathname.replace("/", "");
-  const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
-
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -138,7 +92,10 @@ const CopyWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         prodmac: defaultOption.find((item: any) => item.id === "prodmac")
@@ -150,8 +107,6 @@ const CopyWindow = ({
       }));
     }
   }, [customOptionData]);
-
-  useEffect(() => {}, [reload]);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -238,71 +193,6 @@ const CopyWindow = ({
     setVisible(false);
   };
 
-  interface IItemData {
-    itemcd: string;
-    itemno: string;
-    itemnm: string;
-    insiz: string;
-    model: string;
-    itemacnt: string;
-    itemacntnm: string;
-    bnatur: string;
-    spec: string;
-    invunit: string;
-    invunitnm: string;
-    unitwgt: string;
-    wgtunit: string;
-    wgtunitnm: string;
-    maker: string;
-    dwgno: string;
-    remark: string;
-    itemlvl1: string;
-    itemlvl2: string;
-    itemlvl3: string;
-    extra_field1: string;
-    extra_field2: string;
-    extra_field7: string;
-    extra_field6: string;
-    extra_field8: string;
-    packingsiz: string;
-    unitqty: string;
-    color: string;
-    gubun: string;
-    qcyn: string;
-    outside: string;
-    itemthick: string;
-    itemlvl4: string;
-    itemlvl5: string;
-    custitemnm: string;
-  }
-  interface ICustData {
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
-
-  const setCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
-
-  const setItemData = (data: IItemData) => {
-    setFilters((prev) => ({
-      ...prev,
-      itemcd: data.itemcd,
-      itemnm: data.itemnm,
-    }));
-  };
-
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "N",
@@ -347,12 +237,96 @@ const CopyWindow = ({
   }, []);
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
-  const selectData = (selectedData: any) => {
-    setData(filters);
-    if (workType == "N") {
-      onClose();
-    }
+  const selectData = () => {
+    setParaData((prev) => ({
+      ...prev,
+      workType: workType,
+      orgdiv: "01",
+      location: filters.location,
+      stopnum: filters.stopnum,
+      strtime: filters.strtime,
+      stopcd: filters.stopcd,
+      endtime: filters.endtime,
+      prodmac: filters.prodmac,
+      prodemp: filters.prodemp,
+      remark: filters.remark,
+    }));
   };
+
+  const [ParaData, setParaData] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "N",
+    orgdiv: "01",
+    location: "",
+    stopnum: "",
+    strtime: new Date(),
+    stopcd: "",
+    endtime: new Date(),
+    prodmac: "",
+    prodemp: "",
+    remark: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_PR_A6000W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": "01",
+      "@p_location": ParaData.location,
+      "@p_stopnum": ParaData.stopnum,
+      "@p_stopcd": ParaData.stopcd,
+      "@p_strtime": convertDateToStrWithTime2(ParaData.strtime),
+      "@p_endtime": convertDateToStrWithTime2(ParaData.endtime),
+      "@p_prodmac": ParaData.prodmac,
+      "@p_prodemp": ParaData.prodemp,
+      "@p_remark": ParaData.remark,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "PR_A6000W",
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      setData(data.returnString);
+      if(workType == "N") {
+        onClose();
+      }
+      setParaData({
+        pgSize: PAGE_SIZE,
+        workType: "N",
+        orgdiv: "01",
+        location: "",
+        stopnum: "",
+        strtime: new Date(),
+        stopcd: "",
+        endtime: new Date(),
+        prodmac: "",
+        prodemp: "",
+        remark: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (ParaData.location != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
 
   return (
     <>
@@ -363,7 +337,7 @@ const CopyWindow = ({
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
-        modal={true}
+        modal={modal}
       >
         <FormBoxWrap style={{ paddingRight: "50px" }}>
           <FormBox>
