@@ -26,7 +26,7 @@ export const gridList: Array<TGrid> = [
         id: "col_itemcd",
         field: "itemcd",
         caption: "품목코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_itemnm",
@@ -56,7 +56,7 @@ export const gridList: Array<TGrid> = [
         id: "col_custnm",
         field: "custnm",
         caption: "업체명",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_planno",
@@ -115,7 +115,7 @@ export const gridList: Array<TGrid> = [
         id: "col_proccd",
         field: "proccd",
         caption: "공정",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_procseq",
@@ -127,7 +127,7 @@ export const gridList: Array<TGrid> = [
         id: "col_prodmac",
         field: "prodmac",
         caption: "설비",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_prodemp",
@@ -150,7 +150,7 @@ export const gridList: Array<TGrid> = [
         id: "col_itemcd2",
         field: "itemcd",
         caption: "품목코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_itemnm2",
@@ -162,7 +162,7 @@ export const gridList: Array<TGrid> = [
         id: "col_insiz2",
         field: "insiz",
         caption: "규격",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_proccd2",
@@ -245,19 +245,19 @@ export const gridList: Array<TGrid> = [
         id: "col_custnm2",
         field: "custnm",
         caption: "업체명",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_project",
         field: "project",
         caption: "공사명",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_prodmac3",
         field: "prodmac",
         caption: "설비",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_prodemp3",
@@ -311,7 +311,7 @@ export const gridList: Array<TGrid> = [
         id: "col_remark",
         field: "remark",
         caption: "비고",
-        width: 120,
+        width: 200,
       },
       {
         id: "col_location",
@@ -347,7 +347,7 @@ export const gridList: Array<TGrid> = [
         id: "col_itemno",
         field: "itemno",
         caption: "품번",
-        width: 120,
+        width: 150,
       },
     ],
   },

@@ -2684,9 +2684,7 @@ const BA_A0020_603: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      if (data.statusCode == "P_BA_A0020_S_001") {
-        alert(data.resultMessage);
-      }
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
