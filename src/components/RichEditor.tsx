@@ -315,7 +315,7 @@ const RichEditor = React.forwardRef(
         className={className + " editor-container"}
       >
         <Editor
-          style={{ height: "95%", marginTop: "4.6px" }}
+          style={{ height: "100%", marginTop: "4.6px" }}
           contentStyle={{ height: "100%" }}
           tools={
             hideTools

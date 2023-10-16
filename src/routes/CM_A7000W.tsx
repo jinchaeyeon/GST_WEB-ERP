@@ -1192,7 +1192,7 @@ const CM_A7000W: React.FC = () => {
                     </ButtonContainer>
                   </GridTitleContainer>
                   <Grid
-                    style={{ height: "75vh" }}
+                    style={{ height: "78vh" }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1292,7 +1292,7 @@ const CM_A7000W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <GridContainerWrap>
-            <GridContainer width="30%">
+            <GridContainer style={{ width: isMobile ? "" : `30%`}}>
               <GridTitleContainer>
                 <GridTitle>회의록</GridTitle>
               </GridTitleContainer>
@@ -1525,16 +1525,13 @@ const CM_A7000W: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
             </GridContainer>
-            <GridContainer
-              style={{ 
-                width: isMobile ? "" :`calc(70% - ${GAP}px)`, 
-                height: "80vh" 
-              }}
-            >
+            <GridContainer style={{ width: isMobile ? "" : `calc(70% - ${GAP}px)`}}>
               <GridTitleContainer>
                 <GridTitle>참고자료</GridTitle>
               </GridTitleContainer>
-              <RichEditor id="refEditor" ref={refEditorRef} />
+              <GridContainer style = {{ height: "76vh"}}>
+                <RichEditor id="refEditor" ref={refEditorRef} />
+              </GridContainer>
             </GridContainer>
           </GridContainerWrap>
         </TabStripTab>

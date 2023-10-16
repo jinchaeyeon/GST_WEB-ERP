@@ -1467,10 +1467,9 @@ const CM_A5000W: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>답변</GridTitle>
               </GridTitleContainer>
-              <GridContainer style={{ height: "68.9vh"}}>
-                <RichEditor id="docEditor" ref={docEditorRef1} hideTools/>
-              </GridContainer>
-              <FormBoxWrap border={true}>
+              <GridContainer style = {{ height: "68.5vh"}}>
+                <RichEditor id="docEditor" ref={docEditorRef1} hideTools />
+                <FormBoxWrap border={true}>
                 <FormBox>
                   <tbody>
                     <tr>
@@ -1495,6 +1494,7 @@ const CM_A5000W: React.FC = () => {
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
+              </GridContainer>
             </GridContainer>
           </GridContainerWrap>
         </TabStripTab>
