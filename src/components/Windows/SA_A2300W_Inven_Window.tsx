@@ -61,6 +61,7 @@ import ItemsWindow from "./CommonWindows/ItemsWindow";
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
+  modal?: boolean;
 };
 
 const topHeight = 180.13;
@@ -68,7 +69,7 @@ const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
 let temp = 0;
 
-const CopyWindow = ({ setVisible, setData }: IWindow) => {
+const CopyWindow = ({ setVisible, setData, modal=false}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -953,6 +954,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
+        modal={modal}
       >
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>

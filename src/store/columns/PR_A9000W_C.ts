@@ -20,7 +20,7 @@ export const gridList: Array<TGrid> = [
         id: "col_itemcd",
         field: "itemcd",
         caption: "품목코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_itemnm",
@@ -50,7 +50,7 @@ export const gridList: Array<TGrid> = [
         id: "col_insiz",
         field: "insiz",
         caption: "규격",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_lotnum",
@@ -74,7 +74,7 @@ export const gridList: Array<TGrid> = [
         id: "col_planno",
         field: "planno",
         caption: "생산계획번호",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_planseq",
@@ -86,7 +86,7 @@ export const gridList: Array<TGrid> = [
         id: "col_remark",
         field: "remark",
         caption: "비고",
-        width: 100,
+        width: 200,
       },
     ],
   },
@@ -115,7 +115,7 @@ export const gridList: Array<TGrid> = [
         id: "col_itemcd2",
         field: "itemcd",
         caption: "품목코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_itemnm2",
@@ -151,7 +151,7 @@ export const gridList: Array<TGrid> = [
         id: "col_lotnum2",
         field: "lotnum",
         caption: "LOT번호",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_qty2",
@@ -169,7 +169,7 @@ export const gridList: Array<TGrid> = [
         id: "col_planno2",
         field: "planno",
         caption: "생산계획번호",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_planseq2",
@@ -181,7 +181,7 @@ export const gridList: Array<TGrid> = [
         id: "col_remark2",
         field: "remark",
         caption: "비고",
-        width: 100,
+        width: 200,
       },
       {
         id: "col_len",

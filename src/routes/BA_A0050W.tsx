@@ -427,8 +427,6 @@ const BA_A0050: React.FC = () => {
   UsePermissions(setPermissions);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
-  let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 1200;
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -2087,12 +2085,24 @@ const BA_A0050: React.FC = () => {
       );
       
       minGridWidth3.current += 50;
-      setGridCurrent(grid.current.clientWidth);
-      setGridCurrent2(grid2.current.clientWidth);
-      setGridCurrent3(grid3.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-      setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
-      setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
+      if (grid.current) {
+        setGridCurrent(grid.current.clientWidth);
+      }
+      if (grid2.current) {
+        setGridCurrent2(grid2.current.clientWidth);
+      }
+      if (grid3.current) {
+        setGridCurrent3(grid3.current.clientWidth);
+      }
+      if (grid.current) {
+        setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
+      }
+      if (grid2.current) {
+        setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
+      }
+      if (grid3.current) {
+        setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
+      }
     }
   }, [customOptionData]);
 

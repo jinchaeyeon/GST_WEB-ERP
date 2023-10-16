@@ -1,73 +1,77 @@
-import { useEffect, useState, useCallback } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { useTableKeyboardNavigation } from "@progress/kendo-react-data-tools";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
+  GRID_COL_INDEX_ATTRIBUTE,
   Grid,
-  GridColumn,
-  GridFooterCellProps,
   GridCellProps,
-  GridEvent,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridDataStateChangeEvent,
-  GRID_COL_INDEX_ATTRIBUTE,
-  GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import ItemsWindow from "./CommonWindows/ItemsWindow";
-import { useApi } from "../../hooks/api";
+import * as React from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
+  ButtonInInput,
   FilterBox,
   GridContainer,
   TitleContainer,
-  ButtonInInput,
 } from "../../CommonStyled";
-import { Checkbox, Input } from "@progress/kendo-react-inputs";
+import { useApi } from "../../hooks/api";
+import { IWindowPosition } from "../../hooks/interfaces";
+import { isLoading, loginResultState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
-import FilterContainer from "../Containers/FilterContainer";
+import NumberCell from "../Cells/NumberCell";
 import {
-  chkScrollHandler,
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
+  convertDateToStr,
+  getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
-  convertDateToStr,
-  getGridItemChangedData,
-  GetPropertyValueByName,
 } from "../CommonFunction";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoading, loginResultState } from "../../store/atoms";
-import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
-import NumberCell from "../Cells/NumberCell";
-import { useTableKeyboardNavigation } from "@progress/kendo-react-data-tools";
-import { CellRender, RowRender } from "../Renderers/Renderers";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
+import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
+import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
+import { CellRender, RowRender } from "../Renderers/Renderers";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
 
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
+  modal: boolean;
 };
 
-const CopyWindow = ({ setVisible, setData }: IWindow) => {
+const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1200,
+    width: isMobile == true ? deviceWidth : 1200,
     height: 730,
   });
   const DATA_ITEM_KEY = "num";
-  const DATA_ITEM_KEY2 = "num";
   const idGetter = getter(DATA_ITEM_KEY);
-  const idGetter2 = getter(DATA_ITEM_KEY2);
   const setLoading = useSetRecoilState(isLoading);
 
   const [loginResult] = useRecoilState(loginResultState);
@@ -81,11 +85,31 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
@@ -172,10 +196,8 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
-  const [mainPgNum, setMainPgNum] = useState(1);
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -211,7 +233,6 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
   const onClose = () => {
     setVisible(false);
   };
-
 
   const onItemWndClick = () => {
     setItemWindowVisible(true);
@@ -278,36 +299,34 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     zeroyn: "",
     lotnum: "",
     find_row_value: "",
-    scrollDirrection: "down",
     pgNum: 1,
     isSearch: true,
-    pgGap: 0,
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_PR_P9001W_Q",
-    pageNumber: filters.pgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": filters.workType,
-      "@p_orgdiv": "01",
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_insiz": filters.insiz,
-      "@p_zeroyn": filters.zeroyn,
-      "@p_lotnum": filters.lotnum,
-      "@p_companyCode": companyCode,
-    },
-  };
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_PR_P9001W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.workType,
+        "@p_orgdiv": "01",
+        "@p_location": filters.location,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_itemcd": filters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_insiz": filters.insiz,
+        "@p_zeroyn": filters.zeroyn,
+        "@p_lotnum": filters.lotnum,
+        "@p_companyCode": companyCode,
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -321,19 +340,14 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
           ...row,
         };
       });
-
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
       if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
-        if (filters.find_row_value === "" && filters.pgNum === 1) {
-          // 첫번째 행 선택하기
-          const firstRowData = rows[0];
-          setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
-        }
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
     } else {
       console.log("[오류 발생]");
@@ -341,6 +355,10 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     }
     setFilters((prev) => ({
       ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
       isSearch: false,
     }));
     setLoading(false);
@@ -348,44 +366,19 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      customOptionData != null &&
-      filters.isSearch &&
-      bizComponentData !== null
-    ) {
-      setFilters((prev) => ({ ...prev, isSearch: false }));
-      fetchMainGrid();
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({
+        ...prev,
+        pgNum: 1,
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
 
   let gridRef: any = React.useRef(null);
-
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    if (customOptionData !== null) {
-      // 저장 후, 선택 행 스크롤 유지 처리
-      if (filters.find_row_value !== "" && mainDataResult.total > 0) {
-        const ROW_HEIGHT = 35.56;
-        const idx = mainDataResult.data.findIndex(
-          (item) => idGetter(item) === filters.find_row_value
-        );
-
-        const scrollHeight = ROW_HEIGHT * idx;
-        gridRef.container.scroll(0, scrollHeight);
-
-        //초기화
-        setFilters((prev) => ({
-          ...prev,
-          find_row_value: "",
-        }));
-      }
-      // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
-      // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
-      else if (filters.scrollDirrection === "up") {
-        gridRef.container.scroll(0, 20);
-      }
-    }
-  }, [mainDataResult]);
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -395,47 +388,11 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
   };
 
   //그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-  };
-
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
-    let pgNumWithGap =
-      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
-
-    // 스크롤 최하단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "down",
-        pgNum: pgNumWithGap + 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-      return false;
-    }
-
-    pgNumWithGap =
-      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
-    // 스크롤 최상단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "up",
-        pgNum: pgNumWithGap - 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-    }
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -518,6 +475,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     );
     return array;
   };
+
   const CustomCheckBoxCell = (props: GridCellProps) => {
     const navigationAttributes = useTableKeyboardNavigation(props.id);
     const field = props.field || "";
@@ -528,7 +486,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
-        chk: !item.chk,
+              chk: !item.chk,
               [EDIT_FIELD]: props.field,
             }
           : {
@@ -634,14 +592,17 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
-        modal={true}
+        modal={modal}
       >
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
               onClick={() => {
                 resetAllGrid();
-                fetchMainGrid();
+                setFilters((prev) => ({
+                  ...prev,
+                  isSearch: true,
+                }));
               }}
               icon="search"
               themeColor={"primary"}
@@ -764,7 +725,13 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
             //스크롤 조회기능
             fixedScroll={true}
             total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}
@@ -810,7 +777,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
               width="150px"
               locked={true}
             />
-            <GridColumn field="insiz" title="규격" width="200px" />
+            <GridColumn field="insiz" title="규격" width="150px" />
             <GridColumn field="proccd" title="공정" width="120px" />
             <GridColumn field="qtyunit" title="단위" width="120px" />
             <GridColumn
