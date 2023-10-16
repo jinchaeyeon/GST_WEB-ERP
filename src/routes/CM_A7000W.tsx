@@ -100,6 +100,7 @@ const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 const DateField = ["recdt"];
 const attdatnumField = ["files"];
+let reference = "";
 
 export const FormContext = createContext<{
   attdatnum: string;
@@ -692,7 +693,10 @@ const CM_A7000W: React.FC = () => {
     let data: any;
     setLoading(true);
 
-    //조회조건 파라미터
+    if (mainDataResult.total < 0) {
+      return false;
+    }
+    
     const mainDataId = Object.getOwnPropertyNames(selectedState)[0];
     const selectedRowData = mainDataResult.data.find(
       (item) => item[DATA_ITEM_KEY] == mainDataId
@@ -712,16 +716,12 @@ const CM_A7000W: React.FC = () => {
     }
 
     if (data !== null && data.document !== "") {
-      const reference = data.document;
-
+      reference = data.document;
       // Edior에 HTML & CSS 세팅
       if (refEditorRef.current) {
         refEditorRef.current.setHtml(reference);
       }
     } else {
-      console.log("[에러발생]");
-      console.log(data);
-
       if (refEditorRef.current) {
         refEditorRef.current.setHtml("");
       }
@@ -814,7 +814,9 @@ const CM_A7000W: React.FC = () => {
   };
 
   const onRowDoubleClick = (event: GridRowDoubleClickEvent) => {
-    const selectedRowData = event.dataItem;
+    const selectedRowData = mainDataResult.data.find(
+      (item) => item[DATA_ITEM_KEY] == event.dataItem.num
+    );
 
     setSelectedState({ [selectedRowData[DATA_ITEM_KEY]]: true });
     setTabSelected(1);
@@ -844,7 +846,6 @@ const CM_A7000W: React.FC = () => {
 
   //저장 파라미터 초기 값
   const [paraDataSaved, setParaDataSaved] = useState({
-    fileBytes: "",
     workType: "",
     orgdiv: orgdiv,
     meetingnum: "",
@@ -887,15 +888,7 @@ const CM_A7000W: React.FC = () => {
 
     if (!valid) return false;
 
-    let editorContent: any = "";
-    if (refEditorRef.current) {
-      editorContent = refEditorRef.current.getContent();
-    }
-    const bytes = require("utf8-bytes");
-    const convertedEditorContent = bytesToBase64(bytes(editorContent));
-
     setParaDataSaved({
-      fileBytes: convertedEditorContent,
       workType: workType,
       orgdiv: orgdiv,
       meetingnum: information.meetingnum,
@@ -925,9 +918,25 @@ const CM_A7000W: React.FC = () => {
     }
   }, [paraDataSaved]);
 
+  useEffect(() => {
+    if (workType != "" && workType == "U") {
+      fetchDetail();
+    }
+  }, [workType]);
+
   const fetchTodoGridSaved = async () => {
     let data: any;
     setLoading(true);
+
+    let editorContent: any = "";
+      if (refEditorRef.current) {
+        editorContent = refEditorRef.current.getContent();
+      }
+      const bytes = require("utf8-bytes");
+      const convertedEditorContent = 
+        workType == "D" 
+          ? bytesToBase64(bytes(reference)) 
+          : bytesToBase64(bytes(editorContent));
 
     const para = {
       procedureName: "P_CM_A7000W_S",
@@ -955,7 +964,7 @@ const CM_A7000W: React.FC = () => {
         "@p_pc": pc,
         "@p_form_id": "CM_A7000W",
       },
-      fileBytes: paraDataSaved.fileBytes,
+      fileBytes: convertedEditorContent,
     };
 
     try {
@@ -969,6 +978,7 @@ const CM_A7000W: React.FC = () => {
         setTabSelected(0);
       } else {
         setTabSelected(1);
+        fetchDetail();
       }
 
       resetAllGrid();
@@ -978,7 +988,6 @@ const CM_A7000W: React.FC = () => {
         find_row_value: data.returnString,
         isSearch: true,
       }));
-      fetchDetail();
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1517,7 +1526,10 @@ const CM_A7000W: React.FC = () => {
               </FormBoxWrap>
             </GridContainer>
             <GridContainer
-              style={{ width: `calc(70% - ${GAP}px)`, height: "80vh" }}
+              style={{ 
+                width: isMobile ? "" :`calc(70% - ${GAP}px)`, 
+                height: "80vh" 
+              }}
             >
               <GridTitleContainer>
                 <GridTitle>참고자료</GridTitle>
@@ -1558,6 +1570,13 @@ const CM_A7000W: React.FC = () => {
           modal={true}
         />
       )}
+      {signWindowVisible && (
+        <SignWindow
+          setVisible={setSignWindowVisible}
+          reference_key={filters.orgdiv + "_" + information.meetingnum}
+          modal={true}
+        />
+      )}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
@@ -1570,13 +1589,6 @@ const CM_A7000W: React.FC = () => {
             hidden
           />
         ))
-      )}
-      {signWindowVisible && (
-        <SignWindow
-          setVisible={setSignWindowVisible}
-          reference_key={filters.orgdiv + "_" + information.meetingnum}
-          modal={true}
-        />
       )}
     </>
   );
