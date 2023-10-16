@@ -1,77 +1,28 @@
-import { useEffect, useState, useCallback } from "react";
-import * as React from "react";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import {
-  Grid,
-  GridColumn,
-  GridFooterCellProps,
-  GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridDataStateChangeEvent,
-  GridItemChangeEvent,
-  GridCellProps,
-} from "@progress/kendo-react-grid";
-import { TextArea } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
-import CopyWindow2 from "./MA_A2400W_Plan_Window";
-import { useApi } from "../../hooks/api";
+import { Input } from "@progress/kendo-react-inputs";
+import { useState } from "react";
 import {
   BottomContainer,
   ButtonContainer,
-  GridContainer,
-  Title,
-  TitleContainer,
-  ButtonInInput,
-  GridTitleContainer,
-  FormBoxWrap,
   FormBox,
-  GridTitle,
+  FormBoxWrap
 } from "../../CommonStyled";
-import { useRecoilState } from "recoil";
-import { Input } from "@progress/kendo-react-inputs";
-import { Iparameters } from "../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
-import {
-  chkScrollHandler,
-  UseBizComponent,
-  UseCustomOption,
-  UseMessages,
-  getQueryFromBizComponent,
-  UseParaPc,
-  toDate,
-  convertDateToStr,
-  getGridItemChangedData,
-  dateformat,
-  isValidDate,
-  findMessage,
-} from "../CommonFunction";
-import { CellRender, RowRender } from "../Renderers/Renderers";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { loginResultState } from "../../store/atoms";
-import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import NumberCell from "../Cells/NumberCell";
-import DateCell from "../Cells/DateCell";
-import { FormComboBoxCell, FormComboBox } from "../Editors";
-import ComboBoxCell from "../Cells/ComboBoxCell";
-import { NumberInput } from "adaptivecards";
+import { useApi } from "../../hooks/api";
+import { IWindowPosition } from "../../hooks/interfaces";
 type IWindow = {
   setVisible(t: boolean): void;
   setData(amt: number): void;
+  modal?: boolean;
 };
 
-const CopyWindow = ({ setVisible, setData }: IWindow) => {
+const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 400,
+    width: isMobile == true ? deviceWidth : 400,
     height: 230,
   });
 
@@ -122,9 +73,9 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
-        modal={true}
+        modal={modal}
       >
-        <FormBoxWrap style={{paddingRight: "70px"}}>
+        <FormBoxWrap style={{ paddingRight: "70px" }}>
           <FormBox>
             <tbody>
               <tr>
@@ -142,7 +93,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
           </FormBox>
         </FormBoxWrap>
         <BottomContainer>
-          <ButtonContainer style={{paddingRight: "70px"}}>
+          <ButtonContainer style={{ paddingRight: "70px" }}>
             <Button themeColor={"primary"} onClick={selectData}>
               저장
             </Button>

@@ -8,13 +8,13 @@ export const gridList: Array<TGrid> = [
         id: "col_prsnnum",
         field: "prsnnum",
         caption: "사번",
-        width: 200,
+        width: 150,
       },
       {
         id: "col_prsnnm",
         field: "prsnnm",
         caption: "설명",
-        width: 200,
+        width: 150,
       },
       {
         id: "col_wrkday",
@@ -68,7 +68,7 @@ export const gridList: Array<TGrid> = [
         id: "col_yeruse",
         field: "yeruse",
         caption: "연차사용일수",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_extrawork",
@@ -88,7 +88,7 @@ export const gridList: Array<TGrid> = [
         caption: "특근야간",
         width: 100,
       },
-    ]
+    ],
   },
   {
     gridName: "grdList2",
@@ -103,7 +103,7 @@ export const gridList: Array<TGrid> = [
         id: "col_setime",
         field: "setime",
         caption: "출퇴근시간",
-        width: 200,
+        width: 150,
       },
       {
         id: "col_wrkday2",
@@ -175,8 +175,8 @@ export const gridList: Array<TGrid> = [
         id: "col_remark",
         field: "remark",
         caption: "비고",
-        width: 250,
+        width: 200,
       },
-    ]
+    ],
   },
 ];

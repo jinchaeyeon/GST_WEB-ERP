@@ -20,13 +20,13 @@ export const gridList: Array<TGrid> = [
         id: "col_prsnnum",
         field: "prsnnum",
         caption: "사번",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_prsnnm",
         field: "prsnnm",
         caption: "성명",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_amt",
@@ -38,7 +38,7 @@ export const gridList: Array<TGrid> = [
         id: "col_remark",
         field: "remark",
         caption: "비고",
-        width: 250,
+        width: 200,
       },
       {
         id: "col_insert_userid",
@@ -56,7 +56,7 @@ export const gridList: Array<TGrid> = [
         id: "col_insert_pc",
         field: "insert_pc",
         caption: "등록PC",
-        width: 250,
+        width: 200,
       },
       {
         id: "col_update_userid",
@@ -74,7 +74,7 @@ export const gridList: Array<TGrid> = [
         id: "col_update_pc",
         field: "update_pc",
         caption: "수정PC",
-        width: 250,
+        width: 200,
       },
     ]
   },

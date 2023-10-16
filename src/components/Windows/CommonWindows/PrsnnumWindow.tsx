@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
-  GridFooterCellProps,
-  GridEvent,
   GridDataStateChangeEvent,
-  getSelectedState,
+  GridFooterCellProps,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import { DataResult, process, State, getter } from "@progress/kendo-data-query";
-import { useApi } from "../../../hooks/api";
+import { Input } from "@progress/kendo-react-inputs";
+import { useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -20,18 +21,13 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import { Input } from "@progress/kendo-react-inputs";
-import { Iparameters } from "../../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
-import { IWindowPosition, TCommonCodeData } from "../../../hooks/interfaces";
-import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
-import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
-import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
-import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../../store/atoms";
-import { handleKeyPressSearch } from "../../CommonFunction";
 import FilterContainer from "../../../components/Containers/FilterContainer";
+import { useApi } from "../../../hooks/api";
+import { IWindowPosition } from "../../../hooks/interfaces";
+import { isLoading } from "../../../store/atoms";
+import { Iparameters } from "../../../store/types";
+import { UseBizComponent, handleKeyPressSearch } from "../../CommonFunction";
+import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 type IKendoWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void;
@@ -66,7 +62,22 @@ const KendoWindow = ({
     //업체구분, 사용여부,
     setBizComponentData
   );
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
 
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+  const [page, setPage] = useState(initialPageState);
   const idGetter = getter(DATA_ITEM_KEY);
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -92,14 +103,6 @@ const KendoWindow = ({
     }));
   };
 
-  //조회조건 DropDownList Change 함수 => 사용자가 선택한 드롭다운리스트 값을 조회 파라미터로 세팅
-  const filterDropDownListChange = (name: string, data: TCommonCodeData) => {
-    setFilters((prev) => ({
-      ...prev,
-      [name]: data.sub_code,
-    }));
-  };
-
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
   };
@@ -121,7 +124,6 @@ const KendoWindow = ({
     sort: [],
   });
 
-  const [mainPgNum, setMainPgNum] = useState(1);
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -133,33 +135,30 @@ const KendoWindow = ({
     rtrchk: "Y",
     user_id: "",
     user_name: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
   });
 
-  //팝업 조회 파라미터
-  const parameters = {
-    para:
-      "popup-data?id=" +
-      "P_USERS" +
-      "&page=" +
-      mainPgNum +
-      "&pageSize=" +
-      PAGE_SIZE,
-    dptcd: filters.dptcd,
-    orgdiv: filters.orgdiv,
-    rtrchk: filters.rtrchk,
-    user_id: filters.user_id,
-    user_name: filters.user_name,
-  };
-
-  useEffect(() => {
-    fetchMainGrid();
-  }, [mainPgNum]);
-
   //요약정보 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     let data: any;
     setLoading(true);
-
+    //팝업 조회 파라미터
+    const parameters = {
+      para:
+        "popup-data?id=" +
+        "P_USERS" +
+        "&page=" +
+        filters.pgNum +
+        "&pageSize=" +
+        PAGE_SIZE,
+      dptcd: filters.dptcd,
+      orgdiv: filters.orgdiv,
+      rtrchk: filters.rtrchk,
+      user_id: filters.user_id,
+      user_name: filters.user_name,
+    };
     try {
       data = await processApi<any>("popup-data", parameters);
     } catch (error) {
@@ -169,31 +168,42 @@ const KendoWindow = ({
     if (data !== null) {
       const totalRowCnt = data.data.TotalRowCount;
       const rows = data.data.Rows;
-
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
       if (totalRowCnt) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
     } else {
       console.log(data);
     }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
+  useEffect(() => {
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+    }
+  }, [filters]);
+
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
     setMainDataResult(process([], mainDataState));
-  };
-
-  //스크롤 핸들러 => 한번에 pageSize만큼 조회
-  const onScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
   };
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
@@ -235,16 +245,26 @@ const KendoWindow = ({
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
 
   const search = () => {
     resetAllGrid();
-    fetchMainGrid();
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+    }));
   };
 
   return (
@@ -260,14 +280,7 @@ const KendoWindow = ({
       <TitleContainer>
         <Title />
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              resetAllGrid();
-              fetchMainGrid();
-            }}
-            icon="search"
-            themeColor={"primary"}
-          >
+          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
             조회
           </Button>
         </ButtonContainer>
@@ -321,7 +334,10 @@ const KendoWindow = ({
           //스크롤 조회 기능
           fixedScroll={true}
           total={mainDataResult.total}
-          onScroll={onScrollHandler}
+          skip={page.skip}
+          take={page.take}
+          pageable={true}
+          onPageChange={pageChange}
           //정렬기능
           sortable={true}
           onSortChange={onMainSortChange}
