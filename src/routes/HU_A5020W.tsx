@@ -210,6 +210,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
           setVisible={setPrsnnumWindowVisible}
           workType={"FILTER"}
           setData={setPrsnnumData}
+          modal={true}
         />
       )}
     </>

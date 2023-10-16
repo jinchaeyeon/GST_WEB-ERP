@@ -42,15 +42,18 @@ interface IPrsnnumMulti {
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: IPrsnnumMulti): void; //data : 선택한 품목 데이터를 전달하는 함수
+  modal? :boolean;
 };
 
 const DATA_ITEM_KEY = "prsnnum";
 
-const UserWindow = ({ setVisible, setData }: IWindow) => {
+const UserWindow = ({ setVisible, setData, modal = false}: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 830,
+    width: isMobile == true ? deviceWidth : 830,
     height: 1200,
   });
 
@@ -296,6 +299,7 @@ const UserWindow = ({ setVisible, setData }: IWindow) => {
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={modal}
     >
       <TitleContainer>
         <Title></Title>

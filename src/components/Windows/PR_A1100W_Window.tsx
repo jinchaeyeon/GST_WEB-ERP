@@ -440,15 +440,13 @@ const KendoWindow = ({
   UseCustomOption(pathname, setCustomOptionData);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  // 리스트 데이터 조회 (품목계정)
-  const [itemacntListData, setItemacntListData] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
 
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1200,
+    width: isMobile == true ? deviceWidth : 1200,
     height: 800,
   });
 

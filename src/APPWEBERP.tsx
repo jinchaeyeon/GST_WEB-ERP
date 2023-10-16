@@ -149,6 +149,7 @@ import SA_A1000_603W from "./routes/SA_A1000_603W";
 import SA_A2000W from "./routes/SA_A2000W";
 import SA_A2010W from "./routes/SA_A2010W";
 import SA_A2300W from "./routes/SA_A2300W";
+import SA_A2300W_PDA from "./routes/SA_A2300W_PDA";
 import SA_A3000W from "./routes/SA_A3000W";
 import SA_A5000W from "./routes/SA_A5000W";
 import SA_A5001W from "./routes/SA_A5001W";
@@ -655,6 +656,10 @@ const AppInner: React.FC = () => {
                     exact
                   />
                   <AuthRoute path="/CM_A5000W" component={CM_A5000W} exact />
+
+                  {/* PDA */}
+                  <AuthRoute path="/SA_A2300W_PDA" component={SA_A2300W_PDA} exact />
+
                   {/* 에러페이지 */}
                   <AuthRoute path="/Error" component={NotFound} exact />
                 </PanelBarNavContainerWEBERP>
