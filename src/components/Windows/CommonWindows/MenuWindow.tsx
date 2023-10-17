@@ -1,3 +1,5 @@
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
@@ -9,12 +11,13 @@ import {
   getSelectedState,
   mapTree,
 } from "@progress/kendo-react-treelist";
-import { useCallback, useEffect, useState, MouseEvent } from "react";
+import { bytesToBase64 } from "byte-base64";
+import { MouseEvent, useCallback, useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import { BottomContainer, ButtonContainer } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
-import { Iparameters } from "../../../store/types";
 import {
   EDIT_FIELD,
   EXPANDED_FIELD,
@@ -26,6 +29,17 @@ let deletedMainRows: any[] = [];
 
 const ALL_MENU_DATA_ITEM_KEY = "KeyID";
 const SUB_ITEMS_FIELD: string = "menus";
+
+const menuQueryStr = `SELECT menu_id AS KeyID,
+parent_menu_id AS ParentKeyID,
+menu_name,
+category,
+form_id,
+sort_order
+FROM sysMenuPool
+WHERE category <> 'FORM'
+AND parent_menu_id <> ''
+AND release_status = 'R'`;
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
@@ -70,13 +84,18 @@ const KendoWindow = ({
     { field: "menu_name", title: "메뉴명", expandable: true },
     { field: "form_id", title: "Form ID", expandable: false },
   ];
-
+  const [detailDataState, setDetailDataState] = useState<State>({
+    sort: [],
+  });
   const [allMenuDataResult, setAllMenuDataResult] = useState<any>({
     data: [],
     expanded: ["M2022062210224011070"],
     editItem: undefined,
     editItemField: undefined,
   });
+  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
+    process([], detailDataState)
+  );
 
   const [allMenuSelectedState, setAllMenuSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -100,28 +119,21 @@ const KendoWindow = ({
     let data: any;
     setLoading(true);
 
-    const allMenuParameters: Iparameters = {
-      procedureName: "P_SY_A0011W_Q ",
-      pageNumber: 1,
-      pageSize: 500,
-      parameters: {
-        "@p_work_type": "ALL",
-        "@p_user_group_id": filter.user_group_id,
-        "@p_user_group_name": filter.user_group_name,
-        "@p_culture_name": filter.lang_id,
-        "@p_use_yn": filter.use_yn,
-        "@p_find_row_value": "",
-      },
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(menuQueryStr));
+
+    let query = {
+      query: convertedQueryStr,
     };
 
     try {
-      data = await processApi<any>("procedure", allMenuParameters);
+      data = await processApi<any>("query", query);
     } catch (error) {
       data = null;
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
+      const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0) {
@@ -135,6 +147,12 @@ const KendoWindow = ({
         setAllMenuDataResult({
           ...allMenuDataResult,
           data: dataTree,
+        });
+        setDetailDataResult((prev) => {
+          return {
+            data: rows,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
+          };
         });
         if (totalRowCnt > 0) {
           const selectedRow =
@@ -153,18 +171,16 @@ const KendoWindow = ({
         // 앱 메뉴 (최상위 메뉴) 없을 시 데이터 세팅
         // 드래그앤드롭 사용 시 그리드 내 데이터 최소 1개 필요함
 
-        const appMenuData = rows.find((item: any) => item.ParentKeyID === "");
-
         const appMenuRow = [
           {
-            KeyID: appMenuData.KeyID,
-            ParentKeyID: appMenuData.ParentKeyID,
+            KeyID: "",
+            ParentKeyID: "",
             form_delete_yn: "Y",
             form_id: "",
             form_print_yn: "Y",
             form_save_yn: "Y",
             form_view_yn: "Y",
-            menu_name: appMenuData.menu_name,
+            menu_name: "",
             path: "",
             row_state: "Q",
             sort_order: 0,
@@ -242,9 +258,20 @@ const KendoWindow = ({
     setVisible(false);
   };
 
+  const onConfirmClick = () => {
+    const datas = detailDataResult.data.filter(
+      (item) =>
+        item[ALL_MENU_DATA_ITEM_KEY] ==
+        Object.getOwnPropertyNames(allMenuSelectedState)[0]
+    )[0];
+    reloadData(datas);
+    setVisible(false);
+  };
+
   const Menus = (event: MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
   };
+
   return (
     <div onClick={Menus}>
       <Window
@@ -284,6 +311,20 @@ const KendoWindow = ({
           onRowDoubleClick={onRowDoubleClick}
           columns={allMenuColumns}
         ></TreeList>
+        <BottomContainer>
+          <ButtonContainer>
+            <Button themeColor={"primary"} onClick={onConfirmClick}>
+              확인
+            </Button>
+            <Button
+              themeColor={"primary"}
+              fillMode={"outline"}
+              onClick={onClose}
+            >
+              취소
+            </Button>
+          </ButtonContainer>
+        </BottomContainer>
       </Window>
     </div>
   );

@@ -1,3 +1,22 @@
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
+import {
+  Grid,
+  GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
+import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
+import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import { bytesToBase64 } from "byte-base64";
 import React, {
   createContext,
   useCallback,
@@ -6,77 +25,58 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { useSetRecoilState } from "recoil";
 import {
-  Grid,
-  GridColumn,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridPageChangeEvent,
-  GridDataStateChangeEvent,
-  GridFooterCellProps,
-  GridItemChangeEvent,
-  GridCellProps,
-} from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import {
-  Title,
+  ButtonContainer,
+  ButtonInGridInput,
   FilterBox,
   GridContainer,
-  GridTitle,
-  TitleContainer,
-  ButtonContainer,
-  GridTitleContainer,
   GridContainerWrap,
-  ButtonInGridInput,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import FilterContainer from "../components/Containers/FilterContainer";
-import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions, TColumn, TGrid } from "../store/types";
-import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import {
-  convertDateToStr,
-  UsePermissions,
-  UseGetValueFromSessionItem,
-  UseCustomOption,
-  setDefaultDate,
-  handleKeyPressSearch,
-  dateformat,
-  findMessage,
-  UseMessages,
-  getGridItemChangedData,
-  UseParaPc,
-  UseBizComponent,
-  getQueryFromBizComponent,
-  GetPropertyValueByName,
-} from "../components/CommonFunction";
+import TopButtons from "../components/Buttons/TopButtons";
+import Calendar from "../components/Calendars/Calendar";
+import YearCalendar from "../components/Calendars/YearCalendar";
+import CenterCell from "../components/Cells/CenterCell";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
-import { gridList } from "../store/columns/HU_B4000W_C";
-import {
-  SELECTED_FIELD,
-  PAGE_SIZE,
-  GAP,
-  EDIT_FIELD,
-} from "../components/CommonString";
-import TopButtons from "../components/Buttons/TopButtons";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
-import Calendar from "../components/Calendars/Calendar";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import CenterCell from "../components/Cells/CenterCell";
-import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import YearDateCell from "../components/Cells/YearDateCell";
-import YearCalendar from "../components/Calendars/YearCalendar";
-import { Button } from "@progress/kendo-react-buttons";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  UsePermissions,
+  convertDateToStr,
+  dateformat,
+  findMessage,
+  getGridItemChangedData,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+  setDefaultDate,
+} from "../components/CommonFunction";
+import {
+  EDIT_FIELD,
+  GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
+import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
-import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
-import { bytesToBase64 } from "byte-base64";
+import UserWindow from "../components/Windows/CommonWindows/UserWindow";
+import { useApi } from "../hooks/api";
+import { isLoading } from "../store/atoms";
+import { gridList } from "../store/columns/HU_B4000W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY_USE = "prsnnum";
 const DATA_ITEM_KEY_USE_DETAIL = "startdate";
@@ -93,9 +93,12 @@ let temp = 0;
 let deletedMainRows: object[] = [];
 
 interface IPrsnnum {
-  user_id: string;
-  user_name: string;
-};
+  prsnnum: string;
+  prsnnm: string;
+  dptcd: string;
+  abilcd: string;
+  postcd: string;
+}
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -169,8 +172,8 @@ const ColumnCommandCell = (props: GridCellProps) => {
   };
 
   const setPrsnnumData = (data: IPrsnnum) => {
-    setPrsnnum(data.user_id);
-    setPrsnnm(data.user_name);
+    setPrsnnum(data.prsnnum);
+    setPrsnnm(data.prsnnm);
   };
 
   const defaultRendering = (
@@ -202,10 +205,10 @@ const ColumnCommandCell = (props: GridCellProps) => {
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {prsnnumWindowVisible && (
-        <PrsnnumWindow
+        <UserWindow
           setVisible={setPrsnnumWindowVisible}
-          workType={"FILTER"}
           setData={setPrsnnumData}
+          modal={true}
         />
       )}
     </>
@@ -265,7 +268,10 @@ const HU_B4000W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
@@ -277,29 +283,30 @@ const HU_B4000W: React.FC = () => {
       setAdjFilters((prev) => ({
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
-        prsnnum_adj: defaultOption.find((item: any) => item.id === "prsnnum_adj")
-        .valueCode,
+        prsnnum_adj: defaultOption.find(
+          (item: any) => item.id === "prsnnum_adj"
+        ).valueCode,
         adjdiv: defaultOption.find((item: any) => item.id === "adjdiv")
-        .valueCode,
+          .valueCode,
       }));
     }
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_sysUserMaster_001",
+    "L_HU250T",
     //등록자
     setBizComponentData
   );
 
   const [personListData, setPersonListData] = useState([
-    { user_id: "", user_name: ""},
+    { prsnnum: "", prsnnm: "" },
   ]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
       const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_sysUserMaster_001")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_HU250T")
       );
 
       fetchQuery(personQueryStr, setPersonListData);
@@ -410,7 +417,7 @@ const HU_B4000W: React.FC = () => {
   const [commuteDataResult, setCommuteDataResult] = useState<DataResult>(
     process([], commuteDataState)
   );
-  
+
   // 일지상세
   const [journalDataState, setJournalDataState] = useState<State>({
     sort: [],
@@ -526,7 +533,7 @@ const HU_B4000W: React.FC = () => {
         "@p_prsnnum": filters.cboPrsnnum,
         "@p_rtrchk": filters.radRtryn,
         "@p_yyyy": "",
-	      "@p_adjnm": "",
+        "@p_adjnm": "",
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -592,7 +599,6 @@ const HU_B4000W: React.FC = () => {
             prsnnum: selectedRow.prsnnum,
             isSearch: true,
           }));
-
         } else {
           setSelectedUserAdjState({ [rows[0][DATA_ITEM_KEY_USE]]: true });
         }
@@ -633,7 +639,7 @@ const HU_B4000W: React.FC = () => {
         "@p_prsnnum": subfilters.prsnnum,
         "@p_rtrchk": filters.radRtryn,
         "@p_yyyy": "",
-	      "@p_adjnm": "",
+        "@p_adjnm": "",
         "@p_find_row_value": subfilters.find_row_value,
       },
     };
@@ -678,9 +684,10 @@ const HU_B4000W: React.FC = () => {
 
       // 상세정보는 find_row_value가 없기 때문에 첫번재 행 선택 고정
       if (totalRowCnt > 0) {
-        setSelectedAdjDetailState({ [rows[0][DATA_ITEM_KEY_USE_DETAIL]]: true });
+        setSelectedAdjDetailState({
+          [rows[0][DATA_ITEM_KEY_USE_DETAIL]]: true,
+        });
       }
-
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -716,7 +723,7 @@ const HU_B4000W: React.FC = () => {
         "@p_prsnnum": subfilters2.prsnnum,
         "@p_rtrchk": filters.radRtryn,
         "@p_yyyy": "",
-	      "@p_adjnm": "",
+        "@p_adjnm": "",
         "@p_find_row_value": subfilters2.find_row_value,
       },
     };
@@ -763,7 +770,6 @@ const HU_B4000W: React.FC = () => {
       if (totalRowCnt > 0) {
         setSelectedCommutelState({ [rows[0][DATA_ITEM_KEY_COMMUTE]]: true });
       }
-
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -799,7 +805,7 @@ const HU_B4000W: React.FC = () => {
         "@p_prsnnum": subfilters3.prsnnum,
         "@p_rtrchk": filters.radRtryn,
         "@p_yyyy": "",
-	      "@p_adjnm": "",
+        "@p_adjnm": "",
         "@p_find_row_value": subfilters3.find_row_value,
       },
     };
@@ -846,7 +852,6 @@ const HU_B4000W: React.FC = () => {
       if (totalRowCnt > 0) {
         setSelectedJournalState({ [rows[0][DATA_ITEM_KEY_JOURNARL]]: true });
       }
-
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -882,7 +887,7 @@ const HU_B4000W: React.FC = () => {
         "@p_prsnnum": adjfilters.cboPrsnnum,
         "@p_rtrchk": "",
         "@p_yyyy": adjfilters.yyyy,
-	      "@p_adjnm": adjfilters.adjnm,
+        "@p_adjnm": adjfilters.adjnm,
         "@p_find_row_value": adjfilters.find_row_value,
       },
     };
@@ -901,7 +906,9 @@ const HU_B4000W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (grdAdjRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.yyyy + "-" + row.prsnnum + "-" + row.seq === adjfilters.find_row_value
+            (row: any) =>
+              row.yyyy + "-" + row.prsnnum + "-" + row.seq ===
+              adjfilters.find_row_value
           );
           adjRowIndex = findRowIndex;
         }
@@ -926,9 +933,13 @@ const HU_B4000W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-        adjfilters.find_row_value == ""
+          adjfilters.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.yyyy + "-" + row.prsnnum + "-" + row.seq == adjfilters.find_row_value);
+            : rows.find(
+                (row: any) =>
+                  row.yyyy + "-" + row.prsnnum + "-" + row.seq ==
+                  adjfilters.find_row_value
+              );
 
         if (selectedRow != undefined) {
           setSelectedAdjState({ [selectedRow[DATA_ITEM_KEY_ADJ]]: true });
@@ -965,29 +976,41 @@ const HU_B4000W: React.FC = () => {
     }
   }, [filters]);
 
-  useEffect(() => {   
+  useEffect(() => {
     if (subfilters.isSearch && subfilters.prsnnum) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters);
-      setSubFilters((prev) => ({...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      setSubFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
       fetchSubGrid(deepCopiedFilters);
     }
   }, [subfilters]);
 
-  useEffect(() => {   
+  useEffect(() => {
     if (subfilters2.isSearch && subfilters2.prsnnum) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters2);
-      setSubFilters2((prev) => ({...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      setSubFilters2((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
       fetchSubGrid2(deepCopiedFilters);
     }
   }, [subfilters2]);
 
-  useEffect(() => {   
+  useEffect(() => {
     if (subfilters3.isSearch && subfilters3.prsnnum) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subfilters3);
-      setSubFilters3((prev) => ({...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      setSubFilters3((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
       fetchSubGrid3(deepCopiedFilters);
     }
   }, [subfilters3]);
@@ -996,7 +1019,11 @@ const HU_B4000W: React.FC = () => {
     if (adjfilters.isSearch && permissions !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(adjfilters);
-      setAdjFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      setAdjFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
       fetchAdjGrid(deepCopiedFilters);
     }
   }, [adjfilters, permissions]);
@@ -1108,7 +1135,7 @@ const HU_B4000W: React.FC = () => {
   const onAdjDetailSortChange = (e: any) => {
     setAdjDetailDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-  
+
   const onCommuteSortChange = (e: any) => {
     setCommuteDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -1235,7 +1262,7 @@ const HU_B4000W: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY_USE,
     });
     setSelectedUserAdjState(newSelectedState);
-    
+
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
@@ -1313,15 +1340,15 @@ const HU_B4000W: React.FC = () => {
           convertDateToStr(filters.ymdFrdt).substring(6, 8) > "31" ||
           convertDateToStr(filters.ymdFrdt).substring(6, 8) < "01" ||
           convertDateToStr(filters.ymdFrdt).substring(6, 8).length != 2
-        ){
+        ) {
           throw findMessage(messagesData, "HU_B4000W_001");
         } else {
           resetAllGrid();
           setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
           setPage(initialPageState); // 페이지 초기화
-          setPage2(initialPageState); 
-          setPage3(initialPageState); 
-          setPage4(initialPageState); 
+          setPage2(initialPageState);
+          setPage3(initialPageState);
+          setPage4(initialPageState);
         }
       } catch (e) {
         alert(e);
@@ -1329,9 +1356,7 @@ const HU_B4000W: React.FC = () => {
     } else if (tabSelected == 1) {
       deletedMainRows = [];
       try {
-        if (
-          convertDateToStr(adjfilters.yyyy).substring(0, 4) < "1997"
-        ){
+        if (convertDateToStr(adjfilters.yyyy).substring(0, 4) < "1997") {
           throw findMessage(messagesData, "HU_B4000W_001");
         } else {
           resetAllGrid2();
@@ -1385,7 +1410,7 @@ const HU_B4000W: React.FC = () => {
       prsnnum: "",
       prsnm: "",
       adjdiv: "",
-      qty: "",
+      qty: 0,
       remark: "",
       recdt: convertDateToStr(new Date()),
       insert_userid: "",
@@ -1409,14 +1434,14 @@ const HU_B4000W: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
-           const newData2 = {
-             ...item,
-             rowstatus: "D",
-           };
-           deletedMainRows.push(newData2);
-         }
-         Object.push(index);
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows.push(newData2);
+        }
+        Object.push(index);
       }
     });
     if (Math.min(...Object) < Math.min(...Object2)) {
@@ -1452,14 +1477,14 @@ const HU_B4000W: React.FC = () => {
   });
 
   type TdataArr = {
-    rowstatus_s: string[],
-    yyyy_s: string[],
-    seq_s: string[],
-    prsnnum_s: string[],
-    recdt_s: string[],
-    qty_s: string[],
-    remark_s: string[],
-    adjdiv_s: string[],
+    rowstatus_s: string[];
+    yyyy_s: string[];
+    seq_s: string[];
+    prsnnum_s: string[];
+    recdt_s: string[];
+    qty_s: string[];
+    remark_s: string[];
+    adjdiv_s: string[];
   };
 
   const onSaveClick = () => {
@@ -1472,11 +1497,7 @@ const HU_B4000W: React.FC = () => {
         );
       });
       dataItem.map((item) => {
-        if (
-          item.yyyy == undefined ||
-          item.yyyy == null ||
-          item.yyyy == ""
-        ) {
+        if (item.yyyy == undefined || item.yyyy == null || item.yyyy == "") {
           valid = false;
         }
         if (
@@ -1528,7 +1549,7 @@ const HU_B4000W: React.FC = () => {
           dataArr.qty_s.push(qty);
           dataArr.remark_s.push(remark);
           dataArr.adjdiv_s.push(adjdiv);
-        }); 
+        });
 
         deletedMainRows.forEach((item: any, idx: number) => {
           const {
@@ -1550,7 +1571,7 @@ const HU_B4000W: React.FC = () => {
           dataArr.qty_s.push(qty);
           dataArr.remark_s.push(remark);
           dataArr.adjdiv_s.push(adjdiv);
-        }); 
+        });
 
         setParaSaved((prev) => ({
           ...prev,
@@ -1609,7 +1630,7 @@ const HU_B4000W: React.FC = () => {
 
     try {
       data = await processApi<any>("procedure", para);
-    } catch(error) {
+    } catch (error) {
       data = null;
     }
 
@@ -1618,7 +1639,7 @@ const HU_B4000W: React.FC = () => {
     console.log(data);
 
     if (data.isSuccess == true) {
-      const isLastDataDeleted = 
+      const isLastDataDeleted =
         adjDataResult.data.length == 0 && adjfilters.pgNum > 0;
 
       if (isLastDataDeleted) {
@@ -1632,12 +1653,12 @@ const HU_B4000W: React.FC = () => {
         setAdjFilters((prev: any) => ({
           ...prev,
           find_row_value: "",
-            pgNum: isLastDataDeleted
-              ? prev.pgNum != 1
-                ? prev.pgNum - 1
-                : prev.pgNum
-              : prev.pgNum,
-            isSearch: true,
+          pgNum: isLastDataDeleted
+            ? prev.pgNum != 1
+              ? prev.pgNum - 1
+              : prev.pgNum
+            : prev.pgNum,
+          isSearch: true,
         }));
       } else {
         setAdjFilters((prev: any) => ({
@@ -1669,14 +1690,14 @@ const HU_B4000W: React.FC = () => {
     ) {
       const newData = adjDataResult.data.map((item) =>
         item[DATA_ITEM_KEY_ADJ] === dataItem[DATA_ITEM_KEY_ADJ]
-        ? {
-            ...item,
-            [EDIT_FIELD]: field,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
       );
       setTempResult((prev) => {
         return {
@@ -1703,7 +1724,8 @@ const HU_B4000W: React.FC = () => {
   const exitEdit = () => {
     if (tempResult.data != adjDataResult.data) {
       const newData = adjDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY_ADJ] == Object.getOwnPropertyNames(selectedAdjState)[0]
+        item[DATA_ITEM_KEY_ADJ] ==
+        Object.getOwnPropertyNames(selectedAdjState)[0]
           ? {
               ...item,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
@@ -1770,7 +1792,7 @@ const HU_B4000W: React.FC = () => {
       event,
       adjDataResult,
       setAdjDataResult,
-      DATA_ITEM_KEY_ADJ,
+      DATA_ITEM_KEY_ADJ
     );
   };
 
@@ -1823,10 +1845,11 @@ const HU_B4000W: React.FC = () => {
       window.addEventListener("resize", handleResize);
 
       //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdUserAdj"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
+      customOptionData.menuCustomColumnOptions["grdUserAdj"].map(
+        (item: TColumn) =>
+          item.width !== undefined
+            ? (minGridWidth.current += item.width)
+            : minGridWidth.current
       );
       //가장작은 그리드 이름
       customOptionData.menuCustomColumnOptions["grdAdjDetail"].map(
@@ -2026,8 +2049,8 @@ const HU_B4000W: React.FC = () => {
                         value={filters.cboPrsnnum}
                         customOptionData={customOptionData}
                         changeData={ComboBoxChange}
-                        textField="user_name"
-                        valueField="user_id"
+                        textField="prsnnm"
+                        valueField="prsnnum"
                       />
                     )}
                   </td>
@@ -2045,7 +2068,7 @@ const HU_B4000W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
-          <GridContainerWrap>              
+          <GridContainerWrap>
             <GridContainer width="35%">
               <GridTitleContainer>
                 <GridTitle>사용자별 연차 집계</GridTitle>
@@ -2126,7 +2149,8 @@ const HU_B4000W: React.FC = () => {
                 data={process(
                   adjDetailDataResult.data.map((row) => ({
                     ...row,
-                    [SELECTED_FIELD]: selectedAdjDetailState[idGetter_use_detail(row)],
+                    [SELECTED_FIELD]:
+                      selectedAdjDetailState[idGetter_use_detail(row)],
                   })),
                   adjDetailDataState
                 )}
@@ -2177,11 +2201,13 @@ const HU_B4000W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0 ? subTotalFooterCell : undefined
+                            item.sortOrder === 0
+                              ? subTotalFooterCell
+                              : undefined
                           }
                         />
-                    )
-                )}
+                      )
+                  )}
               </Grid>
             </GridContainer>
             <GridContainer width={`calc(49% - ${GAP}px)`}>
@@ -2189,12 +2215,13 @@ const HU_B4000W: React.FC = () => {
                 <GridTitleContainer>
                   <GridTitle>출퇴근부</GridTitle>
                 </GridTitleContainer>
-                <Grid 
+                <Grid
                   style={{ height: "40vh" }}
                   data={process(
                     commuteDataResult.data.map((row) => ({
                       ...row,
-                      [SELECTED_FIELD]: selectedCommuteState[idGetter_commute(row)],
+                      [SELECTED_FIELD]:
+                        selectedCommuteState[idGetter_commute(row)],
                     })),
                     commuteDataState
                   )}
@@ -2226,11 +2253,11 @@ const HU_B4000W: React.FC = () => {
                   // 컬럼너비조정
                   resizable={true}
                 >
-                  <GridColumn 
-                    field="dutydt" 
-                    title="년월" 
+                  <GridColumn
+                    field="dutydt"
+                    title="년월"
                     width="100px"
-                    cell={CenterCell} 
+                    cell={CenterCell}
                     footerCell={subTotalFooterCell2}
                   />
                   <GridColumn>{createDateColumn()}</GridColumn>
@@ -2246,7 +2273,8 @@ const HU_B4000W: React.FC = () => {
                   data={process(
                     journalDataResult.data.map((row) => ({
                       ...row,
-                      [SELECTED_FIELD]: selectedJournalState[idGetter_journal(row)], //선택된 데이터
+                      [SELECTED_FIELD]:
+                        selectedJournalState[idGetter_journal(row)], //선택된 데이터
                     })),
                     journalDataState
                   )}
@@ -2280,26 +2308,30 @@ const HU_B4000W: React.FC = () => {
                   id="grdJournalList"
                 >
                   {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdJournalList"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={setWidth("grdJournalList", item.width)}
-                          cell={
-                            DateField.includes(item.fieldName)
-                              ? DateCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder === 0 ? subTotalFooterCell3 : undefined
-                          }
-                        />
-                      )
-                  )}
+                    customOptionData.menuCustomColumnOptions[
+                      "grdJournalList"
+                    ].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={setWidth("grdJournalList", item.width)}
+                            cell={
+                              DateField.includes(item.fieldName)
+                                ? DateCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? subTotalFooterCell3
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
                 </Grid>
               </GridContainer>
             </GridContainer>
@@ -2330,8 +2362,8 @@ const HU_B4000W: React.FC = () => {
                         value={adjfilters.cboPrsnnum}
                         customOptionData={customOptionData}
                         changeData={ComboBoxChange}
-                        textField="user_name"
-                        valueField="user_id"
+                        textField="prsnnm"
+                        valueField="prsnnum"
                       />
                     )}
                   </td>
@@ -2387,7 +2419,7 @@ const HU_B4000W: React.FC = () => {
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
-                style={{ height: "72vh"}}
+                style={{ height: "72vh" }}
                 data={process(
                   adjDataResult.data.map((row) => ({
                     ...row,
@@ -2398,8 +2430,8 @@ const HU_B4000W: React.FC = () => {
                       ? new Date(dateformat(row.recdt))
                       : new Date(),
                     insert_userid: personListData.find(
-                      (items: any) => items.user_id == row.insert_userid
-                    )?.user_name,
+                      (items: any) => items.prsnnum == row.insert_userid
+                    )?.prsnnm,
                     rowstatus:
                       row.rowstatus == null ||
                       row.rowstatus == "" ||
@@ -2484,8 +2516,8 @@ const HU_B4000W: React.FC = () => {
                               : undefined
                           }
                         />
-                    )
-                )}
+                      )
+                  )}
               </Grid>
             </FormContext.Provider>
           </GridContainer>

@@ -81,6 +81,7 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A2140W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -378,15 +379,18 @@ const HU_A2140W: React.FC = () => {
   };
 
   interface IPrsnnum {
-    user_id: string;
-    user_name: string;
+    prsnnum: string;
+    prsnnm: string;
+    dptcd: string;
+    abilcd: string;
+    postcd: string;
   }
 
   const setPrsnnumData = (data: IPrsnnum) => {
     setFilters((prev) => ({
       ...prev,
-      prsnnum: data.user_id,
-      prsnnm: data.user_name,
+      prsnnum: data.prsnnum,
+      prsnnm: data.prsnnm,
     }));
   };
   //조회조건 초기값
@@ -1545,9 +1549,8 @@ const HU_A2140W: React.FC = () => {
         </GridContainer>
       </FormContext.Provider>
       {prsnnumWindowVisible && (
-        <PrsnnumWindow
+        <UserWindow
           setVisible={setPrsnnumWindowVisible}
-          workType={"ROW_ADD"}
           setData={setPrsnnumData}
           modal={true}
         />

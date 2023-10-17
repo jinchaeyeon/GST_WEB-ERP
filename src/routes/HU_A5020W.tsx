@@ -64,8 +64,8 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
-import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import PrsnnumMultiWindow from "../components/Windows/CommonWindows/UserMultiWindow";
+import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
@@ -97,10 +97,12 @@ type TdataArr = {
 };
 
 interface IPrsnnum {
-  user_id: string;
-  user_name: string;
+  prsnnum: string;
+  prsnnm: string;
+  dptcd: string;
+  abilcd: string;
+  postcd: string;
 }
-
 interface IPrsnnumMulti {
   prsnnum: string;
   prsnnm: string;
@@ -174,8 +176,8 @@ const ColumnCommandCell = (props: GridCellProps) => {
   };
 
   const setPrsnnumData = (data: IPrsnnum) => {
-    setPrsnnm(data.user_name);
-    setPrsnnum(data.user_id);
+    setPrsnnm(data.prsnnm);
+    setPrsnnum(data.prsnnum);
   };
   const defaultRendering = (
     <td
@@ -206,9 +208,8 @@ const ColumnCommandCell = (props: GridCellProps) => {
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {prsnnumWindowVisible && (
-        <PrsnnumWindow
+        <UserWindow
           setVisible={setPrsnnumWindowVisible}
-          workType={"FILTER"}
           setData={setPrsnnumData}
           modal={true}
         />
@@ -1011,8 +1012,8 @@ const HU_A5020W: React.FC = () => {
   const setPrsnnumData = (data: IPrsnnum) => {
     setFilters((prev) => ({
       ...prev,
-      prsnnum: data.user_id,
-      prsnnm: data.user_name,
+      prsnnum: data.prsnnum,
+      prsnnm: data.prsnnm,
     }));
   };
 
@@ -1032,8 +1033,8 @@ const HU_A5020W: React.FC = () => {
         location: "",
         orgdiv: "01",
         payyrmm: new Date(),
-        prsnnm: item.prsnnum,
-        prsnnum: item.prsnnm,
+        prsnnm: item.prsnnm,
+        prsnnum: item.prsnnum,
         remark: "",
         rowstatus: "N",
       };
@@ -1105,7 +1106,9 @@ const HU_A5020W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "COPY",
-      payyrmm_s: convertDateToStr(new Date(filters.payyrmm.getMonth() - 1)).slice(0,6)
+      payyrmm_s: convertDateToStr(
+        new Date(filters.payyrmm.getMonth() - 1)
+      ).slice(0, 6),
     }));
   };
 
@@ -1407,9 +1410,8 @@ const HU_A5020W: React.FC = () => {
         </FormContext.Provider>
       </GridContainer>
       {prsnnumWindowVisible && (
-        <PrsnnumWindow
+        <UserWindow
           setVisible={setPrsnnumWindowVisible}
-          workType={"FILTER"}
           setData={setPrsnnumData}
           modal={true}
         />

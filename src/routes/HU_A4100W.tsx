@@ -63,7 +63,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import AmtWindow from "../components/Windows/HU_A4100W_Window";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
@@ -90,8 +90,11 @@ type TdataArr = {
 };
 
 interface IPrsnnum {
-  user_id: string;
-  user_name: string;
+  prsnnum: string;
+  prsnnm: string;
+  dptcd: string;
+  abilcd: string;
+  postcd: string;
 }
 
 export const FormContext = createContext<{
@@ -175,8 +178,8 @@ const ColumnCommandCell = (props: GridCellProps) => {
   };
 
   const setPrsnnumData = (data: IPrsnnum) => {
-    setPrsnnm(data.user_name);
-    setPrsnnum(data.user_id);
+    setPrsnnm(data.prsnnm);
+    setPrsnnum(data.prsnnum);
   };
   const defaultRendering = (
     <td
@@ -207,9 +210,8 @@ const ColumnCommandCell = (props: GridCellProps) => {
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {prsnnumWindowVisible && (
-        <PrsnnumWindow
+        <UserWindow
           setVisible={setPrsnnumWindowVisible}
-          workType={"ROW_ADD"}
           setData={setPrsnnumData}
           modal={true}
         />
@@ -443,7 +445,7 @@ const HU_A4100W: React.FC = () => {
         "@p_prsnnum": filters.prsnnum,
         "@p_prsnnum_s": "",
         "@p_yyyy": convertDateToStr(filters.yyyy).substring(0, 4),
-        "@p_find_row_value": filters.find_row_value
+        "@p_find_row_value": filters.find_row_value,
       },
     };
     try {
@@ -461,7 +463,8 @@ const HU_A4100W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.semiannualgb + "-" + row.prsnnum == filters.find_row_value
+            (row: any) =>
+              row.semiannualgb + "-" + row.prsnnum == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -488,7 +491,10 @@ const HU_A4100W: React.FC = () => {
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.semiannualgb + "-" + row.prsnnum == filters.find_row_value);
+            : rows.find(
+                (row: any) =>
+                  row.semiannualgb + "-" + row.prsnnum == filters.find_row_value
+              );
 
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -1114,8 +1120,8 @@ const HU_A4100W: React.FC = () => {
                     value={filters.prsnnum}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
-                    textField="user_name"
-                    valueField="user_id"
+                    textField="prsnnm"
+                    valueField="prsnnum"
                   />
                 )}
               </td>

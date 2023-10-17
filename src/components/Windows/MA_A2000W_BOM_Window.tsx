@@ -295,7 +295,7 @@ const CopyWindow = ({ setVisible, setData }: IWindow) => {
     process([], mainDataState)
   );
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], subDataState)
+    process([], detailDataState)
   );
 
   const [subDataResult, setSubDataResult] = useState<DataResult>(

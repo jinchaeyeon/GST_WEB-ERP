@@ -727,6 +727,7 @@ const SY_A0500W: React.FC = () => {
         ? {
             ...item,
             caption: "",
+            form_id: ""
           }
         : {
             ...item,
@@ -769,6 +770,16 @@ const SY_A0500W: React.FC = () => {
         data: newData,
         total: prev.total,
       };
+    });
+    setClicked("");
+    setInfo({
+      caption: "",
+      form_id: "",
+      key: "",
+    });
+    setPoints({
+      x: 0,
+      y: 0,
     });
   };
 
@@ -833,7 +844,7 @@ const SY_A0500W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <GridContainerWrap>
-        <GridContainer width="25%">
+        <GridContainer width="20%">
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
@@ -915,7 +926,7 @@ const SY_A0500W: React.FC = () => {
               )}
           </Grid>
         </GridContainer>
-        <GridContainer width={`calc(75% - ${GAP}px)`}>
+        <GridContainer width={`calc(60% - ${GAP}px)`}>
           <GridTitleContainer>
             <GridTitle>프로세스 레이아웃</GridTitle>
             <ButtonContainer>
@@ -1006,6 +1017,9 @@ const SY_A0500W: React.FC = () => {
             </div>
           </DndProvider>
         </GridContainer>
+        <GridContainer width={`calc(20% - ${GAP}px)`}>
+          d
+          </GridContainer>
       </GridContainerWrap>
       {clicked != "" && (
         <ContextMenu top={points.y} left={points.x}>

@@ -1,17 +1,20 @@
-import { useEffect, useState } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
+  GridDataStateChangeEvent,
   GridFooterCellProps,
-  GridEvent,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridDataStateChangeEvent,
 } from "@progress/kendo-react-grid";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../../hooks/api";
+import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import * as React from "react";
+import { useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -20,17 +23,20 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import { Input } from "@progress/kendo-react-inputs";
-import { Button } from "@progress/kendo-react-buttons";
-import { chkScrollHandler, getQueryFromBizComponent, UseBizComponent } from "../../CommonFunction";
-import { IWindowPosition } from "../../../hooks/interfaces";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
-import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../../store/atoms";
-import {handleKeyPressSearch} from "../../CommonFunction"
-import { bytesToBase64 } from "byte-base64";
 import FilterContainer from "../../../components/Containers/FilterContainer";
+import { useApi } from "../../../hooks/api";
+import { IWindowPosition } from "../../../hooks/interfaces";
+import { isLoading } from "../../../store/atoms";
+import {
+  UseBizComponent,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+} from "../../CommonFunction";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../../CommonString";
 interface IPrsnnumMulti {
   prsnnum: string;
   prsnnm: string;
@@ -42,19 +48,19 @@ interface IPrsnnumMulti {
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: IPrsnnumMulti): void; //data : 선택한 품목 데이터를 전달하는 함수
-  modal? :boolean;
+  modal?: boolean;
 };
 
 const DATA_ITEM_KEY = "prsnnum";
 
-const UserWindow = ({ setVisible, setData, modal = false}: IWindow) => {
+const UserWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 830,
-    height: 1200,
+    height: 900,
   });
 
   const setLoading = useSetRecoilState(isLoading);
@@ -68,7 +74,22 @@ const UserWindow = ({ setVisible, setData, modal = false}: IWindow) => {
     //사용여부,
     setBizComponentData
   );
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
 
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+  const [page, setPage] = useState(initialPageState);
   //공통코드 리스트 조회 ()
   const [dptcdListData, setDptcdListData] = React.useState([
     { dptcd: "", dptnm: "" },
@@ -133,16 +154,6 @@ const UserWindow = ({ setVisible, setData, modal = false}: IWindow) => {
     }));
   };
 
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterRadioChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
   };
@@ -167,7 +178,6 @@ const UserWindow = ({ setVisible, setData, modal = false}: IWindow) => {
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-  const [mainPgNum, setMainPgNum] = useState(1);
 
   const [filters, setFilters] = useState({
     dptcd: "",
@@ -176,32 +186,30 @@ const UserWindow = ({ setVisible, setData, modal = false}: IWindow) => {
     prsnnum: "",
     prsnnm: "",
     pgSize: PAGE_SIZE,
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
   });
 
-  //팝업 조회 파라미터
-  const parameters = {
-    para:
-      "popup-data?id=" +
-      "P_HU250_POP1" +
-      "&page=" +
-      mainPgNum +
-      "&pageSize=" +
-      PAGE_SIZE,
-    dptcd: filters.dptcd,
-    orgdiv: filters.orgdiv,
-    postcd: filters.postcd,
-    prsnnum: filters.prsnnum,
-    prsnnm: filters.prsnnm,
-  };
-
-  useEffect(() => {
-    fetchMainGrid();
-  }, [mainPgNum]);
-
   //그리드 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     let data: any;
     setLoading(true);
+    //팝업 조회 파라미터
+    const parameters = {
+      para:
+        "popup-data?id=" +
+        "P_HU250_POP1" +
+        "&page=" +
+        filters.pgNum +
+        "&pageSize=" +
+        PAGE_SIZE,
+      dptcd: filters.dptcd,
+      orgdiv: filters.orgdiv,
+      postcd: filters.postcd,
+      prsnnum: filters.prsnnum,
+      prsnnm: filters.prsnnm,
+    };
 
     try {
       data = await processApi<any>("popup-data", parameters);
@@ -212,31 +220,40 @@ const UserWindow = ({ setVisible, setData, modal = false}: IWindow) => {
     if (data !== null) {
       const totalRowCnt = data.data.TotalRowCount;
       const rows = data.data.Rows;
-
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
       if (totalRowCnt) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
     } else {
       console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
+  useEffect(() => {
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+    }
+  }, [filters]);
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
-    setMainDataResult(process([], {}));
-  };
-
-  //스크롤 핸들러 => 한번에 pageSize만큼 조회
-  const onScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
+    setMainDataResult(process([], mainDataState));
   };
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
@@ -279,18 +296,28 @@ const UserWindow = ({ setVisible, setData, modal = false}: IWindow) => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
 
   const search = () => {
     resetAllGrid();
-    fetchMainGrid();
-  }
-  
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+    }));
+  };
+
   return (
     <Window
       title={"사원리스트"}
@@ -304,14 +331,7 @@ const UserWindow = ({ setVisible, setData, modal = false}: IWindow) => {
       <TitleContainer>
         <Title></Title>
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              resetAllGrid();
-              fetchMainGrid();
-            }}
-            icon="search"
-            themeColor={"primary"}
-          >
+          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
             조회
           </Button>
         </ButtonContainer>
@@ -342,11 +362,6 @@ const UserWindow = ({ setVisible, setData, modal = false}: IWindow) => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      {/* **Grid Height를 Window Height에 맞춰 동적으로 세팅하기
-      ...<GridContainer height="calc(100% - {그리드 높이를 제외한 나머지 요소의 높이값})" >
-            <Grid
-          style={{ height: "100%" }}...
-       */}
       <GridContainer height="calc(100% - 170px)">
         <Grid
           style={{ height: "100%" }}
@@ -354,13 +369,13 @@ const UserWindow = ({ setVisible, setData, modal = false}: IWindow) => {
             mainDataResult.data.map((row) => ({
               ...row,
               dptcd: dptcdListData.find((item: any) => item.dptcd === row.dptcd)
-              ?.dptnm,
-            abilcd: abilcdListData.find(
-              (item: any) => item.sub_code === row.abilcd
-            )?.code_name,
-            postcd: postcdListData.find(
-              (item: any) => item.sub_code === row.postcd
-            )?.code_name,
+                ?.dptnm,
+              abilcd: abilcdListData.find(
+                (item: any) => item.sub_code === row.abilcd
+              )?.code_name,
+              postcd: postcdListData.find(
+                (item: any) => item.sub_code === row.postcd
+              )?.code_name,
               [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
             })),
             mainDataState
@@ -378,7 +393,10 @@ const UserWindow = ({ setVisible, setData, modal = false}: IWindow) => {
           //스크롤 조회기능
           fixedScroll={true}
           total={mainDataResult.total}
-          onScroll={onScrollHandler}
+          skip={page.skip}
+          take={page.take}
+          pageable={true}
+          onPageChange={pageChange}
           //정렬기능
           sortable={true}
           onSortChange={onMainSortChange}

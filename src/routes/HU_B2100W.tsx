@@ -53,6 +53,7 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B2100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -529,13 +530,17 @@ const HU_B2100W: React.FC = () => {
   };
 
   interface IPrsnnum {
-    user_id: string;
+    prsnnum: string;
+    prsnnm: string;
+    dptcd: string;
+    abilcd: string;
+    postcd: string;
   }
 
   const setPrsnnumData = (data: IPrsnnum) => {
     setFilters((prev) => ({
       ...prev,
-      prsnnum: data.user_id,
+      prsnnum: data.prsnnum,
     }));
   };
 
@@ -868,9 +873,8 @@ const HU_B2100W: React.FC = () => {
         </Grid>
       </GridContainer>
       {prsnnumWindowVisible && (
-        <PrsnnumWindow
+        <UserWindow
           setVisible={setPrsnnumWindowVisible}
-          workType={"FILTER"}
           setData={setPrsnnumData}
           modal={true}
         />
