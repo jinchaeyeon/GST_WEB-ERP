@@ -133,7 +133,7 @@ const CM_A5001W: React.FC = () => {
       );
 
       const meditypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizCommponentId == "L_CM501_603")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_CM501_603")
       );
 
       fetchQueryData(statusQueryStr, setStatusListData);
