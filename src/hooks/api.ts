@@ -62,10 +62,11 @@ const domain: any = {
     url: "api/files/:attached",
   }, // AttachmentNum 자체를 삭제
 
-  // 바이오톡스텍 회의록관리
+  // 바이오톡스텍 회의록관리(meeting), 컨설팅요청등록(QnA)
   "meeting-query": { action: "get", url: "api/data/html-doc" },
   "meeting-save": { action: "post", url: "api/data/html-doc?folder=CM_A7000W" },
   "meeting-download": { action: "get", url: "api/data/html-doc/file"},
+  "QnA-save": { action: "post", url: "api/data/html-doc?folder=CM_A5000W"},
 };
 let isTokenRefreshing = false;
 let refreshSubscribers: any[] = [];
