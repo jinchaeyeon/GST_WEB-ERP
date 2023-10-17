@@ -972,22 +972,22 @@ const SA_A1000_603W: React.FC = () => {
     ) {
       setInformation((prev) => ({
         ...prev,
-        [name]: value == true ? "K" : "",
+        [name]: value == true ? "K" : "N",
       }));
     } else if (name == "translate2") {
       setInformation((prev) => ({
         ...prev,
-        [name]: value == true ? "E" : "",
+        [name]: value == true ? "E" : "N",
       }));
     } else if (name == "translate3") {
       setInformation((prev) => ({
         ...prev,
-        [name]: value == true ? "J" : "",
+        [name]: value == true ? "J" : "N",
       }));
     } else if (name == "translate4") {
       setInformation((prev) => ({
         ...prev,
-        [name]: value == true ? "P" : "",
+        [name]: value == true ? "P" : "N",
       }));
     } else {
       setInformation((prev) => ({
@@ -1856,7 +1856,7 @@ const SA_A1000_603W: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "testpart") {
+    if (field != "rowstatus" && field != "itemlvl1" && field != "testnum") {
       const newData = subDataResult.data.map((item) =>
         item[SUB_DATA_ITEM_KEY] == dataItem[SUB_DATA_ITEM_KEY]
           ? {
