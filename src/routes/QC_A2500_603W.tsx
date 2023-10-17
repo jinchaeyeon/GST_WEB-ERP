@@ -912,7 +912,7 @@ const BA_A0020_603: React.FC = () => {
       cpmperson: data.cpmperson == undefined ? "" : data.cpmperson,
       ncrdiv: "",
       combytype: "",
-      status: "",
+      status: "01",
       chkperson: data.chkperson == undefined ? "" : data.chkperson,
       itemcd: data.itemcd == undefined ? "" : data.itemcd,
       itemnm: data.itemnm == undefined ? "" : data.itemnm,
@@ -1468,129 +1468,133 @@ const BA_A0020_603: React.FC = () => {
   };
 
   const onSaveClick = () => {
-    const dataItem = commentDataResult.data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
-
-    const dataItem2 = commentDataResult2.data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
-
-    const dataItem3 = commentDataResult3.data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
-
-    let dataArr: TdataArr = {
-      row_status_cause_s: [],
-      id_cause_s: [],
-      seq_cause_s: [],
-      comment_cause_s: [],
-      row_status_plan_s: [],
-      id_plan_s: [],
-      seq_plan_s: [],
-      comment_plan_s: [],
-      row_status_feed_s: [],
-      id_feed_s: [],
-      seq_feed_s: [],
-      comment_feed_s: [],
-    };
-
-    dataItem.forEach((item: any, idx: number) => {
-      const { rowstatus = "", id = "", seq = "", comment = "" } = item;
-
-      dataArr.row_status_cause_s.push(rowstatus);
-      dataArr.id_cause_s.push(id);
-      dataArr.seq_cause_s.push(seq);
-      dataArr.comment_cause_s.push(comment);
-    });
-
-    deletedMainRows.forEach((item: any, idx: number) => {
-      const { rowstatus = "", id = "", seq = "", comment = "" } = item;
-
-      dataArr.row_status_cause_s.push(rowstatus);
-      dataArr.id_cause_s.push(id);
-      dataArr.seq_cause_s.push(seq);
-      dataArr.comment_cause_s.push(comment);
-    });
-
-    dataItem2.forEach((item: any, idx: number) => {
-      const { rowstatus = "", id = "", seq = "", comment = "" } = item;
-
-      dataArr.row_status_plan_s.push(rowstatus);
-      dataArr.id_plan_s.push(id);
-      dataArr.seq_plan_s.push(seq);
-      dataArr.comment_plan_s.push(comment);
-    });
-
-    deletedMainRows2.forEach((item: any, idx: number) => {
-      const { rowstatus = "", id = "", seq = "", comment = "" } = item;
-
-      dataArr.row_status_plan_s.push(rowstatus);
-      dataArr.id_plan_s.push(id);
-      dataArr.seq_plan_s.push(seq);
-      dataArr.comment_plan_s.push(comment);
-    });
-
-    dataItem3.forEach((item: any, idx: number) => {
-      const { rowstatus = "", id = "", seq = "", comment = "" } = item;
-
-      dataArr.row_status_feed_s.push(rowstatus);
-      dataArr.id_feed_s.push(id);
-      dataArr.seq_feed_s.push(seq);
-      dataArr.comment_feed_s.push(comment);
-    });
-
-    deletedMainRows3.forEach((item: any, idx: number) => {
-      const { rowstatus = "", id = "", seq = "", comment = "" } = item;
-
-      dataArr.row_status_feed_s.push(rowstatus);
-      dataArr.id_feed_s.push(id);
-      dataArr.seq_feed_s.push(seq);
-      dataArr.comment_feed_s.push(comment);
-    });
-
-    setParaData({
-      workType: workType,
-      orgdiv: "01",
-      location: "01",
-      datnum: Information.datnum,
-      ordnum: workType == "N" ? Information.ordnum : "",
-      ordseq: workType == "N" ? Information.ordseq : 0,
-      status: Information.status,
-      ncrdiv: Information.ncrdiv,
-      combytype: Information.combytype,
-      baddt: convertDateToStr(Information.baddt),
-      requiretext: Information.requiretext,
-      protext: Information.protext,
-      errtext: Information.errtext,
-      devperson: Information.devperson,
-      chkperson: Information.chkperson2,
-      apperson: Information.apperson,
-      row_status_cause_s: dataArr.row_status_cause_s.join("|"),
-      id_cause_s: dataArr.id_cause_s.join("|"),
-      seq_cause_s: dataArr.seq_cause_s.join("|"),
-      comment_cause_s: dataArr.comment_cause_s.join("|"),
-      row_status_plan_s: dataArr.row_status_plan_s.join("|"),
-      id_plan_s: dataArr.id_plan_s.join("|"),
-      seq_plan_s: dataArr.seq_plan_s.join("|"),
-      comment_plan_s: dataArr.comment_plan_s.join("|"),
-      row_status_feed_s: dataArr.row_status_feed_s.join("|"),
-      id_feed_s: dataArr.id_feed_s.join("|"),
-      seq_feed_s: dataArr.seq_feed_s.join("|"),
-      comment_feed_s: dataArr.comment_feed_s.join("|"),
-      userid: userId,
-      pc: pc,
-      form_id: "QC_A2500_603W",
-    });
+    if(Information.ncrdiv == "" || Information.combytype == "" || Information.status == "") {
+      alert("필수값을 채워주세요");
+    } else {
+      const dataItem = commentDataResult.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+  
+      const dataItem2 = commentDataResult2.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+  
+      const dataItem3 = commentDataResult3.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+  
+      let dataArr: TdataArr = {
+        row_status_cause_s: [],
+        id_cause_s: [],
+        seq_cause_s: [],
+        comment_cause_s: [],
+        row_status_plan_s: [],
+        id_plan_s: [],
+        seq_plan_s: [],
+        comment_plan_s: [],
+        row_status_feed_s: [],
+        id_feed_s: [],
+        seq_feed_s: [],
+        comment_feed_s: [],
+      };
+  
+      dataItem.forEach((item: any, idx: number) => {
+        const { rowstatus = "", id = "", seq = "", comment = "" } = item;
+  
+        dataArr.row_status_cause_s.push(rowstatus);
+        dataArr.id_cause_s.push(id);
+        dataArr.seq_cause_s.push(seq);
+        dataArr.comment_cause_s.push(comment);
+      });
+  
+      deletedMainRows.forEach((item: any, idx: number) => {
+        const { rowstatus = "", id = "", seq = "", comment = "" } = item;
+  
+        dataArr.row_status_cause_s.push(rowstatus);
+        dataArr.id_cause_s.push(id);
+        dataArr.seq_cause_s.push(seq);
+        dataArr.comment_cause_s.push(comment);
+      });
+  
+      dataItem2.forEach((item: any, idx: number) => {
+        const { rowstatus = "", id = "", seq = "", comment = "" } = item;
+  
+        dataArr.row_status_plan_s.push(rowstatus);
+        dataArr.id_plan_s.push(id);
+        dataArr.seq_plan_s.push(seq);
+        dataArr.comment_plan_s.push(comment);
+      });
+  
+      deletedMainRows2.forEach((item: any, idx: number) => {
+        const { rowstatus = "", id = "", seq = "", comment = "" } = item;
+  
+        dataArr.row_status_plan_s.push(rowstatus);
+        dataArr.id_plan_s.push(id);
+        dataArr.seq_plan_s.push(seq);
+        dataArr.comment_plan_s.push(comment);
+      });
+  
+      dataItem3.forEach((item: any, idx: number) => {
+        const { rowstatus = "", id = "", seq = "", comment = "" } = item;
+  
+        dataArr.row_status_feed_s.push(rowstatus);
+        dataArr.id_feed_s.push(id);
+        dataArr.seq_feed_s.push(seq);
+        dataArr.comment_feed_s.push(comment);
+      });
+  
+      deletedMainRows3.forEach((item: any, idx: number) => {
+        const { rowstatus = "", id = "", seq = "", comment = "" } = item;
+  
+        dataArr.row_status_feed_s.push(rowstatus);
+        dataArr.id_feed_s.push(id);
+        dataArr.seq_feed_s.push(seq);
+        dataArr.comment_feed_s.push(comment);
+      });
+  
+      setParaData({
+        workType: workType,
+        orgdiv: "01",
+        location: "01",
+        datnum: Information.datnum,
+        ordnum: workType == "N" ? Information.ordnum : "",
+        ordseq: workType == "N" ? Information.ordseq : 0,
+        status: Information.status,
+        ncrdiv: Information.ncrdiv,
+        combytype: Information.combytype,
+        baddt: convertDateToStr(Information.baddt),
+        requiretext: Information.requiretext,
+        protext: Information.protext,
+        errtext: Information.errtext,
+        devperson: Information.devperson,
+        chkperson: Information.chkperson2,
+        apperson: Information.apperson,
+        row_status_cause_s: dataArr.row_status_cause_s.join("|"),
+        id_cause_s: dataArr.id_cause_s.join("|"),
+        seq_cause_s: dataArr.seq_cause_s.join("|"),
+        comment_cause_s: dataArr.comment_cause_s.join("|"),
+        row_status_plan_s: dataArr.row_status_plan_s.join("|"),
+        id_plan_s: dataArr.id_plan_s.join("|"),
+        seq_plan_s: dataArr.seq_plan_s.join("|"),
+        comment_plan_s: dataArr.comment_plan_s.join("|"),
+        row_status_feed_s: dataArr.row_status_feed_s.join("|"),
+        id_feed_s: dataArr.id_feed_s.join("|"),
+        seq_feed_s: dataArr.seq_feed_s.join("|"),
+        comment_feed_s: dataArr.comment_feed_s.join("|"),
+        userid: userId,
+        pc: pc,
+        form_id: "QC_A2500_603W",
+      });
+    }
   };
 
   const [paraData, setParaData] = useState({
@@ -1964,11 +1968,11 @@ const BA_A0020_603: React.FC = () => {
                         <Input
                           name="smperson"
                           type="text"
-                          value={
+                          value={Information.smperson != "" ?
                             userListData.find(
                               (items: any) =>
                                 items.user_id == Information.smperson
-                            )?.user_name
+                            )?.user_name : ""
                           }
                           className="readonly"
                         />
@@ -1980,11 +1984,11 @@ const BA_A0020_603: React.FC = () => {
                         <Input
                           name="cpmperson"
                           type="text"
-                          value={
+                          value={Information.cpmperson != "" ?
                             userListData.find(
                               (items: any) =>
                                 items.user_id == Information.cpmperson
-                            )?.user_name
+                            )?.user_name : ""
                           }
                           className="readonly"
                         />
@@ -2000,6 +2004,7 @@ const BA_A0020_603: React.FC = () => {
                             type="new"
                             customOptionData={customOptionData}
                             changeData={ComboBoxChange}
+                            className="required"
                           />
                         )}
                       </td>
@@ -2014,6 +2019,7 @@ const BA_A0020_603: React.FC = () => {
                             type="new"
                             customOptionData={customOptionData}
                             changeData={ComboBoxChange}
+                            className="required"
                           />
                         )}
                       </td>
@@ -2028,6 +2034,7 @@ const BA_A0020_603: React.FC = () => {
                             type="new"
                             customOptionData={customOptionData}
                             changeData={ComboBoxChange}
+                            className="required"
                           />
                         )}
                       </td>
@@ -2038,11 +2045,11 @@ const BA_A0020_603: React.FC = () => {
                         <Input
                           name="chkperson"
                           type="text"
-                          value={
+                          value={Information.chkperson != "" ?
                             userListData.find(
                               (items: any) =>
                                 items.user_id == Information.chkperson
-                            )?.user_name
+                            )?.user_name : ""
                           }
                           className="readonly"
                         />
