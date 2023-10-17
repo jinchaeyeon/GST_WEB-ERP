@@ -918,7 +918,7 @@ const CopyWindow = ({
         modal={modal}
       >
         <GridContainerWrap>
-          <GridContainer width="60%">
+          <GridContainer width="70%">
             <GridTitleContainer>
               <GridTitle>상세정보</GridTitle>
             </GridTitleContainer>
@@ -1169,7 +1169,7 @@ const CopyWindow = ({
               </FormBox>
             </FormBoxWrap>
           </GridContainer>
-          <GridContainer width={`calc(40% - ${GAP}px)`}>
+          <GridContainer width={`calc(30% - ${GAP}px)`}>
             <GridTitleContainer>
               <GridTitle>참조</GridTitle>
             </GridTitleContainer>
@@ -1357,7 +1357,7 @@ const CopyWindow = ({
         </GridContainer>
         <GridContainer>
           <CommentsGrid
-            ref_key={data?.recno == undefined ? filters.recno : data?.recno}
+            ref_key={workType == "N" ? "" : data?.recno == undefined ? filters.recno : data?.recno}
             form_id={pathname}
             table_id={"CR100T"}
             style={{ height: "20vh" }}
