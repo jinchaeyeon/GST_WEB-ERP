@@ -1,50 +1,47 @@
-import { useEffect, useState } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
-  GridFooterCellProps,
-  GridCellProps,
-  GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
   GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState
 } from "@progress/kendo-react-grid";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../../hooks/api";
+import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import * as React from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
+  ButtonInInput,
   FilterBox,
   GridContainer,
   GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer,
-  PrimaryP,
-  ButtonInInput,
+  TitleContainer
 } from "../../../CommonStyled";
-import { Input } from "@progress/kendo-react-inputs";
-import { Iparameters } from "../../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
-import {
-  chkScrollHandler,
-  getQueryFromBizComponent,
-  UseBizComponent,
-} from "../../CommonFunction";
+import FilterContainer from "../../../components/Containers/FilterContainer";
+import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
+import { isLoading, loginResultState } from "../../../store/atoms";
+import { Iparameters } from "../../../store/types";
+import {
+  UseBizComponent,
+  getQueryFromBizComponent
+} from "../../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoading, loginResultState } from "../../../store/atoms";
 import PrsnnumWindow from "./PrsnnumWindow";
-import { bytesToBase64 } from "byte-base64";
-import FilterContainer from "../../../components/Containers/FilterContainer";
 
 interface IPrsnnumMulti {
   prsnnum: string;
@@ -59,20 +56,26 @@ interface IPrsnnum {
   user_name: string;
 }
 
-
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: IPrsnnumMulti[]): void; //data : 선택한 품목 데이터를 전달하는 함수
+  modal?: boolean;
 };
+
 const DATA_ITEM_KEY = "prsnnum";
 const KEEPING_DATA_ITEM_KEY = "idx";
+let targetRowIndex: null | number = null;
+let temp = 0;
 
-const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
+const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
+
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 830,
-    height: 1200,
+    width: isMobile == true ? deviceWidth : 830,
+    height: 900,
   });
 
   const setLoading = useSetRecoilState(isLoading);
@@ -86,7 +89,22 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
   const [keepingSelectedState, setKeepingSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
 
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "R_RTR, L_dptcd_001, L_HU006, L_HU005",
@@ -198,7 +216,6 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
   const [keepingDataResult, setKeepingDataResult] = useState<DataResult>(
     process([], keepingDataState)
   );
-  const [mainPgNum, setMainPgNum] = useState(1);
 
   const [filters, setFilters] = useState({
     dptcd: "",
@@ -206,31 +223,47 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
     rtryn: "N",
     prsnnum: "",
     prsnnm: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
     pgSize: PAGE_SIZE,
   });
 
-  const parameters: Iparameters = {
-    procedureName: "P_HU_A5020W_Sub1_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "LIST",
-      "@p_orgdiv": "01",
-      "@p_prsnnum": filters.prsnnum,
-      "@p_prsnnm": filters.prsnnm,
-      "@p_rtryn": filters.rtryn,
-      "@p_company_code": companyCode,
-    },
-  };
+  let gridRef: any = useRef(null);
+
   useEffect(() => {
-    fetchMainGrid();
-  }, [mainPgNum]);
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [mainDataResult]);
+
+  useEffect(() => {
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+    }
+  }, [filters]);
 
   //그리드 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     let data: any;
     setLoading(true);
-
+    const parameters: Iparameters = {
+      procedureName: "P_HU_A5020W_Sub1_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "LIST",
+        "@p_orgdiv": "01",
+        "@p_prsnnum": filters.prsnnum,
+        "@p_prsnnm": filters.prsnnm,
+        "@p_rtryn": filters.rtryn,
+        "@p_company_code": companyCode,
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -239,30 +272,42 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
 
     if (data !== null) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        idx: temp++,
+      }));
 
-      if (totalRowCnt) {
-        setMainDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
+      if (gridRef.current) {
+        targetRowIndex = 0;
       }
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        const selectedRow = rows[0];
+        setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+      }
+    } else {
+      console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setMainPgNum(1);
+    setPage(initialPageState); // 페이지 초기화
     setMainDataResult(process([], {}));
-  };
-
-  //스크롤 핸들러 => 한번에 pageSize만큼 조회
-  const onScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
   };
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
@@ -283,6 +328,7 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
 
   const onRowDoubleClick = (props: any) => {
     const selectedData = props.dataItem;
+    setKeepingSelectedState({ [keepingDataResult.data.length + 1]: true });
 
     setKeepingDataResult((prev) => {
       return {
@@ -296,42 +342,53 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
   };
 
   const onRemoveKeepingRow = () => {
-    //삭제 안 할 데이터 newData에 push
     let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
 
-    keepingDataResult.data.forEach((item: any) => {
+    keepingDataResult.data.forEach((item: any, index: number) => {
       if (!keepingSelectedState[item[KEEPING_DATA_ITEM_KEY]]) {
         newData.push(item);
+        Object2.push(index);
+      } else {
+        Object.push(index);
       }
     });
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = keepingDataResult.data[Math.min(...Object2)];
+    } else {
+      data = keepingDataResult.data[Math.min(...Object) - 1];
+    }
+    setKeepingDataResult((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
 
-    setKeepingDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total - 1,
-      };
+    setKeepingSelectedState({
+      [data != undefined ? data[KEEPING_DATA_ITEM_KEY] : newData[0]]: true,
     });
   };
 
   const onConfirmBtnClick = (props: any) => {
     const newData = keepingDataResult.data.map((items) => {
-      const dptcds = dptcdListData.find((item: any) => item.dptnm === items.dptcd)
-      ?.dptcd;
+      const dptcds = dptcdListData.find(
+        (item: any) => item.dptnm === items.dptcd
+      )?.dptcd;
       const abilcds = abilcdListData.find(
         (item: any) => item.code_name === items.abilcd
       )?.sub_code;
       const postcds = postcdListData.find(
         (item: any) => item.code_name === items.postcd
       )?.sub_code;
-      return({
+      return {
         prsnnum: items.prsnnum,
-      prsnnm: items.prsnnm,
-      dptcd: dptcds == undefined ? "" : dptcds,
-      abilcd: abilcds == undefined ? "" : abilcds,
-      postcd: postcds == undefined ? "" : postcds,
-      })
-    }
-    );
+        prsnnm: items.prsnnm,
+        dptcd: dptcds == undefined ? "" : dptcds,
+        abilcd: abilcds == undefined ? "" : abilcds,
+        postcd: postcds == undefined ? "" : postcds,
+      };
+    });
     setData(newData);
     onClose();
   };
@@ -358,18 +415,41 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {mainDataResult.total}건
+        총
+        {mainDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
+
   const keepingTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = keepingDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {keepingDataResult.total}건
+        총
+        {keepingDataResult.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
+  };
+
+  const search = () => {
+    resetAllGrid();
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
   };
 
   const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
@@ -395,18 +475,12 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
+      modal={modal}
     >
       <TitleContainer>
         <Title></Title>
         <ButtonContainer>
-          <Button
-            onClick={() => {
-              resetAllGrid();
-              fetchMainGrid();
-            }}
-            icon="search"
-            themeColor={"primary"}
-          >
+          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
             조회
           </Button>
         </ButtonContainer>
@@ -459,7 +533,6 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
       <GridContainer height="calc(100% - 470px)">
         <GridTitleContainer>
           <GridTitle>사용자 리스트</GridTitle>
-          <PrimaryP>※ 더블 클릭하여 사용자 Keeping</PrimaryP>
         </GridTitleContainer>
         <Grid
           style={{ height: "calc(100% - 42px)" }}
@@ -491,7 +564,13 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
           //스크롤 조회기능
           fixedScroll={true}
           total={mainDataResult.total}
-          onScroll={onScrollHandler}
+          skip={page.skip}
+          take={page.take}
+          pageable={true}
+          onPageChange={pageChange}
+          //원하는 행 위치로 스크롤 기능
+          ref={gridRef}
+          rowHeight={30}
           //정렬기능
           sortable={true}
           onSortChange={onMainSortChange}
@@ -505,11 +584,11 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
           <GridColumn
             field="prsnnum"
             title="사번"
-            width="200px"
+            width="150px"
             footerCell={mainTotalFooterCell}
           />
-          <GridColumn field="prsnnm" title="성명" width="200px" />
-          <GridColumn field="dptcd" title="부서코드" width="130px" />
+          <GridColumn field="prsnnm" title="성명" width="150px" />
+          <GridColumn field="dptcd" title="부서코드" width="120px" />
           <GridColumn field="abilcd" title="직책" width="120px" />
           <GridColumn field="postcd" title="직위" width="120px" />
         </Grid>
@@ -517,7 +596,6 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
       <GridContainer>
         <GridTitleContainer>
           <GridTitle>Keeping</GridTitle>
-          <PrimaryP>※ 더블 클릭하여 Keeping 해제</PrimaryP>
         </GridTitleContainer>
         <Grid
           style={{ height: "250px" }}
@@ -555,11 +633,11 @@ const ItemsMultiWindow = ({ setVisible, setData }: IWindow) => {
           <GridColumn
             field="prsnnum"
             title="사번"
-            width="200px"
+            width="150px"
             footerCell={keepingTotalFooterCell}
           />
-          <GridColumn field="prsnnm" title="성명" width="200px" />
-          <GridColumn field="dptcd" title="부서코드" width="130px" />
+          <GridColumn field="prsnnm" title="성명" width="150px" />
+          <GridColumn field="dptcd" title="부서코드" width="120px" />
           <GridColumn field="abilcd" title="직책" width="120px" />
           <GridColumn field="postcd" title="직위" width="120px" />
         </Grid>
