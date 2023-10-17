@@ -38,14 +38,15 @@ import {
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UseParaPc,
   UsePermissions,
   convertDateToStr,
   getGridItemChangedData,
   getQueryFromBizComponent,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
@@ -65,6 +66,13 @@ import {
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { isLoading } from "../store/atoms";
+
+type TdataArr = {
+  rowstatus_s: string[];
+  quoseq_s: string[];
+  wonamt_s: string[];
+  taxamt_s: string[];
+};
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -131,9 +139,9 @@ const SA_A1100_603W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
-
   UsePermissions(setPermissions);
-
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -447,7 +455,10 @@ const SA_A1100_603W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setFilters((prev) => ({
         ...prev,
@@ -718,32 +729,26 @@ const SA_A1100_603W: React.FC = () => {
         }
       }
 
-      if (data.tables[0].Row > 0) {
-        setInformation({
+      if (data.tables[0].TotalRowCount > 0) {
+        setInformation((prev) => ({
+          ...prev,
           project: data.tables[0].Rows[0].project,
           paymeth: data.tables[0].Rows[0].paymeth,
           materialnm: data.tables[0].Rows[0].materialnm,
           totamt: data.tables[0].Rows[0].totamt,
           quorev: data.tables[0].Rows[0].quorev,
           rev_reason: data.tables[0].Rows[0].rev_reason,
-          ordamt: 0,
-          saleamt: 0,
-          collamt: 0,
-          janamt: 0,
-        });
+        }));
       } else {
-        setInformation({
+        setInformation((prev) => ({
+          ...prev,
           project: "",
           paymeth: "",
           materialnm: "",
           totamt: 0,
           quorev: 0,
           rev_reason: "",
-          ordamt: 0,
-          saleamt: 0,
-          collamt: 0,
-          janamt: 0,
-        });
+        }));
       }
       setMainDataResult2({
         data: rows,
@@ -919,32 +924,22 @@ const SA_A1100_603W: React.FC = () => {
           targetRowIndex4 = 0;
         }
       }
-      if (data.tables[0].Row > 0) {
-        setInformation({
-          project: "",
-          paymeth: "",
-          materialnm: "",
-          totamt: 0,
-          quorev: 0,
-          rev_reason: "",
+      if (data.tables[0].TotalRowCount > 0) {
+        setInformation((prev) => ({
+          ...prev,
           ordamt: data.tables[0].Rows[0].ordamt,
           saleamt: data.tables[0].Rows[0].saleamt,
           collamt: data.tables[0].Rows[0].collamt,
           janamt: data.tables[0].Rows[0].janamt,
-        });
+        }));
       } else {
-        setInformation({
-          project: "",
-          paymeth: "",
-          materialnm: "",
-          totamt: 0,
-          quorev: 0,
-          rev_reason: "",
+        setInformation((prev) => ({
+          ...prev,
           ordamt: 0,
           saleamt: 0,
           collamt: 0,
           janamt: 0,
-        });
+        }));
       }
       setMainDataResult4({
         data: rows,
@@ -1355,7 +1350,7 @@ const SA_A1100_603W: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "testnum" && field != "remark") {
+    if (field != "rowstatus" && field != "testnum" && field != "taxamt") {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
@@ -1394,6 +1389,7 @@ const SA_A1100_603W: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
+              taxamt: item.wonamt * 0.1,
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -1435,7 +1431,7 @@ const SA_A1100_603W: React.FC = () => {
   };
 
   const enterEdit2 = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "recdt" && field != "comment") {
+    if (field != "rowstatus" && field != "recdt") {
       const newData = mainDataResult3.data.map((item) =>
         item[DATA_ITEM_KEY3] == dataItem[DATA_ITEM_KEY3]
           ? {
@@ -1815,6 +1811,281 @@ const SA_A1100_603W: React.FC = () => {
     }
   };
 
+  const infopara: Iparameters = {
+    procedureName: "P_SA_A1100_603W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": "CONTACT",
+      "@p_orgdiv": "01",
+      "@p_quonum": subFilters.quonum,
+      "@p_quorev": Information.quorev,
+      "@p_location": "01",
+      "@p_paymeth": Information.paymeth,
+      "@p_rowstatus_s": "",
+      "@p_quoseq_s": "",
+      "@p_wonamt_s": "",
+      "@p_taxamt_s": "",
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "SA_A1100_603W",
+    },
+  };
+
+  const [ParaData, setParaData] = useState({
+    rowstatus_s: "",
+    quoseq_s: "",
+    wonamt_s: "",
+    taxamt_s: "",
+  });
+
+  const infopara2: Iparameters = {
+    procedureName: "P_SA_A1100_603W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": "TESTLIST",
+      "@p_orgdiv": "01",
+      "@p_quonum": subFilters.quonum,
+      "@p_quorev": Information.quorev,
+      "@p_location": "01",
+      "@p_paymeth": "",
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_quoseq_s": ParaData.quoseq_s,
+      "@p_wonamt_s": ParaData.wonamt_s,
+      "@p_taxamt_s": ParaData.taxamt_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "SA_A1100_603W",
+    },
+  };
+
+  const onSaveClick = async () => {
+    let data: any;
+
+    setLoading(true);
+
+    try {
+      data = await processApi<any>("procedure", infopara);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      setSubFilters((prev) => ({
+        ...prev,
+        workType: "DETAIL",
+        pgNum: 1,
+        isSearch: true,
+      }));
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      if (data.resultMessage != undefined) {
+        alert(data.resultMessage);
+      }
+    }
+    setLoading(false);
+  };
+
+  const onSaveClick2 = () => {
+    const dataItem = mainDataResult2.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    let dataArr: TdataArr = {
+      rowstatus_s: [],
+      quoseq_s: [],
+      wonamt_s: [],
+      taxamt_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const { rowstatus = "", quoseq = "", wonamt = "", taxamt = "" } = item;
+
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.quoseq_s.push(quoseq);
+      dataArr.wonamt_s.push(wonamt);
+      dataArr.taxamt_s.push(taxamt);
+    });
+
+    setParaData((prev) => ({
+      ...prev,
+      rowstatus_s: dataArr.rowstatus_s.join("|"),
+      quoseq_s: dataArr.quoseq_s.join("|"),
+      wonamt_s: dataArr.wonamt_s.join("|"),
+      taxamt_s: dataArr.taxamt_s.join("|"),
+    }));
+  };
+
+  useEffect(() => {
+    if (ParaData.rowstatus_s != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+
+    setLoading(true);
+
+    try {
+      data = await processApi<any>("procedure", infopara2);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      setSubFilters((prev) => ({
+        ...prev,
+        workType: "DETAIL",
+        pgNum: 1,
+        isSearch: true,
+      }));
+      setParaData({
+        rowstatus_s: "",
+        quoseq_s: "",
+        wonamt_s: "",
+        taxamt_s: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      if (data.resultMessage != undefined) {
+        alert(data.resultMessage);
+      }
+    }
+    setLoading(false);
+  };
+
+  const onSaveClick3 = () => {
+    const dataItem: { [name: string]: any } = mainDataResult3.data.filter(
+      (item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      }
+    );
+    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+
+    type TData = {
+      row_status: string[];
+      id: string[];
+      seq: string[];
+      recdt: string[];
+      comment: string[];
+      user_id: string[];
+    };
+
+    let dataArr: TData = {
+      row_status: [],
+      id: [],
+      comment: [],
+      seq: [],
+      recdt: [],
+      user_id: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const { comment, rowstatus, id = "", seq, recdt, insert_userid } = item;
+
+      dataArr.comment.push(comment);
+      dataArr.id.push(id);
+      dataArr.row_status.push(rowstatus);
+      dataArr.seq.push(seq);
+      dataArr.recdt.push(recdt);
+      dataArr.user_id.push(insert_userid);
+    });
+
+    deletedMainRows.forEach((item: any, idx: number) => {
+      const { comment, id = "", seq, recdt, insert_userid } = item;
+
+      dataArr.row_status.push("D");
+      dataArr.comment.push(comment);
+      dataArr.id.push(id);
+      dataArr.seq.push(seq);
+      dataArr.recdt.push(recdt);
+      dataArr.user_id.push(insert_userid);
+    });
+
+    setParaDataSaved((prev) => ({
+      ...prev,
+      work_type: "save",
+      row_status: dataArr.row_status.join("|"),
+      comment: dataArr.comment.join("|"),
+      id: dataArr.id.join("|"),
+      seq: dataArr.seq.join("|"),
+      recdt: dataArr.recdt.join("|"),
+      user_id: dataArr.user_id.join("|"),
+      ref_key: subFilters.quonum + "-" + subFilters.quorev,
+    }));
+  };
+
+  const [paraDataSaved, setParaDataSaved] = useState({
+    work_type: "",
+    row_status: "",
+    id: "",
+    seq: "",
+    recdt: "",
+    comment: "",
+    user_id: "",
+    ref_key: "",
+  });
+
+  const paraSaved: Iparameters = {
+    procedureName: "sys_sav_comments",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraDataSaved.work_type,
+      "@p_row_status": paraDataSaved.row_status,
+      "@p_id": paraDataSaved.id,
+      "@p_seq": paraDataSaved.seq,
+      "@p_recdt": paraDataSaved.recdt,
+      "@p_comment": paraDataSaved.comment,
+      "@p_user_id": paraDataSaved.user_id,
+      "@p_form_id": "SA_A1100_603W",
+      "@p_table_id": "SA050T",
+      "@p_orgdiv": "01",
+      "@p_ref_key": paraDataSaved.ref_key,
+      "@p_exec_pc": pc,
+    },
+  };
+
+  const fetchTodoGridSaved2 = async () => {
+    let data: any;
+
+    setLoading(true);
+
+    try {
+      data = await processApi<any>("procedure", paraSaved);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      setSubFilters2((prev) => ({
+        ...prev,
+        workType: "COMMENT",
+        pgNum: 1,
+        isSearch: true,
+      }));
+      setParaDataSaved((prev) => ({ ...prev, work_type: "" }));
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      if (data.resultMessage != undefined) {
+        alert(data.resultMessage);
+      }
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (paraDataSaved.work_type !== "") fetchTodoGridSaved2();
+  }, [paraDataSaved]);
+
   return (
     <>
       <TitleContainer>
@@ -1974,7 +2245,7 @@ const SA_A1100_603W: React.FC = () => {
                     <GridTitle>계약내용</GridTitle>
                     <ButtonContainer>
                       <Button
-                        //onClick={onDeleteClick}
+                        onClick={onSaveClick}
                         fillMode="outline"
                         themeColor={"primary"}
                         icon="save"
@@ -1989,7 +2260,7 @@ const SA_A1100_603W: React.FC = () => {
                           <th style={{ textAlign: "right" }}>계약명 </th>
                           <td>
                             <Input
-                              name="prsnnum"
+                              name="project"
                               type="text"
                               value={Information.project}
                               className="readonly"
@@ -2000,7 +2271,7 @@ const SA_A1100_603W: React.FC = () => {
                           <th style={{ textAlign: "right" }}> 지급조건 </th>
                           <td>
                             <Input
-                              name="prsnnum"
+                              name="paymeth"
                               type="text"
                               value={Information.paymeth}
                               onChange={InfoInputChange}
@@ -2012,7 +2283,7 @@ const SA_A1100_603W: React.FC = () => {
                           <th style={{ textAlign: "right" }}> 시험물질명 </th>
                           <td>
                             <Input
-                              name="prsnnum"
+                              name="materialnm"
                               type="text"
                               value={Information.materialnm}
                               className="readonly"
@@ -2024,8 +2295,8 @@ const SA_A1100_603W: React.FC = () => {
                           <th style={{ textAlign: "right" }}> 합계금액 </th>
                           <td>
                             <Input
-                              name="prsnnum"
-                              type="text"
+                              name="totamt"
+                              type="number"
                               value={Information.totamt}
                               className="readonly"
                             />
@@ -2039,7 +2310,7 @@ const SA_A1100_603W: React.FC = () => {
                       <GridTitle>시험리스트</GridTitle>
                       <ButtonContainer>
                         <Button
-                          //onClick={onDeleteClick}
+                          onClick={onSaveClick2}
                           fillMode="outline"
                           themeColor={"primary"}
                           icon="save"
@@ -2142,7 +2413,7 @@ const SA_A1100_603W: React.FC = () => {
                             title="행 삭제"
                           ></Button>
                           <Button
-                            //onClick={onDeleteClick}
+                            onClick={onSaveClick3}
                             fillMode="outline"
                             themeColor={"primary"}
                             icon="save"

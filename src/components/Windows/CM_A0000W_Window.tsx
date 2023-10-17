@@ -315,8 +315,8 @@ const KendoWindow = ({
     let data: any;
     const subparameters: Iparameters = {
       procedureName: "P_CM_A0000W_Q",
-      pageNumber: 0,
-      pageSize: 1,
+      pageNumber: 1,
+      pageSize: 10000,
       parameters: {
         "@p_work_type": "LOAD",
         "@p_orgdiv": "01",
@@ -334,8 +334,8 @@ const KendoWindow = ({
 
     const subparameters2: Iparameters = {
       procedureName: "P_CM_A0000W_Q",
-      pageNumber: 0,
-      pageSize: 1,
+      pageNumber: 1,
+      pageSize: 10000,
       parameters: {
         "@p_work_type": "LOAD",
         "@p_orgdiv": "01",
@@ -841,7 +841,7 @@ const KendoWindow = ({
             </FormBox>
           </FormBoxWrap>
         </GridContainer>
-        <GridContainer width={`calc(45% - ${GAP})`}>
+        <GridContainer width={`calc(45% - ${GAP}px)`}>
           <GridTitleContainer>
             <GridTitle>참조</GridTitle>
           </GridTitleContainer>
@@ -874,7 +874,6 @@ const KendoWindow = ({
             )}
             onDataStateChange={onMainDataStateChange}
             {...mainDataState}
-            //선택 subDataState
             dataItemKey={DATA_ITEM_KEY}
             selectedField={SELECTED_FIELD}
             selectable={{

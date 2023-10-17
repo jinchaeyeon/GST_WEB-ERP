@@ -661,6 +661,11 @@ const CM_A1600: React.FC = () => {
 
     if (data.isSuccess === true) {
       fetchScheduler();
+      setTodoFilter((prev)=> ({
+        ...prev,
+        pgNum: 1,
+        isSearch: true
+      }))
       str = false;
     } else {
       console.log("[오류 발생]");
