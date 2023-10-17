@@ -127,7 +127,7 @@ export const gridList: Array<TGrid> = [
         id: "col_glpyn",
         field: "glpyn",
         caption: "GLP구분",
-        width: 120,
+        width: 250,
       },
       {
         id: "col_startdt",

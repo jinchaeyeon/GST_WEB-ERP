@@ -12,9 +12,10 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import {
+  Checkbox,
   Input,
   InputChangeEvent,
   TextArea,
@@ -53,19 +54,26 @@ import TopButtons from "../components/Buttons/TopButtons";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
+import RadioGroupCell from "../components/Cells/RadioGroupCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
   UsePermissions,
+  convertDateToStr,
   dateformat,
+  findMessage,
   getGridItemChangedData,
   getItemQuery,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   isValidDate,
   toDate,
-  GetPropertyValueByName,
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -75,6 +83,7 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
+import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -85,6 +94,21 @@ import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1000_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
+type TdataArr = {
+  rowstatus_s: string[];
+  quoseq_s: string[];
+  itemcd_s: string[];
+  itemnm_s: string[];
+  testnum_s: string[];
+  glpyn_s: string[];
+  startdt_s: string[];
+  enddt_s: string[];
+  remark_s: string[];
+  group_seq_s: string[];
+  sort_seq_s: string[];
+  packagetype_s: string[];
+};
+
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY2 = "num";
@@ -92,7 +116,7 @@ let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
 const dateField = ["quodt", "materialindt", "startdt", "enddt"];
-const RadioField = ["glpgb"];
+const RadioField = ["glpyn"];
 const numberField = ["group_seq", "sort_seq"];
 const comboField = ["packagetype", "testpart"];
 const itemField = ["itemcd"];
@@ -440,6 +464,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
           setVisible={setItemWindowVisible2}
           workType={"ROW_ADD"}
           setData={setItemData2}
+          modal={true}
         />
       )}
     </>
@@ -447,31 +472,33 @@ const ColumnCommandCell = (props: GridCellProps) => {
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
-  // const [bizComponentData, setBizComponentData] = useState([]);
-  // UseBizComponent("R_MA034", setBizComponentData);
-  // //합부판정
-  // const field = props.field ?? "";
-  // const bizComponentIdVal = field == "glpgb" ? "R_MA034" : "";
-  // const bizComponent = bizComponentData.find(
-  //   (item: any) => item.bizComponentId === bizComponentIdVal
-  // );
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("R_Requestgb", setBizComponentData);
+  //합부판정
+  const field = props.field ?? "";
+  const bizComponentIdVal = field == "glpyn" ? "R_Requestgb" : "";
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
 
-  // return bizComponent ? (
-  //   <RadioGroupCell bizComponentData={bizComponent} {...props} />
-  // ) : (
-  //   <td />
-  // );
-  return <td />;
+  return bizComponent ? (
+    <RadioGroupCell bizComponentData={bizComponent} {...props} />
+  ) : (
+    <td />
+  );
 };
 
 const SA_A1000_603W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(SUB_DATA_ITEM_KEY);
   const idGetter3 = getter(SUB_DATA_ITEM_KEY2);
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
   let gridRef3: any = useRef(null);
+  const userId = UseGetValueFromSessionItem("user_id");
   const [step, setStep] = React.useState(0);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -481,7 +508,10 @@ const SA_A1000_603W: React.FC = () => {
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
-
+  const [worktype, setWorktype] = useState<"N" | "U">("N");
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
   useEffect(() => {
     (async () => {
       const newData = subDataResult.data.map((item) =>
@@ -544,7 +574,10 @@ const SA_A1000_603W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
       }));
@@ -554,7 +587,7 @@ const SA_A1000_603W: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent(
-    "L_sysUserMaster_001, L_SA016, L_SA004, L_SA001_603",
+    "L_sysUserMaster_001, L_SA016, L_SA004, L_SA001_603, R_Requestgb",
     setBizComponentData
   );
 
@@ -924,10 +957,44 @@ const SA_A1000_603W: React.FC = () => {
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setInformation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (
+      name == "guid1" ||
+      name == "guid2" ||
+      name == "guid3" ||
+      name == "guid4" ||
+      name == "guid5" ||
+      name == "glp1" ||
+      name == "glp2" ||
+      name == "glp3" ||
+      name == "glp4" ||
+      name == "glp5" ||
+      name == "translate1"
+    ) {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value == true ? "K" : "",
+      }));
+    } else if (name == "translate2") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value == true ? "E" : "",
+      }));
+    } else if (name == "translate3") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value == true ? "J" : "",
+      }));
+    } else if (name == "translate4") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value == true ? "P" : "",
+      }));
+    } else {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const InputChange2 = (e: any) => {
@@ -1075,7 +1142,21 @@ const SA_A1000_603W: React.FC = () => {
     remark: "",
     remark2: "",
     remark3: "",
-    requestgb: "",
+    requestgb: "A",
+    glp1: "",
+    glp2: "",
+    glp3: "",
+    glp4: "",
+    glp5: "",
+    guid1: "",
+    guid2: "",
+    guid3: "",
+    guid4: "",
+    guid5: "",
+    translate1: "",
+    translate2: "",
+    translate3: "",
+    translate4: "",
     rev_reason: "",
     testenddt: null,
     teststdt: null,
@@ -1240,6 +1321,7 @@ const SA_A1000_603W: React.FC = () => {
       }
 
       if (RowCnt > 0) {
+        setWorktype("U");
         setInformation({
           attdatnum: row[0].attdatnum,
           chkperson: row[0].chkperson,
@@ -1273,9 +1355,24 @@ const SA_A1000_603W: React.FC = () => {
           validt: isValidDate(row[0].validt)
             ? new Date(dateformat(row[0].validt))
             : null,
+          glp1: row[0].glp1,
+          glp2: row[0].glp2,
+          glp3: row[0].glp3,
+          glp4: row[0].glp4,
+          glp5: row[0].glp5,
+          guid1: row[0].guid1,
+          guid2: row[0].guid2,
+          guid3: row[0].guid3,
+          guid4: row[0].guid4,
+          guid5: row[0].guid5,
+          translate1: row[0].translate1,
+          translate2: row[0].translate2,
+          translate3: row[0].translate3,
+          translate4: row[0].translate4,
           workType: "U",
         });
       } else {
+        setWorktype("N");
         setInformation({
           attdatnum: "",
           chkperson: "",
@@ -1298,7 +1395,21 @@ const SA_A1000_603W: React.FC = () => {
           remark: "",
           remark2: "",
           remark3: "",
-          requestgb: "",
+          requestgb: "A",
+          glp1: "",
+          glp2: "",
+          glp3: "",
+          glp4: "",
+          glp5: "",
+          guid1: "",
+          guid2: "",
+          guid3: "",
+          guid4: "",
+          guid5: "",
+          translate1: "",
+          translate2: "",
+          translate3: "",
+          translate4: "",
           rev_reason: "",
           testenddt: "",
           teststdt: "",
@@ -1911,12 +2022,688 @@ const SA_A1000_603W: React.FC = () => {
     });
   };
 
+  const onAddClick2 = () => {
+    setWorktype("N");
+    setInformation({
+      attdatnum: "",
+      chkperson: "",
+      custcd: "",
+      custnm: "",
+      custprsnnm: "",
+      dptcd: "",
+      files: "",
+      materialindt: new Date(),
+      materialnm: "",
+      materialtype: "",
+      person: userId,
+      quodt: new Date(),
+      quonum: "",
+      quorev: 0,
+      quosts: "1",
+      quotype: "1",
+      rcvcustnm: "",
+      rcvcustprsnnm: "",
+      remark: "",
+      remark2: "",
+      remark3: "",
+      requestgb: "A",
+      glp1: "",
+      glp2: "",
+      glp3: "",
+      glp4: "",
+      glp5: "",
+      guid1: "",
+      guid2: "",
+      guid3: "",
+      guid4: "",
+      guid5: "",
+      translate1: "",
+      translate2: "",
+      translate3: "",
+      translate4: "",
+      rev_reason: "",
+      testenddt: "",
+      teststdt: "",
+      validt: "",
+      workType: "N",
+    });
+    setSubDataResult(process([], subDataState));
+    setTabSelected(1);
+  };
+
+  const [ParaData, setParaData] = useState({
+    workType: "",
+    orgdiv: "",
+    location: "",
+    quonum: "",
+    quorev: 0,
+    quoseq: 0,
+    quotype: "",
+    quosts: "",
+    quodt: "",
+    person: "",
+    dptcd: "",
+    chkperson: "",
+    custcd: "",
+    custnm: "",
+    remark2: "",
+    rcvcustnm: "",
+    rcvcustprsnnm: "",
+    remark3: "",
+    materialtype: "",
+    materialinfo: "",
+    materialindt: "",
+    materialnm: "",
+    guideline: "",
+    translatereport: "",
+    teststdt: "",
+    testenddt: "",
+    attdatnum: "",
+    remark: "",
+    custprsnnm: "",
+    requestgb: "",
+    glpgb: "",
+    rev_reason: "",
+    validt: "",
+    rowstatus_s: "",
+    quoseq_s: "",
+    itemcd_s: "",
+    itemnm_s: "",
+    testnum_s: "",
+    glpyn_s: "",
+    startdt_s: "",
+    enddt_s: "",
+    remark_s: "",
+    group_seq_s: "",
+    sort_seq_s: "",
+    packagetype_s: "",
+    userid: "",
+    pc: "",
+    form_id: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_SA_A1000_603W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_location": ParaData.location,
+      "@p_quonum": ParaData.quonum,
+      "@p_quorev": ParaData.quorev,
+      "@p_quotype": ParaData.quotype,
+      "@p_quosts": ParaData.quosts,
+      "@p_quodt": ParaData.quodt,
+      "@p_person": ParaData.person,
+      "@p_dptcd": ParaData.dptcd,
+      "@p_chkperson": ParaData.chkperson,
+      "@p_custcd": ParaData.custcd,
+      "@p_custnm": ParaData.custnm,
+      "@p_remark2": ParaData.remark2,
+      "@p_rcvcustnm": ParaData.rcvcustnm,
+      "@p_rcvcustprsnnm": ParaData.rcvcustprsnnm,
+      "@p_remark3": ParaData.remark3,
+      "@p_materialtype": ParaData.materialtype,
+      "@p_materialinfo": ParaData.materialinfo,
+      "@p_materialindt": ParaData.materialindt,
+      "@p_materialnm": ParaData.materialnm,
+      "@p_guideline": ParaData.guideline,
+      "@p_translatereport": ParaData.translatereport,
+      "@p_teststdt": ParaData.teststdt,
+      "@p_testenddt": ParaData.testenddt,
+      "@p_attdatnum": ParaData.attdatnum,
+      "@p_remark": ParaData.remark,
+      "@p_custprsnnm": ParaData.custprsnnm,
+      "@p_requestgb": ParaData.requestgb,
+      "@p_glpgb": ParaData.glpgb,
+      "@p_rev_reason": ParaData.rev_reason,
+      "@p_validt": ParaData.validt,
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_quoseq_s": ParaData.quoseq_s,
+      "@p_itemcd_s": ParaData.itemcd_s,
+      "@p_itemnm_s": ParaData.itemnm_s,
+      "@p_testnum_s": ParaData.testnum_s,
+      "@p_glpyn_s": ParaData.glpyn_s,
+      "@p_startdt_s": ParaData.startdt_s,
+      "@p_enddt_s": ParaData.enddt_s,
+      "@p_remark_s": ParaData.remark_s,
+      "@p_group_seq_s": ParaData.group_seq_s,
+      "@p_sort_seq_s": ParaData.sort_seq_s,
+      "@p_packagetype_s": ParaData.packagetype_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "AC_P1000W",
+    },
+  };
+
+  const onSaveClick = () => {
+    const dataItem = subDataResult.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    try {
+      if (
+        convertDateToStr(Information.quodt).substring(0, 4) < "1997" ||
+        convertDateToStr(Information.quodt).substring(6, 8) > "31" ||
+        convertDateToStr(Information.quodt).substring(6, 8) < "01" ||
+        convertDateToStr(Information.quodt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A1000_603W_001");
+      } else if (
+        Information.person == null ||
+        Information.person == "" ||
+        Information.person == undefined
+      ) {
+        throw findMessage(messagesData, "SA_A1000_603W_001");
+      } else if (
+        Information.quotype == null ||
+        Information.quotype == "" ||
+        Information.quotype == undefined
+      ) {
+        throw findMessage(messagesData, "SA_A1000_603W_001");
+      } else if (
+        convertDateToStr(Information.materialindt).substring(0, 4) < "1997" ||
+        convertDateToStr(Information.materialindt).substring(6, 8) > "31" ||
+        convertDateToStr(Information.materialindt).substring(6, 8) < "01" ||
+        convertDateToStr(Information.materialindt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A1000_603W_001");
+      } else {
+        const guid =
+          Information.guid1 +
+          "|" +
+          Information.guid2 +
+          "|" +
+          Information.guid3 +
+          "|" +
+          Information.guid4 +
+          "|" +
+          Information.guid5;
+
+        const glp =
+          Information.glp1 +
+          "|" +
+          Information.glp2 +
+          "|" +
+          Information.glp3 +
+          "|" +
+          Information.glp4 +
+          "|" +
+          Information.glp5;
+
+        const translatereport =
+          Information.translate1 +
+          "|" +
+          Information.translate2 +
+          "|" +
+          Information.translate3 +
+          "|" +
+          Information.translate4;
+
+        if (dataItem.length === 0 && deletedMainRows.length === 0) {
+          setParaData({
+            workType: worktype,
+            orgdiv: "01",
+            location: "01",
+            quonum: Information.quonum,
+            quorev: Information.quorev,
+            quoseq: Information.quorev,
+            quotype: Information.quotype,
+            quosts: Information.quosts,
+            quodt: convertDateToStr(Information.quodt),
+            person: Information.person,
+            dptcd: Information.dptcd,
+            chkperson: Information.chkperson,
+            custcd: Information.custcd,
+            custnm: Information.custnm,
+            remark2: Information.remark2,
+            rcvcustnm: Information.rcvcustnm,
+            rcvcustprsnnm: Information.rcvcustprsnnm,
+            remark3: Information.remark3,
+            materialtype: Information.materialtype,
+            materialinfo: "",
+            materialindt: convertDateToStr(Information.materialindt),
+            materialnm: Information.materialnm,
+            guideline: guid,
+            translatereport: translatereport,
+            testenddt: isValidDate(Information.testenddt)
+              ? convertDateToStr(Information.testenddt)
+              : "",
+            teststdt: isValidDate(Information.teststdt)
+              ? convertDateToStr(Information.teststdt)
+              : "",
+            attdatnum: Information.attdatnum,
+            remark: Information.remark,
+            custprsnnm: Information.custprsnnm,
+            requestgb: Information.requestgb,
+            glpgb: glp,
+            rev_reason: Information.rev_reason,
+            validt: isValidDate(Information.validt)
+              ? convertDateToStr(Information.validt)
+              : "",
+            rowstatus_s: "",
+            quoseq_s: "",
+            itemcd_s: "",
+            itemnm_s: "",
+            testnum_s: "",
+            glpyn_s: "",
+            startdt_s: "",
+            enddt_s: "",
+            remark_s: "",
+            group_seq_s: "",
+            sort_seq_s: "",
+            packagetype_s: "",
+            userid: userId,
+            pc: pc,
+            form_id: "SA_A1000_603W",
+          });
+        } else {
+          let dataArr: TdataArr = {
+            rowstatus_s: [],
+            quoseq_s: [],
+            itemcd_s: [],
+            itemnm_s: [],
+            testnum_s: [],
+            glpyn_s: [],
+            startdt_s: [],
+            enddt_s: [],
+            remark_s: [],
+            group_seq_s: [],
+            sort_seq_s: [],
+            packagetype_s: [],
+          };
+          dataItem.forEach((item: any, idx: number) => {
+            const {
+              rowstatus = "",
+              quoseq = "",
+              itemcd = "",
+              itemnm = "",
+              testnum = "",
+              glpyn = "",
+              startdt = "",
+              enddt = "",
+              remark = "",
+              group_seq = "",
+              sort_seq = "",
+              packagetype = "",
+            } = item;
+
+            dataArr.rowstatus_s.push(rowstatus);
+            dataArr.quoseq_s.push(quoseq);
+            dataArr.itemcd_s.push(itemcd);
+            dataArr.itemnm_s.push(itemnm);
+            dataArr.testnum_s.push(testnum);
+            dataArr.glpyn_s.push(glpyn);
+            dataArr.startdt_s.push(
+              isValidDate(startdt) ? convertDateToStr(startdt) : startdt
+            );
+            dataArr.enddt_s.push(
+              isValidDate(enddt) ? convertDateToStr(enddt) : enddt
+            );
+            dataArr.remark_s.push(remark);
+            dataArr.group_seq_s.push(group_seq);
+            dataArr.sort_seq_s.push(sort_seq);
+            dataArr.packagetype_s.push(packagetype);
+          });
+          deletedMainRows.forEach((item: any, idx: number) => {
+            const {
+              rowstatus = "",
+              quoseq = "",
+              itemcd = "",
+              itemnm = "",
+              testnum = "",
+              glpyn = "",
+              startdt = "",
+              enddt = "",
+              remark = "",
+              group_seq = "",
+              sort_seq = "",
+              packagetype = "",
+            } = item;
+
+            dataArr.rowstatus_s.push("D");
+            dataArr.quoseq_s.push(quoseq);
+            dataArr.itemcd_s.push(itemcd);
+            dataArr.itemnm_s.push(itemnm);
+            dataArr.testnum_s.push(testnum);
+            dataArr.glpyn_s.push(glpyn);
+            dataArr.startdt_s.push(
+              isValidDate(startdt) ? convertDateToStr(startdt) : startdt
+            );
+            dataArr.enddt_s.push(
+              isValidDate(enddt) ? convertDateToStr(enddt) : enddt
+            );
+            dataArr.remark_s.push(remark);
+            dataArr.group_seq_s.push(group_seq);
+            dataArr.sort_seq_s.push(sort_seq);
+            dataArr.packagetype_s.push(packagetype);
+          });
+          setParaData({
+            workType: worktype,
+            orgdiv: "01",
+            location: "01",
+            quonum: Information.quonum,
+            quorev: Information.quorev,
+            quoseq: Information.quorev,
+            quotype: Information.quotype,
+            quosts: Information.quosts,
+            quodt: convertDateToStr(Information.quodt),
+            person: Information.person,
+            dptcd: Information.dptcd,
+            chkperson: Information.chkperson,
+            custcd: Information.custcd,
+            custnm: Information.custnm,
+            remark2: Information.remark2,
+            rcvcustnm: Information.rcvcustnm,
+            rcvcustprsnnm: Information.rcvcustprsnnm,
+            remark3: Information.remark3,
+            materialtype: Information.materialtype,
+            materialinfo: "",
+            materialindt: convertDateToStr(Information.materialindt),
+            materialnm: Information.materialnm,
+            guideline: guid,
+            translatereport: translatereport,
+            testenddt: isValidDate(Information.testenddt)
+              ? convertDateToStr(Information.testenddt)
+              : "",
+            teststdt: isValidDate(Information.teststdt)
+              ? convertDateToStr(Information.teststdt)
+              : "",
+            attdatnum: Information.attdatnum,
+            remark: Information.remark,
+            custprsnnm: Information.custprsnnm,
+            requestgb: Information.requestgb,
+            glpgb: glp,
+            rev_reason: Information.rev_reason,
+            validt: isValidDate(Information.validt)
+              ? convertDateToStr(Information.validt)
+              : "",
+            rowstatus_s: dataArr.rowstatus_s.join("|"),
+            quoseq_s: dataArr.quoseq_s.join("|"),
+            itemcd_s: dataArr.itemcd_s.join("|"),
+            itemnm_s: dataArr.itemnm_s.join("|"),
+            testnum_s: dataArr.testnum_s.join("|"),
+            glpyn_s: dataArr.glpyn_s.join("|"),
+            startdt_s: dataArr.startdt_s.join("|"),
+            enddt_s: dataArr.enddt_s.join("|"),
+            remark_s: dataArr.remark_s.join("|"),
+            group_seq_s: dataArr.group_seq_s.join("|"),
+            sort_seq_s: dataArr.sort_seq_s.join("|"),
+            packagetype_s: dataArr.packagetype_s.join("|"),
+            userid: userId,
+            pc: pc,
+            form_id: "SA_A1000_603W",
+          });
+        }
+      }
+    } catch (e) {
+      alert(e);
+    }
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      setTabSelected(0);
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: data.returnString,
+        isSearch: true,
+      }));
+      setSubFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
+      setParaData({
+        workType: "",
+        orgdiv: "",
+        location: "",
+        quonum: "",
+        quorev: 0,
+        quoseq: 0,
+        quotype: "",
+        quosts: "",
+        quodt: "",
+        person: "",
+        dptcd: "",
+        chkperson: "",
+        custcd: "",
+        custnm: "",
+        remark2: "",
+        rcvcustnm: "",
+        rcvcustprsnnm: "",
+        remark3: "",
+        materialtype: "",
+        materialinfo: "",
+        materialindt: "",
+        materialnm: "",
+        guideline: "",
+        translatereport: "",
+        teststdt: "",
+        testenddt: "",
+        attdatnum: "",
+        remark: "",
+        custprsnnm: "",
+        requestgb: "",
+        glpgb: "",
+        rev_reason: "",
+        validt: "",
+        rowstatus_s: "",
+        quoseq_s: "",
+        itemcd_s: "",
+        itemnm_s: "",
+        testnum_s: "",
+        glpyn_s: "",
+        startdt_s: "",
+        enddt_s: "",
+        remark_s: "",
+        group_seq_s: "",
+        sort_seq_s: "",
+        packagetype_s: "",
+        userid: "",
+        pc: "",
+        form_id: "",
+      });
+      deletedMainRows = [];
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (ParaData.workType != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
+  //삭제 프로시저 초기값
+  const [paraDataDeleted, setParaDataDeleted] = useState({
+    work_type: "",
+    quonum: "",
+    quorev: "",
+  });
+
+  //삭제 프로시저 파라미터
+  const paraDeleted: Iparameters = {
+    procedureName: "P_SA_A1000_603W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraDataDeleted.work_type,
+      "@p_orgdiv": "01",
+      "@p_location": "01",
+      "@p_quonum": paraDataDeleted.quonum,
+      "@p_quorev": paraDataDeleted.quorev,
+      "@p_quotype": "",
+      "@p_quosts": "",
+      "@p_quodt": "",
+      "@p_person": "",
+      "@p_dptcd": "",
+      "@p_chkperson": "",
+      "@p_custcd": "",
+      "@p_custnm": "",
+      "@p_remark2": "",
+      "@p_rcvcustnm": "",
+      "@p_rcvcustprsnnm": "",
+      "@p_remark3": "",
+      "@p_materialtype": "",
+      "@p_materialinfo": "",
+      "@p_materialindt": "",
+      "@p_materialnm": "",
+      "@p_guideline": "",
+      "@p_translatereport": "",
+      "@p_teststdt": "",
+      "@p_testenddt": "",
+      "@p_attdatnum": "",
+      "@p_remark": "",
+      "@p_custprsnnm": "",
+      "@p_requestgb": "",
+      "@p_glpgb": "",
+      "@p_rev_reason": "",
+      "@p_validt": "",
+      "@p_rowstatus_s": "",
+      "@p_quoseq_s": "",
+      "@p_itemcd_s": "",
+      "@p_itemnm_s": "",
+      "@p_testnum_s": "",
+      "@p_glpyn_s": "",
+      "@p_startdt_s": "",
+      "@p_enddt_s": "",
+      "@p_remark_s": "",
+      "@p_group_seq_s": "",
+      "@p_sort_seq_s": "",
+      "@p_packagetype_s": "",
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "AC_P1000W",
+    },
+  };
+
+  const fetchToDelete = async () => {
+    let data: any;
+
+    try {
+      data = await processApi<any>("procedure", paraDeleted);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const isLastDataDeleted =
+        mainDataResult.data.length === 1 && filters.pgNum > 0;
+      const findRowIndex = mainDataResult.data.findIndex(
+        (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
+      );
+      setTabSelected(0);
+      if (isLastDataDeleted) {
+        setPage({
+          skip:
+            filters.pgNum == 1 || filters.pgNum == 0
+              ? 0
+              : PAGE_SIZE * (filters.pgNum - 2),
+          take: PAGE_SIZE,
+        });
+
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: isLastDataDeleted
+            ? prev.pgNum != 1
+              ? prev.pgNum - 1
+              : prev.pgNum
+            : prev.pgNum,
+          isSearch: true,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+          isSearch: true,
+        }));
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
+    }
+
+    //초기화
+    setParaDataDeleted((prev) => ({
+      work_type: "",
+      quonum: "",
+      quorev: "",
+    }));
+  };
+
+  const questionToDelete = useSysMessage("QuestionToDelete");
+
+  const onDeleteClick2 = () => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+
+    const datas = mainDataResult.data.filter(
+      (item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
+
+    if (mainDataResult.data.length == 0) {
+      alert("데이터가 없습니다.");
+    } else {
+      if (datas != undefined) {
+        setParaDataDeleted((prev) => ({
+          work_type: "D",
+          quonum: datas.quonum,
+          quorev: datas.quorev,
+        }));
+      }
+    }
+  };
+
+  
+  useEffect(() => {
+    if (paraDataDeleted.work_type === "D") fetchToDelete();
+  }, [paraDataDeleted]);
+
   return (
     <>
       <TitleContainer>
         <Title>영업활동관리</Title>
 
         <ButtonContainer>
+          <Button onClick={onAddClick2} themeColor={"primary"} icon="file-add">
+            신규
+          </Button>
+          <Button
+            onClick={onDeleteClick2}
+            fillMode="outline"
+            themeColor={"primary"}
+            icon="delete"
+          >
+            삭제
+          </Button>
+          <Button
+            onClick={onSaveClick}
+            fillMode="outline"
+            themeColor={"primary"}
+            icon="save"
+          >
+            저장
+          </Button>
           {permissions && (
             <TopButtons
               search={search}
@@ -2384,25 +3171,127 @@ const SA_A1000_603W: React.FC = () => {
             <FormBox>
               <tbody>
                 <tr>
-                  <th>의뢰목적</th>
-                  <td></td>
-                  <th>GLP구분</th>
-                  <td></td>
-                  {/*<td>
-                  {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="requestgb"
-                    customOptionData={customOptionData}
-                    changeData={RadioChange}
-                  />
-                )}
-                    </td> */}
+                  <th style={{ width: "10%" }}>의뢰목적</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentRadioGroup
+                        name="requestgb"
+                        value={Information.requestgb}
+                        bizComponentId="R_Requestgb"
+                        bizComponentData={bizComponentData}
+                        changeData={RadioChange}
+                      />
+                    )}
+                  </td>
+                  <th style={{ width: "10%" }}>GLP구분</th>
+                  <td>
+                    <Checkbox
+                      title="식약처"
+                      name="glp1"
+                      label={"식약처"}
+                      value={Information.glp1 == "K" ? true : false}
+                      onChange={InputChange}
+                    />
+                    <Checkbox
+                      title="국립환경과학"
+                      name="glp2"
+                      label={"국립환경과학"}
+                      value={Information.glp2 == "K" ? true : false}
+                      onChange={InputChange}
+                    />
+                    <Checkbox
+                      title="OLED"
+                      name="glp3"
+                      label={"OLED"}
+                      value={Information.glp3 == "K" ? true : false}
+                      onChange={InputChange}
+                    />
+                    <Checkbox
+                      title="농진청"
+                      name="glp4"
+                      label={"농진청"}
+                      value={Information.glp4 == "K" ? true : false}
+                      onChange={InputChange}
+                    />
+                    <Checkbox
+                      title="기타()"
+                      name="glp5"
+                      label={"기타()"}
+                      value={Information.glp5 == "K" ? true : false}
+                      onChange={InputChange}
+                    />
+                  </td>
                 </tr>
                 <tr>
                   <th>가이드라인(기준)</th>
-                  <td></td>
+                  <td>
+                    <Checkbox
+                      title="식약처"
+                      name="guid1"
+                      label={"식약처"}
+                      value={Information.guid1 == "K" ? true : false}
+                      onChange={InputChange}
+                    />
+                    <Checkbox
+                      title="국립환경과학"
+                      name="guid2"
+                      label={"국립환경과학"}
+                      value={Information.guid2 == "K" ? true : false}
+                      onChange={InputChange}
+                    />
+                    <Checkbox
+                      title="OLED"
+                      name="guid3"
+                      label={"OLED"}
+                      value={Information.guid3 == "K" ? true : false}
+                      onChange={InputChange}
+                    />
+                    <Checkbox
+                      title="농진청"
+                      name="guid4"
+                      label={"농진청"}
+                      value={Information.guid4 == "K" ? true : false}
+                      onChange={InputChange}
+                    />
+                    <Checkbox
+                      title="기타()"
+                      name="guid5"
+                      label={"기타()"}
+                      value={Information.guid5 == "K" ? true : false}
+                      onChange={InputChange}
+                    />
+                  </td>
                   <th>번역보고서</th>
-                  <td></td>
+                  <td>
+                    <Checkbox
+                      title="국문"
+                      name="translate1"
+                      label={"국문"}
+                      value={Information.translate1 == "K" ? true : false}
+                      onChange={InputChange}
+                    />
+                    <Checkbox
+                      title="영문"
+                      name="translate2"
+                      label={"영문"}
+                      value={Information.translate2 == "E" ? true : false}
+                      onChange={InputChange}
+                    />
+                    <Checkbox
+                      title="일문"
+                      name="translate3"
+                      label={"일문"}
+                      value={Information.translate3 == "J" ? true : false}
+                      onChange={InputChange}
+                    />
+                    <Checkbox
+                      title="PDF"
+                      name="translate4"
+                      label={"PDF"}
+                      value={Information.translate4 == "P" ? true : false}
+                      onChange={InputChange}
+                    />
+                  </td>
                 </tr>
               </tbody>
             </FormBox>
