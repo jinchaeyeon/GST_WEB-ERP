@@ -252,7 +252,7 @@ const CM_A5001W: React.FC = () => {
   };
 
   const getAttachmentsAData = (data: IAttachmentData) => {
-    if (!information.attdatnum) {
+    if (!(detailDataResult.data.length == 0 ? "" : detailDataResult.data[0].attdatnum)) {
       setUnsavedAttadatnums([data.attdatnum]);
     }
 
@@ -299,8 +299,8 @@ const CM_A5001W: React.FC = () => {
         attdatnum: selectedRowData.attdatnum,
         files: selectedRowData.files,
       });
-      fetchHtmlDocumentQ();
-      fetchHtmlDocumentA();
+
+      fetchHtmlDocument();
     }
     setTabSelected(e.selected);
   };
@@ -572,7 +572,6 @@ const CM_A5001W: React.FC = () => {
         "@p_find_row_value": "",
       },
     };
-
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -589,11 +588,13 @@ const CM_A5001W: React.FC = () => {
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
+      
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
 
+    // 필터 isSearch false처리, pgNum 세팅
     setDetailFilters((prev) => ({
       ...prev,
       pgNum:
@@ -605,9 +606,10 @@ const CM_A5001W: React.FC = () => {
     setLoading(false);
   };
 
-  const fetchHtmlDocumentQ = async () => {
+  const fetchHtmlDocument = async () => {
     //if (!permissions?.view) return;
     let data: any;
+    let data1: any;
     setLoading(true);
     
     if (mainDataResult.total < 0) {
@@ -633,47 +635,29 @@ const CM_A5001W: React.FC = () => {
       if (docEditorRef.current) {
         setHtmlOnEditor({ document: data.document, type: "Question" });
       }
+
+        const para1 = {
+          folder: "CM_A5001W",
+          id: selectedRowData["ref_document_id"],
+        };
+
+        try {
+          data1 = await processApi<any>("meeting-query", para1);
+        } catch (error) {
+          data1 = null;
+        }
+
+        if (data1 !== null && data1.document !== "") {
+          // Edior에 HTML & CSS 세팅
+          if (docEditorRef1.current) {
+            setHtmlOnEditor({ document: data1.document, type: "Answer" });
+          }
+        } else {
+          setHtmlOnEditor({ document: "", type: "Answer" });
+        }
     } else {
-      if (docEditorRef.current) {
         setHtmlOnEditor({ document: "", type: "Question" });
-      }
-    }
-    setLoading(false);
-  };
-
-  const fetchHtmlDocumentA = async () => {
-    //if (!permissions?.view) return;
-    let data: any;
-    setLoading(true);
-    
-    if (mainDataResult.total < 0) {
-      return false;
-    }
-    const mainDataId = Object.getOwnPropertyNames(selectedState)[0];
-    const selectedRowData = mainDataResult.data.find(
-      (item) => item[DATA_ITEM_KEY] == mainDataId
-    );
-
-    const para = {
-      folder: "CM_A5001W",
-      id: selectedRowData["ref_document_id"],
-    };
-    
-    try {
-      data = await processApi<any>("meeting-query", para);
-    } catch (error) {
-      data = null;
-    }
-    
-    if (data !== null && data.document !== "") {
-      // Edior에 HTML & CSS 세팅
-      if (docEditorRef1.current) {
-        docEditorRef1.current.setHtml(data.document);
-      }
-    } else {
-      if (docEditorRef1.current) {
-        docEditorRef1.current.setHtml("");
-      }
+        setHtmlOnEditor({ document: "", type: "Answer" });
     }
     setLoading(false);
   };
@@ -689,6 +673,8 @@ const CM_A5001W: React.FC = () => {
       docEditorRef.current.updateEditable(true);
       docEditorRef.current.setHtml(document);
       docEditorRef.current.updateEditable(false);
+    } else if (docEditorRef1.current && type == "Answer") {
+      docEditorRef1.current.setHtml(document);
     }
   };
 
@@ -700,7 +686,7 @@ const CM_A5001W: React.FC = () => {
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
@@ -834,8 +820,7 @@ const CM_A5001W: React.FC = () => {
       files: selectedRowData.files,
     });
 
-    fetchHtmlDocumentQ();
-    fetchHtmlDocumentA();
+    fetchHtmlDocument();
   };
 
   //저장 파라미터 초기 값
@@ -926,8 +911,7 @@ const CM_A5001W: React.FC = () => {
         setDeletedAttadatnums([paraDataSaved.attdatnum]);
       }
       setTabSelected(1);
-      fetchHtmlDocumentQ();
-      fetchHtmlDocumentA();
+      fetchHtmlDocument();
 
     } else {
       console.log("[오류 발생]");
@@ -967,8 +951,7 @@ const CM_A5001W: React.FC = () => {
       attdatnum: selectedRowData.attdatnum,
       files: selectedRowData.files,
     });
-    fetchHtmlDocumentQ();
-    fetchHtmlDocumentA();
+    fetchHtmlDocument();
   };
 
   const questionToDelete = useSysMessage("QuestionToDelete");
@@ -1415,7 +1398,7 @@ const CM_A5001W: React.FC = () => {
                         <div className="filter-item-wrap">
                           <Input
                             name="files"
-                            value={detailfilters.files}
+                            value={detailDataResult.data.length == 0 ? "" : detailDataResult.data[0].files}
                             className="readonly"
                           />
                           <ButtonInInput>
@@ -1465,7 +1448,7 @@ const CM_A5001W: React.FC = () => {
         <AttachmentsWindow
           setVisible={setAttachmentsAWindowVisible}
           setData={getAttachmentsAData}
-          para={detailfilters.attdatnum}
+          para={detailDataResult.data.length == 0 ? "" : detailDataResult.data[0].attdatnum}
           modal={true}
         />
       )}

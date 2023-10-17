@@ -270,7 +270,7 @@ const CM_A5000W: React.FC = () => {
   };
 
   const getAttachmentsAData = (data: IAttachmentData) => {
-    if (!information.attdatnum) {
+    if (!(detailDataResult.data.length == 0 ? "" : detailDataResult.data[0].attdatnum)) {
       setUnsavedAttadatnums([data.attdatnum]);
     }
 
@@ -317,8 +317,7 @@ const CM_A5000W: React.FC = () => {
         attdatnum: selectedRowData.attdatnum,
         files: selectedRowData.files,
       });
-      fetchHtmlDocument("Question");
-      fetchHtmlDocument("Answer");
+      fetchHtmlDocument();
     }
     setTabSelected(e.selected);
   };
@@ -635,63 +634,59 @@ const CM_A5000W: React.FC = () => {
     setLoading(false);
   };
 
-  const fetchHtmlDocument = async (type: any) => {
+  const fetchHtmlDocument = async () => {
     //if (!permissions?.view) return;
     let data: any;
+    let data1: any;
     setLoading(true);
     
     if (mainDataResult.total < 0) {
       return false;
     }
+
     const mainDataId = Object.getOwnPropertyNames(selectedState)[0];
     const selectedRowData = mainDataResult.data.find(
       (item) => item[DATA_ITEM_KEY] == mainDataId
     );
-
-    let para;
-
-    if (type == "Question") {
-      para = {
+    const para = {
         folder: "CM_A5000W",
         id: selectedRowData["document_id"],
       };
-    } else {
-      para = {
-        folder: "CM_A5001W",
-        id: selectedRowData["ref_document_id"],
-      };
-    }
     
     try {
       data = await processApi<any>("meeting-query", para);
     } catch (error) {
       data = null;
     }
-    
+
     if (data !== null && data.document !== "") {
-      if (type == "Question") {
-        reference = data.document;
-        // Edior에 HTML & CSS 세팅
-        if (docEditorRef.current) {
-          docEditorRef.current.setHtml(reference);
-        }
-      } else {
-        reference1 = data.document;
-        // Edior에 HTML & CSS 세팅
-        if (docEditorRef1.current) {
-          setHtmlOnEditor({ document: reference1, type: "Answer" });
-        }
+      // Edior에 HTML & CSS 세팅
+      if (docEditorRef.current) {
+        setHtmlOnEditor({ document: data.document, type: "Question" });
       }
+
+        const para1 = {
+          folder: "CM_A5001W",
+          id: selectedRowData["ref_document_id"],
+        };
+
+        try {
+          data1 = await processApi<any>("meeting-query", para1);
+        } catch (error) {
+          data1 = null;
+        }
+
+        if (data1 !== null && data1.document !== "") {
+          // Edior에 HTML & CSS 세팅
+          if (docEditorRef1.current) {
+            setHtmlOnEditor({ document: data1.document, type: "Answer" });
+          }
+        } else {
+          setHtmlOnEditor({ document: "", type: "Answer" });
+        }
     } else {
-      if (type == "Question") {
-        if (docEditorRef.current) {
-          docEditorRef.current.setHtml("");
-        }
-      } else {
-        if (docEditorRef1.current) {
+        setHtmlOnEditor({ document: "", type: "Question" });
         setHtmlOnEditor({ document: "", type: "Answer" });
-        }
-      }
     }
     setLoading(false);
   };
@@ -703,7 +698,9 @@ const CM_A5000W: React.FC = () => {
     document: string;
     type: string;
   }) => {
-    if (docEditorRef1.current && type == "Answer") {
+    if (docEditorRef.current && type == "Question") {
+      docEditorRef.current.setHtml(document);
+    } else if (docEditorRef1.current && type == "Answer") {
       docEditorRef1.current.updateEditable(true);
       docEditorRef1.current.setHtml(document);
       docEditorRef1.current.updateEditable(false);
@@ -728,7 +725,7 @@ const CM_A5000W: React.FC = () => {
       setDetailFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
     }
-  }, [detailfilters]);
+  }, [detailfilters, tabSelected]);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
@@ -854,8 +851,7 @@ const CM_A5000W: React.FC = () => {
       files: selectedRowData.files,
     });
 
-    fetchHtmlDocument("Question");
-    fetchHtmlDocument("Answer");
+    fetchHtmlDocument();
   };
 
   //저장 파라미터 초기 값
@@ -935,8 +931,7 @@ const CM_A5000W: React.FC = () => {
 
   useEffect(() => {
     if (workType != "" && workType == "U") {
-      fetchHtmlDocument("Question");
-      fetchHtmlDocument("Answer");
+      fetchHtmlDocument();
     }
   }, [workType]);
 
@@ -991,8 +986,7 @@ const CM_A5000W: React.FC = () => {
         setTabSelected(0);
       } else {
         setTabSelected(1);
-        fetchHtmlDocument("Question");
-        fetchHtmlDocument("Answer");
+        fetchHtmlDocument();
       }
 
       if (workType == "D") {
@@ -1489,7 +1483,7 @@ const CM_A5000W: React.FC = () => {
                         <div className="filter-item-wrap">
                           <Input
                             name="files"
-                            value={detailfilters.files}
+                            value={detailDataResult.data.length == 0 ? "" : detailDataResult.data[0].files}
                             className="readonly"
                           />
                           <ButtonInInput>
@@ -1546,7 +1540,7 @@ const CM_A5000W: React.FC = () => {
         <AttachmentsWindow
           setVisible={setAttachmentsAWindowVisible}
           setData={getAttachmentsAData}
-          para={detailfilters.attdatnum}
+          para={detailDataResult.data.length == 0 ? "" : detailDataResult.data[0].attdatnum}
           modal={true}
           permission={{ upload: false, download: true, delete: false }}
         />

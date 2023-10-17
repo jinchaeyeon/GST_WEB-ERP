@@ -1385,7 +1385,7 @@ const HU_B4000W: React.FC = () => {
       prsnnum: "",
       prsnm: "",
       adjdiv: "",
-      qty: "",
+      qty: 0,
       remark: "",
       recdt: convertDateToStr(new Date()),
       insert_userid: "",
