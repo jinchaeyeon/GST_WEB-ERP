@@ -68,7 +68,6 @@ import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWi
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 let reference = "";
-let reference1 = "";
 const DateField = [ "request_date", "finexpdt", "completion_date" ];
 
 interface IPrsnnum {
@@ -120,23 +119,21 @@ const CM_A5000W: React.FC = () => {
   }, [customOptionData]);
 
   //비즈니스 컴포넌트 조회
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_CM500_603, L_CM501_603", setBizComponentData);
   //상태, 의약품상세분류
 
-  const [statusListData, setStatusListData] = useState([COM_CODE_DEFAULT_VALUE]);
-  const [meditypeLData, setMeditypeListData] = useState([COM_CODE_DEFAULT_VALUE]);
+  const [statusListData, setStatusListData] = React.useState([COM_CODE_DEFAULT_VALUE]);
+  const [meditypeLData, setMeditypeListData] = React.useState([COM_CODE_DEFAULT_VALUE]);
 
   useEffect(() => {
-    if (bizComponentData.length > 0) {
+    if (bizComponentData !== null ) {
       const statusQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM500_603"
-        )
+        bizComponentData.find((item: any) => item.bizComponentId == "L_CM500_603")
       );
 
       const meditypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizCommponentId == "L_CM501_603")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_CM501_603")
       );
 
       fetchQueryData(statusQueryStr, setStatusListData);
@@ -317,7 +314,7 @@ const CM_A5000W: React.FC = () => {
         attdatnum: selectedRowData.attdatnum,
         files: selectedRowData.files,
       });
-      fetchHtmlDocument();
+      fetchHtmlDocument(selectedRowData);
     }
     setTabSelected(e.selected);
   };
@@ -419,7 +416,6 @@ const CM_A5000W: React.FC = () => {
     }));
   };
 
-
   // 조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -497,6 +493,8 @@ const CM_A5000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
+
+    console.log(data);
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
@@ -634,7 +632,7 @@ const CM_A5000W: React.FC = () => {
     setLoading(false);
   };
 
-  const fetchHtmlDocument = async () => {
+  const fetchHtmlDocument = async (key: any) => {
     //if (!permissions?.view) return;
     let data: any;
     let data1: any;
@@ -643,16 +641,12 @@ const CM_A5000W: React.FC = () => {
     if (mainDataResult.total < 0) {
       return false;
     }
-
-    const mainDataId = Object.getOwnPropertyNames(selectedState)[0];
-    const selectedRowData = mainDataResult.data.find(
-      (item) => item[DATA_ITEM_KEY] == mainDataId
-    );
-    const para = {
-        folder: "CM_A5000W",
-        id: selectedRowData["document_id"],
-      };
     
+    const para = {
+      folder: "CM_A5000W",
+      id: key.document_id,
+    };
+
     try {
       data = await processApi<any>("meeting-query", para);
     } catch (error) {
@@ -661,13 +655,15 @@ const CM_A5000W: React.FC = () => {
 
     if (data !== null && data.document !== "") {
       // Edior에 HTML & CSS 세팅
-      if (docEditorRef.current) {
+      reference = data.document;
+      if (docEditorRef) {
         setHtmlOnEditor({ document: data.document, type: "Question" });
       }
 
+      if (key.ref_document_id != "") {
         const para1 = {
           folder: "CM_A5001W",
-          id: selectedRowData["ref_document_id"],
+          id: key.ref_document_id,
         };
 
         try {
@@ -684,6 +680,7 @@ const CM_A5000W: React.FC = () => {
         } else {
           setHtmlOnEditor({ document: "", type: "Answer" });
         }
+      }  
     } else {
         setHtmlOnEditor({ document: "", type: "Question" });
         setHtmlOnEditor({ document: "", type: "Answer" });
@@ -851,7 +848,7 @@ const CM_A5000W: React.FC = () => {
       files: selectedRowData.files,
     });
 
-    fetchHtmlDocument();
+    fetchHtmlDocument(selectedRowData);
   };
 
   //저장 파라미터 초기 값
@@ -929,12 +926,6 @@ const CM_A5000W: React.FC = () => {
     }
   }, [paraDataSaved]);
 
-  useEffect(() => {
-    if (workType != "" && workType == "U") {
-      fetchHtmlDocument();
-    }
-  }, [workType]);
-
   const fetchTodoGridSaved = async () => {
     let data: any;
     setLoading(true);
@@ -946,8 +937,8 @@ const CM_A5000W: React.FC = () => {
     const bytes = require("utf8-bytes");
     const convertedEditorContent = 
       workType == "D" 
-        ? bytesToBase64(bytes(reference)) 
-        : bytesToBase64(bytes(editorContent));
+        ? bytesToBase64(bytes(reference))
+        : bytesToBase64(bytes(editorContent))
 
     const para = {
       procedureName: "P_CM_A5000W_S",
@@ -973,23 +964,27 @@ const CM_A5000W: React.FC = () => {
       fileBytes: convertedEditorContent,
     };
 
-    console.log(para);
     try {
       data = await processApi<any>("Question-save", para);
     } catch (error) {
       data = null;
     }
-    console.log(data);
 
     if (data.isSuccess === true) {
       if (workType == "N" || workType == "D") {
         setTabSelected(0);
       } else {
         setTabSelected(1);
-        fetchHtmlDocument();
+
+        const selectedRowData = mainDataResult.data.filter(
+          (item) =>
+            item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        )[0];
+        
+        fetchHtmlDocument(selectedRowData);
       }
 
-      if (workType == "D") {
+      if (workType == "D" && paraDataSaved.attdatnum != "") {
         setDeletedAttadatnums([paraDataSaved.attdatnum]);
       }
 
@@ -1011,6 +1006,7 @@ const CM_A5000W: React.FC = () => {
   };
 
   const onAddClick = () => {
+    fetchHtmlDocument("");
     setWorkType("N");
     setTabSelected(1);
     setDetailDataResult(process([], detailDataState));
@@ -1036,19 +1032,22 @@ const CM_A5000W: React.FC = () => {
     if (!window.confirm(questionToDelete)) {
       return false;
     }
+    const selectRows = mainDataResult.data.filter(
+      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
 
     if (mainDataResult.data.length == 0) {
       alert("데이터가 없습니다.");
-    } else {
-      const selectRows = mainDataResult.data.filter(
-        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-      )[0];
-
+    } else if (selectRows.ref_document_id != "") {
+      alert("답변이 존재하는 요청 건은 삭제할 수 없습니다.");
+   } else {
+      fetchHtmlDocument(selectRows);
       setWorkType("D");
       setParaDataSaved((prev) => ({
         ...prev,
         workType: "D",
         document_id: selectRows.document_id,
+        atttdatnum: selectRows.attdatnum,
       }));
     }
   }; 
