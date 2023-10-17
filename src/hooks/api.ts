@@ -66,7 +66,8 @@ const domain: any = {
   "meeting-query": { action: "get", url: "api/data/html-doc" },
   "meeting-save": { action: "post", url: "api/data/html-doc?folder=CM_A7000W" },
   "meeting-download": { action: "get", url: "api/data/html-doc/file"},
-  "QnA-save": { action: "post", url: "api/data/html-doc?folder=CM_A5000W"},
+  "Question-save": { action: "post", url: "api/data/html-doc?folder=CM_A5000W"},
+  "Answer-save": { action: "post", url: "api/data/html-doc?folder=CM_A5001W"},
 };
 let isTokenRefreshing = false;
 let refreshSubscribers: any[] = [];
