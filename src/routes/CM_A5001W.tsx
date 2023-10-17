@@ -910,7 +910,13 @@ const CM_A5001W: React.FC = () => {
       if (paraDataSaved.workType == "D") {
         setDeletedAttadatnums([paraDataSaved.attdatnum]);
       }
-      setTabSelected(1);
+
+      if (paraDataSaved.workType != "U") {
+        setTabSelected(0);
+      } else {
+        setTabSelected(1);
+      }
+      
       fetchHtmlDocument();
 
     } else {
