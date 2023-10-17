@@ -872,12 +872,22 @@ const HU_A4100W: React.FC = () => {
         remark_s: "",
       });
       deletedMainRows = [];
-      resetAllGrid();
-      setFilters((prev) => ({
-        ...prev,
-        find_row_value: data.returnString,
-        isSearch: true,
-      }));
+      if(mainDataResult.data.length == 0) {
+        resetAllGrid();
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: prev.pgNum == 0 || prev.pgNum == 1 ? 1 : prev.pgNum - 1,
+          isSearch: true,
+        }));
+      } else {
+        resetAllGrid();
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: data.returnString,
+          isSearch: true,
+        }));
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
