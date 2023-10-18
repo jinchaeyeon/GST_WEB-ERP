@@ -64,16 +64,88 @@ import { bytesToBase64 } from "byte-base64";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import RichEditor from "../components/RichEditor";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
+import { MultiSelect, MultiSelectChangeEvent } from "@progress/kendo-react-dropdowns";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 let reference = "";
 const DateField = [ "request_date", "finexpdt", "completion_date" ];
 
-interface IPrsnnum {
+interface IUser {
   user_id: string;
   user_name: string;
 }
+
+// interface CustomCellProps extends GridCellProps {
+//   data: any;
+//   columns: any;
+//   textField?: string;
+//   valueField?: string;
+// }
+
+// const StatusComboBoxCell = (props: CustomCellProps) => {
+//   const {
+//     ariaColumnIndex,
+//     columnIndex,
+//     dataItem,
+//     field = "",
+//     render,
+//     onChange,
+//     data = [],
+//     columns,
+//     className = "",
+//     valueField = "sub_code",
+//     textField = "code_name",
+//   } = props;
+
+//   const processApi = useApi();
+
+//   const [listData, setListData]: any = useState(data);
+
+//   const dataValue = dataItem[field];
+//   const value = listData.find((item: any) => item[valueField] === dataValue);
+
+//   const handleChange = (e: ComboBoxChangeEvent) => {
+//     if (onChange) {
+//       onChange({
+//         dataIndex: 0,
+//         dataItem: dataItem,
+//         field: field,
+//         syntheticEvent: e.syntheticEvent,
+//         value: e.target.value ? e.target.value[valueField] : "",
+//       });
+//     }
+//   };
+
+//   const [filter, setFilter] = React.useState<FilterDescriptor>();
+//   const handleFilterChange = (event: ComboBoxFilterChangeEvent) => {
+//     if (event) {
+//       setFilter(event.filter);
+//     }
+//   };
+
+//   const defaultRendering = 
+//   value ? (
+//     <>
+//       <StatusIcon status={value[valueField]} />
+//       {value[valueField] == "001"
+//         ? "컨설팅 요청"
+//         : value[valueField] == "002"
+//         ? "담당자지정"
+//         : value[valueField] == "003"
+//         ? "요청취소"
+//         : value[valueField] == "004"
+//         ? 대응불가"
+//         : value[valueField] == "005"
+//         ? 검토중"
+//         : value[valueField] == "006"
+//         ? 답변 완료"
+//         : ""
+//      }
+//     </>
+//   ) : ("")
+//   }
+// };
 
 const CM_A5000W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
@@ -124,7 +196,7 @@ const CM_A5000W: React.FC = () => {
   //상태, 의약품상세분류
 
   const [statusListData, setStatusListData] = React.useState([COM_CODE_DEFAULT_VALUE]);
-  const [meditypeLData, setMeditypeListData] = React.useState([COM_CODE_DEFAULT_VALUE]);
+  const [meditypeListData, setMeditypeListData] = React.useState([COM_CODE_DEFAULT_VALUE]);
 
   useEffect(() => {
     if (bizComponentData !== null ) {
@@ -187,6 +259,7 @@ const CM_A5000W: React.FC = () => {
   }>({});
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
   const [userWindowVisible2, setUserWindowVisible2] = useState<boolean>(false);
   const [attachmentsQWindowVisible, setAttachmentsQWindowVisible] =
@@ -196,6 +269,10 @@ const CM_A5000W: React.FC = () => {
 
   const onCustWndClick = () => {
     setCustWindowVisible(true);
+  };
+
+  const onCustWndClick2 = () => {
+    setCustWindowVisible2(true);
   };
 
   const onUserWndClick = () => {
@@ -223,7 +300,17 @@ const CM_A5000W: React.FC = () => {
     });
   };
 
-  const setUserData = (data: IPrsnnum) => {
+  const setCustData2 = (data: ICustData) => {
+    setInformation((prev: any) => {
+      return {
+        ...prev,
+        customer_code: data.custcd,
+        customernm: data.custnm,
+      };
+    });
+  };
+
+  const setUserData = (data: IUser) => {
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -232,7 +319,7 @@ const CM_A5000W: React.FC = () => {
     });
   };
 
-  const setUserData2 = (data: IPrsnnum) => {
+  const setUserData2 = (data: IUser) => {
     setInformation((prev: any) => {
       return {
         ...prev,
@@ -310,6 +397,8 @@ const CM_A5000W: React.FC = () => {
         completion_method: selectedRowData.completion_method,
         medicine_type: selectedRowData.medicine_type,
         status: selectedRowData.status,
+        customer_code: selectedRowData.customer_code,
+        customernm: selectedRowData.customernm,
         title: selectedRowData.title,
         attdatnum: selectedRowData.attdatnum,
         files: selectedRowData.files,
@@ -398,6 +487,16 @@ const CM_A5000W: React.FC = () => {
     }));
   };
 
+  const filterMultiSelectChange = (event: MultiSelectChangeEvent) => {
+    const values = event.value;
+    const name = event.target.props.name ?? "";
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: values,
+    }));
+  };
+
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -424,8 +523,8 @@ const CM_A5000W: React.FC = () => {
     frdt: new Date(),
     todt: new Date(),
     dtgb: "",
-    status: "",
-    medicine_type: "",
+    status: [{ sub_code: "001", code_name: "컨설팅 요청"}],
+    medicine_type: [],
     custcd: "",
     custnm: "",
     user_id: "",
@@ -457,16 +556,38 @@ const CM_A5000W: React.FC = () => {
     completion_method: "",
     medicine_type: "",
     status: "",
+    customer_code: "",
+    customernm: "",
     title: "",
     attdatnum: "",
     files: "",
   });
+
+  function getName(data: { sub_code: string }[]) {
+    let str = "";
+    data.map((item: { sub_code: string }) => (str += item.sub_code + "|"));
+    return data.length > 0 ? str.slice(0, -1) : str;
+  };
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+
+    const status =
+      filters.status.length == 0
+        ? getName(statusListData)
+        : filters.status.length == 1
+        ? filters.status[0].sub_code
+        : getName(filters.status);
+
+    const medicine_type =
+      filters.medicine_type.length == 0
+        ? ""
+        : filters.medicine_type.length == 1
+        ? filters.medicine_type[0].sub_code
+        : getName(filters.medicine_type);
 
     //조회조건 파라미터
     const parameters: Iparameters = {
@@ -479,8 +600,8 @@ const CM_A5000W: React.FC = () => {
         "@p_dtgb": filters.dtgb,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
-        "@p_status": filters.status,
-        "@p_medicine_type": filters.medicine_type,
+        "@p_status": status,
+        "@p_medicine_type": medicine_type,
         "@p_user_id": filters.user_id,
         "@p_user_name": filters.user_name,
         "@p_customer_code": filters.customer_code,
@@ -493,8 +614,6 @@ const CM_A5000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
-    console.log(data);
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
@@ -843,6 +962,8 @@ const CM_A5000W: React.FC = () => {
       completion_method: selectedRowData.completion_method,
       medicine_type: selectedRowData.medicine_type,
       status: selectedRowData.status,
+      customer_code: selectedRowData.customer_code,
+      customernm: selectedRowData.customernm,
       title: selectedRowData.title,
       attdatnum: selectedRowData.attdatnum,
       files: selectedRowData.files,
@@ -862,6 +983,7 @@ const CM_A5000W: React.FC = () => {
     completion_method: "",
     medicine_type: "",
     status: "",
+    customer_code: "",
     title: "",
     attdatnum: "",
     userid: "",
@@ -911,6 +1033,7 @@ const CM_A5000W: React.FC = () => {
       completion_method: information.completion_method,
       medicine_type: information.medicine_type,
       status: information.status,
+      customer_code: information.customer_code,
       title: information.title,
       attdatnum: information.attdatnum,
       username: information.user_name,
@@ -954,6 +1077,7 @@ const CM_A5000W: React.FC = () => {
 	      "@p_completion_method": paraDataSaved.completion_method,
 	      "@p_medicine_type": paraDataSaved.medicine_type,
 	      "@p_status": paraDataSaved.status,
+        "@p_customer_code": paraDataSaved.customer_code,
 	      "@p_title": paraDataSaved.title,
 	      "@p_attdatnum": paraDataSaved.attdatnum,
         "@p_user_id_sm": paraDataSaved.userid,
@@ -1021,6 +1145,8 @@ const CM_A5000W: React.FC = () => {
       completion_method: "",
       medicine_type: "",
       status: "001",
+      customer_code: "",
+      customernm: "",
       title: "",
       attdatnum: "",
       files: "",
@@ -1101,27 +1227,27 @@ const CM_A5000W: React.FC = () => {
                     <tr>
                       <th>상태</th>
                       <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="status"
-                            value={filters.status}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                          />
-                        )}
+                        <MultiSelect
+                          name="status"
+                          data={statusListData}
+                          onChange={filterMultiSelectChange}
+                          value={filters.status}
+                          textField="code_name"
+                          dataItemKey="sub_code"
+                        />
                       </td>
                     </tr>
                     <tr>
                       <th>의약품 상세분류</th>
                       <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="medicine_type"
-                            value={filters.medicine_type}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                          />
-                        )}
+                        <MultiSelect
+                          name="medicine_type"
+                          data={meditypeListData}
+                          onChange={filterMultiSelectChange}
+                          value={filters.medicine_type}
+                          textField="code_name"
+                          dataItemKey="sub_code"
+                        />
                       </td>
                     </tr>
                     <tr>
@@ -1165,7 +1291,7 @@ const CM_A5000W: React.FC = () => {
                     <tr>
                       <th>회사명</th>
                       <td>
-                      <Input
+                        <Input
                           name="custnm"
                           type="text"
                           value={filters.custnm}
@@ -1220,7 +1346,7 @@ const CM_A5000W: React.FC = () => {
                       status: statusListData.find(
                         (items: any) => items.sub_code == row.status
                       )?.code_name,
-                      medicine_type: meditypeLData.find(
+                      medicine_type: meditypeListData.find(
                         (items: any) => items.sub_code == row.medicine_type
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
@@ -1346,7 +1472,7 @@ const CM_A5000W: React.FC = () => {
                         </td>
                       </tr>
                       <tr>
-                        <th style={{ width: isMobile ? "" : "15%" }}>문의일</th>
+                        <th>문의일</th>
                         <td>
                           <DatePicker
                             name="request_date"
@@ -1357,7 +1483,7 @@ const CM_A5000W: React.FC = () => {
                             className="required"
                           />
                         </td>
-                        <th style={{ width: isMobile ? "" : "15%" }}>답변기한요청일</th>
+                        <th>답변기한요청일</th>
                         <td>
                           <DatePicker
                             name="finexpdt"
@@ -1423,6 +1549,25 @@ const CM_A5000W: React.FC = () => {
                         </td>
                       </tr>
                       <tr>
+                        <th>회사명</th>
+                        <td>
+                          <Input
+                            name="customernm"
+                            type="text"
+                            value={information.customernm}
+                            onChange={filterInputChange}
+                          />
+                          <ButtonInInput>
+                            <Button
+                              type={"button"}
+                              onClick={onCustWndClick2}
+                              icon="more-horizontal"
+                              fillMode="flat"
+                            />
+                          </ButtonInInput>
+                        </td>
+                      </tr>
+                      <tr>
                         <th>제목</th>
                         <td colSpan={4}>
                           <Input
@@ -1438,14 +1583,14 @@ const CM_A5000W: React.FC = () => {
                   </FormBox>
                 </FormBoxWrap>
               </GridContainer>
-              <GridContainer style={{ height: "45vh" }}>
+              <GridContainer height = "41vh">
                 <RichEditor id="docEditor" ref={docEditorRef} hideTools />
               </GridContainer>
               <FormBoxWrap border={true}>
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th style={{ width: isMobile ? "" : "15%" }}>첨부파일</th>
+                      <th style={{ width: isMobile ? "" :  "15%" }}>첨부파일</th>
                       <td>
                         <div className="filter-item-wrap">
                           <Input
@@ -1471,9 +1616,10 @@ const CM_A5000W: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>답변</GridTitle>
               </GridTitleContainer>
-              <GridContainer style = {{ height: "68.5vh"}}>
+              <GridContainer height={isMobile ? "40vh" : "68.5vh"}>
                 <RichEditor id="docEditor" ref={docEditorRef1} hideTools />
-                <FormBoxWrap border={true}>
+              </GridContainer>
+              <FormBoxWrap border={true}>
                 <FormBox>
                   <tbody>
                     <tr>
@@ -1498,7 +1644,6 @@ const CM_A5000W: React.FC = () => {
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
-              </GridContainer>
             </GridContainer>
           </GridContainerWrap>
         </TabStripTab>
@@ -1508,6 +1653,14 @@ const CM_A5000W: React.FC = () => {
           setVisible={setCustWindowVisible}
           workType={"N"}
           setData={setCustData}
+          modal={true}
+        />
+      )}
+      {custWindowVisible2 && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible2}
+          workType={"N"}
+          setData={setCustData2}
           modal={true}
         />
       )}
