@@ -583,7 +583,7 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
               width="150px"
               footerCell={mainTotalFooterCell}
             />
-            <GridColumn field="quotype" title="견적번호" width="120px" />
+            <GridColumn field="quotype" title="견적형태" width="120px" />
             <GridColumn field="quosts" title="견적상태" width="100px" />
             <GridColumn field="quodt" title="견적일자" width="100px" cell={DateCell}/>
             <GridColumn field="person" title="담당자" width="100px" />
