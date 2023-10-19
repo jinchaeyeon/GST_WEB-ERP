@@ -10,6 +10,7 @@ import {
   GridContainerWrap, 
   GridTitle, 
   GridTitleContainer, 
+  StatusIcon, 
   Title, 
   TitleContainer 
 } from "../CommonStyled";
@@ -50,6 +51,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import { 
   Grid, 
+  GridCellProps, 
   GridColumn, 
   GridDataStateChangeEvent, 
   GridFooterCellProps, 
@@ -70,82 +72,41 @@ const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 let reference = "";
 const DateField = [ "request_date", "finexpdt", "completion_date" ];
+const StatusField = [ "status" ];
 
 interface IUser {
   user_id: string;
   user_name: string;
 }
 
-// interface CustomCellProps extends GridCellProps {
-//   data: any;
-//   columns: any;
-//   textField?: string;
-//   valueField?: string;
-// }
+const StatusCell = (props: GridCellProps) => {
+  const { ariaColumnIndex, columnIndex, dataItem, field = "" } = props;
 
-// const StatusComboBoxCell = (props: CustomCellProps) => {
-//   const {
-//     ariaColumnIndex,
-//     columnIndex,
-//     dataItem,
-//     field = "",
-//     render,
-//     onChange,
-//     data = [],
-//     columns,
-//     className = "",
-//     valueField = "sub_code",
-//     textField = "code_name",
-//   } = props;
-
-//   const processApi = useApi();
-
-//   const [listData, setListData]: any = useState(data);
-
-//   const dataValue = dataItem[field];
-//   const value = listData.find((item: any) => item[valueField] === dataValue);
-
-//   const handleChange = (e: ComboBoxChangeEvent) => {
-//     if (onChange) {
-//       onChange({
-//         dataIndex: 0,
-//         dataItem: dataItem,
-//         field: field,
-//         syntheticEvent: e.syntheticEvent,
-//         value: e.target.value ? e.target.value[valueField] : "",
-//       });
-//     }
-//   };
-
-//   const [filter, setFilter] = React.useState<FilterDescriptor>();
-//   const handleFilterChange = (event: ComboBoxFilterChangeEvent) => {
-//     if (event) {
-//       setFilter(event.filter);
-//     }
-//   };
-
-//   const defaultRendering = 
-//   value ? (
-//     <>
-//       <StatusIcon status={value[valueField]} />
-//       {value[valueField] == "001"
-//         ? "컨설팅 요청"
-//         : value[valueField] == "002"
-//         ? "담당자지정"
-//         : value[valueField] == "003"
-//         ? "요청취소"
-//         : value[valueField] == "004"
-//         ? 대응불가"
-//         : value[valueField] == "005"
-//         ? 검토중"
-//         : value[valueField] == "006"
-//         ? 답변 완료"
-//         : ""
-//      }
-//     </>
-//   ) : ("")
-//   }
-// };
+  return (
+    <td
+      style={{ textAlign: "left" }}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+    >
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <StatusIcon status={dataItem[field]} />{" "}
+        {dataItem[field] === "001"
+          ? "컨설팅 요청"
+          : dataItem[field] === "002"
+          ? "담당자지정"
+          : dataItem[field] === "003"
+          ? "요청취소"
+          : dataItem[field] === "004"
+          ? "대응불가"
+          : dataItem[field] === "005"
+          ? "검토 중"
+          : dataItem[field] === "006"
+          ? "답변 완료"
+          : ""}
+      </div>
+    </td>
+  );
+};
 
 const CM_A5000W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1343,9 +1304,6 @@ const CM_A5000W: React.FC = () => {
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
-                      status: statusListData.find(
-                        (items: any) => items.sub_code == row.status
-                      )?.code_name,
                       medicine_type: meditypeListData.find(
                         (items: any) => items.sub_code == row.medicine_type
                       )?.code_name,
@@ -1398,6 +1356,8 @@ const CM_A5000W: React.FC = () => {
                             cell={
                               DateField.includes(item.fieldName)
                                 ? DateCell
+                                : StatusField.includes(item.fieldName)
+                                ? StatusCell
                                 : undefined
                             }
                             footerCell={
@@ -1583,7 +1543,10 @@ const CM_A5000W: React.FC = () => {
                   </FormBox>
                 </FormBoxWrap>
               </GridContainer>
-              <GridContainer height = "41vh">
+              <GridContainer 
+                height = "41vh" 
+                style = {{ border: "2px solid #2289c3" }}
+              >
                 <RichEditor id="docEditor" ref={docEditorRef} hideTools />
               </GridContainer>
               <FormBoxWrap border={true}>

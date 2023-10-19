@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { createContext, useCallback, useContext, useEffect } from "react";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { 
   ButtonContainer, 
@@ -10,6 +10,7 @@ import {
   GridContainerWrap, 
   GridTitle, 
   GridTitleContainer, 
+  StatusIcon, 
   Title, 
   TitleContainer 
 } from "../CommonStyled";
@@ -50,6 +51,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import { 
   Grid, 
+  GridCellProps, 
   GridColumn, 
   GridDataStateChangeEvent, 
   GridFooterCellProps, 
@@ -69,11 +71,41 @@ import { MultiSelect, MultiSelectChangeEvent } from "@progress/kendo-react-dropd
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 const DateField = [ "request_date", "finexpdt", "completion_date" ];
+const StatusField = [ "status" ];
 
 interface IUser {
   user_id: string;
   user_name: string;
 }
+
+const StatusCell = (props: GridCellProps) => {
+  const { ariaColumnIndex, columnIndex, dataItem, field = "" } = props;
+
+  return (
+    <td
+      style={{ textAlign: "left" }}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+    >
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <StatusIcon status={dataItem[field]} />{" "}
+        {dataItem[field] === "001"
+          ? "컨설팅 요청"
+          : dataItem[field] === "002"
+          ? "담당자지정"
+          : dataItem[field] === "003"
+          ? "요청취소"
+          : dataItem[field] === "004"
+          ? "대응불가"
+          : dataItem[field] === "005"
+          ? "검토 중"
+          : dataItem[field] === "006"
+          ? "답변 완료"
+          : ""}
+      </div>
+    </td>
+  );
+};
 
 const CM_A5001W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
@@ -90,7 +122,6 @@ const CM_A5001W: React.FC = () => {
   let isMobile = deviceWidth <= 1200;
   const docEditorRef = useRef<TEditorHandle>(null);
   const docEditorRef1 = useRef<TEditorHandle>(null);
-  const [workType, setWorkType] = useState("");
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -129,9 +160,7 @@ const CM_A5001W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData.length > 0) {
       const statusQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM500_603"
-        )
+        bizComponentData.find((item: any) => item.bizComponentId == "L_CM500_603")
       );
 
       const meditypeQueryStr = getQueryFromBizComponent(
@@ -281,6 +310,7 @@ const CM_A5001W: React.FC = () => {
         alert("요약정보 데이터가 없습니다.");
         return false;
       };
+
       const selectedRowData = mainDataResult.data.filter(
         (item) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -303,7 +333,8 @@ const CM_A5001W: React.FC = () => {
         attdatnum: selectedRowData.attdatnum,
         files: selectedRowData.files,
       });
-      fetchHtmlDocument(selectedRowData);
+      fetchHtmlDocument(selectedRowData, 
+                        selectedRowData.ref_document_id == "" ? "N" : "U");
     }
     setTabSelected(e.selected);
   };
@@ -556,7 +587,6 @@ const CM_A5001W: React.FC = () => {
             pgNum: 1,
             isSearch: true,
           }));
-          setWorkType(selectedRow.ref_document_id === "" ? "N" : "U");
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
           setDetailFilters((prev) => ({
@@ -565,13 +595,11 @@ const CM_A5001W: React.FC = () => {
             pgNum: 1,
             isSearch: true,
           }));
-          setWorkType(rows[0].ref_document_id === "" ? "N" : "U");
         }
       } else {
         resetAllGrid();
       }
     } else {
-      setWorkType("");
       console.log("[오류 발생]");
       console.log(data);
     }
@@ -644,8 +672,7 @@ const CM_A5001W: React.FC = () => {
     setLoading(false);
   };
 
-  const fetchHtmlDocument = async (key: any) => {
-    //if (!permissions?.view) return;
+  const fetchHtmlDocument = async (key: any, workType: any) => {
     let data: any;
     let data1: any;
     let valid = true;
@@ -684,13 +711,25 @@ const CM_A5001W: React.FC = () => {
       if (docEditorRef.current) {
         setHtmlOnEditor({ document: data.document, type: "Question" });
       }
-      
-      if ( (workType == "N" && detailDataResult.data.length != 0) ||
-          key.ref_document_id !== "" 
-      ) {
+
+      // 신규&삭제 - returnString id / 수정 - ref_document_id
+      const id = workType == "U" 
+                  ? key.ref_document_id 
+                  : key.returnString
+
+      // 신규 상태로 조회했을 때는 답변HTML 조회X
+      if (workType == "N") {
+        if (key.returnString == "" || key.returnString == undefined) {
+          valid1 = false;
+        }
+      } else if (workType !== "U") {
+        valid1 = false;
+      }
+
+      if (valid1) {
         const para1 = {
           folder: "CM_A5001W",
-          id: key.ref_document_id,
+          id: id,
         };
 
         try {
@@ -707,7 +746,7 @@ const CM_A5001W: React.FC = () => {
         } else {
           setHtmlOnEditor({ document: "", type: "Answer" });
         }
-    }
+      }
     } else {
         setHtmlOnEditor({ document: "", type: "Question" });
         setHtmlOnEditor({ document: "", type: "Answer" });
@@ -761,7 +800,6 @@ const CM_A5001W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setWorkType("");
     setPage(initialPageState); // 페이지 초기화
     setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
@@ -851,8 +889,6 @@ const CM_A5001W: React.FC = () => {
     setSelectedState({ [selectedRowData[DATA_ITEM_KEY]]: true });
     setDetailDataResult(process([], detailDataState));
     setTabSelected(1);
-    setWorkType(selectedRowData.ref_document_id === "" ? "N" : "U");
-
     setDetailFilters((prev) => ({
       ...prev,
       document_id: selectedRowData.document_id,
@@ -877,7 +913,8 @@ const CM_A5001W: React.FC = () => {
       files: selectedRowData.files,
     });
 
-    fetchHtmlDocument(selectedRowData);
+    fetchHtmlDocument(selectedRowData, 
+      selectedRowData.ref_document_id == "" ? "N" : "U");
   };
 
   //저장 파라미터 초기 값
@@ -898,10 +935,8 @@ const CM_A5001W: React.FC = () => {
     )[0];
 
     // 답변 문서 ID가 없을 경우 신규, 있으면 업데이트
-    setWorkType(selectedRowData.ref_document_id == "" ? "N" : "U");
-
     setParaDataSaved({
-      workType: workType,
+      workType: selectedRowData.ref_document_id == "" ? "N" : "U",
       document_id: selectedRowData.ref_document_id,
       document_id_Q: information.document_id,
       attdatnum: detailfilters.attdatnum,
@@ -964,16 +999,20 @@ const CM_A5001W: React.FC = () => {
         isSearch: true,
       }));
 
-      if (workType == "D") {
-        setDeletedAttadatnums([paraDataSaved.attdatnum]);
-      }
+      // 첨부파일&Html파일 동시처리 불가 오류
+      // if (paraDataSaved.workType == "D") {
+      //   setDeletedAttadatnums([paraDataSaved.attdatnum]);
+      // }
       
       const selectedRowData = mainDataResult.data.filter(
         (item) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       )[0];
 
-      fetchHtmlDocument(selectedRowData);
+      fetchHtmlDocument( paraDataSaved.workType == "U" 
+                          ? selectedRowData 
+                          : data
+                        , paraDataSaved.workType );
       setTabSelected(1);
 
     } else {
@@ -999,7 +1038,6 @@ const CM_A5001W: React.FC = () => {
     )[0];
   
     setTabSelected(1);
-    setWorkType(selectedRowData.ref_document_id === "" ? "N" : "U");
 
     setInformation({
       document_id: selectedRowData.document_id,
@@ -1018,7 +1056,7 @@ const CM_A5001W: React.FC = () => {
       attdatnum: selectedRowData.attdatnum,
       files: selectedRowData.files,
     });
-    fetchHtmlDocument(selectedRowData );
+    fetchHtmlDocument(selectedRowData, "");
   };
 
   const questionToDelete = useSysMessage("QuestionToDelete");
@@ -1034,7 +1072,6 @@ const CM_A5001W: React.FC = () => {
       alert("등록된 답변이 없습니다.");
       return;
     } else {
-      setWorkType("D");
       setParaDataSaved((prev) => ({
         ...prev,
         workType: "D",
@@ -1201,9 +1238,6 @@ const CM_A5001W: React.FC = () => {
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
-                      status: statusListData.find(
-                        (items: any) => items.sub_code == row.status
-                      )?.code_name,
                       medicine_type: meditypeListData.find(
                         (items: any) => items.sub_code == row.medicine_type
                       )?.code_name,
@@ -1256,6 +1290,8 @@ const CM_A5001W: React.FC = () => {
                             cell={
                               DateField.includes(item.fieldName)
                                 ? DateCell
+                                : StatusField.includes(item.fieldName)
+                                ? StatusCell
                                 : undefined
                             }
                             footerCell={
@@ -1500,7 +1536,10 @@ const CM_A5001W: React.FC = () => {
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
-              <GridContainer height = "62.2vh" >
+              <GridContainer 
+                height = "62.2vh" 
+                style = {{ border: "2px solid #2289c3" }}
+              >
                 <RichEditor id="docEditor1" ref={docEditorRef1} hideTools />
               </GridContainer>
               <FormBoxWrap border={true}>
