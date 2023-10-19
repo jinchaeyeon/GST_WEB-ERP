@@ -412,6 +412,18 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
     selectData(selectedRowData);
   };
 
+  // 부모로 데이터 전달, 창 닫기 (여러 행을 추가하는 경우 Close 제외)
+  const onConfirmBtnClick = (props: any) => {
+    const selectedRowData = mainDataResult.data.filter(
+      (item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
+
+    setData(selectedRowData);
+    onClose();
+  };
+
+
   return (
     <>
       <Window
@@ -601,21 +613,7 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
           <ButtonContainer>
             <Button
               themeColor={"primary"}
-              onClick={() =>
-                mainDataResult.data.filter(
-                  (item) =>
-                    item[DATA_ITEM_KEY] ==
-                    Object.getOwnPropertyNames(selectedState)[0]
-                )[0] == undefined
-                  ? ""
-                  : setData(
-                      mainDataResult.data.filter(
-                        (item) =>
-                          item[DATA_ITEM_KEY] ==
-                          Object.getOwnPropertyNames(selectedState)[0]
-                      )[0]
-                    )
-              }
+              onClick={onConfirmBtnClick}
             >
               확인
             </Button>
