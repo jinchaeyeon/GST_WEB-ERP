@@ -41,7 +41,9 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { gridList } from "../store/columns/SA_B1000_603W_C";
-import { TColumn, TGrid, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../store/atoms";
 
 const DATA_ITEM_KEY = "num";
 
@@ -71,7 +73,7 @@ const SA_B1000W_603: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-
+  const setLoading = useSetRecoilState(isLoading);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -118,6 +120,76 @@ const SA_B1000W_603: React.FC = () => {
       [name]: value,
     }));
   };
+  
+ //그리드 데이터 조회
+ const fetchMainGrid = async (filters: any) => {
+  if (!permissions?.view) return;
+  let data: any;
+  setLoading(true);
+
+  //조회조건 파라미터
+  const parameters: Iparameters = {
+    procedureName: "P_SA_B1000W_603_Q",
+    pageNumber: filters.pgNum,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "LIST",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_location": filters.location,
+      "@p_ref_key": filters.project,
+      "@p_custcd": filters.custcd,
+      "@p_custnm": filters.custnm,
+      "@p_smperson": filters.smperson,
+      "@p_status": filters.status,
+      "@p_datnum": "",
+      "@p_find_row_value": ""
+    },
+  };
+  try {
+    data = await processApi<any>("procedure", parameters);
+  } catch (error) {
+    data = null;
+  }
+
+  if (data.isSuccess === true) {
+    const totalRowCnt = data.tables[0].TotalRowCount;
+    const rows = data.tables[0].Rows;
+
+    setMainDataResult((prev) => {
+      return {
+        data: rows,
+        total: totalRowCnt == -1 ? 0 : totalRowCnt,
+      };
+    });
+    
+    if (totalRowCnt > 0) {
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+    }
+  } else {
+    console.log("[오류 발생]");
+    console.log(data);
+  }
+  // 필터 isSearch false처리, pgNum 세팅
+  setFilters((prev) => ({
+    ...prev,
+    pgNum:
+      data && data.hasOwnProperty("pageNumber")
+        ? data.pageNumber
+        : prev.pgNum,
+    isSearch: false,
+  }));
+  setLoading(false);
+};
+
+//조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+useEffect(() => {
+  if (filters.isSearch && permissions !== null) {
+    const _ = require("lodash");
+    const deepCopiedFilters = _.cloneDeep(filters);
+    setFilters((prev) => ({ ...prev, pgNum: 1, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+    fetchMainGrid(deepCopiedFilters);
+  }
+}, [filters]);
 
   const [Information, setInformation] = useState<{ [name: string]: any }>({
     remark: "",
@@ -242,7 +314,15 @@ const SA_B1000W_603: React.FC = () => {
     setSelectedState(newSelectedState);
   };
 
-  const search = () => {};
+  const search = () => {
+    setPage(initialPageState); // 페이지 초기화
+    setFilters((prev: any) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+      isSearch: true
+    }));
+  };
 
   const minGridWidth = React.useRef<number>(0);
   const grid = React.useRef<any>(null);

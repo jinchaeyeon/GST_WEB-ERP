@@ -90,6 +90,42 @@ const DATA_ITEM_KEY2 = "num";
 let targetRowIndex: null | number = null;
 let temp = 0;
 
+const ColumnCommandCell = (props: GridCellProps) => {
+  const excelInput: any = React.useRef();
+  const [imgBase64, setImgBase64] = useState<string>(); // 파일 base64
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    render,
+    className = "",
+  } = props;
+
+  useEffect(() => {
+    if (dataItem.icon_image != null) {
+      setImgBase64("data:image/png;base64," + dataItem.icon_image);
+    }
+  });
+
+  return (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative", textAlign: "center", cursor: "pointer" }}
+    >
+      <div style={{ textAlign: "center" }}>
+        <img
+          style={{ display: "block", margin: "auto", width: "80%" }}
+          ref={excelInput}
+          src={imgBase64}
+          alt="UserImage"
+        />
+      </div>
+    </td>
+  );
+};
+
 const SY_A0500W: React.FC = () => {
   const layout = useMemo(() => new Layout(), []);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -108,84 +144,14 @@ const SY_A0500W: React.FC = () => {
   const [clicked, setClicked] = useRecoilState(clickedState);
   const [info, setInfo] = useRecoilState(infoState);
   const [points, setPoints] = useRecoilState(pointsState);
-
   const [workType, setWorkType] = useState<"N" | "U">("N");
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA002", setBizComponentData);
-
-  const ColumnCommandCell = (props: GridCellProps) => {
-    const excelInput: any = React.useRef();
-    const [imgBase64, setImgBase64] = useState<string>(); // 파일 base64
-    const {
-      ariaColumnIndex,
-      columnIndex,
-      dataItem,
-      render,
-      className = "",
-    } = props;
-
-    useEffect(() => {
-      if (dataItem.icon_image != null) {
-        setImgBase64("data:image/png;base64," + dataItem.icon_image);
-      }
-    });
-
-    const onAdd = () => {
-      detailDataResult.data.map((item) => {
-        if (item.num > temp) {
-          temp = item.num;
-        }
-      });
-      const newDataItem = {
-        caption: dataItem.icon_word_text,
-        col_index: -1,
-        form_id: "",
-        icon: dataItem.icon_image,
-        insert_pc: null,
-        insert_time: null,
-        insert_userid: null,
-        last_update_time: null,
-        layout_key: information.layout_id,
-        menu_name: dataItem.icon_word_text +"_"+information.layout_id,
-        orgdiv: "01",
-        row_index: -1,
-        seq: ++temp,
-        update_pc: null,
-        update_time: null,
-        update_userid: null,
-        rowstatus: "N"
-      };
-      setDetailDataResult((prev) => {
-        return {
-          data: [newDataItem, ...prev.data],
-          total: prev.total + 1,
-        };
-      });
-    };
-
-    return (
-      <td
-        className={className}
-        aria-colindex={ariaColumnIndex}
-        data-grid-col-index={columnIndex}
-        style={{ position: "relative", textAlign: "center", cursor: "pointer" }}
-        onDragStart={() => onAdd()}
-      >
-        <div style={{ textAlign: "center" }}>
-          <img
-            style={{ display: "block", margin: "auto", width: "80%" }}
-            ref={excelInput}
-            src={imgBase64}
-            alt="UserImage"
-          />
-        </div>
-      </td>
-    );
-  };
-
+  const [xy, setXY] = useState([-1, -1]);
   const [locationListData, setLocationListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const locationQueryStr = getQueryFromBizComponent(
@@ -353,19 +319,31 @@ const SY_A0500W: React.FC = () => {
   function renderSquare(
     row: number,
     col: number,
-    knightLists: any[],
-    style: CSSProperties
+    squareStyle: CSSProperties,
+    knightLists: any[]
   ) {
     const data = detailDataResult.data.filter(
       (item: any) => item.col_index == col && item.row_index == row
     )[0];
+
     return (
-      <div key={`${row}${col}`} style={style} onClick={deletemenu}>
+      <div
+        key={`${row}${col}`}
+        style={squareStyle}
+        onClick={() => {
+          if (xy[0] == row && xy[1] == col) {
+            setXY([-1, -1]);
+          } else {
+            setXY([row, col]);
+          }
+        }}
+      >
         <LayoutSquare
           x={row}
           y={col}
           layout={layout}
           list={detailDataResult.data}
+          bool={xy[0] == row && xy[1] == col ? false : true}
         >
           <Piece
             isKnight={knights(row, col)}
@@ -386,15 +364,16 @@ const SY_A0500W: React.FC = () => {
     const squareStyle: CSSProperties = {
       width: width + "%",
       height: height + "%",
+      cursor: "pointer",
     };
     let arrays = [];
     for (let i = 0; i < information.row_cnt; i++) {
       for (let j = 0; j < information.col_cnt; j++) {
-        arrays.push(renderSquare(i, j, detailDataResult.data, squareStyle));
+        arrays.push(renderSquare(i, j, squareStyle, detailDataResult.data));
       }
     }
     setSquares(arrays);
-  }, [detailDataResult, information]);
+  }, [detailDataResult, information, xy]);
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
@@ -735,6 +714,7 @@ const SY_A0500W: React.FC = () => {
   //그리드 리셋
   const resetAllGrid = () => {
     setPage(initialPageState); // 페이지 초기화
+    setPage2(initialPageState);
     setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
     setClicked("");
@@ -756,7 +736,7 @@ const SY_A0500W: React.FC = () => {
       selectedState: selectedState,
       dataItemKey: DATA_ITEM_KEY,
     });
-
+    setXY([-1, -1]);
     setSelectedState(newSelectedState);
     setWorkType("U");
     const selectedIdx = event.startRowIndex;
@@ -836,6 +816,7 @@ const SY_A0500W: React.FC = () => {
   const search = () => {
     try {
       resetAllGrid();
+      setXY([-1, -1]);
       setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     } catch (e) {
       alert(e);
@@ -906,6 +887,9 @@ const SY_A0500W: React.FC = () => {
         (item) => item.col_index > information.col_cnt - 2
       );
       if (data.length == 0) {
+        if (information.col_cnt - 1 == xy[1]) {
+          setXY([-1, -1]);
+        }
         setInformation((prev) => ({
           ...prev,
           col_cnt: prev.col_cnt - 1,
@@ -922,6 +906,9 @@ const SY_A0500W: React.FC = () => {
         (item) => item.row_index > information.row_cnt - 2
       );
       if (data.length == 0) {
+        if (information.row_cnt - 1 == xy[0]) {
+          setXY([-1, -1]);
+        }
         setInformation((prev) => ({
           ...prev,
           row_cnt: prev.row_cnt - 1,
@@ -1050,7 +1037,64 @@ const SY_A0500W: React.FC = () => {
       col_cnt: 5,
       row_cnt: 5,
     });
+    setXY([-1, -1]);
     setDetailDataResult(process([], detailDataState));
+  };
+
+  const onAddIcon = () => {
+    const IconInfo = mainDataResult2.data.filter(
+      (item) =>
+        item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
+    )[0];
+
+    if (IconInfo == undefined) {
+      alert("아이콘이 없습니다.");
+    } else if (xy[0] == -1 || xy[1] == -1) {
+      alert("영역선택을 해주세요.");
+    } else {
+      let valid = true;
+      detailDataResult.data.map((item) => {
+        if (item.col_index == xy[1] && item.row_index == xy[0]) {
+          valid = false;
+        }
+      });
+
+      if (valid == true) {
+        detailDataResult.data.map((item) => {
+          if (item.num > temp) {
+            temp = item.num;
+          }
+        });
+        const newDataItem = {
+          caption: "",
+          col_index: xy[1],
+          form_id: "",
+          icon: IconInfo.icon_image,
+          insert_pc: null,
+          insert_time: null,
+          insert_userid: null,
+          last_update_time: null,
+          layout_key: information.layout_id,
+          menu_name: IconInfo.icon_word_text + "_" + information.layout_id,
+          orgdiv: "01",
+          row_index: xy[0],
+          seq: ++temp,
+          update_pc: null,
+          update_time: null,
+          update_userid: null,
+          rowstatus: "N",
+        };
+        setDetailDataResult((prev) => {
+          return {
+            data: [newDataItem, ...prev.data],
+            total: prev.total + 1,
+          };
+        });
+        setXY([-1, -1]);
+      } else {
+        alert("이미 존재하는 영역입니다.");
+      }
+    }
   };
   return (
     <>
@@ -1067,7 +1111,7 @@ const SY_A0500W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <GridContainerWrap>
+      <GridContainerWrap onClick={deletemenu}>
         <GridContainer width="20%">
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
@@ -1274,21 +1318,22 @@ const SY_A0500W: React.FC = () => {
                       onChange={InputChange2}
                     />
                   </td>
-                  <td>
+                  <th>
                     <Button
-                      onClick={() =>
+                      onClick={() => {
+                        setPage2(initialPageState);
                         setFilters2((prev) => ({
                           ...prev,
                           isSearch: true,
                           pgNum: 1,
-                        }))
-                      }
+                        }));
+                      }}
                       icon="search"
                       themeColor={"primary"}
                     >
                       조회
                     </Button>
-                  </td>
+                  </th>
                 </tr>
               </tbody>
             </FormBox>
@@ -1312,6 +1357,7 @@ const SY_A0500W: React.FC = () => {
               mode: "single",
             }}
             onSelectionChange={onMainSelectionChange2}
+            onRowDoubleClick={() => onAddIcon()}
             //스크롤 조회 기능
             fixedScroll={true}
             total={mainDataResult2.total}
