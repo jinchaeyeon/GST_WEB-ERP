@@ -851,7 +851,7 @@ const KendoWindow = ({
               mainDataResult.data.map((row) => ({
                 ...row,
                 dptcd: dptcdListData.find(
-                  (item: any) => item.dptcd === row.dptcd
+                  (item: any) => item.dptcd == row.dptcd
                 )?.dptnm,
                 postcd: postcdListData.find(
                   (item: any) => item.sub_code === row.postcd

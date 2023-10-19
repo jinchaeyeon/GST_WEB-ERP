@@ -120,7 +120,7 @@ let targetRowIndex3: null | number = null;
 const dateField = ["quodt", "materialindt", "startdt", "enddt"];
 const RadioField = ["glpyn"];
 const numberField = ["group_seq", "sort_seq"];
-const comboField = ["packagetype", "testpart"];
+const comboField = ["packagetype", "itemlvl1"];
 const itemField = ["itemcd"];
 let temp = 0;
 let deletedMainRows: any[] = [];
@@ -190,7 +190,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   const bizComponentIdVal =
     field === "packagetype"
       ? "L_SA003_603"
-      : field === "testpart"
+      : field === "itemlvl1"
       ? "L_BA171"
       : "";
   const bizComponent = bizComponentData.find(
@@ -589,10 +589,12 @@ const SA_A1000_603W: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent(
-    "L_sysUserMaster_001, L_SA016, L_SA004, L_SA001_603, R_Requestgb",
+    "L_dptcd_001, L_sysUserMaster_001, L_SA016, L_SA004, L_SA001_603, R_Requestgb",
     setBizComponentData
   );
-
+  const [dptcdListData, setdptcdListData] = useState([
+    { dptcd: "", dptnm: "" },
+  ]);
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
@@ -614,6 +616,11 @@ const SA_A1000_603W: React.FC = () => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
+      const dptcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_dptcd_001"
+        )
+      );
       const quotypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_SA016")
       );
@@ -627,6 +634,7 @@ const SA_A1000_603W: React.FC = () => {
           (item: any) => item.bizComponentId === "L_SA001_603"
         )
       );
+      fetchQueryData(dptcdQueryStr, setdptcdListData);
       fetchQueryData(userQueryStr, setUserListData);
       fetchQueryData(quotypeQueryStr, setQuotypeListData);
       fetchQueryData(quostsQueryStr, setQuostsListData);
@@ -924,6 +932,14 @@ const SA_A1000_603W: React.FC = () => {
   };
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
+    if (e.selected == 0) {
+      setFilters((prev)=> ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: "",
+      }))
+    }
     if (e.selected == 1) {
       const selectedRowData = mainDataResult.data.filter(
         (item) =>
@@ -1873,7 +1889,7 @@ const SA_A1000_603W: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "itemlvl1" && field != "testnum") {
+    if (field != "rowstatus" && field != "testnum") {
       const newData = subDataResult.data.map((item) =>
         item[SUB_DATA_ITEM_KEY] == dataItem[SUB_DATA_ITEM_KEY]
           ? {
@@ -2812,6 +2828,9 @@ const SA_A1000_603W: React.FC = () => {
                     person: userListData.find(
                       (items: any) => items.user_id == row.person
                     )?.user_name,
+                    dptcd: dptcdListData.find(
+                      (item: any) => item.dptcd === row.dptcd
+                    )?.dptnm,
                     chkperson: userListData.find(
                       (items: any) => items.user_id == row.chkperson
                     )?.user_name,

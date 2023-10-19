@@ -2,6 +2,7 @@ import type { FC, ReactNode } from 'react'
 
 export interface SquareProps {
   children?: ReactNode
+  bool : boolean;
 }
 
 const squareStyle = {
@@ -9,8 +10,8 @@ const squareStyle = {
   height: '100%',
 }
 
-export const Square: FC<SquareProps> = ({ children }) => {
-  const backgroundColor = 'white'
+export const Square: FC<SquareProps> = ({ children, bool }) => {
+  const backgroundColor = bool == true ? 'white' : "grey"
   const color = 'black'
   return (
     <div

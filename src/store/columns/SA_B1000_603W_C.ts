@@ -6,8 +6,8 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList",
     columns: [ 
       {
-        id: "col_projectnum",
-        field: "projectnum",
+        id: "col_ref_key",
+        field: "ref_key",
         caption: "프로젝트 번호",
         width: 150,
       },

@@ -84,6 +84,12 @@ export const gridList: Array<TGrid> = [
         width: 150,
       },
       {
+        id: "col_itemnm",
+        field: "itemnm",
+        caption: "품목명",
+        width: 150,
+      },
+      {
         id: "col_wonamt_detail",
         field: "wonamt",
         caption: "금액",
