@@ -4,6 +4,7 @@ import logoSrc from "./img/logo.png";
 import loginBgSrc from "./img/login_bg.png";
 import logoWEBERP from "./img/login_web_erp.png";
 import logoDDGD from "./img/login_ddgd.png";
+import processStsSrc from "./img/process_16.png";
 
 type TColor = {
   theme: string;
@@ -1089,4 +1090,20 @@ export const ScrollableContainer = styled.div<TScrollableContainer>`
     border: 2px solid #f5b901;
     height: 80vh;
   }
+`;
+
+type TStatusIcon = { status: string };
+
+export const StatusIcon = styled.span<TStatusIcon>`
+  background: url(${(props) =>
+    props.status === "001"
+      ? processStsSrc
+      : ""});
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 15px;
+  height: 15px;
+  background-position: center;
+  display: inline-block;
+  margin-right: 5px;
 `;
