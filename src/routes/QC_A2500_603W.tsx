@@ -15,6 +15,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
+import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -133,7 +134,10 @@ const BA_A0020_603: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         status: defaultOption.find((item: any) => item.id === "status")
@@ -289,6 +293,10 @@ const BA_A0020_603: React.FC = () => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
+  const [projectWindowVisible, setProjectWindowVisible] =
+    useState<boolean>(false);
+    const [projectWindowVisible2, setProjectWindowVisible2] =
+    useState<boolean>(false);
 
   const onCustWndClick = () => {
     setCustWindowVisible(true);
@@ -297,7 +305,12 @@ const BA_A0020_603: React.FC = () => {
   const onDetailWndClick = () => {
     setDetailWindowVisible(true);
   };
-
+  const onProejctWndClick = () => {
+    setProjectWindowVisible(true);
+  };
+  const onProejctWndClick2 = () => {
+    setProjectWindowVisible2(true);
+  };
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -352,6 +365,30 @@ const BA_A0020_603: React.FC = () => {
         ...prev,
         custcd: data.custcd,
         custnm: data.custnm,
+      };
+    });
+  };
+
+  const setProjectData = (data: any) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        ref_key: data.ref_key == undefined ? "" : data.ref_key,
+        testnum: data.testnum == undefined ? "" : data.testnum,
+        smperson: data.smperson == undefined ? "" : data.smperson,
+        cpmperson: data.cpmperson == undefined ? "" : data.cpmperson,
+      };
+    });
+  };
+
+  const setProjectData2 = (data: any) => {
+    setInformation((prev: any) => {
+      return {
+        ...prev,
+        ref_key: data.ref_key == undefined ? "" : data.ref_key,
+        testnum: data.testnum == undefined ? "" : data.testnum,
+        smperson: data.smperson == undefined ? "" : data.smperson,
+        cpmperson: data.cpmperson == undefined ? "" : data.cpmperson,
       };
     });
   };
@@ -904,16 +941,29 @@ const BA_A0020_603: React.FC = () => {
 
   const setData = (data: any) => {
     setDetailWindowVisible(false);
+    const smperson = userListData.find(
+      (items: any) =>
+        items.user_name == data.smperson
+    );
+    const cpmperson = userListData.find(
+      (items: any) =>
+        items.user_name == data.cpmperson
+    );
+    const chkperson = userListData.find(
+      (items: any) =>
+        items.user_name == data.chkperson
+    );
+
     setInformation({
       orgdiv: data.orgdiv == undefined ? "01" : data.orgdiv,
       ref_key: data.ref_key == undefined ? "" : data.ref_key,
       testnum: data.testnum == undefined ? "" : data.testnum,
-      smperson: data.smperson == undefined ? "" : data.smperson,
-      cpmperson: data.cpmperson == undefined ? "" : data.cpmperson,
+      smperson: smperson == undefined ? "" : smperson.user_id,
+      cpmperson: cpmperson == undefined ? "" : cpmperson.user_id,
       ncrdiv: "",
       combytype: "",
       status: "01",
-      chkperson: data.chkperson == undefined ? "" : data.chkperson,
+      chkperson: chkperson == undefined ? "" : chkperson.user_id,
       itemcd: data.itemcd == undefined ? "" : data.itemcd,
       itemnm: data.itemnm == undefined ? "" : data.itemnm,
       baddt: new Date(),
@@ -1468,7 +1518,11 @@ const BA_A0020_603: React.FC = () => {
   };
 
   const onSaveClick = () => {
-    if(Information.ncrdiv == "" || Information.combytype == "" || Information.status == "") {
+    if (
+      Information.ncrdiv == "" ||
+      Information.combytype == "" ||
+      Information.status == ""
+    ) {
       alert("필수값을 채워주세요");
     } else {
       const dataItem = commentDataResult.data.filter((item: any) => {
@@ -1477,21 +1531,21 @@ const BA_A0020_603: React.FC = () => {
           item.rowstatus !== undefined
         );
       });
-  
+
       const dataItem2 = commentDataResult2.data.filter((item: any) => {
         return (
           (item.rowstatus === "N" || item.rowstatus === "U") &&
           item.rowstatus !== undefined
         );
       });
-  
+
       const dataItem3 = commentDataResult3.data.filter((item: any) => {
         return (
           (item.rowstatus === "N" || item.rowstatus === "U") &&
           item.rowstatus !== undefined
         );
       });
-  
+
       let dataArr: TdataArr = {
         row_status_cause_s: [],
         id_cause_s: [],
@@ -1506,61 +1560,61 @@ const BA_A0020_603: React.FC = () => {
         seq_feed_s: [],
         comment_feed_s: [],
       };
-  
+
       dataItem.forEach((item: any, idx: number) => {
         const { rowstatus = "", id = "", seq = "", comment = "" } = item;
-  
+
         dataArr.row_status_cause_s.push(rowstatus);
         dataArr.id_cause_s.push(id);
         dataArr.seq_cause_s.push(seq);
         dataArr.comment_cause_s.push(comment);
       });
-  
+
       deletedMainRows.forEach((item: any, idx: number) => {
         const { rowstatus = "", id = "", seq = "", comment = "" } = item;
-  
+
         dataArr.row_status_cause_s.push(rowstatus);
         dataArr.id_cause_s.push(id);
         dataArr.seq_cause_s.push(seq);
         dataArr.comment_cause_s.push(comment);
       });
-  
+
       dataItem2.forEach((item: any, idx: number) => {
         const { rowstatus = "", id = "", seq = "", comment = "" } = item;
-  
+
         dataArr.row_status_plan_s.push(rowstatus);
         dataArr.id_plan_s.push(id);
         dataArr.seq_plan_s.push(seq);
         dataArr.comment_plan_s.push(comment);
       });
-  
+
       deletedMainRows2.forEach((item: any, idx: number) => {
         const { rowstatus = "", id = "", seq = "", comment = "" } = item;
-  
+
         dataArr.row_status_plan_s.push(rowstatus);
         dataArr.id_plan_s.push(id);
         dataArr.seq_plan_s.push(seq);
         dataArr.comment_plan_s.push(comment);
       });
-  
+
       dataItem3.forEach((item: any, idx: number) => {
         const { rowstatus = "", id = "", seq = "", comment = "" } = item;
-  
+
         dataArr.row_status_feed_s.push(rowstatus);
         dataArr.id_feed_s.push(id);
         dataArr.seq_feed_s.push(seq);
         dataArr.comment_feed_s.push(comment);
       });
-  
+
       deletedMainRows3.forEach((item: any, idx: number) => {
         const { rowstatus = "", id = "", seq = "", comment = "" } = item;
-  
+
         dataArr.row_status_feed_s.push(rowstatus);
         dataArr.id_feed_s.push(id);
         dataArr.seq_feed_s.push(seq);
         dataArr.comment_feed_s.push(comment);
       });
-  
+
       setParaData({
         workType: workType,
         orgdiv: "01",
@@ -1741,6 +1795,13 @@ const BA_A0020_603: React.FC = () => {
                       value={filters.ref_key}
                       onChange={filterInputChange}
                     />
+                    <ButtonInInput>
+                      <Button
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onProejctWndClick}
+                      />
+                    </ButtonInInput>
                   </td>
                   <th>고객사</th>
                   <td>
@@ -1767,6 +1828,13 @@ const BA_A0020_603: React.FC = () => {
                       value={filters.testnum}
                       onChange={filterInputChange}
                     />
+                     <ButtonInInput>
+                      <Button
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onProejctWndClick}
+                      />
+                    </ButtonInInput>
                   </td>
                 </tr>
                 <tr>
@@ -1968,11 +2036,13 @@ const BA_A0020_603: React.FC = () => {
                         <Input
                           name="smperson"
                           type="text"
-                          value={Information.smperson != "" ?
-                            userListData.find(
-                              (items: any) =>
-                                items.user_id == Information.smperson
-                            )?.user_name : ""
+                          value={
+                            Information.smperson != ""
+                              ? userListData.find(
+                                  (items: any) =>
+                                    items.user_id == Information.smperson
+                                )?.user_name
+                              : ""
                           }
                           className="readonly"
                         />
@@ -1984,11 +2054,13 @@ const BA_A0020_603: React.FC = () => {
                         <Input
                           name="cpmperson"
                           type="text"
-                          value={Information.cpmperson != "" ?
-                            userListData.find(
-                              (items: any) =>
-                                items.user_id == Information.cpmperson
-                            )?.user_name : ""
+                          value={
+                            Information.cpmperson != ""
+                              ? userListData.find(
+                                  (items: any) =>
+                                    items.user_id == Information.cpmperson
+                                )?.user_name
+                              : ""
                           }
                           className="readonly"
                         />
@@ -2045,11 +2117,13 @@ const BA_A0020_603: React.FC = () => {
                         <Input
                           name="chkperson"
                           type="text"
-                          value={Information.chkperson != "" ?
-                            userListData.find(
-                              (items: any) =>
-                                items.user_id == Information.chkperson
-                            )?.user_name : ""
+                          value={
+                            Information.chkperson != ""
+                              ? userListData.find(
+                                  (items: any) =>
+                                    items.user_id == Information.chkperson
+                                )?.user_name
+                              : ""
                           }
                           className="readonly"
                         />
@@ -2485,6 +2559,13 @@ const BA_A0020_603: React.FC = () => {
         <QC_A2500_603W_Window
           setVisible={setDetailWindowVisible}
           setData={setData}
+          modal={true}
+        />
+      )}
+      {projectWindowVisible && (
+        <QC_A2500_603W_Window
+          setVisible={setProjectWindowVisible}
+          setData={setProjectData}
           modal={true}
         />
       )}

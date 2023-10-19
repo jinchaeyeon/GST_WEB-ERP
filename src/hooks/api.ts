@@ -19,6 +19,7 @@ const domain: any = {
   "biz-components": { action: "get", url: "api/data/:id" },
   permissions: { action: "get", url: "api/data/:para" },
   "culture-codes": { action: "get", url: "api/data/culture-codes" },
+  "icons": {action: "get", url: "api/data/process-layout/:para"},
   "get-password-requirements": {
     action: "get",
     url: "api/data/password-requirements",

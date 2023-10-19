@@ -14,6 +14,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
+
 import {
   Checkbox,
   Input,
@@ -85,6 +86,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -746,6 +748,12 @@ const SA_A1000_603W: React.FC = () => {
   const [selectedsubDataState2, setSelectedsubDataState2] = useState<{
     [id: string]: boolean | number[];
   }>({});
+  const [projectWindowVisible, setProjectWindowVisible] =
+    useState<boolean>(false);
+
+  const onProejctWndClick = () => {
+    setProjectWindowVisible(true);
+  };
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
@@ -952,6 +960,15 @@ const SA_A1000_603W: React.FC = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const setProjectData = (data: any) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        quonum: data.quokey,
+      };
+    });
   };
 
   const InputChange = (e: any) => {
@@ -2519,7 +2536,7 @@ const SA_A1000_603W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert(data.resultMessage)
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -2675,7 +2692,6 @@ const SA_A1000_603W: React.FC = () => {
     }
   };
 
-  
   useEffect(() => {
     if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
@@ -2683,7 +2699,7 @@ const SA_A1000_603W: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>영업활동관리</Title>
+        <Title>프로젝트관리</Title>
 
         <ButtonContainer>
           <Button onClick={onAddClick2} themeColor={"primary"} icon="file-add">
@@ -2732,6 +2748,13 @@ const SA_A1000_603W: React.FC = () => {
                       value={filters.quonum}
                       onChange={filterInputChange}
                     />
+                    <ButtonInInput>
+                      <Button
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onProejctWndClick}
+                      />
+                    </ButtonInInput>
                   </td>
                   <th>고객사</th>
                   <td>
@@ -3609,7 +3632,13 @@ const SA_A1000_603W: React.FC = () => {
           modal={true}
         />
       )}
-
+      {projectWindowVisible && (
+        <ProjectsWindow
+          setVisible={setProjectWindowVisible}
+          setData={setProjectData}
+          modal={true}
+        />
+      )}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div

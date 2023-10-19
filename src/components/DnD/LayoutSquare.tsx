@@ -30,6 +30,7 @@ export const LayoutSquare: FC<BoardSquareProps> = ({
     () => ({
       accept: ItemTypes.KNIGHT,
       drop: () => {
+        console.log("dd")
         const loop = async (list: any[]) => {
           const promises = list.map(async (data: any) => {
             if (x == data.row_index && y == data.col_index) {

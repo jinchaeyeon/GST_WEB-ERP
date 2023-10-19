@@ -3,6 +3,7 @@ import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
@@ -52,6 +53,7 @@ import {
 import { Layout, Position } from "../components/DnD/Layout";
 import { LayoutSquare } from "../components/DnD/LayoutSquare";
 import { Piece } from "../components/DnD/Piece";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import DetailWindow from "../components/Windows/CommonWindows/MenuWindow";
 import { useApi } from "../hooks/api";
 import {
@@ -84,7 +86,9 @@ const containerStyle: CSSProperties = {
 };
 /** Styling properties applied to each square element */
 const DATA_ITEM_KEY = "num";
+const DATA_ITEM_KEY2 = "num";
 let targetRowIndex: null | number = null;
+let temp = 0;
 
 const SY_A0500W: React.FC = () => {
   const layout = useMemo(() => new Layout(), []);
@@ -97,6 +101,7 @@ const SY_A0500W: React.FC = () => {
   UseCustomOption(pathname, setCustomOptionData);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
+  const idGetter2 = getter(DATA_ITEM_KEY2);
   const [[knightX, knightY, indexs], setKnightPos] = useState<Position>(
     layout.position
   );
@@ -107,6 +112,77 @@ const SY_A0500W: React.FC = () => {
   const [workType, setWorkType] = useState<"N" | "U">("N");
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA002", setBizComponentData);
+
+  const ColumnCommandCell = (props: GridCellProps) => {
+    const excelInput: any = React.useRef();
+    const [imgBase64, setImgBase64] = useState<string>(); // 파일 base64
+    const {
+      ariaColumnIndex,
+      columnIndex,
+      dataItem,
+      render,
+      className = "",
+    } = props;
+
+    useEffect(() => {
+      if (dataItem.icon_image != null) {
+        setImgBase64("data:image/png;base64," + dataItem.icon_image);
+      }
+    });
+
+    const onAdd = () => {
+      detailDataResult.data.map((item) => {
+        if (item.num > temp) {
+          temp = item.num;
+        }
+      });
+      const newDataItem = {
+        caption: dataItem.icon_word_text,
+        col_index: -1,
+        form_id: "",
+        icon: dataItem.icon_image,
+        insert_pc: null,
+        insert_time: null,
+        insert_userid: null,
+        last_update_time: null,
+        layout_key: information.layout_id,
+        menu_name: dataItem.icon_word_text +"_"+information.layout_id,
+        orgdiv: "01",
+        row_index: -1,
+        seq: ++temp,
+        update_pc: null,
+        update_time: null,
+        update_userid: null,
+        rowstatus: "N"
+      };
+      setDetailDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+    };
+
+    return (
+      <td
+        className={className}
+        aria-colindex={ariaColumnIndex}
+        data-grid-col-index={columnIndex}
+        style={{ position: "relative", textAlign: "center", cursor: "pointer" }}
+        onDragStart={() => onAdd()}
+      >
+        <div style={{ textAlign: "center" }}>
+          <img
+            style={{ display: "block", margin: "auto", width: "80%" }}
+            ref={excelInput}
+            src={imgBase64}
+            alt="UserImage"
+          />
+        </div>
+      </td>
+    );
+  };
+
   const [locationListData, setLocationListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -144,6 +220,9 @@ const SY_A0500W: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
+  const [mainDataState2, setMainDataState2] = useState<State>({
+    sort: [],
+  });
   const [detailDataState, setDetailDataState] = useState<State>({
     sort: [],
   });
@@ -155,9 +234,14 @@ const SY_A0500W: React.FC = () => {
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
     process([], detailDataState)
   );
-
+  const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
+    process([], mainDataState2)
+  );
   //선택 상태
   const [selectedState, setSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState2, setSelectedState2] = useState<{
     [id: string]: boolean | number[];
   }>({});
   //조회조건 초기값
@@ -168,7 +252,7 @@ const SY_A0500W: React.FC = () => {
     location: "",
     pgNum: 1,
     find_row_value: "",
-    isSearch: false,
+    isSearch: true,
   });
 
   const [detailFilters, setDetailFilters] = useState({
@@ -187,13 +271,23 @@ const SY_A0500W: React.FC = () => {
     layout_key: "",
     layout_name: "",
     orgdiv: "",
-    col_cnt: 4,
-    row_cnt: 4,
+    col_cnt: 5,
+    row_cnt: 5,
   });
+
+  const [filters2, setFilters2] = useState({
+    pgSize: PAGE_SIZE,
+    name: "",
+    pgNum: 1,
+    find_row_value: "",
+    isSearch: false,
+  });
+
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
+  const [page2, setPage2] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -204,6 +298,21 @@ const SY_A0500W: React.FC = () => {
     }));
 
     setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange2 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage2({
       skip: page.skip,
       take: initialPageState.take,
     });
@@ -312,7 +421,14 @@ const SY_A0500W: React.FC = () => {
       [name]: value,
     }));
   };
+  const InputChange2 = (e: any) => {
+    const { value, name } = e.target;
 
+    setFilters2((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
   const InfoChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -400,6 +516,10 @@ const SY_A0500W: React.FC = () => {
         });
         if (totalRowCnt > 0) {
           setWorkType("U");
+          setFilters2((prev) => ({
+            ...prev,
+            isSearch: true,
+          }));
           const selectedRow =
             filters.find_row_value == ""
               ? rows[0]
@@ -441,6 +561,7 @@ const SY_A0500W: React.FC = () => {
             }));
           }
         } else {
+          setWorkType("N");
           setInformation({
             location: "",
             layout_id: "",
@@ -522,6 +643,60 @@ const SY_A0500W: React.FC = () => {
     setLoading(false);
   };
 
+  //그리드 데이터 조회
+  const fetchMainGrid2 = async (filters2: any) => {
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters = {
+      para:
+        "icons?page=" +
+        filters2.pgNum +
+        "&pageSize=" +
+        filters2.pgSize +
+        "&name=" +
+        filters2.name,
+    };
+
+    try {
+      data = await processApi<any>("icons", parameters);
+    } catch (error) {
+      data = null;
+    }
+    let idx = 0;
+    if (data.RowCount > 0) {
+      const totalRowCnt = data.TotalRowCount;
+      const rows = data.Rows.map((item: any) => ({
+        ...item,
+        num: idx++,
+      }));
+
+      setMainDataResult2((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        setSelectedState2({ [rows[0][DATA_ITEM_KEY2]]: true });
+      }
+    } else {
+      console.log("[에러발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (filters.isSearch) {
       const _ = require("lodash");
@@ -547,6 +722,15 @@ const SY_A0500W: React.FC = () => {
       targetRowIndex = null;
     }
   }, [mainDataResult]);
+
+  useEffect(() => {
+    if (filters2.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters2);
+      setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid2(deepCopiedFilters);
+    }
+  }, [filters2]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -597,9 +781,22 @@ const SY_A0500W: React.FC = () => {
     }));
   };
 
+  const onMainSelectionChange2 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState2,
+      dataItemKey: DATA_ITEM_KEY2,
+    });
+
+    setSelectedState2(newSelectedState);
+  };
+
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
+  };
+  const onMainDataStateChange2 = (event: GridDataStateChangeEvent) => {
+    setMainDataState2(event.dataState);
   };
 
   //그리드 푸터
@@ -616,12 +813,26 @@ const SY_A0500W: React.FC = () => {
       </td>
     );
   };
-
+  const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult2.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {mainDataResult2.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
   //그리드 정렬 이벤트
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-
+  const onMainSortChange2 = (e: any) => {
+    setMainDataState2((prev) => ({ ...prev, sort: e.sort }));
+  };
   const search = () => {
     try {
       resetAllGrid();
@@ -727,7 +938,7 @@ const SY_A0500W: React.FC = () => {
         ? {
             ...item,
             caption: "",
-            form_id: ""
+            form_id: "",
           }
         : {
             ...item,
@@ -826,8 +1037,21 @@ const SY_A0500W: React.FC = () => {
       x: 0,
       y: 0,
     });
-  }
+  };
 
+  const onAddClick3 = () => {
+    setWorkType("N");
+    setInformation({
+      location: "",
+      layout_id: "",
+      layout_key: "",
+      layout_name: "",
+      orgdiv: "",
+      col_cnt: 5,
+      row_cnt: 5,
+    });
+    setDetailDataResult(process([], detailDataState));
+  };
   return (
     <>
       <TitleContainer>
@@ -926,7 +1150,7 @@ const SY_A0500W: React.FC = () => {
               )}
           </Grid>
         </GridContainer>
-        <GridContainer width={`calc(60% - ${GAP}px)`}>
+        <GridContainer width={`calc(55% - ${GAP}px)`}>
           <GridTitleContainer>
             <GridTitle>프로세스 레이아웃</GridTitle>
             <ButtonContainer>
@@ -954,12 +1178,28 @@ const SY_A0500W: React.FC = () => {
                 열 삭제
               </Button>
               <Button
+                onClick={onAddClick3}
+                themeColor={"primary"}
+                icon="file-add"
+              >
+                신규
+              </Button>
+              <Button
+                // onClick={onSaveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="delete"
+              >
+                삭제
+              </Button>
+              <Button
                 // onClick={onSaveClick}
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="save"
-                title="저장"
-              ></Button>
+              >
+                저장
+              </Button>
             </ButtonContainer>
           </GridTitleContainer>
           <FormBoxWrap>
@@ -1017,9 +1257,91 @@ const SY_A0500W: React.FC = () => {
             </div>
           </DndProvider>
         </GridContainer>
-        <GridContainer width={`calc(20% - ${GAP}px)`}>
-          d
-          </GridContainer>
+        <GridContainer width={`calc(25% - ${GAP}px)`}>
+          <GridTitleContainer>
+            <GridTitle>아이콘</GridTitle>
+          </GridTitleContainer>
+          <FormBoxWrap>
+            <FormBox>
+              <tbody>
+                <tr>
+                  <th style={{ width: "10%" }}>아이콘명</th>
+                  <td>
+                    <Input
+                      name="name"
+                      type="text"
+                      value={filters2.name}
+                      onChange={InputChange2}
+                    />
+                  </td>
+                  <td>
+                    <Button
+                      onClick={() =>
+                        setFilters2((prev) => ({
+                          ...prev,
+                          isSearch: true,
+                          pgNum: 1,
+                        }))
+                      }
+                      icon="search"
+                      themeColor={"primary"}
+                    >
+                      조회
+                    </Button>
+                  </td>
+                </tr>
+              </tbody>
+            </FormBox>
+          </FormBoxWrap>
+          <Grid
+            style={{ height: "79vh" }}
+            data={process(
+              mainDataResult2.data.map((row) => ({
+                ...row,
+                [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+              })),
+              mainDataState2
+            )}
+            {...mainDataState2}
+            onDataStateChange={onMainDataStateChange2}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY2}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onMainSelectionChange2}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={mainDataResult2.total}
+            skip={page2.skip}
+            take={page2.take}
+            pageable={true}
+            onPageChange={pageChange2}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange2}
+            //컬럼순서조정
+            reorderable={true}
+          >
+            <GridColumn
+              field="icon_image"
+              title="아이콘"
+              width="120px"
+              cell={ColumnCommandCell}
+              footerCell={mainTotalFooterCell2}
+            />
+            <GridColumn field="icon_word_text" title="아이콘명" width="120px" />
+            <GridColumn field="remark" title="비고" width="200px" />
+            <GridColumn
+              field="category"
+              title="유형분류"
+              width="120px"
+              headerCell={RequiredHeader}
+            />
+          </Grid>
+        </GridContainer>
       </GridContainerWrap>
       {clicked != "" && (
         <ContextMenu top={points.y} left={points.x}>

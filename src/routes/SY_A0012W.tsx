@@ -453,6 +453,8 @@ const SY_A0120: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
 
   //FormContext에서 데이터 받아 set
   useEffect(() => {
@@ -1037,6 +1039,7 @@ const SY_A0120: React.FC = () => {
             "@p_mbouseyn": "",
             "@p_position": "",
             "@p_home_menu_id": "",
+            "@p_company_code": companyCode,
             "@p_id": "",
             "@p_pc": pc,
           },
@@ -1164,6 +1167,7 @@ const SY_A0120: React.FC = () => {
             "@p_mbouseyn": mbouseyn === "Y" || mbouseyn === true ? "Y" : "N",
             "@p_position": position,
             "@p_home_menu_id": home_menu_id,
+            "@p_company_code": companyCode,
             "@p_id": userid,
             "@p_pc": pc,
           },
