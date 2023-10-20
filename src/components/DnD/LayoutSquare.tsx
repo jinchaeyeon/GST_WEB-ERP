@@ -15,7 +15,6 @@ export interface BoardSquareProps {
   list: any[];
   layout: Layout;
   children?: ReactNode;
-  bool: boolean;
 }
 
 export const LayoutSquare: FC<BoardSquareProps> = ({
@@ -24,7 +23,6 @@ export const LayoutSquare: FC<BoardSquareProps> = ({
   list,
   layout,
   children,
-  bool
 }: BoardSquareProps) => {
   const [lists, setLists] = useState<any[]>(list);
 
@@ -85,7 +83,7 @@ export const LayoutSquare: FC<BoardSquareProps> = ({
         height: "100%",
       }}
     >
-      <Square bool={bool}>{children}</Square>
+      <Square>{children}</Square>
       {isOver && <Overlay type={OverlayType.LegalMoveHover} />}
     </div>
   );

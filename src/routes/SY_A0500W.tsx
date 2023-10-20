@@ -3,7 +3,6 @@ import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import {
   Grid,
-  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
@@ -14,6 +13,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, {
+  MouseEvent,
   useCallback,
   useEffect,
   useMemo,
@@ -41,8 +41,13 @@ import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox"
 import {
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
   UsePermissions,
+  findMessage,
   getQueryFromBizComponent,
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -53,7 +58,7 @@ import {
 import { Layout, Position } from "../components/DnD/Layout";
 import { LayoutSquare } from "../components/DnD/LayoutSquare";
 import { Piece } from "../components/DnD/Piece";
-import RequiredHeader from "../components/HeaderCells/RequiredHeader";
+import DetailWindow2 from "../components/Windows/CommonWindows/IconWindow";
 import DetailWindow from "../components/Windows/CommonWindows/MenuWindow";
 import { useApi } from "../hooks/api";
 import {
@@ -86,45 +91,8 @@ const containerStyle: CSSProperties = {
 };
 /** Styling properties applied to each square element */
 const DATA_ITEM_KEY = "num";
-const DATA_ITEM_KEY2 = "num";
 let targetRowIndex: null | number = null;
 let temp = 0;
-
-const ColumnCommandCell = (props: GridCellProps) => {
-  const excelInput: any = React.useRef();
-  const [imgBase64, setImgBase64] = useState<string>(); // 파일 base64
-  const {
-    ariaColumnIndex,
-    columnIndex,
-    dataItem,
-    render,
-    className = "",
-  } = props;
-
-  useEffect(() => {
-    if (dataItem.icon_image != null) {
-      setImgBase64("data:image/png;base64," + dataItem.icon_image);
-    }
-  });
-
-  return (
-    <td
-      className={className}
-      aria-colindex={ariaColumnIndex}
-      data-grid-col-index={columnIndex}
-      style={{ position: "relative", textAlign: "center", cursor: "pointer" }}
-    >
-      <div style={{ textAlign: "center" }}>
-        <img
-          style={{ display: "block", margin: "auto", width: "80%" }}
-          ref={excelInput}
-          src={imgBase64}
-          alt="UserImage"
-        />
-      </div>
-    </td>
-  );
-};
 
 const SY_A0500W: React.FC = () => {
   const layout = useMemo(() => new Layout(), []);
@@ -137,10 +105,12 @@ const SY_A0500W: React.FC = () => {
   UseCustomOption(pathname, setCustomOptionData);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-  const idGetter2 = getter(DATA_ITEM_KEY2);
   const [[knightX, knightY, indexs], setKnightPos] = useState<Position>(
     layout.position
   );
+  const userId = UseGetValueFromSessionItem("user_id");
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
   const [clicked, setClicked] = useRecoilState(clickedState);
   const [info, setInfo] = useRecoilState(infoState);
   const [points, setPoints] = useRecoilState(pointsState);
@@ -151,6 +121,8 @@ const SY_A0500W: React.FC = () => {
   const [locationListData, setLocationListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
 
   useEffect(() => {
     if (bizComponentData !== null) {
@@ -186,9 +158,7 @@ const SY_A0500W: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-  const [mainDataState2, setMainDataState2] = useState<State>({
-    sort: [],
-  });
+
   const [detailDataState, setDetailDataState] = useState<State>({
     sort: [],
   });
@@ -200,16 +170,12 @@ const SY_A0500W: React.FC = () => {
   const [detailDataResult, setDetailDataResult] = useState<DataResult>(
     process([], detailDataState)
   );
-  const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
-    process([], mainDataState2)
-  );
+
   //선택 상태
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-  const [selectedState2, setSelectedState2] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -241,19 +207,13 @@ const SY_A0500W: React.FC = () => {
     row_cnt: 5,
   });
 
-  const [filters2, setFilters2] = useState({
-    pgSize: PAGE_SIZE,
-    name: "",
-    pgNum: 1,
-    find_row_value: "",
-    isSearch: false,
-  });
-
   const [detailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
+  const [detailWindowVisible2, setDetailWindowVisible2] =
     useState<boolean>(false);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-  const [page2, setPage2] = useState(initialPageState);
+
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -264,21 +224,6 @@ const SY_A0500W: React.FC = () => {
     }));
 
     setPage({
-      skip: page.skip,
-      take: initialPageState.take,
-    });
-  };
-
-  const pageChange2 = (event: GridPageChangeEvent) => {
-    const { page } = event;
-
-    setFilters2((prev) => ({
-      ...prev,
-      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
-      isSearch: true,
-    }));
-
-    setPage2({
       skip: page.skip,
       take: initialPageState.take,
     });
@@ -316,6 +261,50 @@ const SY_A0500W: React.FC = () => {
     return valid;
   }
 
+  const onClickMenu = (
+    e: MouseEvent<HTMLDivElement>,
+    x: number,
+    y: number,
+    info: any
+  ) => {
+    e.preventDefault();
+    setXY([x, y]);
+    if (info == undefined) {
+      setClicked(`${x}${y}`);
+      setInfo({
+        caption: "",
+        form_id: "",
+        key: "",
+      });
+      setPoints({
+        x: e.pageX,
+        y: e.pageY,
+      });
+    } else if (clicked == "") {
+      setClicked(`${x}${y}`);
+      setInfo({
+        caption: info.caption,
+        form_id: info.form_id,
+        key: info.row_index + "" + info.col_index,
+      });
+      setPoints({
+        x: e.pageX,
+        y: e.pageY,
+      });
+    } else {
+      setClicked(`${x}${y}`);
+      setInfo({
+        caption: info.caption,
+        form_id: info.form_id,
+        key: info.row_index + "" + info.col_index,
+      });
+      setPoints({
+        x: e.pageX,
+        y: e.pageY,
+      });
+    }
+  };
+
   function renderSquare(
     row: number,
     col: number,
@@ -330,20 +319,13 @@ const SY_A0500W: React.FC = () => {
       <div
         key={`${row}${col}`}
         style={squareStyle}
-        onClick={() => {
-          if (xy[0] == row && xy[1] == col) {
-            setXY([-1, -1]);
-          } else {
-            setXY([row, col]);
-          }
-        }}
+        onContextMenu={(e) => onClickMenu(e, row, col, data)}
       >
         <LayoutSquare
           x={row}
           y={col}
           layout={layout}
           list={detailDataResult.data}
-          bool={xy[0] == row && xy[1] == col ? false : true}
         >
           <Piece
             isKnight={knights(row, col)}
@@ -400,14 +382,7 @@ const SY_A0500W: React.FC = () => {
       [name]: value,
     }));
   };
-  const InputChange2 = (e: any) => {
-    const { value, name } = e.target;
 
-    setFilters2((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
   const InfoChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -470,7 +445,7 @@ const SY_A0500W: React.FC = () => {
           // find_row_value 행으로 스크롤 이동
           if (gridRef.current) {
             const findRowIndex = rows.findIndex(
-              (row: any) => row.user_id == filters.find_row_value
+              (row: any) => row.layout_key == filters.find_row_value
             );
             targetRowIndex = findRowIndex;
           }
@@ -495,14 +470,12 @@ const SY_A0500W: React.FC = () => {
         });
         if (totalRowCnt > 0) {
           setWorkType("U");
-          setFilters2((prev) => ({
-            ...prev,
-            isSearch: true,
-          }));
           const selectedRow =
             filters.find_row_value == ""
               ? rows[0]
-              : rows.find((row: any) => row.user_id == filters.find_row_value);
+              : rows.find(
+                  (row: any) => row.layout_key == filters.find_row_value
+                );
 
           if (selectedRow != undefined) {
             setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -622,60 +595,6 @@ const SY_A0500W: React.FC = () => {
     setLoading(false);
   };
 
-  //그리드 데이터 조회
-  const fetchMainGrid2 = async (filters2: any) => {
-    let data: any;
-    setLoading(true);
-    //조회조건 파라미터
-    const parameters = {
-      para:
-        "icons?page=" +
-        filters2.pgNum +
-        "&pageSize=" +
-        filters2.pgSize +
-        "&name=" +
-        filters2.name,
-    };
-
-    try {
-      data = await processApi<any>("icons", parameters);
-    } catch (error) {
-      data = null;
-    }
-    let idx = 0;
-    if (data.RowCount > 0) {
-      const totalRowCnt = data.TotalRowCount;
-      const rows = data.Rows.map((item: any) => ({
-        ...item,
-        num: idx++,
-      }));
-
-      setMainDataResult2((prev) => {
-        return {
-          data: rows,
-          total: totalRowCnt == -1 ? 0 : totalRowCnt,
-        };
-      });
-
-      if (totalRowCnt > 0) {
-        setSelectedState2({ [rows[0][DATA_ITEM_KEY2]]: true });
-      }
-    } else {
-      console.log("[에러발생]");
-      console.log(data);
-    }
-    // 필터 isSearch false처리, pgNum 세팅
-    setFilters2((prev) => ({
-      ...prev,
-      pgNum:
-        data && data.hasOwnProperty("pageNumber")
-          ? data.pageNumber
-          : prev.pgNum,
-      isSearch: false,
-    }));
-    setLoading(false);
-  };
-
   useEffect(() => {
     if (filters.isSearch) {
       const _ = require("lodash");
@@ -702,19 +621,9 @@ const SY_A0500W: React.FC = () => {
     }
   }, [mainDataResult]);
 
-  useEffect(() => {
-    if (filters2.isSearch) {
-      const _ = require("lodash");
-      const deepCopiedFilters = _.cloneDeep(filters2);
-      setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
-      fetchMainGrid2(deepCopiedFilters);
-    }
-  }, [filters2]);
-
   //그리드 리셋
   const resetAllGrid = () => {
     setPage(initialPageState); // 페이지 초기화
-    setPage2(initialPageState);
     setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
     setClicked("");
@@ -727,6 +636,7 @@ const SY_A0500W: React.FC = () => {
       x: 0,
       y: 0,
     });
+    setXY([-1, -1]);
   };
 
   //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
@@ -761,22 +671,9 @@ const SY_A0500W: React.FC = () => {
     }));
   };
 
-  const onMainSelectionChange2 = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedState2,
-      dataItemKey: DATA_ITEM_KEY2,
-    });
-
-    setSelectedState2(newSelectedState);
-  };
-
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
-  };
-  const onMainDataStateChange2 = (event: GridDataStateChangeEvent) => {
-    setMainDataState2(event.dataState);
   };
 
   //그리드 푸터
@@ -793,26 +690,12 @@ const SY_A0500W: React.FC = () => {
       </td>
     );
   };
-  const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
-    var parts = mainDataResult2.total.toString().split(".");
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총
-        {mainDataResult2.total == -1
-          ? 0
-          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        건
-      </td>
-    );
-  };
+
   //그리드 정렬 이벤트
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-  const onMainSortChange2 = (e: any) => {
-    setMainDataState2((prev) => ({ ...prev, sort: e.sort }));
-  };
+
   const search = () => {
     try {
       resetAllGrid();
@@ -948,6 +831,7 @@ const SY_A0500W: React.FC = () => {
       x: 0,
       y: 0,
     });
+    setXY([-1, -1]);
   };
 
   const handleClick = (e: { stopPropagation: () => void }) => {
@@ -979,38 +863,43 @@ const SY_A0500W: React.FC = () => {
       x: 0,
       y: 0,
     });
+    setXY([-1, -1]);
   };
 
   const addCaption = (infomations: any) => {
-    const newData = detailDataResult.data.map((item) =>
-      info.key == item.row_index + "" + item.col_index
-        ? {
-            ...item,
-            caption: infomations.menu_name,
-            form_id: infomations.form_id,
-            menu_name: infomations.menu_name,
-          }
-        : {
-            ...item,
-          }
-    );
+    if (info.key != "") {
+      const newData = detailDataResult.data.map((item) =>
+        info.key == item.row_index + "" + item.col_index
+          ? {
+              ...item,
+              caption: infomations.menu_name,
+              form_id: infomations.form_id,
+              menu_name: infomations.menu_name,
+            }
+          : {
+              ...item,
+            }
+      );
 
-    setDetailDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-    setInfo((prev) => ({
-      ...prev,
-      caption: infomations.menu_name,
-      form_id: infomations.form_id,
-    }));
-    setClicked("");
-    setPoints({
-      x: 0,
-      y: 0,
-    });
+      setDetailDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setInfo((prev) => ({
+        ...prev,
+        caption: infomations.menu_name,
+        form_id: infomations.form_id,
+      }));
+      setClicked("");
+      setPoints({
+        x: 0,
+        y: 0,
+      });
+    } else {
+      alert("아이콘을 먼저 등록해주세요");
+    }
   };
 
   const deletemenu = () => {
@@ -1024,6 +913,7 @@ const SY_A0500W: React.FC = () => {
       x: 0,
       y: 0,
     });
+    setXY([-1, -1]);
   };
 
   const onAddClick3 = () => {
@@ -1033,7 +923,7 @@ const SY_A0500W: React.FC = () => {
       layout_id: "",
       layout_key: "",
       layout_name: "",
-      orgdiv: "",
+      orgdiv: "01",
       col_cnt: 5,
       row_cnt: 5,
     });
@@ -1041,12 +931,7 @@ const SY_A0500W: React.FC = () => {
     setDetailDataResult(process([], detailDataState));
   };
 
-  const onAddIcon = () => {
-    const IconInfo = mainDataResult2.data.filter(
-      (item) =>
-        item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
-    )[0];
-
+  const onAddIcon = (IconInfo: any, infos: any) => {
     if (IconInfo == undefined) {
       alert("아이콘이 없습니다.");
     } else if (xy[0] == -1 || xy[1] == -1) {
@@ -1075,7 +960,7 @@ const SY_A0500W: React.FC = () => {
           insert_userid: null,
           last_update_time: null,
           layout_key: information.layout_id,
-          menu_name: IconInfo.icon_word_text + "_" + information.layout_id,
+          menu_name: "",
           orgdiv: "01",
           row_index: xy[0],
           seq: ++temp,
@@ -1091,11 +976,229 @@ const SY_A0500W: React.FC = () => {
           };
         });
         setXY([-1, -1]);
+        setClicked("");
+        setInfo({
+          caption: "",
+          form_id: "",
+          key: "",
+        });
+        setPoints({
+          x: 0,
+          y: 0,
+        });
       } else {
-        alert("이미 존재하는 영역입니다.");
+        const newData = detailDataResult.data.map((item) =>
+          infos.key == item.row_index + "" + item.col_index
+            ? {
+                ...item,
+                icon: IconInfo.icon_image,
+              }
+            : {
+                ...item,
+              }
+        );
+        setDetailDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setXY([-1, -1]);
+        setClicked("");
+        setInfo({
+          caption: "",
+          form_id: "",
+          key: "",
+        });
+        setPoints({
+          x: 0,
+          y: 0,
+        });
       }
     }
   };
+
+  const onSaveClick = async () => {
+    try {
+      if (
+        information.location == null ||
+        information.location == "" ||
+        information.location == undefined
+      ) {
+        throw findMessage(messagesData, "SY_A0500W_001");
+      } else if (
+        information.layout_id == null ||
+        information.layout_id == "" ||
+        information.layout_id == undefined
+      ) {
+        throw findMessage(messagesData, "SY_A0500W_001");
+      } else {
+        let data: any;
+
+        const paraSaved: Iparameters = {
+          procedureName: "P_SY_A0500W_S",
+          pageNumber: 0,
+          pageSize: 0,
+          parameters: {
+            "@p_work_type":
+              workType == "N" ? "ins_layout_header" : "upd_layout_header",
+            "@p_orgdiv": information.orgdiv,
+            "@p_location": information.location,
+            "@p_key_value": information.layout_key,
+            "@p_id": information.layout_id,
+            "@p_name": information.layout_name,
+            "@p_col_cnt": information.col_cnt,
+            "@p_row_cnt": information.row_cnt,
+            "@p_icon": "",
+            "@p_caption": "",
+            "@p_form_id": "",
+            "@p_menu_name": "",
+            "@p_col_index": 0,
+            "@p_row_index": 0,
+            "@p_header_guid_s": "",
+            "@p_header_caption_s": "",
+            "@p_detail_guid_s": "",
+            "@p_form_id_s": "",
+            "@p_exec_userid": userId,
+            "@p_exec_pc": pc,
+          },
+        };
+
+        try {
+          data = await processApi<any>("procedure", paraSaved);
+        } catch (error) {
+          data = null;
+        }
+
+        if (data.isSuccess === true) {
+          let data2: any;
+          detailDataResult.data.map(async (item) => {
+            const paraSaved2: Iparameters = {
+              procedureName: "P_SY_A0500W_S",
+              pageNumber: 0,
+              pageSize: 0,
+              parameters: {
+                "@p_work_type": "ins_layout_detail",
+                "@p_orgdiv": information.orgdiv,
+                "@p_location": information.location,
+                "@p_key_value": information.layout_key,
+                "@p_id": information.layout_id,
+                "@p_name": information.layout_name,
+                "@p_col_cnt": information.col_cnt,
+                "@p_row_cnt": information.row_cnt,
+                "@p_icon": item.icon,
+                "@p_caption": item.caption,
+                "@p_form_id": item.form_id,
+                "@p_menu_name": item.menu_name,
+                "@p_col_index": item.col_index,
+                "@p_row_index": item.row_index,
+                "@p_header_guid_s": "",
+                "@p_header_caption_s": "",
+                "@p_detail_guid_s": "",
+                "@p_form_id_s": "",
+                "@p_exec_userid": userId,
+                "@p_exec_pc": pc,
+              },
+            };
+            try {
+              data2 = await processApi<any>("procedure", paraSaved2);
+            } catch (error) {
+              data2 = null;
+            }
+          });
+
+          if (data.isSuccess === true) {
+            setFilters((prev) => ({
+              ...prev,
+              find_row_value: data.returnString,
+              isSearch: true,
+            }));
+          }
+        } else {
+          console.log("[오류 발생]");
+          console.log(data);
+          alert(data.resultMessage);
+        }
+      }
+    } catch (e) {
+      alert(e);
+    }
+  };
+  const questionToDelete = useSysMessage("QuestionToDelete");
+
+  const onDeleteClick = async () => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+
+    let data: any;
+
+    const paraSaved: Iparameters = {
+      procedureName: "P_SY_A0500W_S",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": "del_layout",
+        "@p_orgdiv": information.orgdiv,
+        "@p_location": information.location,
+        "@p_key_value": information.layout_key,
+        "@p_id": information.layout_id,
+        "@p_name": information.layout_name,
+        "@p_col_cnt": information.col_cnt,
+        "@p_row_cnt": information.row_cnt,
+        "@p_icon": "",
+        "@p_caption": "",
+        "@p_form_id": "",
+        "@p_menu_name": "",
+        "@p_col_index": 0,
+        "@p_row_index": 0,
+        "@p_header_guid_s": "",
+        "@p_header_caption_s": "",
+        "@p_detail_guid_s": "",
+        "@p_form_id_s": "",
+        "@p_exec_userid": userId,
+        "@p_exec_pc": pc,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", paraSaved);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const isLastDataDeleted =
+        mainDataResult.data.length === 1 && filters.pgNum > 1;
+      const findRowIndex = mainDataResult.data.findIndex(
+        (row: any) =>
+          row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      );
+      if (isLastDataDeleted) {
+        setPage({
+          skip: PAGE_SIZE * (filters.pgNum - 2),
+          take: PAGE_SIZE,
+        });
+      }
+
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value:
+          mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1] ==
+          undefined
+            ? ""
+            : mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
+                .layout_key,
+        pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+        isSearch: true,
+      }));
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1194,7 +1297,7 @@ const SY_A0500W: React.FC = () => {
               )}
           </Grid>
         </GridContainer>
-        <GridContainer width={`calc(55% - ${GAP}px)`}>
+        <GridContainer width={`calc(80% - ${GAP}px)`}>
           <GridTitleContainer>
             <GridTitle>프로세스 레이아웃</GridTitle>
             <ButtonContainer>
@@ -1229,7 +1332,7 @@ const SY_A0500W: React.FC = () => {
                 신규
               </Button>
               <Button
-                // onClick={onSaveClick}
+                onClick={onDeleteClick}
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="delete"
@@ -1237,7 +1340,7 @@ const SY_A0500W: React.FC = () => {
                 삭제
               </Button>
               <Button
-                // onClick={onSaveClick}
+                onClick={onSaveClick}
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="save"
@@ -1301,93 +1404,6 @@ const SY_A0500W: React.FC = () => {
             </div>
           </DndProvider>
         </GridContainer>
-        <GridContainer width={`calc(25% - ${GAP}px)`}>
-          <GridTitleContainer>
-            <GridTitle>아이콘</GridTitle>
-          </GridTitleContainer>
-          <FormBoxWrap>
-            <FormBox>
-              <tbody>
-                <tr>
-                  <th style={{ width: "10%" }}>아이콘명</th>
-                  <td>
-                    <Input
-                      name="name"
-                      type="text"
-                      value={filters2.name}
-                      onChange={InputChange2}
-                    />
-                  </td>
-                  <th>
-                    <Button
-                      onClick={() => {
-                        setPage2(initialPageState);
-                        setFilters2((prev) => ({
-                          ...prev,
-                          isSearch: true,
-                          pgNum: 1,
-                        }));
-                      }}
-                      icon="search"
-                      themeColor={"primary"}
-                    >
-                      조회
-                    </Button>
-                  </th>
-                </tr>
-              </tbody>
-            </FormBox>
-          </FormBoxWrap>
-          <Grid
-            style={{ height: "79vh" }}
-            data={process(
-              mainDataResult2.data.map((row) => ({
-                ...row,
-                [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
-              })),
-              mainDataState2
-            )}
-            {...mainDataState2}
-            onDataStateChange={onMainDataStateChange2}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY2}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onMainSelectionChange2}
-            onRowDoubleClick={() => onAddIcon()}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult2.total}
-            skip={page2.skip}
-            take={page2.take}
-            pageable={true}
-            onPageChange={pageChange2}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange2}
-            //컬럼순서조정
-            reorderable={true}
-          >
-            <GridColumn
-              field="icon_image"
-              title="아이콘"
-              width="120px"
-              cell={ColumnCommandCell}
-              footerCell={mainTotalFooterCell2}
-            />
-            <GridColumn field="icon_word_text" title="아이콘명" width="120px" />
-            <GridColumn field="remark" title="비고" width="200px" />
-            <GridColumn
-              field="category"
-              title="유형분류"
-              width="120px"
-              headerCell={RequiredHeader}
-            />
-          </Grid>
-        </GridContainer>
       </GridContainerWrap>
       {clicked != "" && (
         <ContextMenu top={points.y} left={points.x}>
@@ -1410,6 +1426,14 @@ const SY_A0500W: React.FC = () => {
             >
               메뉴 등록
             </li>
+            <li
+              onClick={(e) => {
+                handleClick(e);
+                setDetailWindowVisible2(true);
+              }}
+            >
+              아이콘 등록/변경
+            </li>
             <Divider />
             <li onClick={() => removeCaption(info)}>초기화</li>
             <li onClick={() => removeIcon(info)}>제거</li>
@@ -1420,6 +1444,13 @@ const SY_A0500W: React.FC = () => {
         <DetailWindow
           setVisible={setDetailWindowVisible}
           reloadData={(data) => addCaption(data)}
+          modal={true}
+        />
+      )}
+      {detailWindowVisible2 && (
+        <DetailWindow2
+          setVisible={setDetailWindowVisible2}
+          reloadData={(data) => onAddIcon(data, info)}
           modal={true}
         />
       )}

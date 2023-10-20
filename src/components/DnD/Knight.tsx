@@ -1,18 +1,11 @@
 import {
-  MouseEvent,
   useEffect,
   useRef,
   useState,
   type CSSProperties,
-  type FC,
+  type FC
 } from "react";
 import { DragPreviewImage, useDrag } from "react-dnd";
-import { useRecoilState } from "recoil";
-import {
-  clickedState,
-  infoState,
-  pointsState
-} from "../../store/atoms";
 import { Layout } from "./Layout";
 
 const knightStyle: CSSProperties = {
@@ -33,10 +26,6 @@ export interface KnightProps {
 }
 
 export const Knight: FC<KnightProps> = ({ layout, x, y, list, info }) => {
-  const [clicked, setClicked] = useRecoilState(clickedState);
-  const [information, setInformation] = useRecoilState(infoState);
-  const [points, setPoints] = useRecoilState(pointsState);
-
   const [{ isDragging }, drag, preview] = useDrag(
     () => ({
       type: ItemTypes.KNIGHT,
@@ -54,34 +43,6 @@ export const Knight: FC<KnightProps> = ({ layout, x, y, list, info }) => {
       setImgBase64("data:image/png;base64," + info.icon);
     }
   }, [info]);
-
-  const onClickMenu = (e: MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-
-    if (clicked == "") {
-      setClicked(`${x}${y}`);
-      setInformation({
-        caption: info.caption,
-        form_id: info.form_id,
-        key: info.row_index + "" + info.col_index
-      });
-      setPoints({
-        x: e.pageX,
-        y: e.pageY,
-      });
-    } else {
-      setClicked(`${x}${y}`);
-      setInformation({
-        caption: info.caption,
-        form_id: info.form_id,
-        key: info.row_index + "" + info.col_index
-      });
-      setPoints({
-        x: e.pageX,
-        y: e.pageY,
-      });
-    }
-  };
 
   return (
     <>
@@ -102,7 +63,6 @@ export const Knight: FC<KnightProps> = ({ layout, x, y, list, info }) => {
             }
           });
         }}
-        onContextMenu={(e) => onClickMenu(e)}
       >
         <div
           style={{
@@ -111,7 +71,7 @@ export const Knight: FC<KnightProps> = ({ layout, x, y, list, info }) => {
           }}
         >
           <img
-            style={{ height: "100%", width: "100%", objectFit: "contain"}}
+            style={{ height: "100%", width: "100%", objectFit: "contain" }}
             ref={excelInput}
             src={imgBase64}
             alt="UserImage"
