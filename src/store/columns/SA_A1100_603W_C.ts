@@ -90,15 +90,57 @@ export const gridList: Array<TGrid> = [
         width: 150,
       },
       {
+        id: "col_amt_detail",
+        field: "amt",
+        caption: "금액",
+        width: 100,
+      },
+      {
         id: "col_wonamt_detail",
         field: "wonamt",
-        caption: "금액",
+        caption: "원화금액",
         width: 100,
       },
       {
         id: "col_taxamt_detail",
         field: "taxamt",
         caption: "세액",
+        width: 100,
+      },      
+      {
+        id: "col_margin_detail",
+        field: "margin",
+        caption: "마진",
+        width: 100,
+      },      
+      {
+        id: "col_margin_div_detail",
+        field: "margin_div",
+        caption: "마진적용구분",
+        width: 120,
+      },   
+      {
+        id: "col_margin_amt_detail",
+        field: "margin_amt",
+        caption: "마진적용금액",
+        width: 100,
+      },   
+      {
+        id: "col_discount_detail",
+        field: "discount",
+        caption: "할인",
+        width: 100,
+      },    
+      {
+        id: "col_discount_div_detail",
+        field: "discount_div",
+        caption: "할인적용구분",
+        width: 120,
+      },   
+      {
+        id: "col_discount_amt_detail",
+        field: "discount_amt",
+        caption: "할인적용금액",
         width: 100,
       },      
       {

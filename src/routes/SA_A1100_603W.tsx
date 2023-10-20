@@ -69,6 +69,11 @@ type TdataArr = {
   quoseq_s: string[];
   wonamt_s: string[];
   taxamt_s: string[];
+  amt_s: string[];
+  margin_s: string[];
+  margin_div_s: string[];
+  discount_s: string[];
+  discount_div_s: string[];
 };
 
 const DATA_ITEM_KEY = "num";
@@ -83,6 +88,7 @@ let targetRowIndex4: null | number = null;
 let targetRowIndex5: null | number = null;
 const DateField = ["materialindt", "recdt"];
 const NumberField = [
+  "amt",
   "wonamt",
   "taxamt",
   "totamt",
@@ -90,20 +96,30 @@ const NumberField = [
   "saleamt",
   "collamt",
   "janamt",
+  "margin",
+  "margin_amt",
+  "discount",
+  "discount_amt",
 ];
-const customField = ["insert_userid"];
+const customField = ["insert_userid", "margin_div", "discount_div"];
 let temp = 0;
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
-    "L_sysUserMaster_001",
+    "L_sysUserMaster_001, L_MARGIN, L_DISCOUNT",
     // 구분, 단위, 불량유형
     setBizComponentData
   );
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "insert_userid" ? "L_sysUserMaster_001" : "";
+    field === "insert_userid"
+      ? "L_sysUserMaster_001"
+      : field === "margin_div"
+      ? "L_MARGIN"
+      : field === "discount_div"
+      ? "L_DISCOUNT"
+      : "";
 
   const fieldName = field === "insert_userid" ? "user_name" : undefined;
   const fieldValue = field === "insert_userid" ? "user_id" : undefined;
@@ -321,6 +337,7 @@ const SA_A1100_603W: React.FC = () => {
     saleamt: 0,
     collamt: 0,
     janamt: 0,
+    wonchgrat: 0,
   });
 
   const [selectedState, setSelectedState] = useState<{
@@ -439,10 +456,122 @@ const SA_A1100_603W: React.FC = () => {
   const InfoInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setInformation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "wonchgrat") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+
+      if (value != 0) {
+        const newData = mainDataResult2.data.map((item) => ({
+          ...item,
+          wonamt: Math.floor(
+            (item.discount_div == ""
+              ? item.margin_div == ""
+                ? item.amt
+                : item.margin_div == "1"
+                ? item.amt + (item.amt * item.margin) / 100
+                : item.margin_div == "2"
+                ? item.amt + item.margin
+                : item.amt
+              : item.discount_div == "1"
+              ? (Math.floor(item.margin_div == ""
+                  ? item.amt
+                  : item.margin_div == "1"
+                  ? item.amt + (item.amt * item.margin) / 100
+                  : item.margin_div == "2"
+                  ? item.amt + item.margin
+                  : item.amt)) -
+                ((Math.floor(item.margin_div == ""
+                  ? item.amt
+                  : item.margin_div == "1"
+                  ? item.amt + (item.amt * item.margin) / 100
+                  : item.margin_div == "2"
+                  ? item.amt + item.margin
+                  : item.amt)) *
+                  item.discount) /
+                  100
+              : item.discount_div == "2"
+              ? (Math.floor(item.margin_div == ""
+                  ? item.amt
+                  : item.margin_div == "1"
+                  ? item.amt + (item.amt * item.margin) / 100
+                  : item.margin_div == "2"
+                  ? item.amt + item.margin
+                  : item.amt)) - item.discount
+              : item.margin_div == ""
+              ? item.amt
+              : item.margin_div == "1"
+              ? item.amt + (item.amt * item.margin) / 100
+              : item.margin_div == "2"
+              ? item.amt + item.margin
+              : item.amt) * value
+          ),
+          taxamt: Math.floor(
+            Math.floor(
+              (item.discount_div == ""
+                ? Math.floor(item.margin_div == ""
+                  ? item.amt
+                  : item.margin_div == "1"
+                  ? item.amt + (item.amt * item.margin) / 100
+                  : item.margin_div == "2"
+                  ? item.amt + item.margin
+                  : item.amt)
+                : item.discount_div == "1"
+                ? (item.margin_div == ""
+                    ? item.amt
+                    : item.margin_div == "1"
+                    ? item.amt + (item.amt * item.margin) / 100
+                    : item.margin_div == "2"
+                    ? item.amt + item.margin
+                    : item.amt) -
+                  ((item.margin_div == ""
+                    ? item.amt
+                    : item.margin_div == "1"
+                    ? item.amt + (item.amt * item.margin) / 100
+                    : item.margin_div == "2"
+                    ? item.amt + item.margin
+                    : item.amt) *
+                    item.discount) /
+                    100
+                : item.discount_div == "2"
+                ? (item.margin_div == ""
+                    ? item.amt
+                    : item.margin_div == "1"
+                    ? item.amt + (item.amt * item.margin) / 100
+                    : item.margin_div == "2"
+                    ? item.amt + item.margin
+                    : item.amt) - item.discount
+                : item.margin_div == ""
+                ? item.amt
+                : item.margin_div == "1"
+                ? item.amt + (item.amt * item.margin) / 100
+                : item.margin_div == "2"
+                ? item.amt + item.margin
+                : item.amt) * value
+            ) * 0.1
+          ),
+        }));
+
+        setTempResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult2((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
+    } else {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   //커스텀 옵션 조회
@@ -735,6 +864,7 @@ const SA_A1100_603W: React.FC = () => {
           totamt: data.tables[0].Rows[0].totamt,
           quorev: data.tables[0].Rows[0].quorev,
           rev_reason: data.tables[0].Rows[0].rev_reason,
+          wonchgrat: data.tables[0].Rows[0].wonchgrat,
         }));
       } else {
         setInformation((prev) => ({
@@ -745,6 +875,7 @@ const SA_A1100_603W: React.FC = () => {
           totamt: 0,
           quorev: 0,
           rev_reason: "",
+          wonchgrat: 0,
         }));
       }
       setMainDataResult2({
@@ -1347,7 +1478,12 @@ const SA_A1100_603W: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "testnum" && field != "taxamt") {
+    if (
+      field != "rowstatus" &&
+      field != "testnum" &&
+      field != "taxamt" &&
+      !(Information.wonchgrat != 0 && field == "wonamt")
+    ) {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
@@ -1386,7 +1522,141 @@ const SA_A1100_603W: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
-              taxamt: Math.floor(item.wonamt * 0.1),
+              margin_amt:
+                Math.floor(item.margin_div == ""
+                  ? item.amt
+                  : item.margin_div == "1"
+                  ? item.amt + (item.amt * item.margin) / 100
+                  : item.margin_div == "2"
+                  ? item.amt + item.margin
+                  : item.amt),
+              discount_amt:
+                item.discount_div == ""
+                  ? item.margin_div == ""
+                    ? item.amt
+                    : item.margin_div == "1"
+                    ? item.amt + (item.amt * item.margin) / 100
+                    : item.margin_div == "2"
+                    ? item.amt + item.margin
+                    : item.amt
+                  : item.discount_div == "1"
+                  ? (item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + (item.amt * item.margin) / 100
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt) -
+                    ((item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + (item.amt * item.margin) / 100
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt) *
+                      item.discount) /
+                      100
+                  : item.discount_div == "2"
+                  ? (item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + (item.amt * item.margin) / 100
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt) - item.discount
+                  : Math.floor(item.margin_div == ""
+                  ? item.amt
+                  : item.margin_div == "1"
+                  ? item.amt + (item.amt * item.margin) / 100
+                  : item.margin_div == "2"
+                  ? item.amt + item.margin
+                  : item.amt),
+              wonamt: Math.floor(
+                (item.discount_div == ""
+                  ? item.margin_div == ""
+                    ? item.amt
+                    : item.margin_div == "1"
+                    ? item.amt + (item.amt * item.margin) / 100
+                    : item.margin_div == "2"
+                    ? item.amt + item.margin
+                    : item.amt
+                  : item.discount_div == "1"
+                  ? (item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + (item.amt * item.margin) / 100
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt) -
+                    ((item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + (item.amt * item.margin) / 100
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt) *
+                      item.discount) /
+                      100
+                  : item.discount_div == "2"
+                  ? (item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + (item.amt * item.margin) / 100
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt) - item.discount
+                  : Math.floor(item.margin_div == ""
+                  ? item.amt
+                  : item.margin_div == "1"
+                  ? item.amt + (item.amt * item.margin) / 100
+                  : item.margin_div == "2"
+                  ? item.amt + item.margin
+                  : item.amt)) * Information.wonchgrat
+              ),
+              taxamt: Math.floor(
+                Math.floor(
+                  (item.discount_div == ""
+                    ? item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + (item.amt * item.margin) / 100
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt
+                    : item.discount_div == "1"
+                    ? (item.margin_div == ""
+                        ? item.amt
+                        : item.margin_div == "1"
+                        ? item.amt + (item.amt * item.margin) / 100
+                        : item.margin_div == "2"
+                        ? item.amt + item.margin
+                        : item.amt) -
+                      ((item.margin_div == ""
+                        ? item.amt
+                        : item.margin_div == "1"
+                        ? item.amt + (item.amt * item.margin) / 100
+                        : item.margin_div == "2"
+                        ? item.amt + item.margin
+                        : item.amt) *
+                        item.discount) /
+                        100
+                    : item.discount_div == "2"
+                    ? (item.margin_div == ""
+                        ? item.amt
+                        : item.margin_div == "1"
+                        ? item.amt + (item.amt * item.margin) / 100
+                        : item.margin_div == "2"
+                        ? item.amt + item.margin
+                        : item.amt) - item.discount
+                    : item.margin_div == ""
+                    ? item.amt
+                    : item.margin_div == "1"
+                    ? item.amt + (item.amt * item.margin) / 100
+                    : item.margin_div == "2"
+                    ? item.amt + item.margin
+                    : item.amt) * Information.wonchgrat
+                ) * 0.1
+              ),
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -1810,6 +2080,12 @@ const SA_A1100_603W: React.FC = () => {
       "@p_quorev": Information.quorev,
       "@p_location": "01",
       "@p_paymeth": Information.paymeth,
+      "@p_wonchgrat": Information.wonchgrat,
+"@p_amt_s": "",
+"@p_margin_s": "",
+"@p_margin_div_s": "",
+"@p_discount_s": "",
+"@p_discount_div_s": "",
       "@p_rowstatus_s": "",
       "@p_quoseq_s": "",
       "@p_wonamt_s": "",
@@ -1825,6 +2101,11 @@ const SA_A1100_603W: React.FC = () => {
     quoseq_s: "",
     wonamt_s: "",
     taxamt_s: "",
+    amt_s: "",
+    margin_s: "",
+    margin_div_s: "",
+    discount_s: "",
+    discount_div_s: "",
   });
 
   const infopara2: Iparameters = {
@@ -1838,6 +2119,12 @@ const SA_A1100_603W: React.FC = () => {
       "@p_quorev": Information.quorev,
       "@p_location": "01",
       "@p_paymeth": "",
+      "@p_wonchgrat": Information.wonchgrat,
+      "@p_amt_s":  ParaData.amt_s,
+      "@p_margin_s":  ParaData.margin_s,
+      "@p_margin_div_s":  ParaData.margin_div_s,
+      "@p_discount_s":  ParaData.discount_s,
+      "@p_discount_div_s":  ParaData.discount_div_s,
       "@p_rowstatus_s": ParaData.rowstatus_s,
       "@p_quoseq_s": ParaData.quoseq_s,
       "@p_wonamt_s": ParaData.wonamt_s,
@@ -1888,15 +2175,25 @@ const SA_A1100_603W: React.FC = () => {
       quoseq_s: [],
       wonamt_s: [],
       taxamt_s: [],
+      amt_s: [],
+      margin_s: [],
+      margin_div_s: [],
+      discount_s: [],
+      discount_div_s: [],
     };
 
     dataItem.forEach((item: any, idx: number) => {
-      const { rowstatus = "", quoseq = "", wonamt = "", taxamt = "" } = item;
+      const { rowstatus = "", amt = "" , margin= "", margin_div= "", discount= "", discount_div= "", quoseq = "", wonamt = "", taxamt = "" } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.quoseq_s.push(quoseq);
       dataArr.wonamt_s.push(wonamt);
       dataArr.taxamt_s.push(taxamt);
+      dataArr.amt_s.push(amt);
+      dataArr.margin_s.push(margin);
+      dataArr.margin_div_s.push(margin_div);
+      dataArr.discount_s.push(discount);
+      dataArr.discount_div_s.push(discount_div);
     });
 
     setParaData((prev) => ({
@@ -1905,6 +2202,11 @@ const SA_A1100_603W: React.FC = () => {
       quoseq_s: dataArr.quoseq_s.join("|"),
       wonamt_s: dataArr.wonamt_s.join("|"),
       taxamt_s: dataArr.taxamt_s.join("|"),
+      amt_s: dataArr.amt_s.join("|"),
+      margin_s: dataArr.margin_s.join("|"),
+      margin_div_s: dataArr.margin_div_s.join("|"),
+      discount_s: dataArr.discount_s.join("|"),
+      discount_div_s: dataArr.discount_div_s.join("|"),
     }));
   };
 
@@ -1936,6 +2238,11 @@ const SA_A1100_603W: React.FC = () => {
         quoseq_s: "",
         wonamt_s: "",
         taxamt_s: "",
+        amt_s: "",
+        margin_s: "",
+        margin_div_s: "",
+        discount_s: "",
+        discount_div_s: "",
       });
     } else {
       console.log("[오류 발생]");
@@ -2288,6 +2595,17 @@ const SA_A1100_603W: React.FC = () => {
                         />
                       </td>
                     </tr>
+                    <tr>
+                      <th style={{ textAlign: "right" }}> 환율 </th>
+                      <td>
+                        <Input
+                          name="wonchgrat"
+                          type="number"
+                          value={numberWithCommas(Information.wonchgrat)}
+                          onChange={InfoInputChange}
+                        />
+                      </td>
+                    </tr>
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
@@ -2458,6 +2776,8 @@ const SA_A1100_603W: React.FC = () => {
                               ? DateCell
                               : NumberField.includes(item.fieldName)
                               ? NumberCell
+                              : customField.includes(item.fieldName)
+                              ? CustomComboBoxCell
                               : undefined
                           }
                           footerCell={
@@ -2472,7 +2792,7 @@ const SA_A1100_603W: React.FC = () => {
             </GridContainer>
           </GridContainerWrap>
         </TabStripTab>
-        <TabStripTab title="세부내용"  disabled={checked == true ? false : true}>
+        <TabStripTab title="세부내용" disabled={checked == true ? false : true}>
           <GridContainerWrap>
             <GridContainer>
               <GridTitleContainer>
