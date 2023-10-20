@@ -44,7 +44,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import { Input } from "@progress/kendo-react-inputs";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { Button } from "@progress/kendo-react-buttons";
 import { IAttachmentData, ICustData } from "../hooks/interfaces";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -67,6 +67,7 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import RichEditor from "../components/RichEditor";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import { MultiSelect, MultiSelectChangeEvent } from "@progress/kendo-react-dropdowns";
+import ProjectsWindow from "../components/Windows/CM_A5001W_Project_Window";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -219,6 +220,8 @@ const CM_A5001W: React.FC = () => {
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
+  const [projectWindowVisible, setProjectWindowVisible] =
+  useState<boolean>(false);
   const [attachmentsQWindowVisible, setAttachmentsQWindowVisible] =
     useState<boolean>(false);
   const [attachmentsAWindowVisible, setAttachmentsAWindowVisible] =
@@ -230,6 +233,10 @@ const CM_A5001W: React.FC = () => {
 
   const onUserWndClick = () => {
     setUserWindowVisible(true);
+  };
+
+  const onProjectWndClick = () => {
+    setProjectWindowVisible(true);
   };
 
   const onAttachQuestionWndClick = () => {
@@ -330,6 +337,8 @@ const CM_A5001W: React.FC = () => {
         customer_code: selectedRowData.customer_code,
         customernm: selectedRowData.customernm,
         title: selectedRowData.title,
+        is_emergency: selectedRowData.is_emergency,
+        testnum: selectedRowData.testnum,
         attdatnum: selectedRowData.attdatnum,
         files: selectedRowData.files,
       });
@@ -437,6 +446,15 @@ const CM_A5001W: React.FC = () => {
     // }));
   };
 
+  const CheckChange = (e: any) => {
+    const { value, name } = e.target;
+
+    setInformation((prev) => ({
+      ...prev,
+      [name]: value == true ? "Y" : "N",
+    }));
+  };
+
 
   // 조회조건 초기값
   const [filters, setFilters] = useState({
@@ -482,6 +500,8 @@ const CM_A5001W: React.FC = () => {
     customer_code: "",
     customernm: "",
     title: "",
+    is_emergency: "",
+    testnum: "",
     attdatnum: "",
     files: "",
   });
@@ -909,6 +929,8 @@ const CM_A5001W: React.FC = () => {
       customer_code: selectedRowData.customer_code,
       customernm: selectedRowData.customernm,
       title: selectedRowData.title,
+      is_emergency: selectedRowData.is_emergency,
+      testnum: selectedRowData.testnum,
       attdatnum: selectedRowData.attdatnum,
       files: selectedRowData.files,
     });
@@ -1053,6 +1075,8 @@ const CM_A5001W: React.FC = () => {
       customer_code: selectedRowData.customer_code,
       customernm: selectedRowData.customernm,
       title: selectedRowData.title,
+      is_emergency: selectedRowData.is_emergency,
+      testnum: selectedRowData.testnum,
       attdatnum: selectedRowData.attdatnum,
       files: selectedRowData.files,
     });
@@ -1454,10 +1478,39 @@ const CM_A5001W: React.FC = () => {
                             className="readonly"
                           />
                         </td>
+                        <th>시험번호</th>
+                        <td>
+                          <Input
+                            name="testnum"
+                            type="text"
+                            value={information.testnum}
+                            className="readonly"
+                          />
+                          <ButtonInInput>
+                            <Button
+                              type={"button"}
+                              onClick={onProjectWndClick}
+                              icon="search"
+                              fillMode="flat"
+                            />
+                          </ButtonInInput>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>긴급</th>
+                        <td>
+                          <Checkbox
+                            title="긴급"
+                            name="is_emergency"
+                            value={information.is_emergency == "Y" ? true : false}
+                            onChange={CheckChange}
+                            disabled={true}
+                          />
+                        </td>
                       </tr>
                       <tr>
                         <th>제목</th>
-                        <td colSpan={4}>
+                        <td colSpan={3}>
                           <Input
                             name="title"
                             type="text"
@@ -1470,7 +1523,7 @@ const CM_A5001W: React.FC = () => {
                   </FormBox>
                 </FormBoxWrap>
               </GridContainer>
-              <GridContainer height = "42vh">
+              <GridContainer height = "38.5vh">
                 <RichEditor id="docEditor" ref={docEditorRef} hideTools />
               </GridContainer>
               <FormBoxWrap border={true}>
@@ -1537,7 +1590,7 @@ const CM_A5001W: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
               <GridContainer 
-                height = "62.2vh" 
+                height = "61.7vh" 
                 style = {{ border: "2px solid #2289c3" }}
               >
                 <RichEditor id="docEditor1" ref={docEditorRef1} hideTools />
@@ -1601,6 +1654,13 @@ const CM_A5001W: React.FC = () => {
           setVisible={setAttachmentsAWindowVisible}
           setData={getAttachmentsAData}
           para={detailDataResult.data.length == 0 ? "" : detailDataResult.data[0].attdatnum}
+          modal={true}
+        />
+      )}
+      {projectWindowVisible && (
+        <ProjectsWindow
+          setVisible={setProjectWindowVisible}
+          quokey={information.testnum}
           modal={true}
         />
       )}

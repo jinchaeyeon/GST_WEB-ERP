@@ -95,6 +95,7 @@ import { IAttachmentData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1000_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import { useHistory, useLocation } from "react-router-dom";
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -573,16 +574,28 @@ const SA_A1000_603W: React.FC = () => {
     })();
   }, [itemInfo]);
 
+  const history = useHistory();
+  const location = useLocation();
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
+      const queryParams = new URLSearchParams(location.search);
       const defaultOption = GetPropertyValueByName(
         customOptionData.menuCustomDefaultOptions,
         "query"
       );
-      setFilters((prev) => ({
-        ...prev,
-      }));
+      if (queryParams.has("go")) {
+        history.replace({}, "");
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: queryParams.get("go") as string,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+        }));
+      }
     }
   }, [customOptionData]);
 

@@ -37,14 +37,19 @@ import {
   toDate,
   useSysMessage
 } from "../components/CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
+import { 
+  COM_CODE_DEFAULT_VALUE, 
+  EDIT_FIELD, 
+  GAP, PAGE_SIZE, 
+  SELECTED_FIELD 
+} from "../components/CommonString";
 import { Iparameters, TColumn, TEditorHandle, TGrid, TPermissions } from "../store/types";
 import { gridList } from "../store/columns/CM_A5000W_C";
 import TopButtons from "../components/Buttons/TopButtons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import { Input } from "@progress/kendo-react-inputs";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { Button } from "@progress/kendo-react-buttons";
 import { IAttachmentData, ICustData } from "../hooks/interfaces";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -67,6 +72,8 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import RichEditor from "../components/RichEditor";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import { MultiSelect, MultiSelectChangeEvent } from "@progress/kendo-react-dropdowns";
+import CopyWindow from "../components/Windows/CM_A5000W_Copy_Window";
+import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -144,7 +151,7 @@ const CM_A5000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb")
+        dtgb: defaultOption.find((item: any) => item.id === "dtgb1")
         .valueCode,
         isSearch: true,
       }));
@@ -223,6 +230,9 @@ const CM_A5000W: React.FC = () => {
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
   const [userWindowVisible2, setUserWindowVisible2] = useState<boolean>(false);
+  const [copyWindowVisible, setCopyWindowvisible] = useState<boolean>(false);
+  const [projectWindowVisible, setProjectWindowVisible] =
+    useState<boolean>(false);
   const [attachmentsQWindowVisible, setAttachmentsQWindowVisible] =
     useState<boolean>(false);
   const [attachmentsAWindowVisible, setAttachmentsAWindowVisible] =
@@ -244,6 +254,10 @@ const CM_A5000W: React.FC = () => {
     setUserWindowVisible2(true);
   };
 
+  const onProjectWndClick = () => {
+    setProjectWindowVisible(true);
+  };
+
   const onAttachQuestionWndClick = () => {
     setAttachmentsQWindowVisible(true);
   };
@@ -256,6 +270,7 @@ const CM_A5000W: React.FC = () => {
     setFilters((prev: any) => {
       return {
         ...prev,
+        custcd: data.custcd,
         custnm: data.custnm,
       };
     });
@@ -275,6 +290,7 @@ const CM_A5000W: React.FC = () => {
     setFilters((prev: any) => {
       return {
         ...prev,
+        user_id: data.user_id,
         user_name: data.user_name,
       };
     });
@@ -289,6 +305,40 @@ const CM_A5000W: React.FC = () => {
       };
     });
   };
+
+  const setCopyData = (data: any) => {
+    setWorkType("N");
+    setTabSelected(1);
+    setInformation({
+      document_id: "",
+      cpmnum: data.cpmnum,
+      user_id: data.user_id,
+      user_name: data.user_name,
+      request_date: toDate(data.request_date),
+      finexpdt: toDate(data.finexpdt),
+      require_type: data.require_type,
+      completion_method: data.completion_method,
+      medicine_type: data.medicine_type,
+      status: data.status,
+      customer_code: data.customer_code,
+      customernm: data.customernm,
+      title: data.title,
+      is_emergency: data.is_emergency,
+      testnum: data.testnum,
+      attdatnum: data.attdatnum,
+      files: data.files,
+    });
+  };
+
+  const setProjectData = (data: any) => {
+    setInformation((prev: any) => {
+      return {
+        ...prev,
+        testnum: data.quokey,
+      };
+    });
+  };
+
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -361,6 +411,8 @@ const CM_A5000W: React.FC = () => {
         customer_code: selectedRowData.customer_code,
         customernm: selectedRowData.customernm,
         title: selectedRowData.title,
+        is_emergency: selectedRowData.is_emergency,
+        testnum: selectedRowData.testnum,
         attdatnum: selectedRowData.attdatnum,
         files: selectedRowData.files,
       });
@@ -476,6 +528,15 @@ const CM_A5000W: React.FC = () => {
     }));
   };
 
+  const CheckChange = (e: any) => {
+    const { value, name } = e.target;
+
+    setInformation((prev) => ({
+      ...prev,
+      [name]: value == true ? "Y" : "N",
+    }));
+  };
+
   // 조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -520,6 +581,8 @@ const CM_A5000W: React.FC = () => {
     customer_code: "",
     customernm: "",
     title: "",
+    is_emergency: "",
+    testnum: "",
     attdatnum: "",
     files: "",
   });
@@ -926,6 +989,8 @@ const CM_A5000W: React.FC = () => {
       customer_code: selectedRowData.customer_code,
       customernm: selectedRowData.customernm,
       title: selectedRowData.title,
+      is_emergency: selectedRowData.is_emergency,
+      testnum: selectedRowData.testnum,
       attdatnum: selectedRowData.attdatnum,
       files: selectedRowData.files,
     });
@@ -946,6 +1011,8 @@ const CM_A5000W: React.FC = () => {
     status: "",
     customer_code: "",
     title: "",
+    is_emergency: "",
+    testnum: "",
     attdatnum: "",
     userid: "",
     username: "",
@@ -996,6 +1063,8 @@ const CM_A5000W: React.FC = () => {
       status: information.status,
       customer_code: information.customer_code,
       title: information.title,
+      is_emergency: information.is_emergency,
+      testnum: information.testnum,
       attdatnum: information.attdatnum,
       username: information.user_name,
       userid: information.user_id,
@@ -1040,6 +1109,8 @@ const CM_A5000W: React.FC = () => {
 	      "@p_status": paraDataSaved.status,
         "@p_customer_code": paraDataSaved.customer_code,
 	      "@p_title": paraDataSaved.title,
+        "@p_is_emergency": paraDataSaved.is_emergency,
+        "@p_testnum": paraDataSaved.testnum,
 	      "@p_attdatnum": paraDataSaved.attdatnum,
         "@p_user_id_sm": paraDataSaved.userid,
         "@p_user_name": paraDataSaved.username,
@@ -1109,9 +1180,16 @@ const CM_A5000W: React.FC = () => {
       customer_code: "",
       customernm: "",
       title: "",
+      is_emergency: "",
+      testnum: "",
       attdatnum: "",
       files: "",
     });
+  };
+
+  const onCopyClick = () => {
+    // 이전질문참조 팝업창 오픈\
+    setCopyWindowvisible(true);
   };
 
   const questionToDelete = useSysMessage("QuestionToDelete");
@@ -1174,7 +1252,7 @@ const CM_A5000W: React.FC = () => {
                       <td>
                         {customOptionData !== null && (
                           <CustomOptionComboBox
-                            name="dtgb"
+                            name="dtgb1"
                             value={filters.dtgb}
                             customOptionData={customOptionData}
                             changeData={filterComboBoxChange}
@@ -1288,6 +1366,14 @@ const CM_A5000W: React.FC = () => {
                       icon="file-add"
                     >
                       신규
+                    </Button>
+                    <Button
+                      onClick={onCopyClick}
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                      icon="copy"
+                    >
+                      이전요청 복사
                     </Button>
                     <Button
                       onClick={onDeleteClick}
@@ -1526,10 +1612,38 @@ const CM_A5000W: React.FC = () => {
                             />
                           </ButtonInInput>
                         </td>
+                        <th>시험번호</th>
+                        <td>
+                          <Input
+                            name="testnum"
+                            type="text"
+                            value={information.testnum}
+                            onChange={filterInputChange}
+                          />
+                          <ButtonInInput>
+                            <Button
+                              type={"button"}
+                              onClick={onProjectWndClick}
+                              icon="more-horizontal"
+                              fillMode="flat"
+                            />
+                          </ButtonInInput>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>긴급</th>
+                        <td>
+                          <Checkbox
+                            title="긴급"
+                            name="is_emergency"
+                            value={information.is_emergency == "Y" ? true : false}
+                            onChange={CheckChange}
+                          />
+                        </td>
                       </tr>
                       <tr>
                         <th>제목</th>
-                        <td colSpan={4}>
+                        <td colSpan={3}>
                           <Input
                             name="title"
                             type="text"
@@ -1544,7 +1658,7 @@ const CM_A5000W: React.FC = () => {
                 </FormBoxWrap>
               </GridContainer>
               <GridContainer 
-                height = "41vh" 
+                height = "37.5vh" 
                 style = {{ border: "2px solid #2289c3" }}
               >
                 <RichEditor id="docEditor" ref={docEditorRef} hideTools />
@@ -1658,6 +1772,20 @@ const CM_A5000W: React.FC = () => {
           para={detailDataResult.data.length == 0 ? "" : detailDataResult.data[0].attdatnum}
           modal={true}
           permission={{ upload: false, download: true, delete: false }}
+        />
+      )}
+      {copyWindowVisible && (
+        <CopyWindow
+          setVisible={setCopyWindowvisible}
+          setData={setCopyData}
+          modal={true}
+        />
+      )}
+      {projectWindowVisible && (
+        <ProjectsWindow
+          setVisible={setProjectWindowVisible}
+          setData={setProjectData}
+          modal={true}
         />
       )}
       {gridList.map((grid: TGrid) =>

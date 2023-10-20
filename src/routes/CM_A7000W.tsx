@@ -300,7 +300,7 @@ const CM_A7000W: React.FC = () => {
     setAttachmentsWindowVisiblePr(true);
   };
 
-  const onProejctWndClick = () => {
+  const onProjectWndClick = () => {
     setProjectWindowVisible(true);
   };
 
@@ -1083,7 +1083,7 @@ const CM_A7000W: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>회의록관리</Title>
+        <Title>상담일지</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons
@@ -1499,7 +1499,7 @@ const CM_A7000W: React.FC = () => {
                           <Button
                             icon="more-horizontal"
                             fillMode="flat"
-                            onClick={onProejctWndClick}
+                            onClick={onProjectWndClick}
                           />
                         </ButtonInInput>
                       </td>
