@@ -121,7 +121,7 @@ let targetRowIndex3: null | number = null;
 const dateField = ["quodt", "materialindt", "startdt", "enddt"];
 const RadioField = ["glpyn"];
 const numberField = ["group_seq", "sort_seq"];
-const comboField = ["packagetype", "itemlvl1"];
+const comboField = ["packagetype"];
 const itemField = ["itemcd"];
 let temp = 0;
 let deletedMainRows: any[] = [];
@@ -185,14 +185,12 @@ const CustomStep = (props: any) => {
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_SA003_603,L_BA171", setBizComponentData);
+  UseBizComponent("L_SA003_603", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal =
     field === "packagetype"
       ? "L_SA003_603"
-      : field === "itemlvl1"
-      ? "L_BA171"
       : "";
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
@@ -2006,7 +2004,6 @@ const SA_A1000_603W: React.FC = () => {
       glpyn: "G",
       group_seq: 0,
       itemcd: "",
-      itemlvl1: "",
       itemnm: "",
       quonum: Information.quonum,
       quorev: Information.quorev,

@@ -18,6 +18,20 @@ import {
 } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
 
+//소수점3자리에서 반올림
+export const ThreeNumberceil = (number: number)  => {
+  return parseFloat((Math.ceil(number * 1000) / 1000).toFixed(2));
+}
+
+// 숫자 3자리마다 컴마를 추가하여 반환, 3자리에서 반올림
+export const numberWithCommas3 = (num: number) => {
+  if (typeof num === "number") {
+    return ThreeNumberceil(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  } else {
+    return num;
+  }
+};
+
 //enum 한글로 변경
 export const getDayOfWeeks = (value:number) => {
   const dayofweeks = {일:1, 월:2, 화: 4, 수:8, 목:16, 금:32, 토:64}

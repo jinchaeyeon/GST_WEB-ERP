@@ -14,7 +14,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input } from "@progress/kendo-react-inputs";
+import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -34,6 +34,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   GetPropertyValueByName,
+  ThreeNumberceil,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -53,6 +54,8 @@ import { bytesToBase64 } from "byte-base64";
 import { useSetRecoilState } from "recoil";
 import TopButtons from "../components/Buttons/TopButtons";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import NumberCommaCell from "../components/Cells/NumberCommaCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
@@ -96,10 +99,14 @@ const NumberField = [
   "saleamt",
   "collamt",
   "janamt",
+];
+
+const NumberCommaField = [
   "margin",
   "margin_amt",
   "discount",
   "discount_amt",
+  "amt",
 ];
 const customField = ["insert_userid", "margin_div", "discount_div"];
 let temp = 0;
@@ -338,6 +345,7 @@ const SA_A1100_603W: React.FC = () => {
     collamt: 0,
     janamt: 0,
     wonchgrat: 0,
+    amtunit: "",
   });
 
   const [selectedState, setSelectedState] = useState<{
@@ -456,122 +464,56 @@ const SA_A1100_603W: React.FC = () => {
   const InfoInputChange = (e: any) => {
     const { value, name } = e.target;
 
+    setInformation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const InfoInputChange2 = (e: any) => {
+    const { name } = e.target;
+    const value = e.value;
+
     if (name == "wonchgrat") {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
       }));
 
-      if (value != 0) {
-        const newData = mainDataResult2.data.map((item) => ({
-          ...item,
-          wonamt: Math.floor(
-            (item.discount_div == ""
-              ? item.margin_div == ""
-                ? item.amt
-                : item.margin_div == "1"
-                ? item.amt + (item.amt * item.margin) / 100
-                : item.margin_div == "2"
-                ? item.amt + item.margin
-                : item.amt
-              : item.discount_div == "1"
-              ? (Math.floor(item.margin_div == ""
-                  ? item.amt
-                  : item.margin_div == "1"
-                  ? item.amt + (item.amt * item.margin) / 100
-                  : item.margin_div == "2"
-                  ? item.amt + item.margin
-                  : item.amt)) -
-                ((Math.floor(item.margin_div == ""
-                  ? item.amt
-                  : item.margin_div == "1"
-                  ? item.amt + (item.amt * item.margin) / 100
-                  : item.margin_div == "2"
-                  ? item.amt + item.margin
-                  : item.amt)) *
-                  item.discount) /
-                  100
-              : item.discount_div == "2"
-              ? (Math.floor(item.margin_div == ""
-                  ? item.amt
-                  : item.margin_div == "1"
-                  ? item.amt + (item.amt * item.margin) / 100
-                  : item.margin_div == "2"
-                  ? item.amt + item.margin
-                  : item.amt)) - item.discount
-              : item.margin_div == ""
-              ? item.amt
-              : item.margin_div == "1"
-              ? item.amt + (item.amt * item.margin) / 100
-              : item.margin_div == "2"
-              ? item.amt + item.margin
-              : item.amt) * value
-          ),
-          taxamt: Math.floor(
-            Math.floor(
-              (item.discount_div == ""
-                ? Math.floor(item.margin_div == ""
-                  ? item.amt
-                  : item.margin_div == "1"
-                  ? item.amt + (item.amt * item.margin) / 100
-                  : item.margin_div == "2"
-                  ? item.amt + item.margin
-                  : item.amt)
-                : item.discount_div == "1"
-                ? (item.margin_div == ""
-                    ? item.amt
-                    : item.margin_div == "1"
-                    ? item.amt + (item.amt * item.margin) / 100
-                    : item.margin_div == "2"
-                    ? item.amt + item.margin
-                    : item.amt) -
-                  ((item.margin_div == ""
-                    ? item.amt
-                    : item.margin_div == "1"
-                    ? item.amt + (item.amt * item.margin) / 100
-                    : item.margin_div == "2"
-                    ? item.amt + item.margin
-                    : item.amt) *
-                    item.discount) /
-                    100
-                : item.discount_div == "2"
-                ? (item.margin_div == ""
-                    ? item.amt
-                    : item.margin_div == "1"
-                    ? item.amt + (item.amt * item.margin) / 100
-                    : item.margin_div == "2"
-                    ? item.amt + item.margin
-                    : item.amt) - item.discount
-                : item.margin_div == ""
-                ? item.amt
-                : item.margin_div == "1"
-                ? item.amt + (item.amt * item.margin) / 100
-                : item.margin_div == "2"
-                ? item.amt + item.margin
-                : item.amt) * value
-            ) * 0.1
-          ),
-        }));
+      const newData = mainDataResult2.data.map((item) => ({
+        ...item,
+        wonamt: Math.round(item.discount_amt * Information.wonchgrat),
+        taxamt: Math.round(item.wonamt * 0.1),
+      }));
 
-        setTempResult((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-        setMainDataResult2((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-      }
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
     } else {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
       }));
     }
+  };
+
+  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
+  const ComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    setInformation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //커스텀 옵션 조회
@@ -865,6 +807,7 @@ const SA_A1100_603W: React.FC = () => {
           quorev: data.tables[0].Rows[0].quorev,
           rev_reason: data.tables[0].Rows[0].rev_reason,
           wonchgrat: data.tables[0].Rows[0].wonchgrat,
+          amtunit: data.tables[0].Rows[0].amtunit,
         }));
       } else {
         setInformation((prev) => ({
@@ -1478,12 +1421,7 @@ const SA_A1100_603W: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (
-      field != "rowstatus" &&
-      field != "testnum" &&
-      field != "taxamt" &&
-      !(Information.wonchgrat != 0 && field == "wonamt")
-    ) {
+    if (field != "rowstatus" && field != "testnum") {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
@@ -1522,141 +1460,138 @@ const SA_A1100_603W: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
-              margin_amt:
-                Math.floor(item.margin_div == ""
+              margin_amt: ThreeNumberceil(
+                item.margin_div == ""
                   ? item.amt
                   : item.margin_div == "1"
-                  ? item.amt + (item.amt * item.margin) / 100
+                  ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
                   : item.margin_div == "2"
                   ? item.amt + item.margin
-                  : item.amt),
-              discount_amt:
-                item.discount_div == ""
-                  ? item.margin_div == ""
-                    ? item.amt
-                    : item.margin_div == "1"
-                    ? item.amt + (item.amt * item.margin) / 100
-                    : item.margin_div == "2"
-                    ? item.amt + item.margin
-                    : item.amt
-                  : item.discount_div == "1"
-                  ? (item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + (item.amt * item.margin) / 100
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt) -
-                    ((item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + (item.amt * item.margin) / 100
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt) *
-                      item.discount) /
-                      100
-                  : item.discount_div == "2"
-                  ? (item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + (item.amt * item.margin) / 100
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt) - item.discount
-                  : Math.floor(item.margin_div == ""
-                  ? item.amt
-                  : item.margin_div == "1"
-                  ? item.amt + (item.amt * item.margin) / 100
-                  : item.margin_div == "2"
-                  ? item.amt + item.margin
-                  : item.amt),
-              wonamt: Math.floor(
-                (item.discount_div == ""
-                  ? item.margin_div == ""
-                    ? item.amt
-                    : item.margin_div == "1"
-                    ? item.amt + (item.amt * item.margin) / 100
-                    : item.margin_div == "2"
-                    ? item.amt + item.margin
-                    : item.amt
-                  : item.discount_div == "1"
-                  ? (item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + (item.amt * item.margin) / 100
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt) -
-                    ((item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + (item.amt * item.margin) / 100
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt) *
-                      item.discount) /
-                      100
-                  : item.discount_div == "2"
-                  ? (item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + (item.amt * item.margin) / 100
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt) - item.discount
-                  : Math.floor(item.margin_div == ""
-                  ? item.amt
-                  : item.margin_div == "1"
-                  ? item.amt + (item.amt * item.margin) / 100
-                  : item.margin_div == "2"
-                  ? item.amt + item.margin
-                  : item.amt)) * Information.wonchgrat
+                  : item.amt
               ),
-              taxamt: Math.floor(
-                Math.floor(
-                  (item.discount_div == ""
-                    ? item.margin_div == ""
+              discount_amt: ThreeNumberceil(
+                item.discount_div == ""
+                  ? ThreeNumberceil(
+                    item.margin_div == ""
                       ? item.amt
                       : item.margin_div == "1"
-                      ? item.amt + (item.amt * item.margin) / 100
+                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
                       : item.margin_div == "2"
                       ? item.amt + item.margin
                       : item.amt
-                    : item.discount_div == "1"
-                    ? (item.margin_div == ""
-                        ? item.amt
-                        : item.margin_div == "1"
-                        ? item.amt + (item.amt * item.margin) / 100
-                        : item.margin_div == "2"
-                        ? item.amt + item.margin
-                        : item.amt) -
-                      ((item.margin_div == ""
-                        ? item.amt
-                        : item.margin_div == "1"
-                        ? item.amt + (item.amt * item.margin) / 100
-                        : item.margin_div == "2"
-                        ? item.amt + item.margin
-                        : item.amt) *
-                        item.discount) /
-                        100
-                    : item.discount_div == "2"
-                    ? (item.margin_div == ""
-                        ? item.amt
-                        : item.margin_div == "1"
-                        ? item.amt + (item.amt * item.margin) / 100
-                        : item.margin_div == "2"
-                        ? item.amt + item.margin
-                        : item.amt) - item.discount
-                    : item.margin_div == ""
-                    ? item.amt
-                    : item.margin_div == "1"
-                    ? item.amt + (item.amt * item.margin) / 100
-                    : item.margin_div == "2"
-                    ? item.amt + item.margin
-                    : item.amt) * Information.wonchgrat
-                ) * 0.1
+                  )
+                  : item.discount_div == "1"
+                  ? ThreeNumberceil(
+                    item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt
+                  ) - ThreeNumberceil((item.margin_amt * item.discount) / 100)
+                  : item.discount_div == "2"
+                  ? ThreeNumberceil(
+                    item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt
+                  ) - item.discount
+                  : ThreeNumberceil(
+                    item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt
+                  )
               ),
+              wonamt: Math.round(ThreeNumberceil(
+                item.discount_div == ""
+                  ? ThreeNumberceil(
+                    item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt
+                  )
+                  : item.discount_div == "1"
+                  ? ThreeNumberceil(
+                    item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt
+                  ) - ThreeNumberceil((item.margin_amt * item.discount) / 100)
+                  : item.discount_div == "2"
+                  ? ThreeNumberceil(
+                    item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt
+                  ) - item.discount
+                  : ThreeNumberceil(
+                    item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt
+                  )
+              ) * Information.wonchgrat),
+              taxamt: Math.round(Math.round(ThreeNumberceil(
+                item.discount_div == ""
+                  ? ThreeNumberceil(
+                    item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt
+                  )
+                  : item.discount_div == "1"
+                  ? ThreeNumberceil(
+                    item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt
+                  ) - ThreeNumberceil((item.margin_amt * item.discount) / 100)
+                  : item.discount_div == "2"
+                  ? ThreeNumberceil(
+                    item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt
+                  ) - item.discount
+                  : ThreeNumberceil(
+                    item.margin_div == ""
+                      ? item.amt
+                      : item.margin_div == "1"
+                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
+                      : item.margin_div == "2"
+                      ? item.amt + item.margin
+                      : item.amt
+                  )
+              ) * Information.wonchgrat) * 0.1),
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -2069,33 +2004,6 @@ const SA_A1100_603W: React.FC = () => {
     }
   };
 
-  const infopara: Iparameters = {
-    procedureName: "P_SA_A1100_603W_S",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": "CONTACT",
-      "@p_orgdiv": "01",
-      "@p_quonum": subFilters.quonum,
-      "@p_quorev": Information.quorev,
-      "@p_location": "01",
-      "@p_paymeth": Information.paymeth,
-      "@p_wonchgrat": Information.wonchgrat,
-"@p_amt_s": "",
-"@p_margin_s": "",
-"@p_margin_div_s": "",
-"@p_discount_s": "",
-"@p_discount_div_s": "",
-      "@p_rowstatus_s": "",
-      "@p_quoseq_s": "",
-      "@p_wonamt_s": "",
-      "@p_taxamt_s": "",
-      "@p_userid": userId,
-      "@p_pc": pc,
-      "@p_form_id": "SA_A1100_603W",
-    },
-  };
-
   const [ParaData, setParaData] = useState({
     rowstatus_s: "",
     quoseq_s: "",
@@ -2108,23 +2016,24 @@ const SA_A1100_603W: React.FC = () => {
     discount_div_s: "",
   });
 
-  const infopara2: Iparameters = {
+  const infopara: Iparameters = {
     procedureName: "P_SA_A1100_603W_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
-      "@p_work_type": "TESTLIST",
+      "@p_work_type": "N",
       "@p_orgdiv": "01",
       "@p_quonum": subFilters.quonum,
       "@p_quorev": Information.quorev,
       "@p_location": "01",
-      "@p_paymeth": "",
+      "@p_paymeth": Information.paymeth,
       "@p_wonchgrat": Information.wonchgrat,
-      "@p_amt_s":  ParaData.amt_s,
-      "@p_margin_s":  ParaData.margin_s,
-      "@p_margin_div_s":  ParaData.margin_div_s,
-      "@p_discount_s":  ParaData.discount_s,
-      "@p_discount_div_s":  ParaData.discount_div_s,
+      "@p_amtunit": Information.amtunit,
+      "@p_amt_s": ParaData.amt_s,
+      "@p_margin_s": ParaData.margin_s,
+      "@p_margin_div_s": ParaData.margin_div_s,
+      "@p_discount_s": ParaData.discount_s,
+      "@p_discount_div_s": ParaData.discount_div_s,
       "@p_rowstatus_s": ParaData.rowstatus_s,
       "@p_quoseq_s": ParaData.quoseq_s,
       "@p_wonamt_s": ParaData.wonamt_s,
@@ -2135,34 +2044,7 @@ const SA_A1100_603W: React.FC = () => {
     },
   };
 
-  const onSaveClick = async () => {
-    let data: any;
-
-    setLoading(true);
-
-    try {
-      data = await processApi<any>("procedure", infopara);
-    } catch (error) {
-      data = null;
-    }
-    if (data.isSuccess === true) {
-      setSubFilters((prev) => ({
-        ...prev,
-        workType: "DETAIL",
-        pgNum: 1,
-        isSearch: true,
-      }));
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-      if (data.resultMessage != undefined) {
-        alert(data.resultMessage);
-      }
-    }
-    setLoading(false);
-  };
-
-  const onSaveClick2 = () => {
+  const onSaveClick = () => {
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
@@ -2183,7 +2065,17 @@ const SA_A1100_603W: React.FC = () => {
     };
 
     dataItem.forEach((item: any, idx: number) => {
-      const { rowstatus = "", amt = "" , margin= "", margin_div= "", discount= "", discount_div= "", quoseq = "", wonamt = "", taxamt = "" } = item;
+      const {
+        rowstatus = "",
+        amt = "",
+        margin = "",
+        margin_div = "",
+        discount = "",
+        discount_div = "",
+        quoseq = "",
+        wonamt = "",
+        taxamt = "",
+      } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.quoseq_s.push(quoseq);
@@ -2222,7 +2114,7 @@ const SA_A1100_603W: React.FC = () => {
     setLoading(true);
 
     try {
-      data = await processApi<any>("procedure", infopara2);
+      data = await processApi<any>("procedure", infopara);
     } catch (error) {
       data = null;
     }
@@ -2536,15 +2428,6 @@ const SA_A1100_603W: React.FC = () => {
             <GridContainer width="30%">
               <GridTitleContainer>
                 <GridTitle>계약내용</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                    title="저장"
-                  ></Button>
-                </ButtonContainer>
               </GridTitleContainer>
               <FormBoxWrap border={true}>
                 <FormBox>
@@ -2596,13 +2479,30 @@ const SA_A1100_603W: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
+                      <th>화폐단위</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="amtunit"
+                            value={Information.amtunit}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
                       <th style={{ textAlign: "right" }}> 환율 </th>
                       <td>
-                        <Input
+                        <NumericTextBox
                           name="wonchgrat"
-                          type="number"
-                          value={numberWithCommas(Information.wonchgrat)}
-                          onChange={InfoInputChange}
+                          value={
+                            Information.wonchgrat == null
+                              ? 0
+                              : Information.wonchgrat.toString()
+                          }
+                          format="n2"
+                          onChange={InfoInputChange2}
                         />
                       </td>
                     </tr>
@@ -2710,12 +2610,11 @@ const SA_A1100_603W: React.FC = () => {
                 <GridTitle>시험리스트</GridTitle>
                 <ButtonContainer>
                   <Button
-                    onClick={onSaveClick2}
+                    onClick={onSaveClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
-                    title="저장"
-                  ></Button>
+                  >상세정보 저장</Button>
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid
@@ -2774,6 +2673,8 @@ const SA_A1100_603W: React.FC = () => {
                           cell={
                             DateField.includes(item.fieldName)
                               ? DateCell
+                              : NumberCommaField.includes(item.fieldName)
+                              ? NumberCommaCell
                               : NumberField.includes(item.fieldName)
                               ? NumberCell
                               : customField.includes(item.fieldName)

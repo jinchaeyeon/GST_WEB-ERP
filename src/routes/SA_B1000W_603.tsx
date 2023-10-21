@@ -36,7 +36,7 @@ import {
   handleKeyPressSearch,
   GetPropertyValueByName,
 } from "../components/CommonFunction";
-import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
+import { COM_CODE_DEFAULT_VALUE, GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
@@ -95,7 +95,6 @@ const SA_B1000W_603: React.FC = () => {
     project: "",
     custcd: "",
     custnm: "",
-    user_name: "",
     status: "",
     smperson: "",
     find_row_value: "",
@@ -231,12 +230,16 @@ useEffect(() => {
 
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
-  UseBizComponent("L_sysUserMaster_001", setBizComponentData);
+  UseBizComponent("L_SA001_603, L_sysUserMaster_001", setBizComponentData);
 
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
+  const [materialtypeListData, setMaterialtypeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
 
+  
   useEffect(() => {
     if (bizComponentData.length > 0) {
       const userQueryStr = getQueryFromBizComponent(
@@ -244,8 +247,13 @@ useEffect(() => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
-
+      const materialtypeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA001_603"
+        )
+      );
       fetchQueryData(userQueryStr, setUserListData);
+      fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
     }
   }, [bizComponentData]);
 
@@ -414,15 +422,6 @@ useEffect(() => {
                       />
                     </ButtonInInput>
                   </td>
-                  <th>고객</th>
-                  <td>
-                    <Input
-                      name="user_name"
-                      type="text"
-                      value={filters.user_name}
-                      onChange={filterInputChange}
-                    />
-                  </td>
                 </tr>
                 <tr>
                   <th>진행상태</th>
@@ -467,6 +466,9 @@ useEffect(() => {
                     smperson: userListData.find(
                       (items: any) => items.user_id == row.smperson
                     )?.user_name,
+                    materialtype: materialtypeListData.find(
+                      (items: any) => items.sub_code == row.materialtype
+                    )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
                   mainDataState

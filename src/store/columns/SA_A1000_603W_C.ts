@@ -106,12 +106,6 @@ export const gridList: Array<TGrid> = [
         width: 150,
       },
       {
-        id: "col_itemlvl1",
-        field: "itemlvl1",
-        caption: "시험파트",
-        width: 120,
-      },
-      {
         id: "col_itemcd",
         field: "itemcd",
         caption: "품목코드",
