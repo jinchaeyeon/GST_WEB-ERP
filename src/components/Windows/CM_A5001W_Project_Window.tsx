@@ -396,7 +396,7 @@ const KendoWindow = ({
       origin +
         `/SA_A1000_603?go=` +
         selectedRowData.quonum +
-        "_" +
+        "-" +
         selectedRowData.quorev
     );
   };
@@ -414,7 +414,7 @@ const KendoWindow = ({
       origin +
         `/SA_A1000_603?go=` +
         selectedRowData.quonum +
-        "_" +
+        "-" +
         selectedRowData.quorev
     );
   };
