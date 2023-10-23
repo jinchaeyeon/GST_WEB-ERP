@@ -14,6 +14,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 // ES2015 module syntax
 import { Button } from "@progress/kendo-react-buttons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
+import { NumericTextBox } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   DayView,
@@ -39,6 +40,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
   UseBizComponent,
@@ -65,14 +67,14 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
-import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import { default as CommonRadioGroup, default as CustomOptionRadioGroup } from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { FormWithCustomEditor } from "../components/custom-form";
 import { CustomEditItem } from "../custom-item";
+import { CustomItem } from "../customItem";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
-import { CustomItem } from "../customItem";
 
 const DATA_ITEM_KEY = "num";
 let deletedTodoRows: object[] = [];
@@ -135,11 +137,14 @@ const CM_A1600: React.FC = () => {
   const [colorData, setColorData] = useState<any[]>([]);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_sysUserMaster_001,R_YN,L_APPOINTMENT_COLOR",
+    "L_dptcd_001, L_sysUserMaster_001,R_YN,L_APPOINTMENT_COLOR",
     setBizComponentData
   );
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
+  ]);
+  const [dptcdListData, setdptcdListData] = useState([
+    { dptcd: "", dptnm: "" },
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
@@ -153,8 +158,14 @@ const CM_A1600: React.FC = () => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
+      const dptcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_dptcd_001"
+        )
+      );
       fetchQuery(userQueryStr, setUserListData);
       fetchQuery(colorQueryStr, setColorData);
+      fetchQuery(dptcdQueryStr, setdptcdListData);
     }
   }, [bizComponentData]);
 
@@ -225,15 +236,33 @@ const CM_A1600: React.FC = () => {
   const filterRadioChange = (e: any) => {
     const { name, value } = e;
 
-    setSchedulerFilter((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "rdoplandiv") {
+      setSchedulerFilter((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
 
-    setTodoFilter((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+      setTodoFilter((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+
+      setSchedulerFilter((prev) => ({
+        ...prev,
+        rdoplandiv: value,
+        isSearch: true,
+      }));
+    } else {
+      setSchedulerFilter((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+
+      setTodoFilter((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const [todoFilter, setTodoFilter] = useState({
@@ -253,32 +282,12 @@ const CM_A1600: React.FC = () => {
     work_type: "MY",
     person: userId,
     rdoplandiv: "Y",
+    dptcd: "",
     isSearch: false,
   });
 
-  const schedulerParameters: Iparameters = {
-    procedureName: "P_CM_A1600W_Q",
-    pageNumber: 1,
-    pageSize: 1000,
-    parameters: {
-      "@p_work_type": schedulerFilter.work_type,
-      "@p_orgdiv": "01",
-      "@p_recdt": "",
-      "@p_recdt1": "",
-      "@p_dptcd": "",
-      "@p_postcd": "",
-      "@p_userid": userId,
-      "@p_rtrchk": "",
-      "@p_frdt": "",
-      "@p_person": schedulerFilter.person,
-      "@p_todt": "",
-      "@p_finyn": "",
-      "@p_plandiv": schedulerFilter.rdoplandiv,
-      "@p_stddiv": "",
-      "@p_serviceid": "",
-      "@p_find_row_value": "",
-    },
-  };
+  const [number, setNumber] = useState(7);
+  const [number2, setNumber2] = useState(24);
 
   let gridRef: any = useRef(null);
 
@@ -365,6 +374,30 @@ const CM_A1600: React.FC = () => {
   const fetchScheduler = async () => {
     let data: any;
     setLoading(true);
+    const schedulerParameters: Iparameters = {
+      procedureName: "P_CM_A1600W_Q",
+      pageNumber: 1,
+      pageSize: 100,
+      parameters: {
+        "@p_work_type": schedulerFilter.work_type,
+        "@p_orgdiv": "01",
+        "@p_recdt": "",
+        "@p_recdt1": "",
+        "@p_dptcd": tabSelected == 0 ? "" : schedulerFilter.dptcd,
+        "@p_postcd": "",
+        "@p_userid": userId,
+        "@p_rtrchk": "",
+        "@p_frdt": "",
+        "@p_person": schedulerFilter.person,
+        "@p_todt": "",
+        "@p_finyn": "",
+        "@p_plandiv": schedulerFilter.rdoplandiv,
+        "@p_stddiv": "",
+        "@p_serviceid": "",
+        "@p_find_row_value": "",
+      },
+    };
+  
     try {
       data = await processApi<any>("procedure", schedulerParameters);
     } catch (error) {
@@ -1209,6 +1242,7 @@ const CM_A1600: React.FC = () => {
         ...prev,
         work_type: "MY",
         person: userId,
+        dptcd: "",
         isSearch: true,
       }));
     } else if (e.selected == 1) {
@@ -1216,6 +1250,7 @@ const CM_A1600: React.FC = () => {
         ...prev,
         work_type: "TEAM",
         person: "",
+        dptcd: "",
         isSearch: true,
       }));
     }
@@ -1267,23 +1302,12 @@ const CM_A1600: React.FC = () => {
                         <th>계획구분</th>
                         <td>
                           {customOptionData !== null && (
-                            <CommonRadioGroup
+                            <CustomOptionRadioGroup
                               name="rdoplandiv"
                               customOptionData={customOptionData}
                               changeData={filterRadioChange}
                             />
                           )}
-
-                          {bizComponentData !== null &&
-                            customOptionData === null && (
-                              <BizComponentRadioGroup
-                                name="rdoplandiv"
-                                value={schedulerFilter.rdoplandiv}
-                                bizComponentId="R_YN"
-                                bizComponentData={bizComponentData}
-                                changeData={filterRadioChange}
-                              />
-                            )}
                         </td>
                       </tr>
                     </tbody>
@@ -1478,20 +1502,90 @@ const CM_A1600: React.FC = () => {
             </GridContainerWrap>
           </GridContainerWrap>
         </TabStripTab>
-        <TabStripTab title="전체 스케줄러">
+        {/* <TabStripTab title="전체 스케줄러">
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>일자간격</th>
+                  <td>
+                    <NumericTextBox
+                      name="number"
+                      value={number}
+                      onChange={(e: any) =>
+                        setNumber(
+                          e.target.value == undefined ||
+                            e.target.value == null ||
+                            e.target.value == ""
+                            ? 0
+                            : e.target.value
+                        )
+                      }
+                    />
+                  </td>
+                  <th>시간간격</th>
+                  <td>
+                    <NumericTextBox
+                      name="number2"
+                      value={number2}
+                      onChange={(e: any) =>
+                        setNumber2(
+                          e.target.value == undefined ||
+                            e.target.value == null ||
+                            e.target.value == ""
+                            ? 0
+                            : e.target.value
+                        )
+                      }
+                    />
+                  </td>
+                  <th>부서</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="dptcd"
+                        value={schedulerFilter.dptcd}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                        textField="dptnm"
+                        valueField="dptcd"
+                      />
+                    )}
+                  </td>
+                  <th>계획구분</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="rdoplandiv"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
           <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>전체 스케줄러</GridTitle>
-            </GridTitleContainer>
             <Scheduler
               height={"77vh"}
               data={schedulerDataResult}
               defaultDate={displayDate}
               group={{
-                resources: ["person"],
+                resources: ["dptcd", "person"],
                 orientation,
               }}
               resources={[
+                {
+                  name: "dptcd",
+                  data: dptcdListData.map((item) => ({
+                    text: item.dptnm,
+                    value: item.dptcd,
+                  })),
+                  field: "dptcd",
+                  valueField: "value",
+                  textField: "text",
+                },
                 {
                   name: "person",
                   data: userListData.map((item) => ({
@@ -1507,12 +1601,12 @@ const CM_A1600: React.FC = () => {
             >
               <TimelineView
                 columnWidth={250}
-                slotDuration={1440}
-                numberOfDays={7}
+                slotDuration={number2 * 60}
+                numberOfDays={number}
               />
             </Scheduler>
           </GridContainer>
-        </TabStripTab>
+        </TabStripTab> */}
       </TabStrip>
     </>
   );
