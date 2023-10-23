@@ -8,17 +8,19 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 // ES2015 module syntax
 import { Button } from "@progress/kendo-react-buttons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
+import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   DayView,
   MonthView,
   Scheduler,
   SchedulerDataChangeEvent,
+  TimelineView,
   WeekView,
 } from "@progress/kendo-react-scheduler";
 import { bytesToBase64 } from "byte-base64";
@@ -38,6 +40,7 @@ import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -52,7 +55,6 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -70,6 +72,7 @@ import { CustomEditItem } from "../custom-item";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
+import { CustomItem } from "../customItem";
 
 const DATA_ITEM_KEY = "num";
 let deletedTodoRows: object[] = [];
@@ -88,6 +91,10 @@ const CM_A1600: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const [tabSelected, setTabSelected] = useState<number>(0);
+  const [orientation, setOrientation] = React.useState<
+    "horizontal" | "vertical"
+  >("vertical");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -131,7 +138,9 @@ const CM_A1600: React.FC = () => {
     "L_sysUserMaster_001,R_YN,L_APPOINTMENT_COLOR",
     setBizComponentData
   );
-
+  const [userListData, setUserListData] = useState([
+    { user_id: "", user_name: "" },
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const colorQueryStr = getQueryFromBizComponent(
@@ -139,7 +148,12 @@ const CM_A1600: React.FC = () => {
           (item: any) => item.bizComponentId === "L_APPOINTMENT_COLOR"
         )
       );
-
+      const userQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+        )
+      );
+      fetchQuery(userQueryStr, setUserListData);
       fetchQuery(colorQueryStr, setColorData);
     }
   }, [bizComponentData]);
@@ -291,7 +305,7 @@ const CM_A1600: React.FC = () => {
         "@p_plandiv": "Y",
         "@p_stddiv": "",
         "@p_serviceid": "",
-        "@p_find_row_value": todoFilter.find_row_value
+        "@p_find_row_value": todoFilter.find_row_value,
       },
     };
     try {
@@ -661,11 +675,11 @@ const CM_A1600: React.FC = () => {
 
     if (data.isSuccess === true) {
       fetchScheduler();
-      setTodoFilter((prev)=> ({
+      setTodoFilter((prev) => ({
         ...prev,
         pgNum: 1,
-        isSearch: true
-      }))
+        isSearch: true,
+      }));
       str = false;
     } else {
       console.log("[오류 발생]");
@@ -683,7 +697,10 @@ const CM_A1600: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setSchedulerFilter((prev) => ({
         ...prev,
@@ -750,7 +767,8 @@ const CM_A1600: React.FC = () => {
     if (tempResult.data != todoDataResult.data) {
       const newData = todoDataResult.data.map(
         (item: { [x: string]: string; rowstatus: string }) =>
-          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(todoSelectedState)[0]
+          item[DATA_ITEM_KEY] ==
+          Object.getOwnPropertyNames(todoSelectedState)[0]
             ? {
                 ...item,
                 rowstatus: item.rowstatus == "N" ? "N" : "U",
@@ -857,7 +875,7 @@ const CM_A1600: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1176,6 +1194,31 @@ const CM_A1600: React.FC = () => {
     }
   };
 
+  const handleSelectTab = (e: any) => {
+    setTabSelected(e.selected);
+    if (e.selected == 0) {
+      setTodoFilter((prev) => ({
+        ...prev,
+        find_row_value: "",
+        pgNum: 1,
+        isSearch: true,
+      }));
+      setSchedulerFilter((prev) => ({
+        ...prev,
+        work_type: "MY",
+        person: userId,
+        isSearch: true,
+      }));
+    } else if (e.selected == 1) {
+      setSchedulerFilter((prev) => ({
+        ...prev,
+        work_type: "TEAM",
+        person: "",
+        isSearch: true,
+      }));
+    }
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1190,80 +1233,13 @@ const CM_A1600: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <GridContainerWrap>
-        <GridContainer>
-          <GridTitleContainer>
-            <FilterContainer>
-              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                <tbody>
-                  <tr>
-                    <th>작성자</th>
-                    <td>
-                      {bizComponentData !== null && (
-                        <BizComponentComboBox
-                          name="person"
-                          value={schedulerFilter.person}
-                          bizComponentId="L_sysUserMaster_001"
-                          bizComponentData={bizComponentData}
-                          changeData={filterComboBoxChange}
-                          valueField="user_id"
-                          textField="user_name"
-                        />
-                      )}
-                    </td>
-                    <th>계획구분</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CommonRadioGroup
-                          name="rdoplandiv"
-                          customOptionData={customOptionData}
-                          changeData={filterRadioChange}
-                        />
-                      )}
-
-                      {bizComponentData !== null &&
-                        customOptionData === null && (
-                          <BizComponentRadioGroup
-                            name="rdoplandiv"
-                            value={schedulerFilter.rdoplandiv}
-                            bizComponentId="R_YN"
-                            bizComponentData={bizComponentData}
-                            changeData={filterRadioChange}
-                          />
-                        )}
-                    </td>
-                  </tr>
-                </tbody>
-              </FilterBox>
-            </FilterContainer>
-          </GridTitleContainer>
-          <GridTitleContainer>
-            <GridTitle>개인 스케줄러</GridTitle>
-          </GridTitleContainer>
-          <Scheduler
-            height={"79vh"}
-            data={schedulerDataResult}
-            onDataChange={handleDataChange}
-            defaultDate={displayDate}
-            editable={true}
-            editItem={CustomEditItem}
-            form={FormWithCustomEditor}
-          >
-            <WeekView />
-            <MonthView />
-            <DayView />
-          </Scheduler>
-        </GridContainer>
-        <GridContainerWrap
-          style={{ width: isMobile ? "" : "35%" }}
-          flexDirection="column"
-        >
-          <ExcelExport
-            data={todoDataResult.data}
-            ref={(exporter) => {
-              _export = exporter;
-            }}
-          >
+      <TabStrip
+        style={{ width: "100%" }}
+        selected={tabSelected}
+        onSelect={handleSelectTab}
+      >
+        <TabStripTab title="스케줄러">
+          <GridContainerWrap>
             <GridContainer>
               <GridTitleContainer>
                 <FilterContainer>
@@ -1272,39 +1248,35 @@ const CM_A1600: React.FC = () => {
                   >
                     <tbody>
                       <tr>
-                        <th>일자</th>
+                        <th>작성자</th>
                         <td>
-                          <CommonDateRangePicker
-                            value={{
-                              start: todoFilter.frdt,
-                              end: todoFilter.todt,
-                            }}
-                            onChange={(e: {
-                              value: { start: any; end: any };
-                            }) =>
-                              setTodoFilter((prev) => ({
-                                ...prev,
-                                frdt: e.value.start,
-                                todt: e.value.end,
-                              }))
-                            }
-                            className="required"
-                          />
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="person"
+                              value={schedulerFilter.person}
+                              bizComponentId="L_sysUserMaster_001"
+                              bizComponentData={bizComponentData}
+                              changeData={filterComboBoxChange}
+                              valueField="user_id"
+                              textField="user_name"
+                            />
+                          )}
                         </td>
-                        <th>완료</th>
+                        <th>계획구분</th>
                         <td>
                           {customOptionData !== null && (
                             <CommonRadioGroup
-                              name="rdofinyn"
+                              name="rdoplandiv"
                               customOptionData={customOptionData}
                               changeData={filterRadioChange}
                             />
                           )}
+
                           {bizComponentData !== null &&
                             customOptionData === null && (
                               <BizComponentRadioGroup
-                                name="rdofinyn"
-                                value={todoFilter.rdofinyn}
+                                name="rdoplandiv"
+                                value={schedulerFilter.rdoplandiv}
                                 bizComponentId="R_YN"
                                 bizComponentData={bizComponentData}
                                 changeData={filterRadioChange}
@@ -1316,114 +1288,230 @@ const CM_A1600: React.FC = () => {
                   </FilterBox>
                 </FilterContainer>
               </GridTitleContainer>
-
               <GridTitleContainer>
-                <GridTitle>To-do 리스트</GridTitle>
-
-                {permissions && (
-                  <ButtonContainer>
-                    <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="plus"
-                      title="행 추가"
-                      disabled={permissions.save ? false : true}
-                    ></Button>
-                    <Button
-                      onClick={onRemoveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                      title="행 삭제"
-                      disabled={permissions.save ? false : true}
-                    ></Button>
-                    <Button
-                      onClick={onSaveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      title="저장"
-                      disabled={permissions.save ? false : true}
-                    ></Button>
-                  </ButtonContainer>
-                )}
+                <GridTitle>개인 스케줄러</GridTitle>
               </GridTitleContainer>
-
-              <Grid
-                style={{ height: "78.5vh" }}
-                data={process(
-                  todoDataResult.data.map((row) => ({
-                    ...row,
-                    strtime: row.strtime
-                      ? new Date(dateformat(row.strtime))
-                      : new Date(dateformat("19991231")),
-                    [SELECTED_FIELD]: todoSelectedState[idGetter(row)],
-                  })),
-                  todoDataState
-                )}
-                {...todoDataState}
-                onDataStateChange={onTodoDataStateChange}
-                //선택기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onTodoSelectionChange}
-                //정렬기능
-                sortable={true}
-                onSortChange={onTodoSortChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={todoDataResult.total}
-                skip={page.skip}
-                take={page.take}
-                pageable={true}
-                onPageChange={pageChange}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef}
-                rowHeight={30}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                //incell 수정 기능
-                onItemChange={onTodoItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
+              <Scheduler
+                height={"73vh"}
+                data={schedulerDataResult}
+                onDataChange={handleDataChange}
+                defaultDate={displayDate}
+                editable={true}
+                editItem={CustomEditItem}
+                form={FormWithCustomEditor}
               >
-                <GridColumn
-                  field="rowstatus"
-                  title=" "
-                  width="40px"
-                  editable={false}
-                />
-                <GridColumn
-                  field="strtime"
-                  title="일자"
-                  cell={DateCell}
-                  footerCell={todoTotalFooterCell}
-                  width="140px"
-                />
-                <GridColumn
-                  field="contents"
-                  title="내용"
-                  //cell={CenterCell}
-                  width="450px"
-                />
-                <GridColumn
-                  field="finyn"
-                  title="완료"
-                  width="50px"
-                  cell={CheckBoxCell}
-                />
-              </Grid>
+                <WeekView />
+                <MonthView />
+                <DayView />
+              </Scheduler>
             </GridContainer>
-          </ExcelExport>
-        </GridContainerWrap>
-      </GridContainerWrap>
+            <GridContainerWrap
+              style={{ width: isMobile ? "" : "35%" }}
+              flexDirection="column"
+            >
+              <ExcelExport
+                data={todoDataResult.data}
+                ref={(exporter) => {
+                  _export = exporter;
+                }}
+              >
+                <GridContainer>
+                  <GridTitleContainer>
+                    <FilterContainer>
+                      <FilterBox
+                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                      >
+                        <tbody>
+                          <tr>
+                            <th>일자</th>
+                            <td>
+                              <CommonDateRangePicker
+                                value={{
+                                  start: todoFilter.frdt,
+                                  end: todoFilter.todt,
+                                }}
+                                onChange={(e: {
+                                  value: { start: any; end: any };
+                                }) =>
+                                  setTodoFilter((prev) => ({
+                                    ...prev,
+                                    frdt: e.value.start,
+                                    todt: e.value.end,
+                                  }))
+                                }
+                                className="required"
+                              />
+                            </td>
+                            <th>완료</th>
+                            <td>
+                              {customOptionData !== null && (
+                                <CommonRadioGroup
+                                  name="rdofinyn"
+                                  customOptionData={customOptionData}
+                                  changeData={filterRadioChange}
+                                />
+                              )}
+                              {bizComponentData !== null &&
+                                customOptionData === null && (
+                                  <BizComponentRadioGroup
+                                    name="rdofinyn"
+                                    value={todoFilter.rdofinyn}
+                                    bizComponentId="R_YN"
+                                    bizComponentData={bizComponentData}
+                                    changeData={filterRadioChange}
+                                  />
+                                )}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FilterBox>
+                    </FilterContainer>
+                  </GridTitleContainer>
+
+                  <GridTitleContainer>
+                    <GridTitle>To-do 리스트</GridTitle>
+
+                    {permissions && (
+                      <ButtonContainer>
+                        <Button
+                          onClick={onAddClick}
+                          themeColor={"primary"}
+                          icon="plus"
+                          title="행 추가"
+                          disabled={permissions.save ? false : true}
+                        ></Button>
+                        <Button
+                          onClick={onRemoveClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="minus"
+                          title="행 삭제"
+                          disabled={permissions.save ? false : true}
+                        ></Button>
+                        <Button
+                          onClick={onSaveClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="save"
+                          title="저장"
+                          disabled={permissions.save ? false : true}
+                        ></Button>
+                      </ButtonContainer>
+                    )}
+                  </GridTitleContainer>
+
+                  <Grid
+                    style={{ height: "73.5vh" }}
+                    data={process(
+                      todoDataResult.data.map((row) => ({
+                        ...row,
+                        strtime: row.strtime
+                          ? new Date(dateformat(row.strtime))
+                          : new Date(dateformat("19991231")),
+                        [SELECTED_FIELD]: todoSelectedState[idGetter(row)],
+                      })),
+                      todoDataState
+                    )}
+                    {...todoDataState}
+                    onDataStateChange={onTodoDataStateChange}
+                    //선택기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onTodoSelectionChange}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onTodoSortChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={todoDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    //incell 수정 기능
+                    onItemChange={onTodoItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn
+                      field="rowstatus"
+                      title=" "
+                      width="40px"
+                      editable={false}
+                    />
+                    <GridColumn
+                      field="strtime"
+                      title="일자"
+                      cell={DateCell}
+                      footerCell={todoTotalFooterCell}
+                      width="140px"
+                    />
+                    <GridColumn
+                      field="contents"
+                      title="내용"
+                      //cell={CenterCell}
+                      width="450px"
+                    />
+                    <GridColumn
+                      field="finyn"
+                      title="완료"
+                      width="50px"
+                      cell={CheckBoxCell}
+                    />
+                  </Grid>
+                </GridContainer>
+              </ExcelExport>
+            </GridContainerWrap>
+          </GridContainerWrap>
+        </TabStripTab>
+        <TabStripTab title="전체 스케줄러">
+          <GridContainer>
+            <GridTitleContainer>
+              <GridTitle>전체 스케줄러</GridTitle>
+            </GridTitleContainer>
+            <Scheduler
+              height={"77vh"}
+              data={schedulerDataResult}
+              defaultDate={displayDate}
+              group={{
+                resources: ["person"],
+                orientation,
+              }}
+              resources={[
+                {
+                  name: "person",
+                  data: userListData.map((item) => ({
+                    text: item.user_name,
+                    value: item.user_id,
+                  })),
+                  field: "person",
+                  valueField: "value",
+                  textField: "text",
+                },
+              ]}
+              item={CustomItem}
+            >
+              <TimelineView
+                columnWidth={250}
+                slotDuration={1440}
+                numberOfDays={7}
+              />
+            </Scheduler>
+          </GridContainer>
+        </TabStripTab>
+      </TabStrip>
     </>
   );
 };
