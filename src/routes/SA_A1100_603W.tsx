@@ -75,8 +75,10 @@ type TdataArr = {
   amt_s: string[];
   margin_s: string[];
   margin_div_s: string[];
+  marginamt_s: string[];
   discount_s: string[];
   discount_div_s: string[];
+  discountamt_s: string[];
 };
 
 const DATA_ITEM_KEY = "num";
@@ -103,9 +105,9 @@ const NumberField = [
 
 const NumberCommaField = [
   "margin",
-  "margin_amt",
+  "marginamt",
   "discount",
-  "discount_amt",
+  "discountamt",
   "amt",
 ];
 const customField = ["insert_userid", "margin_div", "discount_div"];
@@ -272,7 +274,8 @@ const SA_A1100_603W: React.FC = () => {
     },
     []
   );
-
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   // 조회조건
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     orgdiv: "01",
@@ -482,8 +485,9 @@ const SA_A1100_603W: React.FC = () => {
 
       const newData = mainDataResult2.data.map((item) => ({
         ...item,
-        wonamt: Math.round(item.discount_amt * Information.wonchgrat),
-        taxamt: Math.round(item.wonamt * 0.1),
+        wonamt: Math.round(item.discountamt * value),
+        taxamt: Math.round(Math.round(item.discountamt * value) * 0.1),
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
       }));
 
       setTempResult((prev) => {
@@ -1431,6 +1435,11 @@ const SA_A1100_603W: React.FC = () => {
           : { ...item, [EDIT_FIELD]: undefined }
       );
 
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
+      }
+
       setTempResult((prev) => {
         return {
           data: newData,
@@ -1460,138 +1469,237 @@ const SA_A1100_603W: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
-              margin_amt: ThreeNumberceil(
-                item.margin_div == ""
-                  ? item.amt
-                  : item.margin_div == "1"
-                  ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
-                  : item.margin_div == "2"
-                  ? item.amt + item.margin
-                  : item.amt
-              ),
-              discount_amt: ThreeNumberceil(
-                item.discount_div == ""
-                  ? ThreeNumberceil(
-                    item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt
-                  )
-                  : item.discount_div == "1"
-                  ? ThreeNumberceil(
-                    item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt
-                  ) - ThreeNumberceil((item.margin_amt * item.discount) / 100)
-                  : item.discount_div == "2"
-                  ? ThreeNumberceil(
-                    item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt
-                  ) - item.discount
+              marginamt:
+                editedField != "amt" &&
+                editedField != "margin" &&
+                editedField != "margin_div"
+                  ? item.marginamt
                   : ThreeNumberceil(
-                    item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt
-                  )
-              ),
-              wonamt: Math.round(ThreeNumberceil(
-                item.discount_div == ""
+                      item.margin_div == ""
+                        ? item.amt
+                        : item.margin_div == "1"
+                        ? item.amt +
+                          ThreeNumberceil((item.amt * item.margin) / 100)
+                        : item.margin_div == "2"
+                        ? item.amt + item.margin
+                        : item.amt
+                    ),
+              discountamt:
+                editedField != "amt" &&
+                editedField != "margin" &&
+                editedField != "margin_div" &&
+                editedField != "marginamt" &&
+                editedField != "discount" &&
+                editedField != "discount_div"
+                  ? item.discountamt
+                  : editedField != "marginamt" &&
+                    editedField != "discount" &&
+                    editedField != "discount_div"
                   ? ThreeNumberceil(
-                    item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt
-                  )
-                  : item.discount_div == "1"
-                  ? ThreeNumberceil(
-                    item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt
-                  ) - ThreeNumberceil((item.margin_amt * item.discount) / 100)
-                  : item.discount_div == "2"
-                  ? ThreeNumberceil(
-                    item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt
-                  ) - item.discount
+                      item.discount_div == ""
+                        ? ThreeNumberceil(
+                            item.margin_div == ""
+                              ? item.amt
+                              : item.margin_div == "1"
+                              ? item.amt +
+                                ThreeNumberceil((item.amt * item.margin) / 100)
+                              : item.margin_div == "2"
+                              ? item.amt + item.margin
+                              : item.amt
+                          )
+                        : item.discount_div == "1"
+                        ? ThreeNumberceil(
+                            item.margin_div == ""
+                              ? item.amt
+                              : item.margin_div == "1"
+                              ? item.amt +
+                                ThreeNumberceil((item.amt * item.margin) / 100)
+                              : item.margin_div == "2"
+                              ? item.amt + item.margin
+                              : item.amt
+                          ) -
+                          ThreeNumberceil(
+                            (item.marginamt * item.discount) / 100
+                          )
+                        : item.discount_div == "2"
+                        ? ThreeNumberceil(
+                            item.margin_div == ""
+                              ? item.amt
+                              : item.margin_div == "1"
+                              ? item.amt +
+                                ThreeNumberceil((item.amt * item.margin) / 100)
+                              : item.margin_div == "2"
+                              ? item.amt + item.margin
+                              : item.amt
+                          ) - item.discount
+                        : ThreeNumberceil(
+                            item.margin_div == ""
+                              ? item.amt
+                              : item.margin_div == "1"
+                              ? item.amt +
+                                ThreeNumberceil((item.amt * item.margin) / 100)
+                              : item.margin_div == "2"
+                              ? item.amt + item.margin
+                              : item.amt
+                          )
+                    )
                   : ThreeNumberceil(
-                    item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt
-                  )
-              ) * Information.wonchgrat),
-              taxamt: Math.round(Math.round(ThreeNumberceil(
-                item.discount_div == ""
-                  ? ThreeNumberceil(
-                    item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt
-                  )
-                  : item.discount_div == "1"
-                  ? ThreeNumberceil(
-                    item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt
-                  ) - ThreeNumberceil((item.margin_amt * item.discount) / 100)
-                  : item.discount_div == "2"
-                  ? ThreeNumberceil(
-                    item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt
-                  ) - item.discount
-                  : ThreeNumberceil(
-                    item.margin_div == ""
-                      ? item.amt
-                      : item.margin_div == "1"
-                      ? item.amt + ThreeNumberceil((item.amt * item.margin) / 100)
-                      : item.margin_div == "2"
-                      ? item.amt + item.margin
-                      : item.amt
-                  )
-              ) * Information.wonchgrat) * 0.1),
+                      item.discount_div == ""
+                        ? item.marginamt
+                        : item.discount_div == "1"
+                        ? item.marginamt -
+                          ThreeNumberceil(
+                            (item.marginamt * item.discount) / 100
+                          )
+                        : item.discount_div == "2"
+                        ? item.marginamt - item.discount
+                        : item.marginamt
+                    ),
+              wonamt:
+                editedField != "amt" &&
+                editedField != "margin" &&
+                editedField != "margin_div" &&
+                editedField != "marginamt" &&
+                editedField != "discount" &&
+                editedField != "discount_div" &&
+                editedField != "discountamt"
+                  ? item.wonamt
+                  : editedField != "discountamt"
+                  ? Math.round(
+                      ThreeNumberceil(
+                        item.discount_div == ""
+                          ? ThreeNumberceil(
+                              item.margin_div == ""
+                                ? item.amt
+                                : item.margin_div == "1"
+                                ? item.amt +
+                                  ThreeNumberceil(
+                                    (item.amt * item.margin) / 100
+                                  )
+                                : item.margin_div == "2"
+                                ? item.amt + item.margin
+                                : item.amt
+                            )
+                          : item.discount_div == "1"
+                          ? ThreeNumberceil(
+                              item.margin_div == ""
+                                ? item.amt
+                                : item.margin_div == "1"
+                                ? item.amt +
+                                  ThreeNumberceil(
+                                    (item.amt * item.margin) / 100
+                                  )
+                                : item.margin_div == "2"
+                                ? item.amt + item.margin
+                                : item.amt
+                            ) -
+                            ThreeNumberceil(
+                              (item.marginamt * item.discount) / 100
+                            )
+                          : item.discount_div == "2"
+                          ? ThreeNumberceil(
+                              item.margin_div == ""
+                                ? item.amt
+                                : item.margin_div == "1"
+                                ? item.amt +
+                                  ThreeNumberceil(
+                                    (item.amt * item.margin) / 100
+                                  )
+                                : item.margin_div == "2"
+                                ? item.amt + item.margin
+                                : item.amt
+                            ) - item.discount
+                          : ThreeNumberceil(
+                              item.margin_div == ""
+                                ? item.amt
+                                : item.margin_div == "1"
+                                ? item.amt +
+                                  ThreeNumberceil(
+                                    (item.amt * item.margin) / 100
+                                  )
+                                : item.margin_div == "2"
+                                ? item.amt + item.margin
+                                : item.amt
+                            )
+                      ) * Information.wonchgrat
+                    )
+                  : Math.round(item.discountamt * Information.wonchgrat),
+              taxamt:
+                editedField != "amt" &&
+                editedField != "margin" &&
+                editedField != "margin_div" &&
+                editedField != "marginamt" &&
+                editedField != "discount" &&
+                editedField != "discount_div" &&
+                editedField != "discountamt" &&
+                editedField != "wonamt"
+                  ? item.taxamt
+                  : editedField != "discountamt" && editedField != "wonamt"
+                  ? Math.round(
+                      Math.round(
+                        ThreeNumberceil(
+                          item.discount_div == ""
+                            ? ThreeNumberceil(
+                                item.margin_div == ""
+                                  ? item.amt
+                                  : item.margin_div == "1"
+                                  ? item.amt +
+                                    ThreeNumberceil(
+                                      (item.amt * item.margin) / 100
+                                    )
+                                  : item.margin_div == "2"
+                                  ? item.amt + item.margin
+                                  : item.amt
+                              )
+                            : item.discount_div == "1"
+                            ? ThreeNumberceil(
+                                item.margin_div == ""
+                                  ? item.amt
+                                  : item.margin_div == "1"
+                                  ? item.amt +
+                                    ThreeNumberceil(
+                                      (item.amt * item.margin) / 100
+                                    )
+                                  : item.margin_div == "2"
+                                  ? item.amt + item.margin
+                                  : item.amt
+                              ) -
+                              ThreeNumberceil(
+                                (item.marginamt * item.discount) / 100
+                              )
+                            : item.discount_div == "2"
+                            ? ThreeNumberceil(
+                                item.margin_div == ""
+                                  ? item.amt
+                                  : item.margin_div == "1"
+                                  ? item.amt +
+                                    ThreeNumberceil(
+                                      (item.amt * item.margin) / 100
+                                    )
+                                  : item.margin_div == "2"
+                                  ? item.amt + item.margin
+                                  : item.amt
+                              ) - item.discount
+                            : ThreeNumberceil(
+                                item.margin_div == ""
+                                  ? item.amt
+                                  : item.margin_div == "1"
+                                  ? item.amt +
+                                    ThreeNumberceil(
+                                      (item.amt * item.margin) / 100
+                                    )
+                                  : item.margin_div == "2"
+                                  ? item.amt + item.margin
+                                  : item.amt
+                              )
+                        ) * Information.wonchgrat
+                      ) * 0.1
+                    )
+                  : editedField != "wonamt"
+                  ? Math.round(
+                      Math.round(item.discountamt * Information.wonchgrat) * 0.1
+                    )
+                  : Math.round(item.wonamt * 0.1),
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -2012,8 +2120,10 @@ const SA_A1100_603W: React.FC = () => {
     amt_s: "",
     margin_s: "",
     margin_div_s: "",
+    marginamt_s: "",
     discount_s: "",
     discount_div_s: "",
+    discountamt_s: "",
   });
 
   const infopara: Iparameters = {
@@ -2032,8 +2142,10 @@ const SA_A1100_603W: React.FC = () => {
       "@p_amt_s": ParaData.amt_s,
       "@p_margin_s": ParaData.margin_s,
       "@p_margin_div_s": ParaData.margin_div_s,
+      "@p_marginamt_s": ParaData.marginamt_s,
       "@p_discount_s": ParaData.discount_s,
       "@p_discount_div_s": ParaData.discount_div_s,
+      "@p_discountamt_s": ParaData.discountamt_s,
       "@p_rowstatus_s": ParaData.rowstatus_s,
       "@p_quoseq_s": ParaData.quoseq_s,
       "@p_wonamt_s": ParaData.wonamt_s,
@@ -2060,8 +2172,10 @@ const SA_A1100_603W: React.FC = () => {
       amt_s: [],
       margin_s: [],
       margin_div_s: [],
+      marginamt_s: [],
       discount_s: [],
       discount_div_s: [],
+      discountamt_s: [],
     };
 
     dataItem.forEach((item: any, idx: number) => {
@@ -2070,8 +2184,10 @@ const SA_A1100_603W: React.FC = () => {
         amt = "",
         margin = "",
         margin_div = "",
+        marginamt = "",
         discount = "",
         discount_div = "",
+        discountamt = "",
         quoseq = "",
         wonamt = "",
         taxamt = "",
@@ -2084,8 +2200,10 @@ const SA_A1100_603W: React.FC = () => {
       dataArr.amt_s.push(amt);
       dataArr.margin_s.push(margin);
       dataArr.margin_div_s.push(margin_div);
+      dataArr.marginamt_s.push(marginamt);
       dataArr.discount_s.push(discount);
       dataArr.discount_div_s.push(discount_div);
+      dataArr.discountamt_s.push(discountamt);
     });
 
     setParaData((prev) => ({
@@ -2097,8 +2215,10 @@ const SA_A1100_603W: React.FC = () => {
       amt_s: dataArr.amt_s.join("|"),
       margin_s: dataArr.margin_s.join("|"),
       margin_div_s: dataArr.margin_div_s.join("|"),
+      marginamt_s: dataArr.marginamt_s.join("|"),
       discount_s: dataArr.discount_s.join("|"),
       discount_div_s: dataArr.discount_div_s.join("|"),
+      discountamt_s: dataArr.discountamt_s.join("|"),
     }));
   };
 
@@ -2133,8 +2253,10 @@ const SA_A1100_603W: React.FC = () => {
         amt_s: "",
         margin_s: "",
         margin_div_s: "",
+        marginamt_s: "",
         discount_s: "",
         discount_div_s: "",
+        discountamt_s: "",
       });
     } else {
       console.log("[오류 발생]");
@@ -2614,7 +2736,9 @@ const SA_A1100_603W: React.FC = () => {
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
-                  >상세정보 저장</Button>
+                  >
+                    상세정보 저장
+                  </Button>
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid

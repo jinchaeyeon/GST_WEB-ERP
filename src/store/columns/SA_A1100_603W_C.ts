@@ -108,8 +108,8 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },   
       {
-        id: "col_margin_amt_detail",
-        field: "margin_amt",
+        id: "col_marginamt_detail",
+        field: "marginamt",
         caption: "마진적용금액",
         width: 100,
       },   
@@ -126,8 +126,8 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },   
       {
-        id: "col_discount_amt_detail",
-        field: "discount_amt",
+        id: "col_discountamt_detail",
+        field: "discountamt",
         caption: "할인적용금액",
         width: 100,
       },      
