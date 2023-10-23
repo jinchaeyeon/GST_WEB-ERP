@@ -661,6 +661,7 @@ const CM_A1600: React.FC = () => {
       "@p_ref_key": paraData.ref_key,
       "@p_pgmid": paraData.pgmid,
       "@p_form_id": paraData.form_id,
+      "@p_company_code": companyCode,
     },
   };
 
@@ -1125,6 +1126,7 @@ const CM_A1600: React.FC = () => {
       "@p_ref_key": todoParaDataSaved.ref_key,
       "@p_pgmid": todoParaDataSaved.pgmid,
       "@p_form_id": todoParaDataSaved.form_id,
+      "@p_company_code": companyCode,
     },
   };
 
