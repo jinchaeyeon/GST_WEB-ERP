@@ -25,7 +25,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -74,7 +74,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B4000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -226,6 +226,8 @@ const HU_B4000W: React.FC = () => {
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [pc, setPc] = useState("");
@@ -534,6 +536,7 @@ const HU_B4000W: React.FC = () => {
         "@p_rtrchk": filters.radRtryn,
         "@p_yyyy": "",
         "@p_adjnm": "",
+        "@p_company_code": companyCode,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -640,6 +643,7 @@ const HU_B4000W: React.FC = () => {
         "@p_rtrchk": filters.radRtryn,
         "@p_yyyy": "",
         "@p_adjnm": "",
+        "@p_company_code": companyCode,
         "@p_find_row_value": subfilters.find_row_value,
       },
     };
@@ -724,6 +728,7 @@ const HU_B4000W: React.FC = () => {
         "@p_rtrchk": filters.radRtryn,
         "@p_yyyy": "",
         "@p_adjnm": "",
+        "@p_company_code": companyCode,
         "@p_find_row_value": subfilters2.find_row_value,
       },
     };
@@ -806,6 +811,7 @@ const HU_B4000W: React.FC = () => {
         "@p_rtrchk": filters.radRtryn,
         "@p_yyyy": "",
         "@p_adjnm": "",
+        "@p_company_code": companyCode,
         "@p_find_row_value": subfilters3.find_row_value,
       },
     };
@@ -888,6 +894,7 @@ const HU_B4000W: React.FC = () => {
         "@p_rtrchk": "",
         "@p_yyyy": adjfilters.yyyy,
         "@p_adjnm": adjfilters.adjnm,
+        "@p_company_code": companyCode,
         "@p_find_row_value": adjfilters.find_row_value,
       },
     };
