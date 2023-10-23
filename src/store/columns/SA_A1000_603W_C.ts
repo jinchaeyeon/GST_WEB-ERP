@@ -143,4 +143,33 @@ export const gridList: Array<TGrid> = [
       }
     ],
   },
+  {
+    gridName: "grdList3",
+    columns: [
+      {
+        id: "col_testnum1",
+        field: "testnum",
+        caption: "시험번호",
+        width: 120,
+      },
+      {
+        id: "col_itemcd1",
+        field: "itemcd",
+        caption: "품목코드",
+        width: 150,
+      },
+      {
+        id: "col_itemnm1",
+        field: "itemnm",
+        caption: "품목명",
+        width: 180,
+      },
+      {
+        id: "col_remark1",
+        field: "remark",
+        caption: "비고",
+        width: 200,
+      }
+    ],
+  },
 ];

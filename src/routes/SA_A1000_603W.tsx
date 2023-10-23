@@ -1702,6 +1702,18 @@ const SA_A1000_603W: React.FC = () => {
     );
   };
 
+  const subTotalFooterCell2 = (props: GridFooterCellProps) => {
+    var parts = subDataResult2.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -1746,7 +1758,7 @@ const SA_A1000_603W: React.FC = () => {
     if (customOptionData != null) {
       grid.current = document.getElementById("grdList");
       grid2.current = document.getElementById("grdList2");
-      // grid3.current = document.getElementById("grdList3");
+      grid3.current = document.getElementById("grdList3");
 
       window.addEventListener("resize", handleResize);
 
@@ -1763,13 +1775,13 @@ const SA_A1000_603W: React.FC = () => {
             ? (minGridWidth2.current += item.width)
             : minGridWidth2.current
       );
-      // //가장작은 그리드 이름
-      // customOptionData.menuCustomColumnOptions["grdList3"].map(
-      //   (item: TColumn) =>
-      //     item.width !== undefined
-      //       ? (minGridWidth3.current += item.width)
-      //       : minGridWidth3.current
-      // );
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList3"].map(
+        (item: TColumn) =>
+          item.width !== undefined
+            ? (minGridWidth3.current += item.width)
+            : minGridWidth3.current
+      );
 
       minGridWidth2.current += 50;
       if (grid.current) {
@@ -1778,18 +1790,18 @@ const SA_A1000_603W: React.FC = () => {
       if (grid2.current) {
         setGridCurrent2(grid2.current.clientWidth);
       }
-      // if (grid3.current) {
-      //   setGridCurrent3(grid3.current.clientWidth);
-      // }
+      if (grid3.current) {
+        setGridCurrent3(grid3.current.clientWidth);
+      }
       if (grid.current) {
         setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
       }
       if (grid2.current) {
         setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
       }
-      // if (grid3.current) {
-      //   setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
-      // }
+      if (grid3.current) {
+        setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
+      }
     }
   }, [customOptionData, tabSelected]);
 
@@ -3525,8 +3537,26 @@ const SA_A1000_603W: React.FC = () => {
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
+                id = "grdList3"
               >
-                <GridColumn field="rowstatus" title=" " width="50px" />
+                {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList3"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={setWidth("grdList3", item.width)}
+                            footerCell={
+                              item.sortOrder === 0
+                                ? subTotalFooterCell2
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
               </Grid>
             </GridContainer>
             <GridContainer width={`calc(15% - ${GAP}px)`}>
