@@ -314,8 +314,8 @@ const CM_A5000W: React.FC = () => {
       cpmnum: data.cpmnum,
       user_id: data.user_id,
       user_name: data.user_name,
-      request_date: toDate(data.request_date),
-      finexpdt: toDate(data.finexpdt),
+      request_date: new Date(),
+      finexpdt: new Date(),
       require_type: data.require_type,
       completion_method: data.completion_method,
       medicine_type: data.medicine_type,
@@ -1188,7 +1188,7 @@ const CM_A5000W: React.FC = () => {
   };
 
   const onCopyClick = () => {
-    // 이전질문참조 팝업창 오픈\
+    // 이전질문참조 팝업창 오픈
     setCopyWindowvisible(true);
   };
 

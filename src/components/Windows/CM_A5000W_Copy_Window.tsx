@@ -45,6 +45,7 @@ import { Grid,
   GridFooterCellProps, 
   GridItemChangeEvent, 
   GridPageChangeEvent, 
+  GridRowDoubleClickEvent, 
   GridSelectionChangeEvent, 
   getSelectedState 
 } from "@progress/kendo-react-grid";
@@ -472,6 +473,15 @@ const KendoWindow = ({
     onClose();
   };
 
+  const onRowDoubleClick = (event: GridRowDoubleClickEvent) => {
+    const selectedRowData = mainDataResult.data.find(
+      (item) => item[DATA_ITEM_KEY] == event.dataItem.num
+    );
+
+    setData(selectedRowData);
+    onClose();
+  };
+
   return (
     <Window
       title={"이전 요청 참조"}
@@ -617,6 +627,7 @@ const KendoWindow = ({
           )}
           {...mainDataState}
           onDataStateChange={onMainDataStateChange}
+          onRowDoubleClick={onRowDoubleClick}
           dataItemKey={DATA_ITEM_KEY}
           selectedField={SELECTED_FIELD}
           selectable={{
