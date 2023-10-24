@@ -67,7 +67,10 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
-import { default as CommonRadioGroup, default as CustomOptionRadioGroup } from "../components/RadioGroups/CustomOptionRadioGroup";
+import {
+  default as CommonRadioGroup,
+  default as CustomOptionRadioGroup,
+} from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { FormWithCustomEditor } from "../components/custom-form";
 import { CustomEditItem } from "../custom-item";
@@ -137,15 +140,11 @@ const CM_A1600: React.FC = () => {
   const [colorData, setColorData] = useState<any[]>([]);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_dptcd_001, L_sysUserMaster_001,R_YN,L_APPOINTMENT_COLOR",
+    "L_sysUserMaster_001,R_YN,L_APPOINTMENT_COLOR, R_PLANDIV_YN",
     setBizComponentData
   );
-  const [userListData, setUserListData] = useState([
-    { user_id: "", user_name: "" },
-  ]);
-  const [dptcdListData, setdptcdListData] = useState([
-    { dptcd: "", dptnm: "" },
-  ]);
+  const [userListData, setUserListData] = useState([]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const colorQueryStr = getQueryFromBizComponent(
@@ -153,19 +152,8 @@ const CM_A1600: React.FC = () => {
           (item: any) => item.bizComponentId === "L_APPOINTMENT_COLOR"
         )
       );
-      const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
-        )
-      );
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
-        )
-      );
-      fetchQuery(userQueryStr, setUserListData);
+
       fetchQuery(colorQueryStr, setColorData);
-      fetchQuery(dptcdQueryStr, setdptcdListData);
     }
   }, [bizComponentData]);
 
@@ -210,9 +198,12 @@ const CM_A1600: React.FC = () => {
       start: new Date("2021-01-01T08:30:00.000Z"),
       end: new Date("2021-01-01T09:00:00.000Z"),
       colorID: 0,
+      dptcd: { text: "", value: "" },
+      person: { text: "", value: "" },
     },
   ];
   const [schedulerDataResult, setSchedulerDataResult] = useState(defaultData);
+  const [schedulerDataResult2, setSchedulerDataResult2] = useState([]);
 
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -226,43 +217,47 @@ const CM_A1600: React.FC = () => {
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
 
-    setSchedulerFilter((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (tabSelected == 0) {
+      setSchedulerFilter((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    } else {
+      setSchedulerFilter2((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
   const filterRadioChange = (e: any) => {
     const { name, value } = e;
 
-    if (name == "rdoplandiv") {
-      setSchedulerFilter((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+    setSchedulerFilter((prev) => ({
+      ...prev,
+      [name]: value,
+      isSearch: true,
+    }));
+  };
 
-      setTodoFilter((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+  const filterRadioChange2 = (e: any) => {
+    const { name, value } = e;
 
-      setSchedulerFilter((prev) => ({
-        ...prev,
-        rdoplandiv: value,
-        isSearch: true,
-      }));
-    } else {
-      setSchedulerFilter((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+    setTodoFilter((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
-      setTodoFilter((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+  const filterRadioChange3 = (e: any) => {
+    const { name, value } = e;
+
+    setSchedulerFilter2((prev) => ({
+      ...prev,
+      rdoplandiv2: value,
+      isSearch: true,
+    }));
   };
 
   const [todoFilter, setTodoFilter] = useState({
@@ -283,7 +278,15 @@ const CM_A1600: React.FC = () => {
     person: userId,
     rdoplandiv: "Y",
     dptcd: "",
-    isSearch: false,
+    isSearch: true,
+  });
+
+  const [schedulerFilter2, setSchedulerFilter2] = useState({
+    work_type: "TEAM",
+    person: userId,
+    rdoplandiv2: "Y",
+    dptcd: "",
+    isSearch: true,
   });
 
   const [number, setNumber] = useState(7);
@@ -369,21 +372,26 @@ const CM_A1600: React.FC = () => {
       }
     }
     setLoading(false);
+    setTodoFilter((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
   };
 
-  const fetchScheduler = async () => {
+  const fetchScheduler = async (schedulerFilter: any) => {
     let data: any;
+
     setLoading(true);
     const schedulerParameters: Iparameters = {
       procedureName: "P_CM_A1600W_Q",
       pageNumber: 1,
-      pageSize: 100,
+      pageSize: 500,
       parameters: {
         "@p_work_type": schedulerFilter.work_type,
         "@p_orgdiv": "01",
         "@p_recdt": "",
         "@p_recdt1": "",
-        "@p_dptcd": tabSelected == 0 ? "" : schedulerFilter.dptcd,
+        "@p_dptcd": "",
         "@p_postcd": "",
         "@p_userid": userId,
         "@p_rtrchk": "",
@@ -397,7 +405,7 @@ const CM_A1600: React.FC = () => {
         "@p_find_row_value": "",
       },
     };
-  
+
     try {
       data = await processApi<any>("procedure", schedulerParameters);
     } catch (error) {
@@ -431,9 +439,77 @@ const CM_A1600: React.FC = () => {
     }));
   };
 
+  const fetchScheduler2 = async (schedulerFilter2: any) => {
+    let data: any;
+
+    setLoading(true);
+    const schedulerParameters: Iparameters = {
+      procedureName: "P_CM_A1600W_Q",
+      pageNumber: 1,
+      pageSize: 500,
+      parameters: {
+        "@p_work_type": schedulerFilter2.work_type,
+        "@p_orgdiv": "01",
+        "@p_recdt": "",
+        "@p_recdt1": "",
+        "@p_dptcd": schedulerFilter2.dptcd,
+        "@p_postcd": "",
+        "@p_userid": userId,
+        "@p_rtrchk": "",
+        "@p_frdt": "",
+        "@p_person": "",
+        "@p_todt": "",
+        "@p_finyn": "",
+        "@p_plandiv": schedulerFilter2.rdoplandiv2,
+        "@p_stddiv": "",
+        "@p_serviceid": "",
+        "@p_find_row_value": "",
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", schedulerParameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      let rows = data.tables[0].Rows.map((row: any) => {
+        const start = new Date(row.strtime);
+        const end = new Date(row.endtime);
+        const timeDiff = end.getTime() - start.getTime();
+
+        return {
+          ...row,
+          id: row.datnum,
+          title: row.title,
+          description: row.contents,
+          start: start,
+          end: end,
+          isAllDay: timeDiff === 8.64e7 ? true : false, // 24시간 차이 시 all day
+          colorID: colorData.find((item) => item.sub_code == row.colorID),
+        };
+      });
+
+      setSchedulerDataResult2(rows);
+      let rows2 = data.tables[1].Rows.map((row: any) => {
+        return {
+          text: row.prsnnm,
+          value: row.person,
+        };
+      });
+      setUserListData(rows2);
+    }
+    setLoading(false);
+    setSchedulerFilter2((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
+  };
+
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (todoFilter.isSearch && permissions !== null) {
+    if (todoFilter.isSearch == true && permissions !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(todoFilter);
       setTodoFilter((prev) => ({
@@ -446,8 +522,30 @@ const CM_A1600: React.FC = () => {
   }, [todoFilter, permissions]);
 
   useEffect(() => {
-    if (schedulerFilter.isSearch) fetchScheduler();
+    if (schedulerFilter.isSearch == true && permissions !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(schedulerFilter);
+      setSchedulerFilter((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchScheduler(deepCopiedFilters);
+    }
   }, [schedulerFilter]);
+
+  useEffect(() => {
+    if (schedulerFilter2.isSearch == true && permissions !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(schedulerFilter2);
+      setSchedulerFilter2((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchScheduler2(deepCopiedFilters);
+    }
+  }, [schedulerFilter2]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -483,6 +581,7 @@ const CM_A1600: React.FC = () => {
       window.removeEventListener("keydown", function () {});
     };
   });
+
   //그리드 푸터
   const todoTotalFooterCell = (props: GridFooterCellProps) => {
     return (
@@ -708,10 +807,17 @@ const CM_A1600: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      fetchScheduler();
+      setSchedulerFilter((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
       setTodoFilter((prev) => ({
         ...prev,
         pgNum: 1,
+        isSearch: true,
+      }));
+      setSchedulerFilter2((prev) => ({
+        ...prev,
         isSearch: true,
       }));
       str = false;
@@ -740,7 +846,12 @@ const CM_A1600: React.FC = () => {
         ...prev,
         rdoplandiv: defaultOption.find((item: any) => item.id === "rdoplandiv")
           .valueCode,
-        isSearch: true,
+      }));
+      setSchedulerFilter2((prev) => ({
+        ...prev,
+        rdoplandiv2: defaultOption.find(
+          (item: any) => item.id === "rdoplandiv2"
+        ).valueCode,
       }));
 
       setTodoFilter((prev) => ({
@@ -1179,8 +1290,14 @@ const CM_A1600: React.FC = () => {
         pgNum: 1,
         isSearch: true,
       }));
-      fetchScheduler();
-
+      setSchedulerFilter((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
+      setSchedulerFilter2((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
       deletedTodoRows = [];
     } else {
       alert("[" + data.statusCode + "] " + data.resultMessage);
@@ -1201,20 +1318,43 @@ const CM_A1600: React.FC = () => {
 
   const search = () => {
     try {
-      if (
-        convertDateToStr(todoFilter.frdt).substring(0, 4) < "1997" ||
-        convertDateToStr(todoFilter.frdt).substring(6, 8) > "31" ||
-        convertDateToStr(todoFilter.frdt).substring(6, 8) < "01" ||
-        convertDateToStr(todoFilter.frdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "CM_A1600W_003");
-      } else if (
-        convertDateToStr(todoFilter.todt).substring(0, 4) < "1997" ||
-        convertDateToStr(todoFilter.todt).substring(6, 8) > "31" ||
-        convertDateToStr(todoFilter.todt).substring(6, 8) < "01" ||
-        convertDateToStr(todoFilter.todt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "CM_A1600W_003");
+      if (tabSelected == 0) {
+        if (
+          convertDateToStr(todoFilter.frdt).substring(0, 4) < "1997" ||
+          convertDateToStr(todoFilter.frdt).substring(6, 8) > "31" ||
+          convertDateToStr(todoFilter.frdt).substring(6, 8) < "01" ||
+          convertDateToStr(todoFilter.frdt).substring(6, 8).length != 2
+        ) {
+          throw findMessage(messagesData, "CM_A1600W_003");
+        } else if (
+          convertDateToStr(todoFilter.todt).substring(0, 4) < "1997" ||
+          convertDateToStr(todoFilter.todt).substring(6, 8) > "31" ||
+          convertDateToStr(todoFilter.todt).substring(6, 8) < "01" ||
+          convertDateToStr(todoFilter.todt).substring(6, 8).length != 2
+        ) {
+          throw findMessage(messagesData, "CM_A1600W_003");
+        } else if (
+          schedulerFilter.person == "" ||
+          schedulerFilter.person == undefined ||
+          schedulerFilter.person == null
+        ) {
+          throw findMessage(messagesData, "CM_A1600W_005");
+        } else {
+          setTodoFilter((prev) => ({
+            ...prev,
+            find_row_value: "",
+            pgNum: 1,
+            isSearch: true,
+          }));
+          setSchedulerFilter((prev) => ({
+            ...prev,
+            isSearch: true,
+          }));
+          setSchedulerFilter2((prev) => ({
+            ...prev,
+            isSearch: true,
+          }));
+        }
       } else {
         setTodoFilter((prev) => ({
           ...prev,
@@ -1222,38 +1362,21 @@ const CM_A1600: React.FC = () => {
           pgNum: 1,
           isSearch: true,
         }));
-        fetchScheduler();
+        setSchedulerFilter((prev) => ({
+          ...prev,
+          isSearch: true,
+        }));
+        setSchedulerFilter2((prev) => ({
+          ...prev,
+          isSearch: true,
+        }));
       }
     } catch (e) {
       alert(e);
     }
   };
-
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
-    if (e.selected == 0) {
-      setTodoFilter((prev) => ({
-        ...prev,
-        find_row_value: "",
-        pgNum: 1,
-        isSearch: true,
-      }));
-      setSchedulerFilter((prev) => ({
-        ...prev,
-        work_type: "MY",
-        person: userId,
-        dptcd: "",
-        isSearch: true,
-      }));
-    } else if (e.selected == 1) {
-      setSchedulerFilter((prev) => ({
-        ...prev,
-        work_type: "TEAM",
-        person: "",
-        dptcd: "",
-        isSearch: true,
-      }));
-    }
   };
 
   return (
@@ -1296,15 +1419,18 @@ const CM_A1600: React.FC = () => {
                               changeData={filterComboBoxChange}
                               valueField="user_id"
                               textField="user_name"
+                              className="required"
                             />
                           )}
                         </td>
                         <th>계획구분</th>
                         <td>
-                          {customOptionData !== null && (
-                            <CustomOptionRadioGroup
+                          {bizComponentData !== null && (
+                            <BizComponentRadioGroup
                               name="rdoplandiv"
-                              customOptionData={customOptionData}
+                              value={schedulerFilter.rdoplandiv}
+                              bizComponentId="R_PLANDIV_YN"
+                              bizComponentData={bizComponentData}
                               changeData={filterRadioChange}
                             />
                           )}
@@ -1370,23 +1496,15 @@ const CM_A1600: React.FC = () => {
                             </td>
                             <th>완료</th>
                             <td>
-                              {customOptionData !== null && (
-                                <CommonRadioGroup
+                              {bizComponentData !== null && (
+                                <BizComponentRadioGroup
                                   name="rdofinyn"
-                                  customOptionData={customOptionData}
-                                  changeData={filterRadioChange}
+                                  value={todoFilter.rdofinyn}
+                                  bizComponentId="R_YN"
+                                  bizComponentData={bizComponentData}
+                                  changeData={filterRadioChange2}
                                 />
                               )}
-                              {bizComponentData !== null &&
-                                customOptionData === null && (
-                                  <BizComponentRadioGroup
-                                    name="rdofinyn"
-                                    value={todoFilter.rdofinyn}
-                                    bizComponentId="R_YN"
-                                    bizComponentData={bizComponentData}
-                                    changeData={filterRadioChange}
-                                  />
-                                )}
                             </td>
                           </tr>
                         </tbody>
@@ -1502,7 +1620,7 @@ const CM_A1600: React.FC = () => {
             </GridContainerWrap>
           </GridContainerWrap>
         </TabStripTab>
-        {/* <TabStripTab title="전체 스케줄러">
+        <TabStripTab title="전체 스케줄러">
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -1514,10 +1632,10 @@ const CM_A1600: React.FC = () => {
                       value={number}
                       onChange={(e: any) =>
                         setNumber(
-                          e.target.value == undefined ||
-                            e.target.value == null ||
-                            e.target.value == ""
-                            ? 0
+                          e.value == undefined ||
+                            e.value == null ||
+                            e.value == ""
+                            ? 1
                             : e.target.value
                         )
                       }
@@ -1528,15 +1646,34 @@ const CM_A1600: React.FC = () => {
                     <NumericTextBox
                       name="number2"
                       value={number2}
-                      onChange={(e: any) =>
-                        setNumber2(
-                          e.target.value == undefined ||
-                            e.target.value == null ||
-                            e.target.value == ""
-                            ? 0
-                            : e.target.value
-                        )
-                      }
+                      onChange={(e: any) => {
+                        if (
+                          !(
+                            e.value == undefined ||
+                            e.value == null ||
+                            e.value == ""
+                          )
+                        ) {
+                          if (e.target.value > 24) {
+                            alert("최대값은 24입니다.");
+                            setNumber2(24);
+                          } else if (e.target.value < 0) {
+                            alert("최소값은 1입니다.");
+                            setNumber2(1);
+                          } else {
+                            setNumber2(
+                              e.value == undefined ||
+                                e.value == null ||
+                                e.value == ""
+                                ? 1
+                                : e.target.value
+                            );
+                          }
+                        } else {
+                          setNumber2(1);
+                        }
+                      }}
+                      placeholder="1~24사이로 입력해주세요."
                     />
                   </td>
                   <th>부서</th>
@@ -1544,7 +1681,7 @@ const CM_A1600: React.FC = () => {
                     {customOptionData !== null && (
                       <CustomOptionComboBox
                         name="dptcd"
-                        value={schedulerFilter.dptcd}
+                        value={schedulerFilter2.dptcd}
                         customOptionData={customOptionData}
                         changeData={filterComboBoxChange}
                         textField="dptnm"
@@ -1554,11 +1691,13 @@ const CM_A1600: React.FC = () => {
                   </td>
                   <th>계획구분</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionRadioGroup
-                        name="rdoplandiv"
-                        customOptionData={customOptionData}
-                        changeData={filterRadioChange}
+                    {bizComponentData !== null && (
+                      <BizComponentRadioGroup
+                        name="rdoplandiv2"
+                        value={schedulerFilter2.rdoplandiv2}
+                        bizComponentId="R_PLANDIV_YN"
+                        bizComponentData={bizComponentData}
+                        changeData={filterRadioChange3}
                       />
                     )}
                   </td>
@@ -1569,29 +1708,16 @@ const CM_A1600: React.FC = () => {
           <GridContainer>
             <Scheduler
               height={"77vh"}
-              data={schedulerDataResult}
+              data={schedulerDataResult2}
               defaultDate={displayDate}
               group={{
-                resources: ["dptcd", "person"],
+                resources: ["person"],
                 orientation,
               }}
               resources={[
                 {
-                  name: "dptcd",
-                  data: dptcdListData.map((item) => ({
-                    text: item.dptnm,
-                    value: item.dptcd,
-                  })),
-                  field: "dptcd",
-                  valueField: "value",
-                  textField: "text",
-                },
-                {
                   name: "person",
-                  data: userListData.map((item) => ({
-                    text: item.user_name,
-                    value: item.user_id,
-                  })),
+                  data: userListData,
                   field: "person",
                   valueField: "value",
                   textField: "text",
@@ -1603,10 +1729,12 @@ const CM_A1600: React.FC = () => {
                 columnWidth={250}
                 slotDuration={number2 * 60}
                 numberOfDays={number}
+                workDayStart={"08:00"}
+                workDayEnd={"22:00"}
               />
             </Scheduler>
           </GridContainer>
-        </TabStripTab> */}
+        </TabStripTab>
       </TabStrip>
     </>
   );
