@@ -629,7 +629,7 @@ const CM_A5000W: React.FC = () => {
         "@p_user_id": filters.user_id,
         "@p_user_name": filters.user_name,
         "@p_customer_code": filters.customer_code,
-        "@p_customernm" : filters.customernm,
+        "@p_customernm" : filters.custnm,
         "@p_find_row_value": filters.find_row_value,
       },
     };
