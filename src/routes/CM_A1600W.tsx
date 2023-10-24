@@ -67,10 +67,6 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
-import {
-  default as CommonRadioGroup,
-  default as CustomOptionRadioGroup,
-} from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { FormWithCustomEditor } from "../components/custom-form";
 import { CustomEditItem } from "../custom-item";
@@ -286,11 +282,15 @@ const CM_A1600: React.FC = () => {
     person: userId,
     rdoplandiv2: "Y",
     dptcd: "",
+    number: 7,
+    number2: 24,
+    width: 250,
     isSearch: true,
   });
 
   const [number, setNumber] = useState(7);
   const [number2, setNumber2] = useState(24);
+  const [width, setWidth] = useState(250);
 
   let gridRef: any = useRef(null);
 
@@ -532,7 +532,7 @@ const CM_A1600: React.FC = () => {
       })); // 한번만 조회되도록
       fetchScheduler(deepCopiedFilters);
     }
-  }, [schedulerFilter]);
+  }, [schedulerFilter.isSearch]);
 
   useEffect(() => {
     if (schedulerFilter2.isSearch == true && permissions !== null) {
@@ -1353,6 +1353,9 @@ const CM_A1600: React.FC = () => {
           setSchedulerFilter2((prev) => ({
             ...prev,
             isSearch: true,
+            number: number,
+            width: width,
+            number2: number2,
           }));
         }
       } else {
@@ -1368,6 +1371,9 @@ const CM_A1600: React.FC = () => {
         }));
         setSchedulerFilter2((prev) => ({
           ...prev,
+          number: number,
+          width: width,
+          number2: number2,
           isSearch: true,
         }));
       }
@@ -1630,15 +1636,17 @@ const CM_A1600: React.FC = () => {
                     <NumericTextBox
                       name="number"
                       value={number}
-                      onChange={(e: any) =>
-                        setNumber(
-                          e.value == undefined ||
+                      onChange={(e: any) => {
+                        if (
+                          !(
+                            e.value == undefined ||
                             e.value == null ||
                             e.value == ""
-                            ? 1
-                            : e.target.value
-                        )
-                      }
+                          )
+                        ) {
+                          setNumber(e.target.value);
+                        }
+                      }}
                     />
                   </td>
                   <th>시간간격</th>
@@ -1661,19 +1669,31 @@ const CM_A1600: React.FC = () => {
                             alert("최소값은 1입니다.");
                             setNumber2(1);
                           } else {
-                            setNumber2(
-                              e.value == undefined ||
-                                e.value == null ||
-                                e.value == ""
-                                ? 1
-                                : e.target.value
-                            );
+                            setNumber2(e.target.value);
                           }
                         } else {
                           setNumber2(1);
                         }
                       }}
                       placeholder="1~24사이로 입력해주세요."
+                    />
+                  </td>
+                  <th>열 너비</th>
+                  <td>
+                    <NumericTextBox
+                      name="width"
+                      value={width}
+                      onChange={(e: any) => {
+                        if (
+                          !(
+                            e.value == undefined ||
+                            e.value == null ||
+                            e.value == ""
+                          )
+                        ) {
+                          setWidth(e.target.value);
+                        }
+                      }}
                     />
                   </td>
                   <th>부서</th>
@@ -1726,11 +1746,9 @@ const CM_A1600: React.FC = () => {
               item={CustomItem}
             >
               <TimelineView
-                columnWidth={250}
-                slotDuration={number2 * 60}
-                numberOfDays={number}
-                workDayStart={"08:00"}
-                workDayEnd={"22:00"}
+                columnWidth={schedulerFilter2.width}
+                slotDuration={schedulerFilter2.number2 * 60}
+                numberOfDays={schedulerFilter2.number}
               />
             </Scheduler>
           </GridContainer>

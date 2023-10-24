@@ -251,6 +251,7 @@ const CM_A5001W: React.FC = () => {
     setFilters((prev: any) => {
       return {
         ...prev,
+        customer_code: data.custcd,
         custnm: data.custnm,
       };
     });
@@ -548,6 +549,7 @@ const CM_A5001W: React.FC = () => {
         "@p_user_id": filters.user_id,
         "@p_user_name": filters.user_name,
         "@p_customer_code": filters.customer_code,
+        "@p_customernm": filters.custnm,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -655,6 +657,7 @@ const CM_A5001W: React.FC = () => {
         "@p_user_id": "",
         "@p_user_name": "",
         "@p_customer_code": "",
+        "@p_customernm": "",
         "@p_find_row_value": "",
       },
     };

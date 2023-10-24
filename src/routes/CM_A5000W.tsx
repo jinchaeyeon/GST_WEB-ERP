@@ -151,7 +151,7 @@ const CM_A5000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb1")
+        dtgb1: defaultOption.find((item: any) => item.id === "dtgb1")
         .valueCode,
         isSearch: true,
       }));
@@ -544,7 +544,7 @@ const CM_A5000W: React.FC = () => {
     document_id: "",
     frdt: new Date(),
     todt: new Date(),
-    dtgb: "",
+    dtgb1: "",
     status: [{ sub_code: "001", code_name: "컨설팅 요청"}],
     medicine_type: [],
     custcd: "",
@@ -621,7 +621,7 @@ const CM_A5000W: React.FC = () => {
       parameters: {
         "@p_work_type": filters.workType,
         "@p_document_id": filters.document_id,
-        "@p_dtgb": filters.dtgb,
+        "@p_dtgb": filters.dtgb1,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_status": status,
@@ -629,6 +629,7 @@ const CM_A5000W: React.FC = () => {
         "@p_user_id": filters.user_id,
         "@p_user_name": filters.user_name,
         "@p_customer_code": filters.customer_code,
+        "@p_customernm" : filters.customernm,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -1253,7 +1254,7 @@ const CM_A5000W: React.FC = () => {
                         {customOptionData !== null && (
                           <CustomOptionComboBox
                             name="dtgb1"
-                            value={filters.dtgb}
+                            value={filters.dtgb1}
                             customOptionData={customOptionData}
                             changeData={filterComboBoxChange}
                             valueField="code"
