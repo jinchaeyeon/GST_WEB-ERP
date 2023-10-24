@@ -13,7 +13,7 @@ import {
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
@@ -54,7 +54,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B4001W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -73,6 +73,8 @@ const HU_B4001W: React.FC = () => {
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   let grdUse: any = useRef(null);
@@ -303,6 +305,7 @@ const HU_B4001W: React.FC = () => {
         "@p_orgdiv": filters.orgdiv,
         "@p_yyyymmdd": convertDateToStr(filters.ymdFrdt),
         "@p_prsnnum": filters.cboPrsnnum,
+        "@p_company_code": companyCode,
       },
     };
 
@@ -373,6 +376,7 @@ const HU_B4001W: React.FC = () => {
         "@p_orgdiv": usefilters.orgdiv,
         "@p_yyyymmdd": convertDateToStr(filters.ymdFrdt),
         "@p_prsnnum": filters.cboPrsnnum,
+        "@p_company_code": companyCode,
       },
     };
 
@@ -458,6 +462,7 @@ const HU_B4001W: React.FC = () => {
         "@p_orgdiv": adjfilters.orgdiv,
         "@p_yyyymmdd": convertDateToStr(filters.ymdFrdt),
         "@p_prsnnum": filters.cboPrsnnum,
+        "@p_company_code": companyCode,
       },
     };
 
