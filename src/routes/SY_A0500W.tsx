@@ -1071,49 +1071,15 @@ const SY_A0500W: React.FC = () => {
         }
 
         if (data.isSuccess === true) {
-          let data2: any;
-          detailDataResult.data.map(async (item) => {
-            const paraSaved2: Iparameters = {
-              procedureName: "P_SY_A0500W_S",
-              pageNumber: 0,
-              pageSize: 0,
-              parameters: {
-                "@p_work_type": "ins_layout_detail",
-                "@p_orgdiv": information.orgdiv,
-                "@p_location": information.location,
-                "@p_key_value": information.layout_key,
-                "@p_id": information.layout_id,
-                "@p_name": information.layout_name,
-                "@p_col_cnt": information.col_cnt,
-                "@p_row_cnt": information.row_cnt,
-                "@p_icon": item.icon,
-                "@p_caption": item.caption,
-                "@p_form_id": item.form_id,
-                "@p_menu_name": item.menu_name,
-                "@p_col_index": item.col_index,
-                "@p_row_index": item.row_index,
-                "@p_header_guid_s": "",
-                "@p_header_caption_s": "",
-                "@p_detail_guid_s": "",
-                "@p_form_id_s": "",
-                "@p_exec_userid": userId,
-                "@p_exec_pc": pc,
-              },
-            };
-            try {
-              data2 = await processApi<any>("procedure", paraSaved2);
-            } catch (error) {
-              data2 = null;
-            }
-          });
-
-          if (data.isSuccess === true) {
-            setFilters((prev) => ({
-              ...prev,
-              find_row_value: data.returnString,
-              isSearch: true,
-            }));
+          for (let i = 0; i < detailDataResult.data.length; i++) {
+            await SaveDetail(detailDataResult.data[i]);
           }
+
+          setFilters((prev) => ({
+            ...prev,
+            find_row_value: data.returnString,
+            isSearch: true,
+          }));
         } else {
           console.log("[오류 발생]");
           console.log(data);
@@ -1199,6 +1165,42 @@ const SY_A0500W: React.FC = () => {
     }
   };
 
+  const SaveDetail = async (item: any) => {
+    let data2: any;
+
+    const paraSaved2: Iparameters = {
+      procedureName: "P_SY_A0500W_S",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": "ins_layout_detail",
+        "@p_orgdiv": information.orgdiv,
+        "@p_location": information.location,
+        "@p_key_value": information.layout_key,
+        "@p_id": information.layout_id,
+        "@p_name": information.layout_name,
+        "@p_col_cnt": information.col_cnt,
+        "@p_row_cnt": information.row_cnt,
+        "@p_icon": item.icon,
+        "@p_caption": item.caption,
+        "@p_form_id": item.form_id,
+        "@p_menu_name": item.menu_name,
+        "@p_col_index": item.col_index,
+        "@p_row_index": item.row_index,
+        "@p_header_guid_s": "",
+        "@p_header_caption_s": "",
+        "@p_detail_guid_s": "",
+        "@p_form_id_s": "",
+        "@p_exec_userid": userId,
+        "@p_exec_pc": pc,
+      },
+    };
+    try {
+      data2 = await processApi<any>("procedure", paraSaved2);
+    } catch (error) {
+      data2 = null;
+    }
+  };
   return (
     <>
       <TitleContainer>
