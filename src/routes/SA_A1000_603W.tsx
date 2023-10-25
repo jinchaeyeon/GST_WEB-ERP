@@ -603,6 +603,7 @@ const SA_A1000_603W: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           find_row_value: queryParams.get("go") as string,
+          isSearch: true,
         }));
       } else {
         setFilters((prev) => ({
