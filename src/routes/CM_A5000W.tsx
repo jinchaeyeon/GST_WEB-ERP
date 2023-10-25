@@ -833,7 +833,7 @@ const CM_A5000W: React.FC = () => {
     };
 
     try {
-      data = await processApi<any>("meeting-query", para);
+      data = await processApi<any>("html-query", para);
     } catch (error) {
       data = null;
     }
@@ -852,7 +852,7 @@ const CM_A5000W: React.FC = () => {
         };
 
         try {
-          data1 = await processApi<any>("meeting-query", para1);
+          data1 = await processApi<any>("html-query", para1);
         } catch (error) {
           data1 = null;
         }
@@ -1135,11 +1135,13 @@ const CM_A5000W: React.FC = () => {
         ? bytesToBase64(bytes(reference))
         : bytesToBase64(bytes(editorContent));
 
-    const para = {
+    const parameters = {
+      folder: "html-doc?folder=" +
+              "CM_A5000W",
       procedureName: "P_CM_A5000W_S",
       pageNumber: 0,
       pageSize: 0,
-      parameters: {
+      parameters : {
         "@p_work_type": paraDataSaved.workType,
         "@p_document_id": paraDataSaved.document_id,
         "@p_cpmnum": paraDataSaved.cpmnum,
@@ -1160,10 +1162,10 @@ const CM_A5000W: React.FC = () => {
         "@p_pc": paraDataSaved.pc,
       },
       fileBytes: convertedEditorContent,
-    };
-
+    }
+    
     try {
-      data = await processApi<any>("Question-save", para);
+      data = await processApi<any>("html-save", parameters);
     } catch (error) {
       data = null;
     }

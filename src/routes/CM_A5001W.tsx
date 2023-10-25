@@ -724,7 +724,7 @@ const CM_A5001W: React.FC = () => {
     };
     
     try {
-      data = await processApi<any>("meeting-query", para);
+      data = await processApi<any>("html-query", para);
     } catch (error) {
       data = null;
     }
@@ -756,7 +756,7 @@ const CM_A5001W: React.FC = () => {
         };
 
         try {
-          data1 = await processApi<any>("meeting-query", para1);
+          data1 = await processApi<any>("html-query", para1);
         } catch (error) {
           data1 = null;
         }
@@ -988,7 +988,9 @@ const CM_A5001W: React.FC = () => {
     const bytes = require("utf8-bytes");
     const convertedEditorContent = bytesToBase64(bytes(editorContent));
 
-    const para = {
+    const parameters = {
+      folder: "html-doc?folder="+
+              "CM_A5001W",
       procedureName: "P_CM_A5001W_S",
       pageNumber: 0,
       pageSize: 0,
@@ -996,15 +998,16 @@ const CM_A5001W: React.FC = () => {
         "@p_work_type": paraDataSaved.workType,
         "@p_document_id": paraDataSaved.document_id,
         "@p_document_id_Q": paraDataSaved.document_id_Q,  // 요청 문서 ID
-	      "@p_attdatnum": paraDataSaved.attdatnum,
+        "@p_attdatnum": paraDataSaved.attdatnum,
         "@p_userid": userId,
         "@p_pc": paraDataSaved.pc,
       },
       fileBytes: convertedEditorContent,
-    };
+    }
+    
 
     try {
-      data = await processApi<any>("Answer-save", para);
+      data = await processApi<any>("html-save", parameters);
     } catch (error) {
       data = null;
     }
