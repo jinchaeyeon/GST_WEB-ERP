@@ -51,6 +51,7 @@ import { gridList } from "../store/columns/SA_A1100_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 import { bytesToBase64 } from "byte-base64";
+import { useHistory, useLocation } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import TopButtons from "../components/Buttons/TopButtons";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
@@ -524,17 +525,29 @@ const SA_A1100_603W: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
+  const history = useHistory();
+  const location = useLocation();
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
+      const queryParams = new URLSearchParams(location.search);
       const defaultOption = GetPropertyValueByName(
         customOptionData.menuCustomDefaultOptions,
         "query"
       );
-
-      setFilters((prev) => ({
-        ...prev,
-      }));
+      if (queryParams.has("go")) {
+        history.replace({}, "");
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: true,
+          find_row_value: queryParams.get("go") as string,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+        }));
+      }
     }
   }, [customOptionData]);
 

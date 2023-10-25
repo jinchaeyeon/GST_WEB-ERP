@@ -1,85 +1,99 @@
-import React, { useCallback, useEffect } from "react";
-import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import { 
-  ButtonContainer, 
-  ButtonInInput, 
-  FilterBox, 
-  FormBox, 
-  FormBoxWrap, 
-  GridContainer, 
-  GridContainerWrap, 
-  GridTitle, 
-  GridTitleContainer, 
-  StatusIcon, 
-  Title, 
-  TitleContainer 
-} from "../CommonStyled";
-import FilterContainer from "../components/Containers/FilterContainer";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
-import { useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { deletedAttadatnumsState, isLoading, unsavedAttadatnumsState } from "../store/atoms";
-import { useApi } from "../hooks/api";
-import { 
-  GetPropertyValueByName, 
-  UseBizComponent, 
-  UseCustomOption, 
-  UseGetValueFromSessionItem, 
-  UseMessages, 
-  UseParaPc, 
-  UsePermissions, 
-  convertDateToStr, 
-  findMessage, 
-  getGridItemChangedData, 
-  getQueryFromBizComponent, 
-  handleKeyPressSearch, 
-  setDefaultDate, 
-  toDate,
-  useSysMessage
-} from "../components/CommonFunction";
-import { 
-  COM_CODE_DEFAULT_VALUE, 
-  EDIT_FIELD, 
-  GAP, PAGE_SIZE, 
-  SELECTED_FIELD 
-} from "../components/CommonString";
-import { Iparameters, TColumn, TEditorHandle, TGrid, TPermissions } from "../store/types";
-import { gridList } from "../store/columns/CM_A5000W_C";
-import TopButtons from "../components/Buttons/TopButtons";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { Button } from "@progress/kendo-react-buttons";
-import { IAttachmentData, ICustData } from "../hooks/interfaces";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
-import { 
-  Grid, 
-  GridCellProps, 
-  GridColumn, 
-  GridDataStateChangeEvent, 
-  GridFooterCellProps, 
-  GridItemChangeEvent, 
-  GridPageChangeEvent, 
-  GridRowDoubleClickEvent, 
-  GridSelectionChangeEvent, 
-  getSelectedState 
-} from "@progress/kendo-react-grid";
-import DateCell from "../components/Cells/DateCell";
-import { bytesToBase64 } from "byte-base64";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
+import {
+  MultiSelect,
+  MultiSelectChangeEvent,
+} from "@progress/kendo-react-dropdowns";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
+import {
+  Grid,
+  GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
+  GridRowDoubleClickEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
+import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  ButtonContainer,
+  ButtonInInput,
+  FilterBox,
+  FormBox,
+  FormBoxWrap,
+  GridContainer,
+  GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
+  StatusIcon,
+  Title,
+  TitleContainer,
+} from "../CommonStyled";
+import TopButtons from "../components/Buttons/TopButtons";
+import DateCell from "../components/Cells/DateCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  UsePermissions,
+  convertDateToStr,
+  findMessage,
+  getGridItemChangedData,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+  setDefaultDate,
+  toDate,
+  useSysMessage,
+} from "../components/CommonFunction";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import RichEditor from "../components/RichEditor";
-import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
-import { MultiSelect, MultiSelectChangeEvent } from "@progress/kendo-react-dropdowns";
 import CopyWindow from "../components/Windows/CM_A5000W_Copy_Window";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
+import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
+import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import { useApi } from "../hooks/api";
+import { IAttachmentData, ICustData } from "../hooks/interfaces";
+import {
+  deletedAttadatnumsState,
+  isLoading,
+  unsavedAttadatnumsState,
+} from "../store/atoms";
+import { gridList } from "../store/columns/CM_A5000W_C";
+import {
+  Iparameters,
+  TColumn,
+  TEditorHandle,
+  TGrid,
+  TPermissions,
+} from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 let reference = "";
-const DateField = [ "request_date", "finexpdt", "completion_date" ];
-const StatusField = [ "status" ];
+const DateField = ["request_date", "finexpdt", "completion_date"];
+const StatusField = ["status"];
 
 interface IUser {
   user_id: string;
@@ -142,19 +156,37 @@ const CM_A5000W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-
+  const history = useHistory();
+  const location = useLocation();
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
-      setFilters((prev) => ({
-        ...prev,
-        frdt: setDefaultDate(customOptionData, "frdt"),
-        todt: setDefaultDate(customOptionData, "todt"),
-        dtgb1: defaultOption.find((item: any) => item.id === "dtgb1")
-        .valueCode,
-        isSearch: true,
-      }));
+      const queryParams = new URLSearchParams(location.search);
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
+      if (queryParams.has("go")) {
+        history.replace({}, "");
+        setFilters((prev) => ({
+          ...prev,
+          frdt: setDefaultDate(customOptionData, "frdt"),
+          todt: setDefaultDate(customOptionData, "todt"),
+          dtgb1: defaultOption.find((item: any) => item.id === "dtgb1")
+            .valueCode,
+          isSearch: true,
+          find_row_value: queryParams.get("go") as string,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          frdt: setDefaultDate(customOptionData, "frdt"),
+          todt: setDefaultDate(customOptionData, "todt"),
+          dtgb1: defaultOption.find((item: any) => item.id === "dtgb1")
+            .valueCode,
+          isSearch: true,
+        }));
+      }
     }
   }, [customOptionData]);
 
@@ -163,17 +195,25 @@ const CM_A5000W: React.FC = () => {
   UseBizComponent("L_CM500_603, L_CM501_603", setBizComponentData);
   //상태, 의약품상세분류
 
-  const [statusListData, setStatusListData] = React.useState([COM_CODE_DEFAULT_VALUE]);
-  const [meditypeListData, setMeditypeListData] = React.useState([COM_CODE_DEFAULT_VALUE]);
+  const [statusListData, setStatusListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [meditypeListData, setMeditypeListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
 
   useEffect(() => {
-    if (bizComponentData !== null ) {
+    if (bizComponentData !== null) {
       const statusQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_CM500_603")
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_CM500_603"
+        )
       );
 
       const meditypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_CM501_603")
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_CM501_603"
+        )
       );
 
       fetchQueryData(statusQueryStr, setStatusListData);
@@ -205,7 +245,7 @@ const CM_A5000W: React.FC = () => {
     },
     []
   );
-  
+
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -339,7 +379,6 @@ const CM_A5000W: React.FC = () => {
     });
   };
 
-
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -365,7 +404,11 @@ const CM_A5000W: React.FC = () => {
   };
 
   const getAttachmentsAData = (data: IAttachmentData) => {
-    if (!(detailDataResult.data.length == 0 ? "" : detailDataResult.data[0].attdatnum)) {
+    if (
+      !(detailDataResult.data.length == 0
+        ? ""
+        : detailDataResult.data[0].attdatnum)
+    ) {
       setUnsavedAttadatnums([data.attdatnum]);
     }
 
@@ -391,7 +434,7 @@ const CM_A5000W: React.FC = () => {
       if (mainDataResult.data.length == 0) {
         alert("요약정보 데이터가 없습니다.");
         return false;
-      };
+      }
       const selectedRowData = mainDataResult.data.filter(
         (item) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -545,7 +588,7 @@ const CM_A5000W: React.FC = () => {
     frdt: new Date(),
     todt: new Date(),
     dtgb1: "",
-    status: [{ sub_code: "001", code_name: "컨설팅 요청"}],
+    status: [{ sub_code: "001", code_name: "컨설팅 요청" }],
     medicine_type: [],
     custcd: "",
     custnm: "",
@@ -591,7 +634,7 @@ const CM_A5000W: React.FC = () => {
     let str = "";
     data.map((item: { sub_code: string }) => (str += item.sub_code + "|"));
     return data.length > 0 ? str.slice(0, -1) : str;
-  };
+  }
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
@@ -629,7 +672,7 @@ const CM_A5000W: React.FC = () => {
         "@p_user_id": filters.user_id,
         "@p_user_name": filters.user_name,
         "@p_customer_code": filters.customer_code,
-        "@p_customernm" : filters.custnm,
+        "@p_customernm": filters.custnm,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -648,8 +691,7 @@ const CM_A5000W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) =>
-              row.document_id == filters.find_row_value
+            (row: any) => row.document_id == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -678,8 +720,7 @@ const CM_A5000W: React.FC = () => {
           filters.find_row_value == ""
             ? rows[0]
             : rows.find(
-                (row: any) =>
-                  row.document_id == filters.find_row_value
+                (row: any) => row.document_id == filters.find_row_value
               );
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -781,11 +822,11 @@ const CM_A5000W: React.FC = () => {
     let data: any;
     let data1: any;
     setLoading(true);
-    
+
     if (mainDataResult.total < 0) {
       return false;
     }
-    
+
     const para = {
       folder: "CM_A5000W",
       id: key.document_id,
@@ -824,10 +865,10 @@ const CM_A5000W: React.FC = () => {
         } else {
           setHtmlOnEditor({ document: "", type: "Answer" });
         }
-      }  
+      }
     } else {
-        setHtmlOnEditor({ document: "", type: "Question" });
-        setHtmlOnEditor({ document: "", type: "Answer" });
+      setHtmlOnEditor({ document: "", type: "Question" });
+      setHtmlOnEditor({ document: "", type: "Answer" });
     }
     setLoading(false);
   };
@@ -918,8 +959,8 @@ const CM_A5000W: React.FC = () => {
     }
   };
 
-   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
-   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
+  //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
+  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
 
@@ -964,7 +1005,7 @@ const CM_A5000W: React.FC = () => {
     const selectedRowData = mainDataResult.data.find(
       (item) => item[DATA_ITEM_KEY] == event.dataItem.num
     );
-    
+
     setSelectedState({ [selectedRowData[DATA_ITEM_KEY]]: true });
     setDetailDataResult(process([], detailDataState));
     setTabSelected(1);
@@ -1089,10 +1130,10 @@ const CM_A5000W: React.FC = () => {
       editorContent = docEditorRef.current.getContent();
     }
     const bytes = require("utf8-bytes");
-    const convertedEditorContent = 
-      workType == "D" 
+    const convertedEditorContent =
+      workType == "D"
         ? bytesToBase64(bytes(reference))
-        : bytesToBase64(bytes(editorContent))
+        : bytesToBase64(bytes(editorContent));
 
     const para = {
       procedureName: "P_CM_A5000W_S",
@@ -1101,18 +1142,18 @@ const CM_A5000W: React.FC = () => {
       parameters: {
         "@p_work_type": paraDataSaved.workType,
         "@p_document_id": paraDataSaved.document_id,
-	      "@p_cpmnum": paraDataSaved.cpmnum,
-	      "@p_request_date": paraDataSaved.request_date,
-	      "@p_finexpdt": paraDataSaved.finexpdt,
-	      "@p_require_type": paraDataSaved.require_type,
-	      "@p_completion_method": paraDataSaved.completion_method,
-	      "@p_medicine_type": paraDataSaved.medicine_type,
-	      "@p_status": paraDataSaved.status,
+        "@p_cpmnum": paraDataSaved.cpmnum,
+        "@p_request_date": paraDataSaved.request_date,
+        "@p_finexpdt": paraDataSaved.finexpdt,
+        "@p_require_type": paraDataSaved.require_type,
+        "@p_completion_method": paraDataSaved.completion_method,
+        "@p_medicine_type": paraDataSaved.medicine_type,
+        "@p_status": paraDataSaved.status,
         "@p_customer_code": paraDataSaved.customer_code,
-	      "@p_title": paraDataSaved.title,
+        "@p_title": paraDataSaved.title,
         "@p_is_emergency": paraDataSaved.is_emergency,
         "@p_testnum": paraDataSaved.testnum,
-	      "@p_attdatnum": paraDataSaved.attdatnum,
+        "@p_attdatnum": paraDataSaved.attdatnum,
         "@p_user_id_sm": paraDataSaved.userid,
         "@p_user_name": paraDataSaved.username,
         "@p_userid": userId,
@@ -1137,7 +1178,7 @@ const CM_A5000W: React.FC = () => {
           (item) =>
             item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
         )[0];
-        
+
         fetchHtmlDocument(selectedRowData);
       }
 
@@ -1206,7 +1247,7 @@ const CM_A5000W: React.FC = () => {
       alert("데이터가 없습니다.");
     } else if (selectRows.ref_document_id != "") {
       alert("답변이 존재하는 요청 건은 삭제할 수 없습니다.");
-   } else {
+    } else {
       fetchHtmlDocument(selectRows);
       setWorkType("D");
       setParaDataSaved((prev) => ({
@@ -1216,7 +1257,7 @@ const CM_A5000W: React.FC = () => {
         atttdatnum: selectRows.attdatnum,
       }));
     }
-  }; 
+  };
 
   return (
     <>
@@ -1237,7 +1278,7 @@ const CM_A5000W: React.FC = () => {
         onSelect={handleSelectTab}
         style={{ width: "100%" }}
       >
-        <TabStripTab title = "요약정보">
+        <TabStripTab title="요약정보">
           <GridContainerWrap>
             <GridContainer width="22%">
               <FilterContainer>
@@ -1351,7 +1392,7 @@ const CM_A5000W: React.FC = () => {
                 </FilterBox>
               </FilterContainer>
             </GridContainer>
-            <GridContainer  width={`calc(88% - ${GAP}px)`}>
+            <GridContainer width={`calc(88% - ${GAP}px)`}>
               <ExcelExport
                 data={mainDataResult.data}
                 ref={(exporter) => {
@@ -1461,7 +1502,7 @@ const CM_A5000W: React.FC = () => {
           </GridContainerWrap>
         </TabStripTab>
 
-        <TabStripTab 
+        <TabStripTab
           title="상세정보"
           disabled={
             mainDataResult.data.length == 0 && workType == "" ? true : false
@@ -1637,7 +1678,9 @@ const CM_A5000W: React.FC = () => {
                           <Checkbox
                             title="긴급"
                             name="is_emergency"
-                            value={information.is_emergency == "Y" ? true : false}
+                            value={
+                              information.is_emergency == "Y" ? true : false
+                            }
                             onChange={CheckChange}
                           />
                         </td>
@@ -1658,9 +1701,9 @@ const CM_A5000W: React.FC = () => {
                   </FormBox>
                 </FormBoxWrap>
               </GridContainer>
-              <GridContainer 
-                height = "37.5vh" 
-                style = {{ border: "2px solid #2289c3" }}
+              <GridContainer
+                height="37.5vh"
+                style={{ border: "2px solid #2289c3" }}
               >
                 <RichEditor id="docEditor" ref={docEditorRef} hideTools />
               </GridContainer>
@@ -1668,7 +1711,7 @@ const CM_A5000W: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th style={{ width: isMobile ? "" :  "15%" }}>첨부파일</th>
+                      <th style={{ width: isMobile ? "" : "15%" }}>첨부파일</th>
                       <td>
                         <div className="filter-item-wrap">
                           <Input
@@ -1701,12 +1744,16 @@ const CM_A5000W: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
-                    <th style={{ width: isMobile ? "" :  "15%" }}>첨부파일</th>
+                      <th style={{ width: isMobile ? "" : "15%" }}>첨부파일</th>
                       <td>
                         <div className="filter-item-wrap">
                           <Input
                             name="files"
-                            value={detailDataResult.data.length == 0 ? "" : detailDataResult.data[0].files}
+                            value={
+                              detailDataResult.data.length == 0
+                                ? ""
+                                : detailDataResult.data[0].files
+                            }
                             className="readonly"
                           />
                           <ButtonInInput>
@@ -1770,7 +1817,11 @@ const CM_A5000W: React.FC = () => {
         <AttachmentsWindow
           setVisible={setAttachmentsAWindowVisible}
           setData={getAttachmentsAData}
-          para={detailDataResult.data.length == 0 ? "" : detailDataResult.data[0].attdatnum}
+          para={
+            detailDataResult.data.length == 0
+              ? ""
+              : detailDataResult.data[0].attdatnum
+          }
           modal={true}
           permission={{ upload: false, download: true, delete: false }}
         />
