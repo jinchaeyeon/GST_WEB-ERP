@@ -16,6 +16,7 @@ import FilterContainer from "../Containers/FilterContainer";
 import { Input } from "@progress/kendo-react-inputs";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import { bytesToBase64 } from "byte-base64";
+import DateCell from "../Cells/DateCell";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -394,7 +395,7 @@ const KendoWindow = ({
     const origin = window.location.origin;
     window.open(
       origin +
-        `/SA_A1000_603?go=` +
+        `/SA_A1000_603W?go=` +
         selectedRowData.quonum +
         "-" +
         selectedRowData.quorev
@@ -549,13 +550,27 @@ const KendoWindow = ({
           />
           <GridColumn field = "quotype" title = "견적형태" width = "120px"/>
           <GridColumn field = "quosts" title = "견적상태" width = "120px"/>
-          <GridColumn field = "quodt" title = "견적일자" width = "120px"/>
+          <GridColumn 
+            field = "quodt" 
+            title = "견적일자" 
+            width = "120px"
+            cell = {DateCell}  
+          />
           <GridColumn field = "person" title = "담당자" width = "120px"/>
           <GridColumn field = "dptcd" title = "부서코드" width = "120px"/>
           <GridColumn field = "chkperson" title = "CS담당자" width = "120px"/>
           <GridColumn field = "custnm" title = "업체명" width = "120px"/>
-          <GridColumn field = "materialtype" title = "물질분류" width = "120px"/>
-          <GridColumn field = "materialindt" title = "물질입고예상일" width = "120px"/>
+          <GridColumn 
+            field = "materialtype" 
+            title = "물질분류" 
+            width = "120px"
+          />
+          <GridColumn 
+            field = "materialindt" 
+            title = "물질입고예상일" 
+            width = "120px"
+            cell = {DateCell}  
+          />
         </Grid>
         <BottomContainer>
           <ButtonContainer>
