@@ -12,7 +12,7 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import {
   Checkbox,
@@ -53,6 +53,7 @@ import YearDateCell from "../components/Cells/YearDateCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -67,7 +68,6 @@ import {
   handleKeyPressSearch,
   isValidDate,
   useSysMessage,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -87,9 +87,11 @@ import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
   loginResultState,
   unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -209,11 +211,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {isInEdit ? (
-        <Input value={value} onChange={handleChange} type="text" />
-      ) : (
-        value
-      )}
+      {value}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -267,6 +265,10 @@ const BA_A0020: React.FC = () => {
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
+
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
@@ -283,7 +285,10 @@ const BA_A0020: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
@@ -394,8 +399,6 @@ const BA_A0020: React.FC = () => {
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
-    useState<boolean>(false);
-  const [attachmentsWindowVisible2, setAttachmentsWindowVisible2] =
     useState<boolean>(false);
 
   const [zipCodeWindowVisible, setZipCodeWindowVisibile] =
@@ -1175,7 +1178,12 @@ const BA_A0020: React.FC = () => {
     setyn(true);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "U",
@@ -1500,7 +1508,7 @@ const BA_A0020: React.FC = () => {
       seq: 0,
       totasset: 0,
       totcapital: 0,
-      yyyy: "",
+      yyyy: new Date(),
       rowstatus: "N",
     };
     setSelectedsubDataState2({ [newDataItem[SUB_DATA_ITEM_KEY2]]: true });
@@ -1532,7 +1540,29 @@ const BA_A0020: React.FC = () => {
     if (unsavedAttadatnums.length > 0) {
       setDeletedAttadatnums(unsavedAttadatnums);
     }
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
 
+    if (e.selected == 0) {
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: Object.getOwnPropertyNames(selectedState)[0],
+        isSearch: true,
+      }));
+    } else {
+      setsubFilters((prev) => ({
+        ...prev,
+        workType: "MONEY",
+        isSearch: true,
+      }));
+
+      setsubFilters2((prev) => ({
+        ...prev,
+        workType: "CustPerson",
+        isSearch: true,
+      }));
+    }
     setTabSelected(e.selected);
   };
 
@@ -1557,31 +1587,9 @@ const BA_A0020: React.FC = () => {
     }));
   };
 
-  const getAttachmentsData2 = (data: IAttachmentData) => {
-    const datas = subDataResult.data.map((item: any) =>
-      item.num == rows
-        ? {
-            ...item,
-            attdatnum: data.attdatnum,
-            files:
-              data.original_name +
-              (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
-            rowstatus: item.rowstatus == "N" ? "N" : "U",
-          }
-        : { ...item }
-    );
-
-    setSubDataResult((prev) => {
-      return {
-        data: datas,
-        total: prev.total,
-      };
-    });
-  };
-
   const getAttachmentsData = (data: IAttachmentData) => {
     if (!infomation.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
+      setUnsavedAttadatnums((prev) => [...prev, data.attdatnum]);
     }
 
     setInfomation((prev) => {
@@ -1622,6 +1630,12 @@ const BA_A0020: React.FC = () => {
     setPage2(initialPageState); // 페이지 초기화
     setPage3(initialPageState); // 페이지 초기화
     resetAllGrid(); // 데이터 초기화
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     setTabSelected(0);
     setyn(true);
@@ -1866,7 +1880,7 @@ const BA_A0020: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-       if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1901,7 +1915,7 @@ const BA_A0020: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -2468,8 +2482,8 @@ const BA_A0020: React.FC = () => {
     try {
       subDataResult2.data.map((item: any) => {
         if (
-          item.yyyy.substring(0, 4) < "1997" ||
-          item.yyyy.substring(0, 4).length != 4
+          convertDateToStr(item.yyyy).substring(0, 4) < "1997" ||
+          convertDateToStr(item.yyyy).substring(0, 4).length != 4
         ) {
           throw findMessage(messagesData, "BA_A0020W_007");
         }
@@ -2520,7 +2534,7 @@ const BA_A0020: React.FC = () => {
       dataArr.rowstatus.push(rowstatus);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(yyyy.substring(0, 4));
+      dataArr.yyyy_s.push(convertDateToStr(yyyy).substring(0, 4));
       dataArr.totasset_s.push(totasset);
       dataArr.paid_up_capital_s.push(paid_up_capital);
       dataArr.totcaptial_s.push(totcapital);
@@ -2638,6 +2652,13 @@ const BA_A0020: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      let array: any[] = [];
+      array.push(infomation.attdatnum);
+      subDataResult.data.map((item) => {
+        array.push(item.attdatnum);
+      });
+
+      setDeletedAttadatnums(array);
       resetAllGrid();
       const isLastDataDeleted =
         mainDataResult.data.length === 1 && filters.pgNum > 0;
@@ -2666,9 +2687,6 @@ const BA_A0020: React.FC = () => {
         pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
         isSearch: true,
       }));
-
-      if (paraDataDeleted.attdatnum)
-        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -2740,9 +2758,8 @@ const BA_A0020: React.FC = () => {
         find_row_value: returnString,
         isSearch: true,
       }));
-
-      // 초기화
       setUnsavedAttadatnums([]);
+      setUnsavedName([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -2766,6 +2783,13 @@ const BA_A0020: React.FC = () => {
       if (paraData.workType == "CustPerson") {
         const isLastDataDeleted =
           subDataResult.data.length == 0 && subfilters.pgNum > 0;
+
+        let array: any[] = [];
+        deletedMainRows.map((item) => {
+          array.push(item.attdatnum);
+        });
+        setDeletedAttadatnums(array);
+
         if (isLastDataDeleted) {
           setPage2({
             skip:
@@ -2792,9 +2816,15 @@ const BA_A0020: React.FC = () => {
             isSearch: true,
           }));
         }
+        setUnsavedAttadatnums([]);
+        setUnsavedName([]);
       } else {
         const isLastDataDeleted =
           subDataResult2.data.length == 0 && subfilters2.pgNum > 1;
+
+        setUnsavedAttadatnums([]);
+        setUnsavedName([]);
+
         if (isLastDataDeleted) {
           setPage3({
             skip:
@@ -2907,8 +2937,6 @@ const BA_A0020: React.FC = () => {
       fetchTodoGridSaved();
     }
   }, [paraData]);
-
-  const [rows, setrows] = useState<number>(0);
 
   const CheckChange = (event: CheckboxChangeEvent) => {
     setyn(event.value);
@@ -3118,6 +3146,17 @@ const BA_A0020: React.FC = () => {
   const [files, setFiles] = useState<string>("");
 
   useEffect(() => {
+    const datas = subDataResult.data.filter(
+      (item) =>
+        item[SUB_DATA_ITEM_KEY] ==
+        Object.getOwnPropertyNames(selectedsubDataState)[0]
+    )[0];
+    if (datas != undefined) {
+      if (datas.attdatnum == "") {
+        setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+      }
+    }
+
     const newData = subDataResult.data.map((item) =>
       item[SUB_DATA_ITEM_KEY] ==
       parseInt(Object.getOwnPropertyNames(selectedsubDataState)[0])
@@ -3131,7 +3170,7 @@ const BA_A0020: React.FC = () => {
             ...item,
           }
     );
-    setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+
     setSubDataResult((prev) => {
       return {
         data: newData,
@@ -4046,9 +4085,6 @@ const BA_A0020: React.FC = () => {
                   data={process(
                     subDataResult2.data.map((row) => ({
                       ...row,
-                      yyyy: row.yyyy
-                        ? new Date(dateformat(row.yyyy))
-                        : new Date(),
                       rowstatus:
                         row.rowstatus == null ||
                         row.rowstatus == "" ||
@@ -4158,13 +4194,6 @@ const BA_A0020: React.FC = () => {
           setData={getZipCodeData}
           para={infomation.zipcode}
           modal={true}
-        />
-      )}
-      {attachmentsWindowVisible2 && (
-        <AttachmentsWindow
-          setVisible={setAttachmentsWindowVisible2}
-          setData={getAttachmentsData2}
-          para={subDataResult.data[rows - 1].attdatnum}
         />
       )}
       {gridList.map((grid: TGrid) =>

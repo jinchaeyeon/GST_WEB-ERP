@@ -274,7 +274,6 @@ const KendoWindow = ({
     const parameters = mainDataResult.data.filter((item) => item.chk == true);
 
     parameters.forEach(async (parameter) => {
-      console.log(parameter);
       try {
         data = await processApi<any>("file-delete", {
           attached: parameter.saved_name,

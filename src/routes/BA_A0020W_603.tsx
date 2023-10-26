@@ -154,8 +154,8 @@ export const FormContext = createContext<{
   files: string;
   setAttdatnum: (d: any) => void;
   setFiles: (d: any) => void;
-  subDataState: State;
-  setSubDataState: (d: any) => void;
+  subDataState2: State;
+  setSubDataState2: (d: any) => void;
   // fetchGrid: (n: number) => any;
 }>({} as any);
 
@@ -207,11 +207,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {isInEdit ? (
-        <Input value={value} onChange={handleChange} type="text" />
-      ) : (
-        value
-      )}
+      {value}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -541,7 +537,7 @@ const BA_A0020_603: React.FC = () => {
 
   const [subfilters, setsubFilters] = useState({
     pgSize: PAGE_SIZE,
-    workType: "CustPerson",
+    workType: "MONEY",
     custcd: infomation.custcd,
     custnm: "",
     custdiv: "B",
@@ -555,7 +551,7 @@ const BA_A0020_603: React.FC = () => {
 
   const [subfilters2, setsubFilters2] = useState({
     pgSize: PAGE_SIZE,
-    workType: "MONEY",
+    workType: "CustPerson",
     custcd: infomation.custcd,
     custnm: "",
     custdiv: "B",
@@ -695,7 +691,7 @@ const BA_A0020_603: React.FC = () => {
 
           setsubFilters((prev) => ({
             ...prev,
-            workType: "CustPerson",
+            workType: "MONEY",
             useyn: selectedRow.useyn,
             custcd: selectedRow.custcd,
             custnm: selectedRow.custnm,
@@ -707,7 +703,7 @@ const BA_A0020_603: React.FC = () => {
 
           setsubFilters2((prev) => ({
             ...prev,
-            workType: "MONEY",
+            workType: "CustPerson",
             useyn: selectedRow.useyn,
             custcd: selectedRow.custcd,
             custnm: selectedRow.custnm,
@@ -775,7 +771,7 @@ const BA_A0020_603: React.FC = () => {
 
           setsubFilters((prev) => ({
             ...prev,
-            workType: "CustPerson",
+            workType: "MONEY",
             useyn: rows[0].useyn,
             custcd: rows[0].custcd,
             custnm: rows[0].custnm,
@@ -787,7 +783,7 @@ const BA_A0020_603: React.FC = () => {
 
           setsubFilters2((prev) => ({
             ...prev,
-            workType: "MONEY",
+            workType: "CustPerson",
             useyn: rows[0].useyn,
             custcd: rows[0].custcd,
             custnm: rows[0].custnm,
@@ -1239,7 +1235,7 @@ const BA_A0020_603: React.FC = () => {
 
     setsubFilters((prev) => ({
       ...prev,
-      workType: "CustPerson",
+      workType: "MONEY",
       useyn: selectedRowData.useyn,
       custcd: selectedRowData.custcd,
       custnm: selectedRowData.custnm,
@@ -1253,7 +1249,7 @@ const BA_A0020_603: React.FC = () => {
 
     setsubFilters2((prev) => ({
       ...prev,
-      workType: "MONEY",
+      workType: "CustPerson",
       useyn: selectedRowData.useyn,
       custcd: selectedRowData.custcd,
       custnm: selectedRowData.custnm,
@@ -1443,7 +1439,7 @@ const BA_A0020_603: React.FC = () => {
       seq: 0,
       totasset: 0,
       totcapital: 0,
-      yyyy: "",
+      yyyy: new Date(),
       rowstatus: "N",
     };
     setSelectedsubDataState({ [newDataItem[SUB_DATA_ITEM_KEY]]: true });
@@ -1511,6 +1507,32 @@ const BA_A0020_603: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+
+    if (e.selected == 0) {
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: Object.getOwnPropertyNames(selectedState)[0],
+        isSearch: true,
+      }));
+    } else {
+      setsubFilters((prev) => ({
+        ...prev,
+        workType: "MONEY",
+        isSearch: true,
+      }));
+
+      setsubFilters2((prev) => ({
+        ...prev,
+        workType: "CustPerson",
+        isSearch: true,
+      }));
+    }
     setTabSelected(e.selected);
   };
 
@@ -2403,8 +2425,8 @@ const BA_A0020_603: React.FC = () => {
     try {
       subDataResult.data.map((item: any) => {
         if (
-          item.yyyy.substring(0, 4) < "1997" ||
-          item.yyyy.substring(0, 4).length != 4
+          convertDateToStr(item.yyyy).substring(0, 4) < "1997" ||
+          convertDateToStr(item.yyyy).substring(0, 4).length != 4
         ) {
           throw findMessage(messagesData, "BA_A0020W_603_006");
         }
@@ -2422,7 +2444,7 @@ const BA_A0020_603: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
- 
+
     if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
     let dataArr: TdataArr2 = {
       rowstatus: [],
@@ -2455,7 +2477,7 @@ const BA_A0020_603: React.FC = () => {
       dataArr.rowstatus.push(rowstatus);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(yyyy.substring(0, 4));
+      dataArr.yyyy_s.push(convertDateToStr(yyyy).substring(0, 4));
       dataArr.totasset_s.push(totasset);
       dataArr.paid_up_capital_s.push(paid_up_capital);
       dataArr.totcaptial_s.push(totcapital);
@@ -2573,6 +2595,12 @@ const BA_A0020_603: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      let array: any[] = [];
+      subDataResult2.data.map((item) => {
+        array.push(item.attdatnum);
+      });
+
+      setDeletedAttadatnums(array);
       resetAllGrid();
       const isLastDataDeleted =
         mainDataResult.data.length === 1 && filters.pgNum > 0;
@@ -2601,7 +2629,9 @@ const BA_A0020_603: React.FC = () => {
         pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
         isSearch: true,
       }));
-
+      if (unsavedName.length > 0) {
+        setDeletedName(unsavedName);
+      }
       if (paraDataDeleted.attdatnum)
         setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
@@ -2652,12 +2682,8 @@ const BA_A0020_603: React.FC = () => {
         find_row_value: returnString,
         isSearch: true,
       }));
-      if (unsavedName.length > 0) {
-        setDeletedName(unsavedName);
-      }
-      if (unsavedAttadatnums.length > 0) {
-        setDeletedAttadatnums(unsavedAttadatnums);
-      }
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -2678,20 +2704,22 @@ const BA_A0020_603: React.FC = () => {
     if (data.isSuccess === true) {
       if (paraData.workType == "CustPerson") {
         const isLastDataDeleted =
-          subDataResult.data.length == 0 && subfilters.pgNum > 0;
+          subDataResult.data.length == 0 && subfilters2.pgNum > 0;
+        let array: any[] = [];
+        deletedMainRows2.map((item) => {
+          array.push(item.attdatnum);
+        });
+        setDeletedAttadatnums(array);
 
-        // 초기화
-        setUnsavedAttadatnums([]);
-        setUnsavedName([]);
         if (isLastDataDeleted) {
           setPage2({
             skip:
-              subfilters.pgNum == 1 || subfilters.pgNum == 0
+              subfilters2.pgNum == 1 || subfilters2.pgNum == 0
                 ? 0
-                : PAGE_SIZE * (subfilters.pgNum - 2),
+                : PAGE_SIZE * (subfilters2.pgNum - 2),
             take: PAGE_SIZE,
           });
-          setsubFilters((prev: any) => ({
+          setsubFilters2((prev: any) => ({
             ...prev,
             find_row_value: "",
             pgNum: isLastDataDeleted
@@ -2702,26 +2730,25 @@ const BA_A0020_603: React.FC = () => {
             isSearch: true,
           }));
         } else {
-          setsubFilters((prev: any) => ({
+          setsubFilters2((prev: any) => ({
             ...prev,
             find_row_value: data.returnString,
             pgNum: prev.pgNum,
             isSearch: true,
           }));
         }
+        // 초기화
+        setUnsavedAttadatnums([]);
+        setUnsavedName([]);
       } else {
         const isLastDataDeleted =
           subDataResult2.data.length == 0 && subfilters2.pgNum > 1;
-        if (unsavedName.length > 0) {
-          setDeletedName(unsavedName);
-        }
-        if (unsavedAttadatnums.length > 0) {
-          setDeletedAttadatnums(unsavedAttadatnums);
-        }
+        setUnsavedAttadatnums([]);
+        setUnsavedName([]);
         if (isLastDataDeleted) {
           setPage3({
             skip:
-              subfilters2.pgNum == 1 || subfilters2.pgNum == 0
+              subfilters.pgNum == 1 || subfilters.pgNum == 0
                 ? 0
                 : PAGE_SIZE * (subfilters2.pgNum - 2),
             take: PAGE_SIZE,
@@ -2737,7 +2764,7 @@ const BA_A0020_603: React.FC = () => {
             isSearch: true,
           }));
         } else {
-          setsubFilters2((prev: any) => ({
+          setsubFilters((prev: any) => ({
             ...prev,
             find_row_value: data.returnString,
             pgNum: prev.pgNum,
@@ -2830,8 +2857,6 @@ const BA_A0020_603: React.FC = () => {
       fetchTodoGridSaved();
     }
   }, [paraData]);
-
-  const [rows, setrows] = useState<number>(0);
 
   const CheckChange = (event: CheckboxChangeEvent) => {
     setyn(event.value);
@@ -2956,10 +2981,10 @@ const BA_A0020_603: React.FC = () => {
   const [files, setFiles] = useState<string>("");
 
   useEffect(() => {
-    const datas = subDataResult.data.filter(
+    const datas = subDataResult2.data.filter(
       (item) =>
-        item[SUB_DATA_ITEM_KEY] ==
-        Object.getOwnPropertyNames(selectedsubDataState)[0]
+        item[SUB_DATA_ITEM_KEY2] ==
+        Object.getOwnPropertyNames(selectedsubDataState2)[0]
     )[0];
     if (datas != undefined) {
       if (datas.attdatnum == "") {
@@ -2967,9 +2992,9 @@ const BA_A0020_603: React.FC = () => {
       }
     }
 
-    const newData = subDataResult.data.map((item) =>
+    const newData = subDataResult2.data.map((item) =>
       item[SUB_DATA_ITEM_KEY] ==
-      parseInt(Object.getOwnPropertyNames(selectedsubDataState)[0])
+      parseInt(Object.getOwnPropertyNames(selectedsubDataState2)[0])
         ? {
             ...item,
             attdatnum: attdatnum,
@@ -2981,7 +3006,7 @@ const BA_A0020_603: React.FC = () => {
           }
     );
 
-    setSubDataResult((prev) => {
+    setSubDataResult2((prev) => {
       return {
         data: newData,
         total: prev.total,
@@ -2989,7 +3014,6 @@ const BA_A0020_603: React.FC = () => {
     });
   }, [attdatnum, files]);
 
-  console.log(subDataResult.data);
   return (
     <>
       <TitleContainer>
@@ -3354,158 +3378,25 @@ const BA_A0020_603: React.FC = () => {
               title="재무현황"
               disabled={infomation.work_type == "N" ? true : false}
             >
-              <FormContext.Provider
-                value={{
-                  attdatnum,
-                  files,
-                  setAttdatnum,
-                  setFiles,
-                  subDataState,
-                  setSubDataState,
-                  // fetchGrid,
-                }}
-              >
-                <GridContainer>
-                  <GridTitleContainer>
-                    <GridTitle>재무현황</GridTitle>
-                    <ButtonContainer>
-                      <Button
-                        onClick={onAddClick}
-                        themeColor={"primary"}
-                        icon="plus"
-                        title="행 추가"
-                      ></Button>
-                      <Button
-                        onClick={onDeleteClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="minus"
-                        title="행 삭제"
-                      ></Button>
-                      <Button
-                        onClick={onSaveClick}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                        icon="save"
-                        title="저장"
-                      ></Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
-                  <Grid
-                    style={{ height: "67.2vh" }}
-                    data={process(
-                      subDataResult.data.map((row) => ({
-                        ...row,
-
-                        yyyy: row.yyyy
-                          ? new Date(dateformat(row.yyyy))
-                          : new Date(),
-                        rowstatus:
-                          row.rowstatus == null ||
-                          row.rowstatus == "" ||
-                          row.rowstatus == undefined
-                            ? ""
-                            : row.rowstatus,
-                        [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
-                      })),
-                      subDataState
-                    )}
-                    {...subDataState}
-                    onDataStateChange={onSubDataStateChange}
-                    //선택 기능
-                    dataItemKey={SUB_DATA_ITEM_KEY}
-                    selectedField={SELECTED_FIELD}
-                    selectable={{
-                      enabled: true,
-                      mode: "multiple",
-                    }}
-                    onSelectionChange={onSubDataSelectionChange}
-                    //스크롤 조회 기능
-                    fixedScroll={true}
-                    total={subDataResult.total}
-                    skip={page2.skip}
-                    take={page2.take}
-                    pageable={true}
-                    onPageChange={pageChange2}
-                    //원하는 행 위치로 스크롤 기능
-                    ref={gridRef2}
-                    rowHeight={30}
-                    //정렬기능
-                    sortable={true}
-                    onSortChange={onSubDataSortChange}
-                    //컬럼순서조정
-                    reorderable={true}
-                    //컬럼너비조정
-                    resizable={true}
-                    onItemChange={onSubItemChange}
-                    cellRender={customCellRender}
-                    rowRender={customRowRender}
-                    editField={EDIT_FIELD}
-                    id="grdList2"
-                  >
-                    <GridColumn field="rowstatus" title=" " width="50px" />
-                    {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              id={item.id}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              className={
-                                requiredField.includes(item.fieldName)
-                                  ? "required"
-                                  : undefined
-                              }
-                              headerCell={
-                                requiredField.includes(item.fieldName)
-                                  ? RequiredHeader
-                                  : undefined
-                              }
-                              cell={
-                                NumberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : YearDateField.includes(item.fieldName)
-                                  ? YearDateCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder === 0
-                                  ? subTotalFooterCell
-                                  : undefined
-                              }
-                            />
-                          )
-                      )}
-                  </Grid>
-                </GridContainer>
-              </FormContext.Provider>
-            </TabStripTab>
-            <TabStripTab
-              title="고객 리스트"
-              disabled={infomation.work_type == "N" ? true : false}
-            >
               <GridContainer>
                 <GridTitleContainer>
-                  <GridTitle>고객 리스트</GridTitle>
+                  <GridTitle>재무현황</GridTitle>
                   <ButtonContainer>
                     <Button
-                      onClick={onAddClick3}
+                      onClick={onAddClick}
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
                     ></Button>
                     <Button
-                      onClick={onDeleteClick3}
+                      onClick={onDeleteClick}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
                     ></Button>
                     <Button
-                      onClick={onSaveClick3}
+                      onClick={onSaveClick}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
@@ -3516,7 +3407,7 @@ const BA_A0020_603: React.FC = () => {
                 <Grid
                   style={{ height: "67.2vh" }}
                   data={process(
-                    subDataResult2.data.map((row) => ({
+                    subDataResult.data.map((row) => ({
                       ...row,
                       rowstatus:
                         row.rowstatus == null ||
@@ -3524,46 +3415,46 @@ const BA_A0020_603: React.FC = () => {
                         row.rowstatus == undefined
                           ? ""
                           : row.rowstatus,
-                      [SELECTED_FIELD]: selectedsubDataState2[idGetter3(row)],
+                      [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
                     })),
-                    subDataState2
+                    subDataState
                   )}
-                  {...subDataState2}
-                  onDataStateChange={onSubDataStateChange2}
+                  {...subDataState}
+                  onDataStateChange={onSubDataStateChange}
                   //선택 기능
-                  dataItemKey={SUB_DATA_ITEM_KEY2}
+                  dataItemKey={SUB_DATA_ITEM_KEY}
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
                     mode: "multiple",
                   }}
-                  onSelectionChange={onSubDataSelectionChange2}
+                  onSelectionChange={onSubDataSelectionChange}
                   //스크롤 조회 기능
                   fixedScroll={true}
-                  total={subDataResult2.total}
-                  skip={page3.skip}
-                  take={page3.take}
+                  total={subDataResult.total}
+                  skip={page2.skip}
+                  take={page2.take}
                   pageable={true}
-                  onPageChange={pageChange3}
+                  onPageChange={pageChange2}
                   //원하는 행 위치로 스크롤 기능
-                  ref={gridRef3}
+                  ref={gridRef2}
                   rowHeight={30}
                   //정렬기능
                   sortable={true}
-                  onSortChange={onSubDataSortChange2}
+                  onSortChange={onSubDataSortChange}
                   //컬럼순서조정
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
-                  onItemChange={onSubItemChange2}
-                  cellRender={customCellRender2}
-                  rowRender={customRowRender2}
+                  onItemChange={onSubItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
                   editField={EDIT_FIELD}
-                  id="grdList3"
+                  id="grdList2"
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList3"].map(
+                    customOptionData.menuCustomColumnOptions["grdList2"].map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -3583,15 +3474,15 @@ const BA_A0020_603: React.FC = () => {
                                 : undefined
                             }
                             cell={
-                              commandField.includes(item.fieldName)
-                              ? ColumnCommandCell //추후 작업
-                              : undefined
+                              NumberField.includes(item.fieldName)
+                                ? NumberCell
+                                : YearDateField.includes(item.fieldName)
+                                ? YearDateCell
+                                : undefined
                             }
                             footerCell={
                               item.sortOrder === 0
-                                ? subTotalFooterCell2
-                                : NumberField.includes(item.fieldName)
-                                ? gridSumQtyFooterCell
+                                ? subTotalFooterCell
                                 : undefined
                             }
                           />
@@ -3599,6 +3490,135 @@ const BA_A0020_603: React.FC = () => {
                     )}
                 </Grid>
               </GridContainer>
+            </TabStripTab>
+            <TabStripTab
+              title="고객 리스트"
+              disabled={infomation.work_type == "N" ? true : false}
+            >
+              <FormContext.Provider
+                value={{
+                  attdatnum,
+                  files,
+                  setAttdatnum,
+                  setFiles,
+                  subDataState2,
+                  setSubDataState2,
+                  // fetchGrid,
+                }}
+              >
+                <GridContainer>
+                  <GridTitleContainer>
+                    <GridTitle>고객 리스트</GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onAddClick3}
+                        themeColor={"primary"}
+                        icon="plus"
+                        title="행 추가"
+                      ></Button>
+                      <Button
+                        onClick={onDeleteClick3}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="minus"
+                        title="행 삭제"
+                      ></Button>
+                      <Button
+                        onClick={onSaveClick3}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                        title="저장"
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Grid
+                    style={{ height: "67.2vh" }}
+                    data={process(
+                      subDataResult2.data.map((row) => ({
+                        ...row,
+                        rowstatus:
+                          row.rowstatus == null ||
+                          row.rowstatus == "" ||
+                          row.rowstatus == undefined
+                            ? ""
+                            : row.rowstatus,
+                        [SELECTED_FIELD]: selectedsubDataState2[idGetter3(row)],
+                      })),
+                      subDataState2
+                    )}
+                    {...subDataState2}
+                    onDataStateChange={onSubDataStateChange2}
+                    //선택 기능
+                    dataItemKey={SUB_DATA_ITEM_KEY2}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "multiple",
+                    }}
+                    onSelectionChange={onSubDataSelectionChange2}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={subDataResult2.total}
+                    skip={page3.skip}
+                    take={page3.take}
+                    pageable={true}
+                    onPageChange={pageChange3}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef3}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onSubDataSortChange2}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onSubItemChange2}
+                    cellRender={customCellRender2}
+                    rowRender={customRowRender2}
+                    editField={EDIT_FIELD}
+                    id="grdList3"
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList3"].map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              className={
+                                requiredField.includes(item.fieldName)
+                                  ? "required"
+                                  : undefined
+                              }
+                              headerCell={
+                                requiredField.includes(item.fieldName)
+                                  ? RequiredHeader
+                                  : undefined
+                              }
+                              cell={
+                                commandField.includes(item.fieldName)
+                                  ? ColumnCommandCell //추후 작업
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder === 0
+                                  ? subTotalFooterCell2
+                                  : NumberField.includes(item.fieldName)
+                                  ? gridSumQtyFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                  </Grid>
+                </GridContainer>
+              </FormContext.Provider>
             </TabStripTab>
           </TabStrip>
         </GridContainer>
