@@ -70,9 +70,11 @@ import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
   loginResultState,
   unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -132,19 +134,22 @@ const BA_A0040: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
-  const initialPageState = { skip: 0, take: PAGE_SIZE };
-  const [page, setPage] = useState(initialPageState);
-  const [page2, setPage2] = useState(initialPageState);
-
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
 
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const [page2, setPage2] = useState(initialPageState);
+  
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -930,6 +935,9 @@ const BA_A0040: React.FC = () => {
     setyn(true);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
 
     setInfomation({
       pgSize: PAGE_SIZE,
@@ -1161,8 +1169,6 @@ const BA_A0040: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
-    if (unsavedAttadatnums.length > 0)
-      setDeletedAttadatnums(unsavedAttadatnums);
     setTabSelected(e.selected);
   };
 
@@ -1254,7 +1260,7 @@ const BA_A0040: React.FC = () => {
 
   const getAttachmentsData = (data: IAttachmentData) => {
     if (!infomation.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
+      setUnsavedAttadatnums((prev) => [...prev, data.attdatnum]);
     }
 
     setInfomation((prev) => {
@@ -1280,6 +1286,12 @@ const BA_A0040: React.FC = () => {
     setPage(initialPageState); // 페이지 초기화
     setPage2(initialPageState); // 페이지 초기화
     resetAllGrid(); // 데이터 초기화
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
@@ -1752,6 +1764,7 @@ const BA_A0040: React.FC = () => {
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       );
+      setDeletedAttadatnums([infomation.attdatnum]);
       resetAllGrid();
 
       if (isLastDataDeleted) {
@@ -1773,10 +1786,6 @@ const BA_A0040: React.FC = () => {
         pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
         isSearch: true,
       }));
-
-      // 첨부파일 삭제
-      if (paraDataDeleted.attdatnum)
-        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1833,6 +1842,7 @@ const BA_A0040: React.FC = () => {
 
       // 초기화
       setUnsavedAttadatnums([]);
+      setUnsavedName([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1918,7 +1928,9 @@ const BA_A0040: React.FC = () => {
       pgNum: page.skip / page.take + 1,
       isSearch: true,
     }));
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
     setPage({
       ...event.page,
     });

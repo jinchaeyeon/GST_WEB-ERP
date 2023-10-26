@@ -35,6 +35,7 @@ import CenterCell from "../components/Cells/CenterCell";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -48,7 +49,6 @@ import {
   setDefaultDate,
   toDate,
   useSysMessage,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -63,7 +63,13 @@ import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWi
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
-import { isLoading, unsavedAttadatnumsState } from "../store/atoms";
+import {
+  deletedAttadatnumsState,
+  deletedNameState,
+  isLoading,
+  unsavedAttadatnumsState,
+  unsavedNameState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/CM_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -86,9 +92,19 @@ const CM_A1000W: React.FC = () => {
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
   UseParaPc(setPc);
+
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   //커스텀 옵션 조회
@@ -97,7 +113,10 @@ const CM_A1000W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
@@ -205,7 +224,10 @@ const CM_A1000W: React.FC = () => {
     const { value, name } = e.target;
 
     if (name == "custcd") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setInfomation((prev) => ({
         ...prev,
@@ -250,7 +272,10 @@ const CM_A1000W: React.FC = () => {
     const { name, value } = e;
 
     if (name == "custnm") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setInfomation((prev) => ({
         ...prev,
@@ -753,6 +778,9 @@ const CM_A1000W: React.FC = () => {
     setSelectedState(newSelectedState);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
     const kind = kindListData.find(
       (item: any) => item.code_name == selectedRowData.kind1
     )?.sub_code;
@@ -844,6 +872,12 @@ const CM_A1000W: React.FC = () => {
       } else {
         setPage(initialPageState); // 페이지 초기화
         resetAllGrid(); // 데이터 초기화
+        if (unsavedName.length > 0) {
+          setDeletedName(unsavedName);
+        }
+        if (unsavedAttadatnums.length > 0) {
+          setDeletedAttadatnums(unsavedAttadatnums);
+        }
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
     } catch (e) {
@@ -853,7 +887,7 @@ const CM_A1000W: React.FC = () => {
 
   const getAttachmentsData = (data: IAttachmentData) => {
     if (!infomation.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
+      setUnsavedAttadatnums((prev) => [...prev, data.attdatnum]);
     }
 
     setInfomation((prev) => {
@@ -1051,6 +1085,8 @@ const CM_A1000W: React.FC = () => {
         isSearch: true,
         find_row_value: data.returnString,
       }));
+      setUnsavedAttadatnums([]);
+      setUnsavedName([]);
       setParaData({
         workType: "N",
         orgdiv: "01",
@@ -1199,6 +1235,7 @@ const CM_A1000W: React.FC = () => {
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
     datnum: "",
+    attdatnum: "",
   });
 
   const paraDeleted: Iparameters = {
@@ -1257,6 +1294,7 @@ const CM_A1000W: React.FC = () => {
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       );
+      setDeletedAttadatnums([infomation.attdatnum]);
       resetAllGrid();
       if (isLastDataDeleted) {
         setPage({
@@ -1303,6 +1341,7 @@ const CM_A1000W: React.FC = () => {
         ...prev,
         work_type: "D",
         datnum: infomation.datnum,
+        attdatnum: infomation.attdatnum,
       }));
     } else {
       alert("데이터가 없습니다.");
@@ -1326,7 +1365,12 @@ const CM_A1000W: React.FC = () => {
       pgNum: page.skip / page.take + 1,
       isSearch: true,
     }));
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setPage({
       ...event.page,
     });

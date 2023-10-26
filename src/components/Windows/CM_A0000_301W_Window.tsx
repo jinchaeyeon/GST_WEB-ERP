@@ -4,7 +4,7 @@ import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -15,10 +15,7 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
-import {
-  deletedAttadatnumsState,
-  unsavedAttadatnumsState,
-} from "../../store/atoms";
+import { deletedNameState, unsavedNameState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import {
   UseCustomOption,
@@ -27,11 +24,9 @@ import {
   UseParaPc,
   convertDateToStr,
   dateformat,
-  setDefaultDate,
-  GetPropertyValueByName,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
+import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 
 type TKendoWindow = {
   getVisible(t: boolean): void;
@@ -60,13 +55,10 @@ const KendoWindow = ({
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-  // 삭제할 첨부파일 리스트를 담는 함수
-  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
-  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
-  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-    unsavedAttadatnumsState
-  );
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -101,8 +93,7 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
-    if (unsavedAttadatnums.length > 0)
-      setDeletedAttadatnums(unsavedAttadatnums);
+    if (unsavedName.length > 0) setDeletedName(unsavedName);
 
     getVisible(false);
   };
@@ -266,8 +257,7 @@ const KendoWindow = ({
         reloadData(data.returnString);
         getVisible(false);
       }
-      // 초기화
-      setUnsavedAttadatnums([]);
+      setUnsavedName([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -317,10 +307,6 @@ const KendoWindow = ({
     useState<boolean>(false);
 
   const getAttachmentsData = (data: IAttachmentData) => {
-    if (!filters.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
     setFilters((prev) => {
       return {
         ...prev,
@@ -471,7 +457,7 @@ const KendoWindow = ({
         </ButtonContainer>
       </BottomContainer>
       {attachmentsWindowVisible && (
-        <AttachmentsWindow
+        <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}

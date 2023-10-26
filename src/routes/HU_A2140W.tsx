@@ -45,6 +45,7 @@ import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -58,7 +59,6 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -70,18 +70,19 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
-import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
   loginResultState,
   unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A2140W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -168,11 +169,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {isInEdit ? (
-        <Input value={value} onChange={handleChange} type="text" />
-      ) : (
-        value
-      )}
+      {value}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -243,7 +240,12 @@ const HU_A2140W: React.FC = () => {
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setPage({
       skip: page.skip,
       take: initialPageState.take,
@@ -253,14 +255,17 @@ const HU_A2140W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const pathname: string = window.location.pathname.replace("/", "");
-  // 삭제할 첨부파일 리스트를 담는 함수
+
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
-
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -272,7 +277,10 @@ const HU_A2140W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
@@ -554,6 +562,12 @@ const HU_A2140W: React.FC = () => {
         throw findMessage(messagesData, "HU_A2140W_002");
       } else {
         resetAllGrid();
+        if (unsavedName.length > 0) {
+          setDeletedName(unsavedName);
+        }
+        if (unsavedAttadatnums.length > 0) {
+          setDeletedAttadatnums(unsavedAttadatnums);
+        }
         setFilters((prev: any) => ({
           ...prev,
           pgNum: 1,
@@ -799,9 +813,18 @@ const HU_A2140W: React.FC = () => {
   const [files, setFiles] = useState<string>("");
 
   useEffect(() => {
+    const datas2 = mainDataResult.data.filter(
+      (item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
+    if (datas2 != undefined) {
+      if (datas2.attdatnum == "") {
+        setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+      }
+    }
+
     const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] ==
-      parseInt(Object.getOwnPropertyNames(selectedState)[0])
+      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
         ? {
             ...item,
             attdatnum: attdatnum,
@@ -812,7 +835,7 @@ const HU_A2140W: React.FC = () => {
             ...item,
           }
     );
-    setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+
     setMainDataResult((prev) => {
       return {
         data: newData,
@@ -882,7 +905,7 @@ const HU_A2140W: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-       if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -927,13 +950,13 @@ const HU_A2140W: React.FC = () => {
           Simbol3: item.Simbol3,
           appyn: item.appyn,
           appynnm: item.appynnm,
-          attdatnum: item.attdatnum,
+          attdatnum: "",
           chk: "",
           dptcd: item.dptcd,
           ehh: item.ehh,
           emm: item.emm,
           enddate: item.enddate,
-          files: item.files,
+          files: "",
           orgdiv: item.orgdiv,
           postcd: item.postcd,
           prsnnm: item.prsnnm,
@@ -1039,6 +1062,15 @@ const HU_A2140W: React.FC = () => {
     if (data.isSuccess === true) {
       const isLastDataDeleted =
         mainDataResult.data.length == 0 && filters.pgNum > 0;
+      let array: any[] = [];
+
+      deletedMainRows.map((item: any) => {
+        array.push(item.attdatnum);
+      });
+      setDeletedAttadatnums(array);
+
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
 
       if (isLastDataDeleted) {
         setPage({

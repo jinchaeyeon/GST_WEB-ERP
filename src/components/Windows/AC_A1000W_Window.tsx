@@ -1924,7 +1924,7 @@ const CopyWindow = ({
       "@p_form_id": "AC_A1000W",
     },
   };
-  console.log(unsavedName);
+
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     let valid = true;
@@ -2604,7 +2604,7 @@ const CopyWindow = ({
       }));
       setUnsavedName([]);
       if (ParaData.workType == "N") {
-        onClose();
+        setVisible(false);
       }
       setParaData({
         pgSize: PAGE_SIZE,

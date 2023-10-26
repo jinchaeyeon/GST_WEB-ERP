@@ -51,6 +51,7 @@ import DateCell from "../components/Cells/DateCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -66,7 +67,6 @@ import {
   setDefaultDate,
   toDate,
   useSysMessage,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -82,8 +82,10 @@ import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
   unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A3000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -141,20 +143,30 @@ const CM_A3000W: React.FC = () => {
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setPage({
       skip: page.skip,
       take: initialPageState.take,
     });
   };
 
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
+
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
   const [localdptcd, setLocaldptcd] = useState("");
-  // 삭제할 첨부파일 리스트를 담는 함수
-  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -167,7 +179,10 @@ const CM_A3000W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         recdt_s: setDefaultDate(customOptionData, "recdt_s"),
@@ -175,6 +190,7 @@ const CM_A3000W: React.FC = () => {
         dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
         person: defaultOption.find((item: any) => item.id === "person")
           .valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -295,7 +311,6 @@ const CM_A3000W: React.FC = () => {
     pgSize: PAGE_SIZE,
     workType: "N",
     orgdiv: "01",
-    attdatnum: "",
     contents: "",
     datnum: "",
     dptcd: "",
@@ -525,10 +540,7 @@ const CM_A3000W: React.FC = () => {
         const selectedRow =
           subfilters.find_row_value == ""
             ? rows[0]
-            : rows.find(
-                (row: any) =>
-                  row.datnum == subfilters.find_row_value
-              );
+            : rows.find((row: any) => row.datnum == subfilters.find_row_value);
 
         if (selectedRow != undefined) {
           setSelectedsubDataState({ [selectedRow[SUB_DATA_ITEM_KEY]]: true });
@@ -542,7 +554,6 @@ const CM_A3000W: React.FC = () => {
             workType: "U",
             orgdiv: selectedRow.orgdiv,
             dptcd: selectedRow.dptcd,
-            attdatnum: selectedRow.attdatnum,
             contents: selectedRow.contents,
             datnum: selectedRow.datnum,
             files: selectedRow.files,
@@ -565,7 +576,6 @@ const CM_A3000W: React.FC = () => {
             workType: "U",
             orgdiv: rows[0].orgdiv,
             dptcd: rows[0].dptcd,
-            attdatnum: rows[0].attdatnum,
             contents: rows[0].contents,
             datnum: rows[0].datnum,
             files: rows[0].files,
@@ -590,7 +600,6 @@ const CM_A3000W: React.FC = () => {
           pgSize: PAGE_SIZE,
           workType: "N",
           orgdiv: "01",
-          attdatnum: "",
           contents: "",
           datnum: "",
           dptcd: "",
@@ -711,17 +720,10 @@ const CM_A3000W: React.FC = () => {
     } else {
       // 모든 파일이 성공적으로 업로드된 경우
       if (!attachmentNumber) {
-        setInfomation((prev) => ({
-          ...prev,
-          attdatnum: newAttachmentNumber,
-        }));
         setAttachmentNumber(newAttachmentNumber);
       } else {
-        setInfomation((prev) => ({
-          ...prev,
-          attdatnum: attachmentNumber,
-        }));
         fetchAttdatnumGrid();
+        setAttachmentNumber(newAttachmentNumber);
       }
     }
   };
@@ -745,6 +747,9 @@ const CM_A3000W: React.FC = () => {
     }
 
     if (data !== null) {
+      data.result.map((item: any) => {
+        setUnsavedName((prev) => [...prev, item.savedFileName]);
+      });
       return data.attachmentNumber;
     } else {
       return data;
@@ -797,7 +802,12 @@ const CM_A3000W: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setLocaldptcd(selectedRowData.name);
     setsubFilters((prev) => ({
       ...prev,
@@ -815,9 +825,12 @@ const CM_A3000W: React.FC = () => {
     });
 
     setSelectedsubDataState(newSelectedState);
-    if (unsavedAttadatnums.length > 0)
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
       setDeletedAttadatnums(unsavedAttadatnums);
-
+    }
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
     const user = userListData.find(
@@ -841,7 +854,6 @@ const CM_A3000W: React.FC = () => {
       workType: "U",
       orgdiv: selectedRowData.orgdiv,
       dptcd: selectedRowData.dptcd,
-      attdatnum: selectedRowData.attdatnum,
       contents: selectedRowData.contents,
       datnum: selectedRowData.datnum,
       files: selectedRowData.files,
@@ -904,7 +916,6 @@ const CM_A3000W: React.FC = () => {
       pgSize: PAGE_SIZE,
       workType: "N",
       orgdiv: "01",
-      attdatnum: "",
       contents: "",
       datnum: "",
       dptcd: dptcd,
@@ -954,6 +965,12 @@ const CM_A3000W: React.FC = () => {
         throw findMessage(messagesData, "CM_A3000W_003");
       } else {
         resetAllGrid();
+        if (unsavedName.length > 0) {
+          setDeletedName(unsavedName);
+        }
+        if (unsavedAttadatnums.length > 0) {
+          setDeletedAttadatnums(unsavedAttadatnums);
+        }
         setFilters((prev) => ({
           ...prev,
           pgNum: 1,
@@ -975,53 +992,22 @@ const CM_A3000W: React.FC = () => {
     if (subDataResult.data.length == 0) {
       alert("데이터가 없습니다");
     } else {
-      const selectedRowData = subDataResult.data.filter(
-        (item: any) =>
-          item.num == Object.getOwnPropertyNames(selectedsubDataState)[0]
-      )[0];
+      const parameters = attDataResult.data.filter((item) => item.chk == true);
+      let data: any;
+      parameters.forEach(async (parameter) => {
+        try {
+          data = await processApi<any>("file-delete", {
+            attached: parameter.saved_name,
+          });
+        } catch (error) {
+          data = null;
+        }
 
-      setAttDataResult((prev) => {
-        return {
-          data: [],
-          total: 0,
-        };
-      });
-      if (selectedRowData.attdatnum == "") {
-        setAttachmentNumber("");
-      } else {
-        let data: any;
-
-        setAttachmentNumber(selectedRowData.attdatnum);
-        attDataResult.data.forEach(async (parameter) => {
-          try {
-            data = await processApi<any>("file-delete", {
-              attached: parameter.saved_name,
-            });
-          } catch (error) {
-            data = null;
-          }
-
-          if (data === null) {
-            alert("처리 중 오류가 발생하였습니다.");
-          }
-        });
-      }
-
-      setInfomation({
-        pgSize: PAGE_SIZE,
-        workType: "D",
-        orgdiv: selectedRowData.orgdiv,
-        dptcd: selectedRowData.dptcd,
-        attdatnum: selectedRowData.attdatnum,
-        contents: selectedRowData.contents,
-        datnum: selectedRowData.datnum,
-        files: selectedRowData.files,
-        itemlvl1: selectedRowData.itemlvl1,
-        location: selectedRowData.location,
-        num: selectedRowData.num,
-        person: selectedRowData.person,
-        recdt: toDate(selectedRowData.recdt),
-        title: selectedRowData.title,
+        if (data !== null) {
+          fetchAttdatnumGrid();
+        } else {
+          alert("처리 중 오류가 발생하였습니다.");
+        }
       });
     }
   };
@@ -1039,7 +1025,7 @@ const CM_A3000W: React.FC = () => {
       "@p_recdt": convertDateToStr(infomation.recdt),
       "@p_contents": infomation.contents,
       "@p_dptcd": infomation.dptcd,
-      "@p_attdatnum": infomation.attdatnum,
+      "@p_attdatnum": attachmentNumber,
       "@p_person": infomation.person,
       "@p_itemlvl1": infomation.itemlvl1,
       "@p_userid": userId,
@@ -1086,16 +1072,19 @@ const CM_A3000W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      if(infomation.workType == "D") {
+      if (infomation.workType == "D") {
         const isLastDataDeleted =
-        subDataResult.data.length == 1 && subfilters.pgNum > 1;
+          subDataResult.data.length == 1 && subfilters.pgNum > 1;
         const findRowIndex = subDataResult.data.findIndex(
-          (row: any) => row.num == Object.getOwnPropertyNames(selectedsubDataState)[0]
+          (row: any) =>
+            row.num == Object.getOwnPropertyNames(selectedsubDataState)[0]
         );
+
+        setDeletedAttadatnums([attachmentNumber]);
         if (isLastDataDeleted) {
           setPage({
             skip:
-            subfilters.pgNum == 1 || subfilters.pgNum == 0
+              subfilters.pgNum == 1 || subfilters.pgNum == 0
                 ? 0
                 : PAGE_SIZE * (subfilters.pgNum - 2),
             take: PAGE_SIZE,
@@ -1121,6 +1110,8 @@ const CM_A3000W: React.FC = () => {
           }));
         }
       } else {
+        setUnsavedAttadatnums([]);
+        setUnsavedName([]);
         setsubFilters((prev) => ({
           ...prev,
           pgNum: 1,
@@ -1128,30 +1119,6 @@ const CM_A3000W: React.FC = () => {
           isSearch: true,
         }));
       }
-
-      setUnsavedAttadatnums([]);
-      setAttDataResult((prev) => {
-        return {
-          data: [],
-          total: 0,
-        };
-      });
-      setInfomation({
-        pgSize: PAGE_SIZE,
-        workType: "N",
-        orgdiv: "01",
-        attdatnum: "",
-        contents: "",
-        datnum: "",
-        dptcd: "",
-        files: "",
-        itemlvl1: "",
-        location: "",
-        num: "",
-        person: "",
-        recdt: new Date(),
-        title: "",
-      });
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1161,7 +1128,7 @@ const CM_A3000W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setPage(initialPageState); 
+    setPage(initialPageState);
     setSubDataResult(process([], subDataState));
     setAllMenuDataResult({
       data: [],
@@ -1271,14 +1238,7 @@ const CM_A3000W: React.FC = () => {
       }
 
       if (data !== null) {
-        setAttDataResult((prev) => {
-          return {
-            data: [],
-            total: 0,
-          };
-        });
         fetchAttdatnumGrid();
-        setSelectedattDataState({});
       } else {
         alert("처리 중 오류가 발생하였습니다.");
       }

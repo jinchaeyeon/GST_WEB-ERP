@@ -67,16 +67,12 @@ const PanelBarNavContainer = (props: any) => {
   const [deletedAttadatnums, setDeletedAttadatnums] = useRecoilState(
     deletedAttadatnumsState
   );
-  const [deletedName, setDeletedName] = useRecoilState(
-    deletedNameState
-  );
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
-  const [unsavedName, setUnsavedName] = useRecoilState(
-    unsavedNameState
-  );
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const customerName = loginResult ? loginResult.customerName : "";
   const userId = loginResult ? loginResult.userId : "";
@@ -174,19 +170,22 @@ const PanelBarNavContainer = (props: any) => {
       // 초기화
       setUnsavedAttadatnums([]);
       setDeletedAttadatnums([]);
+      // 초기화
+      setUnsavedName([]);
+      setDeletedName([]);
     }
   }, [deletedAttadatnums]);
 
-    // 첨부파일 삭제
-    useEffect(() => {
-      if (deletedName.length > 0) {
-        fetchToDeletedName(deletedName);
-  
-        // 초기화
-        setUnsavedName([]);
-        setDeletedName([]);
-      }
-    }, [deletedName]);
+  // 첨부파일 삭제
+  useEffect(() => {
+    if (deletedName.length > 0) {
+      fetchToDeletedName(deletedName);
+
+      // 초기화
+      setUnsavedName([]);
+      setDeletedName([]);
+    }
+  }, [deletedName]);
 
   useEffect(() => {
     // console.log("caches" in window);

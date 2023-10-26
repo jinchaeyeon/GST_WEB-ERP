@@ -14,7 +14,7 @@ import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -28,15 +28,13 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
-import {
-  deletedAttadatnumsState,
-  unsavedAttadatnumsState,
-} from "../../store/atoms";
+import { deletedNameState, unsavedNameState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -47,7 +45,6 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -57,7 +54,7 @@ import {
   SELECTED_FIELD,
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
+import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 
 const DATA_ITEM_KEY = "num";
 
@@ -98,13 +95,10 @@ const KendoWindow = ({
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
   const idGetter = getter(DATA_ITEM_KEY);
-  // 삭제할 첨부파일 리스트를 담는 함수
-  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
-  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
-  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-    unsavedAttadatnumsState
-  );
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -151,8 +145,7 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
-    if (unsavedAttadatnums.length > 0)
-      setDeletedAttadatnums(unsavedAttadatnums);
+    if (unsavedName.length > 0) setDeletedName(unsavedName);
 
     getVisible(false);
   };
@@ -226,12 +219,14 @@ const KendoWindow = ({
             customOptionData,
             "publish_end_date"
           ),
-          category: GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "new").find(
-            (item: any) => item.id === "category"
-          ).valueCode,
-          publish_yn: GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "new").find(
-            (item: any) => item.id === "publish_yn"
-          ).valueCode,
+          category: GetPropertyValueByName(
+            customOptionData.menuCustomDefaultOptions,
+            "new"
+          ).find((item: any) => item.id === "category").valueCode,
+          publish_yn: GetPropertyValueByName(
+            customOptionData.menuCustomDefaultOptions,
+            "new"
+          ).find((item: any) => item.id === "publish_yn").valueCode,
           person: user_name,
         };
       });
@@ -473,8 +468,7 @@ const KendoWindow = ({
         reloadData(data.returnString);
         getVisible(false);
       }
-      // 초기화
-      setUnsavedAttadatnums([]);
+      setUnsavedName([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -540,10 +534,6 @@ const KendoWindow = ({
     useState<boolean>(false);
 
   const getAttachmentsData = (data: IAttachmentData) => {
-    if (!filters.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
     setFilters((prev) => {
       return {
         ...prev,
@@ -929,7 +919,7 @@ const KendoWindow = ({
         </ButtonContainer>
       </BottomContainer>
       {attachmentsWindowVisible && (
-        <AttachmentsWindow
+        <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}

@@ -12,7 +12,7 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -53,7 +53,7 @@ import {
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -70,9 +70,11 @@ import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
   loginResultState,
   unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A5020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -263,11 +265,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {isInEdit ? (
-        <Input value={value} onChange={handleChange} type="text" />
-      ) : (
-        value
-      )}
+      {value}
       <ButtonInGridInput>
         <Button
           type={"button"}
@@ -311,15 +309,18 @@ const HU_A5020W: React.FC = () => {
   const [prsnnum, setPrsnnum] = useState<string>("");
   const [attdatnum, setAttdatnum] = useState<string>("");
   const [files, setFiles] = useState<string>("");
-  const [deletedAttadatnums, setDeletedAttadatnums] = useRecoilState(
-    deletedAttadatnumsState
-  );
-  const [loginResult] = useRecoilState(loginResultState);
-  const companyCode = loginResult ? loginResult.companyCode : "";
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
+
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
 
   const pathname: string = window.location.pathname.replace("/", "");
 
@@ -619,6 +620,12 @@ const HU_A5020W: React.FC = () => {
       } else {
         deletedMainRows = [];
         resetAllGrid();
+        if (unsavedName.length > 0) {
+          setDeletedName(unsavedName);
+        }
+        if (unsavedAttadatnums.length > 0) {
+          setDeletedAttadatnums(unsavedAttadatnums);
+        }
         setFilters((prev) => ({
           ...prev,
           pgNum: 1,
@@ -894,6 +901,16 @@ const HU_A5020W: React.FC = () => {
       data = null;
     }
     if (data.isSuccess === true) {
+      let array: any[] = [];
+
+      deletedMainRows.map((item: any) => {
+        array.push(item.attdatnum);
+      });
+      setDeletedAttadatnums(array);
+
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
+
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "N",
@@ -907,8 +924,7 @@ const HU_A5020W: React.FC = () => {
         remark_s: "",
         attdatnum_s: "",
       });
-      setUnsavedAttadatnums([]);
-      setDeletedAttadatnums([]);
+
       deletedMainRows = [];
       resetAllGrid();
       setFilters((prev) => ({
@@ -1078,6 +1094,16 @@ const HU_A5020W: React.FC = () => {
 
   //FormContext 데이터 set
   useEffect(() => {
+    const datas2 = mainDataResult.data.filter(
+      (item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
+    if (datas2 != undefined) {
+      if (datas2.attdatnum == "") {
+        setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+      }
+    }
+
     const newData = mainDataResult.data.map((item) =>
       item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
         ? {
@@ -1090,7 +1116,7 @@ const HU_A5020W: React.FC = () => {
             ...item,
           }
     );
-    setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+
     setMainDataResult((prev) => {
       return {
         data: newData,
@@ -1120,7 +1146,12 @@ const HU_A5020W: React.FC = () => {
       pgNum: page.skip / page.take + 1,
       isSearch: true,
     }));
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setPage({
       ...event.page,
     });

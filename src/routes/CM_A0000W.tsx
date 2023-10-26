@@ -109,7 +109,10 @@ const CM_A0000W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         cbocategory: defaultOption.find(
@@ -516,6 +519,10 @@ const CM_A0000W: React.FC = () => {
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       );
+      // 첨부파일 삭제
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+
       resetAllGrid();
 
       if (isLastDataDeleted) {

@@ -54,6 +54,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -68,7 +69,6 @@ import {
   setDefaultDate,
   toDate,
   useSysMessage,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -86,8 +86,10 @@ import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
   unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A4100W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -189,11 +191,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {isInEdit ? (
-        <Input value={value} onChange={handleChange} type="text" />
-      ) : (
-        value
-      )}
+      {value}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -238,12 +236,18 @@ const CM_A4100W: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
-  // 삭제할 첨부파일 리스트를 담는 함수
+
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
+
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
+
   //FormContext의 데이터 state
   const [attdatnum, setAttdatnum] = useState<string>("");
   const [files, setFiles] = useState<string>("");
@@ -259,7 +263,10 @@ const CM_A4100W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         person: defaultOption.find((item: any) => item.id === "person")
@@ -788,6 +795,7 @@ const CM_A4100W: React.FC = () => {
           datnum: "",
           eduname: "",
         });
+        setSubDataResult(process([], subDataState));
       }
     } else {
       console.log("[오류 발생]");
@@ -980,7 +988,12 @@ const CM_A4100W: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setyn(selectedRowData.finyn == "Y" ? true : false);
     setInfomation({
       pgSize: PAGE_SIZE,
@@ -1025,7 +1038,12 @@ const CM_A4100W: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "U",
@@ -1227,8 +1245,11 @@ const CM_A4100W: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
-    if (unsavedAttadatnums[0] != "") {
+    if (unsavedAttadatnums.length > 0) {
       setDeletedAttadatnums(unsavedAttadatnums);
+    }
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
     }
     setTabSelected(e.selected);
     resetAllGrid();
@@ -1266,7 +1287,7 @@ const CM_A4100W: React.FC = () => {
 
   const getAttachmentsData = (data: IAttachmentData) => {
     if (!infomation.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
+      setUnsavedAttadatnums((prev) => [...prev, data.attdatnum]);
     }
 
     setInfomation((prev) => {
@@ -1319,6 +1340,12 @@ const CM_A4100W: React.FC = () => {
         throw findMessage(messagesData, "CM_A4100W_003");
       } else {
         resetAllGrid();
+        if (unsavedName.length > 0) {
+          setDeletedName(unsavedName);
+        }
+        if (unsavedAttadatnums.length > 0) {
+          setDeletedAttadatnums(unsavedAttadatnums);
+        }
         setFilters((prev) => ({
           ...prev,
           pgNum: 1,
@@ -1588,35 +1615,22 @@ const CM_A4100W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      let array: any[] = [];
+
+        deletedMainRows.map((item: any) => {
+          array.push(item.attdatnum);
+        });
+
+      setDeletedAttadatnums(array);
+
+      setUnsavedName([]);
       setUnsavedAttadatnums([]);
-      setDeletedAttadatnums([]);
       resetAllGrid();
       setFilters((prev: any) => ({
         ...prev,
         find_row_value: data.returnString,
         pgNum: 1,
         isSearch: true,
-      }));
-      setInfomation((prev) => ({
-        pgSize: PAGE_SIZE,
-        workType: "",
-        edunum: "",
-        edudiv: "",
-        person: "",
-        title: "",
-        edtime: 0,
-        recdt: new Date(),
-        contents: "",
-        files: "",
-        attdatnum: "",
-        finyn: false,
-        row_status_s: "",
-        seq_s: "",
-        person_s: "",
-        remark_s: "",
-        attdatnum_s: "",
-        datnum: "",
-        eduname: "",
       }));
     } else {
       console.log("[오류 발생]");
@@ -1756,7 +1770,6 @@ const CM_A4100W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      resetAllGrid();
       if (tabSelected == 0) {
         const isLastDataDeleted =
           mainDataResult.data.length === 1 && filters.pgNum > 0;
@@ -1764,6 +1777,7 @@ const CM_A4100W: React.FC = () => {
           (row: any) =>
             row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
         );
+        setDeletedAttadatnums([infomation.attdatnum]);
         if (isLastDataDeleted) {
           setPage({
             skip: PAGE_SIZE * (filters.pgNum - 2),
@@ -1795,6 +1809,13 @@ const CM_A4100W: React.FC = () => {
           (row: any) =>
             row[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
         );
+        let array: any[] = [];
+        array.push(infomation.attdatnum);
+        subDataResult.data.map((item: any) => {
+          array.push(item.attdatnum);
+        });
+
+        setDeletedAttadatnums(array);
         if (isLastDataDeleted) {
           setPage2({
             skip: PAGE_SIZE * (filters.pgNum - 2),
@@ -1820,9 +1841,8 @@ const CM_A4100W: React.FC = () => {
           }));
         }
       }
-      // 첨부파일 삭제
-      if (paraDataDeleted.attdatnum)
-        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1880,6 +1900,8 @@ const CM_A4100W: React.FC = () => {
         isSearch: true,
         find_row_value: data.returnString,
       }));
+
+      setUnsavedName([]);
       setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
@@ -1898,6 +1920,15 @@ const CM_A4100W: React.FC = () => {
 
   //FormContext 데이터 변경 시 set
   useEffect(() => {
+    const datas2 = subDataResult.data.filter(
+      (item) => item.num == Object.getOwnPropertyNames(selectedsubDataState)[0]
+    )[0];
+    if (datas2 != undefined) {
+      if (datas2.attdatnum == "") {
+        setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+      }
+    }
+
     const items = subDataResult.data.filter(
       (item: any) =>
         item.num == Object.getOwnPropertyNames(selectedsubDataState)[0]
@@ -1912,7 +1943,7 @@ const CM_A4100W: React.FC = () => {
           }
         : { ...item }
     );
-    setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+
     setSubDataResult((prev) => {
       return {
         data: datas,
@@ -2093,7 +2124,12 @@ const CM_A4100W: React.FC = () => {
       pgNum: page.skip / page.take + 1,
       isSearch: true,
     }));
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setPage({
       ...event.page,
     });
@@ -2107,7 +2143,12 @@ const CM_A4100W: React.FC = () => {
       pgNum: 1,
       isSearch: true,
     }));
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setPage3(initialPageState);
 
     setFilters((prev) => ({
@@ -2123,7 +2164,12 @@ const CM_A4100W: React.FC = () => {
 
   const pageChange3 = (event: GridPageChangeEvent) => {
     const { page } = event;
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setsubFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
@@ -2379,7 +2425,12 @@ const CM_A4100W: React.FC = () => {
                   </td>
                   <th>첨부파일</th>
                   <td>
-                    <Input name="files" type="text" value={infomation.files} className="readonly"/>
+                    <Input
+                      name="files"
+                      type="text"
+                      value={infomation.files}
+                      className="readonly"
+                    />
                     <ButtonInInput>
                       <Button
                         type={"button"}

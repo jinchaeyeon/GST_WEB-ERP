@@ -2968,6 +2968,12 @@ const BA_A0020: React.FC = () => {
     setPage({
       ...event.page,
     });
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setyn(true);
     setPage2(initialPageState);
     setPage3(initialPageState);

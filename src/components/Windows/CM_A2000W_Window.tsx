@@ -10,7 +10,7 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -31,9 +31,10 @@ import {
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
+  deletedNameState,
   isLoading,
   loginResultState,
-  unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
@@ -41,6 +42,7 @@ import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
 import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -52,7 +54,6 @@ import {
   getQueryFromBizComponent,
   isValidDate,
   toDate,
-  GetPropertyValueByName,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -65,8 +66,8 @@ import CommentsGrid from "../Grids/CommentsGrid";
 import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import CopyWindow3 from "./BA_A0080W_Copy_Window";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
+import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -151,10 +152,9 @@ const CopyWindow = ({
       take: initialPageState.take,
     });
   };
-  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
-  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-    unsavedAttadatnumsState
-  );
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -162,7 +162,10 @@ const CopyWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         rcvperson: defaultOption.find((item: any) => item.id === "rcvperson")
@@ -289,6 +292,8 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
+    if (unsavedName.length > 0) setDeletedName(unsavedName);
+
     setVisible(false);
   };
 
@@ -704,13 +709,14 @@ const CopyWindow = ({
 
     if (data.isSuccess === true) {
       reloadData(data.returnString);
+      setUnsavedName([]);
       if (ParaData.workType == "N") {
-        onClose();
+        setVisible(false);
       } else {
         setFilters((prev) => ({
           ...prev,
-          isSearch: true
-        }))
+          isSearch: true,
+        }));
       }
       setParaData({
         pgSize: PAGE_SIZE,
@@ -891,10 +897,6 @@ const CopyWindow = ({
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
-    if (!filters.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
     setFilters((prev) => {
       return {
         ...prev,
@@ -1357,7 +1359,13 @@ const CopyWindow = ({
         </GridContainer>
         <GridContainer>
           <CommentsGrid
-            ref_key={workType == "N" ? "" : data?.recno == undefined ? filters.recno : data?.recno}
+            ref_key={
+              workType == "N"
+                ? ""
+                : data?.recno == undefined
+                ? filters.recno
+                : data?.recno
+            }
             form_id={pathname}
             table_id={"CR100T"}
             style={{ height: "20vh" }}
@@ -1386,7 +1394,7 @@ const CopyWindow = ({
         />
       )}
       {attachmentsWindowVisible && (
-        <AttachmentsWindow
+        <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}

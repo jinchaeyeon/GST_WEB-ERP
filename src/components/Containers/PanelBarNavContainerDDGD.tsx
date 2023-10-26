@@ -171,6 +171,9 @@ const PanelBarNavContainer = (props: any) => {
       // 초기화
       setUnsavedAttadatnums([]);
       setDeletedAttadatnums([]);
+      // 초기화
+      setUnsavedName([]);
+      setDeletedName([]);
     }
   }, [deletedAttadatnums]);
 
