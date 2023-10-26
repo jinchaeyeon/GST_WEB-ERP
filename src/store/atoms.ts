@@ -112,11 +112,18 @@ export const deletedAttadatnumsState = atom<string[]>({
   key: "deletedAttadatnums",
   default: [],
 });
-
+export const deletedNameState = atom<string[]>({
+  key: "deletedNameState",
+  default: [],
+});
 // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 번호를 저장하는 용도.
 // unsavedAttadatnums 값이 존재하는데 저장화면을 벗어나면(path 변경, 팝업닫기, 새로고침 시) 서버에서 파일을 삭제 처리하도록 함
 export const unsavedAttadatnumsState = atom<string[]>({
   key: "unsavedAttadatnums",
+  default: [],
+});
+export const unsavedNameState = atom<string[]>({
+  key: "unsavedNameState",
   default: [],
 });
 

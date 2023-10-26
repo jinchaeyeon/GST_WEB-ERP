@@ -41,12 +41,19 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
-import { isLoading, unsavedAttadatnumsState } from "../../store/atoms";
+import {
+  deletedAttadatnumsState,
+  deletedNameState,
+  isLoading,
+  unsavedAttadatnumsState,
+  unsavedNameState,
+} from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -57,16 +64,15 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   toDate,
-  GetPropertyValueByName,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import AC_A1000W_Note_Window from "./AC_A1000W_Note_Window";
 import AccountWindow from "./CommonWindows/AccountWindow";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import CodeWindow from "./CommonWindows/CodeWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
+import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import StandardWindow from "./CommonWindows/StandardWindow";
 
 type IWindow = {
@@ -74,7 +80,7 @@ type IWindow = {
   data?: Idata;
   setVisible(t: boolean): void;
   setData(str: string): void;
-    modal?: boolean;
+  modal?: boolean;
 };
 
 type TdataArr = {
@@ -560,11 +566,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {isInEdit ? (
-        <Input value={value} onChange={handleChange} type="text" />
-      ) : (
-        value
-      )}
+      {value}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -582,7 +584,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
-        <AttachmentsWindow
+        <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
@@ -658,10 +660,14 @@ const CopyWindow = ({
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
 
-  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
-  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-    unsavedAttadatnumsState
+  const [unsavedName, setUnsavedName] = useRecoilState(
+    unsavedNameState
   );
+
+  const [deletedName, setDeletedName] = useRecoilState(
+    deletedNameState
+  );
+  
   //메시지 조회
   const pathname: string = window.location.pathname.replace("/", "");
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -676,7 +682,10 @@ const CopyWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && worktype == "N") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         location: defaultOption.find((item: any) => item.id === "location")
@@ -994,7 +1003,7 @@ const CopyWindow = ({
             ...item,
           }
     );
-    setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+
     setMainDataResult((prev) => {
       return {
         data: newData,
@@ -1234,7 +1243,9 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
-    setUnsavedAttadatnums([]);
+    console.log(unsavedName);
+    if (unsavedName.length > 0)
+      setDeletedName(unsavedName);
     setVisible(false);
   };
 
@@ -1482,6 +1493,7 @@ const CopyWindow = ({
         const newData = rows.map((item: any) => ({
           ...item,
           rowstatus: "N",
+          attdatnum: "",
         }));
         setWorkType("N");
         setMainDataResult((prev) => {
@@ -1545,8 +1557,8 @@ const CopyWindow = ({
         acntdt: toDate(data.acntdt),
         position: data.position,
         inoutdiv: data.inoutdiv,
-        files: data.files,
-        attdatnum: data.attdatnum,
+        files: worktype === "C" ? "" : data.files,
+        attdatnum: worktype === "C" ? "" : data.attdatnum,
         acseq1: data.acseq1,
         ackey: data.ackey,
         actdt: toDate(data.actdt),
@@ -1920,7 +1932,7 @@ const CopyWindow = ({
       "@p_form_id": "AC_A1000W",
     },
   };
-
+  console.log(unsavedName);
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     let valid = true;
@@ -2598,6 +2610,7 @@ const CopyWindow = ({
         find_row_value: data.returnString,
         isSearch: true,
       }));
+      setUnsavedName([]);
       if (ParaData.workType == "N") {
         onClose();
       }
@@ -2676,7 +2689,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert(data.resultMessage)
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -3383,7 +3396,7 @@ const CopyWindow = ({
                     name="files"
                     type="text"
                     value={filters.files}
-                    onChange={filterInputChange}
+                    className="readonly"
                   />
                   <ButtonInInput>
                     <Button
@@ -5283,7 +5296,7 @@ const CopyWindow = ({
         />
       )}
       {attachmentsWindowVisible && (
-        <AttachmentsWindow
+        <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}

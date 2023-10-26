@@ -1,29 +1,18 @@
-import { useCallback, useState, useEffect } from "react";
+import { Button } from "@progress/kendo-react-buttons";
+import {
+  AutoComplete,
+  AutoCompleteCloseEvent,
+} from "@progress/kendo-react-dropdowns";
 import {
   PanelBar,
   PanelBarItem,
   PanelBarSelectEventArguments,
 } from "@progress/kendo-react-layout";
-import { useHistory, useLocation, withRouter } from "react-router-dom";
-import { Button } from "@progress/kendo-react-buttons";
-import { useRecoilState } from "recoil";
-import {
-  isMobileMenuOpendState,
-  menusState,
-  passwordExpirationInfoState,
-  loginResultState,
-  isMenuOpendState,
-  // accessTokenState,
-  deletedAttadatnumsState,
-  unsavedAttadatnumsState,
-} from "../../store/atoms";
 import { Tooltip } from "@progress/kendo-react-tooltip";
-import UserOptionsWindow from "../Windows/CommonWindows/UserOptionsWindow";
-import ChangePasswordWindow from "../Windows/CommonWindows/ChangePasswordWindow";
-import SystemOptionWindow from "../Windows/CommonWindows/SystemOptionWindow";
-import { useApi } from "../../hooks/api";
-import { Iparameters, TLogParaVal, TPath } from "../../store/types";
-import Loading from "../Loading";
+import { useCallback, useEffect, useState } from "react";
+import cookie from "react-cookies";
+import { useHistory, useLocation, withRouter } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import {
   AppName,
   ButtonContainer,
@@ -37,12 +26,25 @@ import {
   TopTitle,
   Wrapper,
 } from "../../CommonStyled";
-import { getBrowser, resetLocalStorage, UseGetIp } from "../CommonFunction";
+import { useApi } from "../../hooks/api";
 import {
-  AutoComplete,
-  AutoCompleteCloseEvent,
-} from "@progress/kendo-react-dropdowns";
-import cookie from "react-cookies";
+  // accessTokenState,
+  deletedAttadatnumsState,
+  deletedNameState,
+  isMenuOpendState,
+  isMobileMenuOpendState,
+  loginResultState,
+  menusState,
+  passwordExpirationInfoState,
+  unsavedAttadatnumsState,
+  unsavedNameState,
+} from "../../store/atoms";
+import { Iparameters, TLogParaVal, TPath } from "../../store/types";
+import { UseGetIp, getBrowser, resetLocalStorage } from "../CommonFunction";
+import Loading from "../Loading";
+import ChangePasswordWindow from "../Windows/CommonWindows/ChangePasswordWindow";
+import SystemOptionWindow from "../Windows/CommonWindows/SystemOptionWindow";
+import UserOptionsWindow from "../Windows/CommonWindows/UserOptionsWindow";
 
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
@@ -66,12 +68,12 @@ const PanelBarNavContainer = (props: any) => {
   const [deletedAttadatnums, setDeletedAttadatnums] = useRecoilState(
     deletedAttadatnumsState
   );
-
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
-
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const customerName = loginResult ? loginResult.customerName : "";
   const userId = loginResult ? loginResult.userId : "";
@@ -172,6 +174,17 @@ const PanelBarNavContainer = (props: any) => {
     }
   }, [deletedAttadatnums]);
 
+  // 첨부파일 삭제
+  useEffect(() => {
+    if (deletedName.length > 0) {
+      fetchToDeletedName(deletedName);
+
+      // 초기화
+      setUnsavedName([]);
+      setDeletedName([]);
+    }
+  }, [deletedName]);
+
   useEffect(() => {
     // console.log("caches" in window);
     // console.log(window.caches);
@@ -213,6 +226,18 @@ const PanelBarNavContainer = (props: any) => {
 
       if (data === null) {
         console.log("An error occured to delete a file of " + attdatnum);
+      }
+    });
+  }, []);
+
+  const fetchToDeletedName = useCallback(async (saved_name: string[]) => {
+    let data: any;
+
+    saved_name.forEach(async (name) => {
+      try {
+        data = await processApi<any>("file-delete", { attached: name });
+      } catch (error) {
+        data = null;
       }
     });
   }, []);

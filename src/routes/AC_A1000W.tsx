@@ -34,6 +34,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -48,7 +49,6 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   useSysMessage,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -66,7 +66,10 @@ import DetailWindow from "../components/Windows/AC_A1000W_Window";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import {
+  deletedAttadatnumsState,
+  isLoading
+} from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 const DATA_ITEM_KEY = "num";
@@ -90,6 +93,9 @@ const AC_A1000W: React.FC = () => {
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
   let gridRef: any = useRef(null);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -97,7 +103,10 @@ const AC_A1000W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
@@ -244,6 +253,7 @@ const AC_A1000W: React.FC = () => {
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
     actdt: "",
+    attdatnum: "",
     acseq1: 0,
   });
 
@@ -473,6 +483,10 @@ const AC_A1000W: React.FC = () => {
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       );
+      // 첨부파일 삭제
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+
       resetAllGrid();
 
       if (isLastDataDeleted) {
@@ -774,6 +788,7 @@ const AC_A1000W: React.FC = () => {
       setParaDataDeleted((prev) => ({
         ...prev,
         work_type: "D",
+        attdatnum: selectRows.attdatnum,
         actdt: selectRows.actdt,
         acseq1: selectRows.acseq1,
       }));

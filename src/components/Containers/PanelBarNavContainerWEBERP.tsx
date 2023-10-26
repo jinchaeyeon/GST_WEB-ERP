@@ -16,6 +16,8 @@ import {
   // accessTokenState,
   deletedAttadatnumsState,
   unsavedAttadatnumsState,
+  deletedNameState,
+  unsavedNameState,
 } from "../../store/atoms";
 import { Tooltip } from "@progress/kendo-react-tooltip";
 import UserOptionsWindow from "../Windows/CommonWindows/UserOptionsWindow";
@@ -65,12 +67,16 @@ const PanelBarNavContainer = (props: any) => {
   const [deletedAttadatnums, setDeletedAttadatnums] = useRecoilState(
     deletedAttadatnumsState
   );
-
+  const [deletedName, setDeletedName] = useRecoilState(
+    deletedNameState
+  );
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
-
+  const [unsavedName, setUnsavedName] = useRecoilState(
+    unsavedNameState
+  );
   const companyCode = loginResult ? loginResult.companyCode : "";
   const customerName = loginResult ? loginResult.customerName : "";
   const userId = loginResult ? loginResult.userId : "";
@@ -171,6 +177,17 @@ const PanelBarNavContainer = (props: any) => {
     }
   }, [deletedAttadatnums]);
 
+    // 첨부파일 삭제
+    useEffect(() => {
+      if (deletedName.length > 0) {
+        fetchToDeletedName(deletedName);
+  
+        // 초기화
+        setUnsavedName([]);
+        setDeletedName([]);
+      }
+    }, [deletedName]);
+
   useEffect(() => {
     // console.log("caches" in window);
     // console.log(window.caches);
@@ -212,6 +229,18 @@ const PanelBarNavContainer = (props: any) => {
 
       if (data === null) {
         console.log("An error occured to delete a file of " + attdatnum);
+      }
+    });
+  }, []);
+
+  const fetchToDeletedName = useCallback(async (saved_name: string[]) => {
+    let data: any;
+
+    saved_name.forEach(async (name) => {
+      try {
+        data = await processApi<any>("file-delete", { attached: name });
+      } catch (error) {
+        data = null;
       }
     });
   }, []);
