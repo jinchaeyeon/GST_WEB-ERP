@@ -251,7 +251,7 @@ const CM_A5001W: React.FC = () => {
     setFilters((prev: any) => {
       return {
         ...prev,
-        customer_code: data.custcd,
+        //customer_code: data.custcd,
         custnm: data.custnm,
       };
     });

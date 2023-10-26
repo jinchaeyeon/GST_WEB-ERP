@@ -310,7 +310,7 @@ const CM_A5000W: React.FC = () => {
     setFilters((prev: any) => {
       return {
         ...prev,
-        custcd: data.custcd,
+        //custcd: data.custcd,
         custnm: data.custnm,
       };
     });
@@ -330,7 +330,7 @@ const CM_A5000W: React.FC = () => {
     setFilters((prev: any) => {
       return {
         ...prev,
-        user_id: data.user_id,
+        //user_id: data.user_id,
         user_name: data.user_name,
       };
     });
@@ -590,7 +590,6 @@ const CM_A5000W: React.FC = () => {
     dtgb1: "",
     status: [{ sub_code: "001", code_name: "컨설팅 요청" }],
     medicine_type: [],
-    custcd: "",
     custnm: "",
     user_id: "",
     user_name: "",
@@ -677,6 +676,7 @@ const CM_A5000W: React.FC = () => {
       },
     };
 
+    console.log(parameters);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -781,6 +781,7 @@ const CM_A5000W: React.FC = () => {
         "@p_user_id": "",
         "@p_user_name": "",
         "@p_customer_code": "",
+        "@p_customernm": "",
         "@p_find_row_value": "",
       },
     };
