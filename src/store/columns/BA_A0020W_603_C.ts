@@ -111,12 +111,6 @@ export const gridList: Array<TGrid> = [
         caption: "당기순이익",
         width: 100,
       },
-      {
-        id: "col_files",
-        field: "files",
-        caption: "첨부파일",
-        width: 120,
-      },
     ],
   },
   {
@@ -169,6 +163,12 @@ export const gridList: Array<TGrid> = [
         field: "remark",
         caption: "비고",
         width: 200,
+      },
+      {
+        id: "col_files",
+        field: "files",
+        caption: "첨부파일",
+        width: 120,
       },
     ],
   },

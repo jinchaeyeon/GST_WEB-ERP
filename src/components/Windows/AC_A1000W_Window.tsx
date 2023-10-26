@@ -42,11 +42,9 @@ import {
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
-  deletedAttadatnumsState,
   deletedNameState,
   isLoading,
-  unsavedAttadatnumsState,
-  unsavedNameState,
+  unsavedNameState
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import ComboBoxCell from "../Cells/ComboBoxCell";
@@ -660,14 +658,10 @@ const CopyWindow = ({
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
 
-  const [unsavedName, setUnsavedName] = useRecoilState(
-    unsavedNameState
-  );
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
-  const [deletedName, setDeletedName] = useRecoilState(
-    deletedNameState
-  );
-  
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
+
   //메시지 조회
   const pathname: string = window.location.pathname.replace("/", "");
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -1243,9 +1237,7 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
-    console.log(unsavedName);
-    if (unsavedName.length > 0)
-      setDeletedName(unsavedName);
+    if (unsavedName.length > 0) setDeletedName(unsavedName);
     setVisible(false);
   };
 

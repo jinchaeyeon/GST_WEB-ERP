@@ -48,7 +48,9 @@ import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import NumberCell from "../components/Cells/NumberCell";
 import YearDateCell from "../components/Cells/YearDateCell";
+import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -63,7 +65,6 @@ import {
   handleKeyPressSearch,
   isValidDate,
   useSysMessage,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -83,12 +84,13 @@ import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
   loginResultState,
   unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0020W_603_C";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 const DATA_ITEM_KEY = "custcd";
@@ -247,6 +249,7 @@ const BA_A0020_603: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+
   const userId = UseGetValueFromSessionItem("user_id");
   const pathname: string = window.location.pathname.replace("/", "");
   const [loginResult] = useRecoilState(loginResultState);
@@ -262,6 +265,10 @@ const BA_A0020_603: React.FC = () => {
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
@@ -279,7 +286,10 @@ const BA_A0020_603: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
@@ -287,8 +297,7 @@ const BA_A0020_603: React.FC = () => {
       }));
       setInfomation((prev) => ({
         ...prev,
-        useyn: defaultOption.find((item: any) => item.id === "useyn")
-          .valueCode,
+        useyn: defaultOption.find((item: any) => item.id === "useyn").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -393,10 +402,6 @@ const BA_A0020_603: React.FC = () => {
   }>({});
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
-    useState<boolean>(false);
-  const [attachmentsWindowVisible2, setAttachmentsWindowVisible2] =
-    useState<boolean>(false);
 
   const [zipCodeWindowVisible, setZipCodeWindowVisibile] =
     useState<boolean>(false);
@@ -1157,7 +1162,12 @@ const BA_A0020_603: React.FC = () => {
     setyn(true);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "U",
@@ -1423,27 +1433,17 @@ const BA_A0020_603: React.FC = () => {
 
     const newDataItem = {
       [SUB_DATA_ITEM_KEY]: ++temp,
-      recdt: convertDateToStr(new Date()),
-      attdatnum: "",
       custcd: infomation.custcd,
-      custprsncd: "",
-      dptnm: "",
-      email: "",
-      files: "",
-      insert_form_id: "",
-      insert_pc: "",
-      insert_time: "",
-      insert_userid: "",
-      phoneno: "",
-      prsnnm: "",
-      remark: "",
-      rtrchk: "N",
-      sort_seq: 0,
-      telno: "",
-      update_form_id: "BA_A0020",
-      update_pc: "",
-      update_time: "",
-      update_userid: "",
+      current_income: 0,
+      dedt_ratio: 0,
+      operating_profits: 0,
+      paid_up_capital: 0,
+      ramark: "",
+      salesmoney: 0,
+      seq: 0,
+      totasset: 0,
+      totcapital: 0,
+      yyyy: "",
       rowstatus: "N",
     };
     setSelectedsubDataState({ [newDataItem[SUB_DATA_ITEM_KEY]]: true });
@@ -1469,17 +1469,27 @@ const BA_A0020_603: React.FC = () => {
 
     const newDataItem = {
       [SUB_DATA_ITEM_KEY2]: ++temp2,
+      recdt: convertDateToStr(new Date()),
+      attdatnum: "",
       custcd: infomation.custcd,
-      current_income: 0,
-      dedt_ratio: 0,
-      operating_profits: 0,
-      paid_up_capital: 0,
-      ramark: "",
-      salesmoney: 0,
-      seq: 0,
-      totasset: 0,
-      totcapital: 0,
-      yyyy: "",
+      custprsncd: "",
+      dptnm: "",
+      email: "",
+      files: "",
+      insert_form_id: "",
+      insert_pc: "",
+      insert_time: "",
+      insert_userid: "",
+      phoneno: "",
+      prsnnm: "",
+      remark: "",
+      rtrchk: "N",
+      sort_seq: 0,
+      telno: "",
+      update_form_id: "BA_A0020",
+      update_pc: "",
+      update_time: "",
+      update_userid: "",
       rowstatus: "N",
     };
     setSelectedsubDataState2({ [newDataItem[SUB_DATA_ITEM_KEY2]]: true });
@@ -1501,10 +1511,6 @@ const BA_A0020_603: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
-    if (unsavedAttadatnums.length > 0) {
-      setDeletedAttadatnums(unsavedAttadatnums);
-    }
-
     setTabSelected(e.selected);
   };
 
@@ -1527,44 +1533,6 @@ const BA_A0020_603: React.FC = () => {
       custcd: data.custcd,
       custnm: data.custnm,
     }));
-  };
-
-  const getAttachmentsData2 = (data: IAttachmentData) => {
-    const datas = subDataResult.data.map((item: any) =>
-      item.num == rows
-        ? {
-            ...item,
-            attdatnum: data.attdatnum,
-            files:
-              data.original_name +
-              (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
-            rowstatus: item.rowstatus == "N" ? "N" : "U",
-          }
-        : { ...item }
-    );
-
-    setSubDataResult((prev) => {
-      return {
-        data: datas,
-        total: prev.total,
-      };
-    });
-  };
-
-  const getAttachmentsData = (data: IAttachmentData) => {
-    if (!infomation.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
-    setInfomation((prev) => {
-      return {
-        ...prev,
-        attdatnum: data.attdatnum,
-        files:
-          data.original_name +
-          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
-      };
-    });
   };
 
   const getZipCodeData = (zipcode: string, address: string) => {
@@ -1594,6 +1562,12 @@ const BA_A0020_603: React.FC = () => {
     setPage2(initialPageState); // 페이지 초기화
     setPage3(initialPageState); // 페이지 초기화
     resetAllGrid(); // 데이터 초기화
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
     setTabSelected(0);
     setyn(true);
@@ -2254,9 +2228,9 @@ const BA_A0020_603: React.FC = () => {
     if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
 
-  const onSaveClick = async () => {
+  const onSaveClick3 = async () => {
     let valid = true;
-    const dataItem = subDataResult.data.filter((item: any) => {
+    const dataItem = subDataResult2.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
         item.rowstatus !== undefined
@@ -2265,7 +2239,7 @@ const BA_A0020_603: React.FC = () => {
     try {
       dataItem.map((item: any) => {
         if (item.prsnnm == "") {
-          throw findMessage(messagesData, "BA_A0020W_008");
+          throw findMessage(messagesData, "BA_A0020W_603_007");
         }
       });
     } catch (e) {
@@ -2273,7 +2247,7 @@ const BA_A0020_603: React.FC = () => {
       valid = false;
     }
     if (!valid) return false;
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length === 0 && deletedMainRows2.length === 0) return false;
     let dataArr: TdataArr = {
       rowstatus: [],
       remark_s: [],
@@ -2320,7 +2294,7 @@ const BA_A0020_603: React.FC = () => {
       dataArr.sort_seq_s.push(sort_seq);
     });
 
-    deletedMainRows.forEach(async (item: any, idx: number) => {
+    deletedMainRows2.forEach(async (item: any, idx: number) => {
       const {
         rowstatus = "",
         remark = "",
@@ -2424,15 +2398,15 @@ const BA_A0020_603: React.FC = () => {
     }));
   };
 
-  const onSaveClick3 = async () => {
+  const onSaveClick = async () => {
     let valid = true;
     try {
-      subDataResult2.data.map((item: any) => {
+      subDataResult.data.map((item: any) => {
         if (
           item.yyyy.substring(0, 4) < "1997" ||
           item.yyyy.substring(0, 4).length != 4
         ) {
-          throw findMessage(messagesData, "BA_A0020W_007");
+          throw findMessage(messagesData, "BA_A0020W_603_006");
         }
       });
     } catch (e) {
@@ -2442,14 +2416,14 @@ const BA_A0020_603: React.FC = () => {
 
     if (!valid) return false;
 
-    const dataItem = subDataResult2.data.filter((item: any) => {
+    const dataItem = subDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
         item.rowstatus !== undefined
       );
     });
-
-    if (dataItem.length === 0 && deletedMainRows2.length === 0) return false;
+ 
+    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
     let dataArr: TdataArr2 = {
       rowstatus: [],
       remark_s: [],
@@ -2490,7 +2464,7 @@ const BA_A0020_603: React.FC = () => {
       dataArr.current_income_s.push(current_income);
       dataArr.dedt_rati_s.push(dedt_ratio);
     });
-    deletedMainRows2.forEach(async (item: any, idx: number) => {
+    deletedMainRows.forEach(async (item: any, idx: number) => {
       const {
         rowstatus = "",
         remark = "",
@@ -2652,10 +2626,10 @@ const BA_A0020_603: React.FC = () => {
     let valid = true;
     try {
       if (infomation.custnm == "") {
-        throw findMessage(messagesData, "BA_A0020W_001"); //업체명을 입력하세요.
+        throw findMessage(messagesData, "BA_A0020W_603_001"); //업체명을 입력하세요.
       }
       if (infomation.custdiv == "") {
-        throw findMessage(messagesData, "BA_A0020W_002"); //업체구분을 입력하세요.
+        throw findMessage(messagesData, "BA_A0020W_603_002"); //업체구분을 입력하세요.
       }
     } catch (e) {
       alert(e);
@@ -2678,9 +2652,12 @@ const BA_A0020_603: React.FC = () => {
         find_row_value: returnString,
         isSearch: true,
       }));
-
-      // 초기화
-      setUnsavedAttadatnums([]);
+      if (unsavedName.length > 0) {
+        setDeletedName(unsavedName);
+      }
+      if (unsavedAttadatnums.length > 0) {
+        setDeletedAttadatnums(unsavedAttadatnums);
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -2702,6 +2679,10 @@ const BA_A0020_603: React.FC = () => {
       if (paraData.workType == "CustPerson") {
         const isLastDataDeleted =
           subDataResult.data.length == 0 && subfilters.pgNum > 0;
+
+        // 초기화
+        setUnsavedAttadatnums([]);
+        setUnsavedName([]);
         if (isLastDataDeleted) {
           setPage2({
             skip:
@@ -2731,6 +2712,12 @@ const BA_A0020_603: React.FC = () => {
       } else {
         const isLastDataDeleted =
           subDataResult2.data.length == 0 && subfilters2.pgNum > 1;
+        if (unsavedName.length > 0) {
+          setDeletedName(unsavedName);
+        }
+        if (unsavedAttadatnums.length > 0) {
+          setDeletedAttadatnums(unsavedAttadatnums);
+        }
         if (isLastDataDeleted) {
           setPage3({
             skip:
@@ -2969,6 +2956,17 @@ const BA_A0020_603: React.FC = () => {
   const [files, setFiles] = useState<string>("");
 
   useEffect(() => {
+    const datas = subDataResult.data.filter(
+      (item) =>
+        item[SUB_DATA_ITEM_KEY] ==
+        Object.getOwnPropertyNames(selectedsubDataState)[0]
+    )[0];
+    if (datas != undefined) {
+      if (datas.attdatnum == "") {
+        setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+      }
+    }
+
     const newData = subDataResult.data.map((item) =>
       item[SUB_DATA_ITEM_KEY] ==
       parseInt(Object.getOwnPropertyNames(selectedsubDataState)[0])
@@ -2982,7 +2980,7 @@ const BA_A0020_603: React.FC = () => {
             ...item,
           }
     );
-    setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+
     setSubDataResult((prev) => {
       return {
         data: newData,
@@ -2991,6 +2989,7 @@ const BA_A0020_603: React.FC = () => {
     });
   }, [attdatnum, files]);
 
+  console.log(subDataResult.data);
   return (
     <>
       <TitleContainer>
@@ -3397,6 +3396,10 @@ const BA_A0020_603: React.FC = () => {
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
+
+                        yyyy: row.yyyy
+                          ? new Date(dateformat(row.yyyy))
+                          : new Date(),
                         rowstatus:
                           row.rowstatus == null ||
                           row.rowstatus == "" ||
@@ -3466,8 +3469,6 @@ const BA_A0020_603: React.FC = () => {
                                   ? NumberCell
                                   : YearDateField.includes(item.fieldName)
                                   ? YearDateCell
-                                  : commandField.includes(item.fieldName)
-                                  ? ColumnCommandCell //추후 작업
                                   : undefined
                               }
                               footerCell={
@@ -3517,9 +3518,6 @@ const BA_A0020_603: React.FC = () => {
                   data={process(
                     subDataResult2.data.map((row) => ({
                       ...row,
-                      yyyy: row.yyyy
-                        ? new Date(dateformat(row.yyyy))
-                        : new Date(),
                       rowstatus:
                         row.rowstatus == null ||
                         row.rowstatus == "" ||
@@ -3584,6 +3582,11 @@ const BA_A0020_603: React.FC = () => {
                                 ? RequiredHeader
                                 : undefined
                             }
+                            cell={
+                              commandField.includes(item.fieldName)
+                              ? ColumnCommandCell //추후 작업
+                              : undefined
+                            }
                             footerCell={
                               item.sortOrder === 0
                                 ? subTotalFooterCell2
@@ -3608,27 +3611,12 @@ const BA_A0020_603: React.FC = () => {
           modal={true}
         />
       )}
-      {attachmentsWindowVisible && (
-        <AttachmentsWindow
-          setVisible={setAttachmentsWindowVisible}
-          setData={getAttachmentsData}
-          para={infomation.attdatnum}
-          modal={true}
-        />
-      )}
       {zipCodeWindowVisible && (
         <ZipCodeWindow
           setVisible={setZipCodeWindowVisibile}
           setData={getZipCodeData}
           para={infomation.zipcode}
           modal={true}
-        />
-      )}
-      {attachmentsWindowVisible2 && (
-        <AttachmentsWindow
-          setVisible={setAttachmentsWindowVisible2}
-          setData={getAttachmentsData2}
-          para={subDataResult.data[rows - 1].attdatnum}
         />
       )}
       {gridList.map((grid: TGrid) =>
