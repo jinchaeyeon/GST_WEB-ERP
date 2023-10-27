@@ -110,6 +110,7 @@ const CommentsGrid = (props: {
       editField={EDIT_FIELD}
     />
   );
+
   const enterEdit = (dataItem: any, field: string) => {
     const newData = dataResult.data.map((item) =>
       item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
@@ -312,13 +313,23 @@ const CommentsGrid = (props: {
   }, [dataResult]);
 
   useEffect(() => {
-    if (filters.isSearch && permissions !== null && ref_key != "") {
+    if (filters.isSearch && permissions !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchGrid(deepCopiedFilters);
     }
-  }, [filters, permissions, ref_key]);
+  }, [filters, permissions]);
+
+  useEffect(() => {
+    if (permissions !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchGrid(deepCopiedFilters);
+    }
+  }, [ref_key]);
+
 
   //계획 저장 파라미터 초기값
   const [paraDataSaved, setParaDataSaved] = useState({

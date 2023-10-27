@@ -9,7 +9,7 @@ const CashDisbursementVoucher = (data: any) => {
   const [detailDataResult, setDetailDataResult] = useState<any>(null);
 
   useEffect(() => {
-    if (data !== null) {
+    if (data.data !== null && data.data != undefined) {
       fetchMainData(data.data);
     }
   }, [data]);
@@ -25,8 +25,8 @@ const CashDisbursementVoucher = (data: any) => {
       parameters: {
         "@p_work_type": "Z",
         "@p_orgdiv": "01",
-        "@p_key1": para.ref_key.split("-")[0],
-        "@p_key2": para.ref_key.split("-")[1],
+        "@p_key1": para.ref_key == undefined? "" :  para.ref_key.split("-")[0],
+        "@p_key2": para.ref_key == undefined? "" : para.ref_key.split("-")[1],
       },
     };
 

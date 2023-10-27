@@ -5,6 +5,12 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList",
     columns: [
       {
+        id: "col_chooses",
+        field: "chooses",
+        caption: "참조",
+        width: 80,
+      },
+      {
         id: "col_user_name",
         field: "user_name",
         caption: "성명",
@@ -21,12 +27,6 @@ export const gridList: Array<TGrid> = [
         field: "postcd",
         caption: "직위",
         width: 120,
-      },
-      {
-        id: "col_chooses",
-        field: "chooses",
-        caption: "참조",
-        width: 80,
       },
     ],
   },
