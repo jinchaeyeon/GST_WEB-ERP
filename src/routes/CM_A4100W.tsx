@@ -1148,6 +1148,12 @@ const CM_A4100W: React.FC = () => {
   };
 
   const onAddClick2 = () => {
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     if (tabSelected == 0) {
       setInfomation({
         pgSize: PAGE_SIZE,

@@ -50,6 +50,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -62,7 +63,6 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -83,8 +83,10 @@ import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
   unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/QC_A2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -102,6 +104,16 @@ export const FormContext = createContext<{
   setFiles: (d: any) => void;
   mainDataState: State;
   setMainDataState: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
+
+export const FormContext2 = createContext<{
+  attdatnum2: string;
+  files2: string;
+  setAttdatnum2: (d: any) => void;
+  setFiles2: (d: any) => void;
+  detailDataState: State;
+  setDetailDataState: (d: any) => void;
   // fetchGrid: (n: number) => any;
 }>({} as any);
 
@@ -212,11 +224,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {isInEdit ? (
-        <Input value={value} onChange={handleChange} type="text" />
-      ) : (
-        value
-      )}
+      {value}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -238,6 +246,90 @@ const ColumnCommandCell = (props: GridCellProps) => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
+          modal={true}
+        />
+      )}
+    </>
+  );
+};
+
+const ColumnCommandCell2 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const {
+    attdatnum2,
+    files2,
+    setAttdatnum2,
+    setFiles2,
+    detailDataState,
+    setDetailDataState,
+  } = useContext(FormContext2);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+
+  const onAttWndClick2 = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setAttdatnum2(data.attdatnum);
+    setFiles2(
+      data.original_name +
+        (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : "")
+    );
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {value}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onAttWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={dataItem.attdatnum}
+          modal={true}
         />
       )}
     </>
@@ -279,7 +371,12 @@ const QC_A2000: React.FC = () => {
       pgNum: page.skip / page.take + 1,
       isSearch: true,
     }));
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setPage({
       ...event.page,
     });
@@ -292,7 +389,12 @@ const QC_A2000: React.FC = () => {
       pgNum: page.skip / page.take + 1,
       isSearch: true,
     }));
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setPage2({
       ...event.page,
     });
@@ -325,16 +427,23 @@ const QC_A2000: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const [deletedAttadatnums, setDeletedAttadatnums] = useRecoilState(
-    deletedAttadatnumsState
-  );
+
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
+
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
+
   //FormContext 데이터 state
   const [attdatnum, setAttdatnum] = useState<string>("");
   const [files, setFiles] = useState<string>("");
+  const [attdatnum2, setAttdatnum2] = useState<string>("");
+  const [files2, setFiles2] = useState<string>("");
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -347,7 +456,10 @@ const QC_A2000: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setFilters((prev) => ({
         ...prev,
@@ -1011,6 +1123,12 @@ const QC_A2000: React.FC = () => {
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
     resetAllGrid();
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     if (e.selected == 0) {
       setFilters((prev) => ({
         ...prev,
@@ -1166,7 +1284,7 @@ const QC_A2000: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-       if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1202,7 +1320,7 @@ const QC_A2000: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1323,6 +1441,12 @@ const QC_A2000: React.FC = () => {
       } else {
         resetAllGrid();
         setTabSelected(0);
+        if (unsavedName.length > 0) {
+          setDeletedName(unsavedName);
+        }
+        if (unsavedAttadatnums.length > 0) {
+          setDeletedAttadatnums(unsavedAttadatnums);
+        }
         setFilters((prev) => ({
           ...prev,
           isSearch: true,
@@ -1463,6 +1587,14 @@ const QC_A2000: React.FC = () => {
       } else {
         const isLastDataDeleted =
           detailDataResult.data.length == 0 && detailFilters.pgNum > 0;
+        let array: any[] = [];
+
+        deletedMainRows.map((item: any) => {
+          array.push(item.attdatnum);
+        });
+
+        setDeletedAttadatnums(array);
+
         if (isLastDataDeleted) {
           setPage2({
             skip:
@@ -1494,7 +1626,8 @@ const QC_A2000: React.FC = () => {
           }));
         }
       }
-
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "QC_U",
@@ -2160,11 +2293,17 @@ const QC_A2000: React.FC = () => {
 
   //FormContext에서 데이터 받아 set
   useEffect(() => {
-    const items = mainDataResult.data.filter(
+    const datas = mainDataResult.data.filter(
       (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
-    const datas = mainDataResult.data.map((item: any) =>
-      item.num == items.num
+    if (datas != undefined) {
+      if (datas.attdatnum == "") {
+        setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+      }
+    }
+
+    const data = mainDataResult.data.map((item: any) =>
+      item.num == datas.num
         ? {
             ...item,
             attdatnum: attdatnum,
@@ -2173,14 +2312,45 @@ const QC_A2000: React.FC = () => {
           }
         : { ...item }
     );
-    setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+
     setMainDataResult((prev) => {
       return {
-        data: datas,
+        data: data,
         total: prev.total,
       };
     });
   }, [attdatnum, files]);
+
+  //FormContext에서 데이터 받아 set
+  useEffect(() => {
+    const datas = detailDataResult.data.filter(
+      (item: any) =>
+        item.num == Object.getOwnPropertyNames(detailSelectedState)[0]
+    )[0];
+    if (datas != undefined) {
+      if (datas.attdatnum == "") {
+        setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+      }
+    }
+
+    const data = detailDataResult.data.map((item: any) =>
+      item.num == datas.num
+        ? {
+            ...item,
+            attdatnum: attdatnum2,
+            files: files2,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : { ...item }
+    );
+
+    setDetailDataResult((prev) => {
+      return {
+        data: data,
+        total: prev.total,
+      };
+    });
+  }, [attdatnum2, files2]);
 
   const [values, setValues] = React.useState<boolean>(false);
   const CustomCheckBoxCell = (props: GridHeaderCellProps) => {
@@ -2578,111 +2748,123 @@ const QC_A2000: React.FC = () => {
         </TabStripTab>
         <TabStripTab title="검사내역">
           <GridContainerWrap>
-            <GridContainer width="80%">
-              <GridTitleContainer>
-                <GridTitle>검사상세정보</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onDeleteClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                    title="행 삭제"
-                  ></Button>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                    title="저장"
-                  ></Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <Grid
-                style={{ height: "61.5vh" }}
-                data={process(
-                  detailDataResult.data.map((row) => ({
-                    ...row,
-                    proccd: proccdListData.find(
-                      (items: any) => items.sub_code === row.proccd
-                    )?.code_name,
-                    person: personListData.find(
-                      (item: any) => item.user_id === row.person
-                    )?.user_name,
-                    rowstatus:
-                      row.rowstatus == null ||
-                      row.rowstatus == "" ||
-                      row.rowstatus == undefined
-                        ? ""
-                        : row.rowstatus,
-                    [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
-                  })),
-                  detailDataState
-                )}
-                {...detailDataState}
-                onDataStateChange={onDetailDataStateChange}
-                onHeaderSelectionChange={onDetailHeaderSelectionChange}
-                dataItemKey={DATA_ITEM_KEY2}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={ondetailSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={detailDataResult.total}
-                skip={page2.skip}
-                take={page2.take}
-                pageable={true}
-                onPageChange={pageChange2}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef2}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onDetailSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
-                id="grdList"
-              >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={setWidth("grdList", item.width)}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : dateField.includes(item.fieldName)
-                              ? DateCell
-                              : customField.includes(item.fieldName)
-                              ? ColumnCommandCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder === 0
-                              ? detailTotalFooterCell
-                              : numberField.includes(item.fieldName)
-                              ? gridSumQtyFooterCell2
-                              : undefined
-                          }
-                        />
-                      )
+            <FormContext2.Provider
+              value={{
+                attdatnum2,
+                files2,
+                setAttdatnum2,
+                setFiles2,
+                detailDataState,
+                setDetailDataState,
+                // fetchGrid,
+              }}
+            >
+              <GridContainer width="80%">
+                <GridTitleContainer>
+                  <GridTitle>검사상세정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="저장"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: "61.5vh" }}
+                  data={process(
+                    detailDataResult.data.map((row) => ({
+                      ...row,
+                      proccd: proccdListData.find(
+                        (items: any) => items.sub_code === row.proccd
+                      )?.code_name,
+                      person: personListData.find(
+                        (item: any) => item.user_id === row.person
+                      )?.user_name,
+                      rowstatus:
+                        row.rowstatus == null ||
+                        row.rowstatus == "" ||
+                        row.rowstatus == undefined
+                          ? ""
+                          : row.rowstatus,
+                      [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
+                    })),
+                    detailDataState
                   )}
-              </Grid>
-            </GridContainer>
+                  {...detailDataState}
+                  onDataStateChange={onDetailDataStateChange}
+                  onHeaderSelectionChange={onDetailHeaderSelectionChange}
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={ondetailSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={detailDataResult.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef2}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onDetailSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
+                  id="grdList"
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={setWidth("grdList", item.width)}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : dateField.includes(item.fieldName)
+                                ? DateCell
+                                : customField.includes(item.fieldName)
+                                ? ColumnCommandCell2
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? detailTotalFooterCell
+                                : numberField.includes(item.fieldName)
+                                ? gridSumQtyFooterCell2
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </GridContainer>
+            </FormContext2.Provider>
             <GridContainer width={`calc(20% - ${GAP}px)`}>
               <GridTitleContainer>
                 <GridTitle>불량상세정보</GridTitle>

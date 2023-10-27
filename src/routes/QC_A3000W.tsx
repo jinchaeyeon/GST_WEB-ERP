@@ -37,6 +37,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -52,7 +53,6 @@ import {
   setDefaultDate,
   toDate,
   useSysMessage,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -70,9 +70,11 @@ import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
   loginResultState,
   unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/QC_A3000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -142,7 +144,12 @@ const QC_A3000: React.FC = () => {
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setPage({
       skip: page.skip,
       take: initialPageState.take,
@@ -157,7 +164,12 @@ const QC_A3000: React.FC = () => {
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setPage2({
       skip: page.skip,
       take: initialPageState.take,
@@ -172,15 +184,13 @@ const QC_A3000: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
-  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
-  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-    unsavedAttadatnumsState
-  );
-
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setFilters((prev) => ({
         ...prev,
@@ -228,6 +238,15 @@ const QC_A3000: React.FC = () => {
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
 
   useEffect(() => {
     if (bizComponentData !== null) {
@@ -1032,7 +1051,12 @@ const QC_A3000: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setDetailFilters((prev) => ({
       ...prev,
       itemcd: selectedRowData.itemcd,
@@ -1053,7 +1077,12 @@ const QC_A3000: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     const user = usersListData.find(
       (item: any) => item.user_name === selectedRowData.person
     )?.user_id;
@@ -1188,7 +1217,12 @@ const QC_A3000: React.FC = () => {
     const data = mainDataResult.data.filter(
       (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setInformation((prev) => ({
       ...prev,
       workType: "N",
@@ -1269,6 +1303,9 @@ const QC_A3000: React.FC = () => {
       const findRow2 = mainDataResult.data.filter(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       )[0];
+      // 첨부파일 삭제
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
       if (isLastDataDeleted2) {
         if (mainDataResult.data.length == 1) {
           setPage({
@@ -1335,9 +1372,8 @@ const QC_A3000: React.FC = () => {
           }));
         }
       }
-      // 첨부파일 삭제
-      if (paraDataDeleted.attdatnum)
-        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1429,6 +1465,12 @@ const QC_A3000: React.FC = () => {
         resetAllGrid();
         setPage(initialPageState); // 페이지 초기화
         setPage2(initialPageState);
+        if (unsavedName.length > 0) {
+          setDeletedName(unsavedName);
+        }
+        if (unsavedAttadatnums.length > 0) {
+          setDeletedAttadatnums(unsavedAttadatnums);
+        }
         setFilters((prev: any) => ({
           ...prev,
           pgNum: 1,
@@ -1523,6 +1565,8 @@ const QC_A3000: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
       setDetailFilters((prev) => ({
         ...prev,
         find_row_value: data.returnString,
@@ -1560,8 +1604,6 @@ const QC_A3000: React.FC = () => {
         userid: userId,
         pc: pc,
       });
-      // 초기화
-      setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1576,10 +1618,6 @@ const QC_A3000: React.FC = () => {
   }, [ParaData]);
 
   const getAttachmentsData = (data: IAttachmentData) => {
-    if (!information.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
     setInformation((prev) => {
       return {
         ...prev,

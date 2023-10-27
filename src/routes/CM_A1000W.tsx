@@ -1140,6 +1140,12 @@ const CM_A1000W: React.FC = () => {
 
   const onAddClick = () => {
     setWorkType("N");
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setInfomation((prev) => ({
       ...prev,
       amt: 0,

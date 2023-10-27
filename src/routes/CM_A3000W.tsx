@@ -905,6 +905,12 @@ const CM_A3000W: React.FC = () => {
   const excelsInput: any = React.useRef();
 
   const onAddClick2 = () => {
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setAttachmentNumber("");
     setAttDataResult((prev) => {
       return {

@@ -16,8 +16,10 @@ import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
   deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
   unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -37,6 +39,7 @@ import { PAGE_SIZE } from "../CommonString";
 import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
+import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -115,14 +118,10 @@ const CopyWindow = ({
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+  
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
-  // 삭제할 첨부파일 리스트를 담는 함수
-  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
-
-  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
-  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-    unsavedAttadatnumsState
-  );
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -175,8 +174,7 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
-    if (unsavedAttadatnums.length > 0)
-      setDeletedAttadatnums(unsavedAttadatnums);
+    if (unsavedName.length > 0) setDeletedName(unsavedName);
 
     setVisible(false);
   };
@@ -341,10 +339,6 @@ const CopyWindow = ({
   }, []);
 
   const getAttachmentsData = (data: IAttachmentData) => {
-    if (!filters.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -491,6 +485,7 @@ const CopyWindow = ({
         reloadData(data.returnString);
         setVisible(false);
       }
+      setUnsavedName([]);
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "",
@@ -798,7 +793,7 @@ const CopyWindow = ({
         />
       )}
       {attachmentsWindowVisible && (
-        <AttachmentsWindow
+        <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}

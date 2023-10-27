@@ -1381,6 +1381,12 @@ const BA_A0020: React.FC = () => {
   };
   const onAddClick2 = () => {
     setWorkType("N");
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "N",

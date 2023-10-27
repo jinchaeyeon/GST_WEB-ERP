@@ -805,7 +805,10 @@ const QC_A2500W: React.FC = () => {
         (row: any) =>
           row.num == Object.getOwnPropertyNames(detailselectedState)[0]
       );
-      setDetailDataResult(process([], detailDataState));
+      
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+
       if (isLastDataDeleted) {
         setPage2({
           skip:
@@ -835,9 +838,6 @@ const QC_A2500W: React.FC = () => {
           isSearch: true,
         }));
       }
-
-      if (paraDataDeleted.attdatnum)
-        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
