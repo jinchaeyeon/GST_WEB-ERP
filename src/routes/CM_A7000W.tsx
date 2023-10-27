@@ -49,6 +49,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import DateCell from "../components/Cells/DateCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -63,7 +64,6 @@ import {
   setDefaultDate,
   toDate,
   useSysMessage,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -84,8 +84,10 @@ import { useApi } from "../hooks/api";
 import { IAttachmentData, ICustData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
   unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A7000W_C";
 import {
@@ -145,14 +147,6 @@ const ColumnCommandCell = (props: GridCellProps) => {
     setAttachmentsWindowVisible(true);
   };
 
-  const getAttachmentsData = (data: IAttachmentData) => {
-    setAttdatnum(data.attdatnum);
-    setFiles(
-      data.original_name +
-        (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : "")
-    );
-  };
-
   const defaultRendering = (
     <td
       className={className}
@@ -183,7 +177,6 @@ const ColumnCommandCell = (props: GridCellProps) => {
       {attachmentsWindowVisible && (
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
-          setData={getAttachmentsData}
           para={dataItem.attdatnum}
           permission={{ upload: false, download: true, delete: false }}
           modal={true}
@@ -230,10 +223,6 @@ const CM_A7000W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [detailselectedState, setDetailselectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
   const [tabSelected, setTabSelected] = React.useState(0);
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
@@ -248,8 +237,11 @@ const CM_A7000W: React.FC = () => {
   const [attachmentsWindowVisiblePb, setAttachmentsWindowVisiblePb] =
     useState<boolean>(false);
 
-  // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
@@ -257,10 +249,6 @@ const CM_A7000W: React.FC = () => {
   );
 
   const getAttachmentsDataPr = (data: IAttachmentData) => {
-    if (!information.attdatnum_private) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
     setInformation((prev) => {
       return {
         ...prev,
@@ -273,10 +261,6 @@ const CM_A7000W: React.FC = () => {
   };
 
   const getAttachmentsDataPb = (data: IAttachmentData) => {
-    if (!information.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
     setInformation((prev) => {
       return {
         ...prev,
@@ -328,7 +312,17 @@ const CM_A7000W: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
-    if (e.selected == 1) {
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+      setUnsavedAttadatnums([]);
+    }
+
+    if (e.selected == 0) {
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
+    } else if (e.selected == 1) {
       const data = mainDataResult.data.filter(
         (item) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -370,7 +364,10 @@ const CM_A7000W: React.FC = () => {
   useEffect(() => {
     if (customOptionData !== null) {
       const queryParams = new URLSearchParams(location.search);
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       if (queryParams.has("go")) {
         history.replace({}, "");
         setFilters((prev) => ({
@@ -585,7 +582,7 @@ const CM_A7000W: React.FC = () => {
     attdatnum_private: "",
     files_private: "",
   });
-  
+
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
@@ -696,7 +693,7 @@ const CM_A7000W: React.FC = () => {
     if (mainDataResult.total < 0) {
       return false;
     }
-    
+
     const mainDataId = Object.getOwnPropertyNames(selectedState)[0];
     const selectedRowData = mainDataResult.data.find(
       (item) => item[DATA_ITEM_KEY] == mainDataId
@@ -774,6 +771,9 @@ const CM_A7000W: React.FC = () => {
       } else {
         setTabSelected(0);
         resetAllGrid();
+        if (unsavedName.length > 0) {
+          setDeletedName(unsavedName);
+        }
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
     } catch (e) {
@@ -929,14 +929,14 @@ const CM_A7000W: React.FC = () => {
     setLoading(true);
 
     let editorContent: any = "";
-      if (refEditorRef.current) {
-        editorContent = refEditorRef.current.getContent();
-      }
-      const bytes = require("utf8-bytes");
-      const convertedEditorContent = 
-        workType == "D" 
-          ? bytesToBase64(bytes(reference)) 
-          : bytesToBase64(bytes(editorContent));
+    if (refEditorRef.current) {
+      editorContent = refEditorRef.current.getContent();
+    }
+    const bytes = require("utf8-bytes");
+    const convertedEditorContent =
+      workType == "D"
+        ? bytesToBase64(bytes(reference))
+        : bytesToBase64(bytes(editorContent));
 
     const para = {
       procedureName: "P_CM_A7000W_S",
@@ -974,6 +974,15 @@ const CM_A7000W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      let array: any[] = [];
+      if (workType == "D" && paraDataSaved.attdatnum != "") {
+        array.push(paraDataSaved.attdatnum);
+      }
+      if (workType == "D" && paraDataSaved.attdatnum_private != "") {
+        array.push(paraDataSaved.attdatnum_private);
+      }
+      setDeletedAttadatnums(array);
+      setUnsavedName([]);
       if (workType == "N" || workType == "D") {
         setTabSelected(0);
       } else {
@@ -1292,7 +1301,7 @@ const CM_A7000W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <GridContainerWrap>
-            <GridContainer style={{ width: isMobile ? "" : `30%`}}>
+            <GridContainer style={{ width: isMobile ? "" : `30%` }}>
               <GridTitleContainer>
                 <GridTitle>회의록</GridTitle>
               </GridTitleContainer>
@@ -1525,11 +1534,13 @@ const CM_A7000W: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
             </GridContainer>
-            <GridContainer style={{ width: isMobile ? "" : `calc(70% - ${GAP}px)`}}>
+            <GridContainer
+              style={{ width: isMobile ? "" : `calc(70% - ${GAP}px)` }}
+            >
               <GridTitleContainer>
                 <GridTitle>참고자료</GridTitle>
               </GridTitleContainer>
-              <GridContainer style = {{ height: "76vh"}}>
+              <GridContainer style={{ height: "76vh" }}>
                 <RichEditor id="refEditor" ref={refEditorRef} />
               </GridContainer>
             </GridContainer>

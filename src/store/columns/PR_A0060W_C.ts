@@ -178,8 +178,8 @@ export const gridList: Array<TGrid> = [
         width: 200,
       },
       {
-        id: "col_attdatnum",
-        field: "attdatnum",
+        id: "col_files",
+        field: "files",
         caption: "첨부파일",
         width: 150,
       },

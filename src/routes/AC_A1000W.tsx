@@ -510,6 +510,7 @@ const AC_A1000W: React.FC = () => {
         pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
         isSearch: true,
       }));
+      
     } else {
       console.log("[오류 발생]");
       console.log(data);

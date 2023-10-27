@@ -771,6 +771,9 @@ const QC_A0060W: React.FC = () => {
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       );
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+
       resetAllGrid();
       if (isLastDataDeleted) {
         setPage({
@@ -800,9 +803,6 @@ const QC_A0060W: React.FC = () => {
           isSearch: true,
         }));
       }
-
-      if (paraDataDeleted.attdatnum)
-        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);

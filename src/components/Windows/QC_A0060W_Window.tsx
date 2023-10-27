@@ -30,16 +30,17 @@ import {
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
-  deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
   loginResultState,
-  unsavedAttadatnumsState,
+  unsavedNameState
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -50,7 +51,6 @@ import {
   getQueryFromBizComponent,
   setDefaultDate,
   toDate,
-  GetPropertyValueByName,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -60,8 +60,8 @@ import {
 } from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
+import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import CopyWindow2 from "./MA_A2500W_Order_Window";
 
 type IWindow = {
@@ -168,13 +168,9 @@ const CopyWindow = ({
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 
-  // 삭제할 첨부파일 리스트를 담는 함수
-  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
-  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
-  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-    unsavedAttadatnumsState
-  );
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -183,7 +179,10 @@ const CopyWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U" && workType != "R") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "new");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "new"
+      );
       setFilters((prev) => ({
         ...prev,
         proccd: defaultOption.find((item: any) => item.id === "proccd")
@@ -251,9 +250,7 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
-    if (unsavedAttadatnums.length > 0)
-      setDeletedAttadatnums(unsavedAttadatnums);
-
+    if (unsavedName.length > 0) setDeletedName(unsavedName);
     setVisible(false);
   };
 
@@ -416,8 +413,8 @@ const CopyWindow = ({
         itemnm: data.itemnm,
         qcgb: data.qcgb,
         proccd: data.proccd,
-        attdatnum: data.attdatnum,
-        files: data.files,
+        attdatnum: workType == "R" ? "" : data.attdatnum,
+        files: workType == "R" ? "" : data.files,
         rev_reason: data.rev_reason,
         remark: data.remark1,
         stdnum: data.stdnum,
@@ -448,10 +445,6 @@ const CopyWindow = ({
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
-    if (!filters.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -836,6 +829,7 @@ const CopyWindow = ({
         reloadData(data.returnString);
         setVisible(false);
       }
+      setUnsavedName([]);
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "",
@@ -868,7 +862,7 @@ const CopyWindow = ({
         cycle_d: "",
         qty_d: "",
         remark_d: "",
-      })
+      });
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -892,7 +886,7 @@ const CopyWindow = ({
         newData.push(item);
         Object2.push(index);
       } else {
-       if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -900,7 +894,6 @@ const CopyWindow = ({
           deletedMainRows.push(newData2);
         }
         Object.push(index);
-
       }
     });
 
@@ -1566,7 +1559,7 @@ const CopyWindow = ({
         <CopyWindow2 setVisible={setCopyWindowVisible} setData={setCopyData} />
       )}
       {attachmentsWindowVisible && (
-        <AttachmentsWindow
+        <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}

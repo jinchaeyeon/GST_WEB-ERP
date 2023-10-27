@@ -82,9 +82,11 @@ import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
   loginResultState,
   unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/PR_A0060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
@@ -96,7 +98,7 @@ let temp = 0;
 const DateField = ["recdt", "makedt", "indt", "fxdt"];
 const NumberField = ["uph", "cnt", "IOT_TER_ID", "fxcost"];
 const CheckField = ["useyn"];
-const commandField = ["attdatnum"];
+const commandField = ["files"];
 const customField = ["custcd"];
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
@@ -196,8 +198,95 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
+export const FormContext2 = createContext<{
+  attdatnum: string;
+  files: string;
+  setAttdatnum: (d: any) => void;
+  setFiles: (d: any) => void;
+  subDataState: State;
+  setSubDataState: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
+
+const ColumnCommandCell2 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setAttdatnum, setFiles } = useContext(FormContext2);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+
+  const onAttWndClick2 = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setAttdatnum(data.attdatnum);
+    setFiles(
+      data.original_name +
+        (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : "")
+    );
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {value}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onAttWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={dataItem.attdatnum}
+          permission={{ upload: true, download: true, delete: true }}
+          modal={true}
+        />
+      )}
+    </>
+  );
+};
+
 const PR_A0060: React.FC = () => {
-  const [rows, setrows] = useState<number>(0);
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(SUB_DATA_ITEM_KEY);
@@ -212,16 +301,22 @@ const PR_A0060: React.FC = () => {
   UsePermissions(setPermissions);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-  // 삭제할 첨부파일 리스트를 담는 함수
-  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
+
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
+
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   //메시지 조회
@@ -342,8 +437,6 @@ const PR_A0060: React.FC = () => {
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
-    useState<boolean>(false);
-  const [attachmentsWindowVisible2, setAttachmentsWindowVisible2] =
     useState<boolean>(false);
 
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
@@ -1023,7 +1116,12 @@ const PR_A0060: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "U",
@@ -1171,6 +1269,12 @@ const PR_A0060: React.FC = () => {
 
   const onAddClick2 = () => {
     setWorkType("N");
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "N",
@@ -1269,42 +1373,20 @@ const PR_A0060: React.FC = () => {
   };
 
   const handleSelectTab = (e: any) => {
-    setTabSelected(e.selected);
+    if (unsavedName.length > 0) {
+      alert("저장 후 다시 시도해주세요.");
+    } else {
+      setTabSelected(e.selected);
+    }
   };
 
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
   };
 
-  const getAttachmentsData2 = (data: IAttachmentData) => {
-    if (!subDataResult.data[rows].attdatnum) {
-      setUnsavedAttadatnums((prev) => [...prev, data.attdatnum]);
-    }
-
-    const items = parseInt(Object.getOwnPropertyNames(selectedsubDataState)[0]);
-    const datas = subDataResult.data.map((item: any) =>
-      item.fxseq == items
-        ? {
-            ...item,
-            attdatnum: data.attdatnum,
-            files:
-              data.original_name +
-              (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
-          }
-        : { ...item }
-    );
-
-    setSubDataResult((prev) => {
-      return {
-        data: datas,
-        total: prev.total,
-      };
-    });
-  };
-
   const getAttachmentsData = (data: IAttachmentData) => {
     if (!infomation.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
+      setUnsavedAttadatnums((prev) => [...prev, data.attdatnum]);
     }
 
     setInfomation((prev) => {
@@ -1409,6 +1491,12 @@ const PR_A0060: React.FC = () => {
     setPage(initialPageState); // 페이지 초기화
     setPage2(initialPageState); // 페이지 초기화
     resetAllGrid(); // 데이터 초기화
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
@@ -1905,150 +1993,152 @@ const PR_A0060: React.FC = () => {
 
   const onSaveClick = async () => {
     let valid = true;
-    try {
-      subDataResult.data.map((item: any) => {
-        subDataResult.data.map((items: any) => {
-          if (item.fxdt == items.fxdt && item.num != items.num) {
-            throw findMessage(messagesData, "PR_A0060W_004");
-          }
-        });
+
+    subDataResult.data.map((item: any) => {
+      subDataResult.data.map((items: any) => {
+        if (item.fxdt == items.fxdt && item.num != items.num) {
+          valid = false;
+        }
       });
+    });
+
+    try {
+      if (valid != true) {
+        throw findMessage(messagesData, "PR_A0060W_004");
+      } else {
+        const dataItem = subDataResult.data.filter((item: any) => {
+          return (
+            (item.rowstatus === "N" || item.rowstatus === "U") &&
+            item.rowstatus !== undefined
+          );
+        });
+
+        if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+        let dataArr: TdataArr = {
+          rowstatus: [],
+          fxseq_s: [],
+          fxdt_s: [],
+          custcd_s: [],
+          custnm_s: [],
+          errtext_s: [],
+          protext_s: [],
+          fxcost_s: [],
+          remark1_s: [],
+          attdatnum_s: [],
+          stdtime_s: [],
+          errcode_s: [],
+        };
+        dataItem.forEach((item: any, idx: number) => {
+          const {
+            rowstatus = "",
+            fxdt = "",
+            fxseq = "",
+            custcd = "",
+            custnm = "",
+            errtext = "",
+            protext = "",
+            fxcost = "",
+            remark1 = "",
+            attdatnum = "",
+          } = item;
+
+          dataArr.rowstatus.push(rowstatus);
+          dataArr.fxseq_s.push(fxseq);
+          dataArr.fxdt_s.push(fxdt);
+          dataArr.custcd_s.push(custcd);
+          dataArr.custnm_s.push(custnm);
+          dataArr.errtext_s.push(errtext);
+          dataArr.protext_s.push(protext);
+          dataArr.fxcost_s.push(fxcost == "" ? 0 : fxcost);
+          dataArr.remark1_s.push(remark1);
+          dataArr.attdatnum_s.push(attdatnum);
+          dataArr.stdtime_s.push(0);
+          dataArr.errcode_s.push("");
+        });
+        deletedMainRows.forEach(async (item: any, idx: number) => {
+          const {
+            rowstatus = "",
+            fxdt = "",
+            fxseq = "",
+            custcd = "",
+            custnm = "",
+            errtext = "",
+            protext = "",
+            fxcost = "",
+            remark1 = "",
+            attdatnum = "",
+          } = item;
+
+          dataArr.rowstatus.push("D");
+          dataArr.fxseq_s.push(fxseq);
+          dataArr.fxdt_s.push(fxdt);
+          dataArr.custcd_s.push(custcd);
+          dataArr.custnm_s.push(custnm);
+          dataArr.errtext_s.push(errtext);
+          dataArr.protext_s.push(protext);
+          dataArr.fxcost_s.push(fxcost == "" ? 0 : fxcost);
+          dataArr.remark1_s.push(remark1);
+          dataArr.attdatnum_s.push(attdatnum);
+          dataArr.stdtime_s.push(0);
+          dataArr.errcode_s.push("");
+        });
+
+        setParaData((prev) => ({
+          ...prev,
+          workType: "U",
+          fxcode: infomation.fxcode,
+          fxdiv: infomation.fxdiv,
+          location: infomation.location,
+          recdt: infomation.recdt,
+          fxnum: infomation.fxnum,
+          fxnm: infomation.fxnm,
+          fxno: infomation.fxno,
+          spec: infomation.spec,
+          dptcd: infomation.dptcd,
+          person: infomation.person,
+          place: infomation.place,
+          makedt: infomation.makedt == null ? "" : infomation.makedt,
+          maker: infomation.maker == null ? "" : infomation.maker,
+          indt: infomation.indt == null ? "" : infomation.indt,
+          custcd: infomation.custcd,
+          kind: infomation.kind,
+          amt: infomation.amt,
+          uph: infomation.uph,
+          classnm1: infomation.classnm1,
+          classnm2: infomation.classnm2,
+          classnm3: infomation.classnm3,
+          remark: infomation.remark,
+          useyn: infomation.useyn,
+          attdatnum: infomation.attdatnum,
+          proccd: infomation.proccd,
+          IOT_TER_ID: infomation.IOT_TER_ID,
+          iotserialno: infomation.iotserialno,
+          attdatnum_img:
+            infomation.attdatnum_img == null ? "" : infomation.attdatnum_img,
+          custnm: infomation.custnm,
+          cnt: infomation.cnt,
+          files: infomation.files,
+          availabletime: infomation.availabletime,
+          viewyn: infomation.viewyn,
+          insert_form_id: "PR_A0060W",
+          update_form_id: infomation.update_form_id,
+          rowstatus_s: dataArr.rowstatus.join("|"),
+          fxseq_s: dataArr.fxseq_s.join("|"),
+          fxdt_s: dataArr.fxdt_s.join("|"),
+          custcd_s: dataArr.custcd_s.join("|"),
+          custnm_s: dataArr.custnm_s.join("|"),
+          errtext_s: dataArr.errtext_s.join("|"),
+          protext_s: dataArr.protext_s.join("|"),
+          fxcost_s: dataArr.fxcost_s.join("|"),
+          remark1_s: dataArr.remark1_s.join("|"),
+          attdatnum_s: dataArr.attdatnum_s.join("|"),
+          stdtime_s: dataArr.stdtime_s.join("|"),
+          errcode_s: dataArr.errcode_s.join("|"),
+        }));
+      }
     } catch (e) {
       alert(e);
-      valid = false;
     }
-
-    if (!valid) return false;
-    const dataItem = subDataResult.data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
-    let dataArr: TdataArr = {
-      rowstatus: [],
-      fxseq_s: [],
-      fxdt_s: [],
-      custcd_s: [],
-      custnm_s: [],
-      errtext_s: [],
-      protext_s: [],
-      fxcost_s: [],
-      remark1_s: [],
-      attdatnum_s: [],
-      stdtime_s: [],
-      errcode_s: [],
-    };
-    dataItem.forEach((item: any, idx: number) => {
-      const {
-        rowstatus = "",
-        fxdt = "",
-        fxseq = "",
-        custcd = "",
-        custnm = "",
-        errtext = "",
-        protext = "",
-        fxcost = "",
-        remark1 = "",
-        attdatnum = "",
-      } = item;
-
-      dataArr.rowstatus.push(rowstatus);
-      dataArr.fxseq_s.push(fxseq);
-      dataArr.fxdt_s.push(fxdt);
-      dataArr.custcd_s.push(custcd);
-      dataArr.custnm_s.push(custnm);
-      dataArr.errtext_s.push(errtext);
-      dataArr.protext_s.push(protext);
-      dataArr.fxcost_s.push(fxcost == "" ? 0 : fxcost);
-      dataArr.remark1_s.push(remark1);
-      dataArr.attdatnum_s.push(attdatnum);
-      dataArr.stdtime_s.push(0);
-      dataArr.errcode_s.push("");
-    });
-    deletedMainRows.forEach(async (item: any, idx: number) => {
-      const {
-        rowstatus = "",
-        fxdt = "",
-        fxseq = "",
-        custcd = "",
-        custnm = "",
-        errtext = "",
-        protext = "",
-        fxcost = "",
-        remark1 = "",
-        attdatnum = "",
-      } = item;
-
-      dataArr.rowstatus.push("D");
-      dataArr.fxseq_s.push(fxseq);
-      dataArr.fxdt_s.push(fxdt);
-      dataArr.custcd_s.push(custcd);
-      dataArr.custnm_s.push(custnm);
-      dataArr.errtext_s.push(errtext);
-      dataArr.protext_s.push(protext);
-      dataArr.fxcost_s.push(fxcost == "" ? 0 : fxcost);
-      dataArr.remark1_s.push(remark1);
-      dataArr.attdatnum_s.push(attdatnum);
-      dataArr.stdtime_s.push(0);
-      dataArr.errcode_s.push("");
-    });
-    setDeletedAttadatnums([]);
-    deletedMainRows = [];
-
-    setParaData((prev) => ({
-      ...prev,
-      workType: "U",
-      fxcode: infomation.fxcode,
-      fxdiv: infomation.fxdiv,
-      location: infomation.location,
-      recdt: infomation.recdt,
-      fxnum: infomation.fxnum,
-      fxnm: infomation.fxnm,
-      fxno: infomation.fxno,
-      spec: infomation.spec,
-      dptcd: infomation.dptcd,
-      person: infomation.person,
-      place: infomation.place,
-      makedt: infomation.makedt == null ? "" : infomation.makedt,
-      maker: infomation.maker == null ? "" : infomation.maker,
-      indt: infomation.indt == null ? "" : infomation.indt,
-      custcd: infomation.custcd,
-      kind: infomation.kind,
-      amt: infomation.amt,
-      uph: infomation.uph,
-      classnm1: infomation.classnm1,
-      classnm2: infomation.classnm2,
-      classnm3: infomation.classnm3,
-      remark: infomation.remark,
-      useyn: infomation.useyn,
-      attdatnum: infomation.attdatnum,
-      proccd: infomation.proccd,
-      IOT_TER_ID: infomation.IOT_TER_ID,
-      iotserialno: infomation.iotserialno,
-      attdatnum_img:
-        infomation.attdatnum_img == null ? "" : infomation.attdatnum_img,
-      custnm: infomation.custnm,
-      cnt: infomation.cnt,
-      files: infomation.files,
-      availabletime: infomation.availabletime,
-      viewyn: infomation.viewyn,
-      insert_form_id: "PR_A0060W",
-      update_form_id: infomation.update_form_id,
-      rowstatus_s: dataArr.rowstatus.join("|"),
-      fxseq_s: dataArr.fxseq_s.join("|"),
-      fxdt_s: dataArr.fxdt_s.join("|"),
-      custcd_s: dataArr.custcd_s.join("|"),
-      custnm_s: dataArr.custnm_s.join("|"),
-      errtext_s: dataArr.errtext_s.join("|"),
-      protext_s: dataArr.protext_s.join("|"),
-      fxcost_s: dataArr.fxcost_s.join("|"),
-      remark1_s: dataArr.remark1_s.join("|"),
-      attdatnum_s: dataArr.attdatnum_s.join("|"),
-      stdtime_s: dataArr.stdtime_s.join("|"),
-      errcode_s: dataArr.errcode_s.join("|"),
-    }));
   };
 
   const fetchToDelete = async () => {
@@ -2068,6 +2158,14 @@ const PR_A0060: React.FC = () => {
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       );
+      let array: any[] = [];
+      array.push(infomation.attdatnum);
+      subDataResult.data.map((item: any) => {
+        array.push(item.attdatnum);
+      });
+
+      setDeletedAttadatnums(array);
+
       resetAllGrid();
 
       if (isLastDataDeleted) {
@@ -2089,10 +2187,8 @@ const PR_A0060: React.FC = () => {
         pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
         isSearch: true,
       }));
-
-      // 첨부파일 삭제
-      if (paraDataDeleted.attdatnum)
-        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -2147,7 +2243,7 @@ const PR_A0060: React.FC = () => {
         isSearch: true,
       }));
 
-      // 초기화
+      setUnsavedName([]);
       setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
@@ -2166,6 +2262,17 @@ const PR_A0060: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      let array: any[] = [];
+
+      deletedMainRows.map((item: any) => {
+        array.push(item.attdatnum);
+      });
+
+      setDeletedAttadatnums(array);
+
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
+
       setsubFilters((prev) => ({
         ...prev,
         find_row_value: data.returnString,
@@ -2179,40 +2286,10 @@ const PR_A0060: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraData.fxcode != "") {
+    if (paraData.rowstatus_s != "") {
       fetchTodoGridSaved();
     }
   }, [paraData]);
-
-  const CommandCell = (props: GridCellProps) => {
-    const onEditClick = () => {
-      //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
-      const rowData = props.dataItem;
-      for (var i = 0; i < subDataResult.data.length; i++) {
-        if (rowData.fxseq == subDataResult.data[i].fxseq) {
-          setrows(i);
-        }
-      }
-      setSelectedsubDataState({ [rowData[SUB_DATA_ITEM_KEY]]: true });
-      setAttachmentsWindowVisible2(true);
-    };
-
-    return (
-      <>
-        {props.rowType === "groupHeader" ? null : (
-          <td className="k-command-cell">
-            <Button
-              type={"button"}
-              onClick={onEditClick}
-              icon="more-horizontal"
-              fillMode="flat"
-              style={{ float: "right" }}
-            />
-          </td>
-        )}
-      </>
-    );
-  };
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -2222,7 +2299,12 @@ const PR_A0060: React.FC = () => {
       pgNum: page.skip / page.take + 1,
       isSearch: true,
     }));
-
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setPage({
       ...event.page,
     });
@@ -2337,6 +2419,43 @@ const PR_A0060: React.FC = () => {
       return width;
     }
   };
+
+  const [attdatnum, setAttdatnum] = useState<string>("");
+  const [files, setFiles] = useState<string>("");
+
+  useEffect(() => {
+    const datas = subDataResult.data.filter(
+      (item) =>
+        item[SUB_DATA_ITEM_KEY] ==
+        Object.getOwnPropertyNames(selectedsubDataState)[0]
+    )[0];
+    if (datas != undefined) {
+      if (datas.attdatnum == "") {
+        setUnsavedAttadatnums((prev) => [...prev, attdatnum]);
+      }
+    }
+
+    const newData = subDataResult.data.map((item) =>
+      item[SUB_DATA_ITEM_KEY] ==
+      parseInt(Object.getOwnPropertyNames(selectedsubDataState)[0])
+        ? {
+            ...item,
+            attdatnum: attdatnum,
+            files: files,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+
+    setSubDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [attdatnum, files]);
 
   return (
     <>
@@ -2514,6 +2633,7 @@ const PR_A0060: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="save"
+                disabled={tabSelected == 1 ? true : false}
               >
                 저장
               </Button>
@@ -2847,7 +2967,7 @@ const PR_A0060: React.FC = () => {
                       value={infomation.files}
                       className="readonly"
                     />
-                    <ButtonInInput style={{ marginTop: "3vh" }}>
+                    <ButtonInInput>
                       <Button
                         type={"button"}
                         onClick={onAttachmentsWndClick}
@@ -2908,113 +3028,125 @@ const PR_A0060: React.FC = () => {
               setCustnm,
             }}
           >
-            <GridContainer style={{ height: isMobile ? "45vh" : "36vh" }}>
-              <GridTitleContainer>
-                <GridTitle>설비이력관리</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick}
-                    themeColor={"primary"}
-                    icon="plus"
-                    title="행 추가"
-                  ></Button>
-                  <Button
-                    onClick={onDeleteClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                    title="행 삭제"
-                  ></Button>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                    title="저장"
-                  ></Button>
-                </ButtonContainer>
-              </GridTitleContainer>
-              <Grid
-                style={{ height: "33vh" }}
-                data={process(
-                  subDataResult.data.map((row) => ({
-                    ...row,
-                    fxdt: new Date(dateformat(row.fxdt)),
-                    rowstatus:
-                      row.rowstatus == null ||
-                      row.rowstatus == "" ||
-                      row.rowstatus == undefined
-                        ? ""
-                        : row.rowstatus,
-                    [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
-                  })),
-                  subDataState
-                )}
-                {...subDataState}
-                onDataStateChange={onSubDataStateChange}
-                //선택 기능
-                dataItemKey={SUB_DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "multiple",
-                }}
-                onSelectionChange={onSubDataSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={subDataResult.total}
-                skip={page2.skip}
-                take={page2.take}
-                pageable={true}
-                onPageChange={pageChange2}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef2}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onSubDataSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onSubItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
-                id="grdList2"
-              >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={setWidth("grdList2", item.width)}
-                          cell={
-                            DateField.includes(item.fieldName)
-                              ? DateCell
-                              : NumberField.includes(item.fieldName)
-                              ? NumberCell
-                              : commandField.includes(item.fieldName)
-                              ? CommandCell
-                              : customField.includes(item.fieldName)
-                              ? ColumnCommandCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder === 0
-                              ? subTotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
+            <FormContext2.Provider
+              value={{
+                attdatnum,
+                files,
+                setAttdatnum,
+                setFiles,
+                subDataState,
+                setSubDataState,
+                // fetchGrid,
+              }}
+            >
+              <GridContainer style={{ height: isMobile ? "45vh" : "36vh" }}>
+                <GridTitleContainer>
+                  <GridTitle>설비이력관리</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="저장"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: "33vh" }}
+                  data={process(
+                    subDataResult.data.map((row) => ({
+                      ...row,
+                      fxdt: new Date(dateformat(row.fxdt)),
+                      rowstatus:
+                        row.rowstatus == null ||
+                        row.rowstatus == "" ||
+                        row.rowstatus == undefined
+                          ? ""
+                          : row.rowstatus,
+                      [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
+                    })),
+                    subDataState
                   )}
-              </Grid>
-            </GridContainer>
+                  {...subDataState}
+                  onDataStateChange={onSubDataStateChange}
+                  //선택 기능
+                  dataItemKey={SUB_DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "multiple",
+                  }}
+                  onSelectionChange={onSubDataSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={subDataResult.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef2}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onSubDataSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onSubItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
+                  id="grdList2"
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={setWidth("grdList2", item.width)}
+                            cell={
+                              DateField.includes(item.fieldName)
+                                ? DateCell
+                                : NumberField.includes(item.fieldName)
+                                ? NumberCell
+                                : commandField.includes(item.fieldName)
+                                ? ColumnCommandCell2
+                                : customField.includes(item.fieldName)
+                                ? ColumnCommandCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? subTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </GridContainer>
+            </FormContext2.Provider>
           </FormContext.Provider>
         </TabStripTab>
       </TabStrip>
@@ -3047,14 +3179,6 @@ const PR_A0060: React.FC = () => {
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={infomation.attdatnum}
-          modal={true}
-        />
-      )}
-      {attachmentsWindowVisible2 && (
-        <AttachmentsWindow
-          setVisible={setAttachmentsWindowVisible2}
-          setData={getAttachmentsData2}
-          para={subDataResult.data[rows].attdatnum}
           modal={true}
         />
       )}

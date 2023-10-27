@@ -77,8 +77,10 @@ import { useApi } from "../hooks/api";
 import { IAttachmentData, ICustData } from "../hooks/interfaces";
 import {
   deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
   unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A5000W_C";
 import {
@@ -250,16 +252,8 @@ const CM_A5000W: React.FC = () => {
     sort: [],
   });
 
-  const [detailDataState, setDetailDataState] = useState<State>({
-    sort: [],
-  });
-
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
-  );
-
-  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], detailDataState)
   );
 
   const [selectedState, setSelectedState] = useState<{
@@ -368,6 +362,12 @@ const CM_A5000W: React.FC = () => {
       attdatnum: data.attdatnum,
       files: data.files,
     });
+    setInformation2({
+      document_id: "",
+      attdatnum: "",
+      files: "",
+      ref_document_id: "",
+    });
   };
 
   const setProjectData = (data: any) => {
@@ -379,8 +379,11 @@ const CM_A5000W: React.FC = () => {
     });
   };
 
-  // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
@@ -388,10 +391,6 @@ const CM_A5000W: React.FC = () => {
   );
 
   const getAttachmentsQData = (data: IAttachmentData) => {
-    if (!information.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
     setInformation((prev) => {
       return {
         ...prev,
@@ -404,15 +403,7 @@ const CM_A5000W: React.FC = () => {
   };
 
   const getAttachmentsAData = (data: IAttachmentData) => {
-    if (
-      !(detailDataResult.data.length == 0
-        ? ""
-        : detailDataResult.data[0].attdatnum)
-    ) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
-    setDetailFilters((prev) => {
+    setInformation2((prev) => {
       return {
         ...prev,
         attdatnum: data.attdatnum,
@@ -426,8 +417,9 @@ const CM_A5000W: React.FC = () => {
   const [tabSelected, setTabSelected] = React.useState(0);
 
   const handleSelectTab = (e: any) => {
-    if (unsavedAttadatnums.length > 0) {
-      setDeletedAttadatnums(unsavedAttadatnums);
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+      setUnsavedAttadatnums([]);
     }
 
     if (e.selected == 1) {
@@ -458,6 +450,12 @@ const CM_A5000W: React.FC = () => {
         testnum: selectedRowData.testnum,
         attdatnum: selectedRowData.attdatnum,
         files: selectedRowData.files,
+      });
+      setInformation2({
+        document_id: selectedRowData.ref_document_id,
+        attdatnum: selectedRowData.answer_attdatnum,
+        files: selectedRowData.answer_files,
+        ref_document_id: selectedRowData.document_id,
       });
       fetchHtmlDocument(selectedRowData);
     }
@@ -604,8 +602,6 @@ const CM_A5000W: React.FC = () => {
     pgSize: PAGE_SIZE,
     workType: "DETAIL",
     document_id: "",
-    attdatnum: "",
-    files: "",
     pgNum: 1,
     isSearch: false,
   });
@@ -628,6 +624,13 @@ const CM_A5000W: React.FC = () => {
     testnum: "",
     attdatnum: "",
     files: "",
+  });
+
+  const [information2, setInformation2] = useState({
+    document_id: "",
+    attdatnum: "",
+    files: "",
+    ref_document_id: "",
   });
 
   function getName(data: { sub_code: string }[]) {
@@ -795,12 +798,21 @@ const CM_A5000W: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      setDetailDataResult((prev) => {
-        return {
-          data: rows,
-          total: totalRowCnt == -1 ? 0 : totalRowCnt,
-        };
-      });
+      if (totalRowCnt > 0) {
+        setInformation2({
+          document_id: rows[0].document_id,
+          attdatnum: rows[0].attdatnum,
+          files: rows[0].files,
+          ref_document_id: rows[0].ref_document_id,
+        });
+      } else {
+        setInformation2({
+          document_id: "",
+          attdatnum: "",
+          files: "",
+          ref_document_id: "",
+        });
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -922,7 +934,6 @@ const CM_A5000W: React.FC = () => {
     setWorkType("");
     setPage(initialPageState); // 페이지 초기화
     setMainDataResult(process([], mainDataState));
-    setDetailDataResult(process([], detailDataState));
   };
 
   // 엑셀 내보내기
@@ -952,6 +963,9 @@ const CM_A5000W: React.FC = () => {
       } else {
         setTabSelected(0);
         resetAllGrid();
+        if (unsavedName.length > 0) {
+          setDeletedName(unsavedName);
+        }
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
     } catch (e) {
@@ -988,6 +1002,9 @@ const CM_A5000W: React.FC = () => {
       selectedState: selectedState,
       dataItemKey: DATA_ITEM_KEY,
     });
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
     setSelectedState(newSelectedState);
   };
 
@@ -1007,7 +1024,7 @@ const CM_A5000W: React.FC = () => {
     );
 
     setSelectedState({ [selectedRowData[DATA_ITEM_KEY]]: true });
-    setDetailDataResult(process([], detailDataState));
+
     setTabSelected(1);
     setWorkType("U");
 
@@ -1036,7 +1053,12 @@ const CM_A5000W: React.FC = () => {
       attdatnum: selectedRowData.attdatnum,
       files: selectedRowData.files,
     });
-
+    setInformation2({
+      document_id: selectedRowData.ref_document_id,
+      attdatnum: selectedRowData.answer_attdatnum,
+      files: selectedRowData.answer_files,
+      ref_document_id: selectedRowData.document_id,
+    });
     fetchHtmlDocument(selectedRowData);
   };
 
@@ -1185,7 +1207,7 @@ const CM_A5000W: React.FC = () => {
       if (workType == "D" && paraDataSaved.attdatnum != "") {
         setDeletedAttadatnums([paraDataSaved.attdatnum]);
       }
-
+      setUnsavedName([]);
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
@@ -1207,7 +1229,6 @@ const CM_A5000W: React.FC = () => {
     fetchHtmlDocument("");
     setWorkType("N");
     setTabSelected(1);
-    setDetailDataResult(process([], detailDataState));
     setInformation({
       document_id: "",
       cpmnum: "",
@@ -1226,6 +1247,12 @@ const CM_A5000W: React.FC = () => {
       testnum: "",
       attdatnum: "",
       files: "",
+    });
+    setInformation2({
+      document_id: "",
+      attdatnum: "",
+      files: "",
+      ref_document_id: "",
     });
   };
 
@@ -1749,11 +1776,7 @@ const CM_A5000W: React.FC = () => {
                         <div className="filter-item-wrap">
                           <Input
                             name="files"
-                            value={
-                              detailDataResult.data.length == 0
-                                ? ""
-                                : detailDataResult.data[0].files
-                            }
+                            value={information2.files}
                             className="readonly"
                           />
                           <ButtonInInput>
@@ -1817,11 +1840,7 @@ const CM_A5000W: React.FC = () => {
         <AttachmentsWindow
           setVisible={setAttachmentsAWindowVisible}
           setData={getAttachmentsAData}
-          para={
-            detailDataResult.data.length == 0
-              ? ""
-              : detailDataResult.data[0].attdatnum
-          }
+          para={information2.attdatnum}
           modal={true}
           permission={{ upload: false, download: true, delete: false }}
         />
