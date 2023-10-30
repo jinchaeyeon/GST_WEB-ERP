@@ -94,7 +94,13 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
-import { deletedAttadatnumsState, deletedNameState, isLoading, unsavedAttadatnumsState, unsavedNameState } from "../store/atoms";
+import {
+  deletedAttadatnumsState,
+  deletedNameState,
+  isLoading,
+  unsavedAttadatnumsState,
+  unsavedNameState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1000_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -135,6 +141,8 @@ const RadioField = ["glpyn"];
 const numberField = ["group_seq", "sort_seq"];
 const comboField = ["packagetype"];
 const itemField = ["itemcd"];
+const colorField = ["status"];
+
 let temp = 0;
 let deletedMainRows: any[] = [];
 
@@ -208,6 +216,67 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <ComboBoxCell bizComponent={bizComponent} {...props} />
   ) : (
     <td />
+  );
+};
+
+const CustomColorCell = (props: GridCellProps) => {
+  const { ariaColumnIndex, columnIndex, dataItem } = props;
+
+  return dataItem.status == "문의" ? (
+    <td
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{
+        backgroundColor: "#ff0000",
+        color: "white",
+      }}
+    >
+      {dataItem.status}
+    </td>
+  ) : dataItem.status == "컨설팅" ? (
+    <td
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{
+        backgroundColor: "#ffc000",
+        color: "white",
+      }}
+    >
+      {dataItem.status}
+    </td>
+  ) : dataItem.status == "견적" ? (
+    <td
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{
+        backgroundColor: "#70ad47",
+        color: "white",
+      }}
+    >
+      {dataItem.status}
+    </td>
+  ) : dataItem.status == "계약" ? (
+    <td
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{
+        backgroundColor: "#0070c0",
+        color: "white",
+      }}
+    >
+      {dataItem.status}
+    </td>
+  ) : (
+    <td
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{
+        backgroundColor: "#7030a0",
+        color: "white",
+      }}
+    >
+      {dataItem.status}
+    </td>
   );
 };
 
@@ -1422,7 +1491,12 @@ const SA_A1000_603W: React.FC = () => {
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+      //status 임시
+      // const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        status: 2,
+      }));
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
@@ -2704,7 +2778,7 @@ const SA_A1000_603W: React.FC = () => {
       quodt: new Date(),
       quonum: "",
       quorev: 0,
-      quosts: "1",
+      quosts: "0",
       quotype: "1",
       rcvcustnm: "",
       rcvcustprsnnm: "",
@@ -2838,7 +2912,7 @@ const SA_A1000_603W: React.FC = () => {
       "@p_packagetype_s": ParaData.packagetype_s,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "AC_P1000W",
+      "@p_form_id": "SA_A1000_603W",
     },
   };
 
@@ -3256,7 +3330,7 @@ const SA_A1000_603W: React.FC = () => {
       "@p_packagetype_s": "",
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "AC_P1000W",
+      "@p_form_id": "SA_A1000_603W",
     },
   };
 
@@ -3377,6 +3451,95 @@ const SA_A1000_603W: React.FC = () => {
     );
   };
 
+  const ChangeState = async () => {
+    if (!window.confirm("작성중인 내용이 초기화 됩니다. 진행하시겠습니까?")) {
+      return false;
+    }
+    let data: any;
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
+
+    const para: Iparameters = {
+      procedureName: "P_SA_A1000_603W_S",
+      pageNumber: 0,
+      pageSize: 0,
+      parameters: {
+        "@p_work_type": "QUOSTS",
+        "@p_orgdiv": "01",
+        "@p_location": "",
+        "@p_quonum": Information.quonum,
+        "@p_quorev": Information.quorev,
+        "@p_quotype": "",
+        "@p_quosts": "",
+        "@p_quodt": "",
+        "@p_person": "",
+        "@p_dptcd": "",
+        "@p_chkperson": "",
+        "@p_custcd": "",
+        "@p_custnm": "",
+        "@p_remark2": "",
+        "@p_rcvcustnm": "",
+        "@p_rcvcustprsnnm": "",
+        "@p_remark3": "",
+        "@p_materialtype": "",
+        "@p_materialinfo": "",
+        "@p_materialindt": "",
+        "@p_materialnm": "",
+        "@p_guideline": "",
+        "@p_translatereport": "",
+        "@p_teststdt": "",
+        "@p_testenddt": "",
+        "@p_attdatnum": "",
+        "@p_remark": "",
+        "@p_custprsnnm": "",
+        "@p_requestgb": "",
+        "@p_glpgb": "",
+        "@p_rev_reason": "",
+        "@p_validt": "",
+        "@p_rowstatus_s": "",
+        "@p_quoseq_s": "",
+        "@p_itemcd_s": "",
+        "@p_itemnm_s": "",
+        "@p_testnum_s": "",
+        "@p_glpyn_s": "",
+        "@p_startdt_s": "",
+        "@p_enddt_s": "",
+        "@p_remark_s": "",
+        "@p_group_seq_s": "",
+        "@p_sort_seq_s": "",
+        "@p_packagetype_s": "",
+        "@p_userid": userId,
+        "@p_pc": pc,
+        "@p_form_id": "SA_A1000_603W",
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: data.returnString,
+        isSearch: true,
+      }));
+      setSubFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+  };
+
   return (
     <>
       <TitleContainer>
@@ -3476,6 +3639,82 @@ const SA_A1000_603W: React.FC = () => {
             >
               <GridTitleContainer>
                 <GridTitle>요약정보</GridTitle>
+                <ButtonContainer>
+                  <div
+                    style={{
+                      width: "80px",
+                      borderRadius: "2px",
+                      backgroundColor: "#ff0000",
+                      color: "white",
+                      padding: "5px 10px",
+                      textAlign: "center",
+                      marginRight: "5px",
+                      fontWeight: 700,
+                      fontSize: "15px"
+                    }}
+                  >
+                    문의
+                  </div>
+                  <div
+                    style={{
+                      width: "80px",
+                      borderRadius: "2px",
+                      backgroundColor: "#ffc000",
+                      color: "white",
+                      padding: "5px 10px",
+                      textAlign: "center",
+                      marginRight: "5px",
+                      fontWeight: 700,
+                      fontSize: "15px"
+                    }}
+                  >
+                    컨설팅
+                  </div>
+                  <div
+                    style={{
+                      width: "80px",
+                      borderRadius: "2px",
+                      backgroundColor: "#70ad47",
+                      color: "white",
+                      padding: "5px 10px",
+                      textAlign: "center",
+                      marginRight: "5px",
+                      fontWeight: 700,
+                      fontSize: "15px"
+                    }}
+                  >
+                    견적
+                  </div>
+                  <div
+                    style={{
+                      width: "80px",
+                      borderRadius: "2px",
+                      backgroundColor: "#0070c0",
+                      color: "white",
+                      padding: "5px 10px",
+                      textAlign: "center",
+                      marginRight: "5px",
+                      fontWeight: 700,
+                      fontSize: "15px"
+                    }}
+                  >
+                    계약
+                  </div>
+                  <div
+                    style={{
+                      width: "80px",
+                      borderRadius: "2px",
+                      backgroundColor: "#7030a0",
+                      color: "white",
+                      padding: "5px 10px",
+                      textAlign: "center",
+                      fontWeight: 700,
+                      fontSize: "15px"
+                    }}
+                  >
+                    시험관리
+                  </div>
+                </ButtonContainer>
               </GridTitleContainer>
               <Grid
                 style={{ height: "72vh" }}
@@ -3500,6 +3739,17 @@ const SA_A1000_603W: React.FC = () => {
                     materialtype: materialtypeListData.find(
                       (items: any) => items.sub_code == row.materialtype
                     )?.code_name,
+                    //status 임시
+                    status:
+                      row.status == "1"
+                        ? "문의"
+                        : row.status == "2"
+                        ? "컨설팅"
+                        : row.status == "3"
+                        ? "견적"
+                        : row.status == "4"
+                        ? "계약"
+                        : "시험관리",
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
                   mainDataState
@@ -3547,6 +3797,8 @@ const SA_A1000_603W: React.FC = () => {
                           cell={
                             dateField.includes(item.fieldName)
                               ? DateCell
+                              : colorField.includes(item.fieldName)
+                              ? CustomColorCell
                               : undefined
                           }
                           footerCell={
@@ -3572,8 +3824,20 @@ const SA_A1000_603W: React.FC = () => {
                 <Button themeColor={"primary"} icon="track-changes">
                   리비전
                 </Button>
-                <Button themeColor={"primary"} fillMode="outline" icon="file">
-                  견적전환/전환취소
+                <Button
+                  themeColor={"primary"}
+                  fillMode="outline"
+                  icon="file"
+                  disabled={
+                    Information.quosts == "1" || Information.quosts == "0"
+                      ? worktype == "N"
+                        ? true
+                        : false
+                      : true
+                  }
+                  onClick={ChangeState}
+                >
+                  의뢰전환/전환취소
                 </Button>
                 <Button
                   themeColor={"primary"}
@@ -4213,53 +4477,13 @@ const SA_A1000_603W: React.FC = () => {
               />
             </GridContainer>
             <GridContainer width={`calc(60% - ${GAP}px)`}>
-              <GridTitleContainer>
-                <GridTitle>세부내용</GridTitle>
-              </GridTitleContainer>
-              <ButtonContainer>
-                <Button
-                  themeColor={"primary"}
-                  icon="folder"
-                  style={{ width: "20%", height: "7vh" }}
-                >
-                  문의
-                </Button>
-                <Button
-                  themeColor={"primary"}
-                  icon="folder"
-                  style={{ width: "20%", height: "7vh" }}
-                >
-                  컨설팅
-                </Button>
-                <Button
-                  themeColor={"primary"}
-                  icon="folder"
-                  style={{ width: "20%", height: "7vh" }}
-                >
-                  견적
-                </Button>
-                <Button
-                  themeColor={"primary"}
-                  icon="folder"
-                  style={{ width: "20%", height: "7vh" }}
-                >
-                  계약
-                </Button>
-                <Button
-                  themeColor={"primary"}
-                  icon="folder"
-                  style={{ width: "20%", height: "7vh" }}
-                >
-                  시험관리
-                </Button>
-              </ButtonContainer>
               <FormBoxWrap border={true}>
                 <GridContainer width={"100%"}>
                   <GridTitleContainer>
                     <GridTitle>상담</GridTitle>
                   </GridTitleContainer>
                   <Grid
-                    style={{ height: "17vh" }}
+                    style={{ height: "20vh" }}
                     data={process(
                       detailDataResult.data.map((row) => ({
                         ...row,
@@ -4332,7 +4556,7 @@ const SA_A1000_603W: React.FC = () => {
                     <GridTitle>컨설팅</GridTitle>
                   </GridTitleContainer>
                   <Grid
-                    style={{ height: "17vh" }}
+                    style={{ height: "20vh" }}
                     data={process(
                       detailDataResult2.data.map((row) => ({
                         ...row,
@@ -4411,7 +4635,7 @@ const SA_A1000_603W: React.FC = () => {
                     <GridTitle>견적</GridTitle>
                   </GridTitleContainer>
                   <Grid
-                    style={{ height: "17vh" }}
+                    style={{ height: "20vh" }}
                     data={process(
                       detailDataResult3.data.map((row) => ({
                         ...row,

@@ -21,6 +21,12 @@ export const gridList: Array<TGrid> = [
         field: "quosts",
         caption: "견적상태",
         width: 120,
+      },   
+      {
+        id: "col_status",
+        field: "status",
+        caption: "상태",
+        width: 120,
       },
       {
         id: "col_quodt",
