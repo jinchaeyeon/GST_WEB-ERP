@@ -304,7 +304,7 @@ const CM_A5000W: React.FC = () => {
     setFilters((prev: any) => {
       return {
         ...prev,
-        custcd: data.custcd,
+        //custcd: data.custcd,
         custnm: data.custnm,
       };
     });
@@ -324,7 +324,7 @@ const CM_A5000W: React.FC = () => {
     setFilters((prev: any) => {
       return {
         ...prev,
-        user_id: data.user_id,
+        //user_id: data.user_id,
         user_name: data.user_name,
       };
     });
@@ -588,7 +588,6 @@ const CM_A5000W: React.FC = () => {
     dtgb1: "",
     status: [{ sub_code: "001", code_name: "컨설팅 요청" }],
     medicine_type: [],
-    custcd: "",
     custnm: "",
     user_id: "",
     user_name: "",
@@ -680,6 +679,7 @@ const CM_A5000W: React.FC = () => {
       },
     };
 
+    console.log(parameters);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -784,6 +784,7 @@ const CM_A5000W: React.FC = () => {
         "@p_user_id": "",
         "@p_user_name": "",
         "@p_customer_code": "",
+        "@p_customernm": "",
         "@p_find_row_value": "",
       },
     };
@@ -845,7 +846,7 @@ const CM_A5000W: React.FC = () => {
     };
 
     try {
-      data = await processApi<any>("meeting-query", para);
+      data = await processApi<any>("html-query", para);
     } catch (error) {
       data = null;
     }
@@ -864,7 +865,7 @@ const CM_A5000W: React.FC = () => {
         };
 
         try {
-          data1 = await processApi<any>("meeting-query", para1);
+          data1 = await processApi<any>("html-query", para1);
         } catch (error) {
           data1 = null;
         }
@@ -1157,11 +1158,13 @@ const CM_A5000W: React.FC = () => {
         ? bytesToBase64(bytes(reference))
         : bytesToBase64(bytes(editorContent));
 
-    const para = {
+    const parameters = {
+      folder: "html-doc?folder=" +
+              "CM_A5000W",
       procedureName: "P_CM_A5000W_S",
       pageNumber: 0,
       pageSize: 0,
-      parameters: {
+      parameters : {
         "@p_work_type": paraDataSaved.workType,
         "@p_document_id": paraDataSaved.document_id,
         "@p_cpmnum": paraDataSaved.cpmnum,
@@ -1182,10 +1185,10 @@ const CM_A5000W: React.FC = () => {
         "@p_pc": paraDataSaved.pc,
       },
       fileBytes: convertedEditorContent,
-    };
-
+    }
+    
     try {
-      data = await processApi<any>("Question-save", para);
+      data = await processApi<any>("html-save", parameters);
     } catch (error) {
       data = null;
     }

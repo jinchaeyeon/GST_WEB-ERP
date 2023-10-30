@@ -707,7 +707,7 @@ const CM_A7000W: React.FC = () => {
     };
 
     try {
-      data = await processApi<any>("meeting-query", para);
+      data = await processApi<any>("html-query", para);
     } catch (error) {
       data = null;
     }
@@ -938,7 +938,9 @@ const CM_A7000W: React.FC = () => {
         ? bytesToBase64(bytes(reference))
         : bytesToBase64(bytes(editorContent));
 
-    const para = {
+    const parameters = {
+      folder: "html-doc?folder=" +
+              "CM_A7000W",
       procedureName: "P_CM_A7000W_S",
       pageNumber: 0,
       pageSize: 0,
@@ -965,10 +967,10 @@ const CM_A7000W: React.FC = () => {
         "@p_form_id": "CM_A7000W",
       },
       fileBytes: convertedEditorContent,
-    };
+    }
 
     try {
-      data = await processApi<any>("meeting-save", para);
+      data = await processApi<any>("html-save", parameters);
     } catch (error) {
       data = null;
     }

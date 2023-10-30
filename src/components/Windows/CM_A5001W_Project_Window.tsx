@@ -3,14 +3,40 @@ import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../store/atoms";
 import { useApi } from "../../hooks/api";
 import { Iparameters, TPermissions } from "../../store/types";
-import { GetPropertyValueByName, UseBizComponent, UseCustomOption, UseGetValueFromSessionItem, UseMessages, UsePermissions, convertDateToStr, getQueryFromBizComponent, handleKeyPressSearch } from "../CommonFunction";
+import { 
+  GetPropertyValueByName, 
+  UseBizComponent, 
+  UseCustomOption, 
+  UseGetValueFromSessionItem, 
+  UseMessages, 
+  UsePermissions, 
+  getQueryFromBizComponent, 
+  handleKeyPressSearch 
+} from "../CommonFunction";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ICustData, IWindowPosition } from "../../hooks/interfaces";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import React from "react";
-import { Grid, GridColumn, GridDataStateChangeEvent, GridFooterCellProps, GridPageChangeEvent, GridRowDoubleClickEvent, GridSelectionChangeEvent, getSelectedState } from "@progress/kendo-react-grid";
-import { BottomContainer, ButtonContainer, ButtonInInput, FilterBox, GridContainer, GridTitle, GridTitleContainer, TitleContainer } from "../../CommonStyled";
+import { 
+  Grid, 
+  GridColumn, 
+  GridDataStateChangeEvent, 
+  GridFooterCellProps, 
+  GridPageChangeEvent, 
+  GridRowDoubleClickEvent, 
+  GridSelectionChangeEvent, 
+  getSelectedState 
+} from "@progress/kendo-react-grid";
+import { 
+  BottomContainer, 
+  ButtonContainer, 
+  ButtonInInput, 
+  FilterBox, 
+  GridContainer, 
+  GridTitle, 
+  GridTitleContainer, 
+  TitleContainer } from "../../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import FilterContainer from "../Containers/FilterContainer";
 import { Input } from "@progress/kendo-react-inputs";
@@ -35,7 +61,6 @@ const KendoWindow = ({
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
-  const userId = UseGetValueFromSessionItem("user_id");
   const location = UseGetValueFromSessionItem("location");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -120,7 +145,7 @@ const KendoWindow = ({
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent(
-    "L_sysUserMaster_001, L_SA016, L_SA004, L_SA001_603, R_Requestgb",
+    "L_sysUserMaster_001, L_SA016, L_SA004, L_SA001_603, L_dptcd_001",
     setBizComponentData
   );
 
@@ -136,6 +161,9 @@ const KendoWindow = ({
   ]);
   const [materialtypeListData, setMaterialtypeListData] = useState([
     COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [dptcdListData, setDptcdListData] = useState([
+    { dptcd: "", dptnm: "" },
   ]);
 
   useEffect(() => {
@@ -154,14 +182,18 @@ const KendoWindow = ({
       );
 
       const materialtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA001_603"
-        )
+        bizComponentData.find((item: any) => item.bizComponentId === "L_SA001_603")
       );
+
+      const dptcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_dptcd_001")
+      );
+
       fetchQueryData(userQueryStr, setUserListData);
       fetchQueryData(quotypeQueryStr, setQuotypeListData);
       fetchQueryData(quostsQueryStr, setQuostsListData);
       fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
+      fetchQueryData(dptcdQueryStr, setDptcdListData);
     }
   }, [bizComponentData]);
 
@@ -200,7 +232,7 @@ const KendoWindow = ({
     setFilters((prev: any) => {
       return {
         ...prev,
-        custcd: data.custcd,
+        //custcd: data.custcd,
         custnm: data.custnm,
       };
     });
@@ -255,14 +287,11 @@ const KendoWindow = ({
       },
     };
 
-    console.log(parameters);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
       data = null;
     }
-
-    console.log(data);
     
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
@@ -273,7 +302,7 @@ const KendoWindow = ({
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
             (row: any) =>
-              row.orgdiv + "_" + row.meetingnum == filters.find_row_value
+              row.quonum + "-" + row.quorev == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -302,7 +331,7 @@ const KendoWindow = ({
             ? rows[0]
             : rows.find(
                 (row: any) =>
-                  row.orgdiv + "_" + row.meetingnum == filters.find_row_value
+                row.quonum + "-" + row.quorev == filters.find_row_value
               );
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -409,8 +438,6 @@ const KendoWindow = ({
     )[0];
 
     const origin = window.location.origin;
-    console.log(origin);
-    console.log()
     window.open(
       origin +
         `/SA_A1000_603?go=` +
@@ -508,6 +535,9 @@ const KendoWindow = ({
               materialtype: materialtypeListData.find(
                 (items: any) => items.sub_code == row.materialtype
               )?.code_name,
+              dptcd: dptcdListData.find(
+                (items: any) => items.dptcd == row.dptcd
+              )?.dptnm,
               [SELECTED_FIELD]: selectedState[idGetter(row)],
             })),
             mainDataState
@@ -557,7 +587,7 @@ const KendoWindow = ({
             cell = {DateCell}  
           />
           <GridColumn field = "person" title = "담당자" width = "120px"/>
-          <GridColumn field = "dptcd" title = "부서코드" width = "120px"/>
+          <GridColumn field = "dptcd" title = "부서" width = "120px"/>
           <GridColumn field = "chkperson" title = "CS담당자" width = "120px"/>
           <GridColumn field = "custnm" title = "업체명" width = "120px"/>
           <GridColumn 
@@ -575,7 +605,7 @@ const KendoWindow = ({
         <BottomContainer>
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={onLinkClick}>
-              확인
+              이동
             </Button>
             <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
               닫기
@@ -588,7 +618,7 @@ const KendoWindow = ({
           setVisible={setCustWindowVisible}
           workType={"N"}
           setData={setCustData}
-          modal={true}
+          modal={false}
         />
       )}
     </Window>
