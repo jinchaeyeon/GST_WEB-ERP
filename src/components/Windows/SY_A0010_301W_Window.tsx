@@ -32,14 +32,14 @@ import {
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
-  deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
-  unsavedAttadatnumsState,
+  unsavedNameState
 } from "../../store/atoms";
-import { Iparameters, TPermissions } from "../../store/types";
+import { Iparameters } from "../../store/types";
+import ExcelUploadButton from "../Buttons/ExcelUploadButton";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import NumberCell from "../Cells/NumberCell";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   UseBizComponent,
   UseCustomOption,
@@ -54,8 +54,7 @@ import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import CommentsGrid from "../Grids/CommentsGrid";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
-import ExcelUploadButton from "../Buttons/ExcelUploadButton";
+import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 
 let deletedMainRows: any[] = [];
 
@@ -160,13 +159,10 @@ const KendoWindow = ({
     { user_id: "", user_name: "" },
   ]);
 
-  // 삭제할 첨부파일 리스트를 담는 함수
-  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
-  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
-  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-    unsavedAttadatnumsState
-  );
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
+
   // 그룹 카테고리 조회
   useEffect(() => {
     if (bizComponentData.length > 0) {
@@ -227,8 +223,7 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
-    if (unsavedAttadatnums.length > 0)
-      setDeletedAttadatnums(unsavedAttadatnums);
+    if (unsavedName.length > 0) setDeletedName(unsavedName);
 
     setVisible(false);
   };
@@ -782,6 +777,7 @@ const KendoWindow = ({
     }
     if (data.isSuccess === true) {
       deletedMainRows = [];
+      setUnsavedName([]);
       if (workType === "U") {
         reloadData("U", paraData.group_code);
         fetchMain();
@@ -813,6 +809,7 @@ const KendoWindow = ({
       // 초기화
       const isLastDataDeleted =
         detailDataResult.data.length == 0 && filters.pgNum > 0;
+      setUnsavedName([]);
       if (isLastDataDeleted) {
         setPage({
           skip:
@@ -828,7 +825,6 @@ const KendoWindow = ({
         pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
         isSearch: true,
       }));
-      setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -857,7 +853,7 @@ const KendoWindow = ({
             valid = false;
           }
         });
-        
+
         if (!item.sub_code) {
           throw findMessage(messagesData, "SY_A0010W_004");
         }
@@ -1051,10 +1047,6 @@ const KendoWindow = ({
     useState<boolean>(false);
 
   const getAttachmentsData = (data: IAttachmentData) => {
-    if (!initialVal.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
     setInitialVal((prev) => {
       return {
         ...prev,
@@ -1122,7 +1114,7 @@ const KendoWindow = ({
         newData.push(item);
         Object2.push(index);
       } else {
-       if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1217,14 +1209,11 @@ const KendoWindow = ({
     if (jsonArr.length == 0) {
       alert("데이터가 없습니다.");
       return;
-    } 
+    }
 
-    console.log(jsonArr); //    
+    console.log(jsonArr); //
 
-    const columns:string[] = [
-      "코드",
-      "코드명",
-    ]
+    const columns: string[] = ["코드", "코드명"];
 
     setLoading(true);
 
@@ -1249,17 +1238,13 @@ const KendoWindow = ({
       let numref3 = 0;
       if (item.hasOwnProperty("정원")) {
         numref1 = item.정원;
-      }
-      else if (item.hasOwnProperty("등원가능횟수")) {
+      } else if (item.hasOwnProperty("등원가능횟수")) {
         numref1 = item.등원가능횟수;
         numref2 = item.변경가능횟수;
         numref3 = item.금액;
       }
 
-      const {
-        코드 = "",
-        코드명 = "",
-      } = item;
+      const { 코드 = "", 코드명 = "" } = item;
 
       const newDataItem = {
         [DATA_ITEM_KEY]: ++temp,
@@ -1272,9 +1257,9 @@ const KendoWindow = ({
         numref5: 0,
         rowstatus: "N",
         sub_code: 코드,
-        code_name: 코드명
+        code_name: 코드명,
       };
-  
+
       setDetailSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
       setDetailDataResult((prev) => {
         return {
@@ -1461,7 +1446,12 @@ const KendoWindow = ({
           <GridToolbar>
             <ExcelUploadButton
               saveExcel={saveExcel}
-              permissions={{view:true, save:true, delete:true, print:true}}
+              permissions={{
+                view: true,
+                save: true,
+                delete: true,
+                print: true,
+              }}
               style={{ marginLeft: "15px" }}
             />
             <Button
@@ -1544,75 +1534,80 @@ const KendoWindow = ({
           <GridColumn field="extra_field9" width="200px" title={field9} />
           <GridColumn field="extra_field10" width="200px" title={field10} /> */}
 
-          {!!field1 && field1 != "세부코드명1" &&
-            <GridColumn field="extra_field1" width="200px" title={field1} />}
-          {!!field2 && field2 != "세부코드명2" &&
-            <GridColumn field="extra_field2" width="200px" title={field2} />}
-          {!!field3 && field3 != "세부코드명3" &&
-            <GridColumn field="extra_field3" width="200px" title={field3} />}
-          {!!field4 && field4 != "세부코드명4" &&
-            <GridColumn field="extra_field4" width="200px" title={field4} />}
-          {!!field5 && field5 != "세부코드명5" &&
-            <GridColumn field="extra_field5" width="200px" title={field5} />}
-          {!!field6 && field6 != "세부코드명6" &&
-            <GridColumn field="extra_field6" width="200px" title={field6} />}
-          {!!field7 && field7 != "세부코드명7" &&
-            <GridColumn field="extra_field7" width="200px" title={field7} />}
-          {!!field8 && field8 != "세부코드명8" &&
-            <GridColumn field="extra_field8" width="200px" title={field8} />}
-          {!!field9 && field9 != "세부코드명9" &&
-            <GridColumn field="extra_field9" width="200px" title={field9} />}
-          {!!field10 && field10 != "세부코드명10" &&
-            <GridColumn field="extra_field10" width="200px" title={field10} />}
+          {!!field1 && field1 != "세부코드명1" && (
+            <GridColumn field="extra_field1" width="200px" title={field1} />
+          )}
+          {!!field2 && field2 != "세부코드명2" && (
+            <GridColumn field="extra_field2" width="200px" title={field2} />
+          )}
+          {!!field3 && field3 != "세부코드명3" && (
+            <GridColumn field="extra_field3" width="200px" title={field3} />
+          )}
+          {!!field4 && field4 != "세부코드명4" && (
+            <GridColumn field="extra_field4" width="200px" title={field4} />
+          )}
+          {!!field5 && field5 != "세부코드명5" && (
+            <GridColumn field="extra_field5" width="200px" title={field5} />
+          )}
+          {!!field6 && field6 != "세부코드명6" && (
+            <GridColumn field="extra_field6" width="200px" title={field6} />
+          )}
+          {!!field7 && field7 != "세부코드명7" && (
+            <GridColumn field="extra_field7" width="200px" title={field7} />
+          )}
+          {!!field8 && field8 != "세부코드명8" && (
+            <GridColumn field="extra_field8" width="200px" title={field8} />
+          )}
+          {!!field9 && field9 != "세부코드명9" && (
+            <GridColumn field="extra_field9" width="200px" title={field9} />
+          )}
+          {!!field10 && field10 != "세부코드명10" && (
+            <GridColumn field="extra_field10" width="200px" title={field10} />
+          )}
 
-          {
-            !!num1 && num1 != "숫자참조1" &&
+          {!!num1 && num1 != "숫자참조1" && (
             <GridColumn
               field="numref1"
               width="200px"
               title={num1}
               cell={NumberCell}
-          />
-          }
-          {
-            !!num2 && num2 != "숫자참조2" &&
+            />
+          )}
+          {!!num2 && num2 != "숫자참조2" && (
             <GridColumn
               field="numref2"
               width="200px"
               title={num2}
               cell={NumberCell}
-          />
-          }
-          {
-            !!num3 && num3 != "숫자참조3" &&
+            />
+          )}
+          {!!num3 && num3 != "숫자참조3" && (
             <GridColumn
               field="numref3"
               width="200px"
               title={num3}
               cell={NumberCell}
-          />
-          }
-          {
-            !!num4 && num4 != "숫자참조4" &&
+            />
+          )}
+          {!!num4 && num4 != "숫자참조4" && (
             <GridColumn
               field="numref4"
               width="200px"
               title={num4}
               cell={NumberCell}
-          />
-          }
-          {
-            !!num5 && num5 != "숫자참조5" &&
+            />
+          )}
+          {!!num5 && num5 != "숫자참조5" && (
             <GridColumn
               field="numref5"
               width="200px"
               title={num5}
               cell={NumberCell}
-          />
-          }
+            />
+          )}
 
           <GridColumn field="memo" width="120px" title="메모" />
-          
+
           {/* <GridColumn
             field="numref1"
             width="200px"
@@ -1643,12 +1638,42 @@ const KendoWindow = ({
             title={num5}
             cell={NumberCell}
           /> */}
-          <GridColumn field="insert_userid" width="120px" title="등록자" editable={false}/>
-          <GridColumn field="insert_pc" width="120px" title="등록PC" editable={false} />
-          <GridColumn field="insert_time" width="120px" title="등록일자" editable={false} />
-          <GridColumn field="update_userid" width="120px" title="수정자" editable={false} />
-          <GridColumn field="update_pc" width="120px" title="수정PC" editable={false} />
-          <GridColumn field="update_time" width="120px" title="수정일자" editable={false} />
+          <GridColumn
+            field="insert_userid"
+            width="120px"
+            title="등록자"
+            editable={false}
+          />
+          <GridColumn
+            field="insert_pc"
+            width="120px"
+            title="등록PC"
+            editable={false}
+          />
+          <GridColumn
+            field="insert_time"
+            width="120px"
+            title="등록일자"
+            editable={false}
+          />
+          <GridColumn
+            field="update_userid"
+            width="120px"
+            title="수정자"
+            editable={false}
+          />
+          <GridColumn
+            field="update_pc"
+            width="120px"
+            title="수정PC"
+            editable={false}
+          />
+          <GridColumn
+            field="update_time"
+            width="120px"
+            title="수정일자"
+            editable={false}
+          />
         </Grid>
       </GridContainer>
       <BottomContainer>
@@ -1662,14 +1687,14 @@ const KendoWindow = ({
         </ButtonContainer>
       </BottomContainer>
       {attachmentsWindowVisible && (
-        <AttachmentsWindow
+        <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={initialVal.attdatnum}
         />
       )}
       {excelAttachmentsWindowVisible && (
-        <AttachmentsWindow
+        <PopUpAttachmentsWindow
           setVisible={setExcelAttachmentsWindowVisible}
           para={"SY_A0010_301W"}
           //modal={true}

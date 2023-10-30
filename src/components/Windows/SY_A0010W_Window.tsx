@@ -32,9 +32,9 @@ import {
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
-  deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
-  unsavedAttadatnumsState,
+  unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
@@ -54,7 +54,7 @@ import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import CommentsGrid from "../Grids/CommentsGrid";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
+import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 
 let deletedMainRows: any[] = [];
 
@@ -159,12 +159,10 @@ const KendoWindow = ({
   ]);
 
   // 삭제할 첨부파일 리스트를 담는 함수
-  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
-  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
-  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-    unsavedAttadatnumsState
-  );
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
+
   // 그룹 카테고리 조회
   useEffect(() => {
     if (bizComponentData.length > 0) {
@@ -225,8 +223,7 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
-    if (unsavedAttadatnums.length > 0)
-      setDeletedAttadatnums(unsavedAttadatnums);
+    if (unsavedName.length > 0) setDeletedName(unsavedName);
 
     setVisible(false);
   };
@@ -783,6 +780,7 @@ const KendoWindow = ({
     }
     if (data.isSuccess === true) {
       deletedMainRows = [];
+      setUnsavedName([]);
       if (workType === "U") {
         reloadData("U", paraData.group_code);
         fetchMain();
@@ -814,6 +812,7 @@ const KendoWindow = ({
       // 초기화
       const isLastDataDeleted =
         detailDataResult.data.length == 0 && filters.pgNum > 0;
+      setUnsavedName([]);
       if (isLastDataDeleted) {
         setPage({
           skip:
@@ -829,7 +828,6 @@ const KendoWindow = ({
         pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
         isSearch: true,
       }));
-      setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -853,7 +851,7 @@ const KendoWindow = ({
         if (!item.sort_seq) {
           throw findMessage(messagesData, "SY_A0010W_006");
         }
-        
+
         detailDataResult.data.forEach((chkItem: any, chkIdx: number) => {
           if (
             item.sub_code === chkItem.sub_code &&
@@ -869,7 +867,7 @@ const KendoWindow = ({
           throw findMessage(messagesData, "SY_A0010W_007");
           valid = false;
         }
-        
+
         if (!initialVal.group_code) {
           throw findMessage(messagesData, "SY_A0010W_008");
         }
@@ -1059,10 +1057,6 @@ const KendoWindow = ({
     useState<boolean>(false);
 
   const getAttachmentsData = (data: IAttachmentData) => {
-    if (!initialVal.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
     setInitialVal((prev) => {
       return {
         ...prev,
@@ -1130,7 +1124,7 @@ const KendoWindow = ({
         newData.push(item);
         Object2.push(index);
       } else {
-       if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1241,7 +1235,6 @@ const KendoWindow = ({
                   <td>
                     {workType == "N" ? (
                       <Input
-
                         name="group_code"
                         type="text"
                         value={initialVal.group_code}
@@ -1657,7 +1650,7 @@ const KendoWindow = ({
         </ButtonContainer>
       </BottomContainer>
       {attachmentsWindowVisible && (
-        <AttachmentsWindow
+        <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={initialVal.attdatnum}

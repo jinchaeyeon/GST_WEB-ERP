@@ -29,12 +29,18 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
-import { deletedAttadatnumsState, isLoading, loginResultState, unsavedAttadatnumsState } from "../../store/atoms";
+import {
+  deletedNameState,
+  isLoading,
+  loginResultState,
+  unsavedNameState
+} from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -46,12 +52,16 @@ import {
   getQueryFromBizComponent,
   isValidDate,
   toDate,
-  GetPropertyValueByName,
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
+import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import CopyWindow2 from "./SA_A2300W_Inven_Window";
 let targetRowIndex: null | number = null;
 type IWindow = {
@@ -190,18 +200,17 @@ const CopyWindow = ({
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
-  // 삭제할 첨부파일 리스트를 담는 함수
-  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
-  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
-  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-    unsavedAttadatnumsState
-  );
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         person: defaultOption.find((item: any) => item.id === "person")
@@ -315,9 +324,7 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
-    if (unsavedAttadatnums.length > 0)
-      setDeletedAttadatnums(unsavedAttadatnums);
-
+    if (unsavedName.length > 0) setDeletedName(unsavedName);
     setVisible(false);
   };
 
@@ -570,10 +577,6 @@ const CopyWindow = ({
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
-    if (!filters.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -820,7 +823,8 @@ const CopyWindow = ({
             serviceid: companyCode,
             files: filters.files,
           }));
-          if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
+          if (dataItem.length === 0 && deletedMainRows.length == 0)
+            return false;
           let dataArr: TdataArr = {
             rowstatus: [],
             seq2: [],
@@ -1140,8 +1144,8 @@ const CopyWindow = ({
 
     if (data.isSuccess === true) {
       deletedMainRows = [];
-      setUnsavedAttadatnums([]);
-      reload(data.returnString)
+      setUnsavedName([]);
+      reload(data.returnString);
       if (workType == "N") {
         onClose();
       } else {
@@ -1149,8 +1153,8 @@ const CopyWindow = ({
           ...prev,
           isSearch: true,
           pgNum: 1,
-          find_row_value: data.returnString
-        }))
+          find_row_value: data.returnString,
+        }));
       }
     } else {
       console.log("[오류 발생]");
@@ -1176,7 +1180,7 @@ const CopyWindow = ({
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1687,7 +1691,7 @@ const CopyWindow = ({
         <CopyWindow2 setVisible={setCopyWindowVisible} setData={setCopyData} />
       )}
       {attachmentsWindowVisible && (
-        <AttachmentsWindow
+        <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}

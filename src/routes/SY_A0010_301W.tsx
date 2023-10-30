@@ -43,11 +43,7 @@ import {
   rowsWithSelectedDataResult,
   GetPropertyValueByName,
 } from "../components/CommonFunction";
-import {
-  GAP,
-  PAGE_SIZE,
-  SELECTED_FIELD
-} from "../components/CommonString";
+import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import DetailWindow from "../components/Windows/SY_A0010_301W_Window";
 import { useApi } from "../hooks/api";
@@ -75,7 +71,12 @@ let targetRowIndex2: null | number = null;
 const Page: React.FC = () => {
   // const [permissions, setPermissions] = useState<TPermissions | null>(null);
   // UsePermissions(setPermissions);
-  const [permissions, setPermissions] = useState<TPermissions | null>({view:true, save:true, delete:true, print:true}); // 2134
+  const [permissions, setPermissions] = useState<TPermissions | null>({
+    view: true,
+    save: true,
+    delete: true,
+    print: true,
+  }); // 2134
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -122,7 +123,10 @@ const Page: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
       }));
@@ -1064,41 +1068,46 @@ const Page: React.FC = () => {
           data3 = null;
         }
         const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
-      const findRowIndex = mainDataResult.data.findIndex(
-        (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
-      );
+          mainDataResult.data.length === 1 && filters.pgNum > 0;
+        const findRowIndex = mainDataResult.data.findIndex(
+          (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
+        );
+        if (paraDataDeleted.attdatnum)
+          setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+        if (isLastDataDeleted) {
+          setPage({
+            skip:
+              filters.pgNum == 1 || filters.pgNum == 0
+                ? 0
+                : PAGE_SIZE * (filters.pgNum - 2),
+            take: PAGE_SIZE,
+          });
 
-      if (isLastDataDeleted) {
-        setPage({
-          skip:
-            filters.pgNum == 1 || filters.pgNum == 0
-              ? 0
-              : PAGE_SIZE * (filters.pgNum - 2),
-          take: PAGE_SIZE,
-        });
-
-        setFilters((prev) => ({
-          ...prev,
-          find_row_value: "",
-          pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
-          isSearch: true,
-        }));
-      } else {
-        resetAllGrid();
-        setFilters((prev) => ({
-          ...prev,
-          find_row_value:
-            mainDataResult.data[
-              findRowIndex < 1 ? 1 : findRowIndex - 1
-            ].group_code,
-            pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
-          isSearch: true,
-        }));
-      }
-
-      if (paraDataDeleted.attdatnum)
-        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+          setFilters((prev) => ({
+            ...prev,
+            find_row_value: "",
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
+            isSearch: true,
+          }));
+        } else {
+          resetAllGrid();
+          setFilters((prev) => ({
+            ...prev,
+            find_row_value:
+              mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
+                .group_code,
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
+            isSearch: true,
+          }));
+        }
       }
     } else {
       console.log("[오류 발생]");
@@ -1162,10 +1171,11 @@ const Page: React.FC = () => {
       window.addEventListener("resize", handleResize);
 
       //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdHeaderList"]?.map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
+      customOptionData.menuCustomColumnOptions["grdHeaderList"]?.map(
+        (item: TColumn) =>
+          item.width !== undefined
+            ? (minGridWidth.current += item.width)
+            : minGridWidth.current
       );
 
       minGridWidth.current += 50;
@@ -1176,8 +1186,7 @@ const Page: React.FC = () => {
   }, [customOptionData]);
 
   const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth
-    ) {
+    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
       setApplyMinWidth(true);
     } else if (grid.current.clientWidth > minGridWidth.current) {
       setGridCurrent(grid.current.clientWidth);
@@ -1455,72 +1464,77 @@ const Page: React.FC = () => {
             <GridColumn field="extra_field9" width="200px" title={field9} />
             <GridColumn field="extra_field10" width="200px" title={field10} /> */}
 
-            {!!field1 && field1 != "세부코드명1" &&
-              <GridColumn field="extra_field1" width="200px" title={field1} />}
-            {!!field2 && field2 != "세부코드명2" &&
-              <GridColumn field="extra_field2" width="200px" title={field2} />}
-            {!!field3 && field3 != "세부코드명3" &&
-              <GridColumn field="extra_field3" width="200px" title={field3} />}
-            {!!field4 && field4 != "세부코드명4" &&
-              <GridColumn field="extra_field4" width="200px" title={field4} />}
-            {!!field5 && field5 != "세부코드명5" &&
-              <GridColumn field="extra_field5" width="200px" title={field5} />}
-            {!!field6 && field6 != "세부코드명6" &&
-              <GridColumn field="extra_field6" width="200px" title={field6} />}
-            {!!field7 && field7 != "세부코드명7" &&
-              <GridColumn field="extra_field7" width="200px" title={field7} />}
-            {!!field8 && field8 != "세부코드명8" &&
-              <GridColumn field="extra_field8" width="200px" title={field8} />}
-            {!!field9 && field9 != "세부코드명9" &&
-              <GridColumn field="extra_field9" width="200px" title={field9} />}
-            {!!field10 && field10 != "세부코드명10" &&
-              <GridColumn field="extra_field10" width="200px" title={field10} />}
+            {!!field1 && field1 != "세부코드명1" && (
+              <GridColumn field="extra_field1" width="200px" title={field1} />
+            )}
+            {!!field2 && field2 != "세부코드명2" && (
+              <GridColumn field="extra_field2" width="200px" title={field2} />
+            )}
+            {!!field3 && field3 != "세부코드명3" && (
+              <GridColumn field="extra_field3" width="200px" title={field3} />
+            )}
+            {!!field4 && field4 != "세부코드명4" && (
+              <GridColumn field="extra_field4" width="200px" title={field4} />
+            )}
+            {!!field5 && field5 != "세부코드명5" && (
+              <GridColumn field="extra_field5" width="200px" title={field5} />
+            )}
+            {!!field6 && field6 != "세부코드명6" && (
+              <GridColumn field="extra_field6" width="200px" title={field6} />
+            )}
+            {!!field7 && field7 != "세부코드명7" && (
+              <GridColumn field="extra_field7" width="200px" title={field7} />
+            )}
+            {!!field8 && field8 != "세부코드명8" && (
+              <GridColumn field="extra_field8" width="200px" title={field8} />
+            )}
+            {!!field9 && field9 != "세부코드명9" && (
+              <GridColumn field="extra_field9" width="200px" title={field9} />
+            )}
+            {!!field10 && field10 != "세부코드명10" && (
+              <GridColumn field="extra_field10" width="200px" title={field10} />
+            )}
 
-            {
-              !!num1 && num1 != "숫자참조1" &&
+            {!!num1 && num1 != "숫자참조1" && (
               <GridColumn
                 field="numref1"
                 width="200px"
                 title={num1}
                 cell={NumberCell}
-            />
-            }
-            {
-              !!num2 && num2 != "숫자참조2" &&
+              />
+            )}
+            {!!num2 && num2 != "숫자참조2" && (
               <GridColumn
                 field="numref2"
                 width="200px"
                 title={num2}
                 cell={NumberCell}
-            />
-            }
-            {
-              !!num3 && num3 != "숫자참조3" &&
+              />
+            )}
+            {!!num3 && num3 != "숫자참조3" && (
               <GridColumn
                 field="numref3"
                 width="200px"
                 title={num3}
                 cell={NumberCell}
-            />
-            }
-            {
-              !!num4 && num4 != "숫자참조4" &&
+              />
+            )}
+            {!!num4 && num4 != "숫자참조4" && (
               <GridColumn
                 field="numref4"
                 width="200px"
                 title={num4}
                 cell={NumberCell}
-            />
-            }
-            {
-              !!num5 && num5 != "숫자참조5" &&
+              />
+            )}
+            {!!num5 && num5 != "숫자참조5" && (
               <GridColumn
                 field="numref5"
                 width="200px"
                 title={num5}
                 cell={NumberCell}
-            />
-            }
+              />
+            )}
 
             <GridColumn field="memo" width="120px" title="메모" />
             {/* <GridColumn

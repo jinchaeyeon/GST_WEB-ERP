@@ -1,26 +1,35 @@
-import {
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-  createContext,
-} from "react";
-import * as React from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
-  GridColumn,
   GridCellProps,
-  GridSelectionChangeEvent,
-  getSelectedState,
+  GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
   GridHeaderCellProps,
   GridItemChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../hooks/api";
+import {
+  Checkbox,
+  Input,
+  InputChangeEvent,
+  TextArea,
+} from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import * as React from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -32,55 +41,46 @@ import {
   GridTitle,
   GridTitleContainer,
 } from "../../CommonStyled";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Iparameters } from "../../store/types";
-import {
-  checkIsDDLValid,
-  convertDateToStr,
-  dateformat,
-  getItemQuery,
-  UseBizComponent,
-  UseCustomOption,
-  findMessage,
-  UseMessages,
-  getUnpQuery,
-  UseParaPc,
-  UseGetValueFromSessionItem,
-  getQueryFromBizComponent,
-  isValidDate,
-  getGridItemChangedData,
-  GetPropertyValueByName,
-} from "../CommonFunction";
-import { Button } from "@progress/kendo-react-buttons";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
-import ItemsWindow from "./CommonWindows/ItemsWindow";
+import { useApi } from "../../hooks/api";
 import {
   IAttachmentData,
   ICustData,
   IWindowPosition,
 } from "../../hooks/interfaces";
-import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { CellRender, RowRender } from "../Renderers/Renderers";
 import {
-  Checkbox,
-  Input,
-  InputChangeEvent,
-  TextArea,
-} from "@progress/kendo-react-inputs";
-import RequiredHeader from "../HeaderCells/RequiredHeader";
-import { bytesToBase64 } from "byte-base64";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import {
-  deletedAttadatnumsState,
-  unsavedAttadatnumsState,
+  deletedNameState,
+  unsavedNameState
 } from "../../store/atoms";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import NumberCell from "../Cells/NumberCell";
+import { Iparameters } from "../../store/types";
+import CheckBoxCell from "../Cells/CheckBoxCell";
 import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
-import CheckBoxCell from "../Cells/CheckBoxCell";
+import NumberCell from "../Cells/NumberCell";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  checkIsDDLValid,
+  convertDateToStr,
+  dateformat,
+  findMessage,
+  getGridItemChangedData,
+  getItemQuery,
+  getQueryFromBizComponent,
+  getUnpQuery,
+  isValidDate,
+} from "../CommonFunction";
+import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import RequiredHeader from "../HeaderCells/RequiredHeader";
+import { CellRender, RowRender } from "../Renderers/Renderers";
+import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ItemsMultiWindow from "./CommonWindows/ItemsMultiWindow";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
+import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 
 let deletedRows: object[] = [];
 const DATA_ITEM_KEY = "ordseq";
@@ -476,13 +476,10 @@ const KendoWindow = ({
     [id: string]: boolean | number[];
   }>({});
   const [isInitSearch, setIsInitSearch] = useState(false);
-  // 삭제할 첨부파일 리스트를 담는 함수
-  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
-  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
-  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-    unsavedAttadatnumsState
-  );
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
@@ -497,10 +494,10 @@ const KendoWindow = ({
   };
 
   const onClose = () => {
-    if (unsavedAttadatnums.length > 0)
-      setDeletedAttadatnums(unsavedAttadatnums);
+    if (unsavedName.length > 0) setDeletedName(unsavedName);
     getVisible(false);
   };
+
   const fetchUnpItem = async (custcd: string, itemcd: string) => {
     if (custcd == "") return;
     let data: any;
@@ -747,7 +744,10 @@ const KendoWindow = ({
 
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "new");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "new"
+      );
       setFilters((prev) => {
         return {
           ...prev,
@@ -841,8 +841,8 @@ const KendoWindow = ({
           portnm: row.portnm,
           ship_method: row.ship_method,
           poregnum: row.poregnum,
-          attdatnum: row.attdatnum,
-          files: row.files,
+          attdatnum: isCopy != true ? row.attdatnum : "",
+          files: isCopy != true ? row.files : "",
           remark: row.remark,
           baseamt: row.baseamt == 0 ? 1 : row.baseamt,
         };
@@ -1042,6 +1042,7 @@ const KendoWindow = ({
 
     if (data.isSuccess === true) {
       deletedRows = []; //초기화
+      setUnsavedName([]);
       if (workType == "U") {
         reloadData(paraData.ordnum);
         fetchMainGrid();
@@ -1050,8 +1051,6 @@ const KendoWindow = ({
         reloadData(data.returnString);
         getVisible(false);
       }
-      // 초기화
-      setUnsavedAttadatnums([]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1083,7 +1082,7 @@ const KendoWindow = ({
           throw findMessage(messagesData, "SA_A2000W_009");
         }
       });
-      if(
+      if (
         filters.doexdiv == null ||
         filters.doexdiv == "" ||
         filters.doexdiv == undefined ||
@@ -1101,9 +1100,9 @@ const KendoWindow = ({
         filters.custcd == undefined ||
         filters.custnm == null ||
         filters.custnm == undefined
-        ){
-          throw findMessage(messagesData, "SA_A2000W_008");
-        }
+      ) {
+        throw findMessage(messagesData, "SA_A2000W_008");
+      }
     } catch (e) {
       alert(e);
       valid = false;
@@ -1413,9 +1412,6 @@ const KendoWindow = ({
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
-    if (!filters.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -2739,7 +2735,7 @@ const KendoWindow = ({
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -3405,7 +3401,7 @@ const KendoWindow = ({
         />
       )}
       {attachmentsWindowVisible && (
-        <AttachmentsWindow
+        <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}

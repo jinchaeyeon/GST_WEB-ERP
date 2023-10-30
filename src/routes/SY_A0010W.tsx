@@ -42,6 +42,7 @@ import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -49,7 +50,6 @@ import {
   UsePermissions,
   getQueryFromBizComponent,
   handleKeyPressSearch,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -132,7 +132,10 @@ const Page: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         group_category: defaultOption.find(
@@ -1083,7 +1086,8 @@ const Page: React.FC = () => {
         const findRowIndex = mainDataResult.data.findIndex(
           (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
         );
-
+        if (paraDataDeleted.attdatnum)
+          setDeletedAttadatnums([paraDataDeleted.attdatnum]);
         if (isLastDataDeleted) {
           setPage({
             skip:
@@ -1118,9 +1122,6 @@ const Page: React.FC = () => {
             isSearch: true,
           }));
         }
-
-        if (paraDataDeleted.attdatnum)
-          setDeletedAttadatnums([paraDataDeleted.attdatnum]);
       }
     } else {
       console.log("[오류 발생]");

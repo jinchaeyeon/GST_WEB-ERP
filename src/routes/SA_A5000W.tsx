@@ -31,6 +31,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -44,7 +45,6 @@ import {
   setDefaultDate,
   toDate,
   useSysMessage,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -149,7 +149,10 @@ const SA_A5000: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setFilters((prev) => ({
         ...prev,
@@ -868,6 +871,8 @@ const SA_A5000: React.FC = () => {
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       );
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
       resetAllGrid();
       if (isLastDataDeleted) {
         setPage({
@@ -899,9 +904,6 @@ const SA_A5000: React.FC = () => {
           isSearch: true,
         }));
       }
-
-      if (paraDataDeleted.attdatnum)
-        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);

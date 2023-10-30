@@ -38,7 +38,7 @@ import React, {
   useState,
 } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -94,7 +94,7 @@ import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
-import { isLoading } from "../store/atoms";
+import { deletedAttadatnumsState, deletedNameState, isLoading, unsavedAttadatnumsState, unsavedNameState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1000_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -505,6 +505,17 @@ const SA_A1000_603W: React.FC = () => {
   const idGetter4 = getter(DETAIL_DATA_ITEM_KEY);
   const idGetter5 = getter(DETAIL_DATA_ITEM_KEY2);
   const idGetter6 = getter(DETAIL_DATA_ITEM_KEY3);
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
+
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const pathname: string = window.location.pathname.replace("/", "");
@@ -524,7 +535,7 @@ const SA_A1000_603W: React.FC = () => {
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
-  const [worktype, setWorktype] = useState<"N" | "U">("N");
+  const [worktype, setWorktype] = useState<"N" | "U">("U");
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -1049,6 +1060,12 @@ const SA_A1000_603W: React.FC = () => {
   const search = () => {
     setPage(initialPageState); // 페이지 초기화
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setTabSelected(0);
   };
   const [tabSelected, setTabSelected] = React.useState(0);
@@ -1060,6 +1077,13 @@ const SA_A1000_603W: React.FC = () => {
         pgNum: 1,
         find_row_value: "",
       }));
+      setWorktype("U");
+      if (unsavedName.length > 0) {
+        setDeletedName(unsavedName);
+      }
+      if (unsavedAttadatnums.length > 0) {
+        setDeletedAttadatnums(unsavedAttadatnums);
+      }
     }
     if (e.selected == 1) {
       const selectedRowData = mainDataResult.data.filter(
@@ -1079,6 +1103,12 @@ const SA_A1000_603W: React.FC = () => {
         (item) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       )[0];
+      if (unsavedName.length > 0) {
+        setDeletedName(unsavedName);
+      }
+      if (unsavedAttadatnums.length > 0) {
+        setDeletedAttadatnums(unsavedAttadatnums);
+      }
       setSubFilters2((prev) => ({
         ...prev,
         pgNum: 1,
@@ -1237,6 +1267,10 @@ const SA_A1000_603W: React.FC = () => {
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
+    if (!Information.attdatnum) {
+      setUnsavedAttadatnums((prev) => [...prev, data.attdatnum]);
+    }
+
     setInformation((prev) => {
       return {
         ...prev,
@@ -1557,7 +1591,7 @@ const SA_A1000_603W: React.FC = () => {
           workType: "U",
         });
       } else {
-        setWorktype("N");
+        setWorktype("U");
         setInformation({
           attdatnum: "",
           chkperson: "",
@@ -2648,6 +2682,12 @@ const SA_A1000_603W: React.FC = () => {
 
   const onAddClick2 = () => {
     setWorktype("N");
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
     setInformation({
       attdatnum: "",
       chkperson: "",
@@ -3079,6 +3119,8 @@ const SA_A1000_603W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      setUnsavedAttadatnums([]);
+      setUnsavedName([]);
       setTabSelected(0);
       setFilters((prev) => ({
         ...prev,
@@ -3232,6 +3274,7 @@ const SA_A1000_603W: React.FC = () => {
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       );
+      setDeletedAttadatnums([Information.attdatnum]);
       setTabSelected(0);
       if (isLastDataDeleted) {
         setPage({
@@ -3519,7 +3562,7 @@ const SA_A1000_603W: React.FC = () => {
         </TabStripTab>
         <TabStripTab
           title="시험정보"
-          disabled={mainDataResult.total == 0 ? true : false}
+          disabled={mainDataResult.total == 0 && worktype == "U" ? true : false}
         >
           <FormBoxWrap border={true}>
             <GridTitleContainer>

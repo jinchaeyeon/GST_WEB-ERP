@@ -30,16 +30,17 @@ import {
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
-  deletedAttadatnumsState,
+  deletedNameState,
   isLoading,
   loginResultState,
-  unsavedAttadatnumsState,
+  unsavedNameState
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -51,7 +52,6 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   toDate,
-  GetPropertyValueByName,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -60,8 +60,8 @@ import {
   SELECTED_FIELD,
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
+import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import CopyWindow2 from "./SA_A5001W_Inven_Window";
 
 type IWindow = {
@@ -227,13 +227,10 @@ const CopyWindow = ({
   UseMessages(pathname, setMessagesData);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
-  // 삭제할 첨부파일 리스트를 담는 함수
-  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
-  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
-  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-    unsavedAttadatnumsState
-  );
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -242,7 +239,10 @@ const CopyWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
       }));
@@ -822,8 +822,7 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
-    if (unsavedAttadatnums.length > 0)
-      setDeletedAttadatnums(unsavedAttadatnums);
+    if (unsavedName.length > 0) setDeletedName(unsavedName);
 
     setVisible(false);
   };
@@ -1074,10 +1073,6 @@ const CopyWindow = ({
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
-    if (!filters.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -1991,7 +1986,7 @@ const CopyWindow = ({
 
     if (data.isSuccess === true) {
       deletedMainRows = [];
-      setUnsavedAttadatnums([]);
+      setUnsavedName([]);
       reload(data.returnString);
       if (workType == "N") {
         onClose();
@@ -2027,7 +2022,7 @@ const CopyWindow = ({
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -2827,7 +2822,7 @@ const CopyWindow = ({
         />
       )}
       {attachmentsWindowVisible && (
-        <AttachmentsWindow
+        <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}

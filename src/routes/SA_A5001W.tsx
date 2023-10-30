@@ -175,7 +175,10 @@ const SA_A5001W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setFilters((prev) => ({
         ...prev,
@@ -469,10 +472,10 @@ const SA_A5001W: React.FC = () => {
       "@p_actdt": "",
       "@p_acseq1": 0,
       "@p_acseq2": 0,
-      "@p_eregno":"",
+      "@p_eregno": "",
       "@p_custprsncd": "",
       "@p_unprate": 0,
-      "@p_attdatnum":"",
+      "@p_attdatnum": "",
       "@p_rowstatus": "",
       "@p_seq2": "",
       "@p_rtnyn": "",
@@ -980,6 +983,9 @@ const SA_A5001W: React.FC = () => {
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       );
+      if (paraDataDeleted.attdatnum)
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+
       resetAllGrid();
       if (isLastDataDeleted) {
         setPage({
@@ -1011,9 +1017,6 @@ const SA_A5001W: React.FC = () => {
           isSearch: true,
         }));
       }
-
-      if (paraDataDeleted.attdatnum)
-        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);

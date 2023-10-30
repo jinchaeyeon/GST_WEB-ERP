@@ -863,6 +863,9 @@ const SA_A2300: React.FC = () => {
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       );
+      if (paraDataDeleted.attdatnum)
+      setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+    
       resetAllGrid();
       if (isLastDataDeleted) {
         setPage({
@@ -894,9 +897,6 @@ const SA_A2300: React.FC = () => {
           isSearch: true,
         }));
       }
-
-      if (paraDataDeleted.attdatnum)
-        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
     } else {
       console.log("[오류 발생]");
       console.log(data);
