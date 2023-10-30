@@ -9,7 +9,6 @@ import {
   getSelectedState,
   GridDataStateChangeEvent,
   GridItemChangeEvent,
-  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
 import { DataResult, getter, process, State } from "@progress/kendo-data-query";
 import { useApi } from "../../../hooks/api";
@@ -23,24 +22,19 @@ import {
 import { Iparameters } from "../../../store/types";
 import { Button } from "@progress/kendo-react-buttons";
 import {
-  UseBizComponent,
   UseParaPc,
   UseGetValueFromSessionItem,
-  UseMessages,
 } from "../../CommonFunction";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import {
   PAGE_SIZE,
   SELECTED_FIELD,
   EDIT_FIELD,
-  COM_CODE_DEFAULT_VALUE,
 } from "../../CommonString";
 import {
   getGridItemChangedData,
-  getQueryFromBizComponent,
 } from "../../CommonFunction";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
-import { bytesToBase64 } from "byte-base64";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoading, loginResultState } from "../../../store/atoms";
 import Sign from "../../Sign/Sign";
@@ -723,27 +717,27 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
       onClose={onClose}
       modal={modal}
     >
-      <GridContainer height= "35vh">
-        <GridTitleContainer>
-          <GridTitle>참석자</GridTitle>
-          <ButtonContainer>
-            <Button
-              onClick={onAddClick}
-              themeColor={"primary"}
-              icon="plus"
-              title="행 추가"
-            ></Button>
-            <Button
-              onClick={onDeleteClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="minus"
-              title="행 삭제"
-            ></Button>
-          </ButtonContainer>
-        </GridTitleContainer>
+      <GridTitleContainer>
+        <GridTitle>참석자</GridTitle>
+        <ButtonContainer>
+          <Button
+            onClick={onAddClick}
+            themeColor={"primary"}
+            icon="plus"
+            title="행 추가"
+          ></Button>
+          <Button
+            onClick={onDeleteClick}
+            fillMode="outline"
+            themeColor={"primary"}
+            icon="minus"
+            title="행 삭제"
+          ></Button>
+        </ButtonContainer>
+      </GridTitleContainer>
+      <GridContainer height="calc(100% - 410px)">
         <Grid
-          style={{ height: "calc(100% - 40px)"}}
+          style={{ height: "calc(100% - 5px)" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -800,39 +794,41 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
           />
         </Grid>
       </GridContainer>
-      <GridContainer height="33vh">
+      <GridContainer>
         <GridTitleContainer>
           <GridTitle>서명란</GridTitle>
         </GridTitleContainer>
-        <Sign
-          value={
-            mainDataResult.data.filter(
-              (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-            )[0] == undefined
-              ? ""
-              : mainDataResult.data.filter(
-                  (item) =>
-                    item.num == Object.getOwnPropertyNames(selectedState)[0]
-                )[0].signature
-          }
-          disabled={
-            mainDataResult.data.filter(
-              (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
-            )[0] == undefined
-              ? true
-              : mainDataResult.data.filter(
-                  (item) =>
-                    item.num == Object.getOwnPropertyNames(selectedState)[0]
-                )[0].is_lock == "Y" ||
-                mainDataResult.data.filter(
-                  (item) =>
-                    item.num == Object.getOwnPropertyNames(selectedState)[0]
-                )[0].is_lock == true
-              ? true
-              : false
-          }
-          onChange={changeSign}
-        />
+        <GridContainer height = "30vh">
+          <Sign
+            value={
+              mainDataResult.data.filter(
+                (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+              )[0] == undefined
+                ? ""
+                : mainDataResult.data.filter(
+                    (item) =>
+                      item.num == Object.getOwnPropertyNames(selectedState)[0]
+                  )[0].signature
+            }
+            disabled={
+              mainDataResult.data.filter(
+                (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+              )[0] == undefined
+                ? true
+                : mainDataResult.data.filter(
+                    (item) =>
+                      item.num == Object.getOwnPropertyNames(selectedState)[0]
+                  )[0].is_lock == "Y" ||
+                  mainDataResult.data.filter(
+                    (item) =>
+                      item.num == Object.getOwnPropertyNames(selectedState)[0]
+                  )[0].is_lock == true
+                ? true
+                : false
+            }
+            onChange={changeSign}
+          />
+        </GridContainer>
       </GridContainer>
       <BottomContainer>
         <ButtonContainer>

@@ -55,6 +55,7 @@ type TRichEditor = {
   hideTools?: boolean;
   className?: string;
   change?(v: number) : void;
+  border?: boolean;
 };
 
 const noticeStyle = `body {
@@ -64,10 +65,8 @@ const noticeStyle = `body {
 const { EditorState, EditorView, Plugin, PluginKey } = ProseMirror;
 
 const RichEditor = React.forwardRef(
-  ({ id, hideTools, className = "", change}: TRichEditor, ref) => {
+  ({ id, hideTools, className = "", change, border}: TRichEditor, ref) => {
     const editor = React.createRef<Editor>();
-
-    // let styles: null | string = null;
     const [styles, setStyles] = React.useState<null | string>(null);
     const editableRef = React.useRef<boolean>(true);
     const [editable, setEditable] = React.useState<boolean>(true);
@@ -311,8 +310,11 @@ const RichEditor = React.forwardRef(
     return (
       <div
         id={id}
-        style={{ height: "100%" }}
-        className={className + " editor-container"}
+        style={{ 
+          height: "100%", 
+          border: border ? "2px solid #2289c3" : undefined,
+          marginTop: "5px"
+        }}
       >
         <Editor
           style={{ height: "100%"}}
