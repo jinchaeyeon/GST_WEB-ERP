@@ -199,8 +199,6 @@ const CM_A7000W: React.FC = () => {
   UseParaPc(setPc);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-  let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 1200;
   const refEditorRef = useRef<TEditorHandle>(null);
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -1303,7 +1301,7 @@ const CM_A7000W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <GridContainerWrap>
-            <GridContainer style={{ width: isMobile ? "" : `30%` }}>
+            <GridContainer width="30%">
               <GridTitleContainer>
                 <GridTitle>회의록</GridTitle>
               </GridTitleContainer>
@@ -1359,7 +1357,7 @@ const CM_A7000W: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th style={{ width: isMobile ? "" : "15%" }}>회의일</th>
+                      <th>회의일</th>
                       <td>
                         <DatePicker
                           name="recdt"
@@ -1536,9 +1534,7 @@ const CM_A7000W: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
             </GridContainer>
-            <GridContainer
-              style={{ width: isMobile ? "" : `calc(70% - ${GAP}px)` }}
-            >
+            <GridContainer width={`calc(70% - ${GAP}px)`}>
               <GridTitleContainer>
                 <GridTitle>참고자료</GridTitle>
               </GridTitleContainer>

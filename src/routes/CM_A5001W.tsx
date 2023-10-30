@@ -1365,180 +1365,176 @@ const CM_A5001W: React.FC = () => {
           </GridTitleContainer>
           <GridContainerWrap>
             <GridContainer width="50%">
-              <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle>상세정보</GridTitle>
-                </GridTitleContainer>
-                <FormBoxWrap border={true}>
-                  <FormBox>
-                    <tbody>
-                      <tr>
-                        <th>CPM관리번호</th>
-                        <td>
-                          <Input
-                            name="cpmnum"
-                            type="text"
-                            value={information.cpmnum}
-                            className="readonly"
-                            readOnly={true}
-                          />
-                        </td>
-                        <th>SM담당자</th>
-                        <td>
-                          <Input
-                            name="user_name"
-                            type="text"
-                            value={information.user_name}
-                            className="readonly"
-                            readOnly={true}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th style={{ width: isMobile ? "" : "15%" }}>문의일</th>
-                        <td>
-                          <DatePicker
-                            name="request_date"
-                            value={information.request_date}
-                            format="yyyy-MM-dd"
-                            placeholder=""
-                            className="readonly"
-                          />
-                        </td>
-                        <th style={{ width: isMobile ? "" : "15%" }}>
-                          답변기한요청일
-                        </th>
-                        <td>
-                          <DatePicker
-                            name="finexpdt"
-                            value={information.finexpdt}
-                            format="yyyy-MM-dd"
-                            placeholder=""
-                            className="readonly"
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>문의분야</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="require_type"
-                              value={information.require_type}
-                              type="new"
-                              customOptionData={customOptionData}
-                              changeData={ComboBoxChange}
-                              className="readonly"
-                            />
-                          )}
-                        </td>
-                        <th>문의답변방법</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="completion_method"
-                              value={information.completion_method}
-                              type="new"
-                              customOptionData={customOptionData}
-                              changeData={ComboBoxChange}
-                              className="readonly"
-                            />
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>의약품상세분류</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="medicine_type"
-                              value={information.medicine_type}
-                              type="new"
-                              customOptionData={customOptionData}
-                              changeData={ComboBoxChange}
-                              className="readonly"
-                            />
-                          )}
-                        </td>
-                        <th>상태</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="status"
-                              value={information.status}
-                              type="new"
-                              customOptionData={customOptionData}
-                              changeData={ComboBoxChange}
-                              className="readonly"
-                            />
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>회사명</th>
-                        <td>
-                          <Input
-                            name="customernm"
-                            type="text"
-                            value={information.customernm}
+              <GridTitleContainer>
+                <GridTitle>상세정보</GridTitle>
+              </GridTitleContainer>
+              <FormBoxWrap border={true}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>CPM관리번호</th>
+                      <td>
+                        <Input
+                          name="cpmnum"
+                          type="text"
+                          value={information.cpmnum}
+                          className="readonly"
+                          readOnly={true}
+                        />
+                      </td>
+                      <th>SM담당자</th>
+                      <td>
+                        <Input
+                          name="user_name"
+                          type="text"
+                          value={information.user_name}
+                          className="readonly"
+                          readOnly={true}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>문의일</th>
+                      <td>
+                        <DatePicker
+                          name="request_date"
+                          value={information.request_date}
+                          format="yyyy-MM-dd"
+                          placeholder=""
+                          className="readonly"
+                        />
+                      </td>
+                      <th>답변기한요청일</th>
+                      <td>
+                        <DatePicker
+                          name="finexpdt"
+                          value={information.finexpdt}
+                          format="yyyy-MM-dd"
+                          placeholder=""
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>문의분야</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="require_type"
+                            value={information.require_type}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
                             className="readonly"
                           />
-                        </td>
-                        <th>시험번호</th>
-                        <td>
-                          <Input
-                            name="testnum"
-                            type="text"
-                            value={information.testnum}
+                        )}
+                      </td>
+                      <th>문의답변방법</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="completion_method"
+                            value={information.completion_method}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
                             className="readonly"
                           />
-                          <ButtonInInput>
-                            <Button
-                              type={"button"}
-                              onClick={onProjectWndClick}
-                              icon="search"
-                              fillMode="flat"
-                            />
-                          </ButtonInInput>
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>긴급</th>
-                        <td>
-                          <Checkbox
-                            title="긴급"
-                            name="is_emergency"
-                            value={
-                              information.is_emergency == "Y" ? true : false
-                            }
-                            onChange={CheckChange}
-                            disabled={true}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>제목</th>
-                        <td colSpan={3}>
-                          <Input
-                            name="title"
-                            type="text"
-                            value={information.title}
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>의약품상세분류</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="medicine_type"
+                            value={information.medicine_type}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
                             className="readonly"
                           />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FormBox>
-                </FormBoxWrap>
-              </GridContainer>
-              <GridContainer height="38.5vh">
+                        )}
+                      </td>
+                      <th>상태</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="status"
+                            value={information.status}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>회사명</th>
+                      <td>
+                        <Input
+                          name="customernm"
+                          type="text"
+                          value={information.customernm}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>시험번호</th>
+                      <td>
+                        <Input
+                          name="testnum"
+                          type="text"
+                          value={information.testnum}
+                          className="readonly"
+                        />
+                        <ButtonInInput>
+                          <Button
+                            type={"button"}
+                            onClick={onProjectWndClick}
+                            icon="search"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>긴급</th>
+                      <td>
+                        <Checkbox
+                          title="긴급"
+                          name="is_emergency"
+                          value={
+                            information.is_emergency == "Y" ? true : false
+                          }
+                          onChange={CheckChange}
+                          disabled={true}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>제목</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="title"
+                          type="text"
+                          value={information.title}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <GridContainer height="37.5vh">
                 <RichEditor id="docEditor" ref={docEditorRef} hideTools />
               </GridContainer>
               <FormBoxWrap border={true}>
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th style={{ width: isMobile ? "" : "15%" }}>첨부파일</th>
+                      <th style={{ width: isMobile ? "" : "5%" }}>첨부파일</th>
                       <td>
                         <div className="filter-item-wrap">
                           <Input
@@ -1597,17 +1593,14 @@ const CM_A5001W: React.FC = () => {
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
-              <GridContainer
-                height="61.7vh"
-                style={{ border: "2px solid #2289c3" }}
-              >
-                <RichEditor id="docEditor1" ref={docEditorRef1} hideTools />
+              <GridContainer height={`calc(100% - 185px)`}>
+                <RichEditor id="docEditor1" ref={docEditorRef1} hideTools border={true} />
               </GridContainer>
               <FormBoxWrap border={true}>
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th style={{ width: isMobile ? "" : "15%" }}>첨부파일</th>
+                      <th style={{ width: isMobile ? "" : "5%" }}>첨부파일</th>
                       <td>
                         <div className="filter-item-wrap">
                           <Input

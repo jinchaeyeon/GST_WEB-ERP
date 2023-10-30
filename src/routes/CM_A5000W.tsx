@@ -679,7 +679,6 @@ const CM_A5000W: React.FC = () => {
       },
     };
 
-    console.log(parameters);
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -1731,17 +1730,14 @@ const CM_A5000W: React.FC = () => {
                   </FormBox>
                 </FormBoxWrap>
               </GridContainer>
-              <GridContainer
-                height="37.5vh"
-                style={{ border: "2px solid #2289c3" }}
-              >
-                <RichEditor id="docEditor" ref={docEditorRef} hideTools />
+              <GridContainer height="37.5vh">
+                <RichEditor id="docEditor" ref={docEditorRef} hideTools border={true}/>
               </GridContainer>
               <FormBoxWrap border={true}>
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th style={{ width: isMobile ? "" : "15%" }}>첨부파일</th>
+                      <th style={{ width: isMobile ? "" : "5%" }}>첨부파일</th>
                       <td>
                         <div className="filter-item-wrap">
                           <Input
@@ -1767,14 +1763,14 @@ const CM_A5000W: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>답변</GridTitle>
               </GridTitleContainer>
-              <GridContainer height={isMobile ? "40vh" : "68.5vh"}>
+              <GridContainer height={`calc(100% - 115px)`}>
                 <RichEditor id="docEditor" ref={docEditorRef1} hideTools />
               </GridContainer>
               <FormBoxWrap border={true}>
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th style={{ width: isMobile ? "" : "15%" }}>첨부파일</th>
+                      <th style={{ width: isMobile ? "" : "5%" }}>첨부파일</th>
                       <td>
                         <div className="filter-item-wrap">
                           <Input
