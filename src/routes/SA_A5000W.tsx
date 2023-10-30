@@ -897,7 +897,7 @@ const SA_A5000: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           find_row_value:
-            mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1].outdt +
+            mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1].recdt +
             "-" +
             mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1].seq1,
           pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,

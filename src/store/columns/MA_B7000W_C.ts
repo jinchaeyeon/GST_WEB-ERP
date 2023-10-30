@@ -85,7 +85,7 @@ export const gridList: Array<TGrid> = [
     ],
   },
   {
-    gridName: "grdLotDetail",
+    gridName: "grdList3",
     columns: [
       {
         id: "col_gubun",
@@ -144,7 +144,7 @@ export const gridList: Array<TGrid> = [
     ],
   },
   {
-    gridName: "grdStockDetail",
+    gridName: "grdList2",
     columns: [
       {
         id: "col_lotnum",

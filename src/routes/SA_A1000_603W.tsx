@@ -3452,7 +3452,7 @@ const SA_A1000_603W: React.FC = () => {
   };
 
   const ChangeState = async () => {
-    if (!window.confirm("작성중인 내용이 초기화 됩니다. 진행하시겠습니까?")) {
+    if (!window.confirm("작성 중인 내용이 초기화 됩니다. 진행하시겠습니까?")) {
       return false;
     }
     let data: any;
