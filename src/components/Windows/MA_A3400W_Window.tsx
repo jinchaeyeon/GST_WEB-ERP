@@ -85,7 +85,6 @@ type Idata = {
 };
 let deletedMainRows: object[] = [];
 let temp = 0;
-let temp2 = 0;
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -600,6 +599,7 @@ const CopyWindow = ({
 
     for (var i = 0; i < data.length; i++) {
       data[i].num = ++temp;
+      data[i].rowstatus = "N"
     }
 
     try {
@@ -627,8 +627,8 @@ const CopyWindow = ({
     if (dataItem.length === 0) return false;
 
     mainDataResult.data.map((item) => {
-      if (item.num > temp2) {
-        temp2 = item.num;
+      if (item.num > temp) {
+        temp = item.num;
       }
     });
 
@@ -639,7 +639,7 @@ const CopyWindow = ({
           data[0].lotnum == data[i].lotnum
         ) {
           alert("중복되는 품목이있습니다.");
-          data[i].num = ++temp2;
+          data[i].num = ++temp;
           data[i].type = "재고";
           return false;
         }
@@ -648,11 +648,16 @@ const CopyWindow = ({
       for (var i = 1; i < data.length; i++) {
         if (data[0].itemcd == data[i].itemcd) {
           alert("중복되는 품목이있습니다.");
-          data[i].num = ++temp2;
+          data[i].num = ++temp;
           data[i].type = "품목";
           return false;
         }
       }
+    }
+
+    for (var i = 0; i < data.length; i++) {
+      data[i].num = ++temp;
+      data[i].rowstatus = "N"
     }
 
     try {
@@ -1204,7 +1209,7 @@ const CopyWindow = ({
       setUnsavedName([]);
       reload(data.returnString);
       if (workType == "N") {
-        onClose();
+        setVisible(false);
       } else {
         setFilters((prev) => ({
           ...prev,

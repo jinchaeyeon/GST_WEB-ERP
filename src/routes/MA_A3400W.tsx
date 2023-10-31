@@ -474,7 +474,7 @@ const MA_A3400W: React.FC = () => {
             ? rows[0]
             : rows.find(
                 (row: any) =>
-                  row.recdt + "-" + row.seq1 == filters.find_row_value
+                  row.outdt + "-" + row.seq1 == filters.find_row_value
               );
 
         if (selectedRow != undefined) {

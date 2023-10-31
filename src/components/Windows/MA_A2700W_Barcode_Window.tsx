@@ -1,23 +1,13 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import * as React from "react";
+import { Barcode } from "@progress/kendo-react-barcodes";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import { useRef, useState } from "react";
+import ReactToPrint from "react-to-print";
 import {
   BottomContainer,
-  ButtonContainer,
-  GridContainer,
-  LandscapePrint,
+  ButtonContainer
 } from "../../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { Barcode } from "@progress/kendo-react-barcodes";
-import {
-  Grid,
-  GridColumn,
-  GridCellProps,
-  GridDataStateChangeEvent,
-} from "@progress/kendo-react-grid";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import ReactToPrint from "react-to-print";
 
 type barcode = {
   barcode: string;
@@ -32,16 +22,19 @@ type barcode = {
 type IWindow = {
   data: barcode;
   setVisible(t: boolean): void;
+  modal?: boolean;
 };
 
-const CopyWindow = ({ setVisible, data }: IWindow) => {
+const CopyWindow = ({ setVisible, data, modal = false }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 800,
+    width: isMobile == true ? deviceWidth : 800,
     height: 470,
   });
-
+  
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
   };
@@ -68,7 +61,7 @@ const CopyWindow = ({ setVisible, data }: IWindow) => {
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
-        modal={true}
+        modal={modal}
       >
         <ButtonContainer>
           <ReactToPrint

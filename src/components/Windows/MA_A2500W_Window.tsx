@@ -1,79 +1,69 @@
-import { useEffect, useState, useCallback } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
-  GridColumn,
-  GridFooterCellProps,
-  GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridDataStateChangeEvent,
-  GridItemChangeEvent,
   GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridItemChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState
 } from "@progress/kendo-react-grid";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
-import { TextArea } from "@progress/kendo-react-inputs";
+import { Input, TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
-import CopyWindow2 from "./MA_A2500W_Order_Window";
-import { useApi } from "../../hooks/api";
+import * as React from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  GridContainer,
-  Title,
-  TitleContainer,
   ButtonInInput,
-  GridTitleContainer,
-  FormBoxWrap,
   FormBox,
+  FormBoxWrap,
+  GridContainer,
   GridTitle,
+  GridTitleContainer
 } from "../../CommonStyled";
-import { useRecoilState } from "recoil";
-import { Input } from "@progress/kendo-react-inputs";
-import { Iparameters } from "../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
+import { useApi } from "../../hooks/api";
+import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
-  chkScrollHandler,
+  deletedNameState,
+  isLoading,
+  loginResultState,
+  unsavedNameState,
+} from "../../store/atoms";
+import { Iparameters } from "../../store/types";
+import ComboBoxCell from "../Cells/ComboBoxCell";
+import NumberCell from "../Cells/NumberCell";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
-  getQueryFromBizComponent,
   UseParaPc,
-  toDate,
   convertDateToStr,
-  getGridItemChangedData,
   dateformat,
-  isValidDate,
   findMessage,
-  GetPropertyValueByName,
+  getGridItemChangedData,
+  getQueryFromBizComponent,
+  isValidDate,
+  toDate
 } from "../CommonFunction";
+import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { loginResultState } from "../../store/atoms";
-import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
-import { useSetRecoilState } from "recoil";
-import {
-  isLoading,
-  deletedAttadatnumsState,
-  unsavedAttadatnumsState,
-} from "../../store/atoms";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import NumberCell from "../Cells/NumberCell";
-import DateCell from "../Cells/DateCell";
-import { FormComboBoxCell, FormComboBox } from "../Editors";
-import ComboBoxCell from "../Cells/ComboBoxCell";
-import { NumberInput } from "adaptivecards";
+import CustomersWindow from "./CommonWindows/CustomersWindow";
+import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
+import CopyWindow2 from "./MA_A2500W_Order_Window";
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
   setVisible(t: boolean): void;
-  setData(data: object, filter: object, deletedMainRows: object): void;
-  reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
+  reload(str: string): void; //data : 선택한 품목 데이터를 전달하는 함수
+  modal?: boolean;
 };
 
 type Idata = {
@@ -107,8 +97,40 @@ type Idata = {
   seq1: number;
   recdt: string;
 };
-let deletedMainRows: object[] = [];
+type TdataArr = {
+  rowstatus_s: string[];
+  recdt_s: string[];
+  seq1_s: string[];
+  seq2_s: string[];
+  itemcd_s: string[];
+  itemacnt_s: string[];
+  qty_s: string[];
+  qtyunit_s: string[];
+  purnum_s: string[];
+  purseq_s: string[];
+  planno_s: string[];
+  planseq_s: string[];
+  totwgt_s: string[];
+  wgtunit_s: string[];
+  unpcalmeth_s: string[];
+  unp_s: string[];
+  amt_s: string[];
+  wonamt_s: string[];
+  taxamt_s: string[];
+  remark_s: string[];
+  num_s: string[];
+  findkey_s: string[];
+  div_s: string[];
+  outrecdt_s: string[];
+  outseq1_s: string[];
+  outseq2_s: string[];
+  keycode_s: string[];
+  keyseq_s: string[];
+  useqty_s: string[];
+};
 
+let deletedMainRows: object[] = [];
+let temp = 0;
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("L_BA019,L_BA015", setBizComponentData);
@@ -126,19 +148,21 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     <td />
   );
 };
-let temp = 0;
+
 const CopyWindow = ({
   workType,
   data,
   setVisible,
-  setData,
   reload,
+  modal = false,
 }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1600,
-    height: 1200,
+    width: isMobile == true ? deviceWidth : 1600,
+    height: 900,
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -154,13 +178,9 @@ const CopyWindow = ({
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 
-  // 삭제할 첨부파일 리스트를 담는 함수
-  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
-  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
-  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
-    unsavedAttadatnumsState
-  );
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -169,7 +189,10 @@ const CopyWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         person: defaultOption.find((item: any) => item.id === "person")
@@ -178,20 +201,18 @@ const CopyWindow = ({
     }
   }, [customOptionData]);
 
-  useEffect(() => {
-    setMainPgNum(1);
-    setMainDataResult(process([], mainDataState));
-    fetchMainGrid();
-  }, [reload]);
-
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -201,9 +222,7 @@ const CopyWindow = ({
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
-  const [isInitSearch, setIsInitSearch] = useState(false);
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
+
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -237,8 +256,7 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
-    if (unsavedAttadatnums.length > 0)
-      setDeletedAttadatnums(unsavedAttadatnums);
+    if (unsavedName.length > 0) setDeletedName(unsavedName);
 
     setVisible(false);
   };
@@ -307,36 +325,39 @@ const CopyWindow = ({
     serviceid: companyCode,
     recdt: new Date(),
     seq1: 0,
+    pgNum: 1,
+    isSearch: false,
   });
 
-  const parameters: Iparameters = {
-    procedureName: "P_MA_A2500W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "DETAIL",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_frdt": "",
-      "@p_todt": "",
-      "@p_purnum": "",
-      "@p_custcd": "",
-      "@p_custnm": "",
-      "@p_itemcd": "",
-      "@p_itemnm": "",
-      "@p_person": "",
-      "@p_doexdiv": "",
-      "@p_recdt": convertDateToStr(filters.recdt),
-      "@p_seq1": filters.seq1,
-      "@p_company_code": companyCode,
-    },
-  };
-
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+
+    const parameters: Iparameters = {
+      procedureName: "P_MA_A2500W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "DETAIL",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_frdt": "",
+        "@p_todt": "",
+        "@p_purnum": "",
+        "@p_custcd": "",
+        "@p_custnm": "",
+        "@p_itemcd": "",
+        "@p_itemnm": "",
+        "@p_person": "",
+        "@p_doexdiv": "",
+        "@p_recdt": convertDateToStr(filters.recdt),
+        "@p_seq1": filters.seq1,
+        "@p_company_code": companyCode,
+      },
+    };
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -350,33 +371,43 @@ const CopyWindow = ({
           ...row,
         };
       });
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
       if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: rows,
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
-        setIsInitSearch(true);
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   useEffect(() => {
-    if (workType != "N" && isInitSearch === false) {
-      fetchMainGrid();
+    if (filters.isSearch && workType != "N") {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({
+        ...prev,
+        pgNum: 1,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-
-  useEffect(() => {
-    if (customOptionData !== null && workType === "U") {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
 
   useEffect(() => {
     if (workType === "U" && data != undefined) {
@@ -387,8 +418,8 @@ const CopyWindow = ({
         seq1: data.seq1,
         indt: toDate(data.indt),
         purdt: isValidDate(data.purdt)
-        ? new Date(dateformat(data.purdt))
-        : null,
+          ? new Date(dateformat(data.purdt))
+          : null,
         person: data.person,
         doexdiv: data.doexdiv,
         location: data.location,
@@ -401,6 +432,8 @@ const CopyWindow = ({
         wonchgrat: data.wonchgrat,
         uschgrat: data.uschgrat,
         remark: data.remark,
+        isSearch: true,
+        pgNum: 1,
       }));
     }
   }, []);
@@ -426,18 +459,6 @@ const CopyWindow = ({
     }
   };
 
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
-
-        setIfSelectFirstRow(true);
-      }
-    }
-  }, [mainDataResult]);
-
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -446,16 +467,6 @@ const CopyWindow = ({
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-    // setyn(true);
-    setIfSelectFirstRow(false);
-    const selectedIdx = event.startRowIndex;
-    const selectedRowData = event.dataItems[selectedIdx];
-  };
-
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -467,10 +478,6 @@ const CopyWindow = ({
   };
 
   const getAttachmentsData = (data: IAttachmentData) => {
-    if (!filters.attdatnum) {
-      setUnsavedAttadatnums([data.attdatnum]);
-    }
-
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -492,13 +499,14 @@ const CopyWindow = ({
     if (dataItem.length === 0) return false;
 
     mainDataResult.data.map((item) => {
-      if(item.num > temp){
-        temp = item.num
+      if (item.num > temp) {
+        temp = item.num;
       }
-  })
+    });
 
     for (var i = 0; i < data.length; i++) {
       data[i].num = ++temp;
+      data[i].rowstatus = "N"
     }
 
     setFilters((prev) => ({
@@ -510,10 +518,11 @@ const CopyWindow = ({
       data.map((item: any) => {
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, item],
+            data: [item, ...prev.data],
             total: prev.total + 1,
           };
         });
+        setSelectedState({ [item[DATA_ITEM_KEY]]: true });
       });
     } catch (e) {
       alert(e);
@@ -558,11 +567,274 @@ const CopyWindow = ({
         throw findMessage(messagesData, "MA_A2500W_003");
       } else {
         if (valid == true) {
-          setData(mainDataResult.data, filters, deletedMainRows);
-          deletedMainRows = [];
-          setUnsavedAttadatnums([]);
-          if (workType == "N") {
-            onClose();
+          const dataItem = mainDataResult.data.filter((item: any) => {
+            return (
+              (item.rowstatus === "N" || item.rowstatus === "U") &&
+              item.rowstatus !== undefined
+            );
+          });
+
+          if (dataItem.length === 0 && deletedMainRows.length == 0) {
+            setParaData((prev) => ({
+              ...prev,
+              workType: workType,
+              amt: filters.amt,
+              amtunit: filters.amtunit,
+              attdatnum: filters.attdatnum,
+              baseamt: filters.baseamt,
+              custcd: filters.custcd,
+              custnm: filters.custnm,
+              custprsncd: filters.custprsncd,
+              doexdiv: filters.doexdiv,
+              files: filters.files,
+              indt: filters.indt,
+              inexpdt: filters.inexpdt,
+              location: "01",
+              orgdiv: "01",
+              person: filters.person,
+              purdt: filters.purdt,
+              purnum: filters.purnum,
+              purqty: filters.purqty,
+              pursts: filters.pursts,
+              reckey: filters.reckey,
+              recdt: filters.recdt,
+              remark: filters.remark,
+              taxamt: filters.taxamt,
+              taxdiv: filters.taxdiv,
+              totamt: filters.totamt,
+              uschgrat: filters.uschgrat,
+              wonchgrat: filters.wonchgrat,
+              wonamt: filters.wonamt,
+              seq1: filters.seq1,
+              userid: userId,
+              pc: pc,
+              form_id: "MA_A2400W",
+              serviceid: companyCode,
+            }));
+          } else {
+            let dataArr: TdataArr = {
+              rowstatus_s: [],
+              recdt_s: [],
+              seq1_s: [],
+              seq2_s: [],
+              itemcd_s: [],
+              itemacnt_s: [],
+              qty_s: [],
+              qtyunit_s: [],
+              purnum_s: [],
+              purseq_s: [],
+              planno_s: [],
+              planseq_s: [],
+              totwgt_s: [],
+              wgtunit_s: [],
+              unpcalmeth_s: [],
+              unp_s: [],
+              amt_s: [],
+              wonamt_s: [],
+              taxamt_s: [],
+              remark_s: [],
+              num_s: [],
+              findkey_s: [],
+              div_s: [],
+              outrecdt_s: [],
+              outseq1_s: [],
+              outseq2_s: [],
+              keycode_s: [],
+              keyseq_s: [],
+              useqty_s: [],
+            };
+
+            dataItem.forEach((item: any, idx: number) => {
+              const {
+                rowstatus = "",
+                recdt = "",
+                seq1 = "",
+                seq2 = "",
+                outseq1 = "",
+                outseq2 = "",
+                itemcd = "",
+                itemacnt = "",
+                qty = "",
+                qtyunit = "",
+                purnum = "",
+                purseq = "",
+                planno = "",
+                planseq = "",
+                totwgt = "",
+                wgtunit = "", //필요
+                unpcalmeth = "",
+                unp = "",
+                amt = "",
+                wonamt = "",
+                taxamt = "",
+                remark = "",
+                num = "",
+                reckey = "", //필요
+                div = "",
+                purdt = "", // outrecdt
+                keycode = "",
+                keyseq = "",
+                useqty = "",
+                outrecdt = "",
+              } = item;
+
+              dataArr.rowstatus_s.push(rowstatus);
+              dataArr.recdt_s.push(recdt);
+              dataArr.seq1_s.push(seq1 == "" ? 0 : seq1);
+              dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
+              dataArr.itemcd_s.push(itemcd);
+              dataArr.itemacnt_s.push(itemacnt);
+              dataArr.qty_s.push(qty == "" ? 0 : qty);
+              dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
+              dataArr.purnum_s.push(purnum == undefined ? "" : purnum);
+              dataArr.purseq_s.push(purseq == "" ? 0 : purseq);
+              dataArr.planno_s.push(planno == undefined ? "" : planno);
+              dataArr.planseq_s.push(planseq == "" ? 0 : planseq);
+              dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
+              dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
+              dataArr.unpcalmeth_s.push(unpcalmeth == "" ? 0 : unpcalmeth);
+              dataArr.unp_s.push(unp == "" ? 0 : unp);
+              dataArr.amt_s.push(amt == "" ? 0 : amt);
+              dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+              dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
+              dataArr.remark_s.push(remark == undefined ? "" : remark);
+              dataArr.num_s.push(num == "" ? 0 : num);
+              dataArr.findkey_s.push(reckey == undefined ? "" : reckey);
+              dataArr.div_s.push(div == undefined ? "" : div);
+              dataArr.outrecdt_s.push(purdt);
+              dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
+              dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
+              dataArr.keycode_s.push(keycode == undefined ? "" : keycode);
+              dataArr.keyseq_s.push(keyseq == "" ? 0 : keyseq);
+              dataArr.useqty_s.push(useqty == "" ? 0 : useqty);
+            });
+            deletedMainRows.forEach((item: any, idx: number) => {
+              const {
+                rowstatus = "",
+                recdt = "",
+                seq1 = "",
+                seq2 = "",
+                outseq1 = "",
+                outseq2 = "",
+                itemcd = "",
+                itemacnt = "",
+                qty = "",
+                qtyunit = "",
+                purnum = "",
+                purseq = "",
+                planno = "",
+                planseq = "",
+                totwgt = "",
+                wgtunit = "", //필요
+                unpcalmeth = "",
+                unp = "",
+                amt = "",
+                wonamt = "",
+                taxamt = "",
+                remark = "",
+                num = "",
+                findkey = "", //필요
+                div = "",
+                purdt = "", // outrecdt
+                keycode = "",
+                keyseq = "",
+                useqty = "",
+              } = item;
+              dataArr.rowstatus_s.push(rowstatus);
+              dataArr.recdt_s.push(recdt);
+              dataArr.seq1_s.push(seq1 == "" ? 0 : seq1);
+              dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
+              dataArr.itemcd_s.push(itemcd);
+              dataArr.itemacnt_s.push(itemacnt);
+              dataArr.qty_s.push(qty == "" ? 0 : qty);
+              dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
+              dataArr.purnum_s.push(purnum == undefined ? "" : purnum);
+              dataArr.purseq_s.push(purseq == "" ? 0 : purseq);
+              dataArr.planno_s.push(planno == undefined ? "" : planno);
+              dataArr.planseq_s.push(planseq == "" ? 0 : planseq);
+              dataArr.totwgt_s.push(totwgt == "" ? 0 : totwgt);
+              dataArr.wgtunit_s.push(wgtunit == undefined ? "" : wgtunit);
+              dataArr.unpcalmeth_s.push(unpcalmeth == "" ? 0 : unpcalmeth);
+              dataArr.unp_s.push(unp == "" ? 0 : unp);
+              dataArr.amt_s.push(amt == "" ? 0 : amt);
+              dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+              dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
+              dataArr.remark_s.push(remark == undefined ? "" : remark);
+              dataArr.num_s.push(num == "" ? 0 : num);
+              dataArr.findkey_s.push(findkey == undefined ? "" : findkey);
+              dataArr.div_s.push(div == undefined ? "" : div);
+              dataArr.outrecdt_s.push(purdt);
+              dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
+              dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
+              dataArr.keycode_s.push(keycode == undefined ? "" : keycode);
+              dataArr.keyseq_s.push(keyseq == "" ? 0 : keyseq);
+              dataArr.useqty_s.push(useqty == "" ? 0 : useqty);
+            });
+            setParaData((prev) => ({
+              ...prev,
+              workType: workType,
+              amt: filters.amt,
+              amtunit: filters.amtunit,
+              attdatnum: filters.attdatnum,
+              baseamt: filters.baseamt,
+              custcd: filters.custcd,
+              custnm: filters.custnm,
+              custprsncd: filters.custprsncd,
+              doexdiv: filters.doexdiv,
+              files: filters.files,
+              indt: filters.indt,
+              inexpdt: filters.inexpdt,
+              location: "01",
+              orgdiv: "01",
+              person: filters.person,
+              purdt: filters.purdt,
+              purnum: filters.purnum,
+              purqty: filters.purqty,
+              pursts: filters.pursts,
+              reckey: filters.reckey,
+              recdt: filters.recdt,
+              remark: filters.remark,
+              taxamt: filters.taxamt,
+              taxdiv: filters.taxdiv,
+              totamt: filters.totamt,
+              uschgrat: filters.uschgrat,
+              wonchgrat: filters.wonchgrat,
+              wonamt: filters.wonamt,
+              seq1: filters.seq1,
+              userid: userId,
+              pc: pc,
+              form_id: "MA_A2400W",
+              serviceid: companyCode,
+              rowstatus_s: dataArr.rowstatus_s.join("|"),
+              recdt_s: dataArr.recdt_s.join("|"),
+              seq1_s: dataArr.seq1_s.join("|"),
+              seq2_s: dataArr.seq2_s.join("|"),
+              itemcd_s: dataArr.itemcd_s.join("|"),
+              itemacnt_s: dataArr.itemacnt_s.join("|"),
+              qty_s: dataArr.qty_s.join("|"),
+              qtyunit_s: dataArr.qtyunit_s.join("|"),
+              purnum_s: dataArr.purnum_s.join("|"),
+              purseq_s: dataArr.purseq_s.join("|"),
+              planno_s: dataArr.planno_s.join("|"),
+              planseq_s: dataArr.planseq_s.join("|"),
+              totwgt_s: dataArr.totwgt_s.join("|"),
+              wgtunit_s: dataArr.wgtunit_s.join("|"),
+              unpcalmeth_s: dataArr.unpcalmeth_s.join("|"),
+              unp_s: dataArr.unp_s.join("|"),
+              amt_s: dataArr.amt_s.join("|"),
+              wonamt_s: dataArr.wonamt_s.join("|"),
+              taxamt_s: dataArr.taxamt_s.join("|"),
+              remark_s: dataArr.remark_s.join("|"),
+              num_s: dataArr.num_s.join("|"),
+              findkey_s: dataArr.findkey_s.join("|"),
+              div_s: dataArr.div_s.join("|"),
+              outrecdt_s: dataArr.outrecdt_s.join("|"),
+              outseq1_s: dataArr.outseq1_s.join("|"),
+              outseq2_s: dataArr.outseq2_s.join("|"),
+              keycode_s: dataArr.keycode_s.join("|"),
+              keyseq_s: dataArr.keyseq_s.join("|"),
+              useqty_s: dataArr.useqty_s.join("|"),
+            }));
           }
         }
       }
@@ -571,27 +843,240 @@ const CopyWindow = ({
     }
   };
 
+  const [ParaData, setParaData] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "",
+    orgdiv: "01",
+    location: "01",
+    recdt: new Date(),
+    seq1: 0,
+    indt: new Date(),
+    purdt: new Date(),
+    custcd: "",
+    custnm: "",
+    person: "admin",
+    doexdiv: "A",
+    taxdiv: "A",
+    amtunit: "",
+    baseamt: 0,
+    wonchgrat: 0,
+    uschgrat: 0,
+    attdatnum: "",
+    remark: "",
+    rowstatus_s: "",
+    recdt_s: "",
+    seq1_s: "",
+    seq2_s: "",
+    itemcd_s: "",
+    itemacnt_s: "",
+    qty_s: "",
+    qtyunit_s: "",
+    purnum_s: "",
+    purseq_s: "",
+    planno_s: "",
+    planseq_s: "",
+    totwgt_s: "",
+    wgtunit_s: "",
+    unpcalmeth_s: "",
+    unp_s: "",
+    amt_s: "",
+    wonamt_s: "",
+    taxamt_s: "",
+    remark_s: "",
+    num_s: "",
+    findkey_s: "",
+    div_s: "",
+    outrecdt_s: "",
+    outseq1_s: "",
+    outseq2_s: "",
+    keycode_s: "",
+    keyseq_s: "",
+    useqty_s: "",
+    form_id: "MA_A2400W",
+    serviceid: companyCode,
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_MA_A2500W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": "01",
+      "@p_location": "01",
+      "@p_recdt": convertDateToStr(ParaData.recdt),
+      "@p_seq1": ParaData.seq1,
+      "@p_indt": convertDateToStr(ParaData.indt),
+      "@p_purdt": convertDateToStr(ParaData.purdt),
+      "@p_custcd": ParaData.custcd,
+      "@p_custnm": ParaData.custnm,
+      "@p_person": ParaData.person,
+      "@p_doexdiv": ParaData.doexdiv,
+      "@p_taxdiv": ParaData.taxdiv,
+      "@p_amtunit": ParaData.amtunit,
+      "@p_baseamt": ParaData.baseamt,
+      "@p_wonchgrat": ParaData.wonchgrat,
+      "@p_uschgrat": ParaData.uschgrat,
+      "@p_attdatnum": ParaData.attdatnum,
+      "@p_remark": ParaData.remark,
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_recdt_s": ParaData.recdt_s,
+      "@p_seq1_s": ParaData.seq1_s,
+      "@p_seq2_s": ParaData.seq2_s,
+      "@p_itemcd_s": ParaData.itemcd_s,
+      "@p_itemacnt_s": ParaData.itemacnt_s,
+      "@p_qty_s": ParaData.qty_s,
+      "@p_qtyunit_s": ParaData.qtyunit_s,
+      "@p_purnum_s": ParaData.purnum_s,
+      "@p_purseq_s": ParaData.purseq_s,
+      "@p_planno_s": ParaData.planno_s,
+      "@p_planseq_s": ParaData.planseq_s,
+      "@p_totwgt_s": ParaData.totwgt_s,
+      "@p_wgtunit_s": ParaData.wgtunit_s,
+      "@p_unpcalmeth_s": ParaData.unpcalmeth_s,
+      "@p_unp_s": ParaData.unp_s,
+      "@p_amt_s": ParaData.amt_s,
+      "@p_wonamt_s": ParaData.wonamt_s,
+      "@p_taxamt_s": ParaData.taxamt_s,
+      "@p_remark_s": ParaData.remark_s,
+      "@p_num_s": ParaData.num_s,
+      "@p_findkey_s": ParaData.findkey_s,
+      "@p_div_s": ParaData.div_s,
+      "@p_outrecdt_s": ParaData.outrecdt_s,
+      "@p_outseq1_s": ParaData.outseq1_s,
+      "@p_outseq2_s": ParaData.outseq2_s,
+      "@p_keycode_s": ParaData.keycode_s,
+      "@p_keyseq_s": ParaData.keyseq_s,
+      "@p_useqty_s": ParaData.useqty_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "P_MA_A2500W",
+      "@p_company_code": companyCode,
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      deletedMainRows = [];
+      setUnsavedName([]);
+      reload(data.returnString);
+      if (workType == "N") {
+        setVisible(false);
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: true,
+          pgNum: 1,
+          find_row_value: data.returnString,
+        }));
+      }
+      setParaData({
+        pgSize: PAGE_SIZE,
+        workType: "",
+        orgdiv: "01",
+        location: "01",
+        recdt: new Date(),
+        seq1: 0,
+        indt: new Date(),
+        purdt: new Date(),
+        custcd: "",
+        custnm: "",
+        person: "admin",
+        doexdiv: "A",
+        taxdiv: "A",
+        amtunit: "",
+        baseamt: 0,
+        wonchgrat: 0,
+        uschgrat: 0,
+        attdatnum: "",
+        remark: "",
+        rowstatus_s: "",
+        recdt_s: "",
+        seq1_s: "",
+        seq2_s: "",
+        itemcd_s: "",
+        itemacnt_s: "",
+        qty_s: "",
+        qtyunit_s: "",
+        purnum_s: "",
+        purseq_s: "",
+        planno_s: "",
+        planseq_s: "",
+        totwgt_s: "",
+        wgtunit_s: "",
+        unpcalmeth_s: "",
+        unp_s: "",
+        amt_s: "",
+        wonamt_s: "",
+        taxamt_s: "",
+        remark_s: "",
+        num_s: "",
+        findkey_s: "",
+        div_s: "",
+        outrecdt_s: "",
+        outseq1_s: "",
+        outseq2_s: "",
+        keycode_s: "",
+        keyseq_s: "",
+        useqty_s: "",
+        form_id: "MA_A2400W",
+        serviceid: companyCode,
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (ParaData.workType != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
-
+    let Object3: any[] = [];
+    let Object2: any[] = [];
+    let data;
     mainDataResult.data.forEach((item: any, index: number) => {
       if (!selectedState[item[DATA_ITEM_KEY]]) {
         newData.push(item);
+        Object2.push(index);
       } else {
-        const newData2 = {
-          ...item,
-          rowstatus: "D",
-        };
-        deletedMainRows.push(newData2);
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows.push(newData2);
+        }
+        Object3.push(index);
       }
     });
 
+    if (Math.min(...Object3) < Math.min(...Object2)) {
+      data = mainDataResult.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult.data[Math.min(...Object3) - 1];
+    }
+
     setMainDataResult((prev) => ({
       data: newData,
-      total: newData.length,
+      total: prev.total - Object3.length,
     }));
-
-    setMainDataState({});
+    setSelectedState({
+      [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
+    });
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
@@ -638,7 +1123,6 @@ const CopyWindow = ({
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
               [EDIT_FIELD]: field,
             }
           : {
@@ -647,10 +1131,23 @@ const CopyWindow = ({
             }
       );
 
-      setIfSelectFirstRow(false);
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+
       setMainDataResult((prev) => {
         return {
           data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: mainDataResult.data,
           total: prev.total,
         };
       });
@@ -658,17 +1155,50 @@ const CopyWindow = ({
   };
 
   const exitEdit = () => {
-    const newData = mainDataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-    setIfSelectFirstRow(false);
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (tempResult.data != mainDataResult.data) {
+      const newData = mainDataResult.data.map(
+        (item: { [x: string]: string; rowstatus: string }) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+      );
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult.data.map((item: any) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
@@ -746,7 +1276,7 @@ const CopyWindow = ({
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
-        modal={true}
+        modal={modal}
       >
         <FormBoxWrap style={{ paddingRight: "50px" }}>
           <FormBox>
@@ -822,13 +1352,13 @@ const CopyWindow = ({
                     value={filters.custcd}
                     className="readonly"
                   />
-                  {/* <ButtonInInput>
+                  <ButtonInInput>
                     <Button
                       onClick={onCustWndClick}
                       icon="more-horizontal"
                       fillMode="flat"
                     />
-                  </ButtonInInput> */}
+                  </ButtonInInput>
                 </td>
                 <th>업체명</th>
                 <td>
@@ -904,7 +1434,7 @@ const CopyWindow = ({
                     name="files"
                     type="text"
                     value={filters.files}
-                    onChange={filterInputChange}
+                    className="readonly"
                   />
                   <ButtonInInput>
                     <Button
@@ -930,10 +1460,17 @@ const CopyWindow = ({
             </tbody>
           </FormBox>
         </FormBoxWrap>
-        <GridContainer>
+        <GridContainer height="calc(100% - 310px) ">
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
             <ButtonContainer>
+              <Button
+                themeColor={"primary"}
+                onClick={onCopyWndClick}
+                icon="folder-open"
+              >
+                발주참조
+              </Button>
               <Button
                 onClick={onDeleteClick}
                 fillMode="outline"
@@ -941,18 +1478,10 @@ const CopyWindow = ({
                 icon="minus"
                 title="행 삭제"
               ></Button>
-              <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onCopyWndClick}
-                icon="folder-open"
-              >
-                발주참조
-              </Button>
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "450px" }}
+          style={{ height: "calc(100% - 50px)" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -983,7 +1512,6 @@ const CopyWindow = ({
             //스크롤 조회기능
             fixedScroll={true}
             total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}
@@ -1096,7 +1624,7 @@ const CopyWindow = ({
         <CopyWindow2 setVisible={setCopyWindowVisible} setData={setCopyData} />
       )}
       {attachmentsWindowVisible && (
-        <AttachmentsWindow
+        <PopUpAttachmentsWindow
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={filters.attdatnum}

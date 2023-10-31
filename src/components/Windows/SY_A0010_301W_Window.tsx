@@ -1697,7 +1697,6 @@ const KendoWindow = ({
         <PopUpAttachmentsWindow
           setVisible={setExcelAttachmentsWindowVisible}
           para={"SY_A0010_301W"}
-          //modal={true}
         />
       )}
     </Window>
