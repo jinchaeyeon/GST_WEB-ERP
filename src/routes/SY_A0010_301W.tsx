@@ -1297,27 +1297,6 @@ const Page: React.FC = () => {
           >
             <GridTitleContainer>
               <GridTitle>요약정보</GridTitle>
-              {permissions !== null && (
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick}
-                    themeColor={"primary"}
-                    icon="file-add"
-                    disabled={permissions.save ? false : true}
-                  >
-                    생성
-                  </Button>
-                  <Button
-                    onClick={onDeleteClick}
-                    icon="delete"
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    disabled={permissions.delete ? false : true}
-                  >
-                    삭제
-                  </Button>
-                </ButtonContainer>
-              )}
             </GridTitleContainer>
             <Grid
               style={{ height: "76.5vh" }}
