@@ -1246,7 +1246,7 @@ const EA_A2000W: React.FC = () => {
                     </Button>
                     <Button
                       onClick={() => {
-                        processApproval("RTR");
+                        processApproval("RETURN");
                       }}
                       icon="x"
                       fillMode="outline"
@@ -1302,7 +1302,7 @@ const EA_A2000W: React.FC = () => {
                     </Button>
                     <Button
                       onClick={() => {
-                        processApproval("RTR");
+                        processApproval("RETURN");
                       }}
                       icon="x"
                       fillMode="outline"
