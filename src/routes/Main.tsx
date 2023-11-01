@@ -5,12 +5,17 @@ import {
   GridColumn,
   GridDataStateChangeEvent,
   GridEvent,
-  GridFooterCellProps,
-  GridSelectionChangeEvent,
+  GridFooterCellProps
 } from "@progress/kendo-react-grid";
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useState
+} from "react";
 // ES2015 module syntax
 import { Button } from "@progress/kendo-react-buttons";
+import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   DayView,
   MonthView,
@@ -36,6 +41,7 @@ import {
 import CenterCell from "../components/Cells/CenterCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -44,14 +50,26 @@ import {
   convertDateToStr,
   getQueryFromBizComponent,
   useGeoLocation,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
+import { LayoutSquareRead } from "../components/DnD/LayoutSquareRead";
+import { PieceRead } from "../components/DnD/PieceRead";
 import { useApi } from "../hooks/api";
 import { loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 const DATA_ITEM_KEY = "datnum";
+
+const boardStyle: CSSProperties = {
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  flexWrap: "wrap",
+};
+const containerStyle: CSSProperties = {
+  width: "100%",
+  height: "73vh",
+};
 
 const Main: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
@@ -62,8 +80,6 @@ const Main: React.FC = () => {
   const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const geoLocation = useGeoLocation();
-  let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 1200;
 
   useEffect(() => {
     if (sessionUserId === "") fetchSessionItem();
@@ -96,6 +112,14 @@ const Main: React.FC = () => {
   const [workOrderDataState, setWorkOrderDataState] = useState<State>({
     sort: [],
   });
+  //그리드 데이터 스테이트
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
+
+  const [detailDataState, setDetailDataState] = useState<State>({
+    sort: [],
+  });
 
   const [noticeDataResult, setNoticeDataResult] = useState<DataResult>(
     process([], noticeDataState)
@@ -105,12 +129,20 @@ const Main: React.FC = () => {
     process([], workOrderDataState)
   );
 
+  //그리드 데이터 결과값
+  const [mainDataResult, setMainDataResult] = useState<DataResult>(
+    process([], mainDataState)
+  );
+  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
+    process([], detailDataState)
+  );
   type TSchedulerDataResult = {
     id: number;
     title: string;
     start: Date;
     end: Date;
   };
+
   const [schedulerDataResult, setSchedulerDataResult] = useState<
     TSchedulerDataResult[]
   >([]);
@@ -122,7 +154,8 @@ const Main: React.FC = () => {
   const [detailSelectedState, setDetailSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
+  const [tabSelected, setTabSelected] = React.useState(0);
+  const [tabSelected2, setTabSelected2] = React.useState(0);
   const [approvalValueState, setApprovalValueState] = useState({
     app: 0,
     ref: 0,
@@ -166,6 +199,29 @@ const Main: React.FC = () => {
     user_id: userId,
     isSearch: false,
   });
+
+  const [layoutFilter, setLayoutFilter] = useState({
+    pgSize: PAGE_SIZE,
+    worktype: "process_layout",
+    isSearch: true,
+  });
+
+  const layoutParameters: Iparameters = {
+    procedureName: "sys_sel_default_home_web",
+    pageNumber: 1,
+    pageSize: layoutFilter.pgSize,
+    parameters: {
+      "@p_work_type": layoutFilter.worktype,
+      "@p_orgdiv": sessionOrgdiv,
+      "@p_location": sessionLocation,
+      "@p_user_id": userId,
+      "@p_frdt": "",
+      "@p_todt": "",
+      "@p_ref_date": "",
+      "@p_ref_key": "",
+    },
+  };
+
   const noticeParameters: Iparameters = {
     procedureName: "sys_sel_default_home_web",
     pageNumber: noticePgNum,
@@ -443,8 +499,64 @@ const Main: React.FC = () => {
     }
     setSchedulerFilter((prev) => ({
       ...prev,
-      isSearch: false
-    }))
+      isSearch: false,
+    }));
+  };
+
+  const fetchLayout = async () => {
+    let data: any;
+
+    try {
+      data = await processApi<any>("procedure", layoutParameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true && data.tables[0]) {
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows;
+      const totalRowCnt2 = data.tables[1].RowCount;
+      const rows2 = data.tables[1].Rows;
+
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      setDetailDataResult((prev) => {
+        return {
+          data: rows2,
+          total: totalRowCnt2 == -1 ? 0 : totalRowCnt2,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        const selectedRow = rows[0];
+
+        const width = 100 / selectedRow.col_cnt;
+        const height = 100 / selectedRow.row_cnt;
+        const squareStyle: CSSProperties = {
+          width: width + "%",
+          height: height + "%",
+        };
+        let arrays = [];
+        const datas = rows2.filter(
+          (item: any) => selectedRow.layout_key == item.layout_key
+        );
+
+        for (let i = 0; i < selectedRow.row_cnt; i++) {
+          for (let j = 0; j < selectedRow.col_cnt; j++) {
+            arrays.push(renderSquare(i, j, squareStyle, datas));
+          }
+        }
+        setSquares(arrays);
+      }
+    }
+    setLayoutFilter((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
   };
 
   useEffect(() => {
@@ -458,53 +570,16 @@ const Main: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if(schedulerFilter.isSearch === true) {
+    if (schedulerFilter.isSearch === true) {
       fetchScheduler();
     }
   }, [schedulerFilter]);
 
-  //그리드 리셋
-  const resetAllGrid = () => {
-    setNoticePgNum(1);
-    setWorkOrderPgNum(1);
-    setNoticeDataResult(process([], noticeDataState));
-    setWorkOrderDataResult(process([], workOrderDataState));
-  };
-
-  //메인 그리드 선택 이벤트 => 디테일1 그리드 조회
-  const onMainSelectionChange = (event: GridSelectionChangeEvent) => {
-    // const newSelectedState = getSelectedState({
-    //   event,
-    //   selectedState: selectedState,
-    //   dataItemKey: DATA_ITEM_KEY,
-    // });
-    // setSelectedState(newSelectedState);
-    // const selectedIdx = event.startRowIndex;
-    // const selectedRowData = event.dataItems[selectedIdx];
-    // setNoticeFilter((prev) => ({
-    //   ...prev,
-    //   itemacnt: selectedRowData.itemacnt,
-    //   itemcd: selectedRowData.itemcd,
-    //   work_type: "DETAIL1",
-    // }));
-  };
-
-  //디테일1 그리드 선택 이벤트 => 디테일2 그리드 조회
-  const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
-    // const newSelectedState = getSelectedState({
-    //   event,
-    //   selectedState: detailSelectedState,
-    //   dataItemKey: DETAIL_DATA_ITEM_KEY,
-    // });
-    // setDetailSelectedState(newSelectedState);
-    // const selectedIdx = event.startRowIndex;
-    // const selectedRowData = event.dataItems[selectedIdx];
-    // setWorkOrderFilter({
-    //   ...workOrderFilter,
-    //   lotnum: selectedRowData.lotnum,
-    //   work_type: "DETAIL2",
-    // });
-  };
+  useEffect(() => {
+    if (layoutFilter.isSearch === true) {
+      fetchLayout();
+    }
+  }, [layoutFilter]);
 
   //스크롤 핸들러
   const onNoticeScrollHandler = (event: GridEvent) => {
@@ -592,13 +667,20 @@ const Main: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setSchedulerFilter((prev) => ({
         ...prev,
         cboSchedulerType: defaultOption.find(
           (item: any) => item.id === "cboSchedulerType"
         ).valueCode,
+        isSearch: true,
+      }));
+      setLayoutFilter((prev) => ({
+        ...prev,
         isSearch: true,
       }));
     }
@@ -679,6 +761,84 @@ const Main: React.FC = () => {
     );
   };
 
+  const handleSelectTab = (e: any) => {
+    setTabSelected(e.selected);
+  };
+
+  const handleSelectTab2 = (e: any) => {
+    setTabSelected2(e.selected);
+    const selectedRow = mainDataResult.data[e.selected];
+
+    const width = 100 / selectedRow.col_cnt;
+    const height = 100 / selectedRow.row_cnt;
+    const squareStyle: CSSProperties = {
+      width: width + "%",
+      height: height + "%",
+    };
+    let arrays = [];
+    const datas = detailDataResult.data.filter(
+      (item) => mainDataResult.data[e.selected].layout_key == item.layout_key
+    );
+
+    for (let i = 0; i < selectedRow.row_cnt; i++) {
+      for (let j = 0; j < selectedRow.col_cnt; j++) {
+        arrays.push(renderSquare(i, j, squareStyle, datas));
+      }
+    }
+    setSquares(arrays);
+  };
+
+  const [layoutTab, setLayoutTab] = useState<any[]>([]);
+  const [squares, setSquares] = useState<any[]>([]);
+
+  useEffect(() => {
+    let arrays = [];
+    for (let i = 0; i < mainDataResult.data.length; i++) {
+      var name: string = mainDataResult.data[i].layout_name;
+      arrays.push(
+        <TabStripTab title={name}>
+          <div style={containerStyle}>
+            <div style={boardStyle}>{squares}</div>
+          </div>
+        </TabStripTab>
+      );
+    }
+    setLayoutTab(arrays);
+  }, [mainDataResult, tabSelected2, tabSelected]);
+
+  function renderSquare(
+    row: number,
+    col: number,
+    squareStyle: CSSProperties,
+    knightLists: any[]
+  ) {
+    const data = knightLists.filter(
+      (item: any) => item.col_index == col && item.row_index == row
+    );
+
+    return (
+      <div key={`${row}${col}`} style={squareStyle}>
+        <LayoutSquareRead x={row} y={col}>
+          <PieceRead
+            isKnight={knights(data, row, col)}
+            list={data}
+            info={data}
+          />
+        </LayoutSquareRead>
+      </div>
+    );
+  }
+
+  function knights(data: any[], x: number, y: number) {
+    let valid = false;
+    data.map((item) => {
+      if (item.row_index == x && item.col_index == y) {
+        valid = true;
+      }
+    });
+    return valid;
+  }
+
   return (
     <>
       <MainTopContainer>
@@ -733,41 +893,60 @@ const Main: React.FC = () => {
         )}
       </MainTopContainer>
       <GridContainerWrap>
-        <GridContainer width={`65%`}>
-          <GridTitleContainer>
-            <GridTitle>Work Calendar</GridTitle>
-            {customOptionData !== null && (
-              <div>
-                <CustomOptionComboBox
-                  name="cboSchedulerType"
-                  value={schedulerFilter.cboSchedulerType}
-                  customOptionData={customOptionData}
-                  changeData={schedulerFilterChange}
-                />
-              </div>
-            )}
-          </GridTitleContainer>
-          <Scheduler
-            height={"718px"}
-            data={schedulerDataResult}
-            defaultDate={displayDate}
-            item={CustomItem}
+        <GridContainer width="65%">
+          <TabStrip
+            style={{ width: "100%" }}
+            selected={tabSelected}
+            onSelect={handleSelectTab}
           >
-            <MonthView />
-            <DayView />
-            <WeekView />
-          </Scheduler>
+            <TabStripTab title="업무 달력">
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle></GridTitle>
+                  {customOptionData !== null && (
+                    <div>
+                      <CustomOptionComboBox
+                        name="cboSchedulerType"
+                        value={schedulerFilter.cboSchedulerType}
+                        customOptionData={customOptionData}
+                        changeData={schedulerFilterChange}
+                      />
+                    </div>
+                  )}
+                </GridTitleContainer>
+                <Scheduler
+                  height={"718px"}
+                  data={schedulerDataResult}
+                  defaultDate={displayDate}
+                  item={CustomItem}
+                >
+                  <MonthView />
+                  <DayView />
+                  <WeekView />
+                </Scheduler>
+              </GridContainer>
+            </TabStripTab>
+            <TabStripTab
+              title="프로세스 레이아웃"
+              disabled={mainDataResult.total == 0 ? true : false}
+            >
+              <TabStrip
+                style={{ width: "100%" }}
+                selected={tabSelected2}
+                onSelect={handleSelectTab2}
+              >
+                {layoutTab}
+              </TabStrip>
+            </TabStripTab>
+          </TabStrip>
         </GridContainer>
-        <GridContainerWrap
-          style={{ width: isMobile ? "100%" : `calc(35% - ${GAP}px)` }}
-          flexDirection="column"
-        >
+        <GridContainer width={`calc(35% - ${GAP}px)`}>
           <GridContainer>
             <GridTitleContainer>
               <GridTitle>공지사항</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "339px" }}
+              style={{ height: "380px" }}
               data={process(
                 noticeDataResult.data.map((row) => ({
                   ...row,
@@ -784,7 +963,6 @@ const Main: React.FC = () => {
                 enabled: true,
                 mode: "multiple",
               }}
-              onSelectionChange={onDetailSelectionChange}
               //정렬기능
               sortable={true}
               onSortChange={onNoticeSortChange}
@@ -818,7 +996,7 @@ const Main: React.FC = () => {
               <GridTitle>업무지시요청</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "339px" }}
+              style={{ height: "380px" }}
               data={process(workOrderDataResult.data, workOrderDataState)}
               {...workOrderDataState}
               onDataStateChange={onWorkOrderDataStateChange}
@@ -850,7 +1028,7 @@ const Main: React.FC = () => {
               <GridColumn field="title" title="제목" />
             </Grid>
           </GridContainer>
-        </GridContainerWrap>
+        </GridContainer>
       </GridContainerWrap>
     </>
   );

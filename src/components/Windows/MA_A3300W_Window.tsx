@@ -678,6 +678,7 @@ const CopyWindow = ({
             itemcd: itemInfo.itemcd,
             itemno: itemInfo.itemno,
             itemnm: itemInfo.itemnm,
+            itemacnt: itemInfo.itemacnt,
             insiz: itemInfo.insiz,
             model: itemInfo.model,
             bnatur: itemInfo.bnatur,

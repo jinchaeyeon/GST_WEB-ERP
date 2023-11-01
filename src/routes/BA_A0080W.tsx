@@ -456,7 +456,10 @@ const BA_A0080: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setSubFilters((prev) => ({
         ...prev,
         unpitem: defaultOption.find((item: any) => item.id === "unpitem")
@@ -518,6 +521,7 @@ const BA_A0080: React.FC = () => {
             itemno: itemInfo.itemno,
             itemnm: itemInfo.itemnm,
             insiz: itemInfo.insiz,
+            itemacnt: itemInfo.itemacnt,
             model: itemInfo.model,
             bnatur: itemInfo.bnatur,
             spec: itemInfo.spec,
@@ -1685,7 +1689,7 @@ const BA_A0080: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-       if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1818,7 +1822,7 @@ const BA_A0080: React.FC = () => {
             ? (minGridWidth2.current += item.width)
             : minGridWidth2.current
       );
-      
+
       minGridWidth2.current += 50;
       setGridCurrent(grid.current.clientWidth);
       setGridCurrent2(grid2.current.clientWidth);

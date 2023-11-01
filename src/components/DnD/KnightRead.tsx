@@ -1,70 +1,44 @@
 import {
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type FC,
+    useEffect,
+    useRef,
+    useState,
+    type CSSProperties,
+    type FC,
 } from "react";
-import { DragPreviewImage, useDrag } from "react-dnd";
-import { Layout } from "./Layout";
 
 const knightStyle: CSSProperties = {
   fontSize: 1,
   fontWeight: "bold",
-  cursor: "move",
 };
+
 export const ItemTypes = {
   KNIGHT: "knight",
 };
 
 export interface KnightProps {
-  layout: Layout;
-  x: number;
-  y: number;
-  list: any[];
   info: any;
 }
 
-export const Knight: FC<KnightProps> = ({ layout, x, y, list, info }) => {
-  const [{ isDragging }, drag, preview] = useDrag(
-    () => ({
-      type: ItemTypes.KNIGHT,
-      collect: (monitor) => ({
-        isDragging: !!monitor.isDragging(),
-      }),
-    }),
-    []
-  );
-
+export const KnightRead: FC<KnightProps> = ({ info }) => {
   const [imgBase64, setImgBase64] = useState<string>(""); // 파일 base64
   const excelInput: any = useRef();
   useEffect(() => {
-    if (info != undefined) {
-      setImgBase64("data:image/png;base64," + info.icon);
+    if (info.length == 1) {
+      setImgBase64("data:image/png;base64," + info[0].icon);
     }
   }, [info]);
 
   return (
     <>
-      <DragPreviewImage connect={preview} src={imgBase64} />
       <div
-        ref={drag}
         style={{
           ...knightStyle,
-          opacity: isDragging ? 0.5 : 1,
           height: "100%",
           textAlign: "center",
           position: "relative",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-        }}
-        onMouseDown={() => {
-          list.map((item) => {
-            if (x == item.row_index && y == item.col_index) {
-              layout.moveKnight(x, y, item.seq);
-            }
-          });
         }}
       >
         <div
@@ -80,7 +54,7 @@ export const Knight: FC<KnightProps> = ({ layout, x, y, list, info }) => {
             alt="UserImage"
           />
         </div>
-        {info != undefined ? (
+        {info.length == 1 ? (
           <div
             style={{
               position: "absolute",
@@ -90,7 +64,7 @@ export const Knight: FC<KnightProps> = ({ layout, x, y, list, info }) => {
               fontWeight: 700,
             }}
           >
-            {info.caption}
+            {info[0].caption}
           </div>
         ) : (
           ""

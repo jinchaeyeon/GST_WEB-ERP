@@ -8,7 +8,7 @@ export const gridList: Array<TGrid> = [
         id: "col_taxnum",
         field: "taxnum",
         caption: "계산서번호",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_custnm",
@@ -50,7 +50,7 @@ export const gridList: Array<TGrid> = [
         id: "col_items",
         field: "items",
         caption: "거래품목",
-        width: 200,
+        width: 150,
       },
       {
         id: "col_taxtype",
@@ -104,7 +104,7 @@ export const gridList: Array<TGrid> = [
         id: "col_paymentnum",
         field: "paymentnum",
         caption: "지급번호",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_paydt",
@@ -116,7 +116,7 @@ export const gridList: Array<TGrid> = [
         id: "col_payactkey",
         field: "payactkey",
         caption: "지급전표번호",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_actdt",
@@ -133,19 +133,19 @@ export const gridList: Array<TGrid> = [
         id: "col_recnum1",
         field: "recnum",
         caption: "입고번호",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_itemcd1",
         field: "itemcd",
         caption: "품목코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_itemnm1",
         field: "itemnm",
         caption: "품목명",
-        width: 200,
+        width: 150,
       },
       {
         id: "col_insiz1",
@@ -192,7 +192,7 @@ export const gridList: Array<TGrid> = [
         id: "col_ackey2",
         field: "ackey",
         caption: "전표번호",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_drcrdiv2",
@@ -204,7 +204,7 @@ export const gridList: Array<TGrid> = [
         id: "col_acntcd2",
         field: "acntcd",
         caption: "계정코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_acntnm2",
@@ -228,19 +228,19 @@ export const gridList: Array<TGrid> = [
         id: "col_remark2",
         field: "remark",
         caption: "비고",
-        width: 120,
+        width: 200,
       },
       {
         id: "col_custcd2",
         field: "custcd",
         caption: "업체코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_custnm2",
         field: "custnm",
         caption: "업체명",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_mngamt2",
@@ -287,7 +287,7 @@ export const gridList: Array<TGrid> = [
         id: "col_acntcd3",
         field: "acntcd",
         caption: "계정코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_acntnm3",
@@ -311,7 +311,7 @@ export const gridList: Array<TGrid> = [
         id: "col_payactkey3",
         field: "payactkey",
         caption: "지급전표번호",
-        width: 200,
+        width: 150,
       },
     ],
   },

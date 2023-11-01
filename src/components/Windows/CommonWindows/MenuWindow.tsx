@@ -14,7 +14,15 @@ import {
 import { bytesToBase64 } from "byte-base64";
 import { MouseEvent, useCallback, useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
-import { BottomContainer, ButtonContainer } from "../../../CommonStyled";
+import {
+  BottomContainer,
+  ButtonContainer,
+  FilterBox,
+  FormBox,
+  FormBoxWrap,
+  Title,
+  TitleContainer,
+} from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
@@ -24,22 +32,14 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../../CommonString";
+import FilterContainer from "../../Containers/FilterContainer";
+import { handleKeyPressSearch } from "../../CommonFunction";
+import { Input } from "@progress/kendo-react-inputs";
 
 let deletedMainRows: any[] = [];
 
 const ALL_MENU_DATA_ITEM_KEY = "KeyID";
 const SUB_ITEMS_FIELD: string = "menus";
-
-const menuQueryStr = `SELECT menu_id AS KeyID,
-parent_menu_id AS ParentKeyID,
-menu_name,
-category,
-form_id,
-sort_order
-FROM sysMenuPool
-WHERE category <> 'FORM'
-AND parent_menu_id <> ''
-AND release_status = 'R'`;
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
@@ -79,6 +79,15 @@ const KendoWindow = ({
   const onClose = () => {
     setVisible(false);
   };
+  //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
+  const filterInputChange = (e: any) => {
+    const { value, name } = e.target;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const allMenuColumns: TreeListColumnProps[] = [
     { field: "menu_name", title: "메뉴명", expandable: true },
@@ -111,6 +120,8 @@ const KendoWindow = ({
     use_yn: "",
     find_row_value: "",
     find_row_value2: "",
+    menu: "",
+    form_id: "",
     pgNum: 1,
     isSearch: true,
   });
@@ -118,6 +129,18 @@ const KendoWindow = ({
   const fetchAllMenuGrid = async (filter: any) => {
     let data: any;
     setLoading(true);
+    const menuQueryStr = `SELECT menu_id AS KeyID,
+    parent_menu_id AS ParentKeyID,
+    menu_name,
+    category,
+    form_id,
+    sort_order
+    FROM sysMenuPool
+    WHERE category <> 'FORM'
+    AND parent_menu_id <> ''
+    AND release_status = 'R'
+    AND menu_name LIKE '%' + '${filter.menu}' + '%'
+    AND form_id LIKE '%' + '${filter.form_id}' + '%'`;
 
     const bytes = require("utf8-bytes");
     const convertedQueryStr = bytesToBase64(bytes(menuQueryStr));
@@ -168,43 +191,12 @@ const KendoWindow = ({
           });
         }
       } else {
-        // 앱 메뉴 (최상위 메뉴) 없을 시 데이터 세팅
-        // 드래그앤드롭 사용 시 그리드 내 데이터 최소 1개 필요함
-
-        const appMenuRow = [
-          {
-            KeyID: "",
-            ParentKeyID: "",
-            form_delete_yn: "Y",
-            form_id: "",
-            form_print_yn: "Y",
-            form_save_yn: "Y",
-            form_view_yn: "Y",
-            menu_name: "",
-            path: "",
-            row_state: "Q",
-            sort_order: 0,
-            rowstatus: "N",
-          },
-        ];
-
-        const appMenuDataTree = createDataTree(
-          appMenuRow,
-          (i: any) => i.KeyID,
-          (i: any) => i.ParentKeyID,
-          SUB_ITEMS_FIELD
-        );
-
-        setAllMenuDataResult((prev: any) => {
-          if (prev.length === 0) {
-            return { ...prev, data: appMenuDataTree };
-          } else {
-            return prev;
-          }
-        });
-        setAllMenuSelectedState({
-          [appMenuRow[0][ALL_MENU_DATA_ITEM_KEY]]: true,
-        });
+        setAllMenuDataResult({
+          data: [],
+          expanded: ["M2022062210224011070"],
+          editItem: undefined,
+          editItemField: undefined,
+        })
       }
     } else {
       console.log("[에러발생]");
@@ -272,6 +264,15 @@ const KendoWindow = ({
     event.preventDefault();
   };
 
+  const search = () => {
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
+  };
+
   return (
     <div onClick={Menus}>
       <Window
@@ -283,6 +284,45 @@ const KendoWindow = ({
         onClose={onClose}
         modal={modal}
       >
+        <TitleContainer>
+          <Title></Title>
+          <ButtonContainer>
+            <Button
+              onClick={() => search()}
+              icon="search"
+              themeColor={"primary"}
+            >
+              조회
+            </Button>
+          </ButtonContainer>
+        </TitleContainer>
+        <FilterContainer>
+          <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+            <tbody>
+              <tr>
+                <th>메뉴명</th>
+                <td>
+                  <Input
+                    name="menu"
+                    type="text"
+                    value={filters.menu}
+                    onChange={filterInputChange}
+                  />
+                </td>
+
+                <th>Form ID</th>
+                <td>
+                  <Input
+                    name="form_id"
+                    type="text"
+                    value={filters.form_id}
+                    onChange={filterInputChange}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </FilterBox>
+        </FilterContainer>
         <TreeList
           data={mapTree(allMenuDataResult.data, SUB_ITEMS_FIELD, (item) =>
             extendDataItem(item, SUB_ITEMS_FIELD, {

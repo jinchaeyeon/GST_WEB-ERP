@@ -614,6 +614,7 @@ const CopyWindow = ({
             itemcd: itemInfo.itemcd,
             itemno: itemInfo.itemno,
             itemnm: itemInfo.itemnm,
+            itemacnt: itemInfo.itemacnt,
             insiz: itemInfo.insiz,
             model: itemInfo.model,
             bnatur: itemInfo.bnatur,
@@ -1360,7 +1361,7 @@ const CopyWindow = ({
 
     for (var i = 0; i < data.length; i++) {
       data[i].num = ++temp;
-      data[i].rowstatus = "N"
+      data[i].rowstatus = "N";
     }
 
     try {

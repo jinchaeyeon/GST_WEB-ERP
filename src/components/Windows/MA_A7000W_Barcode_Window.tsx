@@ -5,31 +5,30 @@ import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
-import { BottomContainer, ButtonContainer } from "../../CommonStyled";
+import {
+    BottomContainer,
+    ButtonContainer
+} from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { Iparameters } from "../../store/types";
 import { convertDateToStr } from "../CommonFunction";
 
 type barcode = {
-  fxmngnum: string;
+  lotnum: string;
 };
 
 type filters = {
   pgSize: number;
   orgdiv: string;
-  frdt: Date;
-  todt: Date;
-  fxmngnum: string;
+  yyyymm: Date;
+  location: string;
+  itemacnt: string;
   itemcd: string;
   itemnm: string;
-  custcd: string;
-  custnm: string;
-  srialno: string;
-  iteminsiz: string;
-  rcvcustcd: string;
-  rcvcustnm: string;
-  devmngnum: string;
+  insiz: string;
+  lotnum: string;
+  position: string;
   find_row_value: string;
   pgNum: number;
   isSearch: boolean;
@@ -76,6 +75,7 @@ const CopyWindow = ({
   };
   const componentRef = useRef(null);
   const processApi = useApi();
+
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -85,42 +85,32 @@ const CopyWindow = ({
   const [barcodeFilters, setBarCodeFilters] = useState({
     pgSize: total,
     orgdiv: "01",
-    frdt: new Date(),
-    todt: new Date(),
-    fxmngnum: "",
+    yyyymm: new Date(),
+    location: "01",
+    itemacnt: "",
     itemcd: "",
     itemnm: "",
-    custcd: "",
-    custnm: "",
-    srialno: "",
-    iteminsiz: "",
-    rcvcustcd: "",
-    rcvcustnm: "",
-    devmngnum: "",
-    find_row_value: "",
-    pgNum: 1,
+    insiz: "",
+    lotnum: "",
+    position: "",
     isSearch: false,
   });
 
   const BarCodeParameters: Iparameters = {
-    procedureName: "P_MA_A3000W_Q",
+    procedureName: "P_MA_A7000W_Q",
     pageNumber: 1,
     pageSize: barcodeFilters.pgSize,
     parameters: {
       "@p_work_type": "BARCODE",
-      "@p_orgdiv": "01",
-      "@p_fxmngnum": barcodeFilters.fxmngnum,
-      "@p_frdt": convertDateToStr(barcodeFilters.frdt),
-      "@p_todt": convertDateToStr(barcodeFilters.todt),
-      "@p_custcd": "",
-      "@p_custnm": "",
-      "@p_itemcd": "",
-      "@p_itemnm": "",
-      "@p_srialno": "",
-      "@p_iteminsiz": "",
-      "@p_rcvcustcd": "",
-      "@p_rcvcustnm": "",
-      "@p_devmngnum": "",
+      "@p_orgdiv": barcodeFilters.orgdiv,
+      "@p_yyyymm": convertDateToStr(barcodeFilters.yyyymm).substr(0, 4) + "00",
+      "@p_location": barcodeFilters.location,
+      "@p_itemacnt": barcodeFilters.itemacnt,
+      "@p_itemcd": barcodeFilters.itemcd,
+      "@p_itemnm": barcodeFilters.itemnm,
+      "@p_insiz": barcodeFilters.insiz,
+      "@p_lotnum": barcodeFilters.lotnum,
+      "@p_position": barcodeFilters.position,
     },
   };
 
@@ -158,15 +148,13 @@ const CopyWindow = ({
   }, [barcodeFilters]);
 
   useEffect(() => {
-    let fxmngnum: any = [];
+    let lotnum: any = [];
     data.map((item: any) => {
-      fxmngnum.push(item.fxmngnum);
+      lotnum.push(item.lotnum);
     });
     setBarCodeFilters((prev) => ({
       ...prev,
-      fxmngnum: fxmngnum.join("|"),
-      frdt: filter.frdt,
-      todt: filter.todt,
+      lotnum: lotnum.join("|"),
       isSearch: true,
     }));
   }, []);
@@ -177,21 +165,21 @@ const CopyWindow = ({
         left: 300,
         top: 100,
         width: prev.width,
-        height: 780,
+        height: 900,
       }));
     } else if (total > 1) {
       setPosition((prev: any) => ({
         left: 300,
         top: 100,
         width: prev.width,
-        height: 620,
+        height: 750,
       }));
     } else {
       setPosition((prev: any) => ({
         left: 300,
         top: 100,
         width: prev.width,
-        height: 420,
+        height: 500,
       }));
     }
   }, []);
@@ -220,9 +208,36 @@ const CopyWindow = ({
         <div id="BarcodePrint" className="printable barcode" ref={componentRef}>
           {mainDataResult.data != null &&
             mainDataResult.data.map((item: any) => (
-              <div key={item.ordkey} style={{ marginBottom: "10px" }}>
+              <>
                 <table style={{ width: "650px" }}>
                   <tbody>
+                    <tr>
+                      <th>입고년도</th>
+                      <td>{item.yyyymm}</td>
+                      <th>품목계정</th>
+                      <td>{item.itemacnt}</td>
+                    </tr>
+                    <tr>
+                      <th>품명</th>
+                      <td colSpan={3}>{item.itemnm}</td>
+                    </tr>
+                    <tr>
+                      <th>규격</th>
+                      <td>{item.insiz}</td>
+                      <th>수량</th>
+                      <td>{item.qty}</td>
+                    </tr>
+                    <tr>
+                      <th>LOT NO</th>
+                      <td colSpan={3}>{item.lotnum}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table style={{ width: "650px" }}>
+                  <tbody>
+                    <tr>
+                      <th>바코드</th>
+                    </tr>
                     <tr>
                       <td>
                         <Barcode
@@ -234,7 +249,7 @@ const CopyWindow = ({
                     </tr>
                   </tbody>
                 </table>
-              </div>
+              </>
             ))}
         </div>
         <BottomContainer>

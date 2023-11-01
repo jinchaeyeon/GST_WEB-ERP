@@ -600,6 +600,7 @@ const CopyWindow = ({
             insiz: itemInfo.insiz,
             model: itemInfo.model,
             bnatur: itemInfo.bnatur,
+            itemacnt: itemInfo.itemacnt,
             spec: itemInfo.spec,
             //invunit
             qtyunit: itemInfo.invunit,

@@ -1,95 +1,191 @@
-import {
-  useEffect,
-  useState,
-  useCallback,
-  useContext,
-  createContext,
-} from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
+  GridDataStateChangeEvent,
   GridFooterCellProps,
-  GridEvent,
+  GridHeaderCellProps,
+  GridItemChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridDataStateChangeEvent,
-  GridItemChangeEvent,
-  GridCellProps,
-  GridHeaderCellProps,
 } from "@progress/kendo-react-grid";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import {
-  TextArea,
-  InputChangeEvent,
   Checkbox,
+  Input,
+  InputChangeEvent,
+  TextArea,
 } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
-import CopyWindow3 from "./BA_A0080W_Copy_Window";
-import { useApi } from "../../hooks/api";
+import * as React from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  GridContainer,
-  Title,
-  TitleContainer,
-  ButtonInInput,
-  GridTitleContainer,
-  FormBoxWrap,
-  FormBox,
-  GridTitle,
   ButtonInGridInput,
+  ButtonInInput,
+  FormBox,
+  FormBoxWrap,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
 } from "../../CommonStyled";
-import { useRecoilState } from "recoil";
-import { Input } from "@progress/kendo-react-inputs";
-import { Iparameters } from "../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
+import { useApi } from "../../hooks/api";
+import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
-  chkScrollHandler,
+  deletedNameState,
+  isLoading,
+  loginResultState,
+  unsavedNameState,
+} from "../../store/atoms";
+import { Iparameters } from "../../store/types";
+import CheckBoxCell from "../Cells/CheckBoxCell";
+import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
+import ComboBoxCell from "../Cells/ComboBoxCell";
+import DateCell from "../Cells/DateCell";
+import NumberCell from "../Cells/NumberCell";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
-  getQueryFromBizComponent,
   UseParaPc,
-  toDate,
   convertDateToStr,
-  getGridItemChangedData,
-  dateformat,
-  isValidDate,
   findMessage,
-  setDefaultDate,
+  getGridItemChangedData,
   getItemQuery,
-  GetPropertyValueByName,
+  getQueryFromBizComponent,
+  toDate,
 } from "../CommonFunction";
-import { CellRender, RowRender } from "../Renderers/Renderers";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { loginResultState } from "../../store/atoms";
-import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
-import { useSetRecoilState } from "recoil";
 import {
-  isLoading,
-  deletedAttadatnumsState,
-  unsavedAttadatnumsState,
-} from "../../store/atoms";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import NumberCell from "../Cells/NumberCell";
-import DateCell from "../Cells/DateCell";
-import ComboBoxCell from "../Cells/ComboBoxCell";
-import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
-import ItemsWindow from "./CommonWindows/ItemsWindow";
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
-import CheckBoxCell from "../Cells/CheckBoxCell";
+import { CellRender, RowRender } from "../Renderers/Renderers";
+import CopyWindow3 from "./BA_A0080W_Copy_Window";
+import CustomersWindow from "./CommonWindows/CustomersWindow";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
+import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
+
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
   setVisible(t: boolean): void;
-  setData(data: object, filter: object, deletedMainRows: object): void;
-  reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
+  reload(str: string): void; //data : 선택한 품목 데이터를 전달하는 함수
+  modal?: boolean;
+};
+
+export const FormContext = createContext<{
+  itemInfo: TItemInfo;
+  setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
+}>({} as any);
+
+type TdataArr = {
+  rowstatus_s: string[];
+  reqseq_s: string[];
+  inexpdt_s: string[];
+  itemcd_s: string[];
+  itemnm_s: string[];
+  qty_s: string[];
+  qtyunit_s: string[];
+  remark_s: string[];
+  finyn_s: string[];
+  unp_s: string[];
+  amt_s: string[];
+  wonamt_s: string[];
+  taxamt_s: string[];
+  load_place_s: string[];
+  unpcalmeth_s: string[];
+};
+
+type TItemInfo = {
+  itemcd: string;
+  itemno: string;
+  itemnm: string;
+  insiz: string;
+  model: string;
+  itemacnt: string;
+  itemacntnm: string;
+  bnatur: string;
+  spec: string;
+  invunit: string;
+  invunitnm: string;
+  unitwgt: string;
+  wgtunit: string;
+  wgtunitnm: string;
+  maker: string;
+  dwgno: string;
+  remark: string;
+  itemlvl1: string;
+  itemlvl2: string;
+  itemlvl3: string;
+  extra_field1: string;
+  extra_field2: string;
+  extra_field7: string;
+  extra_field6: string;
+  extra_field8: string;
+  packingsiz: string;
+  unitqty: string;
+  color: string;
+  gubun: string;
+  qcyn: string;
+  outside: string;
+  itemthick: string;
+  itemlvl4: string;
+  itemlvl5: string;
+  custitemnm: string;
+};
+
+const defaultItemInfo = {
+  itemcd: "",
+  itemno: "",
+  itemnm: "",
+  insiz: "",
+  model: "",
+  itemacnt: "",
+  itemacntnm: "",
+  bnatur: "",
+  spec: "",
+  invunit: "",
+  invunitnm: "",
+  unitwgt: "",
+  wgtunit: "",
+  wgtunitnm: "",
+  maker: "",
+  dwgno: "",
+  remark: "",
+  itemlvl1: "",
+  itemlvl2: "",
+  itemlvl3: "",
+  extra_field1: "",
+  extra_field2: "",
+  extra_field7: "",
+  extra_field6: "",
+  extra_field8: "",
+  packingsiz: "",
+  unitqty: "",
+  color: "",
+  gubun: "",
+  qcyn: "",
+  outside: "",
+  itemthick: "",
+  itemlvl4: "",
+  itemlvl5: "",
+  custitemnm: "",
 };
 
 type Idata = {
@@ -159,38 +255,6 @@ interface IItemData {
   itemlvl5: string;
   custitemnm: string;
 }
-let deletedMainRows: object[] = [];
-let temp = 0;
-let temp2 = 0;
-export const FormContext = createContext<{
-  itemInfo: TItemInfo;
-  setItemInfo: (d: React.SetStateAction<TItemInfo>) => void;
-}>({} as any);
-
-type TItemInfo = {
-  itemcd: string;
-  itemnm: string;
-  itemacnt: string;
-  insiz: string;
-  bnatur: string;
-  spec: string;
-  invunitnm: string;
-  itemlvl1: string;
-  itemlvl2: string;
-  itemlvl3: string;
-};
-const defaultItemInfo = {
-  itemcd: "",
-  itemnm: "",
-  itemacnt: "",
-  insiz: "",
-  bnatur: "",
-  spec: "",
-  invunitnm: "",
-  itemlvl1: "",
-  itemlvl2: "",
-  itemlvl3: "",
-};
 
 const ColumnCommandCell = (props: GridCellProps) => {
   const {
@@ -217,36 +281,90 @@ const ColumnCommandCell = (props: GridCellProps) => {
       });
     }
   };
+
   const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
+
   const onItemWndClick2 = () => {
     setItemWindowVisible2(true);
   };
+
   const setItemData2 = (data: IItemData) => {
     const {
       itemcd,
+      itemno,
       itemnm,
       insiz,
+      model,
       itemacnt,
+      itemacntnm,
       bnatur,
       spec,
+      invunit,
       invunitnm,
+      unitwgt,
+      wgtunit,
+      wgtunitnm,
+      maker,
+      dwgno,
+      remark,
       itemlvl1,
       itemlvl2,
       itemlvl3,
+      extra_field1,
+      extra_field2,
+      extra_field7,
+      extra_field6,
+      extra_field8,
+      packingsiz,
+      unitqty,
+      color,
+      gubun,
+      qcyn,
+      outside,
+      itemthick,
+      itemlvl4,
+      itemlvl5,
+      custitemnm,
     } = data;
     setItemInfo({
       itemcd,
+      itemno,
       itemnm,
       insiz,
+      model,
       itemacnt,
+      itemacntnm,
       bnatur,
       spec,
+      invunit,
       invunitnm,
+      unitwgt,
+      wgtunit,
+      wgtunitnm,
+      maker,
+      dwgno,
+      remark,
       itemlvl1,
       itemlvl2,
       itemlvl3,
+      extra_field1,
+      extra_field2,
+      extra_field7,
+      extra_field6,
+      extra_field8,
+      packingsiz,
+      unitqty,
+      color,
+      gubun,
+      qcyn,
+      outside,
+      itemthick,
+      itemlvl4,
+      itemlvl5,
+      custitemnm,
     });
   };
+  //BA_A0080W에만 사용
   const defaultRendering = (
     <td
       className={className}
@@ -285,6 +403,10 @@ const ColumnCommandCell = (props: GridCellProps) => {
     </>
   );
 };
+
+let deletedMainRows: object[] = [];
+let temp = 0;
+
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent("L_BA019,L_BA015, L_LOADPLACE", setBizComponentData);
@@ -313,14 +435,16 @@ const CopyWindow = ({
   workType,
   data,
   setVisible,
-  setData,
   reload,
+  modal = false,
 }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1600,
-    height: 1200,
+    width: isMobile == true ? deviceWidth : 1600,
+    height: 900,
   });
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -337,19 +461,21 @@ const CopyWindow = ({
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
 
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-  useEffect(() => {
-    setMainPgNum(1);
-    setMainDataResult(process([], mainDataState));
-    fetchMainGrid();
-  }, [reload]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
@@ -389,46 +515,6 @@ const CopyWindow = ({
     }
   }, [bizComponentData]);
 
-  useEffect(() => {
-    if (bizComponentData != null) {
-      const newData = mainDataResult.data.map((item) =>
-        item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-          ? {
-              ...item,
-              itemcd: itemInfo.itemcd,
-              itemnm: itemInfo.itemnm,
-              itemacnt: itemInfo.itemacnt,
-              insiz: itemInfo.insiz,
-              bnatur: itemInfo.bnatur,
-              spec: itemInfo.spec,
-              qtyunit:
-                qtyunitListData.find(
-                  (item: any) => item.code_name === itemInfo.invunitnm
-                )?.sub_code != null
-                  ? qtyunitListData.find(
-                      (item: any) => item.code_name === itemInfo.invunitnm
-                    )?.sub_code
-                  : itemInfo.invunitnm,
-              itemlvl1: itemInfo.itemlvl1,
-              itemlvl2: itemInfo.itemlvl2,
-              itemlvl3: itemInfo.itemlvl3,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    }
-  }, [itemInfo]);
-
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     let data: any;
 
@@ -450,14 +536,19 @@ const CopyWindow = ({
       setListData(rows);
     }
   }, []);
+
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -466,9 +557,66 @@ const CopyWindow = ({
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [CopyWindowVisible3, setCopyWindowVisible3] = useState<boolean>(false);
 
-  const [isInitSearch, setIsInitSearch] = useState(false);
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+  useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        ? {
+            ...item,
+            chlditemcd: itemInfo.itemcd,
+            chlditemnm: itemInfo.itemnm,
+            itemcd: itemInfo.itemcd,
+            itemno: itemInfo.itemno,
+            itemnm: itemInfo.itemnm,
+            itemacnt: itemInfo.itemacnt,
+            insiz: itemInfo.insiz,
+            model: itemInfo.model,
+            bnatur: itemInfo.bnatur,
+            spec: itemInfo.spec,
+            //invunit
+            qtyunit: itemInfo.invunit,
+            invunitnm: itemInfo.invunitnm,
+            unitwgt: itemInfo.unitwgt,
+            wgtunit: itemInfo.wgtunit,
+            wgtunitnm: itemInfo.wgtunitnm,
+            maker: itemInfo.maker,
+            dwgno: itemInfo.dwgno,
+            remark: itemInfo.remark,
+            itemlvl1: itemInfo.itemlvl1,
+            itemlvl2: itemInfo.itemlvl2,
+            itemlvl3: itemInfo.itemlvl3,
+            extra_field1: itemInfo.extra_field1,
+            extra_field2: itemInfo.extra_field2,
+            extra_field7: itemInfo.extra_field7,
+            extra_field6: itemInfo.extra_field6,
+            extra_field8: itemInfo.extra_field8,
+            packingsiz: itemInfo.packingsiz,
+            unitqty: itemInfo.unitqty,
+            color: itemInfo.color,
+            gubun: itemInfo.gubun,
+            qcyn: itemInfo.qcyn,
+            outside: itemInfo.outside,
+            itemthick: itemInfo.itemthick,
+            itemlvl4: itemInfo.itemlvl4,
+            itemlvl5: itemInfo.itemlvl5,
+            custitemnm: itemInfo.custitemnm,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [itemInfo]);
 
   const fetchItemData = React.useCallback(
     async (itemcd: string) => {
@@ -492,45 +640,122 @@ const CopyWindow = ({
         const rowCount = data.tables[0].RowCount;
 
         if (rowCount > 0) {
-          const invunitnm = rows[0].invunit;
           const {
             itemcd,
+            itemno,
             itemnm,
             insiz,
+            model,
             itemacnt,
+            itemacntnm,
             bnatur,
             spec,
+            invunit,
+            invunitnm,
+            unitwgt,
+            wgtunit,
+            wgtunitnm,
+            maker,
+            dwgno,
+            remark,
             itemlvl1,
             itemlvl2,
             itemlvl3,
+            extra_field1,
+            extra_field2,
+            extra_field7,
+            extra_field6,
+            extra_field8,
+            packingsiz,
+            unitqty,
+            color,
+            gubun,
+            qcyn,
+            outside,
+            itemthick,
+            itemlvl4,
+            itemlvl5,
+            custitemnm,
           } = rows[0];
           setItemInfo({
             itemcd,
+            itemno,
             itemnm,
             insiz,
+            model,
             itemacnt,
+            itemacntnm,
             bnatur,
             spec,
+            invunit,
             invunitnm,
+            unitwgt,
+            wgtunit,
+            wgtunitnm,
+            maker,
+            dwgno,
+            remark,
             itemlvl1,
             itemlvl2,
             itemlvl3,
+            extra_field1,
+            extra_field2,
+            extra_field7,
+            extra_field6,
+            extra_field8,
+            packingsiz,
+            unitqty,
+            color,
+            gubun,
+            qcyn,
+            outside,
+            itemthick,
+            itemlvl4,
+            itemlvl5,
+            custitemnm,
           });
         } else {
           const newData = mainDataResult.data.map((item: any) =>
-            item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+            item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
               ? {
                   ...item,
-                  itemcd: item.itemcd,
+                  chlditemcd: item.itemcd,
+                  chlditemnm: "",
+                  itemcd: "",
+                  itemno: "",
                   itemnm: "",
                   insiz: "",
+                  model: "",
                   itemacnt: "",
+                  itemacntnm: "",
                   bnatur: "",
                   spec: "",
-                  qtyunit: "",
+                  invunit: "",
+                  invunitnm: "",
+                  unitwgt: "",
+                  wgtunit: "",
+                  wgtunitnm: "",
+                  maker: "",
+                  dwgno: "",
+                  remark: "",
                   itemlvl1: "",
                   itemlvl2: "",
                   itemlvl3: "",
+                  extra_field1: "",
+                  extra_field2: "",
+                  extra_field7: "",
+                  extra_field6: "",
+                  extra_field8: "",
+                  packingsiz: "",
+                  unitqty: "",
+                  color: "",
+                  gubun: "",
+                  qcyn: "",
+                  outside: "",
+                  itemthick: "",
+                  itemlvl4: "",
+                  itemlvl5: "",
+                  custitemnm: "",
                   [EDIT_FIELD]: undefined,
                 }
               : {
@@ -549,7 +774,6 @@ const CopyWindow = ({
     },
     [mainDataResult]
   );
-
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -583,11 +807,15 @@ const CopyWindow = ({
   };
 
   const onClose = () => {
+    if (unsavedName.length > 0) setDeletedName(unsavedName);
     setVisible(false);
   };
 
   const onCustWndClick = () => {
     setCustWindowVisible(true);
+  };
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
   };
   interface ICustData {
     custcd: string;
@@ -650,38 +878,40 @@ const CopyWindow = ({
     reqkey: "",
     reqnum: "",
     reqrev: 0,
+    pgNum: 1,
+    isSearch: true,
   });
 
-  const parameters: Iparameters = {
-    procedureName: "P_MA_A1000W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "DETAIL",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_frdt": "",
-      "@p_todt": "",
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
-      "@p_itemcd": filters.itemcd,
-      "@p_itemnm": filters.itemnm,
-      "@p_person": filters.person,
-      "@p_reqnum": filters.reqnum,
-      "@p_reqrev": filters.reqrev,
-      "@p_finyn": "%",
-      "@p_load_place": "",
-      "@p_dptcd": filters.dptcd,
-      "@p_appyn": "%",
-      "@p_find_row_value": "",
-    },
-  };
-
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+
+    const parameters: Iparameters = {
+      procedureName: "P_MA_A1000W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "DETAIL",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_frdt": "",
+        "@p_todt": "",
+        "@p_custcd": filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_itemcd": filters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_person": filters.person,
+        "@p_reqnum": filters.reqnum,
+        "@p_reqrev": filters.reqrev,
+        "@p_finyn": "%",
+        "@p_load_place": "",
+        "@p_dptcd": filters.dptcd,
+        "@p_appyn": "%",
+        "@p_find_row_value": "",
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -695,33 +925,43 @@ const CopyWindow = ({
           ...row,
         };
       });
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
       if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: rows,
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
-        setIsInitSearch(true);
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
 
   useEffect(() => {
-    if (workType != "N" && isInitSearch === false) {
-      fetchMainGrid();
+    if (filters.isSearch && workType != "N") {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({
+        ...prev,
+        pgNum: 1,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-
-  useEffect(() => {
-    if (customOptionData !== null && workType === "U") {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
 
   useEffect(() => {
     if (workType === "U" && data != undefined) {
@@ -753,6 +993,8 @@ const CopyWindow = ({
         taxamt: data.taxamt,
         taxdiv: data.taxdiv,
         totamt: data.totamt,
+        isSearch: true,
+        pgNum: 1,
       }));
     }
   }, []);
@@ -778,18 +1020,6 @@ const CopyWindow = ({
     }
   };
 
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
-
-        setIfSelectFirstRow(true);
-      }
-    }
-  }, [mainDataResult]);
-
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -798,14 +1028,6 @@ const CopyWindow = ({
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-    // setyn(true);
-    setIfSelectFirstRow(false);
-  };
-
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -825,15 +1047,16 @@ const CopyWindow = ({
     if (dataItem.length === 0) return false;
 
     mainDataResult.data.map((item) => {
-      if(item.num > temp2){
-        temp2 = item.num
+      if (item.num > temp) {
+        temp = item.num;
       }
-  })
+    });
     const rows = data.map((row: any) => {
       return {
         ...row,
         totamt: 0,
-        [DATA_ITEM_KEY]: ++temp2,
+        [DATA_ITEM_KEY]: ++temp,
+        rowstatus: "N",
       };
     });
 
@@ -841,10 +1064,11 @@ const CopyWindow = ({
       rows.map((item: any) => {
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, item],
+            data: [item, ...prev.data],
             total: prev.total + 1,
           };
         });
+        setSelectedState({ [item[DATA_ITEM_KEY]]: true });
       });
     } catch (e) {
       alert(e);
@@ -898,10 +1122,177 @@ const CopyWindow = ({
           throw findMessage(messagesData, "MA_A1000W_003");
         } else {
           if (valid == true) {
-            setData(mainDataResult.data, filters, deletedMainRows);
-            deletedMainRows = [];
-            if (workType == "N") {
-              onClose();
+            const dataItem = mainDataResult.data.filter((item: any) => {
+              return (
+                (item.rowstatus === "N" || item.rowstatus === "U") &&
+                item.rowstatus !== undefined
+              );
+            });
+
+            if (dataItem.length === 0 && deletedMainRows.length == 0) {
+              setParaData((prev) => ({
+                ...prev,
+                workType: workType,
+                reqnum: filters.reqnum,
+                reqrev: filters.reqrev,
+                custcd: filters.custcd,
+                custnm: filters.custnm,
+                modiv: "",
+                dptcd: filters.dptcd,
+                person: filters.person,
+                recdt: filters.recdt,
+                finaldes: "",
+                qcmeth: "",
+                boxmeth: "",
+                dlv_method: "",
+                reportyn: "",
+                contractyn: "",
+                attdatnum: filters.attdatnum,
+                remark: filters.remark,
+                project: filters.project,
+                poregnum: filters.poregnum,
+              }));
+            } else {
+              let dataArr: TdataArr = {
+                rowstatus_s: [],
+                reqseq_s: [],
+                inexpdt_s: [],
+                itemcd_s: [],
+                itemnm_s: [],
+                qty_s: [],
+                qtyunit_s: [],
+                remark_s: [],
+                finyn_s: [],
+                unp_s: [],
+                amt_s: [],
+                wonamt_s: [],
+                taxamt_s: [],
+                load_place_s: [],
+                unpcalmeth_s: [],
+              };
+
+              dataItem.forEach((item: any, idx: number) => {
+                const {
+                  rowstatus = "",
+                  reqseq = "",
+                  inexpdt = "",
+                  itemcd = "",
+                  itemnm = "",
+                  qty = "",
+                  qtyunit = "",
+                  remark = "",
+                  finyn = "",
+                  unp = "",
+                  amt = "",
+                  wonamt = "",
+                  taxamt = "",
+                  load_place = "",
+                  unpcalmeth = "",
+                } = item;
+
+                dataArr.rowstatus_s.push(rowstatus);
+                dataArr.reqseq_s.push(
+                  reqseq == undefined || reqseq == "" ? 0 : reqseq
+                );
+                dataArr.inexpdt_s.push(
+                  inexpdt == undefined || inexpdt == ""
+                    ? convertDateToStr(new Date())
+                    : inexpdt
+                );
+                dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
+                dataArr.itemnm_s.push(itemnm == undefined ? "" : itemnm);
+                dataArr.qty_s.push(qty == undefined ? 0 : qty);
+                dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
+                dataArr.remark_s.push(remark == undefined ? "" : remark);
+                dataArr.finyn_s.push(finyn == undefined ? "N" : finyn);
+                dataArr.unp_s.push(unp == undefined ? 0 : unp);
+                dataArr.amt_s.push(amt == undefined ? 0 : amt);
+                dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+                dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
+                dataArr.load_place_s.push(
+                  load_place == undefined ? "" : load_place
+                );
+                dataArr.unpcalmeth_s.push(
+                  unpcalmeth == undefined ? "" : unpcalmeth
+                );
+              });
+              deletedMainRows.forEach((item: any, idx: number) => {
+                const {
+                  rowstatus = "",
+                  reqseq = "",
+                  inexpdt = "",
+                  itemcd = "",
+                  itemnm = "",
+                  qty = "",
+                  qtyunit = "",
+                  remark = "",
+                  finyn = "",
+                  unp = "",
+                  amt = "",
+                  wonamt = "",
+                  taxamt = "",
+                  load_place = "",
+                  unpcalmeth = "",
+                } = item;
+                dataArr.rowstatus_s.push(rowstatus);
+                dataArr.reqseq_s.push(
+                  reqseq == undefined || reqseq == "" ? 0 : reqseq
+                );
+                dataArr.inexpdt_s.push(inexpdt == undefined ? "" : inexpdt);
+                dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
+                dataArr.itemnm_s.push(itemnm == undefined ? "" : itemnm);
+                dataArr.qty_s.push(qty == undefined ? 0 : qty);
+                dataArr.qtyunit_s.push(qtyunit == undefined ? "" : qtyunit);
+                dataArr.remark_s.push(remark == undefined ? "" : remark);
+                dataArr.finyn_s.push(finyn == undefined ? "N" : finyn);
+                dataArr.unp_s.push(unp == undefined ? 0 : unp);
+                dataArr.amt_s.push(amt == undefined ? 0 : amt);
+                dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
+                dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
+                dataArr.load_place_s.push(
+                  load_place == undefined ? "" : load_place
+                );
+                dataArr.unpcalmeth_s.push(
+                  unpcalmeth == undefined ? "" : unpcalmeth
+                );
+              });
+              setParaData((prev) => ({
+                ...prev,
+                workType: workType,
+                reqnum: filters.reqnum,
+                reqrev: filters.reqrev,
+                custcd: filters.custcd,
+                custnm: filters.custnm,
+                modiv: "",
+                dptcd: filters.dptcd,
+                person: filters.person,
+                recdt: filters.recdt,
+                finaldes: "",
+                qcmeth: "",
+                boxmeth: "",
+                dlv_method: "",
+                reportyn: "",
+                contractyn: "",
+                attdatnum: filters.attdatnum,
+                remark: filters.remark,
+                project: filters.project,
+                poregnum: filters.poregnum,
+                rowstatus_s: dataArr.rowstatus_s.join("|"),
+                reqseq_s: dataArr.reqseq_s.join("|"),
+                inexpdt_s: dataArr.inexpdt_s.join("|"),
+                itemcd_s: dataArr.itemcd_s.join("|"),
+                itemnm_s: dataArr.itemnm_s.join("|"),
+                qty_s: dataArr.qty_s.join("|"),
+                qtyunit_s: dataArr.qtyunit_s.join("|"),
+                remark_s: dataArr.remark_s.join("|"),
+                finyn_s: dataArr.finyn_s.join("|"),
+                unp_s: dataArr.unp_s.join("|"),
+                amt_s: dataArr.amt_s.join("|"),
+                wonamt_s: dataArr.wonamt_s.join("|"),
+                taxamt_s: dataArr.taxamt_s.join("|"),
+                load_place_s: dataArr.load_place_s.join("|"),
+                unpcalmeth_s: dataArr.unpcalmeth_s.join("|"),
+              }));
             }
           }
         }
@@ -911,27 +1302,211 @@ const CopyWindow = ({
     }
   };
 
+  const [ParaData, setParaData] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "",
+    orgdiv: "01",
+    location: "01",
+    reqnum: "",
+    reqrev: 0,
+    custcd: "",
+    custnm: "",
+    modiv: "",
+    dptcd: "",
+    person: "",
+    recdt: new Date(),
+    finaldes: "",
+    qcmeth: "",
+    boxmeth: "",
+    dlv_method: "",
+    paymeth: "",
+    reportyn: "",
+    contractyn: "",
+    attdatnum: "",
+    remark: "",
+    project: "",
+    poregnum: "",
+    rowstatus_s: "",
+    reqseq_s: "",
+    inexpdt_s: "",
+    itemcd_s: "",
+    itemnm_s: "",
+    qty_s: "",
+    qtyunit_s: "",
+    remark_s: "",
+    finyn_s: "",
+    unp_s: "",
+    amt_s: "",
+    wonamt_s: "",
+    taxamt_s: "",
+    load_place_s: "",
+    unpcalmeth_s: "",
+    userid: userId,
+    pc: pc,
+    form_id: "MA_A1000W",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_MA_A1000W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": "01",
+      "@p_location": ParaData.location,
+      "@p_reqnum": ParaData.reqnum,
+      "@p_reqrev": ParaData.reqrev,
+      "@p_custcd": ParaData.custcd,
+      "@p_custnm": ParaData.custnm,
+      "@p_modiv": ParaData.modiv,
+      "@p_dptcd": ParaData.dptcd,
+      "@p_person": ParaData.person,
+      "@p_recdt": convertDateToStr(ParaData.recdt),
+      "@p_finaldes": ParaData.finaldes,
+      "@p_qcmeth": ParaData.qcmeth,
+      "@p_boxmeth": ParaData.boxmeth,
+      "@p_dlv_method": ParaData.dlv_method,
+      "@p_paymeth": ParaData.paymeth,
+      "@p_reportyn": ParaData.reportyn,
+      "@p_contractyn": ParaData.contractyn,
+      "@p_attdatnum": ParaData.attdatnum,
+      "@p_remark": ParaData.remark,
+      "@p_project": ParaData.project,
+      "@p_poregnum": ParaData.poregnum,
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_reqseq_s": ParaData.reqseq_s,
+      "@p_inexpdt_s": ParaData.inexpdt_s,
+      "@p_itemcd_s": ParaData.itemcd_s,
+      "@p_itemnm_s": ParaData.itemnm_s,
+      "@p_qty_s": ParaData.qty_s,
+      "@p_qtyunit_s": ParaData.qtyunit_s,
+      "@p_remark_s": ParaData.remark_s,
+      "@p_finyn_s": ParaData.finyn_s,
+      "@p_unp_s": ParaData.unp_s,
+      "@p_amt_s": ParaData.amt_s,
+      "@p_wonamt_s": ParaData.wonamt_s,
+      "@p_taxamt_s": ParaData.taxamt_s,
+      "@p_load_place_s": ParaData.load_place_s,
+      "@p_unpcalmeth_s": ParaData.unpcalmeth_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "MA_A1000W",
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      deletedMainRows = [];
+      setUnsavedName([]);
+      reload(data.returnString);
+      if (workType == "N") {
+        setVisible(false);
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: true,
+          pgNum: 1,
+          find_row_value: data.returnString,
+        }));
+      }
+      setParaData({
+        pgSize: PAGE_SIZE,
+        workType: "",
+        orgdiv: "01",
+        location: "01",
+        reqnum: "",
+        reqrev: 0,
+        custcd: "",
+        custnm: "",
+        modiv: "",
+        dptcd: "",
+        person: "",
+        recdt: new Date(),
+        finaldes: "",
+        qcmeth: "",
+        boxmeth: "",
+        dlv_method: "",
+        paymeth: "",
+        reportyn: "",
+        contractyn: "",
+        attdatnum: "",
+        remark: "",
+        project: "",
+        poregnum: "",
+        rowstatus_s: "",
+        reqseq_s: "",
+        inexpdt_s: "",
+        itemcd_s: "",
+        itemnm_s: "",
+        qty_s: "",
+        qtyunit_s: "",
+        remark_s: "",
+        finyn_s: "",
+        unp_s: "",
+        amt_s: "",
+        wonamt_s: "",
+        taxamt_s: "",
+        load_place_s: "",
+        unpcalmeth_s: "",
+        userid: userId,
+        pc: pc,
+        form_id: "MA_A1000W",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (ParaData.rowstatus_s.length != 0 || ParaData.workType != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
-
+    let Object3: any[] = [];
+    let Object2: any[] = [];
+    let data;
     mainDataResult.data.forEach((item: any, index: number) => {
       if (!selectedState[item[DATA_ITEM_KEY]]) {
         newData.push(item);
+        Object2.push(index);
       } else {
-        const newData2 = {
-          ...item,
-          rowstatus: "D",
-        };
-        deletedMainRows.push(newData2);
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows.push(newData2);
+        }
+        Object3.push(index);
       }
     });
 
+    if (Math.min(...Object3) < Math.min(...Object2)) {
+      data = mainDataResult.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult.data[Math.min(...Object3) - 1];
+    }
+
     setMainDataResult((prev) => ({
       data: newData,
-      total: newData.length,
+      total: prev.total - Object3.length,
     }));
-
-    setMainDataState({});
+    setSelectedState({
+      [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
+    });
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
@@ -983,7 +1558,6 @@ const CopyWindow = ({
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
               [EDIT_FIELD]: field,
             }
           : {
@@ -995,42 +1569,12 @@ const CopyWindow = ({
       if (field) {
         setEditedField(field);
       }
-      setIfSelectFirstRow(false);
-      setMainDataResult((prev) => {
+      setTempResult((prev: { total: any }) => {
         return {
           data: newData,
           total: prev.total,
         };
       });
-    }
-  };
-
-  const exitEdit = () => {
-    if (editedField !== "itemcd") {
-      const newData = mainDataResult.data.map((item) => ({
-        ...item,
-        amt:
-          filters.amtunit == "KRW"
-            ? item.qty * item.unp
-            : item.qty * item.unp * filters.wonchgrat,
-        wonamt:
-          filters.amtunit == "KRW"
-            ? item.qty * item.unp
-            : item.qty * item.unp * filters.wonchgrat,
-        taxamt:
-          filters.amtunit == "KRW"
-            ? (item.qty * item.unp) / 10
-            : (item.qty * item.unp * filters.wonchgrat) / 10,
-        totamt:
-          filters.amtunit == "KRW"
-            ? Math.round(item.qty * item.unp + (item.qty * item.unp) / 10)
-            : Math.round(
-                item.qty * item.unp * filters.wonchgrat +
-                  (item.qty * item.unp * filters.wonchgrat) / 10
-              ),
-        [EDIT_FIELD]: undefined,
-      }));
-      setIfSelectFirstRow(false);
 
       setMainDataResult((prev) => {
         return {
@@ -1039,20 +1583,96 @@ const CopyWindow = ({
         };
       });
     } else {
-      mainDataResult.data.map((item) => {
-        if (editIndex === item.num) {
-          fetchItemData(item.itemcd);
-        }
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: mainDataResult.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit = () => {
+    if (tempResult.data != mainDataResult.data) {
+      if (editedField !== "itemcd") {
+        const newData = mainDataResult.data.map((item: any) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                amt:
+                  filters.amtunit == "KRW"
+                    ? item.qty * item.unp
+                    : item.qty * item.unp * filters.wonchgrat,
+                wonamt:
+                  filters.amtunit == "KRW"
+                    ? item.qty * item.unp
+                    : item.qty * item.unp * filters.wonchgrat,
+                taxamt:
+                  filters.amtunit == "KRW"
+                    ? (item.qty * item.unp) / 10
+                    : (item.qty * item.unp * filters.wonchgrat) / 10,
+                totamt:
+                  filters.amtunit == "KRW"
+                    ? Math.round(
+                        item.qty * item.unp + (item.qty * item.unp) / 10
+                      )
+                    : Math.round(
+                        item.qty * item.unp * filters.wonchgrat +
+                          (item.qty * item.unp * filters.wonchgrat) / 10
+                      ),
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+        setTempResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else {
+        mainDataResult.data.map((item: { [x: string]: any; itemcd: any }) => {
+          if (editIndex === item[DATA_ITEM_KEY]) {
+            fetchItemData(item.itemcd);
+          }
+        });
+      }
+    } else {
+      const newData = mainDataResult.data.map((item: any) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
       });
     }
   };
 
   const onAddClick = () => {
     mainDataResult.data.map((item) => {
-      if(item.num > temp){
-        temp = item.num
+      if (item.num > temp) {
+        temp = item.num;
       }
-  })
+    });
 
     const newDataItem = {
       [DATA_ITEM_KEY]: ++temp,
@@ -1088,6 +1708,7 @@ const CopyWindow = ({
         total: prev.total + 1,
       };
     });
+    setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
   };
 
   const [values2, setValues2] = React.useState<boolean>(false);
@@ -1115,6 +1736,18 @@ const CopyWindow = ({
     );
   };
 
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        attdatnum: data.attdatnum,
+        files:
+          data.original_name +
+          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
+      };
+    });
+  };
+
   return (
     <>
       <Window
@@ -1124,7 +1757,7 @@ const CopyWindow = ({
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
-        modal={true}
+        modal={modal}
       >
         <FormBoxWrap style={{ paddingRight: "50px" }}>
           <FormBox>
@@ -1228,6 +1861,7 @@ const CopyWindow = ({
                   <ButtonInInput>
                     <Button
                       type={"button"}
+                      onClick={onAttachmentsWndClick}
                       icon="more-horizontal"
                       fillMode="flat"
                     />
@@ -1263,13 +1897,20 @@ const CopyWindow = ({
             setItemInfo,
           }}
         >
-          <GridContainer>
+          <GridContainer height="calc(100% - 310px) ">
             <GridTitleContainer>
               <GridTitle>상세정보</GridTitle>
               <ButtonContainer>
                 <Button
+                  themeColor={"primary"}
+                  onClick={onCopyWndClick3}
+                  icon="folder-open"
+                  title="저장"
+                >
+                  품목 참조
+                </Button>
+                <Button
                   onClick={onAddClick}
-                  fillMode="outline"
                   themeColor={"primary"}
                   icon="plus"
                   title="행 추가"
@@ -1281,19 +1922,10 @@ const CopyWindow = ({
                   icon="minus"
                   title="행 삭제"
                 ></Button>
-                <Button
-                  themeColor={"primary"}
-                  fillMode="outline"
-                  onClick={onCopyWndClick3}
-                  icon="folder-open"
-                  title="저장"
-                >
-                  품목 참조
-                </Button>
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "450px" }}
+              style={{ height: "calc(100% - 50px)" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1329,7 +1961,6 @@ const CopyWindow = ({
               //스크롤 조회기능
               fixedScroll={true}
               total={mainDataResult.total}
-              onScroll={onMainScrollHandler}
               //정렬기능
               sortable={true}
               onSortChange={onMainSortChange}
@@ -1470,6 +2101,13 @@ const CopyWindow = ({
           setVisible={setCopyWindowVisible3}
           setData={setCopyData}
           itemacnt={""}
+        />
+      )}
+      {attachmentsWindowVisible && (
+        <PopUpAttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={filters.attdatnum}
         />
       )}
     </>

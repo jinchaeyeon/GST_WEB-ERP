@@ -1,82 +1,72 @@
-import {
-  useEffect,
-  useState,
-  useCallback,
-  useContext,
-  createContext,
-} from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
-  GridColumn,
-  GridFooterCellProps,
-  GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridDataStateChangeEvent,
-  GridItemChangeEvent,
   GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridItemChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState
 } from "@progress/kendo-react-grid";
 import {
-  TextArea,
-  InputChangeEvent,
-  Checkbox,
+  Input,
+  InputChangeEvent
 } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import DepositWindow from "./CommonWindows/DepositWindow";
-import AccountWindow from "./CommonWindows/AccountWindow";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../hooks/api";
+import * as React from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  GridContainer,
-  GridTitleContainer,
-  FormBoxWrap,
-  FormBox,
-  GridTitle,
-  ButtonInGridInput,
   ButtonInInput,
+  FormBox,
+  FormBoxWrap,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer
 } from "../../CommonStyled";
-import { useRecoilState } from "recoil";
-import { Input } from "@progress/kendo-react-inputs";
+import { useApi } from "../../hooks/api";
+import { IWindowPosition } from "../../hooks/interfaces";
+import { isLoading, loginResultState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
+import ComboBoxCell from "../Cells/ComboBoxCell";
+import DateCell from "../Cells/DateCell";
+import NumberCell from "../Cells/NumberCell";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
-  chkScrollHandler,
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
-  getQueryFromBizComponent,
   UseParaPc,
-  toDate,
   convertDateToStr,
-  getGridItemChangedData,
-  getItemQuery,
   findMessage,
-  GetPropertyValueByName,
+  getGridItemChangedData,
+  getQueryFromBizComponent,
+  toDate
 } from "../CommonFunction";
+import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { loginResultState } from "../../store/atoms";
-import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
-import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD } from "../CommonString";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import NumberCell from "../Cells/NumberCell";
-import DateCell from "../Cells/DateCell";
-import ComboBoxCell from "../Cells/ComboBoxCell";
+import AccountWindow from "./CommonWindows/AccountWindow";
+import DepositWindow from "./CommonWindows/DepositWindow";
 
-let deletedMainRows: any = [];
 type IWindow = {
   workType: "N" | "U";
   data?: IData[];
   setVisible(t: boolean): void;
-  setData(data: object, filter: object, deletedMainRows: object): void;
-  reload: boolean; //data : 선택한 품목 데이터를 전달하는 함수
+  setData(data: object, filter: object): void;
+  modal?: boolean;
 };
 
 type IData = {
@@ -94,7 +84,7 @@ interface IAccountData {
   acntcd: string;
   acntnm: string;
 }
-let temp = 0;
+
 const FormContext = createContext<{
   acntcd: string;
   setAcntcd: (d: any) => void;
@@ -309,12 +299,14 @@ const CopyWindow = ({
   data,
   setVisible,
   setData,
-  reload,
+  modal = false,
 }: IWindow) => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: 1600,
+    width: isMobile == true ? deviceWidth : 1600,
     height: 700,
   });
   const [loginResult] = useRecoilState(loginResultState);
@@ -328,8 +320,6 @@ const CopyWindow = ({
   const pathname: string = window.location.pathname.replace("/", "");
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-  const [editIndex, setEditIndex] = useState<number | undefined>();
-  const [editedField, setEditedField] = useState("");
   const [acntcd, setAcntcd] = useState<string>("");
   const [acntnm, setAcntnm] = useState<string>("");
   const [acntsrtnm, setAcntsrtnm] = useState<string>("");
@@ -339,16 +329,14 @@ const CopyWindow = ({
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-  useEffect(() => {
-    setMainPgNum(1);
-    setMainDataResult(process([], mainDataState));
-    fetchMainGrid();
-  }, [reload]);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
@@ -453,18 +441,18 @@ const CopyWindow = ({
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
-  const [isInitSearch, setIsInitSearch] = useState(false);
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [ifSelectFirstRow, setIfSelectFirstRow] = useState(true);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -512,27 +500,38 @@ const CopyWindow = ({
     reqdt_s: "",
     seq_s: "",
     frdt: new Date(),
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
   });
 
-  const parameters: Iparameters = {
-    procedureName: "P_MA_A9001W_Sub2_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "Q",
-      "@p_orgdiv": "01",
-      "@p_location": filters.location,
-      "@p_position": filters.position,
-      "@p_reqdt_s": filters.reqdt_s,
-      "@p_seq_s": filters.seq_s,
-    },
-  };
+  useEffect(() => {
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+    }
+  }, [filters]);
 
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
+  const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+    const parameters: Iparameters = {
+      procedureName: "P_MA_A9001W_Sub2_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "Q",
+        "@p_orgdiv": "01",
+        "@p_location": filters.location,
+        "@p_position": filters.position,
+        "@p_reqdt_s": filters.reqdt_s,
+        "@p_seq_s": filters.seq_s,
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -546,33 +545,30 @@ const CopyWindow = ({
           ...row,
         };
       });
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
       if (totalRowCnt > 0) {
-        setMainDataResult((prev) => {
-          return {
-            data: rows,
-            total: totalRowCnt == -1 ? 0 : totalRowCnt,
-          };
-        });
-        setIsInitSearch(true);
+        const selectedRow = rows[0];
+        setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
       }
     } else {
       console.log("[오류 발생]");
       console.log(data);
     }
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
     setLoading(false);
   };
-
-  useEffect(() => {
-    if (workType != "N" && isInitSearch === false) {
-      fetchMainGrid();
-    }
-  }, [filters]);
-
-  useEffect(() => {
-    if (customOptionData !== null && workType === "U") {
-      fetchMainGrid();
-    }
-  }, [mainPgNum]);
 
   useEffect(() => {
     if (data != undefined) {
@@ -589,6 +585,7 @@ const CopyWindow = ({
         location: data[0].location,
         seq_s: dataArr.seq_s.join("|"),
         reqdt_s: dataArr.reqdt_s.join("|"),
+        isSearch: true,
       }));
     }
   }, []);
@@ -614,18 +611,6 @@ const CopyWindow = ({
     }
   };
 
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    if (ifSelectFirstRow) {
-      if (mainDataResult.total > 0) {
-        const firstRowData = mainDataResult.data[0];
-        setSelectedState({ [firstRowData.num]: true });
-
-        setIfSelectFirstRow(true);
-      }
-    }
-  }, [mainDataResult]);
-
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -634,14 +619,6 @@ const CopyWindow = ({
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-    // setyn(true);
-    setIfSelectFirstRow(false);
-  };
-
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
-      setMainPgNum((prev) => prev + 1);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -695,8 +672,7 @@ const CopyWindow = ({
           throw findMessage(messagesData, "MA_A9001W_003");
         } else {
           if (valid == true) {
-            setData(mainDataResult.data, filters, deletedMainRows);
-            deletedMainRows = [];
+            setData(mainDataResult.data, filters);
             onClose();
           }
         }
@@ -704,29 +680,6 @@ const CopyWindow = ({
         alert(e);
       }
     }
-  };
-
-  const onDeleteClick = (e: any) => {
-    let newData: any[] = [];
-
-    mainDataResult.data.forEach((item: any, index: number) => {
-      if (!selectedState[item[DATA_ITEM_KEY]]) {
-        newData.push(item);
-      } else {
-        const newData2 = {
-          ...item,
-          rowstatus: "D",
-        };
-        deletedMainRows.push(newData2);
-      }
-    });
-
-    setMainDataResult((prev) => ({
-      data: newData,
-      total: newData.length,
-    }));
-
-    setMainDataState({});
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
@@ -774,7 +727,6 @@ const CopyWindow = ({
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
               [EDIT_FIELD]: field,
             }
           : {
@@ -782,10 +734,22 @@ const CopyWindow = ({
               [EDIT_FIELD]: undefined,
             }
       );
-      setIfSelectFirstRow(false);
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
       setMainDataResult((prev) => {
         return {
           data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult((prev) => {
+        return {
+          data: mainDataResult.data,
           total: prev.total,
         };
       });
@@ -793,66 +757,52 @@ const CopyWindow = ({
   };
 
   const exitEdit = () => {
-    const newData = mainDataResult.data.map((item) => ({
-      ...item,
-      amt_1: item.drcrdiv == "2" ? 0 : item.amt_1,
-      amt_2: item.drcrdiv == "1" ? 0 : item.amt_2,
-      [EDIT_FIELD]: undefined,
-    }));
-    setIfSelectFirstRow(false);
+    if (tempResult.data != mainDataResult.data) {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              amt_1: item.drcrdiv == "2" ? 0 : item.amt_1,
+              amt_2: item.drcrdiv == "1" ? 0 : item.amt_2,
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
 
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  };
-
-  const onAddClick = () => {
-    mainDataResult.data.map((item) => {
-      if (item.num > temp) {
-        temp = item.num;
-      }
-    });
-
-    const newDataItem = {
-      [DATA_ITEM_KEY]: ++temp,
-      acnttcd: "",
-      acntnm: "",
-      acntnum: "",
-      acntnumnm: "",
-      advanceinfo: 0,
-      amt_1: 0,
-      amt_2: 0,
-      custcd: "",
-      custnm: "",
-      drcrdiv: "1",
-      enddt: convertDateToStr(new Date()),
-      fornamt: 0,
-      location: filters.location,
-      mngitemcd1: "",
-      notenum: "",
-      orgdiv: "01",
-      paymentnum: "",
-      paymentseq: 0,
-      pubbank: "",
-      pubdt: convertDateToStr(new Date()),
-      pubperson: "",
-      remark: "",
-      remark1: "",
-      stdrmakcd: "",
-      stdrmaknm: "",
-      taxnum: "",
-      rowstatus: "N",
-    };
-
-    setMainDataResult((prev) => {
-      return {
-        data: [newDataItem, ...prev.data],
-        total: prev.total + 1,
-      };
-    });
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   return (
@@ -864,7 +814,7 @@ const CopyWindow = ({
         onMove={handleMove}
         onResize={handleResize}
         onClose={onClose}
-        modal={true}
+        modal={modal}
       >
         <FormBoxWrap style={{ paddingRight: "50px" }}>
           <FormBox>
@@ -937,22 +887,6 @@ const CopyWindow = ({
             <GridContainer>
               <GridTitleContainer>
                 <GridTitle>상세정보</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="plus"
-                    title="행 추가"
-                  ></Button>
-                  <Button
-                    onClick={onDeleteClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                    title="행 삭제"
-                  ></Button>
-                </ButtonContainer>
               </GridTitleContainer>
               <Grid
                 style={{ height: "450px" }}
@@ -994,7 +928,6 @@ const CopyWindow = ({
                 //스크롤 조회기능
                 fixedScroll={true}
                 total={mainDataResult.total}
-                onScroll={onMainScrollHandler}
                 //정렬기능
                 sortable={true}
                 onSortChange={onMainSortChange}

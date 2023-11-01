@@ -86,7 +86,7 @@ const boardStyle: CSSProperties = {
 };
 const containerStyle: CSSProperties = {
   width: "100%",
-  height: "78.5vh",
+  height: "75vh",
   border: "1px solid gray",
 };
 /** Styling properties applied to each square element */
@@ -1409,37 +1409,59 @@ const SY_A0500W: React.FC = () => {
       </GridContainerWrap>
       {clicked != "" && (
         <ContextMenu top={points.y} left={points.x}>
-          <ul>
-            <li onClick={handleClick}>
-              <Input
-                name="caption"
-                type="text"
-                value={info.caption}
-                onChange={InfoChange}
-              />
-            </li>
-            <li>{info.form_id}</li>
-            <Divider />
-            <li
-              onClick={(e) => {
-                handleClick(e);
-                setDetailWindowVisible(true);
-              }}
-            >
-              메뉴 등록
-            </li>
-            <li
-              onClick={(e) => {
-                handleClick(e);
-                setDetailWindowVisible2(true);
-              }}
-            >
-              아이콘 등록/변경
-            </li>
-            <Divider />
-            <li onClick={() => removeCaption(info)}>초기화</li>
-            <li onClick={() => removeIcon(info)}>제거</li>
-          </ul>
+          {info.key == "" ? (
+            <ul>
+              <li
+                onClick={(e) => {
+                  handleClick(e);
+                  setDetailWindowVisible2(true);
+                }}
+              >
+                아이콘 등록/변경
+              </li>
+            </ul>
+          ) : (
+            <ul>
+              <li onClick={handleClick}>
+                <p>캡션</p>
+                <Input
+                  name="caption"
+                  type="text"
+                  value={info.caption}
+                  onChange={InfoChange}
+                />
+              </li>
+              <li>
+                <p>Form ID</p>
+                <Input
+                  name="form_id"
+                  type="text"
+                  value={info.form_id}
+                  className="readonly"
+                />
+              </li>
+              <Divider />
+              <li
+                onClick={(e) => {
+                  handleClick(e);
+                  setDetailWindowVisible(true);
+                }}
+              >
+                메뉴 등록
+              </li>
+              <li
+                onClick={(e) => {
+                  handleClick(e);
+                  setDetailWindowVisible2(true);
+                }}
+              >
+                아이콘 등록/변경
+              </li>
+              <Divider />
+              <li onClick={() => removeCaption(info)}>초기화</li>
+              <li onClick={() => removeIcon(info)}>제거</li>
+            </ul>
+          )}
         </ContextMenu>
       )}
       {detailWindowVisible && (

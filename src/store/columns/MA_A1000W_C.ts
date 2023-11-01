@@ -14,7 +14,7 @@ export const gridList: Array<TGrid> = [
         id: "col_custcd",
         field: "custcd",
         caption: "업체코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_custnm",
@@ -68,13 +68,13 @@ export const gridList: Array<TGrid> = [
         id: "col_project",
         field: "project",
         caption: "프로젝트",
-        width: 200,
+        width: 150,
       },
       {
         id: "col_poregnum",
         field: "poregnum",
         caption: "PO번호",
-        width: 200,
+        width: 150,
       },
     ],
   },   {
@@ -90,7 +90,7 @@ export const gridList: Array<TGrid> = [
         id: "col_itemcd",
         field: "itemcd",
         caption: "품목코드",
-        width: 120,
+        width: 150,
       },
       {
         id: "col_itemnm",
