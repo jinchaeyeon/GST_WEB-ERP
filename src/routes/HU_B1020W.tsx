@@ -1,69 +1,54 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
-import * as ReactDOM from "react-dom";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { getter } from "@progress/kendo-react-common";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
   GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridFooterCellProps,
-  GridCellProps,
-  GridItemChangeEvent,
+  GridFooterCellProps
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
-  Title,
+  ButtonContainer,
   FilterBox,
   GridContainer,
   GridTitle,
-  TitleContainer,
-  ButtonContainer,
   GridTitleContainer,
-  ButtonInInput,
-  GridContainerWrap,
+  Title,
+  TitleContainer
 } from "../CommonStyled";
-import { Input } from "@progress/kendo-react-inputs";
-import FilterContainer from "../components/Containers/FilterContainer";
-import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions,TColumn, TGrid } from "../store/types";
-import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import TopButtons from "../components/Buttons/TopButtons";
+import Calendar from "../components/Calendars/Calendar";
+import DateCell from "../components/Cells/DateCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UsePermissions,
   chkScrollHandler,
   convertDateToStr,
-  UseBizComponent,
-  UsePermissions,
-  UseParaPc,
-  UseGetValueFromSessionItem,
-  UseCustomOption,
-  UseMessages,
-  getQueryFromBizComponent,
-  findMessage,
-  toDate,
-  GetPropertyValueByName,
+  getQueryFromBizComponent
 } from "../components/CommonFunction";
-import DateCell from "../components/Cells/DateCell";
-import { gridList } from "../store/columns/HU_B1020W_C";
 import {
-  SELECTED_FIELD,
   COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
+  SELECTED_FIELD,
 } from "../components/CommonString";
-import TopButtons from "../components/Buttons/TopButtons";
-import { useSetRecoilState } from "recoil";
+import FilterContainer from "../components/Containers/FilterContainer";
+import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
-import Calendar from "../components/Calendars/Calendar";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import { bytesToBase64 } from "byte-base64";
+import { gridList } from "../store/columns/HU_B1020W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "prsnnum";
-const dateField = ["birdt", "regorgdt","rtrdt"];
+const dateField = ["birdt", "regorgdt", "rtrdt"];
 
 const HU_B1020W: React.FC = () => {
-
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
 
@@ -84,80 +69,70 @@ const HU_B1020W: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_dptcd_001 , L_HU028 , L_BA002",
-    //부서, 급여지급유형, 사업장 
+    //부서, 급여지급유형, 사업장
     setBizComponentData
   );
-  
- // #region 공통코드 리스트 조회 ()
+
+  // #region 공통코드 리스트 조회 ()
   const [dptcdLstsListData, setDptcdListData] = useState([
     { dptcd: "", dptnm: "" },
   ]);
 
- const [postcdListData, setPostcdListData] = useState([
-  COM_CODE_DEFAULT_VALUE,
-]);
+  const [postcdListData, setPostcdListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
 
- const [paycdListData, setPaydListData] = useState([
-  COM_CODE_DEFAULT_VALUE,
-]);
+  const [paycdListData, setPaydListData] = useState([COM_CODE_DEFAULT_VALUE]);
 
- const [locationListData, setLocationListData] = useState([
-  COM_CODE_DEFAULT_VALUE,
-]);
-//#endregion
+  const [locationListData, setLocationListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  //#endregion
 
-useEffect(() => {
-  if (bizComponentData !== null) {
-    const dptcdQueryStr = getQueryFromBizComponent(
-      bizComponentData.find(
-        (item: any) => item.bizComponentId === "L_dptcd_001"
-      )
-    );
-    const postcdQueryStr = getQueryFromBizComponent(
-      bizComponentData.find(
-        (item: any) => item.bizComponentId === "L_HU005"
-      )
-    );
-    const paycdQueryStr = getQueryFromBizComponent(
-      bizComponentData.find(
-        (item: any) => item.bizComponentId === "L_HU028"
-      )
-    );
-    const locationQueryStr = getQueryFromBizComponent(
-      bizComponentData.find(
-        (item: any) => item.bizComponentId === "L_BA002"
-      )
-    );
-    fetchQuery(dptcdQueryStr,  setDptcdListData);
-    fetchQuery(postcdQueryStr, setPostcdListData);
-    fetchQuery(paycdQueryStr, setPaydListData);
-    fetchQuery(locationQueryStr, setLocationListData);
-  }
-}, [bizComponentData]);
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const dptcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_dptcd_001"
+        )
+      );
+      const postcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+      );
+      const paycdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_HU028")
+      );
+      const locationQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+      );
+      fetchQuery(dptcdQueryStr, setDptcdListData);
+      fetchQuery(postcdQueryStr, setPostcdListData);
+      fetchQuery(paycdQueryStr, setPaydListData);
+      fetchQuery(locationQueryStr, setLocationListData);
+    }
+  }, [bizComponentData]);
 
-const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
-  let data: any;
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
 
-  const bytes = require("utf8-bytes");
-  const convertedQueryStr = bytesToBase64(bytes(queryStr));
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
 
-  let query = {
-    query: convertedQueryStr,
-  };
+    let query = {
+      query: convertedQueryStr,
+    };
 
-  try {
-    data = await processApi<any>("query", query);
-  } catch (error) {
-    data = null;
-  }
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
 
-  if (data.isSuccess === true) {
-    const rows = data.tables[0].Rows;
-    setListData(rows);
-  }
-}, []);
-
-
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
 
   type TFilters = {
     pgSize: number;
@@ -213,11 +188,13 @@ const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
-
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setFilters((prev) => ({
         ...prev,
@@ -290,9 +267,8 @@ const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
-    
     if (!permissions?.view) return;
-    
+
     let data: any;
     setLoading(true);
 
@@ -306,7 +282,7 @@ const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
       const rows = data.tables[0].Rows;
 
       if (totalRowCnt > 0)
-      setMainDataResult((prev) => {
+        setMainDataResult((prev) => {
           return {
             data: [...prev.data, ...rows],
             total: totalRowCnt,
@@ -315,24 +291,24 @@ const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
     }
     setLoading(false);
   };
-  
+
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
 
-//그리드 푸터
-const mainTotalFooterCell = (props: GridFooterCellProps) => {
-  var parts = mainDataResult.total.toString().split(".");
-  return (
-    <td colSpan={props.colSpan} style={props.style}>
-      총{" "}
-      {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-        (parts[1] ? "." + parts[1] : "")}
-      건
-    </td>
-  );
-};
-  
+  //그리드 푸터
+  const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
     if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
@@ -464,7 +440,6 @@ const mainTotalFooterCell = (props: GridFooterCellProps) => {
             })),
             mainDataState
           )}
-
           {...mainDataState}
           onDataStateChange={onMainDataStateChange}
           //선택 기능
@@ -474,7 +449,6 @@ const mainTotalFooterCell = (props: GridFooterCellProps) => {
             enabled: true,
             mode: "single",
           }}
-          
           //스크롤 조회 기능
           fixedScroll={true}
           total={mainDataResult.total}

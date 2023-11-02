@@ -147,6 +147,7 @@ import QC_B0100W from "./routes/QC_B0100W";
 import QC_B0200W from "./routes/QC_B0200W";
 import QC_B0300W from "./routes/QC_B0300W";
 import SA_A1000_603W from "./routes/SA_A1000_603W";
+import SA_A1100_603W from "./routes/SA_A1100_603W";
 import SA_A2000W from "./routes/SA_A2000W";
 import SA_A2010W from "./routes/SA_A2010W";
 import SA_A2300W from "./routes/SA_A2300W";
@@ -155,8 +156,9 @@ import SA_A3000W from "./routes/SA_A3000W";
 import SA_A5000W from "./routes/SA_A5000W";
 import SA_A5001W from "./routes/SA_A5001W";
 import SA_A5010W from "./routes/SA_A5010W";
-import SA_A1100_603W from "./routes/SA_A1100_603W";
 
+import HU_B1040W from "./routes/HU_B1040W";
+import SA_B1000W_603 from "./routes/SA_B1000W_603";
 import SA_B2200W from "./routes/SA_B2200W";
 import SA_B2211W from "./routes/SA_B2211W";
 import SA_B2221W from "./routes/SA_B2221W";
@@ -178,12 +180,14 @@ import SY_A0120W from "./routes/SY_A0120W";
 import SY_A0125W from "./routes/SY_A0125W";
 import SY_A0500W from "./routes/SY_A0500W";
 import TO_B0011W from "./routes/TO_B0011W";
-import SA_B1000W_603 from "./routes/SA_B1000W_603";
 import {
   colors,
   isMobileMenuOpendState,
   loginResultState,
 } from "./store/atoms";
+import HU_B2120W from "./routes/HU_B2120W";
+import HU_B3180W from "./routes/HU_B3180W";
+import HU_B3220W from "./routes/HU_B3220W";
 const Login = lazy(() => import("./routes/Login"));
 const Main = lazy(() => import("./routes/Main"));
 
@@ -494,7 +498,11 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/SA_A5000W" component={SA_A5000W} exact />
                   <AuthRoute path="/SA_A5001W" component={SA_A5001W} exact />
                   <AuthRoute path="/SA_A5010W" component={SA_A5010W} exact />
-                  <AuthRoute path="/SA_A1100_603W" component={SA_A1100_603W} exact />
+                  <AuthRoute
+                    path="/SA_A1100_603W"
+                    component={SA_A1100_603W}
+                    exact
+                  />
                   <AuthRoute path="/SA_B2200W" component={SA_B2200W} exact />
                   <AuthRoute path="/SA_B2211W" component={SA_B2211W} exact />
                   <AuthRoute path="/SA_B2221W" component={SA_B2221W} exact />
@@ -568,9 +576,13 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/HU_A4100W" component={HU_A4100W} exact />
                   <AuthRoute path="/HU_A5020W" component={HU_A5020W} exact />
                   <AuthRoute path="/HU_B1020W" component={HU_B1020W} exact />
+                  <AuthRoute path="/HU_B1040W" component={HU_B1040W} exact />
                   <AuthRoute path="/HU_B2100W" component={HU_B2100W} exact />
+                  <AuthRoute path="/HU_B2120W" component={HU_B2120W} exact />
                   <AuthRoute path="/HU_B3140W" component={HU_B3140W} exact />
                   <AuthRoute path="/HU_B3160W" component={HU_B3160W} exact />
+                  <AuthRoute path="/HU_B3180W" component={HU_B3180W} exact />
+                  <AuthRoute path="/HU_B3220W" component={HU_B3220W} exact />
                   <AuthRoute path="/HU_B4001W" component={HU_B4001W} exact />
                   <AuthRoute path="/HU_B4000W" component={HU_B4000W} exact />
 
@@ -651,7 +663,7 @@ const AppInner: React.FC = () => {
                     component={SA_A1000_603W}
                     exact
                   />
-                     <AuthRoute
+                  <AuthRoute
                     path="/SA_B1000W_603"
                     component={SA_B1000W_603}
                     exact
@@ -660,7 +672,11 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/CM_A5001W" component={CM_A5001W} exact />
 
                   {/* PDA */}
-                  <AuthRoute path="/SA_A2300W_PDA" component={SA_A2300W_PDA} exact />
+                  <AuthRoute
+                    path="/SA_A2300W_PDA"
+                    component={SA_A2300W_PDA}
+                    exact
+                  />
 
                   {/* 에러페이지 */}
                   <AuthRoute path="/Error" component={NotFound} exact />
