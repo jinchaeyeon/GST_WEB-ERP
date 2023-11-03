@@ -188,6 +188,9 @@ import {
 import HU_B2120W from "./routes/HU_B2120W";
 import HU_B3180W from "./routes/HU_B3180W";
 import HU_B3220W from "./routes/HU_B3220W";
+import AC_B1240W from "./routes/AC_B1240W";
+import AC_B1340W from "./routes/AC_B1340W";
+import AC_B6020W from "./routes/AC_B6020W";
 const Login = lazy(() => import("./routes/Login"));
 const Main = lazy(() => import("./routes/Main"));
 
@@ -592,10 +595,13 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/AC_A0070W" component={AC_A0070W} exact />
                   <AuthRoute path="/AC_A1000W" component={AC_A1000W} exact />
                   <AuthRoute path="/AC_B1100W" component={AC_B1100W} exact />
+                  <AuthRoute path="/AC_B1240W" component={AC_B1240W} exact />
                   <AuthRoute path="/AC_B1280W" component={AC_B1280W} exact />
                   <AuthRoute path="/AC_B1300W" component={AC_B1300W} exact />
+                  <AuthRoute path="/AC_B1340W" component={AC_B1340W} exact />
                   <AuthRoute path="/AC_B5000W" component={AC_B5000W} exact />
                   <AuthRoute path="/AC_B5080W" component={AC_B5080W} exact />
+                  <AuthRoute path="/AC_B6020W" component={AC_B6020W} exact />
                   <AuthRoute path="/AC_B6060W" component={AC_B6060W} exact />
                   <AuthRoute path="/AC_B8030W" component={AC_B8030W} exact />
                   {/* 목형관리 */}
