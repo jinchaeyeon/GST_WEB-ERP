@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { 
   BottomContainer, 
@@ -20,9 +20,10 @@ import {
   GridFooterCellProps, 
   GridHeaderCellProps, 
   GridItemChangeEvent, 
+  GridPageChangeEvent, 
   GridSelectionChangeEvent, 
   GridToolbar, 
-  getSelectedState 
+  getSelectedState, 
 } from "@progress/kendo-react-grid";
 import { IItemData, IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
@@ -36,7 +37,6 @@ import {
   UseGetValueFromSessionItem, 
   UseMessages, 
   UseParaPc, 
-  chkScrollHandler, 
   convertDateToStr, 
   getGridItemChangedData 
 } from "../CommonFunction";
@@ -101,6 +101,7 @@ type TKendoWindow = {
   getVisible(t: boolean): void;
   rekey?: string;
   reloadData(saveyn: string): void;   // 저장 유무
+  modal?: boolean;
 };
 
 type TInData = {
@@ -129,7 +130,8 @@ type TBadData = {
 const DetailWindow = ({
   getVisible,
   rekey,
-  reloadData
+  reloadData,
+  modal = false,
 }: TKendoWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const pathname: string = window.location.pathname.replace("/", "");
@@ -138,6 +140,17 @@ const DetailWindow = ({
   const [isInitSearch, setIsInitSearch] = useState(false);
   UseParaPc(setPc);
   const [stockWindowVisible, setStockWindowVisible] = useState<boolean>(false);
+  const orgdiv = UseGetValueFromSessionItem("orgdiv");
+  const location = UseGetValueFromSessionItem("location");
+  const userId = UseGetValueFromSessionItem("user_id");
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const [page2, setPage2] = useState(initialPageState);
+
+  let grdRef: any = useRef(null);
+  let grdRef2: any = useRef(null);
+  let targetRowIndex: null | number = null;
+  let targetRowIndex2: null | number = null;
 
   // 메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -171,6 +184,36 @@ const DetailWindow = ({
     getVisible(false);
   };
 
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange2 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setBadFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage2({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
   //그리드 데이터 스테이트
   const [inDataState, setInDataState] = useState<State>({
     sort: [],
@@ -180,12 +223,28 @@ const DetailWindow = ({
     sort: [],
   });
 
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
+
+  const [tempState1, setTempState1] = useState<State>({
+    sort: [],
+  });
+
   const [inDataResult, setInDataResult] = useState<DataResult>(
     process([], inDataState)
   );
 
   const [badDataResult, setBadDataResult] = useState<DataResult>(
     process([], badDataState)
+  );
+
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
+
+  const [tempResult1, setTempResult1] = useState<DataResult>(
+    process([], tempState)
   );
 
   //선택 상태
@@ -200,76 +259,28 @@ const DetailWindow = ({
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    orgdiv: "01",
+    orgdiv: orgdiv,
     rekey: rekey,
-    scrollDirrection: "down",
     pgNum: 1,
     isSearch: true,
-    pgGap: 0,
+    find_row_value: "",
+  });
+
+  const [badfilters, setBadFilters] = useState({
+    pgSize: PAGE_SIZE,
+    orgdiv: orgdiv,
+    rekey: rekey,
+    pgNum: 1,
+    isSearch: true,
+    find_row_value: "",
   });
 
   // 그리드 데이터 조회
-  const fetchInGrid = async () => {
+  const fetchInGrid = async (filters: any) => {
     let data: any;
     setLoading(true);
     
-  const inparameters: Iparameters = {
-    procedureName: "P_PR_A4000W_Q",
-    pageNumber: filters.pgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "PRODDETAIL",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_frdt": "",
-      "@p_todt": "",
-      "@p_prodemp": "",
-      "@p_prodmac": "",
-      "@p_itemcd": "",
-      "@p_itemnm": "",
-      "@p_insiz": "",
-      "@p_lotnum": "",
-      "@p_rekey": filters.rekey,
-      "@p_plankey": "",
-      "@p_gokey": "",
-      "@p_proccd": "",
-      "@p_yyyymm": "",
-      "@p_ordnum": "",
-      "@p_dptcd": "",
-      "@p_location": "",
-      "@p_itemacnt": "",
-    },
-  };
-
-    try {
-      data = await processApi<any>("procedure", inparameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
-      if (totalRowCnt > 0) {
-        setInDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt,
-          };
-        });
-      }
-    }
-    setFilters((prev) => ({
-      ...prev,
-      isSearch: false,
-    }));
-    setLoading(false);
-  }
-
-  const fetchBadGrid = async () => {
-    let data: any;
-    setLoading(true);
-
-    const badparameters: Iparameters = {
+    const inparameters: Iparameters = {
       procedureName: "P_PR_A4000W_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
@@ -293,6 +304,107 @@ const DetailWindow = ({
         "@p_dptcd": "",
         "@p_location": "",
         "@p_itemacnt": "",
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", inparameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      if (filters.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (grdRef.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row.keyfield == filters.find_row_value
+          );
+          targetRowIndex = findRowIndex;
+        }
+
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
+        });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (grdRef.current) {
+          targetRowIndex = 0;
+        }
+      }
+
+      setInDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt === -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find((row: any) => row.keyfield == filters.find_row_value);
+
+        if (selectedRow != undefined) {
+          setInSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        } else {
+          setInSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
+    }
+
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+      data && data.hasOwnProperty("pageNumber")
+        ? data.pageNumber
+        : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  const fetchBadGrid = async (badfilters: any) => {
+    let data: any;
+    setLoading(true);
+
+    const badparameters: Iparameters = {
+      procedureName: "P_PR_A4000W_Q",
+      pageNumber: badfilters.pgNum,
+      pageSize: badfilters.pgSize,
+      parameters: {
+        "@p_work_type": "PRODDETAIL",
+        "@p_orgdiv": badfilters.orgdiv,
+        "@p_frdt": "",
+        "@p_todt": "",
+        "@p_prodemp": "",
+        "@p_prodmac": "",
+        "@p_itemcd": "",
+        "@p_itemnm": "",
+        "@p_insiz": "",
+        "@p_lotnum": "",
+        "@p_rekey": badfilters.rekey,
+        "@p_plankey": "",
+        "@p_gokey": "",
+        "@p_proccd": "",
+        "@p_yyyymm": "",
+        "@p_ordnum": "",
+        "@p_dptcd": "",
+        "@p_location": "",
+        "@p_itemacnt": "",
+        "@p_find_row_value": badfilters.find_row_value,
       },
     };
 
@@ -305,69 +417,95 @@ const DetailWindow = ({
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[1].TotalRowCount;
       const rows = data.tables[1].Rows;
-      if (totalRowCnt > 0) {
-        setBadDataResult((prev) => {
-          return {
-            data: [...prev.data, ...rows],
-            total: totalRowCnt,
-          };
+
+      if (badfilters.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (grdRef2.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row.num == badfilters.find_row_value
+          );
+          targetRowIndex2 = findRowIndex;
+        }
+
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage2({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
         });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (grdRef2.current) {
+          targetRowIndex2 = 0;
+        }
       }
+
+      setBadDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt === -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        const selectedRow =
+        badfilters.find_row_value == ""
+            ? rows[0]
+            : rows.find((row: any) => row.keyfield == badfilters.find_row_value);
+
+        if (selectedRow != undefined) {
+          setBadSelectedState({ [selectedRow[BAD_DATA_ITEM_KEY]]: true });
+        } else {
+          setBadSelectedState({ [rows[0][BAD_DATA_ITEM_KEY]]: true });
+        }
+      }
+    }  else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert("[" + data.statusCode + "] " + data.resultMessage);
     }
-    setFilters((prev) => ({
+    
+    // 필터 isSearch false처리, pgNum 세팅
+    setBadFilters((prev) => ({
       ...prev,
+      pgNum:
+      data && data.hasOwnProperty("pageNumber")
+        ? data.pageNumber
+        : prev.pgNum,
       isSearch: false,
     }));
     setLoading(false);
-  };
+  }; 
 
-   // 조회 최초 한번만 실행
-   useEffect(() => {
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
     if (
       filters.isSearch
     ) {
-      setFilters((prev) => ({ ...prev, isSearch: false }));
-      fetchInGrid();
-      fetchBadGrid();
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
+      fetchInGrid(deepCopiedFilters);
     }
   }, [filters]);
 
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (
+      badfilters.isSearch
+    ) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(badfilters);
+      setBadFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
+      fetchBadGrid(deepCopiedFilters);
+    }
+  }, [badfilters]);
+
   const resetAllGrid = () => {
+    setPage(initialPageState); // 페이지 초기화
     setBadDataResult(process([], badDataState));
-    setInDataResult(process([], inDataState))
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }))
-  };
-
-  //스크롤 핸들러
-  const onInScrollHandler = (event: GridEvent) => {
-    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
-    let pgNumWithGap =
-      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
-
-    // 스크롤 최하단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "down",
-        pgNum: pgNumWithGap + 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-      return false;
-    }
-
-    pgNumWithGap =
-      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
-    // 스크롤 최상단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "up",
-        pgNum: pgNumWithGap - 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-      }));
-    }
+    setInDataResult(process([], inDataState));
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setBadFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   const onInDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -436,17 +574,25 @@ const DetailWindow = ({
 
   // 그리드 푸터
   const inTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = inDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {inDataResult.total}건
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
 
   const badTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = badDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-        총 {badDataResult.total}건
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -454,11 +600,11 @@ const DetailWindow = ({
   const gridsumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     inDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    
     if (sum != undefined) {
       var parts = sum.toString().split(".");
+
       return parts[0] != "NaN" ? (
         <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
           {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
@@ -475,9 +621,9 @@ const DetailWindow = ({
   const gridsumQtyFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
     badDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum += item[props.field]) : ""
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    
+
     if (sum != undefined) {
       var parts = sum.toString().split(".");
       return parts[0] != "NaN" ? (
@@ -493,18 +639,82 @@ const DetailWindow = ({
     }
   };
 
-  const enterEdit = (dataItem: any, field: string | undefined) => {
-    if ( field == "qty" || field == "remark" || field == "baddt" || field == "chk") {
+  const enterEdit = (dataItem: any, field: string) => {
+    if (field == "qty" || 
+        field == "remark" || 
+        field == "chk"
+    ) {
       const newData = inDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              chk: item.chk === "Y",
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
               [EDIT_FIELD]: field,
             }
-          : { ...item, [EDIT_FIELD]: undefined }
+          : { ...item, 
+            [EDIT_FIELD]: undefined,
+            }
       );
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setInDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult((prev) => {
+        return {
+          data: inDataResult.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit = (item: any) => {
+    if (tempResult.data != inDataResult.data) {
+      const newData = inDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == 
+        Object.getOwnPropertyNames(inselectedState)[0]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+      );
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setInDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = inDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
 
       setInDataResult((prev) => {
         return {
@@ -515,52 +725,90 @@ const DetailWindow = ({
     }
   };
 
-  const exitEdit = (item: any) => {
-    const newData = inDataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-
-    setInDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  };
-
   const enterEdit1 = (dataItem: any, field: string | undefined) => {
-    const newData = badDataResult.data.map((item) =>
+    if (
+      field == "badcd"  ||
+      field == "qty" ||
+      field == "remark" ||
+      field == "chk"
+    ) {
+      const newData = badDataResult.data.map((item) =>
       item[BAD_DATA_ITEM_KEY] === dataItem[BAD_DATA_ITEM_KEY]
         ? {
             ...item,
-            chk: item.chk === "Y",
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
             [EDIT_FIELD]: field,
           }
-        : { ...item, [EDIT_FIELD]: undefined }
-    );
-
-    setBadDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+        : { ...item, 
+          [EDIT_FIELD]: undefined 
+         }
+      );
+      setTempResult1((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setBadDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult1((prev) => {
+        return {
+          data: badDataResult.data,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const exitEdit1 = (item: any) => {
-    const newData = badDataResult.data.map((item) => ({
-      ...item,
-      [EDIT_FIELD]: undefined,
-    }));
-
-    setBadDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (tempResult1.data != badDataResult.data) {
+      const newData = badDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == 
+        Object.getOwnPropertyNames(badselectedState)[0]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [EDIT_FIELD]: undefined,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+      );
+      setTempResult1((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setBadDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = badDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult1((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setBadDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const customCellRender = (td: any, props: any) => (
@@ -617,31 +865,6 @@ const DetailWindow = ({
     );
   };
 
-  const onInRemoveClick = async () => {
-    let newData: any[] = [];
-
-    //삭제 안 할 데이터 newData에 push
-    inDataResult.data.forEach((item: any, index: number) => {
-      if (item.chk == false) {
-        newData.push(item);
-      } else {
-        const newData2 = {
-          ...item,
-          rowstatus: "D",
-        };
-        deletedMainRows.push(newData2);
-      }
-    });
-
-    setInDataResult((prev) => ({
-      ...prev,
-      data: newData,
-      total: newData.length,
-    }));
-
-    setInDataState({});
-  };
-
   const [values, setValues] = React.useState<boolean>(false);
   const CustomCheckBoxCell = (props: GridHeaderCellProps) => {
     const changeCheck = () => {
@@ -692,6 +915,46 @@ const DetailWindow = ({
     );
   };
 
+  const onInRemoveClick = async () => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
+
+    //삭제 안 할 데이터 newData에 push
+    inDataResult.data.forEach((item: any, index: number) => {
+      if(item.chk != true) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if(!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = inDataResult.data[Math.min(...Object2)];
+    } else {
+      data = inDataResult.data[Math.min(...Object) - 1];
+    }
+
+    setInDataResult((prev) => ({
+      ...prev,
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+
+    setInSelectedState({
+      [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
+    });
+  };
+
   const onBadAddClick = () => {
     // 불량내역 행 추가
     badDataResult.data.map((item) => {
@@ -719,32 +982,46 @@ const DetailWindow = ({
 
   const onBadRemoveClick = async () => {
     let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
 
     //삭제 안 할 데이터 newData에 push
     badDataResult.data.forEach((item: any, index: number) => {
-      if (item.chk == false) {
+      if(item.chk != true) {
         newData.push(item);
+        Object2.push(index);
       } else {
-        const newData2 = {
-          ...item,
-          rowstatus: "D",
-        };
-        deletedMainRows1.push(newData2);
+        if(!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows1.push(newData2);
+        }
+        Object.push(index);
       }
     });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = badDataResult.data[Math.min(...Object2)];
+    } else {
+      data = badDataResult.data[Math.min(...Object) - 1];
+    }
 
     setBadDataResult((prev) => ({
       ...prev,
       data: newData,
-      total: newData.length,
+      total: prev.total - Object.length,
     }));
 
-    setBadDataState({});
+    setBadSelectedState({
+      [data != undefined ? data[BAD_DATA_ITEM_KEY] : newData[0]]: true,
+    });
   };
   
-  const userId = UseGetValueFromSessionItem("user_id");
-
   const onSaveClick = async () => {
+    
     const dataItem = inDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
@@ -759,22 +1036,9 @@ const DetailWindow = ({
       );
     });
 
-    // 삭제 행 존재할 경우 push
-    if (deletedMainRows.length > 0) 
-    {
-      deletedMainRows.map((row: any) => {
-        dataItem.push(row);
-      });
-    }
-
-    if (deletedMainRows1.length > 0) 
-    {
-      deletedMainRows1.map((row: any) => {
-        dataItem1.push(row);
-      });
-    }
-    
-    if (dataItem.length === 0 && dataItem1.length === 0) return false;
+    if ((dataItem.length === 0 && deletedMainRows.length === 0) && 
+        dataItem1.length === 0 && deletedMainRows1.length === 0) 
+        return false;
 
     let inArr: TInData = {
       rowstatus: [],
@@ -799,9 +1063,32 @@ const DetailWindow = ({
       remark: [],
     };
 
-    if (dataItem.length > 0) 
+    let data: any;
+    let data1: any;
+
+    setLoading(true);
+
+    if (dataItem.length > 0 || deletedMainRows.length > 0) 
     {
       dataItem.forEach((item: any) => {
+        const {
+          rowstatus, div, itemcd, itemnm, insiz, qty, qtyunit, lotnum, remark, keyfield, proccd
+        } = item;
+  
+        inArr.rowstatus.push(rowstatus);
+        inArr.div.push(div);
+        inArr.itemcd.push(itemcd);
+        inArr.itemnm.push(itemnm);
+        inArr.insiz.push(insiz);
+        inArr.qty.push(qty);
+        inArr.qtyunit.push(qtyunit);
+        inArr.lotnum.push(lotnum);
+        inArr.remark.push(remark);
+        inArr.keyfield.push(keyfield);
+        inArr.proccd.push(proccd);
+      });
+
+      deletedMainRows.forEach((item: any) => {
         const {
           rowstatus, div, itemcd, itemnm, insiz, qty, qtyunit, lotnum, remark, keyfield, proccd
         } = item;
@@ -826,10 +1113,10 @@ const DetailWindow = ({
         pageSize: 0,
         parameters: {
           "@p_work_type": "INITEM",
-          "@p_orgdiv": "01",
+          "@p_orgdiv": orgdiv,
           "@p_rowstatus": inArr.rowstatus.join("|"),
           "@p_rekey": rekey,
-          "@p_location": "01",
+          "@p_location": location,
           "@p_prodemp": "",
           "@p_prodmac": "",
           "@p_qty": inArr.qty.join("|"),
@@ -853,7 +1140,6 @@ const DetailWindow = ({
           "@p_form_id": "PR_A4000W",
         },
       };
-      let data: any;
   
       try {
         data = await processApi<any>("procedure", inparaSaved);
@@ -861,16 +1147,57 @@ const DetailWindow = ({
         data = null;
       }
 
-      if (data.isSuccess !== true) {
+      if (data.isSuccess == true) {
+        const isLastDataDeleted =
+          inDataResult.data.length == 0 && filters.pgNum > 0;
+
+        if (isLastDataDeleted) {
+          setPage({
+            skip:
+              filters.pgNum == 1 || filters.pgNum == 0
+                ? 0
+                : PAGE_SIZE * (filters.pgNum - 2),
+            take: PAGE_SIZE,
+          });
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                  ? prev.pgNum - 1
+                  : prev.pgNum
+                : prev.pgNum,
+              isSearch: true,
+          }));
+        } else {
+          setFilters((prev: any) => ({
+            ...prev,
+            find_row_value: data.returnString,
+            pgNum: prev.pgNum,
+            isSearch: true,
+          }));
+        }
+        deletedMainRows = [];
+      } else {
         console.log("[오류 발생]");
         console.log(data);
         alert(data.resultMessage);
       }
-    }
+    };
 
-    if (dataItem1.length > 0) 
+    if (dataItem1.length > 0 || deletedMainRows1.length > 0)
     {
       dataItem1.forEach((item: any) => {
+        const { rowstatus, keyfield, baddt, badcd, qty, remark} = item;
+        badArr.rowstatus.push(rowstatus);
+        badArr.keyfield.push(keyfield);
+        badArr.baddt.push(baddt);
+        badArr.badcd.push(badcd);
+        badArr.qty.push(qty);
+        badArr.remark.push(remark);
+      });
+
+      deletedMainRows1.forEach((item: any) => {
         const { rowstatus, keyfield, baddt, badcd, qty, remark} = item;
         badArr.rowstatus.push(rowstatus);
         badArr.keyfield.push(keyfield);
@@ -887,10 +1214,10 @@ const DetailWindow = ({
         pageSize: 0,
         parameters: {
           "@p_work_type": "BAD",
-          "@p_orgdiv": "01",
+          "@p_orgdiv": orgdiv,
           "@p_rowstatus": badArr.rowstatus.join("|"),
           "@p_rekey": rekey,
-          "@p_location": "01",
+          "@p_location": location,
           "@p_prodemp": "",
           "@p_prodmac": "",
           "@p_qty": badArr.qty.join("|"),
@@ -914,25 +1241,51 @@ const DetailWindow = ({
           "@p_form_id": "PR_A4000W",
         },
       };
-
-      let data: any;
   
       try {
-        data = await processApi<any>("procedure", badparaSaved);
+        data1 = await processApi<any>("procedure", badparaSaved);
       } catch (error) {
-        data = null;
+        data1 = null;
       }
   
-      if (data.isSuccess !== true) {
+      if (data1.isSuccess == true) {
+        const isLastDataDeleted =
+          badDataResult.data.length == 0 && badfilters.pgNum > 0;
+
+        if (isLastDataDeleted) {
+          setPage2({
+            skip:
+              badfilters.pgNum == 1 || badfilters.pgNum == 0
+                ? 0
+                : PAGE_SIZE * (filters.pgNum - 2),
+            take: PAGE_SIZE,
+          });
+          setBadFilters((prev: any) => ({
+            ...prev,
+            find_row_value: "",
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                  ? prev.pgNum - 1
+                  : prev.pgNum
+                : prev.pgNum,
+              isSearch: true,
+          }));
+        } else {
+          setBadFilters((prev: any) => ({
+            ...prev,
+            find_row_value: data1.returnString,
+            pgNum: prev.pgNum,
+            isSearch: true,
+          }));
+        }
+        deletedMainRows1 = [];
+      } else {
         console.log("[오류 발생]");
-        console.log(data);
-        alert(data.resultMessage);
+        console.log(data1);
+        alert(data1.resultMessage);
       }
-    }
-    
-    resetAllGrid();
-    deletedMainRows.length = 0;
-    reloadData("Y");
+    };
+    setLoading(false);
   };
 
   const onStockWndClick = () => {
@@ -970,7 +1323,7 @@ const DetailWindow = ({
       onMove={handleMove}
       onResize={handleResize}
       onClose={onClose}
-      modal={true}
+      modal={modal}
     >
       <GridContainerWrap>
         <GridContainer width = {`50%`} >
@@ -999,7 +1352,13 @@ const DetailWindow = ({
             // 스크롤 조회 기능
             fixedScroll={true}
             total={inDataResult.total}
-            onScroll={onInScrollHandler}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            // 원하는 행 위치로 스크롤 기능
+            ref={grdRef}
+            rowHeight={30}
             // 정렬기능
             sortable={true}
             onSortChange={onInSortChange}
@@ -1007,8 +1366,8 @@ const DetailWindow = ({
             reorderable={true}
             // 컬럼너비조정
             resizable={true}
-            // incell 수정 기능
             onItemChange={onInItemChange}
+            // incell 수정 기능
             cellRender={customCellRender}
             rowRender={customRowRender}
             editField={EDIT_FIELD}
@@ -1023,7 +1382,6 @@ const DetailWindow = ({
               ></Button>
               <Button
                 themeColor={"primary"}
-                fillMode="outline"
                 onClick={onStockWndClick}
                 icon="folder-open"
               >
@@ -1091,7 +1449,13 @@ const DetailWindow = ({
             // 스크롤 조회기능
             fixedScroll={true}
             total={badDataResult.total}
-            onScroll={onInScrollHandler}
+            skip={page2.skip}
+            take={page2.take}
+            pageable={true}
+            onPageChange={pageChange2}
+            // 원하는 행 위치로 스크롤 기능
+            ref={grdRef2}
+            rowHeight={30}
             // 정렬기능
             sortable={true}
             onSortChange={onBadSortChange}
@@ -1099,8 +1463,8 @@ const DetailWindow = ({
             reorderable={true}
             // 컬럼너비조정
             resizable={true}
-            // incell 수정 기능
             onItemChange={onBadItemChange}
+            // incell 수정 기능
             cellRender={customCellRender1}
             rowRender={customRowRender1}
             editField={EDIT_FIELD}
@@ -1158,12 +1522,14 @@ const DetailWindow = ({
           <Button 
             onClick={onSaveClick} 
             themeColor={"primary"} 
-            icon = "save">
+            icon = "save"
+          >
             저장
           </Button>
           <Button
             onClick={onClose}
             themeColor={"primary"}
+            fillMode="outline"
           >
             닫기
           </Button>

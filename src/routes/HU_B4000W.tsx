@@ -1244,7 +1244,7 @@ const HU_B4000W: React.FC = () => {
     adjDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    console.log(props.field);
+    
     if (sum != undefined) {
       var parts = sum.toString().split(".");
 
@@ -1640,10 +1640,6 @@ const HU_B4000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
-    console.log(paraSaved);
-    console.log(para);
-    console.log(data);
 
     if (data.isSuccess == true) {
       const isLastDataDeleted =
