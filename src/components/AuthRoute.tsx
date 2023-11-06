@@ -124,9 +124,13 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "HU_A4100W" ||
       link == "HU_A5020W" ||
       link == "HU_B1020W" ||
+      link == "HU_B1040W" ||
       link == "HU_B2100W" ||
+      link == "HU_B2120W" ||
       link == "HU_B3140W" ||
       link == "HU_B3160W" ||
+      link == "HU_B3180W" ||
+      link == "HU_B3220W" ||
       link == "HU_B4001W" ||
       link == "HU_B4000W" ||
       link == "AC_A0020W" ||
@@ -134,10 +138,13 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "AC_A0070W" ||
       link == "AC_A1000W" ||
       link == "AC_B1100W" ||
+      link == "AC_B1240W" ||
       link == "AC_B1280W" ||
       link == "AC_B1300W" ||
+      link == "AC_B1340W" ||
       link == "AC_B5000W" ||
       link == "AC_B5080W" ||
+      link == "AC_B6020W" ||
       link == "AC_B6060W" ||
       link == "AC_B8030W" ||
       link == "TO_B0011W" ||
