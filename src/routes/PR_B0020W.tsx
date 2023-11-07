@@ -1,71 +1,81 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Grid,
-    GridColumn,
-    GridEvent,
-    GridFooterCellProps,
-    getSelectedState,
-    GridHeaderCellProps,
-    GridDataStateChangeEvent,
-    GridSelectionChangeEvent,
-    GridItemChangeEvent,
-    GridExpandChangeEvent,
-    GridCellProps,
+  Grid,
+  GridColumn,
+  GridEvent,
+  GridFooterCellProps,
+  getSelectedState,
+  GridHeaderCellProps,
+  GridDataStateChangeEvent,
+  GridSelectionChangeEvent,
+  GridItemChangeEvent,
+  GridExpandChangeEvent,
+  GridCellProps,
+  GridPageChangeEvent,
   } from "@progress/kendo-react-grid";
-  import { Checkbox, Input } from "@progress/kendo-react-inputs";
-  import { ExcelExport } from "@progress/kendo-react-excel-export";
-  import { getter } from "@progress/kendo-react-common";
-  import { DataResult, process, State } from "@progress/kendo-data-query";
-  import FilterContainer from "../components/Containers/FilterContainer";
-  import {
-    Title,
-    FilterBox,
-    GridContainer,
-    GridTitle,
-    TitleContainer,
-    ButtonContainer,
-    GridTitleContainer,
-    GridContainerWrap,
-    PrimaryP,
-  } from "../CommonStyled";
-  import { useApi } from "../hooks/api";
-  import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-  import {
-    chkScrollHandler,
-    getGridItemChangedData,
-    rowsOfDataResult,
-    UseBizComponent,
-    UseCustomOption,
-    UseMessages,
-    UsePermissions,
-  } from "../components/CommonFunction";
-  import {
-    EDIT_FIELD,
-    PAGE_SIZE,
-    SELECTED_FIELD,
-    GAP,
-  } from "../components/CommonString";
-  import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-  import TopButtons from "../components/Buttons/TopButtons";
-  import CenterCell from "../components/Cells/CenterCell";
-  import { gridList } from "../store/columns/PR_B0020W_C";
-  import { useRecoilState, useSetRecoilState } from "recoil";
-  import { isLoading, sessionItemState } from "../store/atoms";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
+import { getter } from "@progress/kendo-react-common";
+import { DataResult, groupBy, GroupDescriptor, GroupResult, process, State } from "@progress/kendo-data-query";
+import FilterContainer from "../components/Containers/FilterContainer";
 import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardBody,
-  } from "@progress/kendo-react-layout";
+  Title,
+  FilterBox,
+  GridContainer,
+  GridTitle,
+  TitleContainer,
+  ButtonContainer,
+  GridTitleContainer,
+  GridContainerWrap,
+  PrimaryP,
+} from "../CommonStyled";
+import { useApi } from "../hooks/api";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import {
+  getGridItemChangedData,
+  UseBizComponent,
+  UseCustomOption,
+  UseMessages,
+  UsePermissions,
+} from "../components/CommonFunction";
+import {
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+  GAP,
+} from "../components/CommonString";
+import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
+import TopButtons from "../components/Buttons/TopButtons";
+import CenterCell from "../components/Cells/CenterCell";
+import { gridList } from "../store/columns/PR_B0020W_C";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../store/atoms";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardBody,
+} from "@progress/kendo-react-layout";
 import { Barcode } from "@progress/kendo-react-barcodes";
 import { Button } from "@progress/kendo-react-buttons";
 import { CellRender, RowRender } from "../components/Renderers/GroupRenderers";
-import ReactToPrint, { useReactToPrint } from "react-to-print";
+import ReactToPrint from "react-to-print";
+import { setExpandedState, setGroupIds } from "@progress/kendo-react-data-tools";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 const centerField = ["code"];
 const cardField : any[] = [];
+
+const initialGroup: GroupDescriptor[] = [{ field: "group_category_name" }];
+
+const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
+  const newDataState = groupBy(data, group);
+
+  setGroupIds({ data: newDataState, group: group });
+
+  return newDataState;
+};
 
 const PR_B0020W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -76,7 +86,8 @@ const PR_B0020W: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   const pathname: string = window.location.pathname.replace("/", "");
   const [cards, setCards] = React.useState<any>(null);
-  const [show, setShow] = useState(true);
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -91,11 +102,6 @@ const PR_B0020W: React.FC = () => {
 
   //그리드 데이터 스테이트
   const [mainDataState, setMainDataState] = useState<State>({
-    group: [
-      {
-        field: "group_category_name",
-      },
-    ],
     sort: [],
   });
 
@@ -129,6 +135,27 @@ const PR_B0020W: React.FC = () => {
     }));
   };
 
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const [group, setGroup] = React.useState(initialGroup);
+  const [resultState, setResultState] = React.useState<GroupResult[]>(
+    processWithGroups([], initialGroup)
+  );
+  const [collapsedState, setCollapsedState] = React.useState<string[]>([]);
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -144,29 +171,29 @@ const PR_B0020W: React.FC = () => {
     pgGap: 0,
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_PR_B0020W_Q",
-    pageNumber: filters.pgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": filters.work_type,
-      "@p_code": filters.code,
-      "@p_name": filters.name,
-      "@p_div": filters.cboDiv,
-      "@p_company_code": filters.company_code, 
-      "@p_find_row_value": filters.find_row_value,
-    },
-  }
 
   let gridRef : any = useRef(null);
 
   //그리드 데이터 조회
-  const fetchMainGrid = async () => {
-    if (!permissions?.view) return;
+  const fetchMainGrid = async (filters: any) => {
+    //if (!permissions?.view) return;
     let data: any;
-
     setLoading(true);
+
+    const parameters: Iparameters = {
+      procedureName: "P_PR_B0020W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.work_type,
+        "@p_code": filters.code,
+        "@p_name": filters.name,
+        "@p_div": filters.cboDiv,
+        "@p_company_code": filters.company_code, 
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
+
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -180,24 +207,24 @@ const PR_B0020W: React.FC = () => {
           ...row,
           groupId: row.gubun + "gubun",
           group_category_name: "구분" + ":" + row.gubun,
-          chk: false
+          chk: row.chk == "Y" ? true : row.chk == "N" ? false : row.chk,
         };
       });
 
+      const newDataState = processWithGroups(rows, group);
       setMainDataResult((prev) => {
         return {
-          data: [...prev.data, ...rows],
+          data: rows,
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
+      setResultState(newDataState);
       
       if (totalRowCnt > 0) {
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.num == filters.find_row_value);
-
-            console.log(selectedRow);
 
             if(selectedRow != undefined) {
               setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -209,22 +236,32 @@ const PR_B0020W: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
+
+    // 필터 isSearch false처리, pgNum 세팅
     setFilters((prev) => ({
       ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
       isSearch: false,
     }));
     setLoading(false);
   };
 
-  const onExpandChange = (event: GridExpandChangeEvent) => {
-    const isExpanded =
-      event.dataItem.expanded === undefined
-        ? event.dataItem.aggregates
-        : event.dataItem.expanded;
-    event.dataItem.expanded = !isExpanded;
+  const onExpandChange = React.useCallback(
+    (event: GridExpandChangeEvent) => {
+      const item = event.dataItem;
 
-    setMainDataResult({ ...mainDataResult });
-  };
+      if (item.groupId) {
+        const collapsedIds = !event.value
+          ? [...collapsedState, item.groupId]
+          : collapsedState.filter((groupId) => groupId != item.groupId);
+        setCollapsedState(collapsedIds);
+      }
+    },
+    [collapsedState]
+  );
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
@@ -232,10 +269,17 @@ const PR_B0020W: React.FC = () => {
       filters.isSearch &&
       permissions !== null
     ) {
-      setFilters((prev) => ({ ...prev, isSearch: false }));
-      fetchMainGrid();
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
+      fetchMainGrid(deepCopiedFilters);
     }
   }, [filters, permissions]);
+
+  const newData = setExpandedState({
+    data: resultState,
+    collapsedIds: collapsedState,
+  });
 
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
@@ -243,46 +287,6 @@ const PR_B0020W: React.FC = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();
     }
-  };
-
-  //스크롤 핸들러
-  const onMainScrollHandler = (event: GridEvent) => {
-    if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
-    let pgNumWithGap =
-    filters.pgNum +
-      (filters.scrollDirrection === "up" ? filters.pgGap : 0);
-
-    // 스크롤 최하단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "down",
-        pgNum: pgNumWithGap + 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-        tab: 0,
-      }));
-      return false;
-    }
-
-    pgNumWithGap =
-    filters.pgNum -
-      (filters.scrollDirrection === "down" ? filters.pgGap : 0);
-    // 스크롤 최상단 이벤트
-    if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
-      setFilters((prev) => ({
-        ...prev,
-        scrollDirrection: "up",
-        pgNum: pgNumWithGap - 1,
-        pgGap: prev.pgGap + 1,
-        isSearch: true,
-        tab: 0,
-      }));
-    }
-  };
-
-  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
-    setMainDataState(event.dataState);
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -298,14 +302,19 @@ const PR_B0020W: React.FC = () => {
   
   //그리드 리셋
   const resetAllGrid = () => {
+    setPage(initialPageState); // 페이지 초기화
     setMainDataResult(process([], mainDataState));
   };
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
-         총 {mainDataResult.total}건
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
       </td>
     );
   };
@@ -315,8 +324,33 @@ const PR_B0020W: React.FC = () => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  const CustomCheckBoxCell = (props: GridCellProps) => {
-    const { ariaColumnIndex, columnIndex, dataItem, field } = props;
+  const [values, setValues] = React.useState<boolean>(false);
+  const CustomCheckBoxCell = (props: GridHeaderCellProps) => {
+    const changeCheck = () => {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        chk: !values,
+        [EDIT_FIELD]: props.field,
+      }));
+      setValues(!values);
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
+
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Checkbox value={values} onClick={changeCheck}></Checkbox>
+      </div>
+    );
+  };
+
+  const CustomCheckBoxCell1 = (props: GridCellProps) => {
+    const { dataItem, field } = props;
     if (props.rowType === "groupHeader") {
       return null;
     }
@@ -325,15 +359,15 @@ const PR_B0020W: React.FC = () => {
       const newData = mainDataResult.data.map((item) =>
         item.num == dataItem.num
           ? {
-                ...item,
-                rowstatus: item.rowstatus === "N" ? "N" : "U",
-                chk:
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              chk:
                 typeof item.chk == "boolean"
-                    ? !item.chk
-                    : item.chk == "Y"
-                    ? false
-                    : true,
-                [EDIT_FIELD]: field,
+                  ? !item.chk
+                  : item.chk == "Y"
+                  ? false
+                  : true,
+              [EDIT_FIELD]: field,
             }
           : {
               ...item,
@@ -347,6 +381,8 @@ const PR_B0020W: React.FC = () => {
           total: prev.total,
         };
       });
+      const newDataState = processWithGroups(newData, group);
+      setResultState(newDataState);
     };
 
     return (
@@ -356,33 +392,10 @@ const PR_B0020W: React.FC = () => {
     );
   };
 
-  const [values2, setValues2] = React.useState<boolean>(false);
-  const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
-    const changeCheck = () => {
-      const newData = mainDataResult.data.map((item) => ({
-        ...item,
-        chk: !values2,
-        [EDIT_FIELD]: props.field,
-      }));
-      setValues2(!values2);
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    };
-
-    return (
-      <div style={{ textAlign: "center" }}>
-        <Checkbox value={values2} onClick={changeCheck}></Checkbox>
-      </div>
-    );
-  };
-
   const search = () => {
     resetAllGrid();
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setCards(0);  // 카드 초기화
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
@@ -400,12 +413,6 @@ const PR_B0020W: React.FC = () => {
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              chk:
-                typeof item.chk == "boolean"
-                  ? !item.chk
-                  : item.chk == "Y"
-                  ? false
-                  : true,
               [EDIT_FIELD]: field,
             }
           : {
@@ -434,6 +441,8 @@ const PR_B0020W: React.FC = () => {
         total: prev.total,
       };
     });
+    const newDataState = processWithGroups(newData, group);
+    setResultState(newDataState);
   };
 
   const customCellRender = (td: any, props: any) => (
@@ -455,37 +464,33 @@ const PR_B0020W: React.FC = () => {
   );
 
   // 바코드 추가
-  const onAddCard = (e: any) => {
+  const onAddCard = () => {
     const selectRows = mainDataResult.data.filter((item: any) => {
       return item.chk == true;
     });
 
-    if (cardField.length == 0) 
-    {
-        selectRows.forEach((item: any) => {
-            cardField.push(item);
-        });
-    }
-    else    
-    {
-        // 추가된 바코드는 체크되어 있어도 추가되지 않게 불일치 요소 
-        const cardtest = selectRows.filter(item => {
-            return !cardField.some(x => x.code === item.code && x.name === item.name)
-        });
+    if (cardField.length == 0) {
+      selectRows.forEach((item: any) => {
+          cardField.push(item);
+      });
+    } else {
+      // 추가된 바코드는 체크되어 있어도 추가되지 않게 불일치 요소 
+      const cardtest = selectRows.filter(item => {
+          return !cardField.some(x => x.code === item.code && x.name === item.name)
+      });
 
-        for (var i = 0; i < cardtest.length; i++) 
-        {
-            cardField.push(cardtest[i]);
-        }
+      for (var i = 0; i < cardtest.length; i++) {
+          cardField.push(cardtest[i]);
+      }
     }
 
     setCards(cardField);
-    setMainDataResult({ ...mainDataResult }); // 카드 삭제, 초기화 이후에도 카드가 바로 반영되게끔 선언.
+    setMainDataResult({ ...mainDataResult }); 
+    // 카드 삭제, 초기화 이후에도 카드가 바로 반영되게끔 선언.
   };
 
   // 바코드 초기화
-  const onResetCard = (e: any) => {
-
+  const onResetCard = () => {
     cardField.length = 0;
     setCards(cardField);
 
@@ -507,15 +512,12 @@ const PR_B0020W: React.FC = () => {
 
   // 선택 바코드 삭제
   const onDeleteCard = (index: any, items: any) => {
-
     // 삭제 안할 바코드 newData push
     let newData: any[] = [];
-    for (var i =0; i < cardField.length; i++) 
-    {
-        if (index != i)
-        {
-            newData.push(cardField[i]);
-        }
+    for (var i =0; i < cardField.length; i++) {
+      if (index != i) {
+          newData.push(cardField[i]);
+      }
     }
 
     // cardField 초기화 후 재할당
@@ -526,29 +528,76 @@ const PR_B0020W: React.FC = () => {
     
     // 해당 코드 행 체크 초기화
     let resetCheck = mainDataResult.data.map((item: any) => {
-        if (item.code == items) {
-            item.chk = "N"
-        }
-        return item;
-      });
+      if (item.code == items) {
+          item.chk = "N"
+      }
+      return item;
+    });
 
     resetCheck = resetCheck.map((row: any) => {
-        return {
-          ...row,
-        }
-      });
+      return {
+        ...row,
+      }
+    });
   
-      setMainDataResult((prev) => {
-        return {
-          data: resetCheck,
-          total: prev.total,
-        };
-      });
+    setMainDataResult((prev) => {
+      return {
+        data: resetCheck,
+        total: prev.total,
+      };
+    });
   };
 
-  // 삭제버튼 숨김처리
-  const onButtonHide = (e: any) => {  
-    setShow(show == true ? false : true);
+  const minGridWidth = React.useRef<number>(0);
+  const grid = React.useRef<any>(null);
+  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
+  const [gridCurrent, setGridCurrent] = React.useState(0);
+  React.useEffect(() => {
+    if (customOptionData != null) {
+      grid.current = document.getElementById("grdList");
+
+      window.addEventListener("resize", handleResize);
+      
+      //가장작은 그리드 이름
+      customOptionData.menuCustomColumnOptions["grdList"].map(
+        (item: TColumn) =>
+          item.width !== undefined
+            ? (minGridWidth.current += item.width)
+            : minGridWidth.current
+      );
+
+      minGridWidth.current += 45;
+      if (grid.current) {
+        setGridCurrent(grid.current.clientWidth);
+      }
+    }
+  }, [customOptionData]);
+
+  const handleResize = () => {
+    if (grid.current) {
+      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
+        setApplyMinWidth(true);
+      } else if (grid.current.clientWidth > minGridWidth.current) {
+        setGridCurrent(grid.current.clientWidth);
+        setApplyMinWidth(false);
+      }
+    }
+  };
+
+  const setWidth = (Name: string, minWidth: number | undefined) => {
+    if (minWidth == undefined) {
+      minWidth = 0;
+    }
+    
+    if (grid.current && Name == "grdList") {
+      let width = applyMinWidth
+        ? minWidth
+        : minWidth +
+          (gridCurrent - minGridWidth.current) /
+            customOptionData.menuCustomColumnOptions[Name].length;
+
+      return width;
+    }
   };
 
   const componentRef = useRef(null);
@@ -556,244 +605,245 @@ const PR_B0020W: React.FC = () => {
   return (
     <>
     <TitleContainer>
-        <Title>바코드 출력</Title>
-        <ButtonContainer>
-            {permissions && (
-                <TopButtons
-                    search={search}
-                    exportExcel={exportExcel}
-                    permissions={permissions}
-                />
-            )}
-        </ButtonContainer>
+      <Title>바코드 출력</Title>
+      <ButtonContainer>
+        {permissions && (
+          <TopButtons
+            search={search}
+            exportExcel={exportExcel}
+            permissions={permissions}
+          />
+        )}
+      </ButtonContainer>
     </TitleContainer>
     <FilterContainer>
-        <FilterBox>
+      <FilterBox>
         <tbody>
-            <tr>
-                <th>바코드구분</th>
-                <td>
-                    {bizComponentData !== null && (
-                    <BizComponentComboBox
-                        name="cboDiv"
-                        value={filters.cboDiv}
-                        bizComponentId="L_BA090"
-                        bizComponentData={bizComponentData}
-                        changeData={filterComboBoxChange}
-                    />
-                    )}
-                </td>
-                <th>코드</th>
-                <td>
-                    <Input
-                      name="code"
-                      type="text"
-                      value={filters.code}
-                      onChange={filterInputChange}
-                    />
-                </td>
-                <th>코드명</th>
-                <td>
-                    <Input
-                      name="name"
-                      type="text"
-                      value={filters.name}
-                      onChange={filterInputChange}
-                    />
-                </td>
-            </tr>
+          <tr>
+            <th>바코드구분</th>
+            <td>
+                {bizComponentData !== null && (
+                <BizComponentComboBox
+                    name="cboDiv"
+                    value={filters.cboDiv}
+                    bizComponentId="L_BA090"
+                    bizComponentData={bizComponentData}
+                    changeData={filterComboBoxChange}
+                />
+                )}
+            </td>
+            <th>코드</th>
+            <td>
+                <Input
+                  name="code"
+                  type="text"
+                  value={filters.code}
+                  onChange={filterInputChange}
+                />
+            </td>
+            <th>코드명</th>
+            <td>
+                <Input
+                  name="name"
+                  type="text"
+                  value={filters.name}
+                  onChange={filterInputChange}
+                />
+            </td>
+          </tr>
         </tbody>
-        </FilterBox>
+      </FilterBox>
     </FilterContainer>
 
     <GridContainerWrap>
-    <GridContainer width = {'20%'}>
+      <GridContainer width = "30%">
         <ExcelExport
-            data={mainDataResult.data}
-            ref={(exporter) => {
-                _export = exporter;
-            }}
+          data={mainDataResult.data}
+          ref={(exporter) => {
+              _export = exporter;
+          }}
         >
-            <GridTitleContainer>
-                <GridTitle>코드내역</GridTitle>
-                <ButtonContainer>
-                <Button
-                  onClick={onAddCard}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="image-export"
-                >
-                바코드 추가
-                </Button>
-              </ButtonContainer>
-            </GridTitleContainer>
-            <Grid
-                style={{ height: "78.5vh" }}
-                data={process(
-                  mainDataResult.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                  })),
-                  mainDataState
-                )}
-                {...mainDataState}
-                onDataStateChange={onMainDataStateChange}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult.total}
-                onScroll={onMainScrollHandler}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                //그룹기능
-                groupable={true}
-                onExpandChange={onExpandChange}
-                expandField="expanded"
-                //incell 수정 기능
-                onItemChange={onMainItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
-            >
-            <GridColumn
-              field="chk"
-              title=" "
-              width="45px"
-              headerCell={CustomCheckBoxCell2}
-              cell={CustomCheckBoxCell}
-            />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            centerField.includes(item.fieldName)
-                            ? CenterCell
-                            : undefined
-                          }
-                          footerCell={
-                            item.sortOrder === 0 ? mainTotalFooterCell : undefined
-                          }
-                        />
-                      )
-                  )}
-            </Grid>
-        </ExcelExport>
-    </GridContainer> 
-    <GridContainer width={`calc(80% - ${GAP}px)`}>
-        <GridTitleContainer>
-            <GridTitle>바코드 추가목록</GridTitle>
+          <GridTitleContainer>
+            <GridTitle>코드내역</GridTitle>
             <ButtonContainer>
               <Button
-                  onClick={onResetCard}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                >
-                    초기화
-                </Button>
-                <Button
-                   onClick={onButtonHide}
-                   fillMode="outline"
-                   themeColor={"primary"}
-                   icon="close-circle"
-                > {show == true ? "버튼 숨김" : "버튼 표시"}
-                </Button>
-                <ReactToPrint
-                    trigger={() => (
-                    <Button
-                        fillMode="outline" 
-                        themeColor={"primary"} 
-                        icon="print"
-                    >
-                    출력
-                    </Button>
-                )}
-                content={() => componentRef.current}
-                />
+                onClick={onAddCard}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="image-export"
+              >
+              바코드 추가
+              </Button>
             </ButtonContainer>
           </GridTitleContainer>
-          <PrimaryP>※ 바코드 카드 우측 상단의 x 버튼 클릭하여 삭제 / 한 코드당 한 개만 추가 가능</PrimaryP>
-        <div
-            style={{
-                display: "flex",
-                justifyContent: "center",
-                flexWrap: "wrap",
+          <Grid
+            style={{ height: "79vh" }}
+            data={newData.map((item: { items: any[] }) => ({
+              ...item,
+              items: item.items.map((row: any) => ({
+                ...row,
+                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+              })),
+            }))}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
             }}
-            ref={componentRef}
+            onSelectionChange={onSelectionChange}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={mainDataResult.total}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+            //그룹기능
+            group={group}
+            groupable={true}
+            onExpandChange={onExpandChange}
+            expandField="expanded"
+            //incell 수정 기능
+            onItemChange={onMainItemChange}
+            cellRender={customCellRender}
+            rowRender={customRowRender}
+            editField={EDIT_FIELD}
+            id="grdList"
+          >
+          <GridColumn
+            field="chk"
+            title=" "
+            width="45px"
+            headerCell={CustomCheckBoxCell}
+            cell={CustomCheckBoxCell1}
+          />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={setWidth("grdList", item.width)}
+                      cell={
+                        centerField.includes(item.fieldName)
+                        ? CenterCell
+                        : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0 
+                        ? mainTotalFooterCell 
+                        : undefined
+                      }
+                    />
+                  )
+              )}
+          </Grid>
+        </ExcelExport>
+      </GridContainer> 
+      <GridContainer width={`calc(70% - ${GAP}px)`}>
+        <GridTitleContainer>
+          <GridTitle>바코드 추가목록</GridTitle>
+          <ButtonContainer>
+            <Button
+              onClick={onResetCard}
+              fillMode="outline"
+              themeColor={"primary"}
+            >
+              초기화
+            </Button>
+            <ReactToPrint
+              trigger={() => (
+                <Button
+                  fillMode="outline" 
+                  themeColor={"primary"} 
+                  icon="print"
+                >
+                  출력
+                </Button>
+              )}
+              content={() => componentRef.current}
+            />
+          </ButtonContainer>
+        </GridTitleContainer>
+        <PrimaryP>※ 바코드 카드 우측 상단의 x 버튼 클릭하여 삭제 / 한 코드당 한 개만 추가 가능</PrimaryP>
+        <div
+          style={{
+              display: "flex",
+              justifyContent: "center",
+              flexWrap: "wrap",
+          }}
+          ref={componentRef}
         >
           {cards !== null && cards.map((item: any, index: number) => {
-                return (
-                    <div key={index}>
-                        <Card
-                            style={{
-                                width: "300px",
-                                height : "180px",
-                                boxShadow: "0 0 4px 0 rgba(0, 0, 0, .2)",
-                                marginLeft : "20px",
-                                marginRight: "20px",
-                                marginTop: "30px",
-                                marginBottom : "10px",
-                            }}
-                            >
-                            <CardHeader
-                                style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                    height: "50px",
-                                    }}
-                            >
-                                <div>
-                                    <CardTitle>
-                                        {item.name}
-                                    </CardTitle>
-                                </div>
-                                <div>
-                                     {(show == true) ? <Button
-                                      onClick={() => {
-                                        onDeleteCard(index, item.code);
-                                      }}
-                                      fillMode="flat" 
-                                      icon="close-circle"
-                                    >
-                                    </Button> : null}
-                                </div>
-                            </CardHeader>
-                            <CardBody
-                                style = {{
-                                    margin: "15px",
-                                    fontSize: "20px",
-                                    textAlign: "center",
-                                }}>
-                                <tr>
-                                    <td>
-                                        <Barcode type="Code128" height = {80} value={item.barcode} />
-                                    </td>
-                                </tr>
-                            </CardBody>
-                        </Card>
+            return (
+              <div key={index}>
+                <Card
+                  style={{
+                    width: "300px",
+                    height : "180px",
+                    boxShadow: "0 0 4px 0 rgba(0, 0, 0, .2)",
+                    marginLeft : "20px",
+                    marginRight: "20px",
+                    marginTop: "30px",
+                    marginBottom : "10px",
+                  }}
+                >
+                  <CardHeader
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      height: "50px",
+                    }}
+                  >
+                    <div>
+                      <CardTitle>
+                        {item.name}
+                      </CardTitle>
                     </div>
-                )
-            })}
+                    <div className="nonprintable">
+                      <Button
+                        onClick={() => {
+                          onDeleteCard(index, item.code);
+                        }}
+                        fillMode="flat" 
+                        icon="close-circle"
+                      ></Button> 
+                    </div>
+                  </CardHeader>
+                  <CardBody
+                    style = {{
+                        margin: "15px",
+                        fontSize: "20px",
+                        textAlign: "center",
+                    }}
+                  >
+                    <tr>
+                      <td>
+                        <Barcode type="Code128" height = {80} value={item.barcode} />
+                      </td>
+                    </tr>
+                  </CardBody>
+                </Card>
+              </div>
+              )
+          })}
         </div>
-    </GridContainer>
+      </GridContainer>
     </GridContainerWrap>
     
     {/* 컨트롤 네임 불러오기 용 */}
@@ -812,5 +862,5 @@ const PR_B0020W: React.FC = () => {
       )}
     </>
   );
-}
+};
 export default PR_B0020W;

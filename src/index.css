@@ -466,6 +466,10 @@ input.readonly {
   min-height: 2.7cm;
 }
 
+@media print {
+  .nonprintable {display: none};
+}
+
 body {
   -webkit-print-color-adjust: exact;
 }
