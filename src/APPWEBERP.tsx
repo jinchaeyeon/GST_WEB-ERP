@@ -191,6 +191,7 @@ import HU_B3220W from "./routes/HU_B3220W";
 import AC_B1240W from "./routes/AC_B1240W";
 import AC_B1340W from "./routes/AC_B1340W";
 import AC_B6020W from "./routes/AC_B6020W";
+import AC_B8040W from "./routes/AC_B8040W";
 const Login = lazy(() => import("./routes/Login"));
 const Main = lazy(() => import("./routes/Main"));
 
@@ -604,6 +605,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/AC_B6020W" component={AC_B6020W} exact />
                   <AuthRoute path="/AC_B6060W" component={AC_B6060W} exact />
                   <AuthRoute path="/AC_B8030W" component={AC_B8030W} exact />
+                  <AuthRoute path="/AC_B8040W" component={AC_B8040W} exact />
                   {/* 목형관리 */}
                   <AuthRoute path="/TO_B0011W" component={TO_B0011W} exact />
                   {/* CHAT BOT */}
