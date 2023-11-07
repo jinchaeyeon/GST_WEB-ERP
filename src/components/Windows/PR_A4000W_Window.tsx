@@ -16,7 +16,6 @@ import {
   GridCellProps, 
   GridColumn, 
   GridDataStateChangeEvent, 
-  GridEvent, 
   GridFooterCellProps, 
   GridHeaderCellProps, 
   GridItemChangeEvent, 
@@ -896,11 +895,11 @@ const DetailWindow = ({
       const newData = badDataResult.data.map((item) => ({
         ...item,
         rowstatus: item.rowstatus === "N" ? "N" : "U",
-        chk: !values,
+        chk: !values1,
         [EDIT_FIELD]: props.field,
       }));
       setValues1(!values1);
-      setInDataResult((prev) => {
+      setBadDataResult((prev) => {
         return {
           data: newData,
           total: prev.total,

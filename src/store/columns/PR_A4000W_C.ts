@@ -8,19 +8,19 @@ export const gridList: Array<TGrid> = [
           id: "col_proccd",
           field: "proccd",
           caption: "공정",
-          width: 100,
+          width: 120,
       },
       {
           id: "col_prodemp",
           field: "prodemp",
           caption: "작업자",
-          width: 100,
+          width: 120,
       },
       {
         id: "col_prodmac",
         field: "prodmac",
         caption: "설비",
-        width: 100,
+        width: 120,
       },
       {
           id: "col_itemcd",
@@ -32,7 +32,7 @@ export const gridList: Array<TGrid> = [
           id: "col_itemnm",
           field: "itemnm",
           caption: "품목명",
-          width: 180,
+          width: 150,
       },
       {
           id: "col_insiz",
@@ -62,7 +62,7 @@ export const gridList: Array<TGrid> = [
           id: "col_qtyunit",
           field: "qtyunit",
           caption: "단위",
-          width: 80,
+          width: 120,
       },
       {
           id: "col_lotnum",
@@ -86,7 +86,7 @@ export const gridList: Array<TGrid> = [
           id: "col_days",
           field: "days",
           caption: "일(D)",
-          width: 80,
+          width: 100,
       },
       {
           id: "col_worktime",
@@ -151,13 +151,13 @@ export const gridList: Array<TGrid> = [
         id: "col_prodemp1",
         field: "prodemp",
         caption: "작업자",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_prodmac1",
         field: "prodmac",
         caption: "설비",
-        width: 150,
+        width: 120,
       },
     ],
   },
@@ -168,7 +168,7 @@ export const gridList: Array<TGrid> = [
         id: "col_gb",
         field: "gb",
         caption: "구분",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_ordnum",
@@ -180,7 +180,7 @@ export const gridList: Array<TGrid> = [
         id: "col_itemnm1",
         field: "itemnm",
         caption: "품목명",
-        width: 180,
+        width: 150,
       },
       {
         id: "col_strtime1",
@@ -198,7 +198,7 @@ export const gridList: Array<TGrid> = [
         id: "col_proccd1",
         field: "proccd",
         caption: "공정",
-        width: 100,
+        width: 120,
       },
       {
         id: "col_time1",
