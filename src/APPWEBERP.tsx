@@ -193,6 +193,8 @@ import AC_B1340W from "./routes/AC_B1340W";
 import AC_B6020W from "./routes/AC_B6020W";
 import AC_B8040W from "./routes/AC_B8040W";
 import AC_B3000W from "./routes/AC_B3000W";
+import AC_B8100W from "./routes/AC_B8100W";
+import SA_B2226W from "./routes/SA_B2226W";
 const Login = lazy(() => import("./routes/Login"));
 const Main = lazy(() => import("./routes/Main"));
 
@@ -608,6 +610,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/AC_B6060W" component={AC_B6060W} exact />
                   <AuthRoute path="/AC_B8030W" component={AC_B8030W} exact />
                   <AuthRoute path="/AC_B8040W" component={AC_B8040W} exact />
+                  <AuthRoute path="/AC_B8100W" component={AC_B8100W} exact />
                   {/* 목형관리 */}
                   <AuthRoute path="/TO_B0011W" component={TO_B0011W} exact />
                   {/* CHAT BOT */}
@@ -637,6 +640,8 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/PR_B1104W" component={PR_B1104W} exact />
                     {/* DDGD 고객페이지 */}
                     <AuthRoute path="/CR_A1101W" component={CR_A1101W} exact />
+                    {/* 바이오톡스텍 대쉬보드 */}
+                    <AuthRoute path="/SA_B2226W" component={SA_B2226W} exact />
                   </GlobalStyles>
 
                   {/* DDGD 관리자페이지 */}
