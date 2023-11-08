@@ -505,7 +505,7 @@ const CHAT_BOT_MNG: React.FC = () => {
           selectedField={SELECTED_FIELD}
           selectable={{
             enabled: true,
-            mode: "multiple",
+            mode: "single"
           }}
           onSelectionChange={onSelectionChange}
           //

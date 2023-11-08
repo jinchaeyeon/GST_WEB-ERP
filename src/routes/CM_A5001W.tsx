@@ -178,7 +178,7 @@ const CM_A5001W: React.FC = () => {
 
   //비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
-  UseBizComponent("L_CM500_603, L_CM501_603", setBizComponentData);
+  UseBizComponent("L_CM500_603_Q, L_CM501_603_Q", setBizComponentData);
   //상태, 의약품상세분류
 
   const [statusListData, setStatusListData] = useState([
@@ -192,16 +192,16 @@ const CM_A5001W: React.FC = () => {
     if (bizComponentData.length > 0) {
       const statusQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM500_603"
+          (item: any) => item.bizComponentId == "L_CM500_603_Q"
         )
       );
 
       const meditypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM501_603"
+          (item: any) => item.bizComponentId == "L_CM501_603_Q"
         )
       );
-
+      
       fetchQueryData(statusQueryStr, setStatusListData);
       fetchQueryData(meditypeQueryStr, setMeditypeListData);
     }
@@ -494,8 +494,8 @@ const CM_A5001W: React.FC = () => {
     frdt: new Date(),
     todt: new Date(),
     dtgb: "",
-    status: [{ sub_code: "001", code_name: "컨설팅 요청" }],
-    medicine_type: [],
+    status: [{ sub_code: "%", code_name: "전체" }],
+    medicine_type: [{ sub_code: "%", code_name: "전체" }],
     custcd: "",
     custnm: "",
     user_id: "",

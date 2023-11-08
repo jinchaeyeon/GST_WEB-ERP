@@ -2702,7 +2702,7 @@ const QC_A2000: React.FC = () => {
                     selectedField={SELECTED_FIELD}
                     selectable={{
                       enabled: true,
-                      mode: "multiple",
+                      mode: "single"
                     }}
                     onSelectionChange={onSelectionChange}
                     fixedScroll={true}

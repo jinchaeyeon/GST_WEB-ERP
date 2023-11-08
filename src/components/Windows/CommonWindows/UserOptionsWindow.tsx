@@ -2095,7 +2095,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
-                    mode: "multiple",
+                    mode: "single"
                   }}
                   onSelectionChange={onWordSelectionChange}
                   //스크롤 조회 기능
@@ -2162,7 +2162,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
-                  mode: "multiple",
+                  mode: "single"
                 }}
                 onSelectionChange={onMainDefaultSelectionChange}
                 //스크롤 조회 기능
@@ -2230,7 +2230,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
-                  mode: "multiple",
+                  mode: "single"
                 }}
                 onSelectionChange={onDetailDefaultSelectionChange}
                 //스크롤 조회 기능
@@ -2342,7 +2342,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
-                  mode: "multiple",
+                  mode: "single"
                 }}
                 onSelectionChange={onMainColumnSelectionChange}
                 //스크롤 조회 기능
@@ -2428,7 +2428,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
-                  mode: "multiple",
+                  mode: "single"
                 }}
                 onSelectionChange={onDetailColumnSelectionChange}
                 //스크롤 조회 기능

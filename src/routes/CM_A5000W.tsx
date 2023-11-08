@@ -194,7 +194,7 @@ const CM_A5000W: React.FC = () => {
 
   //비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_CM500_603, L_CM501_603", setBizComponentData);
+  UseBizComponent("L_CM500_603_Q, L_CM501_603_Q", setBizComponentData);
   //상태, 의약품상세분류
 
   const [statusListData, setStatusListData] = React.useState([
@@ -208,13 +208,13 @@ const CM_A5000W: React.FC = () => {
     if (bizComponentData !== null) {
       const statusQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM500_603"
+          (item: any) => item.bizComponentId == "L_CM500_603_Q"
         )
       );
 
       const meditypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM501_603"
+          (item: any) => item.bizComponentId == "L_CM501_603_Q"
         )
       );
 
@@ -586,8 +586,8 @@ const CM_A5000W: React.FC = () => {
     frdt: new Date(),
     todt: new Date(),
     dtgb1: "",
-    status: [{ sub_code: "001", code_name: "컨설팅 요청" }],
-    medicine_type: [],
+    status: [{ sub_code: "%", code_name: "전체" }],
+    medicine_type: [{ sub_code: "%", code_name: "전체" }],
     custnm: "",
     user_id: "",
     user_name: "",
@@ -1158,12 +1158,11 @@ const CM_A5000W: React.FC = () => {
         : bytesToBase64(bytes(editorContent));
 
     const parameters = {
-      folder: "html-doc?folder=" +
-              "CM_A5000W",
+      folder: "html-doc?folder=" + "CM_A5000W",
       procedureName: "P_CM_A5000W_S",
       pageNumber: 0,
       pageSize: 0,
-      parameters : {
+      parameters: {
         "@p_work_type": paraDataSaved.workType,
         "@p_document_id": paraDataSaved.document_id,
         "@p_cpmnum": paraDataSaved.cpmnum,
@@ -1184,8 +1183,8 @@ const CM_A5000W: React.FC = () => {
         "@p_pc": paraDataSaved.pc,
       },
       fileBytes: convertedEditorContent,
-    }
-    
+    };
+
     try {
       data = await processApi<any>("html-save", parameters);
     } catch (error) {
@@ -1731,7 +1730,12 @@ const CM_A5000W: React.FC = () => {
                 </FormBoxWrap>
               </GridContainer>
               <GridContainer height="37.5vh">
-                <RichEditor id="docEditor" ref={docEditorRef} hideTools border={true}/>
+                <RichEditor
+                  id="docEditor"
+                  ref={docEditorRef}
+                  hideTools
+                  border={true}
+                />
               </GridContainer>
               <FormBoxWrap border={true}>
                 <FormBox>
@@ -1761,7 +1765,46 @@ const CM_A5000W: React.FC = () => {
             </GridContainer>
             <GridContainer width={`calc(50% - ${GAP}px)`}>
               <GridTitleContainer>
-                <GridTitle>답변</GridTitle>
+                <GridTitle>
+                  <div style={{display: "flex"}}>
+                  <p style={{marginRight: "5px"}}>답변</p>
+                  {workType == "N" ? (
+                    ""
+                  ) : information2.ref_document_id != "" ? (
+                    <div
+                      style={{
+                        width: "80px",
+                        borderRadius: "2px",
+                        backgroundColor: "#70ad47",
+                        color: "white",
+                        padding: "5px 10px",
+                        textAlign: "center",
+                        marginRight: "5px",
+                        fontWeight: 700,
+                        fontSize: "12px",
+                      }}
+                    >
+                      완료
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        width: "80px",
+                        borderRadius: "2px",
+                        backgroundColor: "#ffc000",
+                        color: "white",
+                        padding: "5px 10px",
+                        textAlign: "center",
+                        marginRight: "5px",
+                        fontWeight: 700,
+                        fontSize: "12px",
+                      }}
+                    >
+                      대기중
+                    </div>
+                  )}
+                  </div>
+                </GridTitle>
               </GridTitleContainer>
               <GridContainer height={`calc(100% - 115px)`}>
                 <RichEditor id="docEditor" ref={docEditorRef1} hideTools />

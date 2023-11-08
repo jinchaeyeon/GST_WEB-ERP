@@ -302,7 +302,7 @@ TKendoWindow) => {
             selectedField={SELECTED_FIELD}
             selectable={{
               enabled: true,
-              mode: "multiple",
+              mode: "single"
             }}
             onSelectionChange={onSubDataSelectionChange}
             fixedScroll={true}

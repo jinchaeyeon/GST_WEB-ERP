@@ -635,7 +635,7 @@ const KendoWindow = ({
             selectedField={SELECTED_FIELD}
             selectable={{
               enabled: true,
-              mode: "multiple",
+              mode: "single"
             }}
             //스크롤 조회기능
             fixedScroll={true}

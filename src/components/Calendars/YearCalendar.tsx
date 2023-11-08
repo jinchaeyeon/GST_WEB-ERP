@@ -5,7 +5,7 @@ const CustomCalendar = (props: CalendarProps) => {
   return (
     <Calendar
       bottomView="decade"
-      topView="decade"
+      topView="century"
       value={props.value}
       onChange={props.onChange}
     />

@@ -2,7 +2,7 @@ import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
-  Grid,
+  Grid as GridKendo,
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
@@ -26,6 +26,8 @@ import {
   GridTitleContainer,
   Title,
   TitleContainer,
+  ScrollableContainerBox,
+  AdminQuestionBox,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import DateCell from "../components/Cells/DateCell";
@@ -35,6 +37,7 @@ import {
   UseBizComponent,
   UseCustomOption,
   UsePermissions,
+  dateformat2,
   getQueryFromBizComponent,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
@@ -50,6 +53,7 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B1000_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import Grid from "@mui/material/Grid";
 
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "num";
@@ -262,14 +266,14 @@ const SA_B1000W_603: React.FC = () => {
           ...prev,
           pgNum: 1,
           find_row_value: "",
-          ref_key: rows[0].quokey,
+          ref_key: rows[0].ref_key,
           isSearch: true,
         }));
         setSubFilters2((prev: any) => ({
           ...prev,
           pgNum: 1,
           find_row_value: "",
-          ref_key: rows[0].quokey,
+          ref_key: rows[0].ref_key,
           isSearch: true,
         }));
         setSubFilters3((prev: any) => ({
@@ -790,14 +794,14 @@ const SA_B1000W_603: React.FC = () => {
       ...prev,
       pgNum: 1,
       find_row_value: "",
-      ref_key: selectedRowData.quokey,
+      ref_key: selectedRowData.ref_key,
       isSearch: true,
     }));
     setSubFilters2((prev: any) => ({
       ...prev,
       pgNum: 1,
       find_row_value: "",
-      ref_key: selectedRowData.quokey,
+      ref_key: selectedRowData.ref_key,
       isSearch: true,
     }));
     setSubFilters3((prev: any) => ({
@@ -1009,33 +1013,26 @@ const SA_B1000W_603: React.FC = () => {
     }
   };
 
-  const onLinkChange = (event: GridRowDoubleClickEvent) => {
-    const selectedRowData = event.dataItem;
+  const onLinkChange = (dataItem: any) => {
     const origin = window.location.origin;
     window.open(
-      origin +
-        `/CM_A7000W?go=` +
-        selectedRowData.orgdiv +
-        "_" +
-        selectedRowData.meetingnum
+      origin + `/CM_A7000W?go=` + dataItem.orgdiv + "_" + dataItem.meetingnum
     );
   };
 
-  const onLinkChange2 = (event: GridRowDoubleClickEvent) => {
-    const selectedRowData = event.dataItem;
+  const onLinkChange2 = (dataItem: any) => {
     const origin = window.location.origin;
-    window.open(origin + `/CM_A5000W?go=` + selectedRowData.document_id);
+    window.open(origin + `/CM_A5000W?go=` + dataItem.document_id);
   };
 
-  const onLinkChange3 = (event: GridRowDoubleClickEvent) => {
-    const selectedRowData = event.dataItem;
+  const onLinkChange3 = (dataItem: any) => {
     const origin = window.location.origin;
     window.open(
       origin +
         `/SA_A1100_603W?go=` +
-        selectedRowData.quokey.split("-")[0] +
+        dataItem.quokey.split("-")[0] +
         "-" +
-        selectedRowData.quokey.split("-")[1]
+        dataItem.quokey.split("-")[1]
     );
   };
 
@@ -1122,7 +1119,7 @@ const SA_B1000W_603: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>요약정보</GridTitle>
               </GridTitleContainer>
-              <Grid
+              <GridKendo
                 style={{ height: "76.5vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
@@ -1184,7 +1181,7 @@ const SA_B1000W_603: React.FC = () => {
                         />
                       )
                   )}
-              </Grid>
+              </GridKendo>
             </ExcelExport>
           </GridContainer>
         </GridContainer>
@@ -1193,247 +1190,244 @@ const SA_B1000W_603: React.FC = () => {
             <Button
               themeColor={"primary"}
               icon="folder"
-              style={{ width: "25%", height: "9vh" }}
+              style={{ width: "25%", height: "4vh" }}
             >
               문의
             </Button>
             <Button
               themeColor={"primary"}
               icon="folder"
-              style={{ width: "25%", height: "9vh" }}
+              style={{ width: "25%", height: "4vh" }}
             >
               컨설팅
             </Button>
             <Button
               themeColor={"primary"}
               icon="folder"
-              style={{ width: "25%", height: "9vh" }}
+              style={{ width: "25%", height: "4vh" }}
             >
               견적
             </Button>
             <Button
               themeColor={"primary"}
               icon="folder"
-              style={{ width: "25%", height: "9vh" }}
+              style={{ width: "25%", height: "4vh" }}
             >
               계약
             </Button>
           </ButtonContainer>
           <FormBoxWrap border={true}>
-            <GridContainer width={"100%"}>
+            <GridContainer width={"100%"} height="25.4vh">
               <GridTitleContainer>
                 <GridTitle>상담</GridTitle>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "20vh" }}
-                data={process(
-                  subDataResult.data.map((row) => ({
-                    ...row,
-                    person: userListData.find(
-                      (items: any) => items.user_id == row.person
-                    )?.user_name,
-                    [SELECTED_FIELD]: subselectedState[idGetter2(row)],
-                  })),
-                  subDataState
-                )}
-                {...subDataState}
-                onDataStateChange={onSubDataStateChange}
-                //선택 기능
-                dataItemKey={SUB_DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSubSelectionChange}
-                onRowDoubleClick={onLinkChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={subDataResult.total}
-                skip={page2.skip}
-                take={page2.take}
-                pageable={true}
-                onPageChange={pageChange2}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef2}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onSubSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                id="grdList2"
-              >
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
+              <ScrollableContainerBox>
+                <div className="scroll-wrapper">
+                  <Grid container spacing={2}>
+                    {subDataResult.data.map((item, idx) => (
+                      <Grid item xs={12} sm={12} md={12} lg={6} xl={6}>
+                        <AdminQuestionBox
                           key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          cell={
-                            dateField.includes(item.fieldName)
-                              ? DateCell
-                              : undefined
-                          }
-                          width={setWidth("grdList2", item.width)}
-                          footerCell={
-                            item.sortOrder === 0
-                              ? subTotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
-              </Grid>
+                          onClick={() => onLinkChange(item)}
+                        >
+                          <div style={{ display: "flex", marginBottom: "5px" }}>
+                            <div
+                              style={{
+                                backgroundColor: "#2289c3",
+                                color: "white",
+                                width: "100px",
+                                height: "32px",
+                                borderRadius: "5px",
+                                padding: "5px",
+                                textAlign: "center",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                marginRight: "10px",
+                                fontWeight: 700,
+                              }}
+                            >
+                              <p>{dateformat2(item.recdt)}</p>
+                            </div>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "14px",
+                                fontWeight: 400,
+                              }}
+                            >
+                              <p>
+                                {
+                                  userListData.find(
+                                    (items: any) => items.user_id == item.person
+                                  )?.user_name
+                                }
+                              </p>
+                            </div>
+                          </div>
+                          <div style={{ width: "100%" }}>
+                            <p style={{ fontSize: "16px", fontWeight: 500 }}>
+                              {item.title}
+                            </p>
+                          </div>
+                        </AdminQuestionBox>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </div>
+              </ScrollableContainerBox>
             </GridContainer>
           </FormBoxWrap>
           <FormBoxWrap border={true}>
-            <GridContainer width={"100%"}>
+            <GridContainer width={"100%"} height="25.4vh">
               <GridTitleContainer>
                 <GridTitle>컨설팅</GridTitle>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "20vh" }}
-                data={process(
-                  subDataResult2.data.map((row) => ({
-                    ...row,
-                    user_id: userListData.find(
-                      (items: any) => items.user_id == row.user_id
-                    )?.user_name,
-                    medicine_type: meditypeListData.find(
-                      (items: any) => items.sub_code == row.medicine_type
-                    )?.code_name,
-                    require_type: statusListData.find(
-                      (items: any) => items.sub_code == row.require_type
-                    )?.code_name,
-                    [SELECTED_FIELD]: subselectedState2[idGetter3(row)],
-                  })),
-                  subDataState2
-                )}
-                {...subDataState2}
-                onDataStateChange={onSubDataStateChange2}
-                //선택 기능
-                dataItemKey={SUB_DATA_ITEM_KEY2}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSubSelectionChange2}
-                onRowDoubleClick={onLinkChange2}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={subDataResult2.total}
-                skip={page3.skip}
-                take={page3.take}
-                pageable={true}
-                onPageChange={pageChange3}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef3}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onSubSortChange2}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                id="grdList3"
-              >
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList3"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
+              <ScrollableContainerBox>
+                <div className="scroll-wrapper">
+                  <Grid container spacing={2}>
+                    {subDataResult2.data.map((item, idx) => (
+                      <Grid item xs={12} sm={12} md={12} lg={6} xl={6}>
+                        <AdminQuestionBox
                           key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          cell={
-                            dateField.includes(item.fieldName)
-                              ? DateCell
-                              : undefined
-                          }
-                          width={setWidth("grdList3", item.width)}
-                          footerCell={
-                            item.sortOrder === 0
-                              ? subTotalFooterCell2
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
-              </Grid>
+                          onClick={() => onLinkChange2(item)}
+                        >
+                          <div
+                            style={{
+                              width: "100%",
+                              display: "flex",
+                              marginBottom: "5px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                backgroundColor: "#2289c3",
+                                color: "white",
+                                width: "100px",
+                                height: "32px",
+                                borderRadius: "5px",
+                                padding: "5px",
+                                textAlign: "center",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                marginRight: "10px",
+                                fontWeight: 700,
+                              }}
+                            >
+                              <p>
+                                {
+                                  statusListData.find(
+                                    (items: any) =>
+                                      items.sub_code == item.require_type
+                                  )?.code_name
+                                }
+                              </p>
+                            </div>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <p style={{ fontSize: "14px", fontWeight: 400 }}>
+                                {
+                                  userListData.find(
+                                    (items: any) =>
+                                      items.user_id == item.user_id
+                                  )?.user_name
+                                }
+                                /
+                                {
+                                  meditypeListData.find(
+                                    (items: any) =>
+                                      items.sub_code == item.medicine_type
+                                  )?.code_name
+                                }
+                              </p>
+                            </div>
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              fontSize: "14px",
+                              fontWeight: 400,
+                              width: "100%",
+                              marginBottom: "5px",
+                            }}
+                          >
+                            <div
+                              style={{
+                                marginRight: "5px",
+                                fontSize: "12px",
+                                fontWeight: 400,
+                              }}
+                            >
+                              <p>{dateformat2(item.completion_date)}</p>
+                            </div>
+                          </div>
+                          <div>
+                            <p
+                              style={{
+                                fontSize: "16px",
+                                fontWeight: 500,
+                                marginRight: "5px",
+                              }}
+                            >
+                              {item.title}
+                            </p>
+                          </div>
+                        </AdminQuestionBox>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </div>
+              </ScrollableContainerBox>
             </GridContainer>
           </FormBoxWrap>
+
           <FormBoxWrap border={true}>
-            <GridContainer width={"100%"}>
+            <GridContainer width={"100%"} height="25.4vh">
               <GridTitleContainer>
                 <GridTitle>견적</GridTitle>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "20vh" }}
-                data={process(
-                  subDataResult3.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: subselectedState3[idGetter4(row)],
-                  })),
-                  subDataState3
-                )}
-                {...subDataState3}
-                onDataStateChange={onSubDataStateChange3}
-                //선택 기능
-                dataItemKey={SUB_DATA_ITEM_KEY3}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSubSelectionChange3}
-                onRowDoubleClick={onLinkChange3}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={subDataResult3.total}
-                skip={page4.skip}
-                take={page4.take}
-                pageable={true}
-                onPageChange={pageChange4}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef4}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onSubSortChange3}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                id="grdList4"
-              >
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList4"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={setWidth("grdList4", item.width)}
-                          footerCell={
-                            item.sortOrder === 0
-                              ? subTotalFooterCell3
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
-              </Grid>
+              <ScrollableContainerBox>
+                <Grid container spacing={2}>
+                  {subDataResult3.data.map((item, idx) => (
+                    <Grid item xs={12} sm={12} md={12} lg={6} xl={6}>
+                      <AdminQuestionBox
+                        key={idx}
+                        onClick={() => onLinkChange3(item)}
+                      >
+                        <div>
+                          <p
+                            style={{
+                              fontSize: "14px",
+                              fontWeight: 400,
+                              marginBottom: "5px",
+                            }}
+                          >
+                            {item.itemcd}
+                          </p>
+                        </div>
+                        <div>
+                          <p
+                            style={{
+                              fontSize: "16px",
+                              fontWeight: 600,
+                            }}
+                          >
+                            {item.itemnm}
+                          </p>
+                        </div>
+                      </AdminQuestionBox>
+                    </Grid>
+                  ))}
+                </Grid>
+              </ScrollableContainerBox>
             </GridContainer>
           </FormBoxWrap>
         </GridContainer>

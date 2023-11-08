@@ -4328,7 +4328,7 @@ const SA_A1000_603W: React.FC = () => {
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
-                    mode: "multiple",
+                    mode: "single"
                   }}
                   onSelectionChange={onSubDataSelectionChange}
                   //스크롤 조회 기능
@@ -4422,7 +4422,7 @@ const SA_A1000_603W: React.FC = () => {
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
-                  mode: "multiple",
+                  mode: "single"
                 }}
                 onSelectionChange={onSubDataSelectionChange2}
                 //스크롤 조회 기능

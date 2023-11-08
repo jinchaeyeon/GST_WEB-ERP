@@ -365,7 +365,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           enabled: true,
           drag: false,
           cell: false,
-          mode: "multiple",
+          mode: "single"
         }}
         onSelectionChange={onSelectionChange}
         onHeaderSelectionChange={onHeaderSelectionChange}

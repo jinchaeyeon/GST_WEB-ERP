@@ -143,7 +143,6 @@ export const convertDateToStrWithTime = (date: Date) => {
 //Date 타입 인수를 YYYY-MM-DD hh:mm:ss string로 날짜 변환하여 반환 (ex. => 2022-01-01 00:00:00)
 export const convertDateToStrWithTime2 = (date: Date) => {
   //if (date.getFullYear || date.getMonth || date.getDate) {
-
   const dateTime: string =
     date.getFullYear() +
     "-" +

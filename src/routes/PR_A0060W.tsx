@@ -3088,7 +3088,7 @@ const PR_A0060: React.FC = () => {
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
-                    mode: "multiple",
+                    mode: "single"
                   }}
                   onSelectionChange={onSubDataSelectionChange}
                   //스크롤 조회 기능

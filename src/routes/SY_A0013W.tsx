@@ -2259,7 +2259,7 @@ const Page: React.FC = () => {
                 enabled: true,
                 drag: false,
                 cell: false,
-                mode: "multiple",
+                mode: "single"
               }}
               onSelectionChange={onSelectionChange}
               //스크롤 조회 기능

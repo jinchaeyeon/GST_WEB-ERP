@@ -2981,7 +2981,7 @@ const PR_A1100W: React.FC = () => {
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
-                    mode: "multiple",
+                    mode: "single"
                   }}
                   onSelectionChange={onPlanSelectionChange}
                   //그룹기능
@@ -3093,7 +3093,7 @@ const PR_A1100W: React.FC = () => {
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
-                  mode: "multiple",
+                  mode: "single"
                 }}
                 onSelectionChange={onMaterialSelectionChange}
                 //스크롤 조회 기능

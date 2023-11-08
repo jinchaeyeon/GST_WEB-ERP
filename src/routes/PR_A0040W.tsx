@@ -2019,7 +2019,7 @@ const PR_A0040W: React.FC = () => {
             selectedField={SELECTED_FIELD}
             selectable={{
               enabled: true,
-              mode: "multiple",
+              mode: "single"
             }}
             onSelectionChange={onSubDataSelectionChange}
             //스크롤 조회 기능
@@ -2183,7 +2183,7 @@ const PR_A0040W: React.FC = () => {
               selectedField={SELECTED_FIELD}
               selectable={{
                 enabled: true,
-                mode: "multiple",
+                mode: "single"
               }}
               onSelectionChange={onSubData2SelectionChange}
               //스크롤 조회 기능

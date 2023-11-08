@@ -2624,7 +2624,7 @@ const BA_A0040: React.FC = () => {
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
-                  mode: "multiple",
+                  mode: "single"
                 }}
                 onSelectionChange={onSubData2SelectionChange}
                 //스크롤 조회 기능

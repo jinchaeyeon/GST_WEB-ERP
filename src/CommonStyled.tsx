@@ -6,6 +6,50 @@ import logoWEBERP from "./img/login_web_erp.png";
 import logoDDGD from "./img/login_ddgd.png";
 import processStsSrc from "./img/process_16.png";
 
+export const ScrollableContainerBox = styled.div`
+  padding: 10px;
+  position: relative;
+  height: 90%;
+  overflow: hidden !important;
+
+  .scroll-wrapper {
+    height: 100%;
+    overflow: auto !important;
+
+    /* Scrollbar styles */
+    ::-webkit-scrollbar {
+      width: 8px !important; /* Set the width of the scrollbar */
+    }
+
+    ::-webkit-scrollbar-track {
+      border-radius: 10px; /* Optional: Add border-radius to track */
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background-color: #dfdfdf; /* Set the color of the scroll thumb */
+      border-radius: 10px; /* Set the border-radius of the scroll thumb */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #b6b6b6; /* Set the color when hovering */
+    }
+  }
+  /* ::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 80px; /* control the height of the fade out effect 
+    background-image: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 1)
+    ); 
+    pointer-events: none; /* let users still interact with the content 
+  } */
+`;
+
 type TColor = {
   theme: string;
 };
@@ -1004,7 +1048,6 @@ export const Logo = styled.div<TLogo>`
 
 export const AdminQuestionBox = styled.div`
   padding: 15px;
-  display: flex;
   justify-content: space-between;
   align-items: center;
   /* cursor: pointer; */

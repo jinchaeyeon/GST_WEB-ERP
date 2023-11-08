@@ -2534,7 +2534,7 @@ const CM_A4100W: React.FC = () => {
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
-                  mode: "multiple",
+                  mode: "single"
                 }}
                 onSelectionChange={onSelectionChange2}
                 //스크롤 조회 기능
@@ -2779,7 +2779,7 @@ const CM_A4100W: React.FC = () => {
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
-                    mode: "multiple",
+                    mode: "single"
                   }}
                   onSelectionChange={onSubDataSelectionChange}
                   //스크롤 조회 기능

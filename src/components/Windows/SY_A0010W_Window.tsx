@@ -1507,7 +1507,7 @@ const KendoWindow = ({
             enabled: true,
             drag: false,
             cell: false,
-            mode: "multiple",
+            mode: "single"
           }}
           onSelectionChange={onSelectionChange}
           onHeaderSelectionChange={onHeaderSelectionChange}

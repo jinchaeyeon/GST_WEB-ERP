@@ -961,7 +961,7 @@ const Main: React.FC = () => {
               selectedField={SELECTED_FIELD}
               selectable={{
                 enabled: true,
-                mode: "multiple",
+                mode: "single"
               }}
               //정렬기능
               sortable={true}

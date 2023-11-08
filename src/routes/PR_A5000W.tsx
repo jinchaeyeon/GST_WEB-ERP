@@ -1346,7 +1346,7 @@ const PR_A5000W: React.FC = () => {
             selectedField={SELECTED_FIELD}
             selectable={{
               enabled: true,
-              mode: "multiple",
+              mode: "single"
             }}
             onSelectionChange={onSelectionChange}
             //스크롤 조회 기능
@@ -1480,7 +1480,7 @@ const PR_A5000W: React.FC = () => {
           selectedField={SELECTED_FIELD}
           selectable={{
             enabled: true,
-            mode: "multiple",
+            mode: "single"
           }}
           onSelectionChange={onDetailSelectionChange}
           //스크롤 조회 기능
