@@ -145,7 +145,7 @@ const AC_B8100W: React.FC = () => {
     pageNumber: 0,
     pageSize: 0,
     parameters: {
-      "@p_work_type": "LIST",
+      "@p_work_type": "Q",
       "@p_orgdiv": filters.orgdiv,
       "@p_frdt": convertDateToStr(filters.frdt),
       "@p_todt": convertDateToStr(filters.todt),
@@ -377,178 +377,16 @@ const AC_B8100W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      {/* <GridContainer>
+      <GridContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
         >
-          <Grid
-            style={{ height: "800px", display: "none" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onMainSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-          >
-            <GridColumn
-              field="fxnum"
-              title="구분"
-              width="80px"
-              cell={CenterCell}
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn field="fxnm" title="품명" width="150px" />
-            <GridColumn
-              field="indt"
-              title="구입일"
-              cell={DateCell}
-              width="120px"
-            />
-            <GridColumn
-              field="fxpurcost"
-              title="금액"
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn field="fxdepyrmm" title="내용연수" width="120px" />
-            <GridColumn
-              field="curdamt6"
-              title={dates6}
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="curdamt5"
-              title={dates5}
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="curdamt4"
-              title={dates4}
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="curdamt3"
-              title={dates3}
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="curdamt2"
-              title={dates2}
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="curdamt1"
-              title={dates}
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="totamt"
-              title="합계"
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="chamt"
-              title="잔존가액"
-              width="100px"
-              cell={NumberCell}
-            />
-          </Grid>
+
         </ExcelExport>
       </GridContainer>
-      <LandscapePrint>
-        <div
-          id="ItemCostSheet"
-          className="printable landscape"
-          ref={componentRef}
-        >
-          <div className="title_container">
-            <h1 className="title">전체 감가상각비 계상</h1>
-          </div>
-          <table className="main_tb">
-            <colgroup>
-              <col width="5%" />
-              <col width="9%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="5%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="7%" />
-              <col width="7%" />
-            </colgroup>
-            <tbody>
-              <tr>
-                <th>구분</th>
-                <th>품명</th>
-                <th>구입일</th>
-                <th>금액</th>
-                <th>내용연수</th>
-                <th>{dates6}</th>
-                <th>{dates5}</th>
-                <th>{dates4}</th>
-                <th>{dates3}</th>
-                <th>{dates2}</th>
-                <th>{dates}</th>
-                <th>합계</th>
-                <th>잔존가액</th>
-              </tr>
-              {mainDataResult.data.map((item: any, idx: number) => (
-                <tr key={idx}>
-                  <td className="center">{item.fxnum}</td>
-                  <td className="center">{item.fxnm}</td>
-                  <td className="center">{item.indt}</td>
-                  <td className="number">{numberWithCommas(item.fxpurcost)}</td>
-                  <td className="center">{item.fxdepyrmm}</td>
-                  <td className="number">{numberWithCommas(item.curdamt6)}</td>
-                  <td className="number">{numberWithCommas(item.curdamt5)}</td>
-                  <td className="number">{numberWithCommas(item.curdamt4)}</td>
-                  <td className="number">{numberWithCommas(item.curdamt3)}</td>
-                  <td className="number">{numberWithCommas(item.curdamt2)}</td>
-                  <td className="number">{numberWithCommas(item.curdamt1)}</td>
-                  <td className="number">{numberWithCommas(item.totamt)}</td>
-                  <td className="number">{numberWithCommas(item.chamt)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </LandscapePrint> */}
     </>
   );
 };

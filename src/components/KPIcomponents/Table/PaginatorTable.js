@@ -70,7 +70,7 @@ const PaginatorTable = (props) => {
           filterDisplay="row"
           emptyMessage="No DATA."
           selection={props.selection}
-          onSelectionChange={props.onSelectionChange}
+          onSelectionChange={props.onSelectionChange} 
         >
           {colums()}
         </DataTable>

@@ -3,31 +3,24 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Button } from "primereact/button";
+import { Calendar } from "primereact/calendar";
 import { Divider } from "primereact/divider";
-import { DropdownChangeEvent } from "primereact/dropdown";
+import { Knob } from "primereact/knob";
 import { Toolbar } from "primereact/toolbar";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
-import {
-  UseCustomOption,
-  convertDateToStr,
-  setDefaultDate,
-  GetPropertyValueByName,
-} from "../components/CommonFunction";
-import DatePicker from "../components/KPIcomponents/Calendar/DatePicker";
+import { convertDateToStr } from "../components/CommonFunction";
+import { PAGE_SIZE } from "../components/CommonString";
 import Card from "../components/KPIcomponents/Card/CardBox";
-import DoughnutChart from "../components/KPIcomponents/Chart/DoughnutChart";
-import StackedChart from "../components/KPIcomponents/Chart/StackedChart";
-import ComboBox from "../components/KPIcomponents/ComboBox/ComboBox";
-import Radio from "../components/KPIcomponents/Radio/Radio";
-import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
-import Table from "../components/KPIcomponents/Table/Table";
+import MultiChart from "../components/KPIcomponents/Chart/MultiChart";
+import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutChart";
+import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
 import { colors, colorsName, isLoading } from "../store/atoms";
-import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
-import BarChart from "../components/KPIcomponents/Chart/BarChart";
+import ComboChart from "../components/KPIcomponents/Chart/ComboChart";
+import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 
 interface TList {
   badcnt?: number;
@@ -50,7 +43,15 @@ const SA_B2226W: React.FC = () => {
   const pathname: string = window.location.pathname.replace("/", "");
   const [color, setColor] = useRecoilState(colors);
   const [colorName, setColorName] = useRecoilState(colorsName);
-
+  const [selected, setSelected] = useState<any>({
+    itemcd: "일반독성",
+    value: 61,
+    current_year: 100,
+    past_year: 80,
+    cnt: 5,
+    amt: 100,
+    num: 1,
+  });
   useEffect(() => {}, [color]);
 
   const theme = createTheme({
@@ -94,33 +95,9 @@ const SA_B2226W: React.FC = () => {
     return windowSize;
   }
 
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  //UseCustomOption(pathname, setCustomOptionData);
-
-  //customOptionData 조회 후 디폴트 값 세팅
-  useEffect(() => {
-    if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(
-        customOptionData.menuCustomDefaultOptions,
-        "query"
-      );
-
-      setFilters((prev) => ({
-        ...prev,
-        frdt: setDefaultDate(customOptionData, "frdt"),
-        todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
-        dtdiv: defaultOption.find((item: any) => item.id === "dtdiv").valueCode,
-      }));
-    }
-  }, [customOptionData]);
-
   //조회조건 초기값
   const [filters, setFilters] = useState({
-    pgSize: 20,
+    pgSize: PAGE_SIZE,
     orgdiv: "01",
     location: "01",
     frdt: new Date(),
@@ -129,354 +106,350 @@ const SA_B2226W: React.FC = () => {
     dtgb: "B",
     isSearch: true,
   });
-  const [mainPgNum, setMainPgNum] = useState(1);
-  const [AllList, setAllList] = useState();
-  const [AllChartAllLabel, setAllChartAllLabel] = useState();
-  const [ChartList, setChartList] = useState();
+
+  const [ItemList, setItemList] = useState<any[]>([
+    {
+      itemcd: "일반독성",
+      value: 61,
+      current_year: 100,
+      past_year: 80,
+      cnt: 5,
+      amt: 100,
+      num: 1,
+    },
+    {
+      itemcd: "생식독성",
+      value: 1,
+      current_year: 20,
+      past_year: 20,
+      cnt: 3,
+      amt: 20,
+      num: 2,
+    },
+    {
+      itemcd: "국소/면역",
+      value: 5,
+      current_year: 70,
+      past_year: 0,
+      cnt: 1,
+      amt: 70,
+      num: 3,
+    },
+    {
+      itemcd: "안전성약리",
+      value: 9,
+      current_year: 200,
+      past_year: 200,
+      cnt: 50,
+      amt: 150,
+      num: 4,
+    },
+    {
+      itemcd: "유전독성",
+      value: 6,
+      current_year: 50,
+      past_year: 0,
+      cnt: 1,
+      amt: 50,
+      num: 5,
+    },
+    {
+      itemcd: "대체독성",
+      value: 6,
+      current_year: 0,
+      past_year: 0,
+      cnt: 0,
+      amt: 0,
+      num: 6,
+    },
+    {
+      itemcd: "분석",
+      value: 12,
+      current_year: 1,
+      past_year: 1,
+      cnt: 1,
+      amt: 1,
+      num: 7,
+    },
+  ]);
+
+  const [ChartList, setChartList] = useState([
+    {
+      series: "계약금액",
+      argument: "01월",
+      value: 100,
+    },
+    {
+      series: "계약금액",
+      argument: "02월",
+      value: 0,
+    },
+    {
+      series: "계약금액",
+      argument: "03월",
+      value: 200,
+    },
+    {
+      series: "계약금액",
+      argument: "04월",
+      value: 200,
+    },
+    {
+      series: "계약금액",
+      argument: "05월",
+      value: 0,
+    },
+    {
+      series: "계약금액",
+      argument: "06월",
+      value: 0,
+    },
+    {
+      series: "계약금액",
+      argument: "07월",
+      value: 50,
+    },
+    {
+      series: "계약금액",
+      argument: "08월",
+      value: 100,
+    },
+    {
+      series: "계약금액",
+      argument: "09월",
+      value: 200,
+    },
+    {
+      series: "계약금액",
+      argument: "10월",
+      value: 0,
+    },
+    {
+      series: "계약금액",
+      argument: "11월",
+      value: 100,
+    },
+    {
+      series: "계약금액",
+      argument: "12월",
+      value: 0,
+    },
+    {
+      series: "변경계약금액",
+      argument: "01월",
+      value: 50,
+    },
+    {
+      series: "변경계약금액",
+      argument: "02월",
+      value: 0,
+    },
+    {
+      series: "변경계약금액",
+      argument: "03월",
+      value: 200,
+    },
+    {
+      series: "변경계약금액",
+      argument: "04월",
+      value: 100,
+    },
+    {
+      series: "변경계약금액",
+      argument: "05월",
+      value: 0,
+    },
+    {
+      series: "변경계약금액",
+      argument: "06월",
+      value: 0,
+    },
+    {
+      series: "변경계약금액",
+      argument: "07월",
+      value: 0,
+    },
+    {
+      series: "변경계약금액",
+      argument: "08월",
+      value: 0,
+    },
+    {
+      series: "변경계약금액",
+      argument: "09월",
+      value: 150,
+    },
+    {
+      series: "변경계약금액",
+      argument: "10월",
+      value: 0,
+    },
+    {
+      series: "변경계약금액",
+      argument: "11월",
+      value: 80,
+    },
+    {
+      series: "변경계약금액",
+      argument: "12월",
+      value: 0,
+    },
+    {
+      series: "최종계약금액",
+      argument: "01월",
+      value: 50,
+    },
+    {
+      series: "최종계약금액",
+      argument: "02월",
+      value: 0,
+    },
+    {
+      series: "최종계약금액",
+      argument: "03월",
+      value: 0,
+    },
+    {
+      series: "최종계약금액",
+      argument: "04월",
+      value: 100,
+    },
+    {
+      series: "최종계약금액",
+      argument: "05월",
+      value: 0,
+    },
+    {
+      series: "최종계약금액",
+      argument: "06월",
+      value: 0,
+    },
+    {
+      series: "최종계약금액",
+      argument: "07월",
+      value: 50,
+    },
+    {
+      series: "최종계약금액",
+      argument: "08월",
+      value: 100,
+    },
+    {
+      series: "최종계약금액",
+      argument: "09월",
+      value: 50,
+    },
+    {
+      series: "최종계약금액",
+      argument: "10월",
+      value: 0,
+    },
+    {
+      series: "최종계약금액",
+      argument: "11월",
+      value: 20,
+    },
+    {
+      series: "최종계약금액",
+      argument: "12월",
+      value: 0,
+    },
+  ]);
+
   const [AllPanel, setAllPanel] = useState({
-    badcnt: 0,
-    cancel_percent: 0,
-    confirm_percent: 0,
-    okcnt: 0,
-    totcnt: 0,
+    month_count: 10,
+    month_amt: 150,
+    year_count: 300,
+    year_amt: 400,
+    change_count: 300,
+    change_amt: -50,
+    total_amt: 350,
   });
-  const [stackChartLabel, setStackChartLabel] = useState();
-  const [stackChartAllLabel, setStackChartAllLabel] = useState();
-  const [toppercentData, setTopPercentCust] = useState();
-  const [topdelayData, setTopDelayCust] = useState();
-  const [selected, setSelected] = useState<TList | null>(null);
 
-  //조회조건 파라미터
-  const parameters = {
-    procedureName: "P_SA_B3600W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "LIST",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_dtdiv": filters.dtdiv,
-      "@p_dtgb": filters.dtgb,
-      "@p_custcd": "",
-    },
-  };
-
-  const Rankparameters = {
-    procedureName: "P_SA_B3600W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "RANK1",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_dtdiv": filters.dtdiv,
-      "@p_dtgb": filters.dtgb,
-      "@p_custcd": "",
-    },
-  };
-
-  const Rankparameters2 = {
-    procedureName: "P_SA_B3600W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "RANK2",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_dtdiv": filters.dtdiv,
-      "@p_dtgb": filters.dtgb,
-      "@p_custcd": "",
-    },
-  };
-
-  const ALLparameters = {
-    procedureName: "P_SA_B3600W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "ALLCURRENT",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_dtdiv": filters.dtdiv,
-      "@p_dtgb": filters.dtgb,
-      "@p_custcd": "",
-    },
-  };
-
-  const chartparameters = {
-    procedureName: "P_SA_B3600W_Q",
-    pageNumber: mainPgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "MONTHCUSTCHART",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_dtdiv": filters.dtdiv,
-      "@p_dtgb": filters.dtgb,
-      "@p_custcd": selected == null ? "" : selected.custcd,
-    },
-  };
-
-  const fetchMainGrid = async () => {
-    let data: any;
-    setLoading(true);
-    try {
-      data = await processApi<any>("procedure", parameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows.map(
-        (item: { okcnt: number; totcnt: number }) => ({
-          ...item,
-          percent: Math.round((item.okcnt / item.totcnt) * 100) + "%",
-        })
-      );
-
-      setAllList(rows);
-      let objects = rows.filter(
-        (arr: { custcd: any }, index: any, callback: any[]) =>
-          index === callback.findIndex((t) => t.custcd === arr.custcd)
-      );
-      setAllChartAllLabel(
-        objects.map((item: { custnm: any }) => {
-          return item.custnm;
-        })
-      );
-      if (rows.length > 0) {
-        setSelected(rows[0]);
-      } else {
-        setSelected((item) => ({
-          ...item,
-          okcnt: 0,
-          badcnt: 0,
-        }));
-      }
-    }
-
-    let data2: any;
-    try {
-      data2 = await processApi<any>("procedure", Rankparameters);
-    } catch (error) {
-      data2 = null;
-    }
-
-    if (data2.isSuccess === true) {
-      const rows = data2.tables[0].Rows.map(
-        (item: { okcnt: number; totcnt: number }) => ({
-          ...item,
-          percent: Math.round((item.okcnt / item.totcnt) * 100) + "%",
-        })
-      );
-
-      setTopPercentCust(rows);
-    }
-
-    let data3: any;
-    try {
-      data3 = await processApi<any>("procedure", Rankparameters2);
-    } catch (error) {
-      data3 = null;
-    }
-
-    if (data3.isSuccess === true) {
-      const rows = data3.tables[0].Rows.map(
-        (item: { okcnt: number; totcnt: number }) => ({
-          ...item,
-          percent: Math.round((item.okcnt / item.totcnt) * 100),
-        })
-      );
-
-      setTopDelayCust(rows);
-    }
-
-    let data4: any;
-    try {
-      data4 = await processApi<any>("procedure", ALLparameters);
-    } catch (error) {
-      data4 = null;
-    }
-
-    if (data4.isSuccess === true) {
-      const rows = data4.tables[0].Rows;
-
-      setAllPanel(rows[0]);
-    }
-    setLoading(false);
-  };
-
-  const fetchChartGrid = async () => {
-    let data: any;
-    try {
-      data = await processApi<any>("procedure", chartparameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const rows = data.tables[0].Rows.map((item: any) => ({
-        ...item,
-      }));
-
-      setChartList(rows);
-
-      let objects = rows.filter(
-        (arr: { series: any }, index: any, callback: any[]) =>
-          index === callback.findIndex((t) => t.series === arr.series)
-      );
-      setStackChartLabel(
-        objects.map((item: { series: any }) => {
-          return item.series;
-        })
-      );
-      setStackChartAllLabel(
-        rows
-          .filter((item: { series: any }) => item.series == objects[0].series)
-          .map((items: { argument: any }) => {
-            return items.argument;
-          })
-      );
-    }
-  };
-
-  useEffect(() => {
-    if (filters.isSearch && customOptionData != null) {
-      setFilters((prev) => ({
-        ...prev,
-        isSearch: false,
-      }));
-      fetchMainGrid();
-      fetchChartGrid();
-    }
-  }, [filters]);
-
-  useEffect(() => {
-    fetchChartGrid();
-  }, [selected]);
+  const [stackChartLabel, setStackChartLabel] = useState<any[]>(
+    ChartList.filter(
+      (arr: { series: any }, index: any, callback: any[]) =>
+        index === callback.findIndex((t) => t.series === arr.series)
+    ).map((item: { series: any }) => {
+      return item.series;
+    })
+  );
+  const [stackChartAllLabel, setStackChartAllLabel] = useState<any[]>(
+    ChartList.filter(
+      (item: { series: any }) =>
+        item.series ==
+        ChartList.filter(
+          (arr: { series: any }, index: any, callback: any[]) =>
+            index === callback.findIndex((t) => t.series === arr.series)
+        )[0].series
+    ).map((items: { argument: any }) => {
+      return items.argument;
+    })
+  );
+  const [doughnut, setDoughnut] = useState({
+    target: 350,
+    performance: 500,
+    percent: 60,
+  });
 
   const startContent = (
     <React.Fragment>
       <Grid container spacing={2}>
-        {customOptionData !== null && (
-          <ComboBox
-            value={filters.dtgb}
-            onChange={(e: DropdownChangeEvent) =>
+        <Grid item xs={12} sm={12} md={12} xl={12}>
+          <Calendar
+            value={filters.frdt}
+            onChange={(e: any) =>
               setFilters((prev) => ({
                 ...prev,
-                dtgb: e.value == undefined ? "" : e.value.code,
+                frdt: e.value,
               }))
             }
-            option={customOptionData}
-            placeholder={"일자"}
-            id="dtgb"
-            textField="name"
-            valueField="code"
-            xs={12}
-            sm={4}
-            md={4}
-            lg={2}
-            xl={2}
+            dateFormat={"yy"}
+            view={"year"}
+            showIcon
           />
-        )}
-        <DatePicker
-          frdt={filters.frdt}
-          todt={filters.todt}
-          onFrdtChange={(e: { value: any }) =>
-            setFilters((prev) => ({
-              ...prev,
-              frdt: e.value,
-            }))
-          }
-          onTodtChange={(e: { value: any }) =>
-            setFilters((prev) => ({
-              ...prev,
-              todt: e.value,
-            }))
-          }
-          view="month"
-          dateFormat="yy-mm"
-          xs={12}
-          sm={8}
-          md={6}
-          lg={4}
-          xl={4}
-        />
-        {customOptionData !== null && (
-          <ComboBox
-            value={filters.location}
-            onChange={(e: DropdownChangeEvent) =>
-              setFilters((prev) => ({
-                ...prev,
-                location: e.value == undefined ? "" : e.value.sub_code,
-              }))
-            }
-            option={customOptionData}
-            placeholder={"사업장"}
-            id="location"
-            xs={12}
-            sm={4}
-            md={4}
-            lg={2}
-            xl={2}
-          />
-        )}
-        {customOptionData !== null && (
-          <Radio
-            option={customOptionData}
-            title="일자구분"
-            id="dtdiv"
-            value={filters.dtdiv}
-            onChange={(e: { value: any }) =>
-              setFilters((prev) => ({
-                ...prev,
-                dtdiv: e.value,
-              }))
-            }
-            xs={12}
-            sm={8}
-            md={6}
-            lg={4}
-            xl={4}
-          />
-        )}
+        </Grid>
       </Grid>
     </React.Fragment>
   );
 
   const cardOption = [
     {
-      title: "납기준수율",
+      title: convertDateToStr(new Date()).substring(4, 6) + "월 계약 수",
       data:
-        AllPanel.confirm_percent != null
-          ? AllPanel.confirm_percent + "%"
-          : 0 + "%",
+        AllPanel.month_count != null ? AllPanel.month_count + "건" : 0 + "건",
       backgroundColor: theme.palette.primary.dark,
     },
     {
-      title: "총 준수건수",
-      data: AllPanel.okcnt != null ? AllPanel.okcnt + "건" : 0 + "건",
+      title: convertDateToStr(new Date()).substring(4, 6) + "월 계약금액",
+      data: AllPanel.month_amt != null ? AllPanel.month_amt + "억" : 0 + "원",
       backgroundColor: theme.palette.primary.main,
     },
     {
-      title: "총 지연건수",
-      data: AllPanel.badcnt != null ? AllPanel.badcnt + "건" : 0 + "건",
+      title: convertDateToStr(filters.frdt).substring(0, 4) + "년 계약 수",
+      data: AllPanel.year_count != null ? AllPanel.year_count + "건" : 0 + "건",
       backgroundColor: theme.palette.primary.light,
     },
     {
-      title: "총 건수",
-      data: AllPanel.totcnt != null ? AllPanel.totcnt + "건" : 0 + "건",
+      title: convertDateToStr(filters.frdt).substring(0, 4) + "년 계약금액",
+      data: AllPanel.year_amt != null ? AllPanel.year_amt + "억" : 0 + "원",
       backgroundColor: theme.palette.secondary.main,
+    },
+    {
+      title: convertDateToStr(filters.frdt).substring(0, 4) + "년 변경계약 수",
+      data:
+        AllPanel.change_count != null ? AllPanel.change_count + "건" : 0 + "건",
+      backgroundColor: theme.palette.primary.dark,
+    },
+    {
+      title: convertDateToStr(filters.frdt).substring(0, 4) + "년 변경계약금액",
+      data: AllPanel.change_amt != null ? AllPanel.change_amt + "억" : 0 + "원",
+      backgroundColor: theme.palette.primary.main,
+    },
+    {
+      title: convertDateToStr(filters.frdt).substring(0, 4) + "년 최종계약금액",
+      data: AllPanel.total_amt != null ? AllPanel.total_amt + "억" : 0 + "원",
+      backgroundColor: theme.palette.primary.light,
     },
   ];
 
@@ -499,18 +472,18 @@ const SA_B2226W: React.FC = () => {
               />
             </ButtonContainer>
           </TitleContainer>
-          {/* <Toolbar start={startContent} />
+          <Toolbar start={startContent} />
           <Divider />
           <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
               {cardOption.map((item) => (
-                <Grid item xs={6} sm={6} md={6} lg={3} xl={3}>
+                <Grid item xs={12} sm={6} md={6} lg={3} xl={3}>
                   <Card
                     title={item.title}
                     data={item.data}
                     backgroundColor={item.backgroundColor}
-                    fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
-                        form={"SA_B3600W"}
+                    fontsize={size.width < 600 ? "2.2rem" : "3rem"}
+                    form={"SA_B2221W"}
                   />
                 </Grid>
               ))}
@@ -518,85 +491,107 @@ const SA_B2226W: React.FC = () => {
           </Box>
           <Divider />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-              <Table
-                value={toppercentData}
-                column={{
-                  custcd: "업체코드",
-                  custnm: "업체명",
-                  okcnt: "준수건수",
-                  totcnt: "총건수",
-                  percent: "준수율",
-                }}
-                width={[
-                  150, 160, 150, 130, 130
-                ]}
-                title={"준수율 TOP5"}
+            <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
+              <GridTitle
+                title={
+                  convertDateToStr(filters.frdt).substring(0, 4) +
+                  "년도 실적현황"
+                }
               />
-            </Grid>
-            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-              <Table
-                value={topdelayData}
-                column={{
-                  custcd: "업체코드",
-                  custnm: "업체명",
-                  badcnt: "지연건수",
-                  totcnt: "총건수",
-                  rate: "준수율",
-                }}
-                width={[
-                  150, 160, 150, 130, 130
-                ]}
-                title={"지연건수 TOP5"}
-              />
-            </Grid>
-          </Grid>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-              <GridTitle title="전체 업체 준수율 월별 그래프" />
-              <BarChart
-                props={AllList}
-                value="rate"
-                alllabel={AllChartAllLabel}
-                random={true}
-                name="custnm"
-                colorName={colorName}
-              />
-            </Grid>
-          </Grid>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-              <GridTitle title="업체 준수율 월별 그래프" />
-              <StackedChart
+              <MultiChart
                 props={ChartList}
                 value="value"
-                name="series"                
-                color={[theme.palette.primary.dark, theme.palette.primary.light]}
+                name="series"
+                color={[
+                  theme.palette.primary.dark,
+                  theme.palette.primary.main,
+                  theme.palette.primary.light,
+                ]}
                 alllabel={stackChartAllLabel}
                 label={stackChartLabel}
                 random={false}
               />
             </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
+              <GridTitle
+                title={
+                  convertDateToStr(filters.frdt).substring(0, 4) +
+                  "년도 목표 대비 실적"
+                }
+              />
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
+                  <Card
+                    title={"목표 금액"}
+                    data={doughnut.target + "억"}
+                    backgroundColor={theme.palette.primary.main}
+                    fontsize={size.width < 600 ? "1.8rem" : "2rem"}
+                    form={"SA_B2226W"}
+                    height={"120px"}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
+                  <Card
+                    title={"실적 금액"}
+                    data={doughnut.performance + "억"}
+                    backgroundColor={theme.palette.primary.light}
+                    fontsize={size.width < 600 ? "1.8rem" : "2rem"}
+                    form={"SA_B2226W"}
+                    height={"120px"}
+                  />
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sm={12}
+                  md={12}
+                  lg={12}
+                  xl={12}
+                  style={{ display: "flex", justifyContent: "center" }}
+                >
+                  <Knob
+                    value={doughnut.percent}
+                    size={250}
+                    valueTemplate={"{value}%"}
+                    valueColor={theme.palette.primary.dark}
+                    rangeColor={theme.palette.secondary.main}
+                    readOnly
+                    strokeWidth={10}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
           </Grid>
           <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={7} xl={9}>
+          <GridTitle
+            title={
+              convertDateToStr(filters.frdt).substring(0, 4) +
+              "년도 품목별 계약 현황"
+            }
+          />
+          <Grid container spacing={2} style={{ marginBottom: "50px" }}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <ComboChart
+                data={ItemList}
+                value={["past_year", "current_year"]}
+                label={["직전년도 계약금액", "당해년도 계약금액"]}
+                alllabel={ItemList.map((item) => item.itemcd)}
+                random={true}
+                name="past_year"
+                colorName={colorName}
+                borderColor={theme.palette.primary.dark}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={8} xl={8}>
               <PaginatorTable
-                value={AllList}
+                value={ItemList}
                 column={{
-                  custcd: "업체코드",
-                  custnm: "업체명",
-                  okcnt: "준수건수",
-                  badcnt: "지연건수",
-                  totcnt: "총건수",
-                  percent: "준수율",
+                  itemcd: "품목명",
+                  cnt: "시험건수",
+                  amt: "계약금액",
                 }}
-                title={"전체 목록"}
-                width={[
-                  190, 210, 180, 180, 170, 170
-                ]}
+                title={"목록"}
+                width={[120, 100, 100]}
                 key="num"
                 selection={selected}
                 onSelectionChange={(e: any) => {
@@ -604,16 +599,16 @@ const SA_B2226W: React.FC = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={5} xl={3}>
-              <GridTitle title="업체 건수 그래프" />
-              <DoughnutChart
-                data={selected}
-                option={["okcnt", "badcnt"]}
-                label={["준수건수", "지연건수"]}
-                theme={theme}
+            <Grid item xs={12} sm={12} md={12} lg={4} xl={4}>
+              <MultiDoughnutChart
+                data={ItemList}
+                option={"value"}
+                label={ItemList.map((item) => item.itemcd)}
+                random={true}
+                colorName={colorName}
               />
             </Grid>
-          </Grid> */}
+          </Grid>
         </Container>
         <SpecialDial />
       </ThemeProvider>

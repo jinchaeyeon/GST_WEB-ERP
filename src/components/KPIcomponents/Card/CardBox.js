@@ -6,7 +6,7 @@ const CardBox = (props) => {
     <>
       <Card
         style={{
-          height: "150px",
+          height: props.height == undefined ? "150px" : props.height,
           width: "100%",
           marginRight: "15px",
           backgroundColor: props.backgroundColor,
