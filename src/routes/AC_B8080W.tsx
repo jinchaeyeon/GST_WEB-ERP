@@ -1,10 +1,8 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
-import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import React, { useEffect, useRef, useState } from "react";
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
-import ReactToPrint from "react-to-print";
+import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -14,6 +12,7 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import YearCalendar from "../components/Calendars/YearCalendar";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
@@ -26,13 +25,12 @@ import {
   setDefaultDate,
 } from "../components/CommonFunction";
 import FilterContainer from "../components/Containers/FilterContainer";
-import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
-import FileViewers from "../components/Viewer/FileViewers";
 
-const AC_B8100W: React.FC = () => {
+const AC_B8080W: React.FC = () => {
   const processApi = useApi();
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -41,6 +39,7 @@ const AC_B8100W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
+  const [tabSelected, setTabSelected] = useState<number>(0);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -56,15 +55,12 @@ const AC_B8100W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        frdt: new Date(
-          parseInt(convertDateToStr(new Date()).substring(0, 4)),
-          0,
-          1
-        ),
-        todt: setDefaultDate(customOptionData, "todt"),
-        taxdt: setDefaultDate(customOptionData, "taxdt"),
+        reqdt: setDefaultDate(customOptionData, "reqdt"),
+        taxyy: setDefaultDate(customOptionData, "taxyy"),
         location: defaultOption.find((item: any) => item.id === "location")
           .valueCode,
+        chasu: defaultOption.find((item: any) => item.id === "chasu").valueCode,
+        gisu: defaultOption.find((item: any) => item.id === "gisu").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -73,10 +69,18 @@ const AC_B8100W: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
+  //그리드 데이터 스테이트
+  const [mainDataState2, setMainDataState2] = useState<State>({
+    sort: [],
+  });
 
   //그리드 데이터 결과값
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
+  );
+  //그리드 데이터 결과값
+  const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
+    process([], mainDataState2)
   );
 
   const [isInitSearch, setIsInitSearch] = useState(false);
@@ -101,13 +105,24 @@ const AC_B8100W: React.FC = () => {
     }));
   };
 
+  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
+  const filterRadioChange = (e: any) => {
+    const { name, value } = e;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
     orgdiv: "01",
     location: "01",
-    frdt: new Date(),
-    todt: new Date(),
-    taxdt: new Date(),
+    taxyy: new Date(),
+    reqdt: new Date(),
+    gisu: "01",
+    chasu: "01",
   });
 
   //조회조건 파라미터
@@ -118,9 +133,10 @@ const AC_B8100W: React.FC = () => {
     parameters: {
       "@p_work_type": "Q",
       "@p_orgdiv": filters.orgdiv,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_taxdt": convertDateToStr(filters.taxdt),
+      "@p_reqdt": convertDateToStr(filters.reqdt),
+      "@p_taxyy": convertDateToStr(filters.taxyy).substring(0, 4),
+      "@p_gisu": filters.gisu,
+      "@p_chasu": filters.chasu,
       "@p_location": filters.location,
     },
   };
@@ -157,6 +173,38 @@ const AC_B8100W: React.FC = () => {
     setLoading(false);
   };
 
+  //그리드 데이터 조회
+  const fetchMainGrid2 = async () => {
+    if (!permissions?.view) return;
+    let data: any;
+
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
+        ...row,
+        uri: row.xlsx,
+      }));
+
+      setMainDataResult2((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+    } else {
+      console.log("[에러발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -173,37 +221,44 @@ const AC_B8100W: React.FC = () => {
     }
   }, [filters, permissions]);
 
+  const handleSelectTab = (e: any) => {
+    if (e.selected == 0) {
+      fetchMainGrid();
+    } else {
+      fetchMainGrid2();
+    }
+    setTabSelected(e.selected);
+  };
+
   const search = () => {
     try {
-      if (
-        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.frdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "AC_B8100W_001");
+      if (convertDateToStr(filters.taxyy).substring(0, 4) < "1997") {
+        throw findMessage(messagesData, "AC_B8080W_001");
       } else if (
-        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.todt).substring(6, 8).length != 2
+        convertDateToStr(filters.reqdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.reqdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.reqdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.reqdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "AC_B8100W_001");
-      } else if (
-        convertDateToStr(filters.taxdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.taxdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.taxdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.taxdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "AC_B8100W_001");
+        throw findMessage(messagesData, "AC_B8080W_001");
       } else if (
         filters.location == null ||
         filters.location == undefined ||
         filters.location == ""
       ) {
-        throw findMessage(messagesData, "AC_B8100W_001");
+        throw findMessage(messagesData, "AC_B8080W_001");
+      } else if (
+        filters.chasu == null ||
+        filters.chasu == undefined ||
+        filters.chasu == ""
+      ) {
+        throw findMessage(messagesData, "AC_B8080W_001");
       } else {
-        fetchMainGrid();
+        if (tabSelected == 0) {
+          fetchMainGrid();
+        } else {
+          fetchMainGrid2();
+        }
       }
     } catch (e) {
       alert(e);
@@ -213,7 +268,7 @@ const AC_B8100W: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>전자세금계산서 발급세액공제신고서</Title>
+        <Title>수출실적명세서</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -230,21 +285,16 @@ const AC_B8100W: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th>기준일자</th>
+              <th>신고년도</th>
               <td>
-                <CommonDateRangePicker
-                  value={{
-                    start: filters.frdt,
-                    end: filters.todt,
-                  }}
-                  onChange={(e: { value: { start: any; end: any } }) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      frdt: e.value.start,
-                      todt: e.value.end,
-                    }))
-                  }
+                <DatePicker
+                  name="taxyy"
+                  format="yyyy"
+                  value={filters.taxyy}
+                  onChange={filterInputChange}
                   className="required"
+                  placeholder=""
+                  calendar={YearCalendar}
                 />
               </td>
               <th>사업장</th>
@@ -259,37 +309,87 @@ const AC_B8100W: React.FC = () => {
                   />
                 )}
               </td>
-              <th>신고일자</th>
+              <th>신고기수</th>
+              <td>
+                {" "}
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="gisu"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
+                  />
+                )}
+              </td>
+              <th>차수</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="chasu"
+                    value={filters.chasu}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    className="required"
+                    textField="name"
+                    valueField="code"
+                  />
+                )}
+              </td>
+              <th>작성일</th>
               <td>
                 <DatePicker
-                  name="taxdt"
-                  format="yyyy-MM-dd"
-                  value={filters.taxdt}
+                  name="reqdt"
+                  format="yyyy"
+                  value={filters.reqdt}
                   onChange={filterInputChange}
                   className="required"
                   placeholder=""
+                  calendar={YearCalendar}
                 />
               </td>
             </tr>
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-        >
-          {/* {mainDataResult.total > 0 ? (
+      <TabStrip
+        style={{ width: "100%" }}
+        selected={tabSelected}
+        onSelect={handleSelectTab}
+      >
+        <TabStripTab title="수출실적 일괄제출명세서">
+          <GridContainer>
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+            >
+              {/* {mainDataResult.total > 0 ? (
             <FileViewers file={mainDataResult.data[0]} type="xlsx" />
           ) : (
             ""
           )} */}
-        </ExcelExport>
-      </GridContainer>
+            </ExcelExport>
+          </GridContainer>
+        </TabStripTab>
+        <TabStripTab title="수출실적명세서">
+          <GridContainer>
+            <ExcelExport
+              data={mainDataResult2.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+            >
+              {/* {mainDataResult2.total > 0 ? (
+            <FileViewers file={mainDataResult2.data[0]} type="xlsx" />
+          ) : (
+            ""
+          )} */}
+            </ExcelExport>
+          </GridContainer>
+        </TabStripTab>
+      </TabStrip>
     </>
   );
 };
 
-export default AC_B8100W;
+export default AC_B8080W;

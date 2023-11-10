@@ -569,7 +569,7 @@ const SA_B2226W: React.FC = () => {
               "년도 품목별 계약 현황"
             }
           />
-          <Grid container spacing={2} style={{ marginBottom: "50px" }}>
+          <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <ComboChart
                 data={ItemList}

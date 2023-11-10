@@ -63,7 +63,7 @@ const PaginatorTable = (props) => {
           tableStyle={{ minWidth: "20rem"}}
           stripedRows
           paginator
-          rows={5}
+          rows={50}
           selectionMode="single"
           dataKey={props.key}
           filters={filters}

@@ -113,8 +113,7 @@ kendo-sortable {
     position: absolute;
     top: 50%;
     left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .k-no-click {
@@ -173,8 +172,7 @@ kendo-sortable {
     outline: none;
     cursor: default;
     opacity: 0.6;
-    -webkit-filter: grayscale(0.1);
-            filter: grayscale(0.1);
+    filter: grayscale(0.1);
     pointer-events: none;
     box-shadow: none;
 }
@@ -193,8 +191,7 @@ kendo-sortable {
 .k-disabled [disabled],
 .k-disabled .k-disabled {
     opacity: 1;
-    -webkit-filter: grayscale(0);
-            filter: grayscale(0);
+    filter: grayscale(0);
 }
 
 .k-hr {
@@ -256,8 +253,7 @@ kendo-sortable {
     align-items: center;
     position: absolute;
     z-index: 1000;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .k-drop-hint-start,
@@ -327,159 +323,111 @@ kendo-sortable {
 }
 
 .k-push-right-enter, .k-push-right-appear {
-    -webkit-transform: translate(-100%, 0);
-            transform: translate(-100%, 0);
+    transform: translate(-100%, 0);
 }
 
 .k-push-right-enter-active, .k-push-right-appear-active {
-    -webkit-transform: translate(0, 0);
-            transform: translate(0, 0);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translate(0, 0);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-push-right-exit {
-    -webkit-transform: translate(0, 0);
-            transform: translate(0, 0);
+    transform: translate(0, 0);
 }
 
 .k-push-right-exit-active {
-    -webkit-transform: translate(100%, 0);
-            transform: translate(100%, 0);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translate(100%, 0);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-push-left-enter, .k-push-left-appear {
-    -webkit-transform: translate(100%, 0);
-            transform: translate(100%, 0);
+    transform: translate(100%, 0);
 }
 
 .k-push-left-enter-active, .k-push-left-appear-active {
-    -webkit-transform: translate(0, 0);
-            transform: translate(0, 0);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translate(0, 0);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-push-left-exit {
-    -webkit-transform: translate(0, 0);
-            transform: translate(0, 0);
+    transform: translate(0, 0);
 }
 
 .k-push-left-exit-active {
-    -webkit-transform: translate(-100%, 0);
-            transform: translate(-100%, 0);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translate(-100%, 0);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-push-down-enter, .k-push-down-appear {
-    -webkit-transform: translate(0, -100%);
-            transform: translate(0, -100%);
+    transform: translate(0, -100%);
 }
 
 .k-push-down-enter-active, .k-push-down-appear-active {
-    -webkit-transform: translate(0, 0);
-            transform: translate(0, 0);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translate(0, 0);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-push-down-exit {
-    -webkit-transform: translate(0, 0);
-            transform: translate(0, 0);
+    transform: translate(0, 0);
 }
 
 .k-push-down-exit-active {
-    -webkit-transform: translate(0, 100%);
-            transform: translate(0, 100%);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translate(0, 100%);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-push-up-enter, .k-push-up-appear {
-    -webkit-transform: translate(0, 100%);
-            transform: translate(0, 100%);
+    transform: translate(0, 100%);
 }
 
 .k-push-up-enter-active, .k-push-up-appear-active {
-    -webkit-transform: translate(0, 0);
-            transform: translate(0, 0);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translate(0, 0);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-push-up-exit {
-    -webkit-transform: translate(0, 0);
-            transform: translate(0, 0);
+    transform: translate(0, 0);
 }
 
 .k-push-up-exit-active {
-    -webkit-transform: translate(0, -100%);
-            transform: translate(0, -100%);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translate(0, -100%);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-expand-vertical-enter, .k-expand-vertical-appear {
-    -webkit-transform: scaleY(0);
-            transform: scaleY(0);
+    transform: scaleY(0);
 }
 
 .k-expand-vertical-enter-active, .k-expand-vertical-appear-active {
-    -webkit-transform: scaleY(1);
-            transform: scaleY(1);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: scaleY(1);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-expand-vertical-exit {
-    -webkit-transform: scaleY(1);
-            transform: scaleY(1);
+    transform: scaleY(1);
 }
 
 .k-expand-vertical-exit-active {
-    -webkit-transform: scaleY(0);
-            transform: scaleY(0);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: scaleY(0);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-expand-horizontal-enter, .k-expand-horizontal-appear {
-    -webkit-transform: scaleX(0);
-            transform: scaleX(0);
+    transform: scaleX(0);
 }
 
 .k-expand-horizontal-enter-active, .k-expand-horizontal-appear-active {
-    -webkit-transform: scaleX(1);
-            transform: scaleX(1);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: scaleX(1);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-expand-horizontal-exit {
-    -webkit-transform: scaleX(1);
-            transform: scaleX(1);
+    transform: scaleX(1);
 }
 
 .k-expand-horizontal-exit-active {
-    -webkit-transform: scaleX(0);
-            transform: scaleX(0);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: scaleX(0);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-fade-enter, .k-fade-appear {
@@ -507,191 +455,137 @@ kendo-sortable {
 
 .k-zoom-in-enter, .k-zoom-in-appear {
     opacity: 0;
-    -webkit-transform: scale(0);
-            transform: scale(0);
+    transform: scale(0);
 }
 
 .k-zoom-in-enter-active, .k-zoom-in-appear-active {
     opacity: 1;
-    -webkit-transform: scale(1);
-            transform: scale(1);
-    transition: opacity 300ms ease-in-out, -webkit-transform;
+    transform: scale(1);
     transition: transform, opacity 300ms ease-in-out;
-    transition: transform, opacity 300ms ease-in-out, -webkit-transform;
 }
 
 .k-zoom-in-exit {
     opacity: 1;
-    -webkit-transform: scale(1);
-            transform: scale(1);
+    transform: scale(1);
 }
 
 .k-zoom-in-exit-active {
     opacity: 0;
-    -webkit-transform: scale(2);
-            transform: scale(2);
-    transition: opacity 300ms ease-in-out, -webkit-transform;
+    transform: scale(2);
     transition: transform, opacity 300ms ease-in-out;
-    transition: transform, opacity 300ms ease-in-out, -webkit-transform;
 }
 
 .k-zoom-out-enter, .k-zoom-out-appear {
     opacity: 0;
-    -webkit-transform: scale(2);
-            transform: scale(2);
+    transform: scale(2);
 }
 
 .k-zoom-out-enter-active, .k-zoom-out-appear-active {
     opacity: 1;
-    -webkit-transform: scale(1);
-            transform: scale(1);
-    transition: opacity 300ms ease-in-out, -webkit-transform;
+    transform: scale(1);
     transition: transform, opacity 300ms ease-in-out;
-    transition: transform, opacity 300ms ease-in-out, -webkit-transform;
 }
 
 .k-zoom-out-exit {
     opacity: 1;
-    -webkit-transform: scale(1);
-            transform: scale(1);
+    transform: scale(1);
 }
 
 .k-zoom-out-exit-active {
     opacity: 0;
-    -webkit-transform: scale(0);
-            transform: scale(0);
-    transition: opacity 300ms ease-in-out, -webkit-transform;
+    transform: scale(0);
     transition: transform, opacity 300ms ease-in-out;
-    transition: transform, opacity 300ms ease-in-out, -webkit-transform;
 }
 
 .k-slide-in-appear {
     opacity: .1;
-    -webkit-transform: translate(0, -3em);
-            transform: translate(0, -3em);
+    transform: translate(0, -3em);
 }
 
 .k-slide-in-appear .k-centered {
-    -webkit-transform: translate(-50%, -60%);
-            transform: translate(-50%, -60%);
+    transform: translate(-50%, -60%);
 }
 
 .k-slide-in-appear-active {
     opacity: 1;
-    -webkit-transform: translate(0, 0);
-            transform: translate(0, 0);
-    transition: opacity 0.3s cubic-bezier(0.2, 1, 0.2, 1), -webkit-transform 0.3s cubic-bezier(0.2, 0.6, 0.4, 1);
+    transform: translate(0, 0);
     transition: transform 0.3s cubic-bezier(0.2, 0.6, 0.4, 1), opacity 0.3s cubic-bezier(0.2, 1, 0.2, 1);
-    transition: transform 0.3s cubic-bezier(0.2, 0.6, 0.4, 1), opacity 0.3s cubic-bezier(0.2, 1, 0.2, 1), -webkit-transform 0.3s cubic-bezier(0.2, 0.6, 0.4, 1);
 }
 
 .k-slide-in-appear-active .k-centered {
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .k-slide-down-enter, .k-slide-down-appear {
-    -webkit-transform: translateY(-100%);
-            transform: translateY(-100%);
+    transform: translateY(-100%);
 }
 
 .k-slide-down-enter-active, .k-slide-down-appear-active {
-    -webkit-transform: translateY(0);
-            transform: translateY(0);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translateY(0);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-slide-down-exit {
-    -webkit-transform: translateY(0);
-            transform: translateY(0);
+    transform: translateY(0);
 }
 
 .k-slide-down-exit-active {
-    -webkit-transform: translateY(-100%);
-            transform: translateY(-100%);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translateY(-100%);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-slide-up-enter, .k-slide-up-appear {
-    -webkit-transform: translateY(100%);
-            transform: translateY(100%);
+    transform: translateY(100%);
 }
 
 .k-slide-up-enter-active, .k-slide-up-appear-active {
-    -webkit-transform: translateY(0);
-            transform: translateY(0);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translateY(0);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-slide-up-exit {
-    -webkit-transform: translateY(0);
-            transform: translateY(0);
+    transform: translateY(0);
 }
 
 .k-slide-up-exit-active {
-    -webkit-transform: translateY(100%);
-            transform: translateY(100%);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translateY(100%);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-slide-right-enter, .k-slide-right-appear {
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
 }
 
 .k-slide-right-enter-active, .k-slide-right-appear-active {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translateX(0);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-slide-right-exit {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
 }
 
 .k-slide-right-exit-active {
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translateX(-100%);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-slide-left-enter, .k-slide-left-appear {
-    -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 .k-slide-left-enter-active, .k-slide-left-appear-active {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translateX(0);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-slide-left-exit {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
 }
 
 .k-slide-left-exit-active {
-    -webkit-transform: translateX(100%);
-            transform: translateX(100%);
-    transition: -webkit-transform 300ms ease-in-out;
+    transform: translateX(100%);
     transition: transform 300ms ease-in-out;
-    transition: transform 300ms ease-in-out, -webkit-transform 300ms ease-in-out;
 }
 
 .k-reveal-vertical-enter, .k-reveal-vertical-appear {
@@ -751,29 +645,24 @@ kendo-sortable {
 }
 
 .k-fx-zoom.k-fx-start .k-fx-next {
-    -webkit-transform: scale(0) !important;
-            transform: scale(0) !important;
+    transform: scale(0) !important;
 }
 
 .k-fx-zoom.k-fx-end .k-fx-next {
-    -webkit-transform: scale(1) !important;
-            transform: scale(1) !important;
+    transform: scale(1) !important;
 }
 
 .k-fx-zoom.k-fx-reverse.k-fx-start .k-fx-next,
 .k-fx-zoom.k-fx-reverse.k-fx-end .k-fx-next {
-    -webkit-transform: scale(1) !important;
-            transform: scale(1) !important;
+    transform: scale(1) !important;
 }
 
 .k-fx-zoom.k-fx-reverse.k-fx-start .k-fx-current {
-    -webkit-transform: scale(1) !important;
-            transform: scale(1) !important;
+    transform: scale(1) !important;
 }
 
 .k-fx-zoom.k-fx-reverse.k-fx-end .k-fx-current {
-    -webkit-transform: scale(0) !important;
-            transform: scale(0) !important;
+    transform: scale(0) !important;
 }
 
 .k-fx-fade.k-fx-start .k-fx-next {
@@ -812,8 +701,7 @@ kendo-sortable {
 .k-fx-slide.k-fx-start .k-fx-next .k-content,
 .k-fx-slide.k-fx-start .k-fx-next .km-content {
     will-change: transform;
-    -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 .k-fx-slide.k-fx-start .k-fx-next .k-header,
@@ -826,8 +714,7 @@ kendo-sortable {
 
 .k-fx-slide.k-fx-end .k-fx-current .k-content,
 .k-fx-slide.k-fx-end .k-fx-current .km-content {
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
 }
 
 .k-fx-slide.k-fx-end .k-fx-next .k-header,
@@ -840,26 +727,22 @@ kendo-sortable {
 .k-fx-slide.k-fx-reverse.k-fx-start .k-fx-current .k-content,
 .k-fx-slide.k-fx-reverse.k-fx-start .k-fx-current .km-content {
     will-change: transform;
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
 }
 
 .k-fx-slide.k-fx-reverse.k-fx-end .k-fx-current .k-content,
 .k-fx-slide.k-fx-reverse.k-fx-end .k-fx-current .km-content {
-    -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 .k-fx-slide.k-fx-reverse.k-fx-start .k-fx-next .k-content,
 .k-fx-slide.k-fx-reverse.k-fx-start .k-fx-next .km-content {
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
 }
 
 .k-fx-slide.k-fx-reverse.k-fx-end .k-fx-next .k-content,
 .k-fx-slide.k-fx-reverse.k-fx-end .k-fx-next .km-content {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
 }
 
 .k-fx-slide.k-fx-reverse.k-fx-start .k-fx-current .k-header,
@@ -893,154 +776,126 @@ kendo-sortable {
 
 .k-fx-slide.k-fx-right.k-fx-start .k-fx-next .k-content,
 .k-fx-slide.k-fx-right.k-fx-start .k-fx-next .km-content {
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
 }
 
 .k-fx-slide.k-fx-right.k-fx-end .k-fx-current .k-content,
 .k-fx-slide.k-fx-right.k-fx-end .k-fx-current .km-content {
-    -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 .k-fx-slide.k-fx-right.k-fx-reverse.k-fx-start .k-fx-current .k-content,
 .k-fx-slide.k-fx-right.k-fx-reverse.k-fx-start .k-fx-current .km-content {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
 }
 
 .k-fx-slide.k-fx-right.k-fx-reverse.k-fx-end .k-fx-current .k-content,
 .k-fx-slide.k-fx-right.k-fx-reverse.k-fx-end .k-fx-current .km-content {
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
 }
 
 .k-fx-slide.k-fx-right.k-fx-reverse.k-fx-start .k-fx-next .k-content,
 .k-fx-slide.k-fx-right.k-fx-reverse.k-fx-start .k-fx-next .km-content {
-    -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 .k-fx-slide.k-fx-right.k-fx-reverse.k-fx-end .k-fx-next .k-content,
 .k-fx-slide.k-fx-right.k-fx-reverse.k-fx-end .k-fx-next .km-content {
-    -webkit-transform: translateX(0%);
-            transform: translateX(0%);
+    transform: translateX(0%);
 }
 
 .k-fx-tile.k-fx-start .k-fx-next {
     will-change: transform;
-    -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 .k-fx-tile.k-fx-end .k-fx-current {
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
 }
 
 .k-fx-tile.k-fx-reverse.k-fx-start .k-fx-current {
     will-change: transform;
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
 }
 
 .k-fx-tile.k-fx-reverse.k-fx-end .k-fx-current {
-    -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 .k-fx-tile.k-fx-reverse.k-fx-start .k-fx-next {
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
 }
 
 .k-fx-tile.k-fx-reverse.k-fx-end .k-fx-next {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
 }
 
 .k-fx-tile.k-fx-right.k-fx-start .k-fx-next {
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
 }
 
 .k-fx-tile.k-fx-right.k-fx-end .k-fx-current {
-    -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 .k-fx-tile.k-fx-right.k-fx-reverse.k-fx-start .k-fx-current {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
 }
 
 .k-fx-tile.k-fx-right.k-fx-reverse.k-fx-end .k-fx-current {
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
 }
 
 .k-fx-tile.k-fx-right.k-fx-reverse.k-fx-start .k-fx-next {
-    -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 .k-fx-tile.k-fx-right.k-fx-reverse.k-fx-end .k-fx-next {
-    -webkit-transform: translateX(0%);
-            transform: translateX(0%);
+    transform: translateX(0%);
 }
 
 .k-fx.k-fx-overlay.k-fx-start .k-fx-next,
 .k-fx.k-fx-overlay.k-fx-left.k-fx-start .k-fx-next {
     will-change: transform;
-    -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 .k-fx.k-fx-overlay.k-fx-right.k-fx-start .k-fx-next {
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
 }
 
 .k-fx.k-fx-overlay.k-fx-up.k-fx-start .k-fx-next {
-    -webkit-transform: translateY(100%);
-            transform: translateY(100%);
+    transform: translateY(100%);
 }
 
 .k-fx.k-fx-overlay.k-fx-down.k-fx-start .k-fx-next {
-    -webkit-transform: translateY(-100%);
-            transform: translateY(-100%);
+    transform: translateY(-100%);
 }
 
 .k-fx.k-fx-overlay.k-fx-reverse.k-fx-start .k-fx-next {
-    -webkit-transform: none;
-            transform: none;
+    transform: none;
 }
 
 .k-fx.k-fx-overlay.k-fx-reverse.k-fx-start .k-fx-current {
     will-change: transform;
-    -webkit-transform: none;
-            transform: none;
+    transform: none;
 }
 
 .k-fx.k-fx-overlay.k-fx-reverse.k-fx-end .k-fx-current,
 .k-fx.k-fx-overlay.k-fx-reverse.k-fx-left.k-fx-end .k-fx-current {
-    -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 .k-fx.k-fx-overlay.k-fx-reverse.k-fx-right.k-fx-end .k-fx-current {
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
 }
 
 .k-fx.k-fx-overlay.k-fx-reverse.k-fx-up.k-fx-end .k-fx-current {
-    -webkit-transform: translateY(100%);
-            transform: translateY(100%);
+    transform: translateY(100%);
 }
 
 .k-fx.k-fx-overlay.k-fx-reverse.k-fx-down.k-fx-end .k-fx-current {
-    -webkit-transform: translateY(-100%);
-            transform: translateY(-100%);
+    transform: translateY(-100%);
 }
 
 .k-drag-clue {
@@ -1085,8 +940,7 @@ kendo-sortable {
     height: 0;
     border: 3px solid transparent;
     position: absolute;
-    -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
+    transform: translateX(-50%);
 }
 
 .k-reorder-cue::before {
@@ -1194,8 +1048,7 @@ kendo-sortable {
     margin-left: -.5em;
     width: 1em;
     height: 1em;
-    -webkit-animation: k-loading-animation .7s linear infinite;
-            animation: k-loading-animation .7s linear infinite;
+    animation: k-loading-animation .7s linear infinite;
 }
 
 .k-i-loading::after,
@@ -1215,20 +1068,6 @@ kendo-sortable {
     font-size: 4em;
 }
 
-@-webkit-keyframes loading {
-    0% {
-        stroke-dasharray: 0 251;
-        stroke-dashoffset: 502;
-    }
-    50% {
-        stroke-dasharray: 250 1;
-    }
-    100% {
-        stroke-dasharray: 0 251;
-        stroke-dashoffset: 0;
-    }
-}
-
 @keyframes loading {
     0% {
         stroke-dasharray: 0 251;
@@ -1243,25 +1082,12 @@ kendo-sortable {
     }
 }
 
-@-webkit-keyframes k-loading-animation {
-    0% {
-        -webkit-transform: rotate(0deg);
-                transform: rotate(0deg);
-    }
-    100% {
-        -webkit-transform: rotate(360deg);
-                transform: rotate(360deg);
-    }
-}
-
 @keyframes k-loading-animation {
     0% {
-        -webkit-transform: rotate(0deg);
-                transform: rotate(0deg);
+        transform: rotate(0deg);
     }
     100% {
-        -webkit-transform: rotate(360deg);
-                transform: rotate(360deg);
+        transform: rotate(360deg);
     }
 }
 
@@ -3464,8 +3290,7 @@ kendo-sortable {
 .k-pos-top-center {
     top: 0;
     left: 50%;
-    -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
+    transform: translateX(-50%);
 }
 
 .k-top-end,
@@ -3488,8 +3313,7 @@ kendo-sortable {
 .k-pos-middle-start {
     top: 50%;
     left: 0;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 .k-rtl .k-middle-start, .k-middle-start[dir="rtl"],
@@ -3506,16 +3330,14 @@ kendo-sortable {
 .k-pos-middle-center {
     top: 50%;
     left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .k-middle-end,
 .k-pos-middle-end {
     top: 50%;
     right: 0;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 .k-rtl .k-middle-end, .k-middle-end[dir="rtl"],
@@ -3548,8 +3370,7 @@ kendo-sortable {
 .k-pos-bottom-center {
     bottom: 0;
     left: 50%;
-    -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
+    transform: translateX(-50%);
 }
 
 .k-bottom-end,
@@ -5529,8 +5350,7 @@ kendo-sortable {
 }
 
 .k-gap-x-0 {
-    -webkit-column-gap: 0;
-            column-gap: 0;
+    column-gap: 0;
 }
 
 .k-gap-y-0 {
@@ -5542,8 +5362,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-0 {
-    -webkit-column-gap: 0 !important;
-            column-gap: 0 !important;
+    column-gap: 0 !important;
 }
 
 .\!k-gap-y-0 {
@@ -5555,8 +5374,7 @@ kendo-sortable {
 }
 
 .k-gap-x-1 {
-    -webkit-column-gap: 4px;
-            column-gap: 4px;
+    column-gap: 4px;
 }
 
 .k-gap-y-1 {
@@ -5568,8 +5386,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-1 {
-    -webkit-column-gap: 4px !important;
-            column-gap: 4px !important;
+    column-gap: 4px !important;
 }
 
 .\!k-gap-y-1 {
@@ -5581,8 +5398,7 @@ kendo-sortable {
 }
 
 .k-gap-x-2 {
-    -webkit-column-gap: 8px;
-            column-gap: 8px;
+    column-gap: 8px;
 }
 
 .k-gap-y-2 {
@@ -5594,8 +5410,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-2 {
-    -webkit-column-gap: 8px !important;
-            column-gap: 8px !important;
+    column-gap: 8px !important;
 }
 
 .\!k-gap-y-2 {
@@ -5607,8 +5422,7 @@ kendo-sortable {
 }
 
 .k-gap-x-3 {
-    -webkit-column-gap: 12px;
-            column-gap: 12px;
+    column-gap: 12px;
 }
 
 .k-gap-y-3 {
@@ -5620,8 +5434,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-3 {
-    -webkit-column-gap: 12px !important;
-            column-gap: 12px !important;
+    column-gap: 12px !important;
 }
 
 .\!k-gap-y-3 {
@@ -5633,8 +5446,7 @@ kendo-sortable {
 }
 
 .k-gap-x-4 {
-    -webkit-column-gap: 16px;
-            column-gap: 16px;
+    column-gap: 16px;
 }
 
 .k-gap-y-4 {
@@ -5646,8 +5458,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-4 {
-    -webkit-column-gap: 16px !important;
-            column-gap: 16px !important;
+    column-gap: 16px !important;
 }
 
 .\!k-gap-y-4 {
@@ -5659,8 +5470,7 @@ kendo-sortable {
 }
 
 .k-gap-x-5 {
-    -webkit-column-gap: 20px;
-            column-gap: 20px;
+    column-gap: 20px;
 }
 
 .k-gap-y-5 {
@@ -5672,8 +5482,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-5 {
-    -webkit-column-gap: 20px !important;
-            column-gap: 20px !important;
+    column-gap: 20px !important;
 }
 
 .\!k-gap-y-5 {
@@ -5685,8 +5494,7 @@ kendo-sortable {
 }
 
 .k-gap-x-6 {
-    -webkit-column-gap: 24px;
-            column-gap: 24px;
+    column-gap: 24px;
 }
 
 .k-gap-y-6 {
@@ -5698,8 +5506,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-6 {
-    -webkit-column-gap: 24px !important;
-            column-gap: 24px !important;
+    column-gap: 24px !important;
 }
 
 .\!k-gap-y-6 {
@@ -5711,8 +5518,7 @@ kendo-sortable {
 }
 
 .k-gap-x-7 {
-    -webkit-column-gap: 28px;
-            column-gap: 28px;
+    column-gap: 28px;
 }
 
 .k-gap-y-7 {
@@ -5724,8 +5530,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-7 {
-    -webkit-column-gap: 28px !important;
-            column-gap: 28px !important;
+    column-gap: 28px !important;
 }
 
 .\!k-gap-y-7 {
@@ -5737,8 +5542,7 @@ kendo-sortable {
 }
 
 .k-gap-x-8 {
-    -webkit-column-gap: 32px;
-            column-gap: 32px;
+    column-gap: 32px;
 }
 
 .k-gap-y-8 {
@@ -5750,8 +5554,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-8 {
-    -webkit-column-gap: 32px !important;
-            column-gap: 32px !important;
+    column-gap: 32px !important;
 }
 
 .\!k-gap-y-8 {
@@ -5763,8 +5566,7 @@ kendo-sortable {
 }
 
 .k-gap-x-9 {
-    -webkit-column-gap: 36px;
-            column-gap: 36px;
+    column-gap: 36px;
 }
 
 .k-gap-y-9 {
@@ -5776,8 +5578,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-9 {
-    -webkit-column-gap: 36px !important;
-            column-gap: 36px !important;
+    column-gap: 36px !important;
 }
 
 .\!k-gap-y-9 {
@@ -5789,8 +5590,7 @@ kendo-sortable {
 }
 
 .k-gap-x-10 {
-    -webkit-column-gap: 40px;
-            column-gap: 40px;
+    column-gap: 40px;
 }
 
 .k-gap-y-10 {
@@ -5802,8 +5602,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-10 {
-    -webkit-column-gap: 40px !important;
-            column-gap: 40px !important;
+    column-gap: 40px !important;
 }
 
 .\!k-gap-y-10 {
@@ -5815,8 +5614,7 @@ kendo-sortable {
 }
 
 .k-gap-x-11 {
-    -webkit-column-gap: 44px;
-            column-gap: 44px;
+    column-gap: 44px;
 }
 
 .k-gap-y-11 {
@@ -5828,8 +5626,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-11 {
-    -webkit-column-gap: 44px !important;
-            column-gap: 44px !important;
+    column-gap: 44px !important;
 }
 
 .\!k-gap-y-11 {
@@ -5841,8 +5638,7 @@ kendo-sortable {
 }
 
 .k-gap-x-12 {
-    -webkit-column-gap: 48px;
-            column-gap: 48px;
+    column-gap: 48px;
 }
 
 .k-gap-y-12 {
@@ -5854,8 +5650,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-12 {
-    -webkit-column-gap: 48px !important;
-            column-gap: 48px !important;
+    column-gap: 48px !important;
 }
 
 .\!k-gap-y-12 {
@@ -5867,8 +5662,7 @@ kendo-sortable {
 }
 
 .k-gap-x-13 {
-    -webkit-column-gap: 52px;
-            column-gap: 52px;
+    column-gap: 52px;
 }
 
 .k-gap-y-13 {
@@ -5880,8 +5674,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-13 {
-    -webkit-column-gap: 52px !important;
-            column-gap: 52px !important;
+    column-gap: 52px !important;
 }
 
 .\!k-gap-y-13 {
@@ -5893,8 +5686,7 @@ kendo-sortable {
 }
 
 .k-gap-x-14 {
-    -webkit-column-gap: 56px;
-            column-gap: 56px;
+    column-gap: 56px;
 }
 
 .k-gap-y-14 {
@@ -5906,8 +5698,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-14 {
-    -webkit-column-gap: 56px !important;
-            column-gap: 56px !important;
+    column-gap: 56px !important;
 }
 
 .\!k-gap-y-14 {
@@ -5919,8 +5710,7 @@ kendo-sortable {
 }
 
 .k-gap-x-15 {
-    -webkit-column-gap: 60px;
-            column-gap: 60px;
+    column-gap: 60px;
 }
 
 .k-gap-y-15 {
@@ -5932,8 +5722,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-15 {
-    -webkit-column-gap: 60px !important;
-            column-gap: 60px !important;
+    column-gap: 60px !important;
 }
 
 .\!k-gap-y-15 {
@@ -5945,8 +5734,7 @@ kendo-sortable {
 }
 
 .k-gap-x-16 {
-    -webkit-column-gap: 64px;
-            column-gap: 64px;
+    column-gap: 64px;
 }
 
 .k-gap-y-16 {
@@ -5958,8 +5746,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-16 {
-    -webkit-column-gap: 64px !important;
-            column-gap: 64px !important;
+    column-gap: 64px !important;
 }
 
 .\!k-gap-y-16 {
@@ -5971,8 +5758,7 @@ kendo-sortable {
 }
 
 .k-gap-x-17 {
-    -webkit-column-gap: 68px;
-            column-gap: 68px;
+    column-gap: 68px;
 }
 
 .k-gap-y-17 {
@@ -5984,8 +5770,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-17 {
-    -webkit-column-gap: 68px !important;
-            column-gap: 68px !important;
+    column-gap: 68px !important;
 }
 
 .\!k-gap-y-17 {
@@ -5997,8 +5782,7 @@ kendo-sortable {
 }
 
 .k-gap-x-18 {
-    -webkit-column-gap: 72px;
-            column-gap: 72px;
+    column-gap: 72px;
 }
 
 .k-gap-y-18 {
@@ -6010,8 +5794,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-18 {
-    -webkit-column-gap: 72px !important;
-            column-gap: 72px !important;
+    column-gap: 72px !important;
 }
 
 .\!k-gap-y-18 {
@@ -6023,8 +5806,7 @@ kendo-sortable {
 }
 
 .k-gap-x-19 {
-    -webkit-column-gap: 76px;
-            column-gap: 76px;
+    column-gap: 76px;
 }
 
 .k-gap-y-19 {
@@ -6036,8 +5818,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-19 {
-    -webkit-column-gap: 76px !important;
-            column-gap: 76px !important;
+    column-gap: 76px !important;
 }
 
 .\!k-gap-y-19 {
@@ -6049,8 +5830,7 @@ kendo-sortable {
 }
 
 .k-gap-x-20 {
-    -webkit-column-gap: 80px;
-            column-gap: 80px;
+    column-gap: 80px;
 }
 
 .k-gap-y-20 {
@@ -6062,8 +5842,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-20 {
-    -webkit-column-gap: 80px !important;
-            column-gap: 80px !important;
+    column-gap: 80px !important;
 }
 
 .\!k-gap-y-20 {
@@ -6075,8 +5854,7 @@ kendo-sortable {
 }
 
 .k-gap-x-21 {
-    -webkit-column-gap: 84px;
-            column-gap: 84px;
+    column-gap: 84px;
 }
 
 .k-gap-y-21 {
@@ -6088,8 +5866,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-21 {
-    -webkit-column-gap: 84px !important;
-            column-gap: 84px !important;
+    column-gap: 84px !important;
 }
 
 .\!k-gap-y-21 {
@@ -6101,8 +5878,7 @@ kendo-sortable {
 }
 
 .k-gap-x-22 {
-    -webkit-column-gap: 88px;
-            column-gap: 88px;
+    column-gap: 88px;
 }
 
 .k-gap-y-22 {
@@ -6114,8 +5890,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-22 {
-    -webkit-column-gap: 88px !important;
-            column-gap: 88px !important;
+    column-gap: 88px !important;
 }
 
 .\!k-gap-y-22 {
@@ -6127,8 +5902,7 @@ kendo-sortable {
 }
 
 .k-gap-x-23 {
-    -webkit-column-gap: 92px;
-            column-gap: 92px;
+    column-gap: 92px;
 }
 
 .k-gap-y-23 {
@@ -6140,8 +5914,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-23 {
-    -webkit-column-gap: 92px !important;
-            column-gap: 92px !important;
+    column-gap: 92px !important;
 }
 
 .\!k-gap-y-23 {
@@ -6153,8 +5926,7 @@ kendo-sortable {
 }
 
 .k-gap-x-24 {
-    -webkit-column-gap: 96px;
-            column-gap: 96px;
+    column-gap: 96px;
 }
 
 .k-gap-y-24 {
@@ -6166,8 +5938,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-24 {
-    -webkit-column-gap: 96px !important;
-            column-gap: 96px !important;
+    column-gap: 96px !important;
 }
 
 .\!k-gap-y-24 {
@@ -6179,8 +5950,7 @@ kendo-sortable {
 }
 
 .k-gap-x-xs {
-    -webkit-column-gap: 4px;
-            column-gap: 4px;
+    column-gap: 4px;
 }
 
 .k-gap-y-xs {
@@ -6192,8 +5962,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-xs {
-    -webkit-column-gap: 4px !important;
-            column-gap: 4px !important;
+    column-gap: 4px !important;
 }
 
 .\!k-gap-y-xs {
@@ -6205,8 +5974,7 @@ kendo-sortable {
 }
 
 .k-gap-x-sm {
-    -webkit-column-gap: 8px;
-            column-gap: 8px;
+    column-gap: 8px;
 }
 
 .k-gap-y-sm {
@@ -6218,8 +5986,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-sm {
-    -webkit-column-gap: 8px !important;
-            column-gap: 8px !important;
+    column-gap: 8px !important;
 }
 
 .\!k-gap-y-sm {
@@ -6231,8 +5998,7 @@ kendo-sortable {
 }
 
 .k-gap-x-md {
-    -webkit-column-gap: 12px;
-            column-gap: 12px;
+    column-gap: 12px;
 }
 
 .k-gap-y-md {
@@ -6244,8 +6010,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-md {
-    -webkit-column-gap: 12px !important;
-            column-gap: 12px !important;
+    column-gap: 12px !important;
 }
 
 .\!k-gap-y-md {
@@ -6257,8 +6022,7 @@ kendo-sortable {
 }
 
 .k-gap-x-lg {
-    -webkit-column-gap: 16px;
-            column-gap: 16px;
+    column-gap: 16px;
 }
 
 .k-gap-y-lg {
@@ -6270,8 +6034,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-lg {
-    -webkit-column-gap: 16px !important;
-            column-gap: 16px !important;
+    column-gap: 16px !important;
 }
 
 .\!k-gap-y-lg {
@@ -6283,8 +6046,7 @@ kendo-sortable {
 }
 
 .k-gap-x-xl {
-    -webkit-column-gap: 24px;
-            column-gap: 24px;
+    column-gap: 24px;
 }
 
 .k-gap-y-xl {
@@ -6296,8 +6058,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-xl {
-    -webkit-column-gap: 24px !important;
-            column-gap: 24px !important;
+    column-gap: 24px !important;
 }
 
 .\!k-gap-y-xl {
@@ -6309,8 +6070,7 @@ kendo-sortable {
 }
 
 .k-gap-x-thin {
-    -webkit-column-gap: 2px;
-            column-gap: 2px;
+    column-gap: 2px;
 }
 
 .k-gap-y-thin {
@@ -6322,8 +6082,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-thin {
-    -webkit-column-gap: 2px !important;
-            column-gap: 2px !important;
+    column-gap: 2px !important;
 }
 
 .\!k-gap-y-thin {
@@ -6335,8 +6094,7 @@ kendo-sortable {
 }
 
 .k-gap-x-hair {
-    -webkit-column-gap: 1px;
-            column-gap: 1px;
+    column-gap: 1px;
 }
 
 .k-gap-y-hair {
@@ -6348,8 +6106,7 @@ kendo-sortable {
 }
 
 .\!k-gap-x-hair {
-    -webkit-column-gap: 1px !important;
-            column-gap: 1px !important;
+    column-gap: 1px !important;
 }
 
 .\!k-gap-y-hair {
@@ -6749,113 +6506,91 @@ kendo-sortable {
 }
 
 .k-flip-h {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 .k-flip-v {
-    -webkit-transform: scaleY(-1);
-            transform: scaleY(-1);
+    transform: scaleY(-1);
 }
 
 .k-flip-h.k-flip-v {
-    -webkit-transform: scale(-1, -1);
-            transform: scale(-1, -1);
+    transform: scale(-1, -1);
 }
 
 .k-rotate-45 {
-    -webkit-transform: rotate(45deg);
-            transform: rotate(45deg);
+    transform: rotate(45deg);
 }
 
 .k-rotate-90 {
-    -webkit-transform: rotate(90deg);
-            transform: rotate(90deg);
+    transform: rotate(90deg);
 }
 
 .k-rotate-135 {
-    -webkit-transform: rotate(135deg);
-            transform: rotate(135deg);
+    transform: rotate(135deg);
 }
 
 .k-rotate-180 {
-    -webkit-transform: rotate(180deg);
-            transform: rotate(180deg);
+    transform: rotate(180deg);
 }
 
 .k-rotate-225 {
-    -webkit-transform: rotate(225deg);
-            transform: rotate(225deg);
+    transform: rotate(225deg);
 }
 
 .k-rotate-270 {
-    -webkit-transform: rotate(270deg);
-            transform: rotate(270deg);
+    transform: rotate(270deg);
 }
 
 .k-rotate-315 {
-    -webkit-transform: rotate(315deg);
-            transform: rotate(315deg);
+    transform: rotate(315deg);
 }
 
 .k-scale-0 {
-    -webkit-transform: scale(0, 0);
-            transform: scale(0, 0);
+    transform: scale(0, 0);
 }
 
 .k-scale-1 {
-    -webkit-transform: scale(1, 1);
-            transform: scale(1, 1);
+    transform: scale(1, 1);
 }
 
 .k-scale-2 {
-    -webkit-transform: scale(2, 2);
-            transform: scale(2, 2);
+    transform: scale(2, 2);
 }
 
 .k-translate-0 {
-    -webkit-transform: translate(0, 0);
-            transform: translate(0, 0);
+    transform: translate(0, 0);
 }
 
 .k-translate-0-50 {
-    -webkit-transform: translate(0, 50%);
-            transform: translate(0, 50%);
+    transform: translate(0, 50%);
 }
 
 .k-translate-0-100 {
-    -webkit-transform: translate(0, 100%);
-            transform: translate(0, 100%);
+    transform: translate(0, 100%);
 }
 
 .k-translate-50-0 {
-    -webkit-transform: translate(50%, 0);
-            transform: translate(50%, 0);
+    transform: translate(50%, 0);
 }
 
 .k-translate-50-50 {
-    -webkit-transform: translate(50%, 50%);
-            transform: translate(50%, 50%);
+    transform: translate(50%, 50%);
 }
 
 .k-translate-50-100 {
-    -webkit-transform: translate(50%, 100%);
-            transform: translate(50%, 100%);
+    transform: translate(50%, 100%);
 }
 
 .k-translate-100-0 {
-    -webkit-transform: translate(100%, 0);
-            transform: translate(100%, 0);
+    transform: translate(100%, 0);
 }
 
 .k-translate-100-50 {
-    -webkit-transform: translate(100%, 50%);
-            transform: translate(100%, 50%);
+    transform: translate(100%, 50%);
 }
 
 .k-translate-100-100 {
-    -webkit-transform: translate(100%, 100%);
-            transform: translate(100%, 100%);
+    transform: translate(100%, 100%);
 }
 
 .k-user-select-none {
@@ -7099,23 +6834,19 @@ kendo-sortable {
 }
 
 .k-svg-icon.k-flip-h, .k-svg-icon.k-flip-v, .k-svg-icon.k-flip-h.k-flip-v {
-    -webkit-transform: none;
-            transform: none;
+    transform: none;
 }
 
 .k-svg-icon.k-flip-h > svg {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 .k-svg-icon.k-flip-v > svg {
-    -webkit-transform: scaleY(-1);
-            transform: scaleY(-1);
+    transform: scaleY(-1);
 }
 
 .k-svg-icon.k-flip-h.k-flip-v > svg {
-    -webkit-transform: scale(-1, -1);
-            transform: scale(-1, -1);
+    transform: scale(-1, -1);
 }
 
 .k-icon-with-modifier {
@@ -11175,8 +10906,7 @@ kendo-sortable {
 .k-rtl .k-i-collapse,
 [dir="rtl"] .k-i-expand,
 [dir="rtl"] .k-i-collapse {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 .k-sprite {
@@ -11304,8 +11034,7 @@ kendo-sortable {
     outline: none;
     cursor: default;
     opacity: 0.6;
-    -webkit-filter: grayscale(0.1);
-            filter: grayscale(0.1);
+    filter: grayscale(0.1);
     pointer-events: none;
     box-shadow: none;
 }
@@ -11350,8 +11079,7 @@ kendo-sortable {
 .k-checkbox + .k-checkbox-label,
 .k-checkbox-wrap + .k-checkbox-label {
     display: inline;
-    -webkit-margin-start: 4px;
-            margin-inline-start: 4px;
+    margin-inline-start: 4px;
 }
 
 .k-checkbox-label:empty {
@@ -11401,13 +11129,9 @@ kendo-sortable {
     top: 50%;
     border-radius: 100%;
     z-index: -1;
-    transition: opacity 100ms linear, -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
     transition: opacity 100ms linear, transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    transition: opacity 100ms linear, transform 150ms cubic-bezier(0.4, 0, 0.2, 1), -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    -webkit-transform: translate(-50%, -50%) scale(0);
-            transform: translate(-50%, -50%) scale(0);
-    -webkit-transform-origin: center center;
-            transform-origin: center center;
+    transform: translate(-50%, -50%) scale(0);
+    transform-origin: center center;
 }
 
 .k-ripple-container .k-checkbox:focus,
@@ -11841,8 +11565,7 @@ kendo-sortable {
     position: absolute;
     top: 50%;
     right: 0;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 .k-listgroup-item-segmented {
@@ -11918,8 +11641,7 @@ kendo-sortable {
 }
 
 [dir="rtl"] .k-listgroup-item > .k-link > .k-select .k-icon {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 [dir="rtl"] .k-listgroup-item-segmented > .k-link {
@@ -11935,8 +11657,7 @@ kendo-sortable {
 }
 
 [dir="rtl"] .k-listgroup-item-segmented > .k-select .k-icon {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 .k-noflexbox .k-listgroup,
@@ -12083,11 +11804,8 @@ kendo-sortable {
     position: absolute;
     border-radius: 50%;
     padding: 0;
-    -webkit-transform: translate(-50%, -50%) scale(0);
-            transform: translate(-50%, -50%) scale(0);
-    transition: opacity 100ms linear, -webkit-transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translate(-50%, -50%) scale(0);
     transition: opacity 100ms linear, transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
-    transition: opacity 100ms linear, transform 500ms cubic-bezier(0.4, 0, 0.2, 1), -webkit-transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
     opacity: .1;
     background-color: currentColor;
 }
@@ -12098,39 +11816,19 @@ kendo-sortable {
 
 .k-ripple-focus::after {
     visibility: visible;
-    -webkit-animation: ripple 600ms ease-out;
-            animation: ripple 600ms ease-out;
-}
-
-@-webkit-keyframes ripple {
-    0% {
-        -webkit-transform: translate(-50%, -50%) scale(0);
-                transform: translate(-50%, -50%) scale(0);
-    }
-    20% {
-        -webkit-transform: translate(-50%, -50%) scale(1);
-                transform: translate(-50%, -50%) scale(1);
-    }
-    100% {
-        opacity: 0;
-        -webkit-transform: translate(-50%, -50%) scale(1);
-                transform: translate(-50%, -50%) scale(1);
-    }
+    animation: ripple 600ms ease-out;
 }
 
 @keyframes ripple {
     0% {
-        -webkit-transform: translate(-50%, -50%) scale(0);
-                transform: translate(-50%, -50%) scale(0);
+        transform: translate(-50%, -50%) scale(0);
     }
     20% {
-        -webkit-transform: translate(-50%, -50%) scale(1);
-                transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -50%) scale(1);
     }
     100% {
         opacity: 0;
-        -webkit-transform: translate(-50%, -50%) scale(1);
-                transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -50%) scale(1);
     }
 }
 
@@ -12239,51 +11937,43 @@ kendo-badge-container {
 }
 
 .k-badge-edge.k-top-start {
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .k-badge-edge.k-top-end {
-    -webkit-transform: translate(50%, -50%);
-            transform: translate(50%, -50%);
+    transform: translate(50%, -50%);
 }
 
 .k-badge-edge.k-bottom-start {
-    -webkit-transform: translate(-50%, 50%);
-            transform: translate(-50%, 50%);
+    transform: translate(-50%, 50%);
 }
 
 .k-badge-edge.k-bottom-end {
-    -webkit-transform: translate(50%, 50%);
-            transform: translate(50%, 50%);
+    transform: translate(50%, 50%);
 }
 
 .k-rtl .k-badge-edge.k-top-start,
 [dir="rtl"].k-badge-edge.k-top-start,
 [dir="rtl"] .k-badge-edge.k-top-start {
-    -webkit-transform: translate(50%, -50%);
-            transform: translate(50%, -50%);
+    transform: translate(50%, -50%);
 }
 
 .k-rtl .k-badge-edge.k-top-end,
 [dir="rtl"].k-badge-edge.k-top-end,
 [dir="rtl"] .k-badge-edge.k-top-end {
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .k-rtl .k-badge-edge.k-bottom-start,
 [dir="rtl"].k-badge-edge.k-bottom-start,
 [dir="rtl"] .k-badge-edge.k-bottom-start {
-    -webkit-transform: translate(50%, 50%);
-            transform: translate(50%, 50%);
+    transform: translate(50%, 50%);
 }
 
 .k-rtl .k-badge-edge.k-bottom-end,
 [dir="rtl"].k-badge-edge.k-bottom-end,
 [dir="rtl"] .k-badge-edge.k-bottom-end {
-    -webkit-transform: translate(-50%, 50%);
-            transform: translate(-50%, 50%);
+    transform: translate(-50%, 50%);
 }
 
 .k-badge-outside {
@@ -12292,51 +11982,43 @@ kendo-badge-container {
 }
 
 .k-badge-outside.k-top-start {
-    -webkit-transform: translate(-100%, -100%);
-            transform: translate(-100%, -100%);
+    transform: translate(-100%, -100%);
 }
 
 .k-badge-outside.k-top-end {
-    -webkit-transform: translate(100%, -100%);
-            transform: translate(100%, -100%);
+    transform: translate(100%, -100%);
 }
 
 .k-badge-outside.k-bottom-start {
-    -webkit-transform: translate(-100%, 100%);
-            transform: translate(-100%, 100%);
+    transform: translate(-100%, 100%);
 }
 
 .k-badge-outside.k-bottom-end {
-    -webkit-transform: translate(100%, 100%);
-            transform: translate(100%, 100%);
+    transform: translate(100%, 100%);
 }
 
 .k-rtl .k-badge-outside.k-top-start,
 [dir="rtl"].k-badge-outside.k-top-start,
 [dir="rtl"] .k-badge-outside.k-top-start {
-    -webkit-transform: translate(100%, -100%);
-            transform: translate(100%, -100%);
+    transform: translate(100%, -100%);
 }
 
 .k-rtl .k-badge-outside.k-top-end,
 [dir="rtl"].k-badge-outside.k-top-end,
 [dir="rtl"] .k-badge-outside.k-top-end {
-    -webkit-transform: translate(-100%, -100%);
-            transform: translate(-100%, -100%);
+    transform: translate(-100%, -100%);
 }
 
 .k-rtl .k-badge-outside.k-bottom-start,
 [dir="rtl"].k-badge-outside.k-bottom-start,
 [dir="rtl"] .k-badge-outside.k-bottom-start {
-    -webkit-transform: translate(100%, 100%);
-            transform: translate(100%, 100%);
+    transform: translate(100%, 100%);
 }
 
 .k-rtl .k-badge-outside.k-bottom-end,
 [dir="rtl"].k-badge-outside.k-bottom-end,
 [dir="rtl"] .k-badge-outside.k-bottom-end {
-    -webkit-transform: translate(-100%, 100%);
-            transform: translate(-100%, 100%);
+    transform: translate(-100%, 100%);
 }
 
 .k-badge-border-cutout {
@@ -12482,8 +12164,7 @@ kendo-badge-container {
     outline: none;
     cursor: default;
     opacity: 0.6;
-    -webkit-filter: grayscale(0.1);
-            filter: grayscale(0.1);
+    filter: grayscale(0.1);
     pointer-events: none;
     box-shadow: none;
 }
@@ -12578,8 +12259,7 @@ kendo-badge-container {
 }
 
 .k-button-group > .k-button + .k-button {
-    -webkit-margin-start: -1px;
-            margin-inline-start: -1px;
+    margin-inline-start: -1px;
 }
 
 .k-button-group > .k-button:hover,
@@ -12611,8 +12291,7 @@ kendo-badge-container {
 
 .k-button-group:disabled, .k-button-group[disabled], .k-button-group.k-disabled {
     opacity: 1;
-    -webkit-filter: none;
-            filter: none;
+    filter: none;
 }
 
 .k-button-group-stretched {
@@ -13749,13 +13428,6 @@ kendo-badge-container {
     margin: 0;
 }
 
-.k-input::-webkit-input-placeholder, .k-picker::-webkit-input-placeholder {
-    color: #424242;
-    opacity: 1;
-    -webkit-user-select: none;
-            user-select: none;
-}
-
 .k-input::placeholder,
 .k-picker::placeholder {
     color: #424242;
@@ -13780,8 +13452,7 @@ textarea.k-textarea[disabled] {
     outline: none;
     cursor: default;
     opacity: 0.6;
-    -webkit-filter: grayscale(0.1);
-            filter: grayscale(0.1);
+    filter: grayscale(0.1);
     pointer-events: none;
     box-shadow: none;
 }
@@ -13796,8 +13467,7 @@ textarea.k-textarea[disabled],
 .k-disabled
 textarea.k-textarea[disabled] {
     opacity: 1;
-    -webkit-filter: grayscale(0);
-            filter: grayscale(0);
+    filter: grayscale(0);
 }
 
 .k-picker {
@@ -13814,8 +13484,7 @@ select.k-picker:disabled, select.k-picker[disabled] {
     outline: none;
     cursor: default;
     opacity: 0.6;
-    -webkit-filter: grayscale(0.1);
-            filter: grayscale(0.1);
+    filter: grayscale(0.1);
     pointer-events: none;
     box-shadow: none;
 }
@@ -13824,8 +13493,7 @@ select.k-picker:disabled, select.k-picker[disabled] {
 .k-disabled select.k-picker:disabled, [disabled] select.k-picker[disabled],
 .k-disabled select.k-picker[disabled] {
     opacity: 1;
-    -webkit-filter: grayscale(0);
-            filter: grayscale(0);
+    filter: grayscale(0);
 }
 
 .k-input-inner {
@@ -13846,13 +13514,6 @@ select.k-picker:disabled, select.k-picker[disabled] {
 
 .k-input-inner::-ms-clear {
     display: none;
-}
-
-.k-input-inner::-webkit-input-placeholder {
-    color: #424242;
-    opacity: 1;
-    -webkit-user-select: none;
-            user-select: none;
 }
 
 .k-input-inner::placeholder {
@@ -14258,21 +13919,7 @@ textarea.k-input-inner {
     position: fixed;
 }
 
-@-webkit-keyframes autoFillStart {
-    from {
-    }
-    to {
-    }
-}
-
 @keyframes autoFillStart {
-    from {
-    }
-    to {
-    }
-}
-
-@-webkit-keyframes autoFillEnd {
     from {
     }
     to {
@@ -14287,23 +13934,19 @@ textarea.k-input-inner {
 }
 
 .k-autofill:-webkit-autofill {
-    -webkit-animation-name: autoFillStart;
-            animation-name: autoFillStart;
+    animation-name: autoFillStart;
 }
 
 .k-autofill:not(:-webkit-autofill) {
-    -webkit-animation-name: autoFillEnd;
-            animation-name: autoFillEnd;
+    animation-name: autoFillEnd;
 }
 
 .k-input:-webkit-autofill {
-    -webkit-animation-name: autoFillStart;
-            animation-name: autoFillStart;
+    animation-name: autoFillStart;
 }
 
 .k-input:not(:-webkit-autofill) {
-    -webkit-animation-name: autoFillEnd;
-            animation-name: autoFillEnd;
+    animation-name: autoFillEnd;
 }
 
 .k-input-solid {
@@ -14504,11 +14147,8 @@ textarea.k-input-inner {
     left: 9px;
     overflow: hidden;
     cursor: text;
-    -webkit-transform-origin: left center;
-            transform-origin: left center;
-    transition: color 0.2s ease-out, top 0.2s ease-out, left 0.2s ease-out, -webkit-transform 0.2s ease-out;
+    transform-origin: left center;
     transition: transform 0.2s ease-out, color 0.2s ease-out, top 0.2s ease-out, left 0.2s ease-out;
-    transition: transform 0.2s ease-out, color 0.2s ease-out, top 0.2s ease-out, left 0.2s ease-out, -webkit-transform 0.2s ease-out;
 }
 
 .k-floating-label-container > .k-widget {
@@ -14519,8 +14159,7 @@ textarea.k-input-inner {
 .k-floating-label-container.k-empty > .k-label {
     top: 23.5714285718px;
     left: 9px;
-    -webkit-transform: scale(1);
-            transform: scale(1);
+    transform: scale(1);
     pointer-events: none;
 }
 
@@ -14528,19 +14167,13 @@ textarea.k-input-inner {
 .k-floating-label-container.k-focus > .k-label {
     top: 0;
     left: 0;
-    -webkit-transform: scale(1);
-            transform: scale(1);
+    transform: scale(1);
 }
 
 .k-floating-label-container:focus-within > .k-label {
     top: 0;
     left: 0;
-    -webkit-transform: scale(1);
-            transform: scale(1);
-}
-
-.k-floating-label-container.k-empty:not(.k-focus):not(:focus-within) ::-webkit-input-placeholder {
-    color: transparent;
+    transform: scale(1);
 }
 
 .k-floating-label-container.k-empty:not(.k-focus):not(:focus-within) ::placeholder {
@@ -14549,11 +14182,8 @@ textarea.k-input-inner {
 
 [dir="rtl"] .k-floating-label-container > .k-label,
 .k-rtl .k-floating-label-container > .k-label, .k-floating-label-container[dir="rtl"] > .k-label {
-    -webkit-transform-origin: right center;
-            transform-origin: right center;
-    transition: color 0.2s ease-out, top 0.2s ease-out, right 0.2s ease-out, -webkit-transform 0.2s ease-out;
+    transform-origin: right center;
     transition: transform 0.2s ease-out, color 0.2s ease-out, top 0.2s ease-out, right 0.2s ease-out;
-    transition: transform 0.2s ease-out, color 0.2s ease-out, top 0.2s ease-out, right 0.2s ease-out, -webkit-transform 0.2s ease-out;
 }
 
 [dir="rtl"] .k-floating-label-container.k-empty > .k-label,
@@ -14632,8 +14262,7 @@ textarea.k-input-inner {
 }
 
 .k-table-header {
-    -webkit-padding-end: var(--kendo-scrollbar-width);
-            padding-inline-end: var(--kendo-scrollbar-width);
+    padding-inline-end: var(--kendo-scrollbar-width);
     border-width: 0 0 1px 0;
     border-style: solid;
     box-sizing: border-box;
@@ -14755,8 +14384,7 @@ textarea.k-input-inner {
 }
 
 .k-table-footer {
-    -webkit-padding-end: var(--kendo-scrollbar-width);
-            padding-inline-end: var(--kendo-scrollbar-width);
+    padding-inline-end: var(--kendo-scrollbar-width);
     border-width: 1px 0 0 0;
     border-style: solid;
     box-sizing: border-box;
@@ -15175,13 +14803,11 @@ textarea.k-input-inner {
 }
 
 .k-chip-content:first-child {
-    -webkit-margin-start: 4px;
-            margin-inline-start: 4px;
+    margin-inline-start: 4px;
 }
 
 .k-chip-content:last-child {
-    -webkit-margin-end: 4px;
-            margin-inline-end: 4px;
+    margin-inline-end: 4px;
 }
 
 .k-chip-text,
@@ -15626,33 +15252,15 @@ textarea.k-input-inner {
     height: 16px;
 }
 
-@-webkit-keyframes pulsing-2-segment {
-    0% {
-        -webkit-transform: scale(1);
-                transform: scale(1);
-    }
-    50% {
-        -webkit-transform: scale(1.5);
-                transform: scale(1.5);
-    }
-    100% {
-        -webkit-transform: scale(1);
-                transform: scale(1);
-    }
-}
-
 @keyframes pulsing-2-segment {
     0% {
-        -webkit-transform: scale(1);
-                transform: scale(1);
+        transform: scale(1);
     }
     50% {
-        -webkit-transform: scale(1.5);
-                transform: scale(1.5);
+        transform: scale(1.5);
     }
     100% {
-        -webkit-transform: scale(1);
-                transform: scale(1);
+        transform: scale(1);
     }
 }
 
@@ -15662,22 +15270,16 @@ textarea.k-input-inner {
 
 .k-loader-pulsing-2 .k-loader-segment:nth-child(1) {
     left: 0;
-    -webkit-transform: scale(1.5);
-            transform: scale(1.5);
-    -webkit-transform-origin: 0 50%;
-            transform-origin: 0 50%;
-    -webkit-animation: pulsing-2-segment 1s ease infinite;
-            animation: pulsing-2-segment 1s ease infinite;
-    -webkit-animation-delay: -.5s;
-            animation-delay: -.5s;
+    transform: scale(1.5);
+    transform-origin: 0 50%;
+    animation: pulsing-2-segment 1s ease infinite;
+    animation-delay: -.5s;
 }
 
 .k-loader-pulsing-2 .k-loader-segment:nth-child(2) {
     right: 0;
-    -webkit-transform-origin: 100% 50%;
-            transform-origin: 100% 50%;
-    -webkit-animation: pulsing-2-segment 1s ease infinite;
-            animation: pulsing-2-segment 1s ease infinite;
+    transform-origin: 100% 50%;
+    animation: pulsing-2-segment 1s ease infinite;
 }
 
 .k-loader-pulsing-2.k-loader-sm .k-loader-canvas {
@@ -15693,25 +15295,6 @@ textarea.k-input-inner {
 .k-loader-pulsing-2.k-loader-lg .k-loader-canvas {
     width: 48px;
     height: 24px;
-}
-
-@-webkit-keyframes spinner-3-segment {
-    0% {
-        top: 0;
-        left: 50%;
-    }
-    33.3333% {
-        top: 100%;
-        left: 0;
-    }
-    66.6666% {
-        top: 100%;
-        left: 100%;
-    }
-    100% {
-        top: 0;
-        left: 50%;
-    }
 }
 
 @keyframes spinner-3-segment {
@@ -15734,33 +15317,27 @@ textarea.k-input-inner {
 }
 
 .k-loader-spinner-3 .k-loader-segment {
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .k-loader-spinner-3 .k-loader-segment:nth-child(1) {
     top: 0;
     left: 50%;
-    -webkit-animation: spinner-3-segment 2s ease infinite;
-            animation: spinner-3-segment 2s ease infinite;
+    animation: spinner-3-segment 2s ease infinite;
 }
 
 .k-loader-spinner-3 .k-loader-segment:nth-child(2) {
     top: 100%;
     left: 0;
-    -webkit-animation: spinner-3-segment 2s ease infinite;
-            animation: spinner-3-segment 2s ease infinite;
-    -webkit-animation-delay: -0.6666666667s;
-            animation-delay: -0.6666666667s;
+    animation: spinner-3-segment 2s ease infinite;
+    animation-delay: -0.6666666667s;
 }
 
 .k-loader-spinner-3 .k-loader-segment:nth-child(3) {
     top: 100%;
     left: 100%;
-    -webkit-animation: spinner-3-segment 2s ease infinite;
-            animation: spinner-3-segment 2s ease infinite;
-    -webkit-animation-delay: -1.3333333333s;
-            animation-delay: -1.3333333333s;
+    animation: spinner-3-segment 2s ease infinite;
+    animation-delay: -1.3333333333s;
 }
 
 .k-loader-spinner-3.k-loader-sm .k-loader-canvas {
@@ -15781,84 +15358,26 @@ textarea.k-input-inner {
     height: 39.4256258432px;
 }
 
-@-webkit-keyframes spinner-4-segment-1 {
-    0% {
-        top: 50%;
-        left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
-    }
-    33.3% {
-        top: 0;
-        left: 0;
-        -webkit-transform: translateX(0) translateY(0);
-                transform: translateX(0) translateY(0);
-    }
-    66.6% {
-        top: 0;
-        left: 0;
-        -webkit-transform: translateX(0) translateY(0);
-                transform: translateX(0) translateY(0);
-    }
-    100% {
-        top: 50%;
-        left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
-    }
-}
-
 @keyframes spinner-4-segment-1 {
     0% {
         top: 50%;
         left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
+        transform: translateX(-50%) translateY(-50%);
     }
     33.3% {
         top: 0;
         left: 0;
-        -webkit-transform: translateX(0) translateY(0);
-                transform: translateX(0) translateY(0);
+        transform: translateX(0) translateY(0);
     }
     66.6% {
         top: 0;
         left: 0;
-        -webkit-transform: translateX(0) translateY(0);
-                transform: translateX(0) translateY(0);
+        transform: translateX(0) translateY(0);
     }
     100% {
         top: 50%;
         left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
-    }
-}
-
-@-webkit-keyframes spinner-4-segment-2 {
-    0% {
-        top: 50%;
-        left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
-    }
-    33.3% {
-        top: 0;
-        left: 100%;
-        -webkit-transform: translateX(-100%) translateY(0);
-                transform: translateX(-100%) translateY(0);
-    }
-    66.6% {
-        top: 0;
-        left: 100%;
-        -webkit-transform: translateX(-100%) translateY(0);
-                transform: translateX(-100%) translateY(0);
-    }
-    100% {
-        top: 50%;
-        left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
+        transform: translateX(-50%) translateY(-50%);
     }
 }
 
@@ -15866,53 +15385,22 @@ textarea.k-input-inner {
     0% {
         top: 50%;
         left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
+        transform: translateX(-50%) translateY(-50%);
     }
     33.3% {
         top: 0;
         left: 100%;
-        -webkit-transform: translateX(-100%) translateY(0);
-                transform: translateX(-100%) translateY(0);
+        transform: translateX(-100%) translateY(0);
     }
     66.6% {
         top: 0;
         left: 100%;
-        -webkit-transform: translateX(-100%) translateY(0);
-                transform: translateX(-100%) translateY(0);
+        transform: translateX(-100%) translateY(0);
     }
     100% {
         top: 50%;
         left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
-    }
-}
-
-@-webkit-keyframes spinner-4-segment-3 {
-    0% {
-        top: 50%;
-        left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
-    }
-    33.3% {
-        top: 100%;
-        left: 100%;
-        -webkit-transform: translateX(-100%) translateY(-100%);
-                transform: translateX(-100%) translateY(-100%);
-    }
-    66.6% {
-        top: 100%;
-        left: 100%;
-        -webkit-transform: translateX(-100%) translateY(-100%);
-                transform: translateX(-100%) translateY(-100%);
-    }
-    100% {
-        top: 50%;
-        left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
+        transform: translateX(-50%) translateY(-50%);
     }
 }
 
@@ -15920,53 +15408,22 @@ textarea.k-input-inner {
     0% {
         top: 50%;
         left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
+        transform: translateX(-50%) translateY(-50%);
     }
     33.3% {
         top: 100%;
         left: 100%;
-        -webkit-transform: translateX(-100%) translateY(-100%);
-                transform: translateX(-100%) translateY(-100%);
+        transform: translateX(-100%) translateY(-100%);
     }
     66.6% {
         top: 100%;
         left: 100%;
-        -webkit-transform: translateX(-100%) translateY(-100%);
-                transform: translateX(-100%) translateY(-100%);
+        transform: translateX(-100%) translateY(-100%);
     }
     100% {
         top: 50%;
         left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
-    }
-}
-
-@-webkit-keyframes spinner-4-segment-4 {
-    0% {
-        top: 50%;
-        left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
-    }
-    33.3% {
-        top: 100%;
-        left: 0;
-        -webkit-transform: translateX(0) translateY(-100%);
-                transform: translateX(0) translateY(-100%);
-    }
-    66.6% {
-        top: 100%;
-        left: 0;
-        -webkit-transform: translateX(0) translateY(-100%);
-                transform: translateX(0) translateY(-100%);
-    }
-    100% {
-        top: 50%;
-        left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
+        transform: translateX(-50%) translateY(-50%);
     }
 }
 
@@ -15974,97 +15431,64 @@ textarea.k-input-inner {
     0% {
         top: 50%;
         left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
+        transform: translateX(-50%) translateY(-50%);
     }
     33.3% {
         top: 100%;
         left: 0;
-        -webkit-transform: translateX(0) translateY(-100%);
-                transform: translateX(0) translateY(-100%);
+        transform: translateX(0) translateY(-100%);
     }
     66.6% {
         top: 100%;
         left: 0;
-        -webkit-transform: translateX(0) translateY(-100%);
-                transform: translateX(0) translateY(-100%);
+        transform: translateX(0) translateY(-100%);
     }
     100% {
         top: 50%;
         left: 50%;
-        -webkit-transform: translateX(-50%) translateY(-50%);
-                transform: translateX(-50%) translateY(-50%);
-    }
-}
-
-@-webkit-keyframes spinner-4 {
-    0% {
-        -webkit-transform: rotate(0);
-                transform: rotate(0);
-    }
-    33.3% {
-        -webkit-transform: rotate(0);
-                transform: rotate(0);
-    }
-    66.6% {
-        -webkit-transform: rotate(180deg);
-                transform: rotate(180deg);
-    }
-    100% {
-        -webkit-transform: rotate(180deg);
-                transform: rotate(180deg);
+        transform: translateX(-50%) translateY(-50%);
     }
 }
 
 @keyframes spinner-4 {
     0% {
-        -webkit-transform: rotate(0);
-                transform: rotate(0);
+        transform: rotate(0);
     }
     33.3% {
-        -webkit-transform: rotate(0);
-                transform: rotate(0);
+        transform: rotate(0);
     }
     66.6% {
-        -webkit-transform: rotate(180deg);
-                transform: rotate(180deg);
+        transform: rotate(180deg);
     }
     100% {
-        -webkit-transform: rotate(180deg);
-                transform: rotate(180deg);
+        transform: rotate(180deg);
     }
 }
 
 .k-loader-spinner-4 .k-loader-canvas {
-    -webkit-animation: spinner-4 1.833s ease infinite;
-            animation: spinner-4 1.833s ease infinite;
+    animation: spinner-4 1.833s ease infinite;
 }
 
 .k-loader-spinner-4 .k-loader-segment {
     top: 50%;
     left: 50%;
-    -webkit-transform: translateX(-50%) translateY(-50%);
-            transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
 }
 
 .k-loader-spinner-4 .k-loader-segment:nth-child(1) {
-    -webkit-animation: spinner-4-segment-1 1.833s ease infinite;
-            animation: spinner-4-segment-1 1.833s ease infinite;
+    animation: spinner-4-segment-1 1.833s ease infinite;
 }
 
 .k-loader-spinner-4 .k-loader-segment:nth-child(2) {
-    -webkit-animation: spinner-4-segment-2 1.833s ease infinite;
-            animation: spinner-4-segment-2 1.833s ease infinite;
+    animation: spinner-4-segment-2 1.833s ease infinite;
 }
 
 .k-loader-spinner-4 .k-loader-segment:nth-child(3) {
-    -webkit-animation: spinner-4-segment-3 1.833s ease infinite;
-            animation: spinner-4-segment-3 1.833s ease infinite;
+    animation: spinner-4-segment-3 1.833s ease infinite;
 }
 
 .k-loader-spinner-4 .k-loader-segment:nth-child(4) {
-    -webkit-animation: spinner-4-segment-4 1.833s ease infinite;
-            animation: spinner-4-segment-4 1.833s ease infinite;
+    animation: spinner-4-segment-4 1.833s ease infinite;
 }
 
 .k-loader-spinner-4.k-loader-sm .k-loader-canvas {
@@ -16213,8 +15637,7 @@ textarea.k-input-inner {
 
 .k-skeleton-text {
     border-radius: 4px;
-    -webkit-transform: scale(1, 0.6);
-            transform: scale(1, 0.6);
+    transform: scale(1, 0.6);
 }
 
 .k-skeleton-text:empty::before {
@@ -16229,33 +15652,15 @@ textarea.k-input-inner {
     border-radius: 9999px;
 }
 
-@-webkit-keyframes k-skeleton-wave {
-    0% {
-        -webkit-transform: translateX(-100%);
-                transform: translateX(-100%);
-    }
-    60% {
-        -webkit-transform: translateX(100%);
-                transform: translateX(100%);
-    }
-    100% {
-        -webkit-transform: translateX(100%);
-                transform: translateX(100%);
-    }
-}
-
 @keyframes k-skeleton-wave {
     0% {
-        -webkit-transform: translateX(-100%);
-                transform: translateX(-100%);
+        transform: translateX(-100%);
     }
     60% {
-        -webkit-transform: translateX(100%);
-                transform: translateX(100%);
+        transform: translateX(100%);
     }
     100% {
-        -webkit-transform: translateX(100%);
-                transform: translateX(100%);
+        transform: translateX(100%);
     }
 }
 
@@ -16271,22 +15676,8 @@ textarea.k-input-inner {
     right: 0;
     bottom: 0;
     left: 0;
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
-    -webkit-animation: k-skeleton-wave 1.6s linear .5s infinite;
-            animation: k-skeleton-wave 1.6s linear .5s infinite;
-}
-
-@-webkit-keyframes k-skeleton-pulse {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: .4;
-    }
-    100% {
-        opacity: 1;
-    }
+    transform: translateX(-100%);
+    animation: k-skeleton-wave 1.6s linear .5s infinite;
 }
 
 @keyframes k-skeleton-pulse {
@@ -16302,8 +15693,7 @@ textarea.k-input-inner {
 }
 
 .k-skeleton-pulse .k-skeleton, .k-skeleton-pulse.k-skeleton {
-    -webkit-animation: k-skeleton-pulse 1.5s ease-in-out .5s infinite;
-            animation: k-skeleton-pulse 1.5s ease-in-out .5s infinite;
+    animation: k-skeleton-pulse 1.5s ease-in-out .5s infinite;
 }
 
 .k-skeleton {
@@ -16385,8 +15775,7 @@ textarea.k-input-inner {
 }
 
 .k-menu-expand-arrow {
-    -webkit-margin-end: -4px;
-            margin-inline-end: -4px;
+    margin-inline-end: -4px;
     display: inline-flex;
     flex-flow: row wrap;
     align-items: center;
@@ -16424,10 +15813,8 @@ textarea.k-input-inner {
 }
 
 .k-menu-vertical > .k-menu-item > .k-menu-link > .k-menu-expand-arrow {
-    -webkit-margin-start: 8px;
-            margin-inline-start: 8px;
-    -webkit-margin-end: -28px;
-            margin-inline-end: -28px;
+    margin-inline-start: 8px;
+    margin-inline-end: -28px;
 }
 
 .k-menu-vertical > .k-separator {
@@ -16491,15 +15878,12 @@ textarea.k-input-inner {
 
 .k-menu-group-sm .k-menu-link {
     padding: 2px 8px;
-    -webkit-padding-end: 32px;
-            padding-inline-end: 32px;
+    padding-inline-end: 32px;
 }
 
 .k-menu-group-sm .k-menu-expand-arrow {
-    -webkit-margin-start: 8px;
-            margin-inline-start: 8px;
-    -webkit-margin-end: -28px;
-            margin-inline-end: -28px;
+    margin-inline-start: 8px;
+    margin-inline-end: -28px;
 }
 
 .k-menu-group-md {
@@ -16514,15 +15898,12 @@ textarea.k-input-inner {
 
 .k-menu-group-md .k-menu-link {
     padding: 4px 8px;
-    -webkit-padding-end: 32px;
-            padding-inline-end: 32px;
+    padding-inline-end: 32px;
 }
 
 .k-menu-group-md .k-menu-expand-arrow {
-    -webkit-margin-start: 8px;
-            margin-inline-start: 8px;
-    -webkit-margin-end: -28px;
-            margin-inline-end: -28px;
+    margin-inline-start: 8px;
+    margin-inline-end: -28px;
 }
 
 .k-menu-group-lg {
@@ -16537,15 +15918,12 @@ textarea.k-input-inner {
 
 .k-menu-group-lg .k-menu-link {
     padding: 6px 8px;
-    -webkit-padding-end: 32px;
-            padding-inline-end: 32px;
+    padding-inline-end: 32px;
 }
 
 .k-menu-group-lg .k-menu-expand-arrow {
-    -webkit-margin-start: 8px;
-            margin-inline-start: 8px;
-    -webkit-margin-end: -28px;
-            margin-inline-end: -28px;
+    margin-inline-start: 8px;
+    margin-inline-end: -28px;
 }
 
 .k-popups-wrapper {
@@ -16743,8 +16121,7 @@ textarea.k-input-inner {
 .k-toolbar::before {
     content: "";
     height: calc(1.4285714286em + 10px);
-    -webkit-margin-start: -8px;
-            margin-inline-start: -8px;
+    margin-inline-start: -8px;
 }
 
 .k-toolbar.k-toolbar-resizable {
@@ -16759,8 +16136,7 @@ textarea.k-input-inner {
 }
 
 .k-toolbar > * > label {
-    -webkit-margin-end: 8px;
-            margin-inline-end: 8px;
+    margin-inline-end: 8px;
     align-self: center;
 }
 
@@ -17153,8 +16529,7 @@ kendo-label > .k-label {
     outline: none;
     cursor: default;
     opacity: 0.6;
-    -webkit-filter: grayscale(0.1);
-            filter: grayscale(0.1);
+    filter: grayscale(0.1);
     pointer-events: none;
     box-shadow: none;
 }
@@ -17455,8 +16830,7 @@ kendo-label > .k-label {
 }
 
 .k-tooltip-icon {
-    -webkit-margin-end: 4px;
-            margin-inline-end: 4px;
+    margin-inline-end: 4px;
     flex-shrink: 0;
 }
 
@@ -17474,8 +16848,7 @@ kendo-label > .k-label {
 }
 
 .k-tooltip-button {
-    -webkit-margin-start: 4px;
-            margin-inline-start: 4px;
+    margin-inline-start: 4px;
     flex-shrink: 0;
 }
 
@@ -17646,10 +17019,8 @@ kendo-label > .k-label {
 
 .k-menu-button > .k-button-arrow,
 .k-dropdown-button > .k-button-arrow {
-    -webkit-margin-start: -4px;
-            margin-inline-start: -4px;
-    -webkit-margin-end: -8px;
-            margin-inline-end: -8px;
+    margin-inline-start: -4px;
+    margin-inline-end: -8px;
     padding-left: 4px;
     padding-right: 4px;
     flex: none;
@@ -17660,10 +17031,8 @@ kendo-label > .k-label {
 
 .k-menu-button.k-icon-button > .k-button-arrow,
 .k-dropdown-button.k-icon-button > .k-button-arrow {
-    -webkit-margin-start: 0;
-            margin-inline-start: 0;
-    -webkit-margin-end: -4px;
-            margin-inline-end: -4px;
+    margin-inline-start: 0;
+    margin-inline-end: -4px;
 }
 
 .k-listbox {
@@ -17758,8 +17127,7 @@ kendo-label > .k-label {
 .k-rtl .k-listbox.k-listbox-toolbar-left .k-listbox-toolbar, .k-rtl .k-listbox.k-listbox-toolbar-right .k-listbox-toolbar, .k-listbox[dir="rtl"].k-listbox-toolbar-left .k-listbox-toolbar, .k-listbox[dir="rtl"].k-listbox-toolbar-right .k-listbox-toolbar,
 [dir="rtl"] .k-listbox.k-listbox-toolbar-left .k-listbox-toolbar,
 [dir="rtl"] .k-listbox.k-listbox-toolbar-right .k-listbox-toolbar {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 .k-rtl .k-listbox.k-listbox-toolbar-left .k-listbox-toolbar, .k-listbox[dir="rtl"].k-listbox-toolbar-left .k-listbox-toolbar,
@@ -17863,14 +17231,10 @@ kendo-label > .k-label {
 
 .k-progress-status {
     padding: 0 0.5em;
-    -webkit-padding-before: 0;
-            padding-block-start: 0;
-    -webkit-padding-after: 0;
-            padding-block-end: 0;
-    -webkit-padding-start: 0.5em;
-            padding-inline-start: 0.5em;
-    -webkit-padding-end: 0.5em;
-            padding-inline-end: 0.5em;
+    padding-block-start: 0;
+    padding-block-end: 0;
+    padding-inline-start: 0.5em;
+    padding-inline-end: 0.5em;
     min-width: 10px;
     text-align: center;
     display: inline-block;
@@ -17925,8 +17289,7 @@ kendo-label > .k-label {
 }
 
 .k-progressbar-vertical .k-progress-status {
-    -webkit-writing-mode: vertical-lr;
-            writing-mode: vertical-lr;
+    writing-mode: vertical-lr;
 }
 
 .k-progressbar-vertical > .k-selected {
@@ -18034,10 +17397,8 @@ kendo-label > .k-label {
 
 .k-circular-progressbar-arc {
     transform-box: fill-box;
-    -webkit-transform-origin: center center;
-            transform-origin: center center;
-    -webkit-transform: rotate(-90deg);
-            transform: rotate(-90deg);
+    transform-origin: center center;
+    transform: rotate(-90deg);
     stroke-linecap: round;
     fill: none;
 }
@@ -18047,15 +17408,6 @@ kendo-label > .k-label {
     text-align: center;
     padding: 0;
     margin: 0;
-}
-
-@-webkit-keyframes progressbar-indeterminate-animation {
-    from {
-        background-position: 0 0;
-    }
-    to {
-        background-position: 22px 0;
-    }
 }
 
 @keyframes progressbar-indeterminate-animation {
@@ -18089,8 +17441,7 @@ kendo-label > .k-label {
     background-color: #ebebeb;
     background-image: linear-gradient(45deg, #d8d8d8 25%, transparent 25%, transparent 50%, #d8d8d8 50%, #d8d8d8 75%, transparent 75%, transparent);
     background-size: 22px 22px;
-    -webkit-animation: progressbar-indeterminate-animation 1s linear infinite;
-            animation: progressbar-indeterminate-animation 1s linear infinite;
+    animation: progressbar-indeterminate-animation 1s linear infinite;
 }
 
 .k-circular-progressbar-scale {
@@ -18132,8 +17483,7 @@ kendo-label > .k-label {
     outline: none;
     cursor: default;
     opacity: 0.6;
-    -webkit-filter: grayscale(0.1);
-            filter: grayscale(0.1);
+    filter: grayscale(0.1);
     pointer-events: none;
     box-shadow: none;
 }
@@ -18178,8 +17528,7 @@ kendo-label > .k-label {
 .k-radio + .k-radio-label,
 .k-radio-wrap + .k-radio-label {
     display: inline;
-    -webkit-margin-start: 4px;
-            margin-inline-start: 4px;
+    margin-inline-start: 4px;
 }
 
 .k-radio-label:empty {
@@ -18229,13 +17578,9 @@ kendo-label > .k-label {
     top: 50%;
     border-radius: 100%;
     z-index: -1;
-    transition: opacity 100ms linear, -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
     transition: opacity 100ms linear, transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    transition: opacity 100ms linear, transform 150ms cubic-bezier(0.4, 0, 0.2, 1), -webkit-transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
-    -webkit-transform: translate(-50%, -50%) scale(0);
-            transform: translate(-50%, -50%) scale(0);
-    -webkit-transform-origin: center center;
-            transform-origin: center center;
+    transform: translate(-50%, -50%) scale(0);
+    transform-origin: center center;
 }
 
 .k-ripple-container .k-radio:focus,
@@ -18459,14 +17804,12 @@ kendo-label > .k-label {
 
 .k-slider-horizontal .k-slider-track-wrap .k-draghandle {
     top: 50%;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .k-slider-horizontal .k-slider-track-wrap .k-draghandle:focus,
 .k-slider-horizontal .k-slider-track-wrap .k-draghandle:active {
-    -webkit-transform: translate(-50%, -50%) scale(1);
-            transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%) scale(1);
 }
 
 .k-slider-horizontal .k-slider-track-wrap .k-slider-selection {
@@ -18498,14 +17841,12 @@ kendo-label > .k-label {
 }
 
 [dir="rtl"] .k-slider-horizontal .k-slider-track-wrap .k-draghandle {
-    -webkit-transform: translate(50%, -50%);
-            transform: translate(50%, -50%);
+    transform: translate(50%, -50%);
 }
 
 [dir="rtl"] .k-slider-horizontal .k-slider-track-wrap .k-draghandle:focus,
 [dir="rtl"] .k-slider-horizontal .k-slider-track-wrap .k-draghandle:active {
-    -webkit-transform: translate(50%, -50%) scale(1);
-            transform: translate(50%, -50%) scale(1);
+    transform: translate(50%, -50%) scale(1);
 }
 
 .k-slider-vertical .k-slider-track-wrap {
@@ -18518,14 +17859,12 @@ kendo-label > .k-label {
 
 .k-slider-vertical .k-slider-track-wrap .k-draghandle {
     left: 50%;
-    -webkit-transform: translate(-50%, 50%);
-            transform: translate(-50%, 50%);
+    transform: translate(-50%, 50%);
 }
 
 .k-slider-vertical .k-slider-track-wrap .k-draghandle:focus,
 .k-slider-vertical .k-slider-track-wrap .k-draghandle:active {
-    -webkit-transform: translate(-50%, 50%) scale(1);
-            transform: translate(-50%, 50%) scale(1);
+    transform: translate(-50%, 50%) scale(1);
 }
 
 .k-slider-vertical .k-slider-track-wrap .k-slider-selection {
@@ -18633,8 +17972,7 @@ kendo-label > .k-label {
     text-align: left;
     left: 120%;
     top: 50%;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 .k-slider-vertical .k-first .k-label {
@@ -18742,8 +18080,7 @@ kendo-label > .k-label {
 .k-slider-horizontal .k-label {
     left: 50%;
     bottom: -1.2em;
-    -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
+    transform: translateX(-50%);
 }
 
 .k-slider-horizontal .k-first .k-label {
@@ -18774,8 +18111,7 @@ kendo-label > .k-label {
 [dir="rtl"] .k-slider-horizontal .k-button-increase .k-icon,
 [dir="rtl"] .k-slider-horizontal .k-button-decrease .k-icon, .k-slider-horizontal[dir="rtl"] .k-button-increase .k-icon,
 .k-slider-horizontal[dir="rtl"] .k-button-decrease .k-icon {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 .k-slider-track,
@@ -18815,15 +18151,11 @@ kendo-label > .k-label {
 }
 
 .k-slider-transitions.k-slider-horizontal .k-draghandle {
-    transition: left 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     transition: left 0.3s ease-out, background-color 0.3s ease-out, transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    transition: left 0.3s ease-out, background-color 0.3s ease-out, transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), -webkit-transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .k-slider-transitions.k-slider-vertical .k-draghandle {
-    transition: bottom 0.3s ease-out, background-color 0.3s ease-out, -webkit-transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     transition: bottom 0.3s ease-out, background-color 0.3s ease-out, transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    transition: bottom 0.3s ease-out, background-color 0.3s ease-out, transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), -webkit-transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .k-draghandle.k-pressed {
@@ -19354,8 +18686,7 @@ kendo-label > .k-label {
     position: absolute;
     top: 50%;
     right: 0;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 .k-calendar-range {
@@ -19404,8 +18735,7 @@ kendo-label > .k-label {
 .k-calendar[dir="rtl"] .k-next-view,
 .k-calendar[dir="rtl"] .k-calendar-nav-prev,
 .k-calendar[dir="rtl"] .k-calendar-nav-next {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 .k-rtl .k-calendar .k-content.k-scrollable,
@@ -19661,8 +18991,7 @@ kendo-label > .k-label {
     top: calc(50% + 9px);
     left: 0;
     right: 0;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
     z-index: 1;
 }
 
@@ -20145,10 +19474,8 @@ kendo-label > .k-label {
 }
 
 .k-colorgradient-inputs .k-input-inner {
-    -webkit-padding-start: 2px;
-            padding-inline-start: 2px;
-    -webkit-padding-end: 2px;
-            padding-inline-end: 2px;
+    padding-inline-start: 2px;
+    padding-inline-end: 2px;
     text-align: center;
     text-overflow: clip;
 }
@@ -20351,9 +19678,7 @@ kendo-label > .k-label {
 
 .k-datetime-selector {
     display: flex;
-    transition: -webkit-transform .2s;
     transition: transform .2s;
-    transition: transform .2s, -webkit-transform .2s;
 }
 
 .k-datetime-wrap {
@@ -20378,19 +19703,16 @@ kendo-label > .k-label {
 }
 
 .k-date-tab .k-datetime-selector {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
 }
 
 .k-time-tab .k-datetime-selector {
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
 }
 
 .k-datetimepicker[dir="rtl"] .k-time-tab .k-datetime-selector,
 .k-rtl .k-datetimepicker .k-time-tab .k-datetime-selector {
-    -webkit-transform: translateX(100%);
-            transform: translateX(100%);
+    transform: translateX(100%);
 }
 
 .k-daterange-picker, .k-daterangepicker {
@@ -20840,8 +20162,7 @@ kendo-label > .k-label {
     border-style: solid;
     display: block;
     position: absolute;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .k-switch-label-on,
@@ -20850,8 +20171,7 @@ kendo-label > .k-label {
     display: inline;
     position: absolute;
     top: 50%;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
     overflow: hidden;
 }
 
@@ -21033,8 +20353,7 @@ kendo-label > .k-label {
 [dir="rtl"] .k-switch .k-switch-thumb,
 .k-switch.k-rtl .k-switch-thumb,
 .k-rtl .k-switch .k-switch-thumb {
-    -webkit-transform: translate(50%, -50%);
-            transform: translate(50%, -50%);
+    transform: translate(50%, -50%);
 }
 
 .k-switch-off .k-switch-track {
@@ -22388,8 +21707,7 @@ kendo-label > .k-label {
     left: 0;
     z-index: 9999;
     overflow: hidden;
-    -webkit-transform: translateZ(0);
-            transform: translateZ(0);
+    transform: translateZ(0);
 }
 
 .k-actionsheet-container > .k-overlay {
@@ -22537,8 +21855,7 @@ kendo-label > .k-label {
     border-top-width: 0;
     top: 0;
     left: 50%;
-    -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
+    transform: translateX(-50%);
 }
 
 .k-actionsheet-bottom {
@@ -22548,8 +21865,7 @@ kendo-label > .k-label {
     border-bottom-width: 0;
     bottom: 0;
     left: 50%;
-    -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
+    transform: translateX(-50%);
 }
 
 .k-actionsheet-left {
@@ -22559,8 +21875,7 @@ kendo-label > .k-label {
     border-left-width: 0;
     left: 0;
     top: 50%;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 .k-actionsheet-right {
@@ -22570,8 +21885,7 @@ kendo-label > .k-label {
     border-right-width: 0;
     right: 0;
     top: 50%;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 .k-actionsheet-fullscreen {
@@ -22586,8 +21900,7 @@ kendo-label > .k-label {
     right: auto;
     bottom: auto;
     left: auto;
-    -webkit-transform: none;
-            transform: none;
+    transform: none;
 }
 
 .k-adaptive-actionsheet {
@@ -22802,8 +22115,7 @@ kendo-label > .k-label {
 
 .k-window-actions {
     margin: -5em 0;
-    -webkit-margin-end: -4px;
-            margin-inline-end: -4px;
+    margin-inline-end: -4px;
     line-height: 1;
     display: flex;
     flex-flow: row nowrap;
@@ -22930,8 +22242,7 @@ kendo-label > .k-label {
 }
 
 .k-dialog.k-dialog-centered {
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     top: 50%;
     left: 50%;
 }
@@ -23134,34 +22445,28 @@ kendo-drawer .k-drawer-wrapper {
 }
 
 .k-drawer-item .k-drawer-toggle {
-    -webkit-margin-start: auto;
-            margin-inline-start: auto;
+    margin-inline-start: auto;
     cursor: pointer;
 }
 
 .k-drawer-item.k-level-1 {
-    -webkit-padding-start: 16px;
-            padding-inline-start: 16px;
+    padding-inline-start: 16px;
 }
 
 .k-drawer-item.k-level-2 {
-    -webkit-padding-start: 32px;
-            padding-inline-start: 32px;
+    padding-inline-start: 32px;
 }
 
 .k-drawer-item.k-level-3 {
-    -webkit-padding-start: 48px;
-            padding-inline-start: 48px;
+    padding-inline-start: 48px;
 }
 
 .k-drawer-item.k-level-4 {
-    -webkit-padding-start: 64px;
-            padding-inline-start: 64px;
+    padding-inline-start: 64px;
 }
 
 .k-drawer-item.k-level-5 {
-    -webkit-padding-start: 80px;
-            padding-inline-start: 80px;
+    padding-inline-start: 80px;
 }
 
 .k-drawer-separator {
@@ -23699,8 +23004,7 @@ kendo-card-footer {
 }
 
 .k-card-group .k-card + .k-card {
-    -webkit-margin-start: 1px;
-            margin-inline-start: 1px;
+    margin-inline-start: 1px;
 }
 
 .k-card-group .k-card.k-first {
@@ -23734,29 +23038,25 @@ kendo-card-footer {
 .k-card-callout.k-callout-n {
     top: 0;
     left: 50%;
-    -webkit-transform: translate(-50%, -50%) rotate(45deg);
-            transform: translate(-50%, -50%) rotate(45deg);
+    transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .k-card-callout.k-callout-e {
     top: 50%;
     right: 0;
-    -webkit-transform: translate(50%, -50%) rotate(-45deg);
-            transform: translate(50%, -50%) rotate(-45deg);
+    transform: translate(50%, -50%) rotate(-45deg);
 }
 
 .k-card-callout.k-callout-s {
     bottom: 0;
     left: 50%;
-    -webkit-transform: translate(-50%, 50%) rotate(45deg);
-            transform: translate(-50%, 50%) rotate(45deg);
+    transform: translate(-50%, 50%) rotate(45deg);
 }
 
 .k-card-callout.k-callout-w {
     top: 50%;
     left: 0;
-    -webkit-transform: translate(-50%, -50%) rotate(45deg);
-            transform: translate(-50%, -50%) rotate(45deg);
+    transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .k-card-flat {
@@ -23977,29 +23277,25 @@ kendo-card-footer {
 .k-popover-callout.k-callout-n {
     top: 0;
     left: 50%;
-    -webkit-transform: translate(-50%, -50%) rotate(45deg);
-            transform: translate(-50%, -50%) rotate(45deg);
+    transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .k-popover-callout.k-callout-e {
     top: 50%;
     right: 0;
-    -webkit-transform: translate(50%, -50%) rotate(-45deg);
-            transform: translate(50%, -50%) rotate(-45deg);
+    transform: translate(50%, -50%) rotate(-45deg);
 }
 
 .k-popover-callout.k-callout-s {
     bottom: 0;
     left: 50%;
-    -webkit-transform: translate(-50%, 50%) rotate(45deg);
-            transform: translate(-50%, 50%) rotate(45deg);
+    transform: translate(-50%, 50%) rotate(45deg);
 }
 
 .k-popover-callout.k-callout-w {
     top: 50%;
     left: 0;
-    -webkit-transform: translate(-50%, -50%) rotate(45deg);
-            transform: translate(-50%, -50%) rotate(45deg);
+    transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .k-popover {
@@ -24042,19 +23338,16 @@ kendo-card-footer {
 
 .k-rpanel-left.k-rpanel-expanded,
 .k-rpanel-right.k-rpanel-expanded {
-    -webkit-transform: translateX(0) translateZ(0);
-            transform: translateX(0) translateZ(0);
+    transform: translateX(0) translateZ(0);
 }
 
 .k-rpanel-left {
-    -webkit-transform: translateX(-100%) translateZ(0);
-            transform: translateX(-100%) translateZ(0);
+    transform: translateX(-100%) translateZ(0);
     left: 0;
 }
 
 .k-rpanel-right {
-    -webkit-transform: translateX(100%) translateZ(0);
-            transform: translateX(100%) translateZ(0);
+    transform: translateX(100%) translateZ(0);
     right: 0;
 }
 
@@ -24652,8 +23945,7 @@ kendo-card-footer {
 .k-pager .k-i-arrow-e,
 [dir="rtl"]
 .k-pager .k-i-seek-e {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 .k-pager-input, .k-pager-sizes, .k-pager-info {
@@ -25513,8 +24805,7 @@ kendo-card-footer {
 .k-rtl .k-tabstrip .k-tabstrip-next,
 .k-tabstrip[dir="rtl"] .k-tabstrip-prev,
 .k-tabstrip[dir="rtl"] .k-tabstrip-next {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 .k-tabstrip-items-wrapper {
@@ -25885,15 +25176,13 @@ kendo-card-footer {
 .k-panelbar .k-panelbar-expand,
 .k-panelbar .k-panelbar-collapse,
 .k-panelbar .k-panelbar-toggle {
-    -webkit-margin-start: auto;
-            margin-inline-start: auto;
+    margin-inline-start: auto;
 }
 
 .k-panelbar .k-group .k-panelbar-expand,
 .k-panelbar .k-group .k-panelbar-collapse,
 .k-panelbar .k-panelbar-group .k-panelbar-toggle {
-    -webkit-margin-end: 0px;
-            margin-inline-end: 0px;
+    margin-inline-end: 0px;
 }
 
 .k-rtl .k-panelbar .k-group > .k-item.k-level-1 .k-link,
@@ -26241,8 +25530,7 @@ kendo-card-footer {
 
 .k-splitter-flex.k-splitter-horizontal[dir="rtl"] > .k-splitbar > .k-collapse-next,
 .k-splitter-flex.k-splitter-horizontal[dir="rtl"] > .k-splitbar > .k-collapse-prev {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 .k-splitter-flex.k-splitter-vertical {
@@ -26424,8 +25712,7 @@ kendo-card-footer {
     font: 16px/1 "WebComponentsIcons";
     top: calc(50% - 1px);
     left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     padding: .2em;
 }
 
@@ -26632,10 +25919,8 @@ kendo-card-footer {
 .k-scheduler-mobile .k-scheduler-times .k-scheduler-groupcolumn .k-scheduler-group-text,
 .k-scheduler-mobile .k-scheduler-agenda .k-scheduler-group-cell .k-scheduler-group-text,
 .k-scheduler-mobile .k-scheduler-agenda .k-scheduler-groupcolumn .k-scheduler-group-text {
-    -webkit-writing-mode: vertical-lr;
-            writing-mode: vertical-lr;
-    -webkit-transform: rotate(180deg);
-            transform: rotate(180deg);
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
     white-space: nowrap;
 }
 
@@ -26746,8 +26031,7 @@ kendo-card-footer {
 .k-pane-wrapper[dir="rtl"] .k-listgroup-item .k-select .k-i-arrow-chevron-right,
 [dir="rtl"] .k-pane-wrapper .k-header-cancel .k-i-arrow-chevron-left,
 [dir="rtl"] .k-pane-wrapper .k-listgroup-item .k-select .k-i-arrow-chevron-right {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 .k-rtl .k-pane-wrapper .k-scheduler-mobile .k-scheduler-toolbar > ul > li, .k-pane-wrapper[dir="rtl"] .k-scheduler-mobile .k-scheduler-toolbar > ul > li,
@@ -26760,8 +26044,7 @@ kendo-card-footer {
 .k-pane-wrapper[dir="rtl"] .k-scheduler-mobile .k-scheduler-toolbar .k-nav-next,
 [dir="rtl"] .k-pane-wrapper .k-scheduler-mobile .k-scheduler-toolbar .k-nav-prev,
 [dir="rtl"] .k-pane-wrapper .k-scheduler-mobile .k-scheduler-toolbar .k-nav-next {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 .k-rtl .k-pane-wrapper .k-scheduler-mobile .k-task .k-i-reload, .k-pane-wrapper[dir="rtl"] .k-scheduler-mobile .k-task .k-i-reload,
@@ -27430,10 +26713,8 @@ kendo-card-footer {
 
 .k-grid-header,
 .k-grid-footer {
-    -webkit-padding-start: 0;
-            padding-inline-start: 0;
-    -webkit-padding-end: var(--kendo-scrollbar-width, 17px);
-            padding-inline-end: var(--kendo-scrollbar-width, 17px);
+    padding-inline-start: 0;
+    padding-inline-end: var(--kendo-scrollbar-width, 17px);
     border-width: 0;
     border-style: solid;
     border-color: inherit;
@@ -27536,8 +26817,7 @@ div.k-grid-footer {
 
 .k-grid-header .k-cell-inner > .k-link > .k-icon.k-i-sort-desc-sm, .k-grid-header .k-cell-inner > .k-link > .k-icon.k-i-sort-asc-sm, .k-grid-header .k-cell-inner > .k-link > .k-icon.k-i-sort-asc-small, .k-grid-header .k-cell-inner > .k-link > .k-icon.k-i-sort-desc-small {
     vertical-align: text-top;
-    -webkit-margin-start: 7px;
-            margin-inline-start: 7px;
+    margin-inline-start: 7px;
 }
 
 .k-grid-header .k-sort-order {
@@ -27546,8 +26826,7 @@ div.k-grid-footer {
     height: 16px;
     font-size: 12px;
     margin-top: 2px;
-    -webkit-margin-start: -2px;
-            margin-inline-start: -2px;
+    margin-inline-start: -2px;
 }
 
 .k-column-resizer {
@@ -27717,10 +26996,8 @@ div.k-grid-footer {
 
 .k-grid .k-command-cell > .k-button + .k-button {
     margin-left: 8px;
-    -webkit-margin-end: unset;
-            margin-inline-end: unset;
-    -webkit-margin-start: 8px;
-            margin-inline-start: 8px;
+    margin-inline-end: unset;
+    margin-inline-start: 8px;
 }
 
 .k-grid > .k-resize-handle,
@@ -27955,13 +27232,11 @@ div.k-grid-norecords {
 }
 
 .k-filterable > .k-cell-inner {
-    -webkit-margin-end: calc(-1.4285714286em + -14px);
-            margin-inline-end: calc(-1.4285714286em + -14px);
+    margin-inline-end: calc(-1.4285714286em + -14px);
 }
 
 .k-filterable > .k-cell-inner .k-link {
-    -webkit-padding-end: 0;
-            padding-inline-end: 0;
+    padding-inline-end: 0;
 }
 
 .k-cell-inner {
@@ -27999,8 +27274,7 @@ div.k-grid-norecords {
 .k-cell-inner .k-header-column-menu,
 .k-cell-inner .k-grid-header-menu {
     position: static;
-    -webkit-margin-end: 4px;
-            margin-inline-end: 4px;
+    margin-inline-end: 4px;
 }
 
 .k-cell-inner .k-grid-filter,
@@ -28849,15 +28123,13 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
 .k-spreadsheet .k-vertical-align-center {
     position: relative;
     top: 50%;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 .k-spreadsheet .k-vertical-align-bottom {
     position: relative;
     top: 100%;
-    -webkit-transform: translateY(-100%);
-            transform: translateY(-100%);
+    transform: translateY(-100%);
 }
 
 .k-spreadsheet .k-tabstrip-wrapper {
@@ -29288,8 +28560,7 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
 }
 
 .k-spreadsheet .k-selection-wrapper .k-spreadsheet-editor-button.k-spreadsheet-last-column {
-    -webkit-transform: translateX(-100%);
-            transform: translateX(-100%);
+    transform: translateX(-100%);
 }
 
 .k-spreadsheet-active-cell {
@@ -29666,8 +28937,7 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
     border-width: 1px;
     border-radius: 6px;
     position: absolute;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .k-spreadsheet-drawing .k-spreadsheet-drawing-handle.N {
@@ -29992,10 +29262,8 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
 }
 
 .k-pivotgrid-column-headers .k-pivotgrid-table {
-    -webkit-padding-start: 0;
-            padding-inline-start: 0;
-    -webkit-padding-end: var(--kendo-scrollbar-width, 17px);
-            padding-inline-end: var(--kendo-scrollbar-width, 17px);
+    padding-inline-start: 0;
+    padding-inline-end: var(--kendo-scrollbar-width, 17px);
 }
 
 .k-pivotgrid-column-headers .k-pivotgrid-cell {
@@ -30059,8 +29327,7 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
 
 .k-pivotgrid-cell .k-icon {
     cursor: pointer;
-    -webkit-padding-end: 8px;
-            padding-inline-end: 8px;
+    padding-inline-end: 8px;
 }
 
 .k-pivotgrid-total {
@@ -30104,8 +29371,7 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
 
 .k-flex-row .k-pivotgrid-configurator-button span, .k-d-flex-row .k-pivotgrid-configurator-button span,
 .k-flex-row-reverse .k-pivotgrid-configurator-button span {
-    -webkit-writing-mode: vertical-rl;
-            writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
 }
 
 .k-flex-row .k-pivotgrid-configurator-button .k-icon, .k-d-flex-row .k-pivotgrid-configurator-button .k-icon,
@@ -30114,8 +29380,7 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
 }
 
 .k-flex-row-reverse .k-pivotgrid-configurator-button > span {
-    -webkit-transform: rotate(-180deg);
-            transform: rotate(-180deg);
+    transform: rotate(-180deg);
 }
 
 .k-flex-col .k-pivotgrid-configurator-button, .k-d-flex-col .k-pivotgrid-configurator-button, .k-flex-column .k-pivotgrid-configurator-button,
@@ -30196,8 +29461,7 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
 }
 
 .k-pivotgrid-configurator-content .k-select-all .k-checkbox {
-    -webkit-margin-end: 4px;
-            margin-inline-end: 4px;
+    margin-inline-end: 4px;
 }
 
 .k-pivotgrid-configurator-content .k-fields-list-wrapper {
@@ -30350,8 +29614,7 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
 }
 
 .k-pdf-export-shadow .k-pivotgrid-column-headers .k-pivotgrid-table {
-    -webkit-padding-end: 0;
-            padding-inline-end: 0;
+    padding-inline-end: 0;
 }
 
 .k-pivot {
@@ -30766,8 +30029,7 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
 }
 
 .k-treelist .k-drop-hint {
-    -webkit-transform: translate(0, -50%);
-            transform: translate(0, -50%);
+    transform: translate(0, -50%);
 }
 
 .k-treelist tr.k-footer td,
@@ -31469,8 +30731,7 @@ kendo-grid tr.k-hover .k-grid-content-sticky.k-selected {
     outline: none;
     cursor: default;
     opacity: 0.6;
-    -webkit-filter: grayscale(0.1);
-            filter: grayscale(0.1);
+    filter: grayscale(0.1);
     pointer-events: none;
     box-shadow: none;
 }
@@ -31518,8 +30779,7 @@ kendo-editor.k-readonly {
     outline: none;
     cursor: default;
     opacity: 0.6;
-    -webkit-filter: grayscale(0.1);
-            filter: grayscale(0.1);
+    filter: grayscale(0.1);
     pointer-events: none;
     box-shadow: none;
 }
@@ -31571,64 +30831,56 @@ kendo-editor.k-readonly .k-editor-content.k-focus {
 .k-editor-resize-handle.northwest {
     top: 0;
     left: 0;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     cursor: nw-resize;
 }
 
 .k-editor-resize-handle.north {
     top: 0;
     left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     cursor: n-resize;
 }
 
 .k-editor-resize-handle.northeast {
     top: 0;
     right: 0;
-    -webkit-transform: translate(50%, -50%);
-            transform: translate(50%, -50%);
+    transform: translate(50%, -50%);
     cursor: ne-resize;
 }
 
 .k-editor-resize-handle.southwest {
     left: 0;
     bottom: 0;
-    -webkit-transform: translate(-50%, 50%);
-            transform: translate(-50%, 50%);
+    transform: translate(-50%, 50%);
     cursor: sw-resize;
 }
 
 .k-editor-resize-handle.south {
     bottom: 0;
     left: 50%;
-    -webkit-transform: translate(-50%, 50%);
-            transform: translate(-50%, 50%);
+    transform: translate(-50%, 50%);
     cursor: s-resize;
 }
 
 .k-editor-resize-handle.southeast {
     right: 0;
     bottom: 0;
-    -webkit-transform: translate(50%, 50%);
-            transform: translate(50%, 50%);
+    transform: translate(50%, 50%);
     cursor: se-resize;
 }
 
 .k-editor-resize-handle.west {
     top: 50%;
     left: 0;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     cursor: w-resize;
 }
 
 .k-editor-resize-handle.east {
     top: 50%;
     right: 0;
-    -webkit-transform: translate(50%, -50%);
-            transform: translate(50%, -50%);
+    transform: translate(50%, -50%);
     cursor: e-resize;
 }
 
@@ -32341,18 +31593,15 @@ kendo-editor.k-readonly .k-editor-content.k-focus {
 }
 
 .k-imageeditor-crop .k-resize-ne {
-    -webkit-transform: rotate(-90deg);
-            transform: rotate(-90deg);
+    transform: rotate(-90deg);
 }
 
 .k-imageeditor-crop .k-resize-nw {
-    -webkit-transform: rotate(-180deg);
-            transform: rotate(-180deg);
+    transform: rotate(-180deg);
 }
 
 .k-imageeditor-crop .k-resize-sw {
-    -webkit-transform: rotate(90deg);
-            transform: rotate(90deg);
+    transform: rotate(90deg);
 }
 
 .k-imageeditor-crop .k-resize-n {
@@ -32390,15 +31639,13 @@ kendo-editor.k-readonly .k-editor-content.k-focus {
     background: linear-gradient(45deg, rgba(0, 0, 0, 0.09) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.09) 75%, rgba(0, 0, 0, 0.09) 0), linear-gradient(45deg, rgba(0, 0, 0, 0.09) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.09) 75%, rgba(0, 0, 0, 0.09) 0), white;
     background-repeat: repeat, repeat;
     background-position: 0px 0px, 5px 5px;
-    -webkit-transform-origin: 0 0 0;
-            transform-origin: 0 0 0;
+    transform-origin: 0 0 0;
     background-origin: padding-box, padding-box;
     background-size: 10px 10px, 10px 10px;
     box-shadow: none;
     text-shadow: none;
     transition: none;
-    -webkit-transform: scaleX(1) scaleY(1) scaleZ(1);
-            transform: scaleX(1) scaleY(1) scaleZ(1);
+    transform: scaleX(1) scaleY(1) scaleZ(1);
 }
 
 .k-imageeditor-action-pane {
@@ -32532,8 +31779,7 @@ kendo-editor.k-readonly .k-editor-content.k-focus {
 
 .k-gantt .k-treelist-scrollable .k-task-milestone {
     border: 0;
-    -webkit-transform: none;
-            transform: none;
+    transform: none;
     background: none;
 }
 
@@ -32543,8 +31789,7 @@ kendo-editor.k-readonly .k-editor-content.k-focus {
     border-width: 1px;
     border-style: solid;
     box-sizing: border-box;
-    -webkit-transform: rotate(45deg);
-            transform: rotate(45deg);
+    transform: rotate(45deg);
 }
 
 .k-gantt .k-treelist-scrollable .k-task-summary {
@@ -32559,13 +31804,11 @@ kendo-editor.k-readonly .k-editor-content.k-focus {
 }
 
 .k-gantt .k-treelist-scrollable .k-task-start {
-    -webkit-transform: translateX(-140%) translateY(-50%);
-            transform: translateX(-140%) translateY(-50%);
+    transform: translateX(-140%) translateY(-50%);
 }
 
 .k-gantt .k-treelist-scrollable .k-task-end {
-    -webkit-transform: translateX(140%) translateY(-50%);
-            transform: translateX(140%) translateY(-50%);
+    transform: translateX(140%) translateY(-50%);
 }
 
 .k-gantt .k-treelist-scrollable .k-master-row:hover .k-task-dot {
@@ -32802,8 +32045,7 @@ kendo-editor.k-readonly .k-editor-content.k-focus {
     display: none;
     position: absolute;
     top: 50%;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 .k-task-wrap:hover .k-task-dot,
@@ -32822,8 +32064,7 @@ kendo-editor.k-readonly .k-editor-content.k-focus {
     position: absolute;
     top: 50%;
     left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .k-task-dot:hover::before,
@@ -32866,8 +32107,7 @@ kendo-editor.k-readonly .k-editor-content.k-focus {
     border-width: 1px;
     border-style: solid;
     box-sizing: border-box;
-    -webkit-transform: rotate(45deg);
-            transform: rotate(45deg);
+    transform: rotate(45deg);
 }
 
 .k-task-summary {
@@ -33799,8 +33039,7 @@ kendo-scheduler.k-scheduler.k-readonly-scheduler .k-event-delete {
 
 .k-scheduler-header,
 .k-scheduler-view-header {
-    -webkit-padding-end: var(--kendo-scrollbar-width, 17px);
-            padding-inline-end: var(--kendo-scrollbar-width, 17px);
+    padding-inline-end: var(--kendo-scrollbar-width, 17px);
 }
 
 .k-scheduler-header th {
@@ -34054,8 +33293,7 @@ kendo-scheduler .k-event .k-event-bottom-actions,
     position: absolute;
     top: 50%;
     left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .k-current-time {
@@ -34488,8 +33726,7 @@ kendo-scheduler .k-recurrence-editor {
 .k-rtl.k-scheduler .k-i-arrow-60-left,
 .k-rtl.k-scheduler .k-i-arrow-60-right,
 .k-rtl.k-scheduler .k-current-time-arrow-right {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 .k-rtl .k-scheduler .k-scheduler-header-wrap, .k-rtl.k-scheduler .k-scheduler-header-wrap {
@@ -34785,8 +34022,7 @@ kendo-scheduler .k-recurrence-editor {
 .k-chat .k-message-time {
     opacity: 0;
     top: 50%;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
     transition: opacity .2s ease-in-out;
 }
 
@@ -34961,8 +34197,7 @@ kendo-scheduler .k-recurrence-editor {
 }
 
 .k-rtl .k-message-box .k-button, .k-message-box .k-button[dir="rtl"] {
-    -webkit-transform: scaleX(-1);
-            transform: scaleX(-1);
+    transform: scaleX(-1);
 }
 
 .k-chat .k-card-list {
@@ -35030,28 +34265,19 @@ kendo-scheduler .k-recurrence-editor {
 }
 
 .k-typing-indicator span:nth-of-type(1) {
-    -webkit-animation: 1s k-animation-blink infinite 0.3333s;
-            animation: 1s k-animation-blink infinite 0.3333s;
+    animation: 1s k-animation-blink infinite 0.3333s;
 }
 
 .k-typing-indicator span:nth-of-type(2) {
-    -webkit-animation: 1s k-animation-blink infinite 0.6666s;
-            animation: 1s k-animation-blink infinite 0.6666s;
+    animation: 1s k-animation-blink infinite 0.6666s;
 }
 
 .k-typing-indicator span:nth-of-type(3) {
-    -webkit-animation: 1s k-animation-blink infinite 0.9999s;
-            animation: 1s k-animation-blink infinite 0.9999s;
+    animation: 1s k-animation-blink infinite 0.9999s;
 }
 
 .k-typing-indicator span + span {
     margin-left: 5px;
-}
-
-@-webkit-keyframes k-animation-blink {
-    50% {
-        opacity: 1;
-    }
 }
 
 @keyframes k-animation-blink {
@@ -35336,8 +34562,7 @@ kendo-scheduler .k-recurrence-editor {
     z-index: 3;
     top: 0;
     left: 0;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 .k-mediaplayer-seekbar .k-slider-track {
@@ -35494,8 +34719,7 @@ kendo-scheduler .k-recurrence-editor {
 .k-timeline-vertical::after {
     height: 100%;
     width: 6px;
-    -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
+    transform: translateX(-50%);
     border-radius: 6px;
 }
 
@@ -35509,16 +34733,14 @@ kendo-scheduler .k-recurrence-editor {
 }
 
 .k-timeline-vertical .k-timeline-flag {
-    -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
+    transform: translateX(-50%);
 }
 
 .k-timeline-vertical .k-timeline-date-wrap {
     position: absolute;
     padding-right: 16px;
     margin-top: 36px;
-    -webkit-transform: translate(-100%, -50%);
-            transform: translate(-100%, -50%);
+    transform: translate(-100%, -50%);
     text-align: right;
 }
 
@@ -35556,11 +34778,8 @@ kendo-scheduler .k-recurrence-editor {
 
 .k-timeline-vertical .k-timeline-card .k-event-collapse {
     margin: -4px 0;
-    -webkit-transform: rotate(90deg);
-            transform: rotate(90deg);
-    transition: -webkit-transform .2s ease-in-out;
+    transform: rotate(90deg);
     transition: transform .2s ease-in-out;
-    transition: transform .2s ease-in-out, -webkit-transform .2s ease-in-out;
 }
 
 .k-timeline-vertical .k-timeline-card.k-collapsed .k-card-body,
@@ -35569,14 +34788,12 @@ kendo-scheduler .k-recurrence-editor {
 }
 
 .k-timeline-vertical .k-timeline-card.k-collapsed .k-event-collapse {
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
+    transform: rotate(0deg);
 }
 
 .k-timeline-vertical .k-timeline-circle {
     margin-top: 36px;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     margin-right: -8px;
 }
 
@@ -35593,8 +34810,7 @@ kendo-scheduler .k-recurrence-editor {
 }
 
 .k-timeline-vertical.k-timeline-alternating .k-timeline-flag {
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
+    transform: translateX(0);
 }
 
 .k-timeline-vertical.k-timeline-alternating .k-timeline-event {
@@ -35629,13 +34845,11 @@ kendo-scheduler .k-recurrence-editor {
 
 .k-timeline-vertical.k-timeline-alternating .k-timeline-date-wrap {
     position: static;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
 }
 
 .k-timeline-vertical.k-timeline-alternating .k-timeline-circle {
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
     margin-right: 0;
 }
 
@@ -35697,8 +34911,7 @@ kendo-scheduler .k-recurrence-editor {
     bottom: 18px;
     left: 28px;
     right: 28px;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
     height: 6px;
 }
 
@@ -35710,9 +34923,7 @@ kendo-scheduler .k-recurrence-editor {
 }
 
 .k-timeline-horizontal .k-timeline-track-wrap .k-timeline-track .k-timeline-scrollable-wrap {
-    transition: -webkit-transform 1s ease-in-out;
     transition: transform 1s ease-in-out;
-    transition: transform 1s ease-in-out, -webkit-transform 1s ease-in-out;
 }
 
 .k-timeline-horizontal .k-timeline-track-wrap .k-timeline-flag {
@@ -35728,8 +34939,7 @@ kendo-scheduler .k-recurrence-editor {
     position: absolute;
     left: 50%;
     bottom: 0;
-    -webkit-transform: translate(-50%, 50%) rotate(45deg);
-            transform: translate(-50%, 50%) rotate(45deg);
+    transform: translate(-50%, 50%) rotate(45deg);
 }
 
 .k-timeline-horizontal .k-timeline-scrollable-wrap {
@@ -35926,8 +35136,7 @@ kendo-scheduler .k-recurrence-editor {
 .k-pdf-viewer .k-page .k-text-layer > span {
     position: absolute;
     line-height: 1.25;
-    -webkit-transform-origin: 0% 0%;
-            transform-origin: 0% 0%;
+    transform-origin: 0% 0%;
     color: transparent;
 }
 
@@ -36070,8 +35279,7 @@ kendo-scheduler .k-recurrence-editor {
     line-height: 3em;
     font-size: 1.4em;
     text-align: center;
-    -webkit-transform: translate3d(0, -3em, 0);
-            transform: translate3d(0, -3em, 0);
+    transform: translate3d(0, -3em, 0);
 }
 
 .km-scroller-pull .km-template {
@@ -36088,16 +35296,12 @@ kendo-scheduler .k-recurrence-editor {
     vertical-align: middle;
     width: 2rem;
     font-size: 2rem;
-    -webkit-transform: rotate(0deg);
-            transform: rotate(0deg);
-    transition: -webkit-transform 300ms linear;
+    transform: rotate(0deg);
     transition: transform 300ms linear;
-    transition: transform 300ms linear, -webkit-transform 300ms linear;
 }
 
 .km-widget .km-scroller-release .km-icon {
-    -webkit-transform: rotate(180deg);
-            transform: rotate(180deg);
+    transform: rotate(180deg);
 }
 
 .km-widget .km-scroller-refresh .km-icon {
@@ -36111,8 +35315,7 @@ kendo-scheduler .k-recurrence-editor {
     height: .4em;
     width: .4em;
     opacity: 0;
-    -webkit-transform-origin: 0 0;
-            transform-origin: 0 0;
+    transform-origin: 0 0;
     transition: opacity .3s linear;
 }
 
@@ -36194,8 +35397,7 @@ kendo-scrollview.k-scrollview,
     width: calc(var(--kendo-scrollview-views, 1)*100%);
     transition-duration: 0.3s;
     transition-timing-function: ease-in-out;
-    -webkit-transform: translateX(calc(-100%/var(--kendo-scrollview-views, 1)*(var(--kendo-scrollview-current, 1) - 1)));
-            transform: translateX(calc(-100%/var(--kendo-scrollview-views, 1)*(var(--kendo-scrollview-current, 1) - 1)));
+    transform: translateX(calc(-100%/var(--kendo-scrollview-views, 1)*(var(--kendo-scrollview-current, 1) - 1)));
 }
 
 .k-scrollview-wrap.k-scrollview-animate .k-scrollview-view {
@@ -36205,8 +35407,7 @@ kendo-scrollview.k-scrollview,
 
 [dir="rtl"] .k-scrollview-wrap.k-scrollview-animate,
 .k-rtl .k-scrollview-wrap.k-scrollview-animate {
-    -webkit-transform: translateX(calc(100%/var(--kendo-scrollview-views, 1)*(var(--kendo-scrollview-current, 1) - 1)));
-            transform: translateX(calc(100%/var(--kendo-scrollview-views, 1)*(var(--kendo-scrollview-current, 1) - 1)));
+    transform: translateX(calc(100%/var(--kendo-scrollview-views, 1)*(var(--kendo-scrollview-current, 1) - 1)));
 }
 
 kendo-scrollview.k-scrollview-wrap kendo-scrollview-pager,
@@ -36281,8 +35482,7 @@ kendo-scrollview.k-scrollview .k-scrollview-nav {
     position: absolute;
     top: 50%;
     left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     pointer-events: initial;
     border-radius: 0;
 }
@@ -36552,8 +35752,7 @@ div.k-scrollview.k-scrollview-light .k-scrollview-nav-wrap {
 
 .k-selector {
     position: absolute;
-    -webkit-transform: translateZ(0);
-            transform: translateZ(0);
+    transform: translateZ(0);
 }
 
 .k-selection {
@@ -36750,10 +35949,8 @@ div.k-scrollview.k-scrollview-light .k-scrollview-nav-wrap {
 }
 
 .k-treemap .k-treemap-title-vertical > div {
-    -webkit-transform-origin: right;
-            transform-origin: right;
-    -webkit-transform: rotate(-90deg);
-            transform: rotate(-90deg);
+    transform-origin: right;
+    transform: rotate(-90deg);
     position: absolute;
     top: 0;
     right: 1em;
@@ -37195,8 +36392,7 @@ div.k-scrollview.k-scrollview-light .k-scrollview-nav-wrap {
 }
 
 .k-map .k-marker {
-    -webkit-transform: translate(-50%, -100%);
-            transform: translate(-50%, -100%);
+    transform: translate(-50%, -100%);
     font-size: 32px;
     cursor: pointer;
     position: absolute;
@@ -37247,32 +36443,28 @@ div.k-scrollview.k-scrollview-light .k-scrollview-nav-wrap {
 
 .k-navigator .k-navigator-n,
 .k-navigator .k-navigator-up {
-    -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
+    transform: translateX(-50%);
     top: 2px;
     left: 50%;
 }
 
 .k-navigator .k-navigator-e,
 .k-navigator .k-navigator-right {
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
     right: 2px;
     top: 50%;
 }
 
 .k-navigator .k-navigator-s,
 .k-navigator .k-navigator-down {
-    -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
+    transform: translateX(-50%);
     bottom: 2px;
     left: 50%;
 }
 
 .k-navigator .k-navigator-w,
 .k-navigator .k-navigator-left {
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
     left: 2px;
     top: 50%;
 }
@@ -37464,8 +36656,7 @@ div.k-scrollview.k-scrollview-light .k-scrollview-nav-wrap {
     display: flex;
     width: -webkit-min-content;
     width: min-content;
-    -webkit-margin-start: auto;
-            margin-inline-start: auto;
+    margin-inline-start: auto;
     gap: 4px;
     z-index: 2;
 }

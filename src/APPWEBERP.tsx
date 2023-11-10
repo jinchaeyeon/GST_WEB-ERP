@@ -43,6 +43,7 @@ import AC_B5000W from "./routes/AC_B5000W";
 import AC_B5080W from "./routes/AC_B5080W";
 import AC_B6060W from "./routes/AC_B6060W";
 import AC_B8030W from "./routes/AC_B8030W";
+import AC_B8080W from "./routes/AC_B8080W";
 import BA_A0020W from "./routes/BA_A0020W";
 import BA_A0020W_603 from "./routes/BA_A0020W_603";
 import BA_A0040W from "./routes/BA_A0040W";
@@ -195,6 +196,8 @@ import AC_B8040W from "./routes/AC_B8040W";
 import AC_B3000W from "./routes/AC_B3000W";
 import AC_B8100W from "./routes/AC_B8100W";
 import SA_B2226W from "./routes/SA_B2226W";
+import AC_B6080W from "./routes/AC_B6080W";
+import SA_B2216W from "./routes/SA_B2216W";
 const Login = lazy(() => import("./routes/Login"));
 const Main = lazy(() => import("./routes/Main"));
 
@@ -608,8 +611,10 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/AC_B5080W" component={AC_B5080W} exact />
                   <AuthRoute path="/AC_B6020W" component={AC_B6020W} exact />
                   <AuthRoute path="/AC_B6060W" component={AC_B6060W} exact />
+                  <AuthRoute path="/AC_B6080W" component={AC_B6080W} exact />
                   <AuthRoute path="/AC_B8030W" component={AC_B8030W} exact />
                   <AuthRoute path="/AC_B8040W" component={AC_B8040W} exact />
+                  <AuthRoute path="/AC_B8080W" component={AC_B8080W} exact />
                   <AuthRoute path="/AC_B8100W" component={AC_B8100W} exact />
                   {/* 목형관리 */}
                   <AuthRoute path="/TO_B0011W" component={TO_B0011W} exact />
@@ -632,7 +637,7 @@ const AppInner: React.FC = () => {
                   {/* 연구개발 */}
                   <AuthRoute path="/GANTT" component={GANTT} exact />
 
-                  <GlobalStyles style={{ fontFamily: "TheJamsil5Bold" }}>
+                  <GlobalStyles style={{ fontFamily: "TheJamsil5Bold", marginBottom: "50px" }}>
                     {/*KPI관리 */}
                     <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
                     <AuthRoute path="/PR_B1103W" component={PR_B1103W} exact />
@@ -642,6 +647,7 @@ const AppInner: React.FC = () => {
                     <AuthRoute path="/CR_A1101W" component={CR_A1101W} exact />
                     {/* 바이오톡스텍 대쉬보드 */}
                     <AuthRoute path="/SA_B2226W" component={SA_B2226W} exact />
+                    <AuthRoute path="/SA_B2216W" component={SA_B2216W} exact />
                   </GlobalStyles>
 
                   {/* DDGD 관리자페이지 */}
