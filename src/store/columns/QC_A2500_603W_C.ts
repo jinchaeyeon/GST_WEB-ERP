@@ -66,4 +66,91 @@ export const gridList: Array<TGrid> = [
       },
     ],
   },
+  {
+    gridName: "grdList2",
+    columns: [
+      {
+        id: "col_insert_userid",
+        field: "insert_userid",
+        caption: "작성자",
+        width: 120,
+      },
+      {
+        id: "col_comment",
+        field: "comment",
+        caption: "내용",
+        width: 200,
+      },
+      {
+        id: "col_insert_time",
+        field: "insert_time",
+        caption: "완료",
+        width: 180,
+      },
+      {
+        id: "col_update_time",
+        field: "update_time",
+        caption: "수정일시",
+        width: 180,
+      },
+    ],
+  },
+  {
+    gridName: "grdList3",
+    columns: [
+      {
+        id: "col_insert_userid2",
+        field: "insert_userid",
+        caption: "작성자",
+        width: 120,
+      },
+      {
+        id: "col_comment2",
+        field: "comment",
+        caption: "내용",
+        width: 200,
+      },
+      {
+        id: "col_insert_time2",
+        field: "insert_time",
+        caption: "완료",
+        width: 180,
+      },
+      {
+        id: "col_update_time2",
+        field: "update_time",
+        caption: "수정일시",
+        width: 180,
+      },
+    ],
+  },
+  {
+    gridName: "grdList4",
+    columns: [
+      {
+        id: "col_insert_userid3",
+        field: "insert_userid",
+        caption: "작성자",
+        width: 120,
+      },
+      {
+        id: "col_comment3",
+        field: "comment",
+        caption: "내용",
+        width: 200,
+      },
+      {
+        id: "col_insert_time3",
+        field: "insert_time",
+        caption: "완료",
+        width: 180,
+      },
+      {
+        id: "col_update_time3",
+        field: "update_time",
+        caption: "수정일시",
+        width: 180,
+      },
+    ],
+  },
 ];

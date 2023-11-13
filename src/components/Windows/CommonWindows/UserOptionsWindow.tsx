@@ -180,14 +180,29 @@ const DefaultValueCell = (props: GridCellProps) => {
   //const useSession = getYn(dataItem["use_session"]);
   const [bizComponentData, setBizComponentData] = useState([]);
   if (bcId) UseBizComponent(bcId, setBizComponentData);
-  const bizComponent = bizComponentData.find(
+  const bizComponent: any = bizComponentData.find(
     (item: any) => item.bizComponentId === bcId
   );
+
+  const textField = bizComponent
+    ? bizComponent.data.ColumnCount == 1
+      ? bizComponent.data.Columns[0].ColumnName
+      : bizComponent.data.Columns[1].ColumnName
+    : undefined;
+
+  const valueField = bizComponent
+    ? bizComponent.data.Columns[0].ColumnName
+    : undefined;
 
   const defaultRendering = (
     <>
       {bizComponent && valueType === "Lookup" ? (
-        <ComboBoxCell bizComponent={bizComponent} {...props} />
+        <ComboBoxCell
+          bizComponent={bizComponent}
+          textField={textField}
+          valueField={valueField}
+          {...props}
+        />
       ) : bizComponent && valueType === "Radio" ? (
         <RadioGroupCell bizComponentData={bizComponent} {...props} />
       ) : valueType === "Text" ? (
@@ -2095,7 +2110,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
-                    mode: "single"
+                    mode: "single",
                   }}
                   onSelectionChange={onWordSelectionChange}
                   //스크롤 조회 기능
@@ -2162,7 +2177,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
-                  mode: "single"
+                  mode: "single",
                 }}
                 onSelectionChange={onMainDefaultSelectionChange}
                 //스크롤 조회 기능
@@ -2230,7 +2245,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
-                  mode: "single"
+                  mode: "single",
                 }}
                 onSelectionChange={onDetailDefaultSelectionChange}
                 //스크롤 조회 기능
@@ -2342,7 +2357,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
-                  mode: "single"
+                  mode: "single",
                 }}
                 onSelectionChange={onMainColumnSelectionChange}
                 //스크롤 조회 기능
@@ -2428,7 +2443,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
-                  mode: "single"
+                  mode: "single",
                 }}
                 onSelectionChange={onDetailColumnSelectionChange}
                 //스크롤 조회 기능

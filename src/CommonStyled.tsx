@@ -1050,7 +1050,7 @@ export const AdminQuestionBox = styled.div`
   padding: 15px;
   justify-content: space-between;
   align-items: center;
-  /* cursor: pointer; */
+  cursor: pointer;
 
   > div:nth-child(2) {
     width: 60%;

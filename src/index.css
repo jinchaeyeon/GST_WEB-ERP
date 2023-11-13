@@ -344,6 +344,10 @@ div.k-animation-container {
   display: none;
 }
 
+.k-animation-container-relative {
+  display: block !important;
+}
+
 /*시스템 옵션*/
 .sys-opt-wnd-form-elem .k-form-field>.k-label,
 .sys-opt-wnd-form-elem .k-form-field>kendo-label,

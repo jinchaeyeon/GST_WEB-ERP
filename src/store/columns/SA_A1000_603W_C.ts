@@ -74,7 +74,7 @@ export const gridList: Array<TGrid> = [
         id: "col_materialnm",
         field: "materialnm",
         caption: "시험물질명",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_materialindt",

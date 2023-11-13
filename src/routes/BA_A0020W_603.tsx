@@ -93,6 +93,7 @@ import {
 import { gridList } from "../store/columns/BA_A0020W_603_C";
 
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 const DATA_ITEM_KEY = "custcd";
 const SUB_DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY2 = "num";
@@ -291,16 +292,12 @@ const BA_A0020_603: React.FC = () => {
         raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
           .valueCode,
       }));
-      setInfomation((prev) => ({
-        ...prev,
-        useyn: defaultOption.find((item: any) => item.id === "useyn").valueCode,
-      }));
     }
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_AC401,L_BA025,L_AC901, L_sysUserMaster_001,L_BA171, L_BA172,L_BA173,L_BA049, L_BA026,L_BA027,L_BA008,L_BA075",
+    "R_YESNO, L_AC401,L_BA025,L_AC901, L_sysUserMaster_001,L_BA171, L_BA172,L_BA173,L_BA049, L_BA026,L_BA027,L_BA008,L_BA075",
     //업체구분, 사업자구분, 매출단가항목(매입단가항목)
     setBizComponentData
   );
@@ -1358,10 +1355,15 @@ const BA_A0020_603: React.FC = () => {
   };
   const onAddClick2 = () => {
     setWorkType("N");
+    const defaultOption = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "new"
+    );
+    setyn(defaultOption.find((item: any) => item.id === "yn").valueCode == "Y" ? true : false)
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "N",
-      custcd: "자동생성",
+      custcd: defaultOption.find((item: any) => item.id === "yn").valueCode == "Y" ? "자동생성" : "",
       custnm: "",
       custdiv: "B",
       custabbr: "",
@@ -1391,11 +1393,11 @@ const BA_A0020_603: React.FC = () => {
       efaxnum: "",
       email: "",
       taxortnm: "",
-      useyn: "Y",
+      useyn: defaultOption.find((item: any) => item.id === "useyn").valueCode,
       scmyn: "N",
       pariodyn: "",
       attdatnum: "",
-      itemlvl1: "",
+      itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1").valueCode,
       itemlvl2: "",
       itemlvl3: "",
       etax: "",
@@ -3023,7 +3025,7 @@ const BA_A0020_603: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>고객관리</Title>
+        <Title>고객등록관리</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -3340,9 +3342,11 @@ const BA_A0020_603: React.FC = () => {
                         <th style={{ width: "15%" }}>상장유무</th>
                         <td>
                           {customOptionData !== null && (
-                            <CustomOptionRadioGroup
+                            <BizComponentRadioGroup
                               name="useyn"
-                              customOptionData={customOptionData}
+                              value={infomation.useyn}
+                              bizComponentId="R_YESNO"
+                              bizComponentData={bizComponentData}
                               changeData={RadioChange}
                             />
                           )}
@@ -3432,7 +3436,7 @@ const BA_A0020_603: React.FC = () => {
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
-                    mode: "single"
+                    mode: "single",
                   }}
                   onSelectionChange={onSubDataSelectionChange}
                   //스크롤 조회 기능
@@ -3560,7 +3564,7 @@ const BA_A0020_603: React.FC = () => {
                     selectedField={SELECTED_FIELD}
                     selectable={{
                       enabled: true,
-                      mode: "single"
+                      mode: "single",
                     }}
                     onSelectionChange={onSubDataSelectionChange2}
                     //스크롤 조회 기능

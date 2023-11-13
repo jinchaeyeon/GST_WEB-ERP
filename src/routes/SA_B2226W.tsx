@@ -456,7 +456,7 @@ const SA_B2226W: React.FC = () => {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <Container maxWidth="xl" style={{ width: "100%" }}>
+        <Container maxWidth="xl" style={{ width: "100%", marginBottom: "50px" }}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
             <Title>DASHBOARD(실적)</Title>
             <ButtonContainer>
@@ -503,9 +503,9 @@ const SA_B2226W: React.FC = () => {
                 value="value"
                 name="series"
                 color={[
-                  theme.palette.primary.dark,
-                  theme.palette.primary.main,
-                  theme.palette.primary.light,
+                  "#1d7cef",
+                  "#f8a73a",
+                  "#00b050",
                 ]}
                 alllabel={stackChartAllLabel}
                 label={stackChartLabel}

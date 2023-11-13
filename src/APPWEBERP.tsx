@@ -637,7 +637,7 @@ const AppInner: React.FC = () => {
                   {/* 연구개발 */}
                   <AuthRoute path="/GANTT" component={GANTT} exact />
 
-                  <GlobalStyles style={{ fontFamily: "TheJamsil5Bold", marginBottom: "50px" }}>
+                  <GlobalStyles style={{ fontFamily: "TheJamsil5Bold"}}>
                     {/*KPI관리 */}
                     <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
                     <AuthRoute path="/PR_B1103W" component={PR_B1103W} exact />

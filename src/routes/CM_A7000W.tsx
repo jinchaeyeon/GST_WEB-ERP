@@ -1011,6 +1011,10 @@ const CM_A7000W: React.FC = () => {
     setWorkType("N");
     setTabSelected(1);
     setDetailDataResult(process([], detailDataState));
+    const defaultOption = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "new"
+    );
     setInformation({
       orgdiv: orgdiv,
       meetingnum: "",
@@ -1020,7 +1024,8 @@ const CM_A7000W: React.FC = () => {
       attdatnum: "",
       files: "",
       remark2: "",
-      unshared: "Y",
+      unshared: defaultOption.find((item: any) => item.id === "unshared")
+      .valueCode,
       place: "",
       meetingnm: "",
       ref_key: "",

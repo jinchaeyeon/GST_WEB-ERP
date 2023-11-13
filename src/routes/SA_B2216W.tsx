@@ -328,7 +328,10 @@ const SA_B2216W: React.FC = () => {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <Container maxWidth="xl" style={{ width: "100%" }}>
+        <Container
+          maxWidth="xl"
+          style={{ width: "100%", marginBottom: "50px" }}
+        >
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
             <Title>DASHBOARD(담당자별)</Title>
             <ButtonContainer>

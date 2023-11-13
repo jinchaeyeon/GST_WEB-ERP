@@ -723,6 +723,24 @@ export const setDefaultDate = (customOptionData: any, id: string) => {
   return newDate;
 };
 
+//Date 디폴트 값 반환
+export const setDefaultDate2 = (customOptionData: any, id: string) => {
+  const date = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "new").find(
+    (item: any) => item.id === id,
+  );
+
+  const addYear = date ? date.addYear : 0;
+  const addMonth = date ? date.addMonth : 0;
+  const addDay = date ? date.addDay : 0;
+
+  const newDate = new Date();
+  newDate.setFullYear(newDate.getFullYear() + addYear);
+  newDate.setMonth(newDate.getMonth() + addMonth);
+  newDate.setDate(newDate.getDate() + addDay);
+
+  return newDate;
+};
+
 // Validate the entire Form
 export const arrayLengthValidator = (value: any) => {
   return value && value.length ? "" : "최소 1개 행을 입력해주세요";
@@ -824,11 +842,11 @@ export const getUnpQuery = (custcd: string) => {
 };
 
 // code값을 인수로 받아 sessionItem value 반환
-export const UseGetValueFromSessionItem = (code: TSessionItemCode) => {
+export const UseGetValueFromSessionItem = (code: string) => {
   const [sessionItem] = useRecoilState(sessionItemState);
-
+  const codes = code == "UserID" ? "user_id" : code == "UserName" ? "user_name" : code;
   if (sessionItem) {
-    return sessionItem.find((sessionItem) => sessionItem.code === code)!.value;
+    return sessionItem.find((sessionItem) => sessionItem.code === codes)!.value;
   } else {
     console.log("sessionItem 오류");
     return "";

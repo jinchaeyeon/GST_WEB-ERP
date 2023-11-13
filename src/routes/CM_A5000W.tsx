@@ -55,6 +55,7 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
+  setDefaultDate2,
   toDate,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -1230,13 +1231,17 @@ const CM_A5000W: React.FC = () => {
     fetchHtmlDocument("");
     setWorkType("N");
     setTabSelected(1);
+    const defaultOption = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "new"
+    );
     setInformation({
       document_id: "",
       cpmnum: "",
       user_id: "",
       user_name: "",
-      request_date: new Date(),
-      finexpdt: new Date(),
+      request_date: setDefaultDate2(customOptionData, "request_date"),
+      finexpdt: setDefaultDate2(customOptionData, "finexpdt"),
       require_type: "",
       completion_method: "",
       medicine_type: "",
@@ -1244,7 +1249,8 @@ const CM_A5000W: React.FC = () => {
       customer_code: "",
       customernm: "",
       title: "",
-      is_emergency: "",
+      is_emergency: defaultOption.find((item: any) => item.id === "is_emergency")
+      .valueCode,
       testnum: "",
       attdatnum: "",
       files: "",

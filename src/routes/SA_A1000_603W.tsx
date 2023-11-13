@@ -44,6 +44,7 @@ import {
   ButtonInGridInput,
   ButtonInInput,
   FilterBox,
+  FilterBoxWrap,
   FormBox,
   FormBoxWrap,
   GridContainer,
@@ -75,8 +76,9 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   isValidDate,
+  setDefaultDate2,
   toDate,
-  useSysMessage,
+  useSysMessage
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -85,7 +87,6 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import FilterContainer from "../components/Containers/FilterContainer";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
@@ -2386,38 +2387,26 @@ const SA_A1000_603W: React.FC = () => {
       minGridWidth2.current += 50;
       if (grid.current) {
         setGridCurrent(grid.current.clientWidth);
-      }
-      if (grid2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-      }
-      if (grid3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-      }
-      if (grid4.current) {
-        setGridCurrent4(grid4.current.clientWidth);
-      }
-      if (grid5.current) {
-        setGridCurrent5(grid5.current.clientWidth);
-      }
-      if (grid6.current) {
-        setGridCurrent6(grid6.current.clientWidth);
-      }
-      if (grid.current) {
         setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
       }
       if (grid2.current) {
+        setGridCurrent2(grid2.current.clientWidth);
         setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
       }
       if (grid3.current) {
+        setGridCurrent3(grid3.current.clientWidth);
         setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
       }
       if (grid4.current) {
+        setGridCurrent4(grid4.current.clientWidth);
         setApplyMinWidth4(grid4.current.clientWidth < minGridWidth4.current);
       }
       if (grid5.current) {
+        setGridCurrent5(grid5.current.clientWidth);
         setApplyMinWidth5(grid5.current.clientWidth < minGridWidth5.current);
       }
       if (grid6.current) {
+        setGridCurrent6(grid6.current.clientWidth);
         setApplyMinWidth6(grid6.current.clientWidth < minGridWidth6.current);
       }
     }
@@ -2763,6 +2752,10 @@ const SA_A1000_603W: React.FC = () => {
     if (unsavedAttadatnums.length > 0) {
       setDeletedAttadatnums(unsavedAttadatnums);
     }
+    const defaultOption = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "new"
+    );
     setInformation({
       attdatnum: "",
       chkperson: "",
@@ -2771,11 +2764,11 @@ const SA_A1000_603W: React.FC = () => {
       custprsnnm: "",
       dptcd: "",
       files: "",
-      materialindt: new Date(),
+      materialindt: setDefaultDate2(customOptionData, "materialindt"),
       materialnm: "",
       materialtype: "",
       person: userId,
-      quodt: new Date(),
+      quodt: setDefaultDate2(customOptionData, "quodt"),
       quonum: "",
       quorev: 0,
       quosts: "0",
@@ -2785,7 +2778,8 @@ const SA_A1000_603W: React.FC = () => {
       remark: "",
       remark2: "",
       remark3: "",
-      requestgb: "A",
+      requestgb: defaultOption.find((item: any) => item.id === "requestgb")
+      .valueCode,
       glp1: "",
       glp2: "",
       glp3: "",
@@ -3580,7 +3574,7 @@ const SA_A1000_603W: React.FC = () => {
         style={{ width: "100%" }}
       >
         <TabStripTab title="요약정보">
-          <FilterContainer>
+          <FilterBoxWrap>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
@@ -3629,8 +3623,8 @@ const SA_A1000_603W: React.FC = () => {
                 </tr>
               </tbody>
             </FilterBox>
-          </FilterContainer>
-          <GridContainer width={"100%"}>
+          </FilterBoxWrap>
+          <GridContainer>
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
@@ -3650,7 +3644,7 @@ const SA_A1000_603W: React.FC = () => {
                       textAlign: "center",
                       marginRight: "5px",
                       fontWeight: 700,
-                      fontSize: "15px"
+                      fontSize: "15px",
                     }}
                   >
                     문의
@@ -3665,7 +3659,7 @@ const SA_A1000_603W: React.FC = () => {
                       textAlign: "center",
                       marginRight: "5px",
                       fontWeight: 700,
-                      fontSize: "15px"
+                      fontSize: "15px",
                     }}
                   >
                     컨설팅
@@ -3680,7 +3674,7 @@ const SA_A1000_603W: React.FC = () => {
                       textAlign: "center",
                       marginRight: "5px",
                       fontWeight: 700,
-                      fontSize: "15px"
+                      fontSize: "15px",
                     }}
                   >
                     견적
@@ -3695,7 +3689,7 @@ const SA_A1000_603W: React.FC = () => {
                       textAlign: "center",
                       marginRight: "5px",
                       fontWeight: 700,
-                      fontSize: "15px"
+                      fontSize: "15px",
                     }}
                   >
                     계약
@@ -3709,7 +3703,7 @@ const SA_A1000_603W: React.FC = () => {
                       padding: "5px 10px",
                       textAlign: "center",
                       fontWeight: 700,
-                      fontSize: "15px"
+                      fontSize: "15px",
                     }}
                   >
                     시험관리
@@ -4328,7 +4322,7 @@ const SA_A1000_603W: React.FC = () => {
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
-                    mode: "single"
+                    mode: "single",
                   }}
                   onSelectionChange={onSubDataSelectionChange}
                   //스크롤 조회 기능
@@ -4422,7 +4416,7 @@ const SA_A1000_603W: React.FC = () => {
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
-                  mode: "single"
+                  mode: "single",
                 }}
                 onSelectionChange={onSubDataSelectionChange2}
                 //스크롤 조회 기능
