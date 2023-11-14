@@ -99,6 +99,7 @@ export default function ComboChart(props) {
             labels: {
               color: textColor,
             },
+            align: "end",
           },
         },
         scales: {

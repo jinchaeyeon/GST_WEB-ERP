@@ -9,7 +9,7 @@ import {
   ChartSeriesItemTooltip,
   ChartTooltip,
   ChartValueAxis,
-  ChartValueAxisItem
+  ChartValueAxisItem,
 } from "@progress/kendo-react-charts";
 import { getter } from "@progress/kendo-react-common";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -35,7 +35,7 @@ import {
   GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
@@ -51,12 +51,9 @@ import {
   findMessage,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
-import {
-  PAGE_SIZE,
-  SELECTED_FIELD
-} from "../components/CommonString";
+import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -105,6 +102,22 @@ const AC_B6080W: React.FC = () => {
         worktype3: defaultOption.find((item: any) => item.id === "worktype3")
           .valueCode,
       }));
+
+      const year = setDefaultDate(customOptionData, "yyyymm").getFullYear(); // 년
+      const month = setDefaultDate(customOptionData, "yyyymm").getMonth(); // 월
+      const day = 1; // 일
+      setDate(new Date(year, month, day));
+      setDate2(new Date(year, month - 1, day));
+      setDate3(new Date(year, month - 2, day));
+      setDate4(new Date(year, month - 3, day));
+      setDate5(new Date(year, month - 4, day));
+      setDate6(new Date(year, month - 5, day));
+      setDate7(new Date(year, month - 6, day));
+      setDate8(new Date(year, month - 7, day));
+      setDate9(new Date(year, month - 8, day));
+      setDate10(new Date(year, month - 9, day));
+      setDate11(new Date(year, month - 10, day));
+      setDate12(new Date(year - 1, month, day));
     }
   }, [customOptionData]);
 
@@ -417,7 +430,7 @@ const AC_B6080W: React.FC = () => {
         setDetailFilters2((prev) => ({
           ...prev,
           isSearch: true,
-          custcd: rows[0].custcd,
+          custcd: rows[0].업체코드,
           pgNum: 1,
         }));
       }
@@ -551,6 +564,28 @@ const AC_B6080W: React.FC = () => {
       </td>
     );
   };
+
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
+
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
+  };
+
   //그리드 푸터
   const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
     var parts = mainDataResult2.total.toString().split(".");
@@ -562,6 +597,27 @@ const AC_B6080W: React.FC = () => {
         건
       </td>
     );
+  };
+
+  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult2.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
+
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
   };
 
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -578,7 +634,7 @@ const AC_B6080W: React.FC = () => {
     setDetailFilters2((prev) => ({
       ...prev,
       isSearch: true,
-      custcd: selectedRowData.custcd,
+      custcd: selectedRowData.업체코드,
       pgNum: 1,
     }));
   };
@@ -600,6 +656,11 @@ const AC_B6080W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
+    setAllChartDataResult({
+      mm: [""],
+      series: [""],
+      list: [],
+    });
     setPage(initialPageState);
     setPage2(initialPageState);
     setMainDataResult(process([], mainDataState));
@@ -617,13 +678,36 @@ const AC_B6080W: React.FC = () => {
         throw findMessage(messagesData, "AC_B6080W_001");
       } else {
         resetAllGrid();
-        setFilters((prev: any) => ({
-          ...prev,
-          pgNum: 1,
-          find_row_value: "",
-          isSearch: true,
-        }));
-        
+        if(tabSelected == 0) {
+          setFilters((prev) => ({
+            ...prev,
+            worktype: "SALETOTAL",
+            worktype2: "A",
+            isSearch: true,
+          }));
+        } else if (tabSelected == 1) {
+          setFilters((prev) => ({
+            ...prev,
+            worktype: "COLLECT",
+            worktype3: "1",
+            isSearch: true,
+          }));
+        } else if (tabSelected == 2) {
+          setFilters((prev) => ({
+            ...prev,
+            worktype: "PURCHASETOTAL",
+            worktype2: "A",
+            isSearch: true,
+          }));
+        } else {
+          setFilters((prev) => ({
+            ...prev,
+            worktype: "PAYMENT",
+            worktype3: "1",
+            isSearch: true,
+          }));
+        }
+
         const year = filters.yyyymm.getFullYear(); // 년
         const month = filters.yyyymm.getMonth(); // 월
         const day = 1; // 일
@@ -665,6 +749,7 @@ const AC_B6080W: React.FC = () => {
     }));
   };
   const handleSelectTab = (e: any) => {
+    resetAllGrid();
     if (e.selected == 0) {
       setFilters((prev) => ({
         ...prev,
@@ -902,8 +987,6 @@ const AC_B6080W: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th></th>
-                  <td></td>
                 </tr>
                 <tr>
                   <th>업체코드</th>
@@ -931,12 +1014,6 @@ const AC_B6080W: React.FC = () => {
                       onChange={filterInputChange}
                     />
                   </td>
-                  <th></th>
-                  <td></td>
-                  <th></th>
-                  <td></td>
-                  <th></th>
-                  <td></td>
                 </tr>
               </tbody>
             </FilterBox>
@@ -1010,7 +1087,7 @@ const AC_B6080W: React.FC = () => {
                   field="업체코드"
                   title="업체코드"
                   width="120px"
-                  // footerCell={mainTotalFooterCell}
+                  footerCell={mainTotalFooterCell}
                 />
                 <GridColumn field="업체명" title="업체명" width="120px" />
                 <GridColumn
@@ -1018,60 +1095,70 @@ const AC_B6080W: React.FC = () => {
                   title="1년초과"
                   width="100px"
                   cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
                 />
                 <GridColumn
                   field={column12}
                   title={column12}
                   width="100px"
                   cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
                 />
                 <GridColumn
                   field={column11}
                   title={column11}
                   width="100px"
                   cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
                 />
                 <GridColumn
                   field={column10}
                   title={column10}
                   width="100px"
                   cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
                 />
                 <GridColumn
                   field={column9}
                   title={column9}
                   width="100px"
                   cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
                 />
                 <GridColumn
                   field={column8}
                   title={column8}
                   width="100px"
                   cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
                 />
                 <GridColumn
                   field={column7}
                   title={column7}
                   width="100px"
                   cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
                 />
                 <GridColumn
                   field={column6}
                   title={column6}
                   width="100px"
                   cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
                 />
                 <GridColumn
                   field={column5}
                   title={column5}
                   width="100px"
                   cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
                 />
                 <GridColumn
                   field={column4}
                   title={column4}
                   width="100px"
                   cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
                 />
 
                 <GridColumn
@@ -1079,24 +1166,28 @@ const AC_B6080W: React.FC = () => {
                   title={column3}
                   width="100px"
                   cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
                 />
                 <GridColumn
                   field={column2}
                   title={column2}
                   width="100px"
                   cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
                 />
                 <GridColumn
                   field={column1}
                   title={column1}
                   width="100px"
                   cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
                 />
                 <GridColumn
                   field="TOTAL"
                   title="TOTAL"
                   width="100px"
                   cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
                 />
               </Grid>
             </ExcelExport>
@@ -1163,6 +1254,8 @@ const AC_B6080W: React.FC = () => {
                         footerCell={
                           item.sortOrder === 0
                             ? mainTotalFooterCell2
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell2
                             : undefined
                         }
                       />
@@ -1237,6 +1330,180 @@ const AC_B6080W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
+          <GridContainer width="100%">
+            <GridContainer height="25vh">
+              <Chart style={{ height: "100%" }}>
+                <ChartTooltip format="{0}" />
+                <ChartValueAxis>
+                  <ChartValueAxisItem
+                    labels={{
+                      visible: true,
+                      content: (e) => numberWithCommas(e.value) + "",
+                    }}
+                  />
+                </ChartValueAxis>
+                <ChartCategoryAxis>
+                  <ChartCategoryAxisItem categories={allChartDataResult.mm} />
+                </ChartCategoryAxis>
+                <ChartSeries>
+                  {filters.worktype3 == "1"
+                    ? Barchart()
+                    : Linechart()}
+                </ChartSeries>
+              </Chart>
+            </GridContainer>
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+            >
+              <Grid
+                style={{ height: "25vh" }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                <GridColumn
+                  field="업체코드"
+                  title="업체코드"
+                  width="120px"
+                  footerCell={mainTotalFooterCell}
+                />
+                <GridColumn field="업체명" title="업체명" width="120px" />
+                <GridColumn
+                  field="1년초과"
+                  title="1년초과"
+                  width="100px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+                <GridColumn
+                  field={column12}
+                  title={column12}
+                  width="100px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+                <GridColumn
+                  field={column11}
+                  title={column11}
+                  width="100px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+                <GridColumn
+                  field={column10}
+                  title={column10}
+                  width="100px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+                <GridColumn
+                  field={column9}
+                  title={column9}
+                  width="100px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+                <GridColumn
+                  field={column8}
+                  title={column8}
+                  width="100px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+                <GridColumn
+                  field={column7}
+                  title={column7}
+                  width="100px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+                <GridColumn
+                  field={column6}
+                  title={column6}
+                  width="100px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+                <GridColumn
+                  field={column5}
+                  title={column5}
+                  width="100px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+                <GridColumn
+                  field={column4}
+                  title={column4}
+                  width="100px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+
+                <GridColumn
+                  field={column3}
+                  title={column3}
+                  width="100px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+                <GridColumn
+                  field={column2}
+                  title={column2}
+                  width="100px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+                <GridColumn
+                  field={column1}
+                  title={column1}
+                  width="100px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+                <GridColumn
+                  field="TOTAL"
+                  title="TOTAL"
+                  width="100px"
+                  cell={NumberCell}
+                  footerCell={gridSumQtyFooterCell}
+                />
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
         </TabStripTab>
         <TabStripTab title="매입TAX미처리">
           <FilterContainer>
@@ -1275,20 +1542,8 @@ const AC_B6080W: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th></th>
-                  <td></td>
                 </tr>
                 <tr>
-                  <th>증빙유형</th>
-                  <td colSpan={3}>
-                    {customOptionData !== null && (
-                      <CustomOptionRadioGroup
-                        name="taxtype"
-                        customOptionData={customOptionData}
-                        changeData={filterRadioChange}
-                      />
-                    )}
-                  </td>
                   <th>업체코드</th>
                   <td>
                     <Input
@@ -1314,8 +1569,16 @@ const AC_B6080W: React.FC = () => {
                       onChange={filterInputChange}
                     />
                   </td>
-                  <th></th>
-                  <td></td>
+                  <th>증빙유형</th>
+                  <td colSpan={3}>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="taxtype"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
                 </tr>
               </tbody>
             </FilterBox>

@@ -47,7 +47,8 @@ export default function MultiChart(props) {
             labels: {
               color: textColor,
             },
-            display: false
+            align: "end",
+            display: true
           },
           datalabels: {
             color: 'black',

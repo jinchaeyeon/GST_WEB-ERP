@@ -45,6 +45,7 @@ export default function LineChart(props) {
             labels: {
               color: textColor,
             },
+            align: "end",
           },
           datalabels: {
             color: 'black',

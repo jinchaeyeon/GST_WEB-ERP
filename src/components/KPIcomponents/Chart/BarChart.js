@@ -57,7 +57,6 @@ export default function BarChart(props) {
         datasets: [
           {
             type: "bar",
-            label: "datas",
             backgroundColor: props.alllabel.map((item, index) =>
               props.random == true ? shuffleScores() : props.color[index]
             ),

@@ -47,7 +47,8 @@ export default function StackedChart(props) {
             labels: {
               color: textColor,
             },
-            display: false
+            display: true,
+            align: "end",
           },
           datalabels: {
             color: 'black',
