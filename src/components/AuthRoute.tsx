@@ -90,6 +90,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "QC_B0200W" ||
       link == "QC_B0300W" ||
       link == "QC_B0040W" ||
+      link == "QC_B0030W" ||
       link == "SY_A0120W" ||
       link == "SY_A0110W" ||
       link == "SY_A0010W" ||
