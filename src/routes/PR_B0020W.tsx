@@ -273,6 +273,7 @@ const PR_B0020W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid(deepCopiedFilters);
+      onResetCard();
     }
   }, [filters, permissions]);
 
@@ -395,7 +396,7 @@ const PR_B0020W: React.FC = () => {
   const search = () => {
     resetAllGrid();
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-    setCards(0);  // 카드 초기화
+    onResetCard();  // 카드 초기화
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {

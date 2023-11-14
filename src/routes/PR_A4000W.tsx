@@ -325,10 +325,10 @@ const PR_A4000W: React.FC = () => {
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
   const [detailWindowVisible, setDetailWindowVisible] = useState<boolean>(false);
   const [planWindowVisible, setPlanWindowVisible] = useState<boolean>(false);
-  const [prodtime, setProdTime] = useState<string>("");
-  const [stoptime, setStopTime] = useState<string>("");
-  const [prodrate, setProdRate] = useState<string>("");
-  const [stoprate, setStopRate] = useState<string>("");
+  const [prodtime, setProdTime] = useState<string>();
+  const [stoptime, setStopTime] = useState<string>();
+  const [prodrate, setProdRate] = useState<string>();
+  const [stoprate, setStopRate] = useState<string>();
 
   const onItemWndClick = () => {
     setItemWindowVisible(true);
@@ -1017,10 +1017,10 @@ const PR_A4000W: React.FC = () => {
     setDailyDataResult(process([], dailyDataState));
 
     // 가동-비가동 FormBox 빈값 처리
-    setProdTime("");
-    setStopTime("");
-    setProdRate("");
-    setStopRate("");
+    setProdTime("0");
+    setStopTime("0");
+    setProdRate("0");
+    setStopRate("0");
   };
 
   // 메인 그리드 선택 이벤트
@@ -1241,14 +1241,18 @@ const PR_A4000W: React.FC = () => {
         throw findMessage(messagesData, "PR_A4000W_001");
       } else {
         resetAllGrid();
-        setPage(initialPageState); // 페이지 초기화
-        setPage1(initialPageState); // 페이지 초기화
-        setPage2(initialPageState); // 페이지 초기화
-        setPage3(initialPageState); // 페이지 초기화
-        setFilters((prev) => ({ ...prev, pgNum: 1, find_row_value: "", isSearch: true }));
-        setGoFilters((prev) => ({ ...prev, pgNum: 1, find_row_value: "", isSearch: true }));
-        setDetailFilters((prev) => ({ ...prev, pgNum: 1, find_row_value: "", isSearch: true }));
-        setDailyFilters((prev) => ({ ...prev, pgNum: 1, find_row_value: "", isSearch: true }));
+        if (tabSelected == 0) {
+          setPage(initialPageState); // 페이지 초기화
+          setFilters((prev) => ({ ...prev, pgNum: 1, find_row_value: "", isSearch: true }));
+        } else if (tabSelected == 1) {
+          setPage1(initialPageState); // 페이지 초기화
+          setPage2(initialPageState); // 페이지 초기화
+          setGoFilters((prev) => ({ ...prev, pgNum: 1, find_row_value: "", isSearch: true }));
+          setDetailFilters((prev) => ({ ...prev, pgNum: 1, find_row_value: "", isSearch: true }));
+        } else if (tabSelected == 2) {
+          setPage3(initialPageState); // 페이지 초기화
+          setDailyFilters((prev) => ({ ...prev, pgNum: 1, find_row_value: "", isSearch: true }));
+        }
       }
     } catch (e) {
       alert(e);
@@ -2251,7 +2255,7 @@ const PR_A4000W: React.FC = () => {
                   <GridTitle>작업내용</GridTitle>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "66.5vh"}}
+                  style={{ height: "64.8vh"}}
                   data={process(
                     detailDataResult.data.map((row) => ({
                       ...row,
