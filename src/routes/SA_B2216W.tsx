@@ -1,27 +1,21 @@
 import { Container } from "@mui/material";
-import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Divider } from "primereact/divider";
-import { Knob } from "primereact/knob";
 import { Toolbar } from "primereact/toolbar";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import { convertDateToStr } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
-import Card from "../components/KPIcomponents/Card/CardBox";
 import MultiChart from "../components/KPIcomponents/Chart/MultiChart";
-import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutChart";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
+import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
 import { colors, colorsName, isLoading } from "../store/atoms";
-import ComboChart from "../components/KPIcomponents/Chart/ComboChart";
-import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
-import BarChart from "../components/KPIcomponents/Chart/BarChart";
 
 interface TList {
   badcnt?: number;
@@ -109,6 +103,7 @@ const SA_B2216W: React.FC = () => {
     location: "01",
     frdt: new Date(),
     todt: new Date(),
+    mm: new Date(),
     dtdiv: "W",
     dtgb: "B",
     isSearch: true,
@@ -197,29 +192,104 @@ const SA_B2216W: React.FC = () => {
 
   const [BarData, setBarData] = useState([
     {
-      series: "담당 프로젝트 수",
       user_name: "송준헌",
+      date: "2023-11",
       value: 10,
     },
     {
-      series: "담당 프로젝트 수",
-      user_name: "서다영",
-      value: 15,
-    },
-    {
-      series: "담당 프로젝트 수",
-      user_name: "이찬우",
-      value: 5,
-    },
-    {
-      series: "담당 프로젝트 수",
-      user_name: "김우겸",
+      user_name: "송준헌",
+      date: "2023-12",
       value: 2,
     },
     {
-      series: "담당 프로젝트 수",
+      user_name: "송준헌",
+      date: "2024-01",
+      value: 20,
+    },
+    {
+      user_name: "송준헌",
+      date: "2024-02",
+      value: 15,
+    },
+    {
+      user_name: "서다영",
+      date: "2023-11",
+      value: 22,
+    },
+    {
+      user_name: "서다영",
+      date: "2023-12",
+      value: 10,
+    },
+    {
+      user_name: "서다영",
+      date: "2024-01",
+      value: 10,
+    },
+    {
+      user_name: "서다영",
+      date: "2024-02",
+      value: 15,
+    },
+    {
+      user_name: "이찬우",
+      date: "2023-11",
+      value: 8,
+    },
+    {
+      user_name: "이찬우",
+      date: "2023-12",
+      value: 4,
+    },
+    {
+      user_name: "이찬우",
+      date: "2024-01",
+      value: 28,
+    },
+    {
+      user_name: "이찬우",
+      date: "2024-02",
+      value: 2,
+    },
+    {
+      user_name: "김우겸",
+      date: "2023-11",
+      value: 11,
+    },
+    {
+      user_name: "김우겸",
+      date: "2023-12",
+      value: 6,
+    },
+    {
+      user_name: "김우겸",
+      date: "2024-01",
+      value: 3,
+    },
+    {
+      user_name: "김우겸",
+      date: "2024-02",
+      value: 9,
+    },
+    {
       user_name: "강석우",
-      value: 24,
+      date: "2023-11",
+      value: 2,
+    },
+    {
+      user_name: "강석우",
+      date: "2023-12",
+      value: 0,
+    },
+    {
+      user_name: "강석우",
+      date: "2024-01",
+      value: 10,
+    },
+    {
+      user_name: "강석우",
+      date: "2024-02",
+      value: 11,
     },
   ]);
 
@@ -285,6 +355,15 @@ const SA_B2216W: React.FC = () => {
     })
   );
 
+  const [stackChartLabel2, setStackChartLabel2] = useState<any[]>(
+    BarData.filter(
+      (arr: { date: any }, index: any, callback: any[]) =>
+        index === callback.findIndex((t) => t.date === arr.date)
+    ).map((item: { date: any }) => {
+      return item.date;
+    })
+  );
+
   const [stackChartAllLabel, setStackChartAllLabel] = useState<any[]>(
     ChartList.filter(
       (item: { series: any }) =>
@@ -299,7 +378,14 @@ const SA_B2216W: React.FC = () => {
   );
 
   const [stackChartAllLabel2, setStackChartAllLabel2] = useState<any[]>(
-    BarData.map((items: { user_name: any }) => {
+    BarData.filter(
+      (item: { date: any }) =>
+        item.date ==
+        BarData.filter(
+          (arr: { date: any }, index: any, callback: any[]) =>
+            index === callback.findIndex((t) => t.date === arr.date)
+        )[0].date
+    ).map((items: { user_name: any }) => {
       return items.user_name;
     })
   );
@@ -307,7 +393,7 @@ const SA_B2216W: React.FC = () => {
   const startContent = (
     <React.Fragment>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={12} md={12} xl={12}>
+        <Grid item xs={12} sm={6} md={6} xl={6}>
           <Calendar
             value={filters.frdt}
             onChange={(e: any) =>
@@ -318,6 +404,20 @@ const SA_B2216W: React.FC = () => {
             }
             dateFormat={"yy"}
             view={"year"}
+            showIcon
+          />
+        </Grid>
+        <Grid item xs={12} sm={6} md={6} xl={6}>
+          <Calendar
+            value={filters.mm}
+            onChange={(e: any) =>
+              setFilters((prev) => ({
+                ...prev,
+                mm: e.value,
+              }))
+            }
+            dateFormat={"mm"}
+            view={"month"}
             showIcon
           />
         </Grid>
@@ -380,13 +480,19 @@ const SA_B2216W: React.FC = () => {
                   "년도 개인별 담당프로젝트 수"
                 }
               />
-              <BarChart
+              <MultiChart
                 props={BarData}
                 value="value"
+                name="date"
+                color={[
+                  theme.palette.primary.dark,
+                  theme.palette.primary.main,
+                  theme.palette.primary.light,
+                  theme.palette.secondary.main,
+                ]}
                 alllabel={stackChartAllLabel2}
-                random={true}
-                name="user_name"
-                colorName={colorName}
+                label={stackChartLabel2}
+                random={false}
               />
             </Grid>
           </Grid>
