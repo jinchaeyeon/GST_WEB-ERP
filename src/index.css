@@ -13,13 +13,24 @@ code {
 }
 
 /*Prime table css*/
-.p-inputtext {
-  height: 15px !important;
-  padding: 0.6rem 0.5rem !important
+.incell-input {
+  height: 70% !important;
+  padding: 0.5rem 0.2rem !important;
+  width: 90% !important;
+}
+
+.p-datatable-table {
+  min-width: 100% !important;
 }
 
 .p-datatable .p-datatable-tbody > tr > td {
-  padding: 1rem 0rem !important;
+  padding: 0.5rem 0.5rem !important;
+  height: 55px !important;
+  vertical-align: middle !important;
+}
+
+.p-datatable .p-column-header-content {
+  justify-content: center !important;
 }
 
 /*스플린터*/
@@ -34,7 +45,7 @@ code {
 
 /* 드래그 디자인 */
 *::-webkit-scrollbar {
-  width: 0px;
+  width: 6px;
   height: 8px;
 }
 

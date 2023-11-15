@@ -11,7 +11,7 @@ import {
   GridPageChangeEvent,
   GridRowDoubleClickEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -46,13 +46,13 @@ import {
   convertDateToStr,
   convertDateToStrWithTime2,
   getQueryFromBizComponent,
-  toDate
+  toDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
   GAP,
   PAGE_SIZE,
-  SELECTED_FIELD
+  SELECTED_FIELD,
 } from "../components/CommonString";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import QC_A2500_603W_Window from "../components/Windows/QC_A2500_603W_Window";
@@ -1195,7 +1195,7 @@ const BA_A0020_603: React.FC = () => {
     }));
     setCommentSelectedState3(data != undefined ? data : newData[0]);
   };
-  
+
   const onSaveClick = () => {
     if (
       Information.ncrdiv == "" ||
@@ -1449,6 +1449,7 @@ const BA_A0020_603: React.FC = () => {
     if (options.field == "comment") {
       return (
         <InputText
+          className="incell-input"
           type="text"
           value={options.value}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1486,6 +1487,7 @@ const BA_A0020_603: React.FC = () => {
     if (options.field == "comment") {
       return (
         <InputText
+          className="incell-input"
           type="text"
           value={options.value}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1523,6 +1525,7 @@ const BA_A0020_603: React.FC = () => {
     if (options.field == "comment") {
       return (
         <InputText
+          className="incell-input"
           type="text"
           value={options.value}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1783,7 +1786,7 @@ const BA_A0020_603: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <GridContainerWrap>
-            <GridContainer width="30%">
+            <GridContainer width="20%">
               <FormBoxWrap border={true}>
                 <GridTitleContainer>
                   <GridTitle>Claim, Complain 기본사항</GridTitle>
@@ -1958,7 +1961,7 @@ const BA_A0020_603: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
             </GridContainer>
-            <GridContainer width={`calc(70% - ${GAP}px)`}>
+            <GridContainer width={`calc(80% - ${GAP}px)`}>
               <FormBoxWrap border={true}>
                 <GridContainer>
                   <GridTitleContainer>
@@ -2023,7 +2026,7 @@ const BA_A0020_603: React.FC = () => {
                       </GridTitleContainer>
                       <DataTable
                         value={commentDataResult.data}
-                        tableStyle={{ minWidth: "20rem", marginTop: "5px" }}
+                        tableStyle={{ marginTop: "5px" }}
                         selectionMode="single"
                         dataKey={COMMENT_DATA_ITEM_KEY}
                         emptyMessage="No DATA."
@@ -2039,11 +2042,12 @@ const BA_A0020_603: React.FC = () => {
                         scrollHeight="25vh"
                         id="grdList2"
                         editMode="cell"
+                        showGridlines
                       >
                         <Column
                           field="rowstatus"
                           header=" "
-                          style={{ minWidth: "50px" }}
+                          style={{ width: "50px" }}
                         />
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
@@ -2056,7 +2060,10 @@ const BA_A0020_603: React.FC = () => {
                                   header={item.caption}
                                   editor={(options) => cellEditor(options)}
                                   style={{
-                                    minWidth: setWidth("grdList2", item.width),
+                                    width: setWidth("grdList2", item.width),
+                                    whiteSpace: "nowrap",
+                                    textOverflow: "ellipsis",
+                                    overflow: "hidden",
                                   }}
                                 />
                               )
@@ -2130,7 +2137,7 @@ const BA_A0020_603: React.FC = () => {
                       </GridTitleContainer>
                       <DataTable
                         value={commentDataResult2.data}
-                        tableStyle={{ minWidth: "20rem", marginTop: "5px" }}
+                        tableStyle={{ marginTop: "5px" }}
                         selectionMode="single"
                         dataKey={COMMENT_DATA_ITEM_KEY2}
                         emptyMessage="No DATA."
@@ -2146,11 +2153,12 @@ const BA_A0020_603: React.FC = () => {
                         scrollHeight="25vh"
                         id="grdList3"
                         editMode="cell"
+                        showGridlines
                       >
                         <Column
                           field="rowstatus"
                           header=" "
-                          style={{ minWidth: "50px" }}
+                          style={{ width: "50px" }}
                         />
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
@@ -2163,7 +2171,10 @@ const BA_A0020_603: React.FC = () => {
                                   header={item.caption}
                                   editor={(options) => cellEditor2(options)}
                                   style={{
-                                    minWidth: setWidth("grdList3", item.width),
+                                    width: setWidth("grdList3", item.width),
+                                    whiteSpace: "nowrap",
+                                    textOverflow: "ellipsis",
+                                    overflow: "hidden",
                                   }}
                                 />
                               )
@@ -2237,7 +2248,7 @@ const BA_A0020_603: React.FC = () => {
                       </GridTitleContainer>
                       <DataTable
                         value={commentDataResult3.data}
-                        tableStyle={{ minWidth: "20rem", marginTop: "5px" }}
+                        tableStyle={{ minWidth: "100%", marginTop: "5px" }}
                         selectionMode="single"
                         dataKey={COMMENT_DATA_ITEM_KEY3}
                         emptyMessage="No DATA."
@@ -2253,11 +2264,12 @@ const BA_A0020_603: React.FC = () => {
                         scrollHeight="25vh"
                         id="grdList4"
                         editMode="cell"
+                        showGridlines
                       >
                         <Column
                           field="rowstatus"
                           header=" "
-                          style={{ minWidth: "50px" }}
+                          style={{ width: "50px" }}
                         />
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
@@ -2270,7 +2282,10 @@ const BA_A0020_603: React.FC = () => {
                                   header={item.caption}
                                   editor={(options) => cellEditor3(options)}
                                   style={{
-                                    minWidth: setWidth("grdList4", item.width),
+                                    width: setWidth("grdList4", item.width),
+                                    whiteSpace: "nowrap",
+                                    textOverflow: "ellipsis",
+                                    overflow: "hidden",
                                   }}
                                 />
                               )
