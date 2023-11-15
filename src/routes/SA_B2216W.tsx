@@ -33,6 +33,8 @@ interface Tsize {
 }
 
 const SA_B2216W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const pathname: string = window.location.pathname.replace("/", "");
@@ -394,6 +396,9 @@ const SA_B2216W: React.FC = () => {
     <React.Fragment>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6} md={6} xl={6}>
+          <label htmlFor="calendar-12h" className="font-bold block mb-2">
+            년도
+          </label>
           <Calendar
             value={filters.frdt}
             onChange={(e: any) =>
@@ -408,6 +413,9 @@ const SA_B2216W: React.FC = () => {
           />
         </Grid>
         <Grid item xs={12} sm={6} md={6} xl={6}>
+          <label htmlFor="calendar-12h" className="font-bold block mb-2">
+            월
+          </label>
           <Calendar
             value={filters.mm}
             onChange={(e: any) =>
@@ -425,6 +433,26 @@ const SA_B2216W: React.FC = () => {
     </React.Fragment>
   );
 
+  const endContent = (
+    <React.Fragment>
+      {isMobile ? (
+        ""
+      ) : (
+        <ButtonContainer>
+          <Button
+            icon="pi pi-search"
+            onClick={() =>
+              setFilters((prev) => ({
+                ...prev,
+                isSearch: true,
+              }))
+            }
+            className="mr-2"
+          />
+        </ButtonContainer>
+      )}
+    </React.Fragment>
+  );
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -434,20 +462,24 @@ const SA_B2216W: React.FC = () => {
         >
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
             <Title>DASHBOARD(담당자별)</Title>
-            <ButtonContainer>
-              <Button
-                icon="pi pi-search"
-                onClick={() =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    isSearch: true,
-                  }))
-                }
-                className="mr-2"
-              />
-            </ButtonContainer>
+            {isMobile ? (
+              <ButtonContainer>
+                <Button
+                  icon="pi pi-search"
+                  onClick={() =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      isSearch: true,
+                    }))
+                  }
+                  className="mr-2"
+                />
+              </ButtonContainer>
+            ) : (
+              ""
+            )}
           </TitleContainer>
-          <Toolbar start={startContent} />
+          <Toolbar start={startContent} end={endContent} />
           <Divider />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -484,12 +516,7 @@ const SA_B2216W: React.FC = () => {
                 props={BarData}
                 value="value"
                 name="date"
-                color={[
-                  theme.palette.primary.dark,
-                  theme.palette.primary.main,
-                  theme.palette.primary.light,
-                  theme.palette.secondary.main,
-                ]}
+                color={["#1d7cef", "#f8a73a", "#00b050", "#e72969"]}
                 alllabel={stackChartAllLabel2}
                 label={stackChartLabel2}
                 random={false}

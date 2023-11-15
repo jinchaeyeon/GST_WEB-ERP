@@ -38,6 +38,8 @@ interface Tsize {
 }
 
 const SA_B2226W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const pathname: string = window.location.pathname.replace("/", "");
@@ -396,6 +398,9 @@ const SA_B2226W: React.FC = () => {
     <React.Fragment>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={12} md={12} xl={12}>
+          <label htmlFor="calendar-12h" className="font-bold block mb-2">
+            년도
+          </label>
           <Calendar
             value={filters.frdt}
             onChange={(e: any) =>
@@ -453,26 +458,54 @@ const SA_B2226W: React.FC = () => {
     },
   ];
 
+  const endContent = (
+    <React.Fragment>
+      {isMobile ? (
+        ""
+      ) : (
+        <ButtonContainer>
+          <Button
+            icon="pi pi-search"
+            onClick={() =>
+              setFilters((prev) => ({
+                ...prev,
+                isSearch: true,
+              }))
+            }
+            className="mr-2"
+          />
+        </ButtonContainer>
+      )}
+    </React.Fragment>
+  );
+
   return (
     <>
       <ThemeProvider theme={theme}>
-        <Container maxWidth="xl" style={{ width: "100%", marginBottom: "50px" }}>
+        <Container
+          maxWidth="xl"
+          style={{ width: "100%", marginBottom: "50px" }}
+        >
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
             <Title>DASHBOARD(실적)</Title>
-            <ButtonContainer>
-              <Button
-                icon="pi pi-search"
-                onClick={() =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    isSearch: true,
-                  }))
-                }
-                className="mr-2"
-              />
-            </ButtonContainer>
+            {isMobile ? (
+              <ButtonContainer>
+                <Button
+                  icon="pi pi-search"
+                  onClick={() =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      isSearch: true,
+                    }))
+                  }
+                  className="mr-2"
+                />
+              </ButtonContainer>
+            ) : (
+              ""
+            )}
           </TitleContainer>
-          <Toolbar start={startContent} />
+          <Toolbar start={startContent} end={endContent} />
           <Divider />
           <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
@@ -502,11 +535,7 @@ const SA_B2226W: React.FC = () => {
                 props={ChartList}
                 value="value"
                 name="series"
-                color={[
-                  "#1d7cef",
-                  "#f8a73a",
-                  "#00b050",
-                ]}
+                color={["#1d7cef", "#f8a73a", "#00b050"]}
                 alllabel={stackChartAllLabel}
                 label={stackChartLabel}
                 random={false}

@@ -12,6 +12,16 @@ code {
     monospace;
 }
 
+/*Prime table css*/
+.p-inputtext {
+  height: 15px !important;
+  padding: 0.6rem 0.5rem !important
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 1rem 0rem !important;
+}
+
 /*스플린터*/
 .pane-content {
   padding: 0 10px;

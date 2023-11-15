@@ -8,16 +8,17 @@ import {
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
-  GridItemChangeEvent,
   GridPageChangeEvent,
   GridRowDoubleClickEvent,
   GridSelectionChangeEvent,
-  getSelectedState,
+  getSelectedState
 } from "@progress/kendo-react-grid";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
-import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
+import { Column, ColumnEditorOptions } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import { InputText } from "primereact/inputtext";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -37,25 +38,22 @@ import {
 import TopButtons from "../components/Buttons/TopButtons";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseParaPc,
   UsePermissions,
   convertDateToStr,
   convertDateToStrWithTime2,
-  getGridItemChangedData,
   getQueryFromBizComponent,
-  toDate,
-  GetPropertyValueByName,
+  toDate
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
-  EDIT_FIELD,
   GAP,
   PAGE_SIZE,
-  SELECTED_FIELD,
+  SELECTED_FIELD
 } from "../components/CommonString";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import QC_A2500_603W_Window from "../components/Windows/QC_A2500_603W_Window";
 import { useApi } from "../hooks/api";
@@ -92,9 +90,6 @@ type TdataArr = {
 
 const BA_A0020_603: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
-  const commentidGetter = getter(COMMENT_DATA_ITEM_KEY);
-  const commentidGetter2 = getter(COMMENT_DATA_ITEM_KEY2);
-  const commentidGetter3 = getter(COMMENT_DATA_ITEM_KEY3);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [tabSelected, setTabSelected] = React.useState(0);
@@ -223,17 +218,6 @@ const BA_A0020_603: React.FC = () => {
     sort: [],
   });
 
-  const [tempState, setTempState] = useState<State>({
-    sort: [],
-  });
-  const [tempState2, setTempState2] = useState<State>({
-    sort: [],
-  });
-
-  const [tempState3, setTempState3] = useState<State>({
-    sort: [],
-  });
-
   const [commentDataState, setCommentDataState] = useState<State>({
     sort: [],
   });
@@ -248,18 +232,6 @@ const BA_A0020_603: React.FC = () => {
 
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
-  );
-
-  const [tempResult, setTempResult] = useState<DataResult>(
-    process([], tempState)
-  );
-
-  const [tempResult2, setTempResult2] = useState<DataResult>(
-    process([], tempState2)
-  );
-
-  const [tempResult3, setTempResult3] = useState<DataResult>(
-    process([], tempState3)
   );
 
   const [commentDataResult, setCommentDataResult] = useState<DataResult>(
@@ -278,17 +250,11 @@ const BA_A0020_603: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [commentselectedState, setCommentSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
+  const [commentselectedState, setCommentSelectedState] = useState<any>();
 
-  const [commentselectedState2, setCommentSelectedState2] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
+  const [commentselectedState2, setCommentSelectedState2] = useState<any>();
 
-  const [commentselectedState3, setCommentSelectedState3] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
+  const [commentselectedState3, setCommentSelectedState3] = useState<any>();
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [detailWindowVisible, setDetailWindowVisible] =
@@ -591,11 +557,32 @@ const BA_A0020_603: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       const commenttotalRowCnt = data.tables[1].TotalRowCount;
-      const comeentrows = data.tables[1].Rows;
+      const comeentrows = data.tables[1].Rows.map(
+        (row: { insert_userid: any }) => ({
+          ...row,
+          insert_userid: userListData.find(
+            (items: any) => items.user_id == row.insert_userid
+          )?.user_name,
+        })
+      );
       const commenttotalRowCnt2 = data.tables[2].TotalRowCount;
-      const comeentrows2 = data.tables[2].Rows;
+      const comeentrows2 = data.tables[2].Rows.map(
+        (row: { insert_userid: any }) => ({
+          ...row,
+          insert_userid: userListData.find(
+            (items: any) => items.user_id == row.insert_userid
+          )?.user_name,
+        })
+      );
       const commenttotalRowCnt3 = data.tables[3].TotalRowCount;
-      const comeentrows3 = data.tables[3].Rows;
+      const comeentrows3 = data.tables[3].Rows.map(
+        (row: { insert_userid: any }) => ({
+          ...row,
+          insert_userid: userListData.find(
+            (items: any) => items.user_id == row.insert_userid
+          )?.user_name,
+        })
+      );
 
       setInformation({
         orgdiv: rows[0].orgdiv,
@@ -642,23 +629,17 @@ const BA_A0020_603: React.FC = () => {
         };
       });
       if (commenttotalRowCnt > 0) {
-        setCommentSelectedState({
-          [comeentrows[0][COMMENT_DATA_ITEM_KEY]]: true,
-        });
+        setCommentSelectedState(comeentrows[0]);
       } else {
         setCommentDataResult(process([], commentDataState));
       }
       if (commenttotalRowCnt2 > 0) {
-        setCommentSelectedState2({
-          [comeentrows2[0][COMMENT_DATA_ITEM_KEY2]]: true,
-        });
+        setCommentSelectedState2(comeentrows2[0]);
       } else {
         setCommentDataResult2(process([], commentDataState2));
       }
       if (commenttotalRowCnt3 > 0) {
-        setCommentSelectedState3({
-          [comeentrows3[0][COMMENT_DATA_ITEM_KEY3]]: true,
-        });
+        setCommentSelectedState3(comeentrows3[0]);
       } else {
         setCommentDataResult3(process([], commentDataState3));
       }
@@ -756,76 +737,13 @@ const BA_A0020_603: React.FC = () => {
     setMainDataState(event.dataState);
   };
 
-  const onCommentDataStateChange = (event: GridDataStateChangeEvent) => {
-    setCommentDataState(event.dataState);
-  };
-
-  const onCommentDataStateChange2 = (event: GridDataStateChangeEvent) => {
-    setCommentDataState2(event.dataState);
-  };
-
-  const onCommentDataStateChange3 = (event: GridDataStateChangeEvent) => {
-    setCommentDataState3(event.dataState);
-  };
-
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
-  };
-
-  const onCommentSortChange = (e: any) => {
-    setCommentDataState((prev) => ({ ...prev, sort: e.sort }));
-  };
-
-  const onCommentSortChange2 = (e: any) => {
-    setCommentDataState2((prev) => ({ ...prev, sort: e.sort }));
-  };
-
-  const onCommentSortChange3 = (e: any) => {
-    setCommentDataState3((prev) => ({ ...prev, sort: e.sort }));
   };
 
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-        건
-      </td>
-    );
-  };
-
-  //그리드 푸터
-  const commentTotalFooterCell = (props: GridFooterCellProps) => {
-    var parts = commentDataResult.total.toString().split(".");
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-        건
-      </td>
-    );
-  };
-
-  //그리드 푸터
-  const commentTotalFooterCell2 = (props: GridFooterCellProps) => {
-    var parts = commentDataResult2.total.toString().split(".");
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-        건
-      </td>
-    );
-  };
-
-  //그리드 푸터
-  const commentTotalFooterCell3 = (props: GridFooterCellProps) => {
-    var parts = commentDataResult3.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총{" "}
@@ -846,33 +764,6 @@ const BA_A0020_603: React.FC = () => {
     setSelectedState(newSelectedState);
   };
 
-  const onCommentSelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: commentselectedState,
-      dataItemKey: COMMENT_DATA_ITEM_KEY,
-    });
-    setCommentSelectedState(newSelectedState);
-  };
-
-  const onCommentSelectionChange2 = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: commentselectedState2,
-      dataItemKey: COMMENT_DATA_ITEM_KEY2,
-    });
-    setCommentSelectedState2(newSelectedState);
-  };
-
-  const onCommentSelectionChange3 = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: commentselectedState3,
-      dataItemKey: COMMENT_DATA_ITEM_KEY3,
-    });
-    setCommentSelectedState3(newSelectedState);
-  };
- 
   const minGridWidth = React.useRef<number>(0);
   const minGridWidth2 = React.useRef<number>(0);
   const minGridWidth3 = React.useRef<number>(0);
@@ -1037,7 +928,6 @@ const BA_A0020_603: React.FC = () => {
     }
   };
 
-
   const onRowDoubleClick = (event: GridRowDoubleClickEvent) => {
     const selectedRowData = event.dataItem;
     setSelectedState({ [selectedRowData[DATA_ITEM_KEY]]: true });
@@ -1108,342 +998,6 @@ const BA_A0020_603: React.FC = () => {
     setTabSelected(1);
   };
 
-  const onCommentItemChange = (event: GridItemChangeEvent) => {
-    setCommentDataState((prev) => ({ ...prev, sort: [] }));
-    getGridItemChangedData(
-      event,
-      commentDataResult,
-      setCommentDataResult,
-      COMMENT_DATA_ITEM_KEY
-    );
-  };
-
-  const onCommentItemChange2 = (event: GridItemChangeEvent) => {
-    setCommentDataState2((prev) => ({ ...prev, sort: [] }));
-    getGridItemChangedData(
-      event,
-      commentDataResult2,
-      setCommentDataResult2,
-      COMMENT_DATA_ITEM_KEY2
-    );
-  };
-
-  const onCommentItemChange3 = (event: GridItemChangeEvent) => {
-    setCommentDataState3((prev) => ({ ...prev, sort: [] }));
-    getGridItemChangedData(
-      event,
-      commentDataResult3,
-      setCommentDataResult3,
-      COMMENT_DATA_ITEM_KEY3
-    );
-  };
-
-  const customCellRender = (td: any, props: any) => (
-    <CellRender
-      originalProps={props}
-      td={td}
-      enterEdit={enterEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const customCellRender2 = (td: any, props: any) => (
-    <CellRender
-      originalProps={props}
-      td={td}
-      enterEdit={enterEdit2}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const customCellRender3 = (td: any, props: any) => (
-    <CellRender
-      originalProps={props}
-      td={td}
-      enterEdit={enterEdit3}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const customRowRender = (tr: any, props: any) => (
-    <RowRender
-      originalProps={props}
-      tr={tr}
-      exitEdit={exitEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const customRowRender2 = (tr: any, props: any) => (
-    <RowRender
-      originalProps={props}
-      tr={tr}
-      exitEdit={exitEdit2}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const customRowRender3 = (tr: any, props: any) => (
-    <RowRender
-      originalProps={props}
-      tr={tr}
-      exitEdit={exitEdit3}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const enterEdit = (dataItem: any, field: string) => {
-    if (field == "comment") {
-      const newData = commentDataResult.data.map((item) =>
-        item[COMMENT_DATA_ITEM_KEY] === dataItem[COMMENT_DATA_ITEM_KEY]
-          ? {
-              ...item,
-              [EDIT_FIELD]: field,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
-
-      setTempResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setCommentDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    } else {
-      setTempResult((prev: { total: any }) => {
-        return {
-          data: commentDataResult.data,
-          total: prev.total,
-        };
-      });
-    }
-  };
-
-  const enterEdit2 = (dataItem: any, field: string) => {
-    if (field == "comment") {
-      const newData = commentDataResult2.data.map((item) =>
-        item[COMMENT_DATA_ITEM_KEY2] === dataItem[COMMENT_DATA_ITEM_KEY2]
-          ? {
-              ...item,
-              [EDIT_FIELD]: field,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
-
-      setTempResult2((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setCommentDataResult2((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    } else {
-      setTempResult2((prev: { total: any }) => {
-        return {
-          data: commentDataResult2.data,
-          total: prev.total,
-        };
-      });
-    }
-  };
-
-  const enterEdit3 = (dataItem: any, field: string) => {
-    if (field == "comment") {
-      const newData = commentDataResult3.data.map((item) =>
-        item[COMMENT_DATA_ITEM_KEY3] === dataItem[COMMENT_DATA_ITEM_KEY3]
-          ? {
-              ...item,
-              [EDIT_FIELD]: field,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
-
-      setTempResult3((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setCommentDataResult3((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    } else {
-      setTempResult3((prev: { total: any }) => {
-        return {
-          data: commentDataResult3.data,
-          total: prev.total,
-        };
-      });
-    }
-  };
-
-  const exitEdit = () => {
-    if (tempResult.data != commentDataResult.data) {
-      const newData = commentDataResult.data.map(
-        (item: { [x: string]: string; rowstatus: string }) =>
-          item[COMMENT_DATA_ITEM_KEY] ==
-          Object.getOwnPropertyNames(commentselectedState)[0]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "U",
-                [EDIT_FIELD]: undefined,
-              }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-      );
-      setTempResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setCommentDataResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    } else {
-      const newData = commentDataResult.data.map((item: any) => ({
-        ...item,
-        [EDIT_FIELD]: undefined,
-      }));
-      setTempResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setCommentDataResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    }
-  };
-
-  const exitEdit2 = () => {
-    if (tempResult2.data != commentDataResult2.data) {
-      const newData = commentDataResult2.data.map(
-        (item: { [x: string]: string; rowstatus: string }) =>
-          item[COMMENT_DATA_ITEM_KEY2] ==
-          Object.getOwnPropertyNames(commentselectedState2)[0]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "U",
-                [EDIT_FIELD]: undefined,
-              }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-      );
-      setTempResult2((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setCommentDataResult2((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    } else {
-      const newData = commentDataResult2.data.map((item: any) => ({
-        ...item,
-        [EDIT_FIELD]: undefined,
-      }));
-      setTempResult2((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setCommentDataResult2((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    }
-  };
-
-  const exitEdit3 = () => {
-    if (tempResult3.data != commentDataResult3.data) {
-      const newData = commentDataResult3.data.map(
-        (item: { [x: string]: string; rowstatus: string }) =>
-          item[COMMENT_DATA_ITEM_KEY3] ==
-          Object.getOwnPropertyNames(commentselectedState3)[0]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "U",
-                [EDIT_FIELD]: undefined,
-              }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-      );
-      setTempResult3((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setCommentDataResult3((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    } else {
-      const newData = commentDataResult3.data.map((item: any) => ({
-        ...item,
-        [EDIT_FIELD]: undefined,
-      }));
-      setTempResult3((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setCommentDataResult3((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    }
-  };
-
   const onCommentAddClick = () => {
     commentDataResult.data.map((item) => {
       if (item.num > temp) {
@@ -1457,7 +1011,8 @@ const BA_A0020_603: React.FC = () => {
       id: "",
       seq: 0,
       comment: "",
-      insert_userid: userId,
+      insert_userid: userListData.find((items: any) => items.user_id == userId)
+        ?.user_name,
       insert_time: convertDateToStrWithTime2(new Date()),
       update_time: "",
       rowstatus: "N",
@@ -1465,12 +1020,12 @@ const BA_A0020_603: React.FC = () => {
 
     setCommentDataResult((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
 
-    setCommentSelectedState({ [newDataItem[COMMENT_DATA_ITEM_KEY]]: true });
+    setCommentSelectedState(newDataItem);
   };
 
   const onCommentAddClick2 = () => {
@@ -1486,7 +1041,8 @@ const BA_A0020_603: React.FC = () => {
       id: "",
       seq: 0,
       comment: "",
-      insert_userid: userId,
+      insert_userid: userListData.find((items: any) => items.user_id == userId)
+        ?.user_name,
       insert_time: convertDateToStrWithTime2(new Date()),
       update_time: "",
       rowstatus: "N",
@@ -1494,12 +1050,12 @@ const BA_A0020_603: React.FC = () => {
 
     setCommentDataResult2((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
 
-    setCommentSelectedState2({ [newDataItem[COMMENT_DATA_ITEM_KEY2]]: true });
+    setCommentSelectedState2(newDataItem);
   };
 
   const onCommentAddClick3 = () => {
@@ -1515,7 +1071,8 @@ const BA_A0020_603: React.FC = () => {
       id: "",
       seq: 0,
       comment: "",
-      insert_userid: userId,
+      insert_userid: userListData.find((items: any) => items.user_id == userId)
+        ?.user_name,
       insert_time: convertDateToStrWithTime2(new Date()),
       update_time: "",
       rowstatus: "N",
@@ -1523,12 +1080,12 @@ const BA_A0020_603: React.FC = () => {
 
     setCommentDataResult3((prev) => {
       return {
-        data: [...prev.data, newDataItem],
+        data: [newDataItem, ...prev.data],
         total: prev.total + 1,
       };
     });
 
-    setCommentSelectedState3({ [newDataItem[COMMENT_DATA_ITEM_KEY3]]: true });
+    setCommentSelectedState3(newDataItem);
   };
 
   const onCommentRemoveClick = (e: any) => {
@@ -1537,7 +1094,10 @@ const BA_A0020_603: React.FC = () => {
     let Object2: any[] = [];
     let data;
     commentDataResult.data.forEach((item: any, index: number) => {
-      if (!commentselectedState[item[COMMENT_DATA_ITEM_KEY]]) {
+      if (
+        commentselectedState[COMMENT_DATA_ITEM_KEY] !=
+        item[COMMENT_DATA_ITEM_KEY]
+      ) {
         newData.push(item);
         Object2.push(index);
       } else {
@@ -1561,9 +1121,7 @@ const BA_A0020_603: React.FC = () => {
       data: newData,
       total: prev.total - Object.length,
     }));
-    setCommentSelectedState({
-      [data != undefined ? data[COMMENT_DATA_ITEM_KEY] : newData[0]]: true,
-    });
+    setCommentSelectedState(data != undefined ? data : newData[0]);
   };
 
   const onCommentRemoveClick2 = (e: any) => {
@@ -1572,7 +1130,10 @@ const BA_A0020_603: React.FC = () => {
     let Object2: any[] = [];
     let data;
     commentDataResult2.data.forEach((item: any, index: number) => {
-      if (!commentselectedState2[item[COMMENT_DATA_ITEM_KEY2]]) {
+      if (
+        commentselectedState2[COMMENT_DATA_ITEM_KEY2] !=
+        item[COMMENT_DATA_ITEM_KEY2]
+      ) {
         newData.push(item);
         Object2.push(index);
       } else {
@@ -1596,9 +1157,7 @@ const BA_A0020_603: React.FC = () => {
       data: newData,
       total: prev.total - Object.length,
     }));
-    setCommentSelectedState2({
-      [data != undefined ? data[COMMENT_DATA_ITEM_KEY2] : newData[0]]: true,
-    });
+    setCommentSelectedState2(data != undefined ? data : newData[0]);
   };
 
   const onCommentRemoveClick3 = (e: any) => {
@@ -1607,7 +1166,10 @@ const BA_A0020_603: React.FC = () => {
     let Object2: any[] = [];
     let data;
     commentDataResult3.data.forEach((item: any, index: number) => {
-      if (!commentselectedState3[item[COMMENT_DATA_ITEM_KEY3]]) {
+      if (
+        commentselectedState3[COMMENT_DATA_ITEM_KEY3] !=
+        item[COMMENT_DATA_ITEM_KEY3]
+      ) {
         newData.push(item);
         Object2.push(index);
       } else {
@@ -1631,11 +1193,9 @@ const BA_A0020_603: React.FC = () => {
       data: newData,
       total: prev.total - Object.length,
     }));
-    setCommentSelectedState3({
-      [data != undefined ? data[COMMENT_DATA_ITEM_KEY3] : newData[0]]: true,
-    });
+    setCommentSelectedState3(data != undefined ? data : newData[0]);
   };
-
+  
   const onSaveClick = () => {
     if (
       Information.ncrdiv == "" ||
@@ -1879,6 +1439,121 @@ const BA_A0020_603: React.FC = () => {
       }
     }
     setLoading(false);
+  };
+
+  const footer = `총 ${commentDataResult.total} 건`;
+  const footer2 = `총 ${commentDataResult2.total} 건`;
+  const footer3 = `총 ${commentDataResult3.total} 건`;
+
+  const cellEditor = (options: ColumnEditorOptions) => {
+    if (options.field == "comment") {
+      return (
+        <InputText
+          type="text"
+          value={options.value}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            if (options.editorCallback != undefined) {
+              const newData = commentDataResult.data.map(
+                (item: { [x: string]: string; rowstatus: string }) =>
+                  item[COMMENT_DATA_ITEM_KEY] ==
+                  commentselectedState[COMMENT_DATA_ITEM_KEY]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [options.field]: e.target.value,
+                      }
+                    : {
+                        ...item,
+                      }
+              );
+              setCommentDataResult((prev: { total: any }) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+              return options.editorCallback(e.target.value);
+            }
+          }}
+        />
+      );
+    } else {
+      return <div>{options.value}</div>;
+    }
+  };
+
+  const cellEditor2 = (options: ColumnEditorOptions) => {
+    if (options.field == "comment") {
+      return (
+        <InputText
+          type="text"
+          value={options.value}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            if (options.editorCallback != undefined) {
+              const newData = commentDataResult2.data.map(
+                (item: { [x: string]: string; rowstatus: string }) =>
+                  item[COMMENT_DATA_ITEM_KEY2] ==
+                  commentselectedState2[COMMENT_DATA_ITEM_KEY2]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [options.field]: e.target.value,
+                      }
+                    : {
+                        ...item,
+                      }
+              );
+              setCommentDataResult2((prev: { total: any }) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+              return options.editorCallback(e.target.value);
+            }
+          }}
+        />
+      );
+    } else {
+      return <div>{options.value}</div>;
+    }
+  };
+
+  const cellEditor3 = (options: ColumnEditorOptions) => {
+    if (options.field == "comment") {
+      return (
+        <InputText
+          type="text"
+          value={options.value}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            if (options.editorCallback != undefined) {
+              const newData = commentDataResult3.data.map(
+                (item: { [x: string]: string; rowstatus: string }) =>
+                  item[COMMENT_DATA_ITEM_KEY3] ==
+                  commentselectedState3[COMMENT_DATA_ITEM_KEY3]
+                    ? {
+                        ...item,
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
+                        [options.field]: e.target.value,
+                      }
+                    : {
+                        ...item,
+                      }
+              );
+              setCommentDataResult3((prev: { total: any }) => {
+                return {
+                  data: newData,
+                  total: prev.total,
+                };
+              });
+              return options.editorCallback(e.target.value);
+            }
+          }}
+        />
+      );
+    } else {
+      return <div>{options.value}</div>;
+    }
   };
 
   return (
@@ -2285,7 +1960,7 @@ const BA_A0020_603: React.FC = () => {
             </GridContainer>
             <GridContainer width={`calc(70% - ${GAP}px)`}>
               <FormBoxWrap border={true}>
-                <GridContainer height={isMobile ? "" : "50vh"}>
+                <GridContainer>
                   <GridTitleContainer>
                     <GridTitle>Claim, Complain 사유</GridTitle>
                   </GridTitleContainer>
@@ -2346,77 +2021,53 @@ const BA_A0020_603: React.FC = () => {
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
-                      <Grid
-                        style={{ height: "25vh" }}
-                        data={process(
-                          commentDataResult.data.map((row) => ({
-                            ...row,
-                            insert_userid: userListData.find(
-                              (items: any) => items.user_id == row.insert_userid
-                            )?.user_name,
-                            [SELECTED_FIELD]:
-                              commentselectedState[commentidGetter(row)],
-                          })),
-                          commentDataState
-                        )}
-                        {...commentDataState}
-                        onDataStateChange={onCommentDataStateChange}
-                        //선택기능
-                        dataItemKey={COMMENT_DATA_ITEM_KEY}
-                        selectedField={SELECTED_FIELD}
-                        selectable={{
-                          enabled: true,
-                          mode: "single",
+                      <DataTable
+                        value={commentDataResult.data}
+                        tableStyle={{ minWidth: "20rem", marginTop: "5px" }}
+                        selectionMode="single"
+                        dataKey={COMMENT_DATA_ITEM_KEY}
+                        emptyMessage="No DATA."
+                        footer={footer}
+                        selection={commentselectedState}
+                        onSelectionChange={(e: any) => {
+                          setCommentSelectedState(e.value);
                         }}
-                        onSelectionChange={onCommentSelectionChange}
-                        //정렬기능
-                        sortable={true}
-                        onSortChange={onCommentSortChange}
-                        //스크롤 조회 기능
-                        fixedScroll={true}
-                        total={commentDataResult.total}
-                        //컬럼순서조정
-                        reorderable={true}
-                        //컬럼너비조정
-                        resizable={true}
-                        //incell 수정 기능
-                        onItemChange={onCommentItemChange}
-                        cellRender={customCellRender}
-                        rowRender={customRowRender}
-                        editField={EDIT_FIELD}
+                        columnResizeMode="expand"
+                        resizableColumns
+                        reorderableColumns
+                        scrollable
+                        scrollHeight="25vh"
                         id="grdList2"
+                        editMode="cell"
                       >
-                        <GridColumn field="rowstatus" title=" " width="50px" />
+                        <Column
+                          field="rowstatus"
+                          header=" "
+                          style={{ minWidth: "50px" }}
+                        />
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdList2"
                           ].map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  id={item.id}
+                                <Column
                                   field={item.fieldName}
-                                  title={item.caption}
-                                  width={setWidth("grdList2", item.width)}
-                                  footerCell={
-                                    item.sortOrder === 0
-                                      ? commentTotalFooterCell
-                                      : undefined
-                                  }
+                                  header={item.caption}
+                                  editor={(options) => cellEditor(options)}
+                                  style={{
+                                    minWidth: setWidth("grdList2", item.width),
+                                  }}
                                 />
                               )
                           )}
-                      </Grid>
+                      </DataTable>
                     </CardContent>
                   </Card>
                 </GridContainer>
               </FormBoxWrap>
               <FormBoxWrap border={true}>
-                <GridContainer
-                  style={{ marginTop: "5px" }}
-                  height={isMobile ? "" : "50vh"}
-                >
+                <GridContainer style={{ marginTop: "5px" }}>
                   <GridTitleContainer>
                     <GridTitle>후속조치(계획)</GridTitle>
                   </GridTitleContainer>
@@ -2477,77 +2128,53 @@ const BA_A0020_603: React.FC = () => {
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
-                      <Grid
-                        style={{ height: "25vh" }}
-                        data={process(
-                          commentDataResult2.data.map((row) => ({
-                            ...row,
-                            insert_userid: userListData.find(
-                              (items: any) => items.user_id == row.insert_userid
-                            )?.user_name,
-                            [SELECTED_FIELD]:
-                              commentselectedState2[commentidGetter2(row)],
-                          })),
-                          commentDataState2
-                        )}
-                        {...commentDataState2}
-                        onDataStateChange={onCommentDataStateChange2}
-                        //선택기능
-                        dataItemKey={COMMENT_DATA_ITEM_KEY2}
-                        selectedField={SELECTED_FIELD}
-                        selectable={{
-                          enabled: true,
-                          mode: "single",
+                      <DataTable
+                        value={commentDataResult2.data}
+                        tableStyle={{ minWidth: "20rem", marginTop: "5px" }}
+                        selectionMode="single"
+                        dataKey={COMMENT_DATA_ITEM_KEY2}
+                        emptyMessage="No DATA."
+                        footer={footer2}
+                        selection={commentselectedState2}
+                        onSelectionChange={(e: any) => {
+                          setCommentSelectedState2(e.value);
                         }}
-                        onSelectionChange={onCommentSelectionChange2}
-                        //정렬기능
-                        sortable={true}
-                        onSortChange={onCommentSortChange2}
-                        //스크롤 조회 기능
-                        fixedScroll={true}
-                        total={commentDataResult2.total}
-                        //컬럼순서조정
-                        reorderable={true}
-                        //컬럼너비조정
-                        resizable={true}
-                        //incell 수정 기능
-                        onItemChange={onCommentItemChange2}
-                        cellRender={customCellRender2}
-                        rowRender={customRowRender2}
-                        editField={EDIT_FIELD}
+                        columnResizeMode="expand"
+                        resizableColumns
+                        reorderableColumns
+                        scrollable
+                        scrollHeight="25vh"
                         id="grdList3"
+                        editMode="cell"
                       >
-                        <GridColumn field="rowstatus" title=" " width="50px" />
+                        <Column
+                          field="rowstatus"
+                          header=" "
+                          style={{ minWidth: "50px" }}
+                        />
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdList3"
                           ].map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  id={item.id}
+                                <Column
                                   field={item.fieldName}
-                                  title={item.caption}
-                                  width={setWidth("grdList3", item.width)}
-                                  footerCell={
-                                    item.sortOrder === 0
-                                      ? commentTotalFooterCell2
-                                      : undefined
-                                  }
+                                  header={item.caption}
+                                  editor={(options) => cellEditor2(options)}
+                                  style={{
+                                    minWidth: setWidth("grdList3", item.width),
+                                  }}
                                 />
                               )
                           )}
-                      </Grid>
+                      </DataTable>
                     </CardContent>
                   </Card>
                 </GridContainer>
               </FormBoxWrap>
               <FormBoxWrap border={true}>
-                <GridContainer
-                  style={{ marginTop: "5px" }}
-                  height={isMobile ? "" : "50vh"}
-                >
+                <GridContainer style={{ marginTop: "5px" }}>
                   <GridTitleContainer>
                     <GridTitle>결과 및 Feedback</GridTitle>
                   </GridTitleContainer>
@@ -2608,68 +2235,47 @@ const BA_A0020_603: React.FC = () => {
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
-                      <Grid
-                        style={{ height: "25vh" }}
-                        data={process(
-                          commentDataResult3.data.map((row) => ({
-                            ...row,
-                            insert_userid: userListData.find(
-                              (items: any) => items.user_id == row.insert_userid
-                            )?.user_name,
-                            [SELECTED_FIELD]:
-                              commentselectedState3[commentidGetter3(row)],
-                          })),
-                          commentDataState3
-                        )}
-                        {...commentDataState3}
-                        onDataStateChange={onCommentDataStateChange3}
-                        //선택기능
-                        dataItemKey={COMMENT_DATA_ITEM_KEY3}
-                        selectedField={SELECTED_FIELD}
-                        selectable={{
-                          enabled: true,
-                          mode: "single",
+                      <DataTable
+                        value={commentDataResult3.data}
+                        tableStyle={{ minWidth: "20rem", marginTop: "5px" }}
+                        selectionMode="single"
+                        dataKey={COMMENT_DATA_ITEM_KEY3}
+                        emptyMessage="No DATA."
+                        footer={footer3}
+                        selection={commentselectedState3}
+                        onSelectionChange={(e: any) => {
+                          setCommentSelectedState3(e.value);
                         }}
-                        onSelectionChange={onCommentSelectionChange3}
-                        //정렬기능
-                        sortable={true}
-                        onSortChange={onCommentSortChange3}
-                        //스크롤 조회 기능
-                        fixedScroll={true}
-                        total={commentDataResult3.total}
-                        //컬럼순서조정
-                        reorderable={true}
-                        //컬럼너비조정
-                        resizable={true}
-                        //incell 수정 기능
-                        onItemChange={onCommentItemChange3}
-                        cellRender={customCellRender3}
-                        rowRender={customRowRender3}
-                        editField={EDIT_FIELD}
+                        columnResizeMode="expand"
+                        resizableColumns
+                        reorderableColumns
+                        scrollable
+                        scrollHeight="25vh"
                         id="grdList4"
+                        editMode="cell"
                       >
-                        <GridColumn field="rowstatus" title=" " width="50px" />
+                        <Column
+                          field="rowstatus"
+                          header=" "
+                          style={{ minWidth: "50px" }}
+                        />
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdList4"
                           ].map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  id={item.id}
+                                <Column
                                   field={item.fieldName}
-                                  title={item.caption}
-                                  width={setWidth("grdList4", item.width)}
-                                  footerCell={
-                                    item.sortOrder === 0
-                                      ? commentTotalFooterCell3
-                                      : undefined
-                                  }
+                                  header={item.caption}
+                                  editor={(options) => cellEditor3(options)}
+                                  style={{
+                                    minWidth: setWidth("grdList4", item.width),
+                                  }}
                                 />
                               )
                           )}
-                      </Grid>
+                      </DataTable>
                     </CardContent>
                   </Card>
                 </GridContainer>
