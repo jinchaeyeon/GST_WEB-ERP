@@ -1244,7 +1244,7 @@ const HU_B4000W: React.FC = () => {
     adjDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    
+
     if (sum != undefined) {
       var parts = sum.toString().split(".");
 
@@ -1821,175 +1821,6 @@ const HU_B4000W: React.FC = () => {
     });
   }, [prsnnm, prsnnum]);
 
-  const minGridWidth = React.useRef<number>(0);
-  const minGridWidth2 = React.useRef<number>(0);
-  const minGridWidth3 = React.useRef<number>(0);
-  const minGridWidth4 = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const grid2 = React.useRef<any>(null);
-  const grid3 = React.useRef<any>(null);
-  const grid4 = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
-  const [applyMinWidth3, setApplyMinWidth3] = React.useState(false);
-  const [applyMinWidth4, setApplyMinWidth4] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-  const [gridCurrent2, setGridCurrent2] = React.useState(0);
-  const [gridCurrent3, setGridCurrent3] = React.useState(0);
-  const [gridCurrent4, setGridCurrent4] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdUserAdj");
-      grid2.current = document.getElementById("grdAdjDetail");
-      grid3.current = document.getElementById("grdJournalList");
-      grid4.current = document.getElementById("grdAdjList");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdUserAdj"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth.current += item.width)
-            : minGridWidth.current
-      );
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdAdjDetail"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth2.current += item.width)
-            : minGridWidth2.current
-      );
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdJournalList"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth3.current += item.width)
-            : minGridWidth3.current
-      );
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdAdjList"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth4.current += item.width)
-            : minGridWidth4.current
-      );
-
-      minGridWidth4.current += 50;
-      if (grid.current) {
-        setGridCurrent(grid.current.clientWidth);
-      }
-      if (grid2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-      }
-      if (grid3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-      }
-      if (grid4.current) {
-        setGridCurrent4(grid4.current.clientWidth);
-      }
-      if (grid.current) {
-        setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-      }
-      if (grid2.current) {
-        setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
-      }
-      if (grid3.current) {
-        setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
-      }
-      if (grid4.current) {
-        setApplyMinWidth4(grid4.current.clientWidth < minGridWidth4.current);
-      }
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current) {
-      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-        setApplyMinWidth(true);
-      } else if (grid.current.clientWidth > minGridWidth.current) {
-        setGridCurrent(grid.current.clientWidth);
-        setApplyMinWidth(false);
-      }
-    }
-    if (grid2.current) {
-      if (
-        grid2.current.clientWidth < minGridWidth2.current &&
-        !applyMinWidth2
-      ) {
-        setApplyMinWidth2(true);
-      } else if (grid2.current.clientWidth > minGridWidth2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-        setApplyMinWidth2(false);
-      }
-    }
-    if (grid3.current) {
-      if (
-        grid3.current.clientWidth < minGridWidth3.current &&
-        !applyMinWidth3
-      ) {
-        setApplyMinWidth3(true);
-      } else if (grid3.current.clientWidth > minGridWidth3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-        setApplyMinWidth3(false);
-      }
-    }
-    if (grid4.current) {
-      if (
-        grid4.current.clientWidth < minGridWidth4.current &&
-        !applyMinWidth4
-      ) {
-        setApplyMinWidth4(true);
-      } else if (grid4.current.clientWidth > minGridWidth4.current) {
-        setGridCurrent3(grid4.current.clientWidth);
-        setApplyMinWidth3(false);
-      }
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    if (grid.current && Name == "grdUserAdj") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-    if (grid2.current && Name == "grdAdjDetail") {
-      let width = applyMinWidth2
-        ? minWidth
-        : minWidth +
-          (gridCurrent2 - minGridWidth2.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-    if (grid3.current && Name == "grdJournalList") {
-      let width = applyMinWidth3
-        ? minWidth
-        : minWidth +
-          (gridCurrent3 - minGridWidth3.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-    if (grid4.current && Name == "grdAdjList") {
-      let width = applyMinWidth4
-        ? minWidth
-        : minWidth +
-          (gridCurrent4 - minGridWidth4.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-  };
-
   // 1일 ~ 31일 반복문으로 컬럼 추가
   const createDateColumn = () => {
     const array = [];
@@ -2112,7 +1943,6 @@ const HU_B4000W: React.FC = () => {
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
-                id="grdUserAdj"
               >
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdUserAdj"].map(
@@ -2123,7 +1953,7 @@ const HU_B4000W: React.FC = () => {
                           id={item.id}
                           field={item.fieldName}
                           title={item.caption}
-                          width={setWidth("grdUserAdj", item.width)}
+                          width={item.width}
                           cell={
                             DateField.includes(item.fieldName)
                               ? DateCell
@@ -2184,7 +2014,6 @@ const HU_B4000W: React.FC = () => {
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
-                id="grdAdjDetail"
               >
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdAdjDetail"].map(
@@ -2195,7 +2024,7 @@ const HU_B4000W: React.FC = () => {
                           id={item.id}
                           field={item.fieldName}
                           title={item.caption}
-                          width={setWidth("grdAdjDetail", item.width)}
+                          width={item.width}
                           cell={
                             DateField.includes(item.fieldName)
                               ? DateCell
@@ -2308,7 +2137,6 @@ const HU_B4000W: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
-                  id="grdJournalList"
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions[
@@ -2321,7 +2149,7 @@ const HU_B4000W: React.FC = () => {
                             id={item.id}
                             field={item.fieldName}
                             title={item.caption}
-                            width={setWidth("grdJournalList", item.width)}
+                            width={item.width}
                             cell={
                               DateField.includes(item.fieldName)
                                 ? DateCell
@@ -2475,7 +2303,6 @@ const HU_B4000W: React.FC = () => {
                 cellRender={customCellRender}
                 rowRender={customRowRender}
                 editField={EDIT_FIELD}
-                id="grdAdjList"
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
@@ -2487,7 +2314,7 @@ const HU_B4000W: React.FC = () => {
                           id={item.id}
                           field={item.fieldName}
                           title={item.caption}
-                          width={setWidth("grdAdjList", item.width)}
+                          width={item.width}
                           className={
                             requiredField.includes(item.fieldName)
                               ? "required"

@@ -9,7 +9,7 @@ import {
   GridFooterCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -30,6 +30,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -39,7 +40,6 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -76,7 +76,10 @@ const MA_B2100W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
@@ -289,7 +292,7 @@ const MA_B2100W: React.FC = () => {
   };
 
   //그리드 데이터 조회
-  const fetchMainGrid = async (filters : any) => {
+  const fetchMainGrid = async (filters: any) => {
     // if (!permissions?.view) return;
     let data: any;
     setLoading(true);
@@ -369,8 +372,7 @@ const MA_B2100W: React.FC = () => {
     }
   }, [filters]);
 
-
-  let gridRef : any = useRef(null); 
+  let gridRef: any = useRef(null);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -554,13 +556,13 @@ const MA_B2100W: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
 
-  const pageChange = (event:GridPageChangeEvent) => {
+  const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
-      isSearch : true,
+      isSearch: true,
     }));
 
     setPage({
@@ -569,50 +571,6 @@ const MA_B2100W: React.FC = () => {
     });
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    if (grid.current && Name == "grdList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    } 
-  };
   return (
     <>
       <TitleContainer>
@@ -645,21 +603,21 @@ const MA_B2100W: React.FC = () => {
               </td>
               <th>입고일자</th>
               <td>
-                  <CommonDateRangePicker
-                    value={{
-                      start: filters.ymdFrdt,
-                      end: filters.ymdTodt,
-                    }}
-                    onChange={(e: { value: { start: any; end: any } }) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        ymdFrdt: e.value.start,
-                        ymdTodt: e.value.end,
-                      }))
-                    }
-                    className="required"
-                  />
-                </td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.ymdFrdt,
+                    end: filters.ymdTodt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      ymdFrdt: e.value.start,
+                      ymdTodt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
+              </td>
               <th>대분류</th>
               <td>
                 {customOptionData !== null && (
@@ -872,7 +830,6 @@ const MA_B2100W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            id="grdList"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"]
@@ -884,7 +841,7 @@ const MA_B2100W: React.FC = () => {
                         key={idx}
                         field={item.fieldName}
                         title={item.caption}
-                        width={setWidth("grdList", item.width)}
+                        width={item.width}
                         cell={
                           numberField.includes(item.fieldName)
                             ? NumberCell

@@ -31,6 +31,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -44,7 +45,6 @@ import {
   setDefaultDate,
   toDate,
   useSysMessage,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -139,7 +139,10 @@ const SA_A2300: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setFilters((prev) => ({
         ...prev,
@@ -453,7 +456,7 @@ const SA_A2300: React.FC = () => {
         "@p_orglot": filters.orglot,
         "@p_reqnum": filters.reqnum,
         "@p_reckey": filters.reckey,
-        "@p_find_row_value": filters.find_row_value
+        "@p_find_row_value": filters.find_row_value,
       },
     };
     try {
@@ -864,8 +867,8 @@ const SA_A2300: React.FC = () => {
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       );
       if (paraDataDeleted.attdatnum)
-      setDeletedAttadatnums([paraDataDeleted.attdatnum]);
-    
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+
       resetAllGrid();
       if (isLastDataDeleted) {
         setPage({
@@ -1024,81 +1027,6 @@ const SA_A2300: React.FC = () => {
     }
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const minGridWidth2 = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const grid2 = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-  const [gridCurrent2, setGridCurrent2] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      grid2.current = document.getElementById("grdList2");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-      customOptionData.menuCustomColumnOptions["grdList2"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth2.current += item.width)
-            : minGridWidth2.current
-      );
-      minGridWidth.current += 50;
-      setGridCurrent(grid.current.clientWidth);
-      setGridCurrent2(grid2.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-      setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-    if (grid2.current.clientWidth < minGridWidth2.current && !applyMinWidth2) {
-      setApplyMinWidth2(true);
-    } else if (grid2.current.clientWidth > minGridWidth2.current) {
-      setGridCurrent2(grid2.current.clientWidth);
-      setApplyMinWidth2(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    if (grid.current && Name == "grdList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-    if (grid2.current && Name == "grdList2") {
-      let width = applyMinWidth2
-        ? minWidth
-        : minWidth +
-          (gridCurrent2 - minGridWidth2.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-  };
-
   return (
     <>
       <TitleContainer>
@@ -1118,7 +1046,7 @@ const SA_A2300: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th style={{ width: isMobile? "100%" : "250px" }}>
+              <th style={{ width: isMobile ? "100%" : "250px" }}>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
                     name="gubun1"
@@ -1333,7 +1261,6 @@ const SA_A2300: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            id="grdList"
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
@@ -1344,7 +1271,7 @@ const SA_A2300: React.FC = () => {
                       key={idx}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdList", item.width)}
+                      width={item.width}
                       cell={
                         numberField.includes(item.fieldName)
                           ? NumberCell
@@ -1411,7 +1338,6 @@ const SA_A2300: React.FC = () => {
           reorderable={true}
           //컬럼너비조정
           resizable={true}
-          id="grdList2"
         >
           {customOptionData !== null &&
             customOptionData.menuCustomColumnOptions["grdList2"].map(
@@ -1421,7 +1347,7 @@ const SA_A2300: React.FC = () => {
                     key={idx}
                     field={item.fieldName}
                     title={item.caption}
-                    width={setWidth("grdList2", item.width)}
+                    width={item.width}
                     cell={
                       numberField.includes(item.fieldName)
                         ? NumberCell

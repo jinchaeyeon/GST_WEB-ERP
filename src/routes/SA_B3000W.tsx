@@ -46,6 +46,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseDesignInfo,
@@ -56,7 +57,6 @@ import {
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -183,7 +183,10 @@ const SA_B3000W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setFilters((prev) => ({
         ...prev,
@@ -613,163 +616,6 @@ const SA_B3000W: React.FC = () => {
     }
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const minGridWidth2 = React.useRef<number>(0);
-  const minGridWidth3 = React.useRef<number>(0);
-  const minGridWidth4 = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const grid2 = React.useRef<any>(null);
-  const grid3 = React.useRef<any>(null);
-  const grid4 = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
-  const [applyMinWidth3, setApplyMinWidth3] = React.useState(false);
-  const [applyMinWidth4, setApplyMinWidth4] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-  const [gridCurrent2, setGridCurrent2] = React.useState(0);
-  const [gridCurrent3, setGridCurrent3] = React.useState(0);
-  const [gridCurrent4, setGridCurrent4] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdAllList");
-      grid2.current = document.getElementById("grdMonthList");
-      grid3.current = document.getElementById("grdQuarterList");
-      grid4.current = document.getElementById("grd5YearList");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdAllList"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth.current += item.width)
-            : minGridWidth.current
-      );
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdMonthList"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth2.current += item.width)
-            : minGridWidth2.current
-      );
-      customOptionData.menuCustomColumnOptions["grdQuarterList"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth3.current += item.width)
-            : minGridWidth3.current
-      );
-      customOptionData.menuCustomColumnOptions["grd5YearList"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth4.current += item.width)
-            : minGridWidth4.current
-      );
-      if (grid.current) {
-        setGridCurrent(grid.current.clientWidth);
-        setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-      }
-      if (grid2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-        setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
-      }
-      if (grid3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-        setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
-      }
-      if (grid4.current) {
-        setGridCurrent4(grid4.current.clientWidth);
-        setApplyMinWidth4(grid4.current.clientWidth < minGridWidth4.current);
-      }
-    }
-  }, [customOptionData, tabSelected]);
-
-  const handleResize = () => {
-    if (grid.current) {
-      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-        setApplyMinWidth(true);
-      } else if (grid.current.clientWidth > minGridWidth.current) {
-        setGridCurrent(grid.current.clientWidth);
-        setApplyMinWidth(false);
-      }
-    }
-    if (grid2.current) {
-      if (
-        grid2.current.clientWidth < minGridWidth2.current &&
-        !applyMinWidth2
-      ) {
-        setApplyMinWidth2(true);
-      } else if (grid2.current.clientWidth > minGridWidth2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-        setApplyMinWidth2(false);
-      }
-    }
-    if (grid3.current) {
-      if (
-        grid3.current.clientWidth < minGridWidth3.current &&
-        !applyMinWidth3
-      ) {
-        setApplyMinWidth3(true);
-      } else if (grid3.current.clientWidth > minGridWidth3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-        setApplyMinWidth3(false);
-      }
-    }
-    if (grid4.current) {
-      if (
-        grid4.current.clientWidth < minGridWidth4.current &&
-        !applyMinWidth4
-      ) {
-        setApplyMinWidth4(true);
-      } else if (grid4.current.clientWidth > minGridWidth4.current) {
-        setGridCurrent4(grid4.current.clientWidth);
-        setApplyMinWidth4(false);
-      }
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    if (grid.current && Name == "grdAllList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-    if (grid2.current && Name == "grdMonthList") {
-      let width = applyMinWidth2
-        ? minWidth
-        : minWidth +
-          (gridCurrent2 - minGridWidth2.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-    if (grid3.current && Name == "grdQuarterList") {
-      let width = applyMinWidth3
-        ? minWidth
-        : minWidth +
-          (gridCurrent3 - minGridWidth3.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-    if (grid4.current && Name == "grd5YearList") {
-      let width = applyMinWidth4
-        ? minWidth
-        : minWidth +
-          (gridCurrent4 - minGridWidth4.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-  };
-
   return (
     <>
       <TitleContainer>
@@ -968,7 +814,6 @@ const SA_B3000W: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
-                  id="grdAllList"
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdAllList"].map(
@@ -978,7 +823,7 @@ const SA_B3000W: React.FC = () => {
                             key={idx}
                             field={item.fieldName}
                             title={item.caption}
-                            width={setWidth("grdAllList", item.width)}
+                            width={item.width}
                             cell={
                               numberField.includes(item.fieldName)
                                 ? NumberCell
@@ -1049,7 +894,6 @@ const SA_B3000W: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
-                  id="grdMonthList"
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions[
@@ -1067,14 +911,14 @@ const SA_B3000W: React.FC = () => {
                                 ? gridTotalFooterCell
                                 : undefined
                             }
-                            width={setWidth("grdMonthList", item.width)}
+                            width={item.width}
                           >
                             <GridColumn
                               title={"수량"}
                               cell={NumberCell}
                               field={item.fieldName}
                               footerCell={gridSumQtyFooterCell}
-                              width={setWidth("grdMonthList", item.width / 2)}
+                              width={item.width}
                             />
 
                             <GridColumn
@@ -1082,7 +926,7 @@ const SA_B3000W: React.FC = () => {
                               cell={NumberCell}
                               field={item.fieldName.replace("qty", "amt")}
                               footerCell={gridSumQtyFooterCell}
-                              width={setWidth("grdMonthList", item.width / 2)}
+                              width={item.width}
                             />
                           </GridColumn>
                         ) : (
@@ -1097,7 +941,7 @@ const SA_B3000W: React.FC = () => {
                                 ? gridSumQtyFooterCell
                                 : undefined
                             }
-                            width={setWidth("grdMonthList", item.width)}
+                            width={item.width}
                           />
                         ))
                     )}
@@ -1216,7 +1060,6 @@ const SA_B3000W: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
-                  id="grdQuarterList"
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions[
@@ -1235,7 +1078,7 @@ const SA_B3000W: React.FC = () => {
                                 ? gridTotalFooterCell
                                 : undefined
                             }
-                            width={setWidth("grdQuarterList", item.width)}
+                            width={item.width}
                           >
                             <GridColumn title={"1/4분기"}>
                               <GridColumn
@@ -1243,10 +1086,7 @@ const SA_B3000W: React.FC = () => {
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "q1" : "q11"}
                                 footerCell={gridSumQtyFooterCell}
-                                width={setWidth(
-                                  "grdQuarterList",
-                                  item.width / 8
-                                )}
+                                width={item.width}
                               />
 
                               <GridColumn
@@ -1254,10 +1094,7 @@ const SA_B3000W: React.FC = () => {
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "jm1" : "dm1"}
                                 footerCell={gridSumQtyFooterCell}
-                                width={setWidth(
-                                  "grdQuarterList",
-                                  item.width / 8
-                                )}
+                                width={item.width}
                               />
                             </GridColumn>
                             <GridColumn title={"2/4분기"}>
@@ -1266,10 +1103,7 @@ const SA_B3000W: React.FC = () => {
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "q2" : "q22"}
                                 footerCell={gridSumQtyFooterCell}
-                                width={setWidth(
-                                  "grdQuarterList",
-                                  item.width / 8
-                                )}
+                                width={item.width}
                               />
 
                               <GridColumn
@@ -1277,10 +1111,7 @@ const SA_B3000W: React.FC = () => {
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "jm2" : "dm2"}
                                 footerCell={gridSumQtyFooterCell}
-                                width={setWidth(
-                                  "grdQuarterList",
-                                  item.width / 8
-                                )}
+                                width={item.width}
                               />
                             </GridColumn>
                             <GridColumn title={"3/4분기"}>
@@ -1289,10 +1120,7 @@ const SA_B3000W: React.FC = () => {
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "q3" : "q33"}
                                 footerCell={gridSumQtyFooterCell}
-                                width={setWidth(
-                                  "grdQuarterList",
-                                  item.width / 8
-                                )}
+                                width={item.width}
                               />
 
                               <GridColumn
@@ -1300,10 +1128,7 @@ const SA_B3000W: React.FC = () => {
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "jm3" : "dm3"}
                                 footerCell={gridSumQtyFooterCell}
-                                width={setWidth(
-                                  "grdQuarterList",
-                                  item.width / 8
-                                )}
+                                width={item.width}
                               />
                             </GridColumn>
                             <GridColumn title={"4/4분기"}>
@@ -1312,10 +1137,7 @@ const SA_B3000W: React.FC = () => {
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "q4" : "q44"}
                                 footerCell={gridSumQtyFooterCell}
-                                width={setWidth(
-                                  "grdQuarterList",
-                                  item.width / 8
-                                )}
+                                width={item.width}
                               />
 
                               <GridColumn
@@ -1323,10 +1145,7 @@ const SA_B3000W: React.FC = () => {
                                 cell={NumberCell}
                                 field={item.caption === "전기" ? "jm4" : "dm4"}
                                 footerCell={gridSumQtyFooterCell}
-                                width={setWidth(
-                                  "grdQuarterList",
-                                  item.width / 8
-                                )}
+                                width={item.width}
                               />
                             </GridColumn>
 
@@ -1337,7 +1156,7 @@ const SA_B3000W: React.FC = () => {
                                 item.caption === "전기" ? "jtotal" : "dtotal"
                               }
                               footerCell={gridSumQtyFooterCell}
-                              width={setWidth("grdQuarterList", item.width / 4)}
+                              width={item.width}
                             />
                           </GridColumn>
                         ) : (
@@ -1352,7 +1171,7 @@ const SA_B3000W: React.FC = () => {
                                 ? gridSumQtyFooterCell
                                 : undefined
                             }
-                            width={setWidth("grdQuarterList", item.width)}
+                            width={item.width}
                           />
                         ))
                     )}
@@ -1519,7 +1338,6 @@ const SA_B3000W: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
-                  id="grd5YearList"
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions[
@@ -1543,7 +1361,7 @@ const SA_B3000W: React.FC = () => {
                                 ? gridTotalFooterCell
                                 : undefined
                             }
-                            width={setWidth("grd5YearList", item.width)}
+                            width={item.width}
                           >
                             <GridColumn
                               title={"(1-6)분기"}
@@ -1603,7 +1421,7 @@ const SA_B3000W: React.FC = () => {
                                   : "")
                               }
                               footerCell={gridSumQtyFooterCell}
-                              width={setWidth("grd5YearList", item.width / 3)}
+                              width={item.width}
                             />
                             <GridColumn
                               title={"(7-12)분기"}
@@ -1663,7 +1481,7 @@ const SA_B3000W: React.FC = () => {
                                   : "")
                               }
                               footerCell={gridSumQtyFooterCell}
-                              width={setWidth("grd5YearList", item.width / 3)}
+                              width={item.width}
                             />
 
                             <GridColumn
@@ -1724,7 +1542,7 @@ const SA_B3000W: React.FC = () => {
                                   : "")
                               }
                               footerCell={gridSumQtyFooterCell}
-                              width={setWidth("grd5YearList", item.width / 3)}
+                              width={item.width}
                             />
                           </GridColumn>
                         ) : (
@@ -1739,7 +1557,7 @@ const SA_B3000W: React.FC = () => {
                                 ? gridSumQtyFooterCell
                                 : undefined
                             }
-                            width={setWidth("grd5YearList", item.width)}
+                            width={item.width}
                           />
                         ))
                     )}

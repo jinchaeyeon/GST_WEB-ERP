@@ -1,60 +1,58 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
-  GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
   GridFooterCellProps,
   GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import FilterContainer from "../components/Containers/FilterContainer";
+import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
-  Title,
+  ButtonContainer,
+  ButtonInInput,
   FilterBox,
   GridContainer,
   GridTitle,
-  TitleContainer,
-  ButtonContainer,
   GridTitleContainer,
-  ButtonInInput,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
-import { Input } from "@progress/kendo-react-inputs";
-import { useApi } from "../hooks/api";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import TopButtons from "../components/Buttons/TopButtons";
+import YearCalender from "../components/Calendars/YearCalendar";
+import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
-  chkScrollHandler,
-  convertDateToStr,
-  getQueryFromBizComponent,
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
   UsePermissions,
-  handleKeyPressSearch,
+  convertDateToStr,
   findMessage,
-  GetPropertyValueByName,
+  getQueryFromBizComponent,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import WoodenWindow from "../components/Windows/CommonWindows/WoodenWindow";
-import NumberCell from "../components/Cells/NumberCell";
-import YearCalender from "../components/Calendars/YearCalendar";
 import {
   COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/Buttons/TopButtons";
-import { bytesToBase64 } from "byte-base64";
-import { useSetRecoilState } from "recoil";
+import FilterContainer from "../components/Containers/FilterContainer";
+import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import WoodenWindow from "../components/Windows/CommonWindows/WoodenWindow";
+import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/TO_B0011W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 const numberField = ["stockqty"];
@@ -94,7 +92,10 @@ const TO_B0011W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         location: defaultOption.find((item: any) => item.id === "location")
@@ -239,30 +240,30 @@ const TO_B0011W: React.FC = () => {
     // if (!permissions?.view) return;
     let data: any;
     setLoading(true);
-     //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_TO_B0011W_Q",
-    pageNumber: filters.pgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "LIST",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_location": filters.location,
-      "@p_yyyymm": convertDateToStr(filters.yyyymm).substring(0, 4),
-      "@p_itemcd": filters.itemcd,
-      "@p_model": filters.model,
-      "@p_itemnm": filters.itemnm,
-      "@p_itemno": filters.itemno,
-      "@p_spec": filters.spec,
-      "@p_bnatur": filters.bnatur,
-      "@p_custcd": filters.custcd,
-      "@p_custnm": filters.custnm,
-      "@p_insiz": filters.insiz,
-      "@p_itemlvl1": filters.itemlvl1,
-      "@p_itemlvl2": filters.itemlvl2,
-      "@p_itemlvl3": filters.itemlvl3,
-    },
-  };
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_TO_B0011W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "LIST",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_yyyymm": convertDateToStr(filters.yyyymm).substring(0, 4),
+        "@p_itemcd": filters.itemcd,
+        "@p_model": filters.model,
+        "@p_itemnm": filters.itemnm,
+        "@p_itemno": filters.itemno,
+        "@p_spec": filters.spec,
+        "@p_bnatur": filters.bnatur,
+        "@p_custcd": filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_insiz": filters.insiz,
+        "@p_itemlvl1": filters.itemlvl1,
+        "@p_itemlvl2": filters.itemlvl2,
+        "@p_itemlvl3": filters.itemlvl3,
+      },
+    };
 
     try {
       data = await processApi<any>("procedure", parameters);
@@ -300,21 +301,21 @@ const TO_B0011W: React.FC = () => {
     setLoading(false);
   };
 
- //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
- useEffect(() => {
-  if (filters.isSearch && permissions !== null) {
-    const _ = require("lodash");
-    const deepCopiedFilters = _.cloneDeep(filters);
-    setFilters((prev) => ({
-      ...prev,
-      find_row_value: "",
-      isSearch: false,
-    })); // 한번만 조회되도록
-    fetchMainGrid(deepCopiedFilters);
-  }
-}, [filters]);
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (filters.isSearch && permissions !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+    }
+  }, [filters]);
 
-  let gridRef : any = useRef(null); 
+  let gridRef: any = useRef(null);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -456,54 +457,6 @@ const TO_B0011W: React.FC = () => {
       }
     } catch (e) {
       alert(e);
-    }
-  };
-
-  
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    if (Name == "grdList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
     }
   };
 
@@ -742,7 +695,6 @@ const TO_B0011W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            id="grdList"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"]
@@ -754,7 +706,7 @@ const TO_B0011W: React.FC = () => {
                         key={idx}
                         field={item.fieldName}
                         title={item.caption}
-                        width={setWidth("grdList", item.width)}
+                        width={item.width}
                         cell={
                           numberField.includes(item.fieldName)
                             ? NumberCell
@@ -788,7 +740,7 @@ const TO_B0011W: React.FC = () => {
           modal={true}
         />
       )}
-     {gridList.map((grid: TGrid) =>
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}

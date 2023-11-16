@@ -12,6 +12,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
@@ -24,6 +25,10 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
+import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
+import RadioGroupCell from "../components/Cells/RadioGroupCell";
 import {
   GetPropertyValueByName,
   UseBizComponent,
@@ -41,16 +46,11 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_B1040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { bytesToBase64 } from "byte-base64";
-import NumberCell from "../components/Cells/NumberCell";
-import DateCell from "../components/Cells/DateCell";
-import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
-import RadioGroupCell from "../components/Cells/RadioGroupCell";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -66,7 +66,7 @@ const dateField = [
   "marrydt",
   "exstartdt",
   "exenddt",
-  "hirdate"
+  "hirdate",
 ];
 const numberField = [
   "anlslry",
@@ -491,53 +491,6 @@ const HU_B1040W: React.FC = () => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    if (Name == "grdList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-  };
-
   const onMainItemChange = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
@@ -566,12 +519,9 @@ const HU_B1040W: React.FC = () => {
     />
   );
 
-  const enterEdit = (dataItem: any, field: string) => {
-  };
+  const enterEdit = (dataItem: any, field: string) => {};
 
-  const exitEdit = () => {
-  };
-
+  const exitEdit = () => {};
 
   return (
     <>
@@ -721,7 +671,6 @@ const HU_B1040W: React.FC = () => {
             cellRender={customCellRender}
             rowRender={customRowRender}
             editField={EDIT_FIELD}
-            id="grdList"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"]
@@ -733,7 +682,7 @@ const HU_B1040W: React.FC = () => {
                         key={idx}
                         field={item.fieldName}
                         title={item.caption}
-                        width={setWidth("grdList", item.width)}
+                        width={item.width}
                         cell={
                           numberField.includes(item.fieldName)
                             ? NumberCell

@@ -1188,197 +1188,6 @@ const SA_B2410: React.FC = () => {
     }
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const minGridWidth2 = React.useRef<number>(0);
-  const minGridWidth3 = React.useRef<number>(0);
-  const minGridWidth4 = React.useRef<number>(0);
-  const minGridWidth5 = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const grid2 = React.useRef<any>(null);
-  const grid3 = React.useRef<any>(null);
-  const grid4 = React.useRef<any>(null);
-  const grid5 = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
-  const [applyMinWidth3, setApplyMinWidth3] = React.useState(false);
-  const [applyMinWidth4, setApplyMinWidth4] = React.useState(false);
-  const [applyMinWidth5, setApplyMinWidth5] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-  const [gridCurrent2, setGridCurrent2] = React.useState(0);
-  const [gridCurrent3, setGridCurrent3] = React.useState(0);
-  const [gridCurrent4, setGridCurrent4] = React.useState(0);
-  const [gridCurrent5, setGridCurrent5] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      grid2.current = document.getElementById("grdList2");
-      grid3.current = document.getElementById("grdList3");
-      grid4.current = document.getElementById("grdList4");
-      grid5.current = document.getElementById("grdList5");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-      customOptionData.menuCustomColumnOptions["grdList2"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth2.current += item.width)
-            : minGridWidth2.current
-      );
-      customOptionData.menuCustomColumnOptions["grdList3"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth3.current += item.width)
-            : minGridWidth3.current
-      );
-      customOptionData.menuCustomColumnOptions["grdList4"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth4.current += item.width)
-            : minGridWidth4.current
-      );
-      customOptionData.menuCustomColumnOptions["grdList5"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth5.current += item.width)
-            : minGridWidth5.current
-      );
-
-      if (grid.current) {
-        setGridCurrent(grid.current.clientWidth);
-        setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-      }
-      if (grid2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-        setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
-      }
-      if (grid3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-        setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
-      }
-      if (grid4.current) {
-        setGridCurrent4(grid4.current.clientWidth);
-        setApplyMinWidth4(grid4.current.clientWidth < minGridWidth4.current);
-      }
-      if (grid5.current) {
-        setGridCurrent5(grid5.current.clientWidth);
-        setApplyMinWidth5(grid5.current.clientWidth < minGridWidth5.current);
-      }
-    }
-  }, [customOptionData, tabSelected]);
-
-  const handleResize = () => {
-    if (grid.current) {
-      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-        setApplyMinWidth(true);
-      } else if (grid.current.clientWidth > minGridWidth.current) {
-        setGridCurrent(grid.current.clientWidth);
-        setApplyMinWidth(false);
-      }
-    }
-    if (grid2.current) {
-      if (
-        grid2.current.clientWidth < minGridWidth2.current &&
-        !applyMinWidth2
-      ) {
-        setApplyMinWidth2(true);
-      } else if (grid2.current.clientWidth > minGridWidth2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-        setApplyMinWidth2(false);
-      }
-    }
-    if (grid3.current) {
-      if (
-        grid3.current.clientWidth < minGridWidth3.current &&
-        !applyMinWidth3
-      ) {
-        setApplyMinWidth3(true);
-      } else if (grid3.current.clientWidth > minGridWidth3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-        setApplyMinWidth3(false);
-      }
-    }
-    if (grid4.current) {
-      if (
-        grid4.current.clientWidth < minGridWidth4.current &&
-        !applyMinWidth4
-      ) {
-        setApplyMinWidth4(true);
-      } else if (grid4.current.clientWidth > minGridWidth4.current) {
-        setGridCurrent4(grid4.current.clientWidth);
-        setApplyMinWidth4(false);
-      }
-    }
-    if (grid5.current) {
-      if (
-        grid5.current.clientWidth < minGridWidth5.current &&
-        !applyMinWidth5
-      ) {
-        setApplyMinWidth5(true);
-      } else if (grid5.current.clientWidth > minGridWidth5.current) {
-        setGridCurrent5(grid5.current.clientWidth);
-        setApplyMinWidth5(false);
-      }
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    if (grid.current && Name == "grdList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-    if (grid2.current && Name == "grdList2") {
-      let width = applyMinWidth2
-        ? minWidth
-        : minWidth +
-          (gridCurrent2 - minGridWidth2.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-    if (grid3.current && Name == "grdList3") {
-      let width = applyMinWidth3
-        ? minWidth
-        : minWidth +
-          (gridCurrent3 - minGridWidth3.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-    if (grid4.current && Name == "grdList4") {
-      let width = applyMinWidth4
-        ? minWidth
-        : minWidth +
-          (gridCurrent4 - minGridWidth4.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-    if (grid5.current && Name == "grdList5") {
-      let width = applyMinWidth5
-        ? minWidth
-        : minWidth +
-          (gridCurrent5 - minGridWidth5.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-  };
-
   return (
     <>
       <TitleContainer>
@@ -1559,7 +1368,6 @@ const SA_B2410: React.FC = () => {
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
-                id="grdList"
               >
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdList"]
@@ -1571,7 +1379,7 @@ const SA_B2410: React.FC = () => {
                             key={idx}
                             field={item.fieldName}
                             title={item.caption}
-                            width={setWidth("grdList", item.width)}
+                            width={item.width}
                             cell={
                               numberField.includes(item.fieldName)
                                 ? NumberCell
@@ -1638,7 +1446,6 @@ const SA_B2410: React.FC = () => {
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
-                id="grdList2"
               >
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdList2"]
@@ -1650,7 +1457,7 @@ const SA_B2410: React.FC = () => {
                             key={idx}
                             field={item.fieldName}
                             title={item.caption}
-                            width={setWidth("grdList2", item.width)}
+                            width={item.width}
                             cell={
                               numberField.includes(item.fieldName)
                                 ? NumberCell
@@ -1715,7 +1522,6 @@ const SA_B2410: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
-                  id="grdList3"
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdList3"]
@@ -1727,7 +1533,7 @@ const SA_B2410: React.FC = () => {
                               key={idx}
                               field={item.fieldName}
                               title={item.caption}
-                              width={setWidth("grdList3", item.width)}
+                              width={item.width}
                               cell={
                                 numberField.includes(item.fieldName)
                                   ? NumberCell
@@ -1790,7 +1596,6 @@ const SA_B2410: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
-                  id="grdList4"
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdList4"]
@@ -1802,7 +1607,7 @@ const SA_B2410: React.FC = () => {
                               key={idx}
                               field={item.fieldName}
                               title={item.caption}
-                              width={setWidth("grdList4", item.width)}
+                              width={item.width}
                               cell={
                                 numberField.includes(item.fieldName)
                                   ? NumberCell
@@ -1869,7 +1674,6 @@ const SA_B2410: React.FC = () => {
           reorderable={true}
           //컬럼너비조정
           resizable={true}
-          id="grdList5"
         >
           {customOptionData !== null &&
             customOptionData.menuCustomColumnOptions["grdList5"]
@@ -1881,7 +1685,7 @@ const SA_B2410: React.FC = () => {
                       key={idx}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdList5", item.width)}
+                      width={item.width}
                       cell={
                         numberField.includes(item.fieldName)
                           ? NumberCell

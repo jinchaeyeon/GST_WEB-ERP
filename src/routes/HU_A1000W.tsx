@@ -544,7 +544,6 @@ const HU_A1000W: React.FC = () => {
           reorderable={true}
           //컬럼너비조정
           resizable={true}
-          id="grdList"
         >
           <GridColumn cell={CommandCell} width="50px" />
           {customOptionData !== null &&

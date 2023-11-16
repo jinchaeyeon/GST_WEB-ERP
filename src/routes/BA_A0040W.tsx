@@ -13,7 +13,12 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Checkbox, CheckboxChangeEvent, Input, TextArea } from "@progress/kendo-react-inputs";
+import {
+  Checkbox,
+  CheckboxChangeEvent,
+  Input,
+  TextArea,
+} from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -38,6 +43,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -51,7 +57,6 @@ import {
   handleKeyPressSearch,
   toDate,
   useSysMessage,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -149,7 +154,7 @@ const BA_A0040: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
-  
+
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -163,7 +168,10 @@ const BA_A0040: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
@@ -560,7 +568,9 @@ const BA_A0040: React.FC = () => {
               qtyunitListData.find(
                 (item: any) => item.sub_code == selectedRow.invunit
               )?.code_name == undefined
-                ? selectedRow.invunit == undefined ? "" : selectedRow.invunit
+                ? selectedRow.invunit == undefined
+                  ? ""
+                  : selectedRow.invunit
                 : qtyunitListData.find(
                     (item: any) => item.sub_code == selectedRow.invunit
                   )?.code_name,
@@ -963,7 +973,8 @@ const BA_A0040: React.FC = () => {
       row_values: selectedRowData.row_values,
       safeqty: selectedRowData.safeqty,
       unitwgt: selectedRowData.unitwgt,
-      invunit: selectedRowData.invunit == undefined ? "" : selectedRowData.invunit,
+      invunit:
+        selectedRowData.invunit == undefined ? "" : selectedRowData.invunit,
       dwgno: selectedRowData.dwgno,
       maker: selectedRowData.maker,
       qcyn: selectedRowData.qcyn == "Y" ? "Y" : "N",
@@ -1434,7 +1445,7 @@ const BA_A0040: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-       if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1609,13 +1620,16 @@ const BA_A0040: React.FC = () => {
       "@p_itemlvl2": infomation.itemlvl2,
       "@p_itemlvl3": infomation.itemlvl3,
       "@p_itemlvl4": infomation.itemlvl4,
-      "@p_invunit": infomation.invunit != "" ? qtyunitListData.find(
-        (item: any) => item.code_name == infomation.invunit
-      )?.sub_code == undefined
-        ? infomation.invunit
-        : qtyunitListData.find(
-            (item: any) => item.code_name == infomation.invunit
-          )?.sub_code : "",
+      "@p_invunit":
+        infomation.invunit != ""
+          ? qtyunitListData.find(
+              (item: any) => item.code_name == infomation.invunit
+            )?.sub_code == undefined
+            ? infomation.invunit
+            : qtyunitListData.find(
+                (item: any) => item.code_name == infomation.invunit
+              )?.sub_code
+          : "",
       "@p_bomyn": infomation.bomyn,
       "@p_qcyn": infomation.qcyn,
       "@p_unitwgt": infomation.unitwgt,
@@ -1961,97 +1975,6 @@ const BA_A0040: React.FC = () => {
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
 
-  const minGridWidth = React.useRef<number>(0);
-  const minGridWidth2 = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const grid2 = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-  const [gridCurrent2, setGridCurrent2] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      grid2.current = document.getElementById("grdList2");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList2"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth2.current += item.width)
-            : minGridWidth2.current
-      );
-
-      minGridWidth2.current += 50;
-      
-      if (grid.current) {
-        setGridCurrent(grid.current.clientWidth);
-      }
-      if (grid2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-      }
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-      if (grid2.current) {
-        setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
-      }
-    }
-  }, [customOptionData, tabSelected]);
-
-  const handleResize = () => {
-    if (grid.current) {
-      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-        setApplyMinWidth(true);
-      } else if (grid.current.clientWidth > minGridWidth.current) {
-        setGridCurrent(grid.current.clientWidth);
-        setApplyMinWidth(false);
-      }
-    }
-    if (grid2.current) {
-      if (
-        grid2.current.clientWidth < minGridWidth2.current &&
-        !applyMinWidth2
-      ) {
-        setApplyMinWidth2(true);
-      } else if (grid2.current.clientWidth > minGridWidth2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-        setApplyMinWidth2(false);
-      }
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    if (grid.current && Name == "grdList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-    if (grid2.current && Name == "grdList2") {
-      let width = applyMinWidth2
-        ? minWidth
-        : minWidth +
-          (gridCurrent2 - minGridWidth2.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-  };
-
   return (
     <>
       <TitleContainer>
@@ -2253,7 +2176,6 @@ const BA_A0040: React.FC = () => {
             //원하는 행 위치로 스크롤 기능
             ref={gridRef}
             rowHeight={30}
-            id="grdList"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"].map(
@@ -2264,7 +2186,7 @@ const BA_A0040: React.FC = () => {
                       id={item.id}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdList", item.width)}
+                      width={item.width}
                       cell={
                         CheckField.includes(item.fieldName)
                           ? CheckBoxCell
@@ -2624,7 +2546,7 @@ const BA_A0040: React.FC = () => {
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
-                  mode: "single"
+                  mode: "single",
                 }}
                 onSelectionChange={onSubData2SelectionChange}
                 //스크롤 조회 기능
@@ -2648,7 +2570,6 @@ const BA_A0040: React.FC = () => {
                 cellRender={customCellRender}
                 rowRender={customRowRender}
                 editField={EDIT_FIELD}
-                id="grdList2"
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
@@ -2660,7 +2581,7 @@ const BA_A0040: React.FC = () => {
                           id={item.id}
                           field={item.fieldName}
                           title={item.caption}
-                          width={setWidth("grdList2", item.width)}
+                          width={item.width}
                           cell={
                             DateField.includes(item.fieldName)
                               ? DateCell

@@ -706,50 +706,6 @@ const SY_A0500W: React.FC = () => {
     }
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    let width = applyMinWidth
-      ? minWidth
-      : minWidth +
-        (gridCurrent - minGridWidth.current) /
-          customOptionData.menuCustomColumnOptions[Name].length;
-
-    return width;
-  };
-
   const onAddClick = () => {
     setInformation((prev) => ({
       ...prev,
@@ -1201,6 +1157,7 @@ const SY_A0500W: React.FC = () => {
       data2 = null;
     }
   };
+
   return (
     <>
       <TitleContainer>
@@ -1279,7 +1236,6 @@ const SY_A0500W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            id="grdList"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"].map(
@@ -1290,7 +1246,7 @@ const SY_A0500W: React.FC = () => {
                       id={item.id}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdList", item.width)}
+                      width={item.width}
                       footerCell={
                         item.sortOrder === 0 ? mainTotalFooterCell : undefined
                       }

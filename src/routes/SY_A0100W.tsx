@@ -39,6 +39,7 @@ import MonthCalendar from "../components/Calendars/MonthCalendar";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
@@ -47,12 +48,8 @@ import {
   findMessage,
   handleKeyPressSearch,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
-import {
-  PAGE_SIZE,
-  SELECTED_FIELD
-} from "../components/CommonString";
+import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
@@ -113,7 +110,10 @@ const App: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setDataFilters((prev) => ({
         ...prev,
         cboViewType: defaultOption.find(
@@ -541,6 +541,7 @@ const App: React.FC = () => {
             //원하는 행 위치로 스크롤 기능
             ref={gridRef}
             rowHeight={30}
+            resizable={true}
           >
             {tabSelected === 2 && (
               <GridColumn

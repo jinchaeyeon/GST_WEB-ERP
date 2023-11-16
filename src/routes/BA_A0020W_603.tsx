@@ -92,8 +92,8 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0020W_603_C";
 
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 const DATA_ITEM_KEY = "custcd";
 const SUB_DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY2 = "num";
@@ -1359,11 +1359,18 @@ const BA_A0020_603: React.FC = () => {
       customOptionData.menuCustomDefaultOptions,
       "new"
     );
-    setyn(defaultOption.find((item: any) => item.id === "yn").valueCode == "Y" ? true : false)
+    setyn(
+      defaultOption.find((item: any) => item.id === "yn").valueCode == "Y"
+        ? true
+        : false
+    );
     setInfomation({
       pgSize: PAGE_SIZE,
       workType: "N",
-      custcd: defaultOption.find((item: any) => item.id === "yn").valueCode == "Y" ? "자동생성" : "",
+      custcd:
+        defaultOption.find((item: any) => item.id === "yn").valueCode == "Y"
+          ? "자동생성"
+          : "",
       custnm: "",
       custdiv: "B",
       custabbr: "",
@@ -1397,7 +1404,8 @@ const BA_A0020_603: React.FC = () => {
       scmyn: "N",
       pariodyn: "",
       attdatnum: "",
-      itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1").valueCode,
+      itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1")
+        .valueCode,
       itemlvl2: "",
       itemlvl3: "",
       etax: "",
@@ -2939,52 +2947,6 @@ const BA_A0020_603: React.FC = () => {
     });
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-      minGridWidth.current += 10;
-      setGridCurrent(grid.current.clientWidth);
-    }
-  }, [customOptionData, tabSelected]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    if (grid.current && Name == "grdList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-  };
-
   const [attdatnum, setAttdatnum] = useState<string>("");
   const [files, setFiles] = useState<string>("");
 
@@ -3139,7 +3101,6 @@ const BA_A0020_603: React.FC = () => {
               reorderable={true}
               //컬럼너비조정
               resizable={true}
-              id="grdList"
             >
               {customOptionData !== null &&
                 customOptionData.menuCustomColumnOptions["grdList"].map(
@@ -3150,7 +3111,7 @@ const BA_A0020_603: React.FC = () => {
                         id={item.id}
                         field={item.fieldName}
                         title={item.caption}
-                        width={setWidth("grdList", item.width)}
+                        width={item.width}
                         cell={
                           checkboxField.includes(item.fieldName)
                             ? CheckBoxCell
@@ -3460,7 +3421,6 @@ const BA_A0020_603: React.FC = () => {
                   cellRender={customCellRender}
                   rowRender={customRowRender}
                   editField={EDIT_FIELD}
-                  id="grdList2"
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
@@ -3588,7 +3548,6 @@ const BA_A0020_603: React.FC = () => {
                     cellRender={customCellRender2}
                     rowRender={customRowRender2}
                     editField={EDIT_FIELD}
-                    id="grdList3"
                   >
                     <GridColumn field="rowstatus" title=" " width="50px" />
                     {customOptionData !== null &&

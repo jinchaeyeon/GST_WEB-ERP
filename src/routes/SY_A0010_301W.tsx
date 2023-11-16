@@ -7,11 +7,10 @@ import {
   GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
-  GridExpandChangeEvent,
   GridFooterCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState,
+  getSelectedState
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -30,18 +29,14 @@ import {
 import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import NumberCell from "../components/Cells/NumberCell";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseParaPc,
-  UsePermissions,
   getQueryFromBizComponent,
-  handleKeyPressSearch,
-  rowsOfDataResult,
-  rowsWithSelectedDataResult,
-  GetPropertyValueByName,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -50,7 +45,6 @@ import { useApi } from "../hooks/api";
 import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import ExcelUploadButton from "../components/Buttons/ExcelUploadButton";
 
 const numberField = [
   "sort_seq",
@@ -1160,52 +1154,6 @@ const Page: React.FC = () => {
   const onDetailSortChange = (e: any) => {
     setDetailDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdHeaderList");
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdHeaderList"]?.map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth.current += item.width)
-            : minGridWidth.current
-      );
-
-      minGridWidth.current += 50;
-
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    let width = applyMinWidth
-      ? minWidth
-      : minWidth +
-        (gridCurrent - minGridWidth.current) /
-          customOptionData.menuCustomColumnOptions[Name].length;
-
-    return width;
-  };
 
   return (
     <>
@@ -1335,7 +1283,6 @@ const Page: React.FC = () => {
               //컬럼너비조정
               resizable={true}
               //그룹기능
-              id="grdHeaderList"
             >
               <GridColumn cell={CommandCell} width="50px" />
               {customOptionData !== null &&
@@ -1347,7 +1294,7 @@ const Page: React.FC = () => {
                         id={item.id}
                         field={item.fieldName}
                         title={item.caption}
-                        width={setWidth("grdHeaderList", item.width)}
+                        width={item.width}
                         cell={
                           numberField.includes(item.fieldName)
                             ? NumberCell

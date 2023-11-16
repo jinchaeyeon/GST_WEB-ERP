@@ -1,70 +1,69 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridHeaderCellProps,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridFooterCellProps,
-  GridItemChangeEvent,
-  GridCellProps,
-  GridHeaderCellProps,
-  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
-import { Checkbox } from "@progress/kendo-react-inputs";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import { gridList } from "../store/columns/BA_A0041W_C";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
-import ExcelUploadButtons from "../components/Buttons/ExcelUploadButton";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-  Title,
+  ButtonContainer,
+  ButtonInInput,
   FilterBox,
   GridContainer,
   GridTitle,
-  TitleContainer,
-  ButtonContainer,
   GridTitleContainer,
-  ButtonInInput,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import FilterContainer from "../components/Containers/FilterContainer";
-import { Button } from "@progress/kendo-react-buttons";
-import { Input } from "@progress/kendo-react-inputs";
-import { useApi } from "../hooks/api";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import ExcelUploadButtons from "../components/Buttons/ExcelUploadButton";
+import TopButtons from "../components/Buttons/TopButtons";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
-  findMessage,
-  getQueryFromBizComponent,
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
-  UseMessages,
-  UsePermissions,
-  handleKeyPressSearch,
-  getGridItemChangedData,
-  UseParaPc,
   UseGetValueFromSessionItem,
-  GetPropertyValueByName,
+  UseMessages,
+  UseParaPc,
+  UsePermissions,
+  findMessage,
+  getGridItemChangedData,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import NumberCell from "../components/Cells/NumberCell";
 import {
   COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
   PAGE_SIZE,
   SELECTED_FIELD,
-  EDIT_FIELD,
 } from "../components/CommonString";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/Buttons/TopButtons";
-import { bytesToBase64 } from "byte-base64";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoading, loginResultState } from "../store/atoms";
-import CheckBoxCell from "../components/Cells/CheckBoxCell";
+import FilterContainer from "../components/Containers/FilterContainer";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
-import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
+import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
+import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import { useApi } from "../hooks/api";
+import { isLoading, loginResultState } from "../store/atoms";
+import { gridList } from "../store/columns/BA_A0041W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 let deletedMainRows: object[] = [];
@@ -153,7 +152,7 @@ const BA_A0041W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
- 
+
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -179,7 +178,10 @@ const BA_A0041W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
@@ -831,7 +833,7 @@ const BA_A0041W: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-       if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1372,7 +1374,11 @@ const BA_A0041W: React.FC = () => {
           setFilters((prev: any) => ({
             ...prev,
             find_row_value: "",
-            pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
             isSearch: true,
           }));
         } else {
@@ -1400,7 +1406,11 @@ const BA_A0041W: React.FC = () => {
           setFilters((prev: any) => ({
             ...prev,
             find_row_value: "",
-            pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
             isSearch: true,
           }));
         } else {
@@ -1414,7 +1424,7 @@ const BA_A0041W: React.FC = () => {
               newData.push(item);
               Object2.push(index);
             } else {
-              if(!item.rowstatus || item.rowstatus != "N") {
+              if (!item.rowstatus || item.rowstatus != "N") {
                 const newData2 = {
                   ...item,
                   rowstatus: "D",
@@ -1703,51 +1713,6 @@ const BA_A0041W: React.FC = () => {
     setAttachmentsWindowVisible(true);
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-      minGridWidth.current += 95;
-
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    let width = applyMinWidth
-      ? minWidth
-      : minWidth +
-        (gridCurrent - minGridWidth.current) /
-          customOptionData.menuCustomColumnOptions[Name].length;
-
-    return width;
-  };
-
   return (
     <>
       <TitleContainer>
@@ -2005,7 +1970,6 @@ const BA_A0041W: React.FC = () => {
             cellRender={customCellRender}
             rowRender={customRowRender}
             editField={EDIT_FIELD}
-            id="grdList"
           >
             <GridColumn field="rowstatus" title=" " width="50px" />
             <GridColumn
@@ -2024,7 +1988,7 @@ const BA_A0041W: React.FC = () => {
                       id={item.id}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdList", item.width)}
+                      width={item.width}
                       cell={
                         CheckField.includes(item.fieldName)
                           ? CustomCheckCell

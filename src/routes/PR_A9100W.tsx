@@ -43,6 +43,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -56,7 +57,6 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -414,7 +414,10 @@ const PR_A9100W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setFilters((prev) => ({
         ...prev,
@@ -764,7 +767,11 @@ const PR_A9100W: React.FC = () => {
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.itemcd + "-" + row.proccd + "-" + row.lotnum == filters.find_row_value);
+            : rows.find(
+                (row: any) =>
+                  row.itemcd + "-" + row.proccd + "-" + row.lotnum ==
+                  filters.find_row_value
+              );
 
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -889,16 +896,16 @@ const PR_A9100W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     let valid = true;
 
-    if(field == "itemcd" || field == "proccd" || field == "lotnum"){
-      if(dataItem.rowstatus == "N") {
+    if (field == "itemcd" || field == "proccd" || field == "lotnum") {
+      if (dataItem.rowstatus == "N") {
         valid = true;
       } else {
         valid = false;
       }
-    } 
+    }
 
     if (
-      (field != "rowstatus" &&
+      field != "rowstatus" &&
       field != "itemnm" &&
       field != "itemlvl1" &&
       field != "itemlvl2" &&
@@ -908,8 +915,8 @@ const PR_A9100W: React.FC = () => {
       field != "itemacnt" &&
       field != "invunit" &&
       field != "wgtunit" &&
-      field != "insert_time"
-      ) && valid == true
+      field != "insert_time" &&
+      valid == true
     ) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
@@ -1483,51 +1490,6 @@ const PR_A9100W: React.FC = () => {
     }
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-      minGridWidth.current += 50;
-
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    let width = applyMinWidth
-      ? minWidth
-      : minWidth +
-        (gridCurrent - minGridWidth.current) /
-          customOptionData.menuCustomColumnOptions[Name].length;
-
-    return width;
-  };
-
   return (
     <>
       <TitleContainer>
@@ -1776,7 +1738,7 @@ const PR_A9100W: React.FC = () => {
                         }
                         field={item.fieldName}
                         title={item.caption}
-                        width={setWidth("grdList", item.width)}
+                        width={item.width}
                         cell={
                           numberField.includes(item.fieldName)
                             ? NumberCell

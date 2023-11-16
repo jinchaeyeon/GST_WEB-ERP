@@ -1,4 +1,10 @@
-import { DataResult, FilterDescriptor, SortDescriptor, State, process } from "@progress/kendo-data-query";
+import {
+  DataResult,
+  FilterDescriptor,
+  SortDescriptor,
+  State,
+  process,
+} from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -42,6 +48,7 @@ import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -53,7 +60,6 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   useSysMessage,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -133,7 +139,10 @@ const SY_A0125W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         location: defaultOption.find((item: any) => item.id === "location")
@@ -153,7 +162,7 @@ const SY_A0125W: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [dptcdListData, setDptcdListData] = useState([
-    {dptcd: "", dptnm: ""}
+    { dptcd: "", dptnm: "" },
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
@@ -161,7 +170,9 @@ const SY_A0125W: React.FC = () => {
         bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
       );
       const dtpcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_dptcd_001")
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_dptcd_001"
+        )
       );
       fetchQuery(dtpcdQueryStr, setDptcdListData);
       fetchQuery(postcdQueryStr, setpostcdListData);
@@ -235,7 +246,7 @@ const SY_A0125W: React.FC = () => {
     });
   };
 
-  let gridRef : any = useRef(null); 
+  let gridRef: any = useRef(null);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -262,7 +273,7 @@ const SY_A0125W: React.FC = () => {
           [name]: "Y",
         }));
       }
-    } else if(name == "prntdptcd") {
+    } else if (name == "prntdptcd") {
       const values = dptcdListData.find(
         (item: any) => item.dptcd == value
       )?.dptnm;
@@ -270,7 +281,7 @@ const SY_A0125W: React.FC = () => {
       setInfomation((prev) => ({
         ...prev,
         prntdptcd: value,
-        prntdptnm: values == undefined ? "" : values
+        prntdptnm: values == undefined ? "" : values,
       }));
     } else {
       setInfomation((prev) => ({
@@ -413,20 +424,20 @@ const SY_A0125W: React.FC = () => {
           if (selectedRow != undefined) {
             let array = [];
             let valid = selectedRow.prntdptcd;
-            while(valid != "" && valid != undefined && valid != null){
+            while (valid != "" && valid != undefined && valid != null) {
               array.push(valid);
-              if(rows.find((row: any) => row.dptcd == valid) != undefined) {
+              if (rows.find((row: any) => row.dptcd == valid) != undefined) {
                 valid = rows.find((row: any) => row.dptcd == valid).prntdptcd;
               } else {
                 valid = "";
               }
             }
 
-            if(selectedRow.prntdptcd != "") {
+            if (selectedRow.prntdptcd != "") {
               setAllMenuDataResult({
                 ...allMenuDataResult,
                 data: dataTree,
-                expanded: array
+                expanded: array,
               });
             }
             setInfomation({
@@ -499,7 +510,7 @@ const SY_A0125W: React.FC = () => {
         }
       } else {
         setAllMenuDataResult((prev: any) => {
-            return { ...prev, data: [] };
+          return { ...prev, data: [] };
         });
         setInfomation({
           pgSize: PAGE_SIZE,
@@ -509,8 +520,8 @@ const SY_A0125W: React.FC = () => {
           dptnm: "",
           insert_form_id: "",
           insert_pc: "",
-          insert_time:"",
-          insert_user_id:"",
+          insert_time: "",
+          insert_user_id: "",
           last_update_time: "",
           location: "",
           mfcsaldv: "",
@@ -814,7 +825,7 @@ const SY_A0125W: React.FC = () => {
       expanded: [],
       editItem: undefined,
       editItemField: undefined,
-    })
+    });
   };
 
   const search = () => {
@@ -948,7 +959,7 @@ const SY_A0125W: React.FC = () => {
       return false;
     }
 
-    if(allMenuDataResult.data.length == 0) {
+    if (allMenuDataResult.data.length == 0) {
       alert("데이터가 없습니다");
     } else {
       const item = Object.getOwnPropertyNames(selectedState)[0];
@@ -1121,7 +1132,7 @@ const SY_A0125W: React.FC = () => {
     if (data.isSuccess === true) {
       setFilters((prev) => ({
         ...prev,
-        find_row_value:"",
+        find_row_value: "",
         isSearch: true,
       }));
     } else {
@@ -1147,7 +1158,7 @@ const SY_A0125W: React.FC = () => {
         throw findMessage(messagesData, "SY_A0125W_002");
       }
 
-      if(infomation.dptcd == infomation.prntdptcd) {
+      if (infomation.dptcd == infomation.prntdptcd) {
         throw findMessage(messagesData, "SY_A0125W_004");
       }
 
@@ -1223,53 +1234,6 @@ const SY_A0125W: React.FC = () => {
   };
   const { data, expanded, editItem, editItemField } = allMenuDataResult;
   const editItemId = editItem ? editItem[ALL_MENU_DATA_ITEM_KEY] : null;
-
-
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData !== null) {
-      grid.current = document.getElementById("grdAllList");
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdAllList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current 
-      );
-
-      minGridWidth.current += 50;
-      
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    let width = applyMinWidth
-      ? minWidth
-      : minWidth +
-        (gridCurrent - minGridWidth.current) /
-          customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-  };
 
   return (
     <>
@@ -1518,7 +1482,7 @@ const SY_A0125W: React.FC = () => {
             selectedField={SELECTED_FIELD}
             selectable={{
               enabled: true,
-              mode: "single"
+              mode: "single",
             }}
             onSelectionChange={onSubDataSelectionChange}
             //스크롤 조회 기능
@@ -1542,7 +1506,6 @@ const SY_A0125W: React.FC = () => {
             cellRender={customCellRender}
             rowRender={customRowRender}
             editField={EDIT_FIELD}
-            id="grdAllList"
           >
             <GridColumn
               field="rowstatus"
@@ -1559,7 +1522,7 @@ const SY_A0125W: React.FC = () => {
                       id={item.id}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdAllList", item.width)}
+                      width={item.width}
                       footerCell={
                         item.sortOrder === 0 ? subTotalFooterCell : undefined
                       }

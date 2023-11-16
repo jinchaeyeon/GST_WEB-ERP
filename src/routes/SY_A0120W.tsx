@@ -8,7 +8,7 @@ import {
   GridFooterCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -26,6 +26,7 @@ import {
 import TopButtons from "../components/Buttons/TopButtons";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   //UseMenuDefaults,
@@ -39,7 +40,6 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -77,7 +77,10 @@ const SY_A0120: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         location: defaultOption.find((item: any) => item.id === "location")
@@ -200,7 +203,7 @@ const SY_A0120: React.FC = () => {
     isSearch: true,
   });
 
-  let gridRef : any = useRef(null); 
+  let gridRef: any = useRef(null);
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
@@ -267,12 +270,11 @@ const SY_A0120: React.FC = () => {
             ? rows[0]
             : rows.find((row: any) => row.num == filters.find_row_value);
 
-            if(selectedRow != undefined) {
-              setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
-            } else {
-              setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-            }
-
+        if (selectedRow != undefined) {
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
       }
     } else {
       console.log("[에러발생]");
@@ -377,7 +379,7 @@ const SY_A0120: React.FC = () => {
       } else if (
         filters.location != null ||
         filters.location != "" ||
-        filters.location != undefined 
+        filters.location != undefined
       ) {
         throw findMessage(messagesData, "SY_A0120W_002");
       } else {
@@ -387,50 +389,6 @@ const SY_A0120: React.FC = () => {
     } catch (e) {
       alert(e);
     }
-  };
-
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdAllList");
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdAllList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current 
-      );
-      
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    let width = applyMinWidth
-      ? minWidth
-      : minWidth +
-        (gridCurrent - minGridWidth.current) /
-          customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
   };
 
   return (
@@ -590,7 +548,6 @@ const SY_A0120: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            id="grdAllList"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdAllList"].map(
@@ -601,7 +558,7 @@ const SY_A0120: React.FC = () => {
                       id={item.id}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdAllList", item.width)}
+                      width={item.width}
                       footerCell={
                         item.sortOrder === 0 ? mainTotalFooterCell : undefined
                       }

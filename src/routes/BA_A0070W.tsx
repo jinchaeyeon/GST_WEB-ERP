@@ -1,70 +1,68 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
-  GridEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
   GridFooterCellProps,
   GridItemChangeEvent,
-  GridCellProps,
   GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState
 } from "@progress/kendo-react-grid";
-import { gridList } from "../store/columns/BA_A0070W_C";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
 import { bytesToBase64 } from "byte-base64";
-import { DataResult, process, State } from "@progress/kendo-data-query";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
-  Title,
+  ButtonContainer,
   FilterBox,
   GridContainer,
-  GridTitle,
-  TitleContainer,
-  ButtonContainer,
-  GridTitleContainer,
   GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import FilterContainer from "../components/Containers/FilterContainer";
-import { Button } from "@progress/kendo-react-buttons";
-import { useApi } from "../hooks/api";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import {
-  chkScrollHandler,
-  convertDateToStr,
-  findMessage,
-  getQueryFromBizComponent,
-  UseBizComponent,
-  UseCustomOption,
-  UseMessages,
-  UsePermissions,
-  handleKeyPressSearch,
-  getGridItemChangedData,
-  dateformat,
-  UseParaPc,
-  UseGetValueFromSessionItem,
-  setDefaultDate,
-  toDate,
-  useSysMessage,
-  GetPropertyValueByName,
-} from "../components/CommonFunction";
+import TopButtons from "../components/Buttons/TopButtons";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
-  PAGE_SIZE,
-  SELECTED_FIELD,
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  UsePermissions,
+  convertDateToStr,
+  dateformat,
+  findMessage,
+  getGridItemChangedData,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+  setDefaultDate,
+  toDate,
+  useSysMessage
+} from "../components/CommonFunction";
+import {
   EDIT_FIELD,
   GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD,
 } from "../components/CommonString";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/Buttons/TopButtons";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
-import RequiredHeader from "../components/HeaderCells/RequiredHeader";
+import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import { useApi } from "../hooks/api";
+import { isLoading } from "../store/atoms";
+import { gridList } from "../store/columns/BA_A0070W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 let temp = 0;
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "num";
@@ -161,7 +159,10 @@ const BA_A0070W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setSubFilters((prev) => ({
         ...prev,
@@ -973,7 +974,11 @@ const BA_A0070W: React.FC = () => {
           setFilters((prev) => ({
             ...prev,
             find_row_value: "",
-            pgNum: isLastDataDeleted ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
+            pgNum: isLastDataDeleted
+              ? prev.pgNum != 1
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
           }));
           if (isLastDataDeleted2 == true) {
             setPage2({
@@ -986,7 +991,11 @@ const BA_A0070W: React.FC = () => {
             setSubFilters((prev) => ({
               ...prev,
               find_row_value: data.returnString.split("|")[0],
-              pgNum: isLastDataDeleted2 ? prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum : prev.pgNum,
+              pgNum: isLastDataDeleted2
+                ? prev.pgNum != 1
+                  ? prev.pgNum - 1
+                  : prev.pgNum
+                : prev.pgNum,
               isSearch: true,
             }));
           } else {
@@ -1102,7 +1111,7 @@ const BA_A0070W: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-       if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1166,89 +1175,6 @@ const BA_A0070W: React.FC = () => {
     });
 
     window.open(link, "_blank", "noopener, noreferrer");
-  };
-
-  const minGridWidth = React.useRef<number>(0);
-  const minGridWidth2 = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const grid2 = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-  const [gridCurrent2, setGridCurrent2] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      grid2.current = document.getElementById("grdList2");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList2"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth2.current += item.width)
-            : minGridWidth2.current
-      );
-      
-      minGridWidth2.current += 50;
-      setGridCurrent(grid.current.clientWidth);
-      setGridCurrent2(grid2.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-      setApplyMinWidth2(grid2.current.clientWidth  < minGridWidth2.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (
-      grid.current.clientWidth < minGridWidth.current &&
-      !applyMinWidth
-    ) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-    if (
-      grid2.current.clientWidth  < minGridWidth2.current &&
-      !applyMinWidth2
-    ) {
-      setApplyMinWidth2(true);
-    } else if (grid2.current.clientWidth  > minGridWidth2.current) {
-      setGridCurrent2(grid2.current.clientWidth );
-      setApplyMinWidth2(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    if (grid.current && Name == "grdList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    } 
-    if (grid2.current && Name == "grdList2") {
-      let width = applyMinWidth2
-        ? minWidth
-        : minWidth +
-          (gridCurrent2 - minGridWidth2.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
   };
 
   return (
@@ -1371,7 +1297,6 @@ const BA_A0070W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            id="grdList2"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList2"].map(
@@ -1382,7 +1307,7 @@ const BA_A0070W: React.FC = () => {
                       id={item.id}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdList2", item.width)}
+                      width={item.width}
                       cell={DateCell}
                       footerCell={
                         item.sortOrder === 0 ? SubTotalFooterCell : undefined
@@ -1449,7 +1374,7 @@ const BA_A0070W: React.FC = () => {
               selectedField={SELECTED_FIELD}
               selectable={{
                 enabled: true,
-                mode: "single"
+                mode: "single",
               }}
               onSelectionChange={onSelectionChange}
               //스크롤 조회 기능
@@ -1474,7 +1399,6 @@ const BA_A0070W: React.FC = () => {
               cellRender={customCellRender}
               rowRender={customRowRender}
               editField={EDIT_FIELD}
-              id="grdList"
             >
               <GridColumn
                 field="rowstatus"
@@ -1491,7 +1415,7 @@ const BA_A0070W: React.FC = () => {
                         id={item.id}
                         field={item.fieldName}
                         title={item.caption}
-                        width={setWidth("grdList", item.width)}
+                        width={item.width}
                         cell={
                           DateField.includes(item.fieldName)
                             ? DateCell

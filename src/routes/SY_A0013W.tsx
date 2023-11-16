@@ -44,6 +44,7 @@ import CheckBoxTreeListCell from "../components/Cells/CheckBoxTreeListCell";
 import ComboBoxCell from "../components/Cells/ComboBoxTreeListCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -53,7 +54,6 @@ import {
   getQueryFromBizComponent,
   getYn,
   handleKeyPressSearch,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -230,7 +230,10 @@ const Page: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         cboOrgdiv: defaultOption.find((item: any) => item.id === "cboOrgdiv")
@@ -1948,83 +1951,7 @@ const Page: React.FC = () => {
       };
     });
   };
-  const minGridWidth = React.useRef<number>(0);
-  const minGridWidth2 = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const grid2 = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-  const [gridCurrent2, setGridCurrent2] = React.useState(0);
 
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      grid2.current = document.getElementById("grdList2");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList2"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth2.current += item.width)
-            : minGridWidth2.current
-      );
-
-      minGridWidth.current += 90;
-      minGridWidth2.current += 95;
-      setGridCurrent(grid.current.clientWidth);
-      setGridCurrent2(grid2.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-      setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-    if (grid2.current.clientWidth < minGridWidth2.current && !applyMinWidth2) {
-      setApplyMinWidth2(true);
-    } else if (grid2.current.clientWidth > minGridWidth2.current) {
-      setGridCurrent2(grid2.current.clientWidth);
-      setApplyMinWidth2(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    if (grid.current && Name == "grdList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-    if (grid2.current && Name == "grdList2") {
-      let width = applyMinWidth2
-        ? minWidth
-        : minWidth +
-          (gridCurrent2 - minGridWidth2.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-  };
   return (
     <>
       <TitleContainer>
@@ -2187,7 +2114,6 @@ const Page: React.FC = () => {
             onItemChange={onMainItemChange2}
             cellRender={customCellRender2}
             rowRender={customRowRender2}
-            id="grdList"
           >
             <GridColumn
               field={"chk_org"}
@@ -2210,7 +2136,7 @@ const Page: React.FC = () => {
                       id={item.id}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdList", item.width)}
+                      width={item.width}
                       footerCell={
                         item.sortOrder === 0 ? mainTotalFooterCell : undefined
                       }
@@ -2259,7 +2185,7 @@ const Page: React.FC = () => {
                 enabled: true,
                 drag: false,
                 cell: false,
-                mode: "single"
+                mode: "single",
               }}
               onSelectionChange={onSelectionChange}
               //스크롤 조회 기능
@@ -2278,7 +2204,6 @@ const Page: React.FC = () => {
               reorderable={true}
               //컬럼너비조정
               resizable={true}
-              id="grdList2"
             >
               <GridColumn field="rowstatus" title=" " width="50px" />
               <GridColumn
@@ -2296,7 +2221,7 @@ const Page: React.FC = () => {
                         id={item.id}
                         field={item.fieldName}
                         title={item.caption}
-                        width={setWidth("grdList2", item.width)}
+                        width={item.width}
                         footerCell={
                           item.sortOrder === 0
                             ? detailTotalFooterCell

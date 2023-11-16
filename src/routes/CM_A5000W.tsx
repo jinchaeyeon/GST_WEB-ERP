@@ -478,50 +478,6 @@ const CM_A5000W: React.FC = () => {
     });
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData, tabSelected]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    let width = applyMinWidth
-      ? minWidth
-      : minWidth +
-        (gridCurrent - minGridWidth.current) /
-          customOptionData.menuCustomColumnOptions[Name].length;
-
-    return width;
-  };
-
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -1249,8 +1205,9 @@ const CM_A5000W: React.FC = () => {
       customer_code: "",
       customernm: "",
       title: "",
-      is_emergency: defaultOption.find((item: any) => item.id === "is_emergency")
-      .valueCode,
+      is_emergency: defaultOption.find(
+        (item: any) => item.id === "is_emergency"
+      ).valueCode,
       testnum: "",
       attdatnum: "",
       files: "",
@@ -1503,7 +1460,6 @@ const CM_A5000W: React.FC = () => {
                   resizable={true}
                   onItemChange={onMainItemChange}
                   editField={EDIT_FIELD}
-                  id="grdList"
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdList"].map(
@@ -1514,7 +1470,7 @@ const CM_A5000W: React.FC = () => {
                             id={item.id}
                             field={item.fieldName}
                             title={item.caption}
-                            width={setWidth("grdList", item.width)}
+                            width={item.width}
                             cell={
                               DateField.includes(item.fieldName)
                                 ? DateCell
@@ -1772,43 +1728,43 @@ const CM_A5000W: React.FC = () => {
             <GridContainer width={`calc(50% - ${GAP}px)`}>
               <GridTitleContainer>
                 <GridTitle>
-                  <div style={{display: "flex"}}>
-                  <p style={{marginRight: "5px"}}>답변</p>
-                  {workType == "N" ? (
-                    ""
-                  ) : information2.ref_document_id != "" ? (
-                    <div
-                      style={{
-                        width: "80px",
-                        borderRadius: "2px",
-                        backgroundColor: "#70ad47",
-                        color: "white",
-                        padding: "5px 10px",
-                        textAlign: "center",
-                        marginRight: "5px",
-                        fontWeight: 700,
-                        fontSize: "12px",
-                      }}
-                    >
-                      완료
-                    </div>
-                  ) : (
-                    <div
-                      style={{
-                        width: "80px",
-                        borderRadius: "2px",
-                        backgroundColor: "#ffc000",
-                        color: "white",
-                        padding: "5px 10px",
-                        textAlign: "center",
-                        marginRight: "5px",
-                        fontWeight: 700,
-                        fontSize: "12px",
-                      }}
-                    >
-                      대기중
-                    </div>
-                  )}
+                  <div style={{ display: "flex" }}>
+                    <p style={{ marginRight: "5px" }}>답변</p>
+                    {workType == "N" ? (
+                      ""
+                    ) : information2.ref_document_id != "" ? (
+                      <div
+                        style={{
+                          width: "80px",
+                          borderRadius: "2px",
+                          backgroundColor: "#70ad47",
+                          color: "white",
+                          padding: "5px 10px",
+                          textAlign: "center",
+                          marginRight: "5px",
+                          fontWeight: 700,
+                          fontSize: "12px",
+                        }}
+                      >
+                        완료
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          width: "80px",
+                          borderRadius: "2px",
+                          backgroundColor: "#ffc000",
+                          color: "white",
+                          padding: "5px 10px",
+                          textAlign: "center",
+                          marginRight: "5px",
+                          fontWeight: 700,
+                          fontSize: "12px",
+                        }}
+                      >
+                        대기중
+                      </div>
+                    )}
                   </div>
                 </GridTitle>
               </GridTitleContainer>

@@ -13,7 +13,6 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import ExcelUploadButtons from "../components/Buttons/ExcelUploadButton";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { Buffer } from "buffer";
 import cryptoRandomString from "crypto-random-string";
@@ -35,6 +34,7 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
+import ExcelUploadButtons from "../components/Buttons/ExcelUploadButton";
 import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
@@ -44,6 +44,7 @@ import NameCell from "../components/Cells/NameCell";
 import RadioGroupCell from "../components/Cells/RadioGroupCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -55,7 +56,6 @@ import {
   findMessage,
   getGridItemChangedData,
   handleKeyPressSearch,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -71,8 +71,8 @@ import { isLoading, loginResultState } from "../store/atoms";
 
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
-import { gridList } from "../store/columns/CR_A0010W_C";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
+import { gridList } from "../store/columns/CR_A0010W_C";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -338,7 +338,7 @@ const EncryptedCell2 = (props: GridCellProps) => {
     >
       {isInEdit ? (
         <Input value={value} onChange={handleChange} type={"password"}></Input>
-      ) : value != ""? (
+      ) : value != "" ? (
         "*********"
       ) : (
         ""
@@ -514,7 +514,10 @@ const CR_A0010W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       if (!!defaultOption) {
         setFilters((prev) => ({
           ...prev,
@@ -950,7 +953,7 @@ const CR_A0010W: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1217,55 +1220,6 @@ const CR_A0010W: React.FC = () => {
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-
-      minGridWidth.current += 50;
-
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (
-      grid.current.clientWidth < minGridWidth.current &&
-      !applyMinWidth
-    ) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    let width = applyMinWidth
-      ? minWidth
-      : minWidth +
-        (gridCurrent - minGridWidth.current) /
-          customOptionData.menuCustomColumnOptions[Name].length;
-
-    return width;
-  };
-
   // 행추가만 하는 방식
   // const saveExcel = (jsonArr: any[]) => {
   //   if (jsonArr.length == 0) {
@@ -1383,10 +1337,9 @@ const CR_A0010W: React.FC = () => {
           }
         });
 
-
-        let isSuccess:boolean = true;
-        let errorMessage:string = "";
-        let returnString:string = "";
+        let isSuccess: boolean = true;
+        let errorMessage: string = "";
+        let returnString: string = "";
         jsonArr.forEach(async (item: any, idx: number) => {
           const {
             사용자ID = "",
@@ -1395,7 +1348,7 @@ const CR_A0010W: React.FC = () => {
             휴대폰번호 = "",
             생년월일 = "",
           } = item;
-          
+
           const para: Iparameters = {
             procedureName: "P_CR_A0010W_S",
             pageNumber: 1,
@@ -1406,7 +1359,7 @@ const CR_A0010W: React.FC = () => {
               "@p_user_name": 사용자명,
               "@p_password": 사용자ID,
               "@p_password_confirm": 사용자ID,
-              "@p_salt": cryptoRandomString({ length: 32 }) ,
+              "@p_salt": cryptoRandomString({ length: 32 }),
               "@p_user_category": "EXTERNAL",
               "@p_email": "",
               "@p_tel_no": 전화번호,
@@ -1434,21 +1387,21 @@ const CR_A0010W: React.FC = () => {
               "@p_pc": pc,
             },
           };
-  
+
           let data: any;
-  
+
           try {
             data = await processApi<any>("procedure", para);
           } catch (error) {
             data = null;
           }
-  
+
           if (data.isSuccess === true) {
             returnString = data.returnString;
           } else {
             console.log("[오류 발생]");
             console.log(data);
-    
+
             isSuccess = false;
             errorMessage = data.resultMessage;
           }
@@ -1464,7 +1417,6 @@ const CR_A0010W: React.FC = () => {
           //     isSearch: true,
           //   }));
           // }
-          
         });
 
         setFilters((prev) => ({
@@ -1473,7 +1425,8 @@ const CR_A0010W: React.FC = () => {
           isSearch: true,
         }));
 
-        if (!isSuccess) { // 실패한 자료가 있는 경우
+        if (!isSuccess) {
+          // 실패한 자료가 있는 경우
           alert(errorMessage);
         }
       } else {
@@ -1681,7 +1634,6 @@ const CR_A0010W: React.FC = () => {
                 cellRender={customCellRender}
                 rowRender={customRowRender}
                 editField={EDIT_FIELD}
-                id="grdList"
               >
                 <GridColumn
                   field="rowstatus"
@@ -1700,7 +1652,7 @@ const CR_A0010W: React.FC = () => {
                             id={item.id}
                             field={item.fieldName}
                             title={caption}
-                            width={setWidth("grdList", item.width)}
+                            width={item.width}
                             cell={
                               NameField.includes(item.fieldName)
                                 ? NameCell

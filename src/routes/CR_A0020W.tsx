@@ -13,11 +13,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import React, {
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -42,8 +38,7 @@ import {
   UsePermissions,
   convertDateToStr,
   dateformat,
-  handleKeyPressSearch,
-  GetPropertyValueByName,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -57,34 +52,26 @@ import { isLoading } from "../store/atoms";
 
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
-import { gridList } from "../store/columns/CR_A0020W_C";
+import ExcelUploadButton from "../components/Buttons/ExcelUploadButton";
 import CR_A0020W_Window from "../components/Windows/CR_A0020W_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
-import ExcelUploadButton from "../components/Buttons/ExcelUploadButton";
+import { gridList } from "../store/columns/CR_A0020W_C";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
 
 let targetRowIndex: null | number = null;
 
-const CustomField:string[] = [
-  "owner",
-  "species",
-  "gender",
-  "class"
-];
+const CustomField: string[] = ["owner", "species", "gender", "class"];
 
-const checkField:string[] = [];
+const checkField: string[] = [];
 
-const DateField:string[] = ["birdt"];
+const DateField: string[] = ["birdt"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   // 사용자구분, 사업장, 사업부, 부서코드, 직위, 공개범위
-  UseBizComponent(
-    "L_BA310, L_SEXCD, L_BA320, L_USERS_EX",
-    setBizComponentData
-  );
+  UseBizComponent("L_BA310, L_SEXCD, L_BA320, L_USERS_EX", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal =
@@ -98,18 +85,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_USERS_EX"
       : "";
 
-  const textField = 
-    field === "owner" 
-    ? "name" 
-    : field === "gender" 
-    ? "name" 
-    : undefined;
-  const valueField = 
-    field === "owner" 
-    ? "code" 
-    : field === "gender" 
-    ? "code" 
-    : undefined;
+  const textField =
+    field === "owner" ? "name" : field === "gender" ? "name" : undefined;
+  const valueField =
+    field === "owner" ? "code" : field === "gender" ? "code" : undefined;
 
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
@@ -124,10 +103,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     />
   ) : (
     <td></td>
-  ); 
+  );
 };
 
-let workType:string = "";
+let workType: string = "";
 
 const CR_A0020W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -199,7 +178,8 @@ const CR_A0020W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [DetailWindowVisible, setDetailWindowVisible] = useState<boolean>(false);
+  const [DetailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -391,9 +371,7 @@ const CR_A0020W: React.FC = () => {
     }
   }, [filters, permissions, bizComponentData]);
 
-  const enterEdit = (dataItem: any, field: string) => {
-    
-  };
+  const enterEdit = (dataItem: any, field: string) => {};
 
   const customCellRender = (td: any, props: any) => (
     <CellRender
@@ -409,62 +387,12 @@ const CR_A0020W: React.FC = () => {
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"]?.map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-
-      minGridWidth.current += 50;
-
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (
-      grid.current.clientWidth < minGridWidth.current &&
-      !applyMinWidth
-    ) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    let width = applyMinWidth
-      ? minWidth
-      : minWidth +
-        (gridCurrent - minGridWidth.current) /
-          customOptionData.menuCustomColumnOptions[Name].length;
-
-    return width;
-  };
-
   const onClickNew = () => {
     workType = "N";
     setDetailWindowVisible(true);
-  }
+  };
 
   const onClickDelete = async () => {
-
     if (!window.confirm("선택한 데이터를 삭제하시겠습니까?")) {
       return;
     }
@@ -480,7 +408,9 @@ const CR_A0020W: React.FC = () => {
       parameters: {
         "@p_work_type": "D",
         "@p_orgdiv": orgdiv,
-        "@p_custcd": mainDataResult.data.find((x) => idGetter(x) == Object.getOwnPropertyNames(selectedState)[0]).custcd,
+        "@p_custcd": mainDataResult.data.find(
+          (x) => idGetter(x) == Object.getOwnPropertyNames(selectedState)[0]
+        ).custcd,
         "@p_location": "",
         "@p_custnm": "",
         "@p_class": "",
@@ -524,9 +454,7 @@ const CR_A0020W: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           find_row_value: "",
-          pgNum: prev.pgNum != 1
-              ? prev.pgNum - 1
-              : prev.pgNum,
+          pgNum: prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum,
           isSearch: true,
         }));
       } else {
@@ -547,22 +475,17 @@ const CR_A0020W: React.FC = () => {
   };
 
   const ColumnCommandCell = (props: GridCellProps) => {
-    const {
-      render,
-      dataItem,
-    } = props;
-  
+    const { render, dataItem } = props;
+
     const onAccountWndClick = () => {
       setSelectedState({ [dataItem[DATA_ITEM_KEY]]: true });
 
       workType = "U";
       setDetailWindowVisible(true);
     };
-  
+
     const defaultRendering = (
-      <td
-        className="k-command-cell"
-      >
+      <td className="k-command-cell">
         <Button
           className="k-grid-edit-command"
           onClick={onAccountWndClick}
@@ -572,7 +495,7 @@ const CR_A0020W: React.FC = () => {
         />
       </td>
     );
-  
+
     return (
       <>
         {render === undefined
@@ -586,9 +509,9 @@ const CR_A0020W: React.FC = () => {
     if (jsonArr.length == 0) {
       alert("데이터가 없습니다.");
       return;
-    } 
+    }
 
-    const columns:string[] = [
+    const columns: string[] = [
       "반려견ID",
       "반려견명",
       "반려인ID",
@@ -599,7 +522,7 @@ const CR_A0020W: React.FC = () => {
       "수",
       "목",
       "금",
-    ]
+    ];
 
     setLoading(true);
 
@@ -619,13 +542,13 @@ const CR_A0020W: React.FC = () => {
     //   }
     // });
 
-    const bizComponent:any = bizComponentData.find(
+    const bizComponent: any = bizComponentData.find(
       (item: any) => item.bizComponentId === "L_BA310"
     );
 
-    let isSuccess:boolean = true;
-    let errorMessage:string = "";
-    let returnString:string = "";
+    let isSuccess: boolean = true;
+    let errorMessage: string = "";
+    let returnString: string = "";
     jsonArr.forEach(async (item: any) => {
       const {
         반려견ID = "",
@@ -635,7 +558,9 @@ const CR_A0020W: React.FC = () => {
         담당자ID = "",
       } = item;
 
-      const classCode = bizComponent ? bizComponent.data.Rows.find((x:any) => x.code_name == 반).sub_code : "";
+      const classCode = bizComponent
+        ? bizComponent.data.Rows.find((x: any) => x.code_name == 반).sub_code
+        : "";
 
       //프로시저 파라미터
       const paraSaved: Iparameters = {
@@ -687,16 +612,20 @@ const CR_A0020W: React.FC = () => {
     });
 
     if (isSuccess) {
-      setFilters((prev:any) => ({ ...prev, find_row_value: returnString, isSearch: true })); // 한번만 조회되도록
-    }
-    else {
+      setFilters((prev: any) => ({
+        ...prev,
+        find_row_value: returnString,
+        isSearch: true,
+      })); // 한번만 조회되도록
+    } else {
       alert(errorMessage);
     }
 
     setLoading(false);
   };
 
-  const [attachmentsWindowVisible, setAttachmentsWindowVisible] = useState<boolean>(false);
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
 
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
@@ -807,9 +736,7 @@ const CR_A0020W: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                birdt: row.birdt
-                  ? new Date(dateformat(row.birdt))
-                  : null,//new Date(dateformat("19991231")),
+                birdt: row.birdt ? new Date(dateformat(row.birdt)) : null, //new Date(dateformat("19991231")),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
@@ -846,7 +773,6 @@ const CR_A0020W: React.FC = () => {
             cellRender={customCellRender} // Input 외 셀 표시하려면 필요함
             // rowRender={customRowRender}
             // editField={EDIT_FIELD}
-            id="grdList"
           >
             <GridColumn cell={ColumnCommandCell} width="50px" />
             {customOptionData !== null &&
@@ -859,7 +785,7 @@ const CR_A0020W: React.FC = () => {
                         id={item.id}
                         field={item.fieldName}
                         title={item.caption}
-                        width={setWidth("grdList", item.width)}
+                        width={item.width}
                         cell={
                           CustomField.includes(item.fieldName)
                             ? CustomComboBoxCell
@@ -869,16 +795,10 @@ const CR_A0020W: React.FC = () => {
                             ? DateCell
                             : undefined
                         }
-                        headerCell={
-                          undefined
-                        }
-                        className={
-                          undefined
-                        }
+                        headerCell={undefined}
+                        className={undefined}
                         footerCell={
-                          item.sortOrder === 0
-                            ? mainTotalFooterCell
-                            : undefined
+                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
                         }
                         editable={false}
                       />
@@ -909,7 +829,11 @@ const CR_A0020W: React.FC = () => {
           setFilters={setFilters}
           workType={workType}
           orgdiv={orgdiv}
-          custcd={mainDataResult.data.find((x) => idGetter(x) == Object.getOwnPropertyNames(selectedState)[0])?.custcd ?? ""}
+          custcd={
+            mainDataResult.data.find(
+              (x) => idGetter(x) == Object.getOwnPropertyNames(selectedState)[0]
+            )?.custcd ?? ""
+          }
           modal={true}
         />
       )}

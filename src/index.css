@@ -43,40 +43,12 @@ code {
   border-color: rgba(0,0,0,0) !important;
 }
 
-/* 드래그 디자인 */
-*::-webkit-scrollbar {
-  width: 6px;
-  height: 8px;
-}
-
-*::-webkit-scrollbar-track {
-  background-color: transparent;
-}
-
-*::-webkit-scrollbar-thumb {
-  border-radius: 3px;
-  background-color: gray;
-}
-
-*::-webkit-scrollbar-button{
-  width: 0px;
-  height: 0px;
-} 
-
 /*step 설정*/
 .k-step-list-vertical, .k-progressbar {
   height: 77vh !important;
 }
 
 /*드래그 오류 수정*/
-.k-grid-header, .k-grid-footer {
-  padding-inline-end: 0px !important;
-}
-
-.k-grid-content {
-  overflow: auto auto !important;
-}
-
 .k-grid table {
   width: 100% !important;
 }

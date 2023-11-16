@@ -8,43 +8,34 @@ import {
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
-  GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState,
+  getSelectedState
 } from "@progress/kendo-react-grid";
-import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
-import { Buffer } from "buffer";
-import cryptoRandomString from "crypto-random-string";
 import React, {
-  createContext,
-  useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
-  ButtonInGridInput,
-  ButtonInInput,
   FilterBox,
   GridContainer,
   GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../CommonStyled";
-import TopButtons from "../components/Buttons/TopButtons";
 import ExcelUploadButton from "../components/Buttons/ExcelUploadButton";
+import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import DateCell from "../components/Cells/DateCell";
-import EncryptedCell from "../components/Cells/EncryptedCell";
 import NameCell from "../components/Cells/NameCell";
 import RadioGroupCell from "../components/Cells/RadioGroupCell";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -52,11 +43,8 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
-  dateformat,
   findMessage,
-  getGridItemChangedData,
-  handleKeyPressSearch,
-  GetPropertyValueByName,
+  handleKeyPressSearch
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -66,28 +54,27 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import { CellRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { isLoading } from "../store/atoms";
 
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
-import { gridList } from "../store/columns/CR_A0040W_C";
-import CR_A0040W_Window from "../components/Windows/CR_A0040W_Window";
-import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import NumberCell from "../components/Cells/NumberCell";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import CR_A0040W_Window from "../components/Windows/CR_A0040W_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
+import { gridList } from "../store/columns/CR_A0040W_C";
 
-const firstDay = (date:Date) => {
+const firstDay = (date: Date) => {
   return new Date(date.getFullYear(), date.getMonth(), 1);
-}
+};
 
-const lastDay = (date:Date) => {
+const lastDay = (date: Date) => {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0);
-}
+};
 
-enum weekDay
-{
+enum weekDay {
   None = 0,
   일 = 1 << 0,
   월 = 1 << 1,
@@ -95,58 +82,54 @@ enum weekDay
   수 = 1 << 3,
   목 = 1 << 4,
   금 = 1 << 5,
-  토 = 1 << 6
+  토 = 1 << 6,
 }
 
-const getWeekDay = (value:any) => {
-  let stringValues:string[] = [];
-  
-  const keys = Object.keys(weekDay).filter((x:any) => isNaN(x))
+const getWeekDay = (value: any) => {
+  let stringValues: string[] = [];
+
+  const keys = Object.keys(weekDay).filter((x: any) => isNaN(x));
   for (let i in keys) {
-    const key:any = keys[i];
-    const dayofweek:any = weekDay[key]
+    const key: any = keys[i];
+    const dayofweek: any = weekDay[key];
     if (value & dayofweek) {
       stringValues.push(key);
     }
   }
 
   return stringValues.join("/");
-}
+};
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
 
 let targetRowIndex: null | number = null;
 
-const requiredHeaderField:string[] = [
-];
+const requiredHeaderField: string[] = [];
 
-const requiredField:string[] = [];
+const requiredField: string[] = [];
 
-const editableField:string[] = [];
+const editableField: string[] = [];
 
-const NameField:string[] = [];
+const NameField: string[] = [];
 
-const CustomField:string[] = [
+const CustomField: string[] = [
   "owner",
   "species",
   "gender",
   "class",
-  "manager"
+  "manager",
 ];
 
-const numberField:string[] = [
-  "janqty",
-  "amt"
-]
+const numberField: string[] = ["janqty", "amt"];
 
-const checkField:string[] = [];
+const checkField: string[] = [];
 
-const DateField:string[] = ["strdt", "enddt"];
+const DateField: string[] = ["strdt", "enddt"];
 
-const CustomRadioField:string[] = [];
+const CustomRadioField: string[] = [];
 
-const CustonCommandField:string[] = [];
+const CustonCommandField: string[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -170,18 +153,18 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_USERS_IN"
       : "";
 
-  const textField = 
+  const textField =
     field === "owner" || field === "manager"
-    ? "name" 
-    : field === "gender" 
-    ? "name" 
-    : undefined;
-  const valueField = 
+      ? "name"
+      : field === "gender"
+      ? "name"
+      : undefined;
+  const valueField =
     field === "owner" || field === "manager"
-    ? "code" 
-    : field === "gender" 
-    ? "code" 
-    : undefined;
+      ? "code"
+      : field === "gender"
+      ? "code"
+      : undefined;
 
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
@@ -196,7 +179,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     />
   ) : (
     <td></td>
-  ); 
+  );
 };
 
 const CustomRadioCell = (props: GridCellProps) => {
@@ -215,12 +198,12 @@ const CustomRadioCell = (props: GridCellProps) => {
     <RadioGroupCell bizComponentData={bizComponent} {...props} />
   ) : (
     <td></td>
-  ); 
+  );
 };
 
 // 참조팝업 전달용 변수
-let workType:string = "";
-let isCopy:boolean = false;
+let workType: string = "";
+let isCopy: boolean = false;
 
 const CR_A0040W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -233,7 +216,7 @@ const CR_A0040W: React.FC = () => {
   const location = UseGetValueFromSessionItem("location");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
-  UsePermissions(setPermissions); 
+  UsePermissions(setPermissions);
   //const [permissions, setPermissions] = useState<TPermissions>({view:true, print:true, save:true, delete:true});
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -265,7 +248,10 @@ const CR_A0040W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       if (!!defaultOption) {
         setFilters((prev) => ({
           ...prev,
@@ -274,7 +260,7 @@ const CR_A0040W: React.FC = () => {
         }));
       }
     }
-  }, [customOptionData]); 
+  }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_dptcd_001,L_SYS005", setBizComponentData);
@@ -290,13 +276,14 @@ const CR_A0040W: React.FC = () => {
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
- 
+
   //선택 상태
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
-  const [DetailWindowVisible, setDetailWindowVisible] = useState<boolean>(false);
+  const [DetailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -329,14 +316,14 @@ const CR_A0040W: React.FC = () => {
   };
 
   const chkDate = (date: Date) => {
-    const yyyyMMdd:string = convertDateToStr(date)
+    const yyyyMMdd: string = convertDateToStr(date);
     return !(
       yyyyMMdd.substring(0, 4) < "1997" ||
       yyyyMMdd.substring(6, 8) > "31" ||
       yyyyMMdd.substring(6, 8) < "01" ||
       yyyyMMdd.substring(6, 8).length != 2
-    )
-  }
+    );
+  };
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -421,7 +408,9 @@ const CR_A0040W: React.FC = () => {
           const selectedRow =
             filters.find_row_value == ""
               ? rows[0]
-              : rows.find((row: any) => row.membership_id == filters.find_row_value);
+              : rows.find(
+                  (row: any) => row.membership_id == filters.find_row_value
+                );
 
           if (selectedRow != undefined) {
             setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -515,9 +504,7 @@ const CR_A0040W: React.FC = () => {
     }
   }, [filters, permissions, bizComponentData]);
 
-  const enterEdit = (dataItem: any, field: string) => {
-    
-  };
+  const enterEdit = (dataItem: any, field: string) => {};
 
   const customCellRender = (td: any, props: any) => (
     <CellRender
@@ -530,9 +517,7 @@ const CR_A0040W: React.FC = () => {
 
   const search = () => {
     // 조회조건 검증
-    if (!chkDate(filters.frdt)
-      || !chkDate(filters.todt)
-    ) {
+    if (!chkDate(filters.frdt) || !chkDate(filters.todt)) {
       alert(findMessage(messagesData, "CR_A0040W_004")); // 조회일자를 입력해주세요.
       return;
     }
@@ -541,67 +526,19 @@ const CR_A0040W: React.FC = () => {
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"]?.map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-
-      minGridWidth.current += 50;
-
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth
-    ) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    let width = applyMinWidth
-      ? minWidth
-      : minWidth +
-        (gridCurrent - minGridWidth.current) /
-          customOptionData.menuCustomColumnOptions[Name].length;
-
-    return width;
-  };
-
   const onClickNew = () => {
     workType = "N";
     isCopy = false;
     setDetailWindowVisible(true);
-  }
+  };
 
   const onClickCopy = () => {
     workType = "N";
     isCopy = true;
     setDetailWindowVisible(true);
-  }
+  };
 
   const onClickDelete = async () => {
-
     if (!window.confirm("선택한 데이터를 삭제하시겠습니까?")) {
       return;
     }
@@ -617,7 +554,9 @@ const CR_A0040W: React.FC = () => {
         "@p_work_type": "D",
         "@p_orgdiv": orgdiv,
         "@p_location": "",
-        "@p_membership_id":mainDataResult.data.find((x) => idGetter(x) == Object.getOwnPropertyNames(selectedState)[0]).membership_id,
+        "@p_membership_id": mainDataResult.data.find(
+          (x) => idGetter(x) == Object.getOwnPropertyNames(selectedState)[0]
+        ).membership_id,
         "@p_custcd": "",
         "@p_gubun": "",
         "@p_remark": "",
@@ -640,7 +579,7 @@ const CR_A0040W: React.FC = () => {
     }
     if (data.isSuccess) {
       const isLastDataDeleted =
-          mainDataResult.data.length == 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
 
       if (isLastDataDeleted) {
         setPage({
@@ -654,9 +593,7 @@ const CR_A0040W: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           find_row_value: "",
-          pgNum: prev.pgNum != 1
-              ? prev.pgNum - 1
-              : prev.pgNum,
+          pgNum: prev.pgNum != 1 ? prev.pgNum - 1 : prev.pgNum,
           isSearch: true,
         }));
       } else {
@@ -677,11 +614,8 @@ const CR_A0040W: React.FC = () => {
   };
 
   const ColumnCommandCell = (props: GridCellProps) => {
-    const {
-      render,
-      dataItem
-    } = props;
-  
+    const { render, dataItem } = props;
+
     const onAccountWndClick = () => {
       setSelectedState({ [dataItem[DATA_ITEM_KEY]]: true });
 
@@ -689,11 +623,9 @@ const CR_A0040W: React.FC = () => {
       isCopy = false;
       setDetailWindowVisible(true);
     };
-  
+
     const defaultRendering = (
-      <td
-        className="k-command-cell"
-      >
+      <td className="k-command-cell">
         <Button
           className="k-grid-edit-command"
           onClick={onAccountWndClick}
@@ -703,7 +635,7 @@ const CR_A0040W: React.FC = () => {
         />
       </td>
     );
-  
+
     return (
       <>
         {render === undefined
@@ -717,9 +649,9 @@ const CR_A0040W: React.FC = () => {
     if (jsonArr.length == 0) {
       alert("데이터가 없습니다.");
       return;
-    } 
+    }
 
-    const columns:string[] = [
+    const columns: string[] = [
       "반려견ID",
       "반려견명",
       "시작일자",
@@ -731,8 +663,8 @@ const CR_A0040W: React.FC = () => {
       "화",
       "수",
       "목",
-      "금"
-    ]
+      "금",
+    ];
 
     setLoading(true);
 
@@ -752,9 +684,9 @@ const CR_A0040W: React.FC = () => {
     //   }
     // });
 
-    let isSuccess:boolean = true;
-    let errorMessage:string = "";
-    let returnString:string = "";
+    let isSuccess: boolean = true;
+    let errorMessage: string = "";
+    let returnString: string = "";
     jsonArr.forEach(async (item: any) => {
       const {
         반려견ID = "",
@@ -834,16 +766,20 @@ const CR_A0040W: React.FC = () => {
     });
 
     if (isSuccess) {
-      setFilters((prev:any) => ({ ...prev, find_row_value: returnString, isSearch: true })); // 한번만 조회되도록
-    }
-    else {
+      setFilters((prev: any) => ({
+        ...prev,
+        find_row_value: returnString,
+        isSearch: true,
+      })); // 한번만 조회되도록
+    } else {
       alert(errorMessage);
     }
 
     setLoading(false);
   };
 
-  const [attachmentsWindowVisible, setAttachmentsWindowVisible] = useState<boolean>(false);
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
 
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
@@ -993,10 +929,9 @@ const CR_A0040W: React.FC = () => {
             resizable={true}
             // //incell 수정 기능
             // onItemChange={onMainItemChange}
-              cellRender={customCellRender}
+            cellRender={customCellRender}
             // rowRender={customRowRender}
             // editField={EDIT_FIELD}
-            id="grdList"
           >
             <GridColumn cell={ColumnCommandCell} width="50px" />
             {/* <GridColumn
@@ -1015,7 +950,7 @@ const CR_A0040W: React.FC = () => {
                         id={item.id}
                         field={item.fieldName}
                         title={item.caption}
-                        width={setWidth("grdList", item.width)}
+                        width={item.width}
                         cell={
                           NameField.includes(item.fieldName)
                             ? NameCell
@@ -1046,9 +981,7 @@ const CR_A0040W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
-                            ? mainTotalFooterCell
-                            : undefined
+                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
                         }
                         editable={false}
                       />
@@ -1079,7 +1012,11 @@ const CR_A0040W: React.FC = () => {
           setFilters={setFilters}
           workType={workType}
           isCopy={isCopy}
-          membership_id={mainDataResult.data.find((x) => idGetter(x) == Object.getOwnPropertyNames(selectedState)[0])?.membership_id ?? ""}
+          membership_id={
+            mainDataResult.data.find(
+              (x) => idGetter(x) == Object.getOwnPropertyNames(selectedState)[0]
+            )?.membership_id ?? ""
+          }
           modal={true}
         />
       )}

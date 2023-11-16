@@ -1,58 +1,62 @@
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
+import {
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
+import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
-import { 
-  ButtonContainer, 
-  ButtonInInput, 
-  FilterBox, 
-  GridContainer, 
-  GridContainerWrap, 
-  GridTitle, 
-  GridTitleContainer, 
-  Title, 
-  TitleContainer 
+import {
+  ButtonContainer,
+  ButtonInInput,
+  FilterBox,
+  GridContainer,
+  GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
-import { DataResult, State, getter, process } from "@progress/kendo-data-query";
-import { isLoading } from "../store/atoms";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { 
-  GetPropertyValueByName, 
-  UseBizComponent, 
-  UseCustomOption, 
-  UseGetValueFromSessionItem, 
-  UseMessages, 
-  UsePermissions, 
-  convertDateToStr, 
-  findMessage, 
-  getQueryFromBizComponent, 
-  handleKeyPressSearch, 
-  setDefaultDate 
-} from "../components/CommonFunction";
-import { useApi } from "../hooks/api";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import React from "react";
-import FilterContainer from "../components/Containers/FilterContainer";
+import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UsePermissions,
+  convertDateToStr,
+  findMessage,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+  setDefaultDate,
+} from "../components/CommonFunction";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
-import { COM_CODE_DEFAULT_VALUE, GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
-import { Input } from "@progress/kendo-react-inputs";
-import { Button } from "@progress/kendo-react-buttons";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import { useApi } from "../hooks/api";
 import { ICustData, IItemData } from "../hooks/interfaces";
-import { 
-  Grid, 
-  GridColumn, 
-  GridDataStateChangeEvent, 
-  GridFooterCellProps, 
-  GridPageChangeEvent, 
-  GridSelectionChangeEvent, 
-  getSelectedState 
-} from "@progress/kendo-react-grid";
-import NumberCell from "../components/Cells/NumberCell";
-import DateCell from "../components/Cells/DateCell";
-import { bytesToBase64 } from "byte-base64";
+import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/QC_B0030W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -71,7 +75,7 @@ const QC_B0030W: React.FC = () => {
   const idGetter2 = getter(DETAIL_DATA_ITEM_KEY);
   const idGetter3 = getter(DETAIL_DATA_ITEM_KEY2);
   const processApi = useApi();
-  
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -92,14 +96,15 @@ const QC_B0030W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, 
-        "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb")
-          .valueCode,
+        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
         isSearch: true,
       }));
     }
@@ -118,16 +123,14 @@ const QC_B0030W: React.FC = () => {
   ]);
 
   const [prodempListData, setProdempListData] = useState([
-    {user_id: "", user_name: ""},
+    { user_id: "", user_name: "" },
   ]);
 
   const [prodmacListData, setProdmacListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
 
-  const [badcdListData, setBadcdListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
+  const [badcdListData, setBadcdListData] = useState([COM_CODE_DEFAULT_VALUE]);
 
   const [itemacntListData, setItemacntListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -139,7 +142,9 @@ const QC_B0030W: React.FC = () => {
         bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
       );
       const prodempQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_sysUserMaster_001")
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+        )
       );
       const prodmacQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
@@ -426,7 +431,7 @@ const QC_B0030W: React.FC = () => {
             : rows.find(
                 (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
               );
-        
+
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
           setDetailFilters((prev) => ({
@@ -469,7 +474,7 @@ const QC_B0030W: React.FC = () => {
     }));
     setLoading(false);
   };
-  
+
   const fetchDetailGrid = async (detailFilters: any) => {
     let data: any;
     setLoading(true);
@@ -814,7 +819,7 @@ const QC_B0030W: React.FC = () => {
       ) {
         throw findMessage(messagesData, "QC_B0030W_001");
       } else if (
-        filters.dtgb == undefined || 
+        filters.dtgb == undefined ||
         filters.dtgb == "" ||
         filters.dtgb == null
       ) {
@@ -830,164 +835,8 @@ const QC_B0030W: React.FC = () => {
           isSearch: true,
         }));
       }
-    } catch(e) {
+    } catch (e) {
       alert(e);
-    }
-  };
-
-  const minGridWidth = React.useRef<number>(0);
-  const minGridWidth1 = React.useRef<number>(0);
-  const minGridWidth2 = React.useRef<number>(0);
-  const minGridWidth3 = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const grid1 = React.useRef<any>(null);
-  const grid2 = React.useRef<any>(null);
-  const grid3 = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [applyMinWidth1, setApplyMinWidth1] = React.useState(false);
-  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
-  const [applyMinWidth3, setApplyMinWidth3] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-  const [gridCurrent1, setGridCurrent1] = React.useState(0);
-  const [gridCurrent2, setGridCurrent2] = React.useState(0);
-  const [gridCurrent3, setGridCurrent3] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      grid1.current = document.getElementById("grdList1");
-      grid2.current = document.getElementById("grdList2");
-      grid3.current = document.getElementById("grdList3");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-      customOptionData.menuCustomColumnOptions["grdList1"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth1.current += item.width)
-            : minGridWidth1.current
-      );
-      customOptionData.menuCustomColumnOptions["grdList2"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth2.current += item.width)
-            : minGridWidth2.current
-      );
-      customOptionData.menuCustomColumnOptions["grdList3"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth3.current += item.width)
-            : minGridWidth3.current
-      );
-      if (grid.current) {
-        setGridCurrent(grid.current.clientWidth);
-        setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-      }
-      if (grid1.current) {
-        setGridCurrent1(grid1.current.clientWidth);
-        setApplyMinWidth1(grid1.current.clientWidth < minGridWidth1.current);
-      }
-      if (grid2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-        setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
-      }
-      if (grid3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-        setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
-      }
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current) {
-      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-        setApplyMinWidth(true);
-      } else if (grid.current.clientWidth > minGridWidth.current) {
-        setGridCurrent(grid.current.clientWidth);
-        setApplyMinWidth(false);
-      }
-    }
-    if (grid1.current) {
-      if (grid1.current.clientWidth < minGridWidth1.current && !applyMinWidth1) {
-        setApplyMinWidth1(true);
-      } else if (grid1.current.clientWidth > minGridWidth1.current) {
-        setGridCurrent1(grid1.current.clientWidth);
-        setApplyMinWidth1(false);
-      }
-    }
-    if (grid2.current) {
-      if (
-        grid2.current.clientWidth < minGridWidth2.current &&
-        !applyMinWidth2
-      ) {
-        setApplyMinWidth2(true);
-      } else if (grid2.current.clientWidth > minGridWidth2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-        setApplyMinWidth2(false);
-      }
-    }
-    if (grid3.current) {
-      if (
-        grid3.current.clientWidth < minGridWidth3.current &&
-        !applyMinWidth3
-      ) {
-        setApplyMinWidth(true);
-      } else if (grid3.current.clientWidth > minGridWidth3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-        setApplyMinWidth3(false);
-      }
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-
-    if (grid.current && Name == "grdList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-
-    if (grid1.current && Name == "grdList1") {
-      let width = applyMinWidth1
-        ? minWidth
-        : minWidth +
-          (gridCurrent1 - minGridWidth1.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-
-    if (grid2.current && Name == "grdList2") {
-      let width = applyMinWidth2
-        ? minWidth
-        : minWidth +
-          (gridCurrent2 - minGridWidth2.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-
-    if (grid3.current && Name == "grdList3") {
-      let width = applyMinWidth3
-        ? minWidth
-        : minWidth +
-          (gridCurrent3 - minGridWidth3.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
     }
   };
 
@@ -1007,119 +856,121 @@ const QC_B0030W: React.FC = () => {
       </TitleContainer>
       <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-            <tbody>
-              <tr>
-                <th>일자조건</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="dtgb"
-                      value={filters.dtgb}
-                      customOptionData={customOptionData}
-                      className="required"
-                      changeData={filterComboBoxChange}
-                      valueField="code"
-                      textField="name"
-                    />
-                  )}
-                </td>
-                <td colSpan={2}>
-                  <CommonDateRangePicker
-                    value={{
-                      start: filters.frdt,
-                      end: filters.todt,
-                    }}
-                    onChange={(e: { value: { start: any; end: any } }) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        frdt: e.value.start,
-                        todt: e.value.end,
-                      }))
-                    }
+          <tbody>
+            <tr>
+              <th>일자조건</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="dtgb"
+                    value={filters.dtgb}
+                    customOptionData={customOptionData}
                     className="required"
+                    changeData={filterComboBoxChange}
+                    valueField="code"
+                    textField="name"
                   />
-                </td>
-                <th>품목코드</th>
-                <td>
-                  <Input
-                    name="itemcd"
-                    type="text"
-                    value={filters.itemcd}
-                    onChange={filterInputChange}
+                )}
+              </td>
+              <td colSpan={2}>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.frdt,
+                    end: filters.todt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      frdt: e.value.start,
+                      todt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
+              </td>
+              <th>품목코드</th>
+              <td>
+                <Input
+                  name="itemcd"
+                  type="text"
+                  value={filters.itemcd}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onItemWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
                   />
-                  <ButtonInInput>
-                    <Button
-                      onClick={onItemWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
-                </td>
-                <th>품목명</th>
-                <td>
-                  <Input
-                    name="itemnm"
-                    type="text"
-                    value={filters.itemnm}
-                    onChange={filterInputChange}
+                </ButtonInInput>
+              </td>
+              <th>품목명</th>
+              <td>
+                <Input
+                  name="itemnm"
+                  type="text"
+                  value={filters.itemnm}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>생산계획번호</th>
+              <td>
+                <Input
+                  name="planno"
+                  type="text"
+                  value={filters.planno}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>LOT NO</th>
+              <td>
+                <Input
+                  name="lotnum"
+                  type="text"
+                  value={filters.lotnum}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>업체코드</th>
+              <td>
+                <Input
+                  name="custcd"
+                  type="text"
+                  value={filters.custcd}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onCustWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
                   />
-                </td>
-              </tr>
-              <tr>
-                <th>생산계획번호</th>
-                <td>
-                  <Input
-                    name="planno"
-                    type="text"
-                    value={filters.planno}
-                    onChange={filterInputChange}
-                  />
-                </td>
-                <th>LOT NO</th>
-                <td>
-                  <Input
-                    name="lotnum"
-                    type="text"
-                    value={filters.lotnum}
-                    onChange={filterInputChange}
-                  />
-                </td>
-                <th>업체코드</th>
-                <td>
-                  <Input
-                    name="custcd"
-                    type="text"
-                    value={filters.custcd}
-                    onChange={filterInputChange}
-                  />
-                  <ButtonInInput>
-                    <Button
-                      onClick={onCustWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
-                </td>
-                <th>업체명</th>
-                <td>
-                  <Input
-                    name="custnm"
-                    type="text"
-                    value={filters.custnm}
-                    onChange={filterInputChange}
-                  />
-                </td>
-              </tr>
-            </tbody>
+                </ButtonInInput>
+              </td>
+              <th>업체명</th>
+              <td>
+                <Input
+                  name="custnm"
+                  type="text"
+                  value={filters.custnm}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+          </tbody>
         </FilterBox>
       </FilterContainer>
       <GridContainer>
         <GridTitleContainer>
-          <GridTitle>{filters.dtgb === "A" ? "제품입고내역" : "제품출하내역"}</GridTitle>
+          <GridTitle>
+            {filters.dtgb === "A" ? "제품입고내역" : "제품출하내역"}
+          </GridTitle>
         </GridTitleContainer>
-        {filters.dtgb === "A" ?
+        {filters.dtgb === "A" ? (
           <Grid
-            style={{ height: "35vh"}}
+            style={{ height: "35vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1154,7 +1005,6 @@ const QC_B0030W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            id="grdList"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"].map(
@@ -1164,7 +1014,7 @@ const QC_B0030W: React.FC = () => {
                       key={idx}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdList", item.width)}
+                      width={item.width}
                       cell={
                         numberField.includes(item.fieldName)
                           ? NumberCell
@@ -1183,8 +1033,9 @@ const QC_B0030W: React.FC = () => {
                   )
               )}
           </Grid>
-        : <Grid
-            style={{ height: "35vh"}}
+        ) : (
+          <Grid
+            style={{ height: "35vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1219,7 +1070,6 @@ const QC_B0030W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            id="grdList1"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList1"].map(
@@ -1229,7 +1079,7 @@ const QC_B0030W: React.FC = () => {
                       key={idx}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdList1", item.width)}
+                      width={item.width}
                       cell={
                         numberField.includes(item.fieldName)
                           ? NumberCell
@@ -1248,15 +1098,15 @@ const QC_B0030W: React.FC = () => {
                   )
               )}
           </Grid>
-        }
+        )}
       </GridContainer>
       <GridContainerWrap>
-        <GridContainer width = "50%">
+        <GridContainer width="50%">
           <GridTitleContainer>
             <GridTitle>공정별 LOT 추적</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "38vh"}}
+            style={{ height: "38vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,
@@ -1302,7 +1152,6 @@ const QC_B0030W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            id="grdList2"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList2"].map(
@@ -1312,7 +1161,7 @@ const QC_B0030W: React.FC = () => {
                       key={idx}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdList2", item.width)}
+                      width={item.width}
                       cell={
                         numberField.includes(item.fieldName)
                           ? NumberCell
@@ -1337,7 +1186,7 @@ const QC_B0030W: React.FC = () => {
             <GridTitle>소요자재 LOT</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "38vh"}}
+            style={{ height: "38vh" }}
             data={process(
               detailDataResult2.data.map((row) => ({
                 ...row,
@@ -1374,7 +1223,6 @@ const QC_B0030W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            id="grdList3"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList3"].map(
@@ -1384,7 +1232,7 @@ const QC_B0030W: React.FC = () => {
                       key={idx}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdList3", item.width)}
+                      width={item.width}
                       cell={
                         numberField.includes(item.fieldName)
                           ? NumberCell
@@ -1394,7 +1242,7 @@ const QC_B0030W: React.FC = () => {
                       }
                     />
                   )
-            )}
+              )}
           </Grid>
         </GridContainer>
       </GridContainerWrap>
@@ -1428,7 +1276,7 @@ const QC_B0030W: React.FC = () => {
         ))
       )}
     </>
-  )
+  );
 };
 
 export default QC_B0030W;

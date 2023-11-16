@@ -2341,133 +2341,6 @@ const MA_A2400W: React.FC = () => {
     }
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const minGridWidth2 = React.useRef<number>(0);
-  const minGridWidth3 = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const grid2 = React.useRef<any>(null);
-  const grid3 = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
-  const [applyMinWidth3, setApplyMinWidth3] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-  const [gridCurrent2, setGridCurrent2] = React.useState(0);
-  const [gridCurrent3, setGridCurrent3] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      grid2.current = document.getElementById("grdList2");
-      grid3.current = document.getElementById("grdList3");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-      customOptionData.menuCustomColumnOptions["grdList2"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth2.current += item.width)
-            : minGridWidth2.current
-      );
-      customOptionData.menuCustomColumnOptions["grdList3"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth3.current += item.width)
-            : minGridWidth3.current
-      );
-
-      minGridWidth.current += 45;
-      minGridWidth2.current += 45;
-
-      if (grid.current) {
-        setGridCurrent(grid.current.clientWidth);
-        setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-      }
-      if (grid2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-        setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
-      }
-      if (grid3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-        setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
-      }
-    }
-  }, [customOptionData, tabSelected]);
-
-  const handleResize = () => {
-    if (grid.current) {
-      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-        setApplyMinWidth(true);
-      } else if (grid.current.clientWidth > minGridWidth.current) {
-        setGridCurrent(grid.current.clientWidth);
-        setApplyMinWidth(false);
-      }
-    }
-    if (grid2.current) {
-      if (
-        grid2.current.clientWidth < minGridWidth2.current &&
-        !applyMinWidth2
-      ) {
-        setApplyMinWidth2(true);
-      } else if (grid2.current.clientWidth > minGridWidth2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-        setApplyMinWidth2(false);
-      }
-    }
-    if (grid3.current) {
-      if (
-        grid3.current.clientWidth < minGridWidth3.current &&
-        !applyMinWidth3
-      ) {
-        setApplyMinWidth(true);
-      } else if (grid3.current.clientWidth > minGridWidth3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-        setApplyMinWidth3(false);
-      }
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-
-    if (grid.current && Name == "grdList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-
-    if (grid2.current && Name == "grdList2") {
-      let width = applyMinWidth2
-        ? minWidth
-        : minWidth +
-          (gridCurrent2 - minGridWidth2.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-
-    if (grid3.current && Name == "grdList3") {
-      let width = applyMinWidth3
-        ? minWidth
-        : minWidth +
-          (gridCurrent3 - minGridWidth3.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-  };
-
   return (
     <>
       <TitleContainer>
@@ -2640,7 +2513,7 @@ const MA_A2400W: React.FC = () => {
             selectedField={SELECTED_FIELD}
             selectable={{
               enabled: true,
-              mode: "single"
+              mode: "single",
             }}
             onSelectionChange={onSelectionChange}
             //스크롤 조회 기능
@@ -2664,7 +2537,6 @@ const MA_A2400W: React.FC = () => {
             cellRender={customCellRender3}
             rowRender={customRowRender3}
             editField={EDIT_FIELD}
-            id="grdList"
           >
             <GridColumn
               field="chk"
@@ -2681,7 +2553,7 @@ const MA_A2400W: React.FC = () => {
                       key={idx}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdList", item.width)}
+                      width={item.width}
                       cell={
                         numberField.includes(item.fieldName)
                           ? NumberCell
@@ -2796,7 +2668,7 @@ const MA_A2400W: React.FC = () => {
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
-                    mode: "single"
+                    mode: "single",
                   }}
                   onSelectionChange={onSubSelectionChange}
                   //스크롤 조회 기능
@@ -2820,7 +2692,6 @@ const MA_A2400W: React.FC = () => {
                   cellRender={customCellRender}
                   rowRender={customRowRender}
                   editField={EDIT_FIELD}
-                  id="grdList2"
                 >
                   <GridColumn
                     field="chk"
@@ -2837,7 +2708,7 @@ const MA_A2400W: React.FC = () => {
                             key={idx}
                             field={item.fieldName}
                             title={item.caption}
-                            width={setWidth("grdList2", item.width)}
+                            width={item.width}
                             cell={
                               numberField.includes(item.fieldName)
                                 ? NumberCell
@@ -2921,7 +2792,7 @@ const MA_A2400W: React.FC = () => {
                     selectedField={SELECTED_FIELD}
                     selectable={{
                       enabled: true,
-                      mode: "single"
+                      mode: "single",
                     }}
                     onSelectionChange={onBOMSelectionChange}
                     //스크롤 조회 기능
@@ -3049,7 +2920,7 @@ const MA_A2400W: React.FC = () => {
                     selectedField={SELECTED_FIELD}
                     selectable={{
                       enabled: true,
-                      mode: "single"
+                      mode: "single",
                     }}
                     onSelectionChange={onBOMSelectionChange2}
                     //스크롤 조회 기능
@@ -3073,7 +2944,6 @@ const MA_A2400W: React.FC = () => {
                     cellRender={customCellRender2}
                     rowRender={customRowRender2}
                     editField={EDIT_FIELD}
-                    id="grdList2"
                   >
                     <GridColumn
                       field="chk"
@@ -3090,7 +2960,7 @@ const MA_A2400W: React.FC = () => {
                               key={idx}
                               field={item.fieldName}
                               title={item.caption}
-                              width={setWidth("grdList2", item.width)}
+                              width={item.width}
                               cell={
                                 numberField.includes(item.fieldName)
                                   ? NumberCell
@@ -3196,7 +3066,6 @@ const MA_A2400W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            id="grdList3"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList3"].map(
@@ -3206,7 +3075,7 @@ const MA_A2400W: React.FC = () => {
                       key={idx}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdList3", item.width)}
+                      width={item.width}
                       cell={
                         numberField.includes(item.fieldName)
                           ? NumberCell

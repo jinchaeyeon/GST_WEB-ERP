@@ -1,66 +1,66 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { ButtonContainer, 
-  ButtonInInput, 
-  FilterBox, 
-  GridContainer, 
-  GridTitle, 
-  GridTitleContainer, 
-  Title, 
-  TitleContainer 
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
+import {
+  Grid,
+  GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
+import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import {
+  ButtonContainer,
+  ButtonInInput,
+  FilterBox,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
-import { useApi } from "../hooks/api";
-import { 
-  GetPropertyValueByName, 
-  UseBizComponent, 
-  UseCustomOption,
-  UseGetValueFromSessionItem, 
-  UseMessages, 
-  UseParaPc, 
-  UsePermissions, 
-  convertDateToStr, 
-  findMessage, 
-  getQueryFromBizComponent, 
-  handleKeyPressSearch, 
-  setDefaultDate, 
-  useSysMessage 
-} from "../components/CommonFunction";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import FilterContainer from "../components/Containers/FilterContainer";
-import { gridList } from "../store/columns/MA_A2410W_C";
-import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
-import { useSetRecoilState } from "recoil";
-import { deletedAttadatnumsState, isLoading } from "../store/atoms";
-import { getter } from "@progress/kendo-react-common";
-import { 
-  COM_CODE_DEFAULT_VALUE, 
-  PAGE_SIZE, 
-  SELECTED_FIELD 
-} from "../components/CommonString";
-import { Input } from "@progress/kendo-react-inputs";
-import { Button } from "@progress/kendo-react-buttons";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import React from "react";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import { ICustData, IItemData } from "../hooks/interfaces";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import { DataResult, State, process } from "@progress/kendo-data-query";
-import { 
-  Grid, 
-  GridCellProps, 
-  GridColumn, 
-  GridDataStateChangeEvent, 
-  GridFooterCellProps, 
-  GridPageChangeEvent, 
-  GridSelectionChangeEvent, 
-  getSelectedState 
-} from "@progress/kendo-react-grid";
-import { bytesToBase64 } from "byte-base64";
-import NumberCell from "../components/Cells/NumberCell";
 import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  UsePermissions,
+  convertDateToStr,
+  findMessage,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+  setDefaultDate,
+  useSysMessage,
+} from "../components/CommonFunction";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import DetailWindow from "../components/Windows/MA_A2410W_Window";
+import { useApi } from "../hooks/api";
+import { ICustData, IItemData } from "../hooks/interfaces";
+import { deletedAttadatnumsState, isLoading } from "../store/atoms";
+import { gridList } from "../store/columns/MA_A2410W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "purnum";
 const DETAIL_DATA_ITEM_KEY = "num";
@@ -113,15 +113,17 @@ const MA_A2410W: React.FC = () => {
 
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         person: defaultOption.find((item: any) => item.id === "person")
           .valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn")
-          .valueCode,
+        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -161,16 +163,15 @@ const MA_A2410W: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
 
-  const [finynListData, setFinynListData] = useState([
-    { code: "", name: "" },
-  ]);
+  const [finynListData, setFinynListData] = useState([{ code: "", name: "" }]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001")
-        );
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+        )
+      );
       const qtyunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
       );
@@ -271,8 +272,8 @@ const MA_A2410W: React.FC = () => {
     }));
   };
 
-   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
-   const filterComboBoxChange = (e: any) => {
+  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
+  const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
 
     setFilters((prev) => ({
@@ -281,8 +282,8 @@ const MA_A2410W: React.FC = () => {
     }));
   };
 
-   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-   const filterRadioChange = (e: any) => {
+  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
+  const filterRadioChange = (e: any) => {
     const { name, value } = e;
 
     setFilters((prev) => ({
@@ -295,7 +296,7 @@ const MA_A2410W: React.FC = () => {
     useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  
+
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
@@ -386,7 +387,7 @@ const MA_A2410W: React.FC = () => {
     person: "",
     ordnum: "",
     planno: "",
-    finyn : "",
+    finyn: "",
     purnum: "",
     find_row_value: "",
     pgNum: 1,
@@ -414,11 +415,11 @@ const MA_A2410W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "LIST",
-        "@p_orgdiv": orgdiv, 
+        "@p_orgdiv": orgdiv,
         "@p_location": location,
         "@p_frdt": convertDateToStr(filters.frdt),
-        "@p_todt": convertDateToStr(filters.todt),    
-        "@p_custcd": filters.custcd,  
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
         "@p_itemcd": filters.itemcd,
         "@p_itemnm": filters.itemnm,
@@ -473,10 +474,7 @@ const MA_A2410W: React.FC = () => {
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
-            : rows.find(
-                (row: any) =>
-                  row.purnum == filters.find_row_value
-              );
+            : rows.find((row: any) => row.purnum == filters.find_row_value);
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
           setDetailFilters((prev) => ({
@@ -512,17 +510,17 @@ const MA_A2410W: React.FC = () => {
     let data: any;
     setLoading(true);
 
-    const parameters : Iparameters = {
+    const parameters: Iparameters = {
       procedureName: "P_MA_A2410W_Q",
       pageNumber: detailfilters.pgNum,
       pageSize: detailfilters.pgSize,
       parameters: {
         "@p_work_type": "DETAIL",
-        "@p_orgdiv": orgdiv, 
+        "@p_orgdiv": orgdiv,
         "@p_location": location,
         "@p_frdt": "",
-        "@p_todt": "",    
-        "@p_custcd": "",  
+        "@p_todt": "",
+        "@p_custcd": "",
         "@p_custnm": "",
         "@p_itemcd": "",
         "@p_itemnm": "",
@@ -578,8 +576,7 @@ const MA_A2410W: React.FC = () => {
           detailfilters.find_row_value == ""
             ? rows[0]
             : rows.find(
-                (row: any) =>
-                  row.purnum == detailfilters.find_row_value
+                (row: any) => row.purnum == detailfilters.find_row_value
               );
         if (selectedRow != undefined) {
           setDetailSelectedState({ [selectedRow[DETAIL_DATA_ITEM_KEY]]: true });
@@ -703,7 +700,7 @@ const MA_A2410W: React.FC = () => {
     });
     setDetailSelectedState(newSelectedState);
   };
-  
+
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
@@ -862,7 +859,7 @@ const MA_A2410W: React.FC = () => {
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       );
       if (paraDataDeleted.attdatnum)
-      setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+        setDeletedAttadatnums([paraDataDeleted.attdatnum]);
       resetAllGrid();
       if (isLastDataDeleted) {
         setPage({
@@ -887,8 +884,9 @@ const MA_A2410W: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           find_row_value:
-            mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
-            [DATA_ITEM_KEY],
+            mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1][
+              DATA_ITEM_KEY
+            ],
           pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
           isSearch: true,
         }));
@@ -904,81 +902,6 @@ const MA_A2410W: React.FC = () => {
     if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
 
-  const minGridWidth = React.useRef<number>(0);
-  const minGridWidth2 = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const grid2 = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-  const [gridCurrent2, setGridCurrent2] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      grid2.current = document.getElementById("grdList1");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-      customOptionData.menuCustomColumnOptions["grdList1"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth2.current += item.width)
-            : minGridWidth2.current
-      );
-      minGridWidth.current += 50;
-      setGridCurrent(grid.current.clientWidth);
-      setGridCurrent2(grid2.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-      setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-    if (grid2.current.clientWidth < minGridWidth2.current && !applyMinWidth2) {
-      setApplyMinWidth2(true);
-    } else if (grid2.current.clientWidth > minGridWidth2.current) {
-      setGridCurrent2(grid2.current.clientWidth);
-      setApplyMinWidth2(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    if (grid.current && Name == "grdList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-    if (grid2.current && Name == "grdList1") {
-      let width = applyMinWidth2
-        ? minWidth
-        : minWidth +
-          (gridCurrent2 - minGridWidth2.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-  };
-  
   return (
     <>
       <TitleContainer>
@@ -1002,16 +925,16 @@ const MA_A2410W: React.FC = () => {
                 <CommonDateRangePicker
                   value={{
                     start: filters.frdt,
-                    end: filters.todt
+                    end: filters.todt,
                   }}
-                  onChange={(e:{ value: {start: any; end: any}}) =>
+                  onChange={(e: { value: { start: any; end: any } }) =>
                     setFilters((prev) => ({
-                        ...prev,
-                        frdt: e.value.start,
-                        todt: e.value.end,
+                      ...prev,
+                      frdt: e.value.start,
+                      todt: e.value.end,
                     }))
                   }
-                  className="required" 
+                  className="required"
                 />
               </td>
               <th>업체코드</th>
@@ -1041,8 +964,8 @@ const MA_A2410W: React.FC = () => {
               </td>
               <th>담당자</th>
               <td>
-                {customOptionData !== null &&(
-                  <CustomOptionComboBox 
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
                     name="person"
                     value={filters.person}
                     customOptionData={customOptionData}
@@ -1124,11 +1047,7 @@ const MA_A2410W: React.FC = () => {
         <GridTitleContainer>
           <GridTitle>요약정보</GridTitle>
           <ButtonContainer>
-            <Button
-              onClick={onAddClick}
-              themeColor={"primary"}
-              icon="file-add"
-            >
+            <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
               외주처리생성
             </Button>
             <Button
@@ -1142,16 +1061,15 @@ const MA_A2410W: React.FC = () => {
           </ButtonContainer>
         </GridTitleContainer>
         <Grid
-          style={{ height: "35vh"}}
+          style={{ height: "35vh" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
               person: usersListData.find(
                 (item: any) => item.user_id === row.person
               )?.user_name,
-              finyn: finynListData.find(
-                (item: any) => item.code === row.finyn
-              )?.name,
+              finyn: finynListData.find((item: any) => item.code === row.finyn)
+                ?.name,
               [SELECTED_FIELD]: selectedState[idGetter(row)],
             })),
             mainDataState
@@ -1183,7 +1101,6 @@ const MA_A2410W: React.FC = () => {
           reorderable={true}
           //컬럼너비조정
           resizable={true}
-          id="grdList"
         >
           <GridColumn cell={CommandCell} width="50px" />
           {customOptionData !== null &&
@@ -1194,7 +1111,7 @@ const MA_A2410W: React.FC = () => {
                     key={idx}
                     field={item.fieldName}
                     title={item.caption}
-                    width={setWidth("grdList", item.width)}
+                    width={item.width}
                     cell={
                       numberField.includes(item.fieldName)
                         ? NumberCell
@@ -1203,7 +1120,7 @@ const MA_A2410W: React.FC = () => {
                         : undefined
                     }
                     footerCell={
-                      item.sortOrder == 0 
+                      item.sortOrder == 0
                         ? mainTotalFooterCell
                         : numberField.includes(item.fieldName)
                         ? gridSumQtyFooterCell
@@ -1271,7 +1188,6 @@ const MA_A2410W: React.FC = () => {
           reorderable={true}
           //컬럼너비조정
           resizable={true}
-          id="grdList1"
         >
           {customOptionData !== null &&
             customOptionData.menuCustomColumnOptions["grdList1"].map(
@@ -1281,8 +1197,8 @@ const MA_A2410W: React.FC = () => {
                     key={idx}
                     field={item.fieldName}
                     title={item.caption}
-                    width={setWidth("grdList1", item.width)}
-                    cell = {
+                    width={item.width}
+                    cell={
                       numberField.includes(item.fieldName)
                         ? NumberCell
                         : dateField.includes(item.fieldName)
@@ -1290,7 +1206,7 @@ const MA_A2410W: React.FC = () => {
                         : undefined
                     }
                     footerCell={
-                      item.sortOrder == 0 
+                      item.sortOrder == 0
                         ? subTotalFooterCell
                         : numberField.includes(item.fieldName)
                         ? gridSumQtyFooterCell2
@@ -1327,12 +1243,12 @@ const MA_A2410W: React.FC = () => {
         />
       )}
       {itemWindowVisible && (
-          <ItemsWindow
-            setVisible={setItemWindowVisible}
-            workType={"FILTER"}
-            setData={setItemData}
-            modal={true}
-          />
+        <ItemsWindow
+          setVisible={setItemWindowVisible}
+          workType={"FILTER"}
+          setData={setItemData}
+          modal={true}
+        />
       )}
       {custWindowVisible && (
         <CustomersWindow

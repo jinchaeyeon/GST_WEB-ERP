@@ -68,7 +68,7 @@ let deletedMainRows: object[] = [];
 let temp = 0;
 let temp2 = 0;
 let temp3 = 0;
-let temp4= 0;
+let temp4 = 0;
 const headerField = ["user_name", "appseq", "appline"];
 const editableField = ["user_name", "dptcd", "postcd", "resno", "appgb"];
 const checkboxField = ["chooses", "arbitragb"];
@@ -495,7 +495,6 @@ const EA_A1000: React.FC = () => {
         };
       });
       if (filters2.find_row_value !== "") {
-  
         // find_row_value 행으로 스크롤 이동
         if (gridRef2.current) {
           const findRowIndex = rows.findIndex(
@@ -1243,7 +1242,7 @@ const EA_A1000: React.FC = () => {
         if (item.num > temp2) {
           temp2 = item.num;
         }
-        if(item.appseq > count) {
+        if (item.appseq > count) {
           count = item.appseq;
         }
       });
@@ -1316,7 +1315,7 @@ const EA_A1000: React.FC = () => {
         if (item.num > temp3) {
           temp3 = item.num;
         }
-        if(item.appseq > count) {
+        if (item.appseq > count) {
           count = item.appseq;
         }
       });
@@ -1388,7 +1387,7 @@ const EA_A1000: React.FC = () => {
         if (item.num > temp2) {
           temp2 = item.num;
         }
-        if(item.appseq > count) {
+        if (item.appseq > count) {
           count = item.appseq;
         }
       });
@@ -1455,14 +1454,13 @@ const EA_A1000: React.FC = () => {
         return false;
       }
 
-     
       let count = 0;
 
       mainDataResult4.data.map((item) => {
         if (item.num > temp4) {
           temp4 = item.num;
         }
-        if(item.appseq > count) {
+        if (item.appseq > count) {
           count = item.appseq;
         }
       });
@@ -2027,167 +2025,6 @@ const EA_A1000: React.FC = () => {
     setDataResult: setMainDataResult2,
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const minGridWidth2 = React.useRef<number>(0);
-  const minGridWidth3 = React.useRef<number>(0);
-  const minGridWidth4 = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const grid2 = React.useRef<any>(null);
-  const grid3 = React.useRef<any>(null);
-  const grid4 = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [applyMinWidth2, setApplyMinWidth2] = React.useState(false);
-  const [applyMinWidth3, setApplyMinWidth3] = React.useState(false);
-  const [applyMinWidth4, setApplyMinWidth4] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-  const [gridCurrent2, setGridCurrent2] = React.useState(0);
-  const [gridCurrent3, setGridCurrent3] = React.useState(0);
-  const [gridCurrent4, setGridCurrent4] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      grid2.current = document.getElementById("grdList2");
-      grid3.current = document.getElementById("grdList3");
-      grid4.current = document.getElementById("grdList4");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-      customOptionData.menuCustomColumnOptions["grdList2"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth2.current += item.width)
-            : minGridWidth2.current
-      );
-      customOptionData.menuCustomColumnOptions["grdList3"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth3.current += item.width)
-            : minGridWidth3.current
-      );
-      customOptionData.menuCustomColumnOptions["grdList4"].map(
-        (item: TColumn) =>
-          item.width !== undefined
-            ? (minGridWidth4.current += item.width)
-            : minGridWidth4.current
-      );
-
-      minGridWidth2.current += 50;
-
-      if (grid.current) {
-        setGridCurrent(grid.current.clientWidth);
-        setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-      }
-      if (grid2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-        setApplyMinWidth2(grid2.current.clientWidth < minGridWidth2.current);
-      }
-      if (grid3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-        setApplyMinWidth3(grid3.current.clientWidth < minGridWidth3.current);
-      }
-      if (grid4.current) {
-        setGridCurrent4(grid4.current.clientWidth);
-        setApplyMinWidth4(grid4.current.clientWidth < minGridWidth4.current);
-      }
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current) {
-      if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-        setApplyMinWidth(true);
-      } else if (grid.current.clientWidth > minGridWidth.current) {
-        setGridCurrent(grid.current.clientWidth);
-        setApplyMinWidth(false);
-      }
-    }
-    if (grid2.current) {
-      if (
-        grid2.current.clientWidth < minGridWidth2.current &&
-        !applyMinWidth2
-      ) {
-        setApplyMinWidth2(true);
-      } else if (grid2.current.clientWidth > minGridWidth2.current) {
-        setGridCurrent2(grid2.current.clientWidth);
-        setApplyMinWidth2(false);
-      }
-    }
-    if (grid3.current) {
-      if (
-        grid3.current.clientWidth < minGridWidth3.current &&
-        !applyMinWidth3
-      ) {
-        setApplyMinWidth(true);
-      } else if (grid3.current.clientWidth > minGridWidth3.current) {
-        setGridCurrent3(grid3.current.clientWidth);
-        setApplyMinWidth3(false);
-      }
-    }
-    if (grid4.current) {
-      if (
-        grid4.current.clientWidth < minGridWidth4.current &&
-        !applyMinWidth4
-      ) {
-        setApplyMinWidth(true);
-      } else if (grid4.current.clientWidth > minGridWidth4.current) {
-        setGridCurrent4(grid4.current.clientWidth);
-        setApplyMinWidth4(false);
-      }
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-
-    if (grid.current && Name == "grdList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-
-    if (grid2.current && Name == "grdList2") {
-      let width = applyMinWidth2
-        ? minWidth
-        : minWidth +
-          (gridCurrent2 - minGridWidth2.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-
-    if (grid3.current && Name == "grdList3") {
-      let width = applyMinWidth3
-        ? minWidth
-        : minWidth +
-          (gridCurrent3 - minGridWidth3.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-
-    if (grid4.current && Name == "grdList4") {
-      let width = applyMinWidth4
-        ? minWidth
-        : minWidth +
-          (gridCurrent4 - minGridWidth4.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-  };
   return (
     <>
       <TitleContainer>
@@ -2304,7 +2141,6 @@ const EA_A1000: React.FC = () => {
             cellRender={customCellRender}
             rowRender={customRowRender}
             editField={EDIT_FIELD}
-            id="grdList"
           >
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"].map(
@@ -2314,7 +2150,7 @@ const EA_A1000: React.FC = () => {
                       key={idx}
                       field={item.fieldName}
                       title={item.caption}
-                      width={setWidth("grdList", item.width)}
+                      width={item.width}
                       editable={
                         editableField.includes(item.fieldName) ? false : true
                       }
@@ -2448,7 +2284,6 @@ const EA_A1000: React.FC = () => {
                 cellRender={customCellRender2}
                 rowRender={customRowRender2}
                 editField={EDIT_FIELD}
-                id="grdList2"
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
@@ -2459,7 +2294,7 @@ const EA_A1000: React.FC = () => {
                           key={idx}
                           field={item.fieldName}
                           title={item.caption}
-                          width={setWidth("grdList2", item.width)}
+                          width={item.width}
                           headerCell={
                             headerField.includes(item.fieldName)
                               ? RequiredHeader
@@ -2563,7 +2398,6 @@ const EA_A1000: React.FC = () => {
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
-                id="grdList3"
               >
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdList3"].map(
@@ -2573,7 +2407,7 @@ const EA_A1000: React.FC = () => {
                           key={idx}
                           field={item.fieldName}
                           title={item.caption}
-                          width={setWidth("grdList3", item.width)}
+                          width={item.width}
                           editable={
                             editableField.includes(item.fieldName)
                               ? false
@@ -2656,7 +2490,6 @@ const EA_A1000: React.FC = () => {
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
-                id="grdList4"
               >
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdList4"].map(
@@ -2666,7 +2499,7 @@ const EA_A1000: React.FC = () => {
                           key={idx}
                           field={item.fieldName}
                           title={item.caption}
-                          width={setWidth("grdList4", item.width)}
+                          width={item.width}
                           editable={
                             editableField.includes(item.fieldName)
                               ? false

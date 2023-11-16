@@ -21,11 +21,7 @@ import {
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
-import React, {
-  useCallback,
-  useEffect,
-  useRef, useState
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -201,7 +197,7 @@ const CM_A5001W: React.FC = () => {
           (item: any) => item.bizComponentId == "L_CM501_603_Q"
         )
       );
-      
+
       fetchQueryData(statusQueryStr, setStatusListData);
       fetchQueryData(meditypeQueryStr, setMeditypeListData);
     }
@@ -392,50 +388,6 @@ const CM_A5001W: React.FC = () => {
       skip: page.skip,
       take: initialPageState.take,
     });
-  };
-
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData, tabSelected]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    let width = applyMinWidth
-      ? minWidth
-      : minWidth +
-        (gridCurrent - minGridWidth.current) /
-          customOptionData.menuCustomColumnOptions[Name].length;
-
-    return width;
   };
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -1036,22 +988,20 @@ const CM_A5001W: React.FC = () => {
     const convertedEditorContent = bytesToBase64(bytes(editorContent));
 
     const parameters = {
-      folder: "html-doc?folder="+
-              "CM_A5001W",
+      folder: "html-doc?folder=" + "CM_A5001W",
       procedureName: "P_CM_A5001W_S",
       pageNumber: 0,
       pageSize: 0,
       parameters: {
         "@p_work_type": paraDataSaved.workType,
         "@p_document_id": paraDataSaved.document_id,
-        "@p_document_id_Q": paraDataSaved.document_id_Q,  // 요청 문서 ID
+        "@p_document_id_Q": paraDataSaved.document_id_Q, // 요청 문서 ID
         "@p_attdatnum": paraDataSaved.attdatnum,
         "@p_userid": userId,
         "@p_pc": paraDataSaved.pc,
       },
       fileBytes: convertedEditorContent,
-    }
-    
+    };
 
     try {
       data = await processApi<any>("html-save", parameters);
@@ -1305,7 +1255,6 @@ const CM_A5001W: React.FC = () => {
                   resizable={true}
                   onItemChange={onMainItemChange}
                   editField={EDIT_FIELD}
-                  id="grdList"
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdList"].map(
@@ -1316,7 +1265,7 @@ const CM_A5001W: React.FC = () => {
                             id={item.id}
                             field={item.fieldName}
                             title={item.caption}
-                            width={setWidth("grdList", item.width)}
+                            width={item.width}
                             cell={
                               DateField.includes(item.fieldName)
                                 ? DateCell
@@ -1505,9 +1454,7 @@ const CM_A5001W: React.FC = () => {
                         <Checkbox
                           title="긴급"
                           name="is_emergency"
-                          value={
-                            information.is_emergency == "Y" ? true : false
-                          }
+                          value={information.is_emergency == "Y" ? true : false}
                           onChange={CheckChange}
                           disabled={true}
                         />
@@ -1594,7 +1541,12 @@ const CM_A5001W: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
               <GridContainer height={`calc(100% - 185px)`}>
-                <RichEditor id="docEditor1" ref={docEditorRef1} hideTools border={true} />
+                <RichEditor
+                  id="docEditor1"
+                  ref={docEditorRef1}
+                  hideTools
+                  border={true}
+                />
               </GridContainer>
               <FormBoxWrap border={true}>
                 <FormBox>

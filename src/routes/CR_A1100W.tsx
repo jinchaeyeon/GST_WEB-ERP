@@ -1,62 +1,62 @@
-import React, { useEffect, useRef } from "react";
-import { useSetRecoilState } from "recoil";
-import { 
-  ButtonContainer, 
-  FilterBox, 
-  GridContainer, 
-  GridTitle, 
-  GridTitleContainer, 
-  Title, 
-  TitleContainer 
-} from "../CommonStyled";
-import { gridList } from "../store/columns/CR_A1100W_C";
-import { useApi } from "../hooks/api";
-import { 
-  DataResult, 
-  State,
-  getter, 
-  process } from "@progress/kendo-data-query";
-import { useState } from "react";
-import { 
-  UseBizComponent, 
-  UseCustomOption,
-  UseGetValueFromSessionItem, 
-  UseMessages, 
-  UseParaPc, 
-  UsePermissions, 
-  convertDateToStr, 
-  dateformat, 
-  findMessage, 
-  getGridItemChangedData, 
-  handleKeyPressSearch, 
-  toDate} from "../components/CommonFunction";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import TopButtons from "../components/Buttons/TopButtons";
-import { isLoading } from "../store/atoms";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import FilterContainer from "../components/Containers/FilterContainer";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
-import { Input } from "@progress/kendo-react-inputs";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { 
-  Grid, 
-  GridCellProps, 
-  GridColumn, 
-  GridDataStateChangeEvent, 
-  GridFooterCellProps, 
-  GridItemChangeEvent, 
-  GridPageChangeEvent, 
-  GridSelectionChangeEvent, 
-  getSelectedState 
+import { ExcelExport } from "@progress/kendo-react-excel-export";
+import {
+  Grid,
+  GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import DateCell from "../components/Cells/DateCell";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import NumberCell from "../components/Cells/NumberCell";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import { Input } from "@progress/kendo-react-inputs";
+import React, { useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import {
+  ButtonContainer,
+  FilterBox,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
+} from "../CommonStyled";
+import TopButtons from "../components/Buttons/TopButtons";
 import CenterCell from "../components/Cells/CenterCell";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import {
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  UsePermissions,
+  convertDateToStr,
+  dateformat,
+  findMessage,
+  getGridItemChangedData,
+  handleKeyPressSearch,
+  toDate,
+} from "../components/CommonFunction";
+import {
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import { useApi } from "../hooks/api";
+import { isLoading } from "../store/atoms";
+import { gridList } from "../store/columns/CR_A1100W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -74,7 +74,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 
   const field = props.field ?? "";
-  const bizComponentIdVal = 
+  const bizComponentIdVal =
     field === "owner"
       ? "L_USERS_EX"
       : field === "manager"
@@ -89,13 +89,13 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const fieldName =
     field === "owner" || field === "manager" || field === "gender"
-      ? { valueField: "code", textField: "name"}
+      ? { valueField: "code", textField: "name" }
       : { valueField: undefined, textField: undefined };
-    
+
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
-  
+
   return bizComponent ? (
     <ComboBoxCell
       bizComponent={bizComponent}
@@ -123,17 +123,14 @@ const CR_A1100W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-  
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 반, 종, 성별
-  UseBizComponent(
-    "L_BA310, L_BA320, L_SEXCD",
-    setBizComponentData
-  );
+  UseBizComponent("L_BA310, L_BA320, L_SEXCD", setBizComponentData);
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -173,8 +170,8 @@ const CR_A1100W: React.FC = () => {
     }));
   };
 
-   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-   const filterRadioChange = (e: any) => {
+  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
+  const filterRadioChange = (e: any) => {
     const { name, value } = e;
 
     setFilters((prev) => ({
@@ -254,7 +251,7 @@ const CR_A1100W: React.FC = () => {
 
     try {
       data = await processApi<any>("procedure", parameters);
-    } catch(e) {
+    } catch (e) {
       data = null;
     }
 
@@ -262,7 +259,7 @@ const CR_A1100W: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      if ( filters.find_row_value !== "" ) {
+      if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
@@ -294,13 +291,15 @@ const CR_A1100W: React.FC = () => {
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.membership_id == filters.find_row_value);
-        
-            if(selectedRow != undefined) {
-              setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
-            } else {
-              setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-            }
+            : rows.find(
+                (row: any) => row.membership_id == filters.find_row_value
+              );
+
+        if (selectedRow != undefined) {
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
       }
     } else {
       console.log("[오류 발생]");
@@ -317,7 +316,7 @@ const CR_A1100W: React.FC = () => {
     }));
     setLoading(false);
   };
-  
+
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (filters.isSearch && permissions !== null && bizComponentData !== null) {
@@ -385,28 +384,29 @@ const CR_A1100W: React.FC = () => {
     setPage(initialPageState); // 페이지 초기화
     setMainDataResult(process([], mainDataState));
   };
-  
+
   const search = () => {
     try {
-      if (filters.orgdiv == "" ||
-          filters.orgdiv == null ||
-          filters.orgdiv == undefined
+      if (
+        filters.orgdiv == "" ||
+        filters.orgdiv == null ||
+        filters.orgdiv == undefined
       ) {
-        throw findMessage(messagesData, "CR_A1100W_001")
+        throw findMessage(messagesData, "CR_A1100W_001");
       } else if (
         convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "CR_A1100W_002")
+        throw findMessage(messagesData, "CR_A1100W_002");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "CR_A1100W_002")
+        throw findMessage(messagesData, "CR_A1100W_002");
       } else {
         resetAllGrid();
         setFilters((prev: any) => ({
@@ -494,7 +494,7 @@ const CR_A1100W: React.FC = () => {
         ) {
           throw findMessage(messagesData, "CR_A1100W_002");
         } else if (
-          toDate(item.recdt) < toDate(item.plandt)   // 등원예정일자 이전 일자로 수정할 경우
+          toDate(item.recdt) < toDate(item.plandt) // 등원예정일자 이전 일자로 수정할 경우
         ) {
           throw findMessage(messagesData, "CR_A1100W_003");
         }
@@ -518,7 +518,7 @@ const CR_A1100W: React.FC = () => {
       if (!window.confirm(findMessage(messagesData, "CR_A1100W_004"))) {
         return;
       }
-    };
+    }
 
     let dataArr: TdataArr = {
       rowstatus: [],
@@ -568,7 +568,7 @@ const CR_A1100W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    
+
     if (data.isSuccess === true) {
       const isLastDataDeleted =
         mainDataResult.data.length == 0 && filters.pgNum > 0;
@@ -610,72 +610,26 @@ const CR_A1100W: React.FC = () => {
     if (paraDataSaved != undefined) {
       fetchTodoGridSaved();
     }
-  }, [paraDataSaved])
-
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-      minGridWidth.current += 50;
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    if (grid.current && Name == "grdList") {
-      let width = applyMinWidth
-        ? minWidth
-        : minWidth +
-          (gridCurrent - minGridWidth.current) /
-            customOptionData.menuCustomColumnOptions[Name].length;
-
-      return width;
-    }
-  };
-
+  }, [paraDataSaved]);
 
   const enterEdit = (dataItem: any, field: string) => {
     let valid = false;
 
-    if (field == "rowstatus" ||
-        field == "custcd" ||
-        field == "custnm" ||
-        field == "class" ||
-        field == "owner" ||
-        field == "species" ||
-        field == "gender"||
-        field == "age" ||
-        field == "mobile_no" ||
-        field == "gubun" ||
-        field == "minus" ||
-        field == "manager" ||
-        field == "plandt" ||
-        field == "att_check"
+    if (
+      field == "rowstatus" ||
+      field == "custcd" ||
+      field == "custnm" ||
+      field == "class" ||
+      field == "owner" ||
+      field == "species" ||
+      field == "gender" ||
+      field == "age" ||
+      field == "mobile_no" ||
+      field == "gubun" ||
+      field == "minus" ||
+      field == "manager" ||
+      field == "plandt" ||
+      field == "att_check"
     ) {
       valid = true;
     }
@@ -716,7 +670,7 @@ const CR_A1100W: React.FC = () => {
 
   const exitEdit = () => {
     if (tempResult.data != mainDataResult.data) {
-      const newData = mainDataResult.data.map((item) => 
+      const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
           ? {
               ...item,
@@ -777,7 +731,7 @@ const CR_A1100W: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
-  
+
   return (
     <>
       <TitleContainer>
@@ -800,12 +754,12 @@ const CR_A1100W: React.FC = () => {
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
-                  name="orgdiv"
-                  value={filters.orgdiv}
-                  customOptionData={customOptionData}
-                  changeData={filterComboBoxChange}
-                  className="required"
-                />
+                    name="orgdiv"
+                    value={filters.orgdiv}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    className="required"
+                  />
                 )}
               </td>
               <th>조회기간</th>
@@ -815,11 +769,11 @@ const CR_A1100W: React.FC = () => {
                     start: filters.frdt,
                     end: filters.todt,
                   }}
-                  onChange={(e: {value: { start: any; end: any}}) =>
+                  onChange={(e: { value: { start: any; end: any } }) =>
                     setFilters((prev) => ({
                       ...prev,
                       frdt: e.value.start,
-                      todt: e.value.end,                      
+                      todt: e.value.end,
                     }))
                   }
                   className="required"
@@ -921,19 +875,19 @@ const CR_A1100W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{height: "75vh"}}
+            style={{ height: "75vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                recdt: row.recdt  
+                recdt: row.recdt
                   ? new Date(dateformat(row.recdt))
                   : new Date(dateformat("19991231")),
                 rowstatus:
-                    row.rowstatus == null ||
-                    row.rowstatus == "" ||
-                    row.rowstatus == undefined
-                      ? ""
-                      : row.rowstatus,
+                  row.rowstatus == null ||
+                  row.rowstatus == "" ||
+                  row.rowstatus == undefined
+                    ? ""
+                    : row.rowstatus,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -970,43 +924,40 @@ const CR_A1100W: React.FC = () => {
             cellRender={customCellRender}
             rowRender={customRowRender}
             editField={EDIT_FIELD}
-            id="grdList"
           >
             <GridColumn
-                field="rowstatus"
-                title=" "
-                width="50px"
-                editable={false}
-              />
+              field="rowstatus"
+              title=" "
+              width="50px"
+              editable={false}
+            />
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"].map(
-              (item: any, idx: number) =>
-                item.sortOrder !== -1 && (
-                  <GridColumn
-                    key={idx}
-                    id={item.id}
-                    field={item.fieldName}
-                    title={item.caption}
-                    width={setWidth("grdList", item.width)}
-                    cell={
-                      DateField.includes(item.fieldName)
-                        ? DateCell
-                        : CustomComboField.includes(item.fieldName)
-                        ? CustomComboBoxCell
-                        : NumberField.includes(item.fieldName)
-                        ? NumberCell
-                        : CenterField.includes(item.fieldName)
-                        ? CenterCell
-                        : undefined
-                    }
-                    footerCell={
-                      item.sortOrder === 0
-                        ? mainTotalFooterCell
-                        : undefined
-                    }
-                  />
-                )
-            )}
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        DateField.includes(item.fieldName)
+                          ? DateCell
+                          : CustomComboField.includes(item.fieldName)
+                          ? CustomComboBoxCell
+                          : NumberField.includes(item.fieldName)
+                          ? NumberCell
+                          : CenterField.includes(item.fieldName)
+                          ? CenterCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
           </Grid>
         </ExcelExport>
       </GridContainer>

@@ -453,50 +453,6 @@ const CM_A7000W: React.FC = () => {
     });
   };
 
-  const minGridWidth = React.useRef<number>(0);
-  const grid = React.useRef<any>(null);
-  const [applyMinWidth, setApplyMinWidth] = React.useState(false);
-  const [gridCurrent, setGridCurrent] = React.useState(0);
-
-  React.useEffect(() => {
-    if (customOptionData != null) {
-      grid.current = document.getElementById("grdList");
-      window.addEventListener("resize", handleResize);
-
-      //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
-        item.width !== undefined
-          ? (minGridWidth.current += item.width)
-          : minGridWidth.current
-      );
-
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(grid.current.clientWidth < minGridWidth.current);
-    }
-  }, [customOptionData, tabSelected]);
-
-  const handleResize = () => {
-    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
-      setApplyMinWidth(true);
-    } else if (grid.current.clientWidth > minGridWidth.current) {
-      setGridCurrent(grid.current.clientWidth);
-      setApplyMinWidth(false);
-    }
-  };
-
-  const setWidth = (Name: string, minWidth: number | undefined) => {
-    if (minWidth == undefined) {
-      minWidth = 0;
-    }
-    let width = applyMinWidth
-      ? minWidth
-      : minWidth +
-        (gridCurrent - minGridWidth.current) /
-          customOptionData.menuCustomColumnOptions[Name].length;
-
-    return width;
-  };
-
   // 엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -937,8 +893,7 @@ const CM_A7000W: React.FC = () => {
         : bytesToBase64(bytes(editorContent));
 
     const parameters = {
-      folder: "html-doc?folder=" +
-              "CM_A7000W",
+      folder: "html-doc?folder=" + "CM_A7000W",
       procedureName: "P_CM_A7000W_S",
       pageNumber: 0,
       pageSize: 0,
@@ -965,7 +920,7 @@ const CM_A7000W: React.FC = () => {
         "@p_form_id": "CM_A7000W",
       },
       fileBytes: convertedEditorContent,
-    }
+    };
 
     try {
       data = await processApi<any>("html-save", parameters);
@@ -1025,7 +980,7 @@ const CM_A7000W: React.FC = () => {
       files: "",
       remark2: "",
       unshared: defaultOption.find((item: any) => item.id === "unshared")
-      .valueCode,
+        .valueCode,
       place: "",
       meetingnm: "",
       ref_key: "",
@@ -1252,7 +1207,6 @@ const CM_A7000W: React.FC = () => {
                     cellRender={customCellRender}
                     rowRender={customRowRender}
                     editField={EDIT_FIELD}
-                    id="grdList"
                   >
                     {customOptionData !== null &&
                       customOptionData.menuCustomColumnOptions["grdList"].map(
@@ -1263,7 +1217,7 @@ const CM_A7000W: React.FC = () => {
                               id={item.id}
                               field={item.fieldName}
                               title={item.caption}
-                              width={setWidth("grdList", item.width)}
+                              width={item.width}
                               cell={
                                 DateField.includes(item.fieldName)
                                   ? DateCell
