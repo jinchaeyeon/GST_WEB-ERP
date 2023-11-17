@@ -1240,6 +1240,7 @@ const PR_A6000W: React.FC = () => {
       return width;
     }
   };
+
   return (
     <>
       <TitleContainer>
@@ -1434,7 +1435,6 @@ const PR_A6000W: React.FC = () => {
             //원하는 행 위치로 스크롤 기능
             ref={gridRef2}
             rowHeight={30}
-            resizable={true}
             id="grdList2"
           >
             {customOptionData !== null &&
@@ -1531,7 +1531,6 @@ const PR_A6000W: React.FC = () => {
             //원하는 행 위치로 스크롤 기능
             ref={gridRef3}
             rowHeight={30}
-            resizable={true}
             id="grdList3"
           >
             <GridColumn cell={CommandCell} width="50px" />
