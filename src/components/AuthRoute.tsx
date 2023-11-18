@@ -129,6 +129,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "HU_B1040W" ||
       link == "HU_B2100W" ||
       link == "HU_B2120W" ||
+      link == "HU_B2140W" ||
       link == "HU_B3140W" ||
       link == "HU_B3160W" ||
       link == "HU_B3180W" ||
@@ -175,6 +176,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "CR_A1101W" ||
       link == "QC_A2500_603W" ||
       link == "SA_A1000_603W" ||
+      link == "SA_A1001_603W" ||
       link == "SA_A1100_603W" ||
       link == "SA_B1000W_603" ||
       link == "SA_B2216W" ||

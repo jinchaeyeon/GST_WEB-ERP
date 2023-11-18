@@ -91,6 +91,7 @@ import HU_A4100W from "./routes/HU_A4100W";
 import HU_A5020W from "./routes/HU_A5020W";
 import HU_B1020W from "./routes/HU_B1020W";
 import HU_B2100W from "./routes/HU_B2100W";
+import HU_B2140W from "./routes/HU_B2140W";
 import HU_B3140W from "./routes/HU_B3140W";
 import HU_B3160W from "./routes/HU_B3160W";
 import HU_B4000W from "./routes/HU_B4000W";
@@ -159,8 +160,8 @@ import SA_A3000W from "./routes/SA_A3000W";
 import SA_A5000W from "./routes/SA_A5000W";
 import SA_A5001W from "./routes/SA_A5001W";
 import SA_A5010W from "./routes/SA_A5010W";
-
 import HU_B1040W from "./routes/HU_B1040W";
+import SA_A1001_603W from "./routes/SA_A1001_603W";
 import SA_B1000W_603 from "./routes/SA_B1000W_603";
 import SA_B2200W from "./routes/SA_B2200W";
 import SA_B2211W from "./routes/SA_B2211W";
@@ -594,6 +595,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/HU_B1040W" component={HU_B1040W} exact />
                   <AuthRoute path="/HU_B2100W" component={HU_B2100W} exact />
                   <AuthRoute path="/HU_B2120W" component={HU_B2120W} exact />
+                  <AuthRoute path="/HU_B2140W" component={HU_B2140W} exact />
                   <AuthRoute path="/HU_B3140W" component={HU_B3140W} exact />
                   <AuthRoute path="/HU_B3160W" component={HU_B3160W} exact />
                   <AuthRoute path="/HU_B3180W" component={HU_B3180W} exact />
@@ -690,6 +692,11 @@ const AppInner: React.FC = () => {
                     component={SA_A1000_603W}
                     exact
                   />
+                          <AuthRoute
+                    path="/SA_A1001_603W"
+                    component={SA_A1001_603W}
+                    exact
+                  />
                   <AuthRoute
                     path="/SA_B1000W_603"
                     component={SA_B1000W_603}
@@ -697,7 +704,7 @@ const AppInner: React.FC = () => {
                   />
                   <AuthRoute path="/CM_A5000W" component={CM_A5000W} exact />
                   <AuthRoute path="/CM_A5001W" component={CM_A5001W} exact />
-
+                  
                   {/* PDA */}
                   <AuthRoute
                     path="/SA_A2300W_PDA"
