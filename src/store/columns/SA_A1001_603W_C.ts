@@ -94,14 +94,14 @@ export const gridList: Array<TGrid> = [
         width: 100,
       },   
       {
-        id: "col_marginpercent",
-        field: "marginpercent",
+        id: "col_marginamt",
+        field: "marginamt",
         caption: "마진률",
         width: 100,
       },
       {
-        id: "col_discountpercent",
-        field: "discountpercent",
+        id: "col_discountamt",
+        field: "discountamt",
         caption: "할인률",
         width: 100,
       },

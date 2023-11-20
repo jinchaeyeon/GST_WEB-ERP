@@ -79,8 +79,13 @@ const dateField = ["quodt"];
 const numberField = [
   "quoamt",
   "quowonamt",
-  "marginpercent",
-  "discountpercent",
+  "marginamt",
+  "discountamt",
+  "finalquowonamt",
+];
+
+const numberField2 = [
+  "quowonamt",
   "finalquowonamt",
 ];
 
@@ -156,11 +161,13 @@ const SA_A1001_603W: React.FC = () => {
     }
   }, [customOptionData]);
   const [bizComponentData, setBizComponentData] = useState<any>([]);
-  UseBizComponent("L_sysUserMaster_001", setBizComponentData);
+  UseBizComponent("L_sysUserMaster_001, L_SA001_603", setBizComponentData);
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
-
+  const [materialtypeListData, setMaterialtypeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData.length > 0) {
       const userQueryStr = getQueryFromBizComponent(
@@ -168,6 +175,12 @@ const SA_A1001_603W: React.FC = () => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
+      const materialtypeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA001_603"
+        )
+      );
+      fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
       fetchQueryData(userQueryStr, setUserListData);
     }
   }, [bizComponentData]);
@@ -276,18 +289,18 @@ const SA_A1001_603W: React.FC = () => {
     ceonm: string;
   }
 
-  const [information, setInformation] = useState({
+  const [information, setInformation] = useState<{ [name: string]: any }>({
     num: 1,
     requestnum: "TEST20231114",
     custnm: "셀트리온",
     custprsnnm: "손흥민",
-    materialtype: "1",
+    materialtype: "01",
     requestreason: "허가",
     quonum: "E20231118",
     quofinyn: "",
     quorev: "2",
     quodt: "2023-11-18",
-    quoamt: 500000000,
+    quoamt: "500000000",
   });
 
   const setCustData = (data: ICustData) => {
@@ -372,7 +385,7 @@ const SA_A1001_603W: React.FC = () => {
         requestnum: "TEST20231114",
         custnm: "셀트리온",
         custprsnnm: "손흥민",
-        materialtype: "1",
+        materialtype: "01",
         designyn: "",
         quocalyn: "",
         quofinyn: "",
@@ -564,8 +577,8 @@ const SA_A1001_603W: React.FC = () => {
         itemcd: "#000",
         testitem: "시험품목1",
         quowonamt: 100,
-        marginpercent: 10,
-        discountpercent: 5,
+        marginamt: 10,
+        discountamt: 5,
         finalquowonamt: 104.5,
       },
       {
@@ -573,8 +586,8 @@ const SA_A1001_603W: React.FC = () => {
         itemcd: "#000",
         testitem: "시험품목2",
         quowonamt: 50,
-        marginpercent: 0,
-        discountpercent: 5,
+        marginamt: 0,
+        discountamt: 5,
         finalquowonamt: 45,
       },
     ];
@@ -701,6 +714,19 @@ const SA_A1001_603W: React.FC = () => {
     );
   };
 
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult2.data.forEach((item) =>
+      props.field !== undefined ? (sum += parseFloat(item[props.field])) : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    )
+  };
+
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = "";
     mainDataResult.data.forEach((item) =>
@@ -809,18 +835,15 @@ const SA_A1001_603W: React.FC = () => {
               rowstatus: item.rowstatus == "N" ? "N" : "U",
               finalquowonamt:
                 editedField != "finalquowonamt"
-                  ? (item.quowonamt +
+                  ? ThreeNumberceil(item.quowonamt +
+                    ThreeNumberceil(item.quowonamt * (item.marginamt / 100)) -
                     ThreeNumberceil(
-                      (item.quowonamt * (item.marginpercent/ 100)) 
-                    )) -
-                    ThreeNumberceil(
-                      ((item.quowonamt +
+                      (item.quowonamt +
                         ThreeNumberceil(
-                          (item.quowonamt * (item.marginpercent/ 100)) 
+                          item.quowonamt * (item.marginamt / 100)
                         )) *
-                          (item.discountpercent /
-                          100)) 
-                    )
+                        (item.discountamt / 100)
+                    ))
                   : item.finalquowonamt,
               [EDIT_FIELD]: undefined,
             }
@@ -1012,6 +1035,9 @@ const SA_A1001_603W: React.FC = () => {
                     person: userListData.find(
                       (items: any) => items.user_id == row.person
                     )?.user_name,
+                    materialtype: materialtypeListData.find(
+                      (items: any) => items.sub_code == row.materialtype
+                    )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
                   mainDataState
@@ -1087,7 +1113,7 @@ const SA_A1001_603W: React.FC = () => {
               <Button themeColor={"primary"}>계약 전환</Button>
             </ButtonContainer>
           </GridTitleContainer>
-          <FormBoxWrap>
+          <FormBoxWrap border={true}>
             <FormBox>
               <tbody>
                 <tr>
@@ -1097,6 +1123,7 @@ const SA_A1001_603W: React.FC = () => {
                       name="requestnum"
                       type="text"
                       value={information.requestnum}
+                      className="readonly"
                     />
                   </td>
                   <th>의뢰기관</th>
@@ -1105,6 +1132,7 @@ const SA_A1001_603W: React.FC = () => {
                       name="custnm"
                       type="text"
                       value={information.custnm}
+                      className="readonly"
                     />
                   </td>
                   <th>의뢰자</th>
@@ -1113,6 +1141,7 @@ const SA_A1001_603W: React.FC = () => {
                       name="custprsnnm"
                       type="text"
                       value={information.custprsnnm}
+                      className="readonly"
                     />
                   </td>
                   <th>의뢰목적</th>
@@ -1121,6 +1150,7 @@ const SA_A1001_603W: React.FC = () => {
                       name="requestreason"
                       type="text"
                       value={information.requestreason}
+                      className="readonly"
                     />
                   </td>
                   <th>물질분야</th>
@@ -1128,7 +1158,13 @@ const SA_A1001_603W: React.FC = () => {
                     <Input
                       name="materialtype"
                       type="text"
-                      value={information.materialtype}
+                      value={
+                        materialtypeListData.find(
+                          (items: any) =>
+                            items.sub_code == information.materialtype
+                        )?.code_name
+                      }
+                      className="readonly"
                     />
                   </td>
                 </tr>
@@ -1139,6 +1175,7 @@ const SA_A1001_603W: React.FC = () => {
                       name="quonum"
                       type="text"
                       value={information.quonum}
+                      className="readonly"
                     />
                   </td>
                   <th>견적rev</th>
@@ -1147,18 +1184,26 @@ const SA_A1001_603W: React.FC = () => {
                       name="quorev"
                       type="text"
                       value={information.quorev}
+                      className="readonly"
                     />
                   </td>
                   <th>견적 발행일</th>
                   <td>
-                    <Input name="quodt" type="text" value={information.quodt} />
+                    <Input
+                      name="quodt"
+                      type="text"
+                      value={information.quodt}
+                      className="readonly"
+                    />
                   </td>
                   <th>견적금액</th>
                   <td>
                     <Input
                       name="quoamt"
-                      type="number"
-                      value={information.quoamt}
+                      type="text"
+                      value={numberWithCommas(parseInt(information.quoamt))}
+                      className="readonly"
+                      style={{ textAlign: "end" }}
                     />
                   </td>
                   <th>견적확정여부</th>
@@ -1167,6 +1212,7 @@ const SA_A1001_603W: React.FC = () => {
                       name="quofinyn"
                       type="text"
                       value={information.quofinyn}
+                      className="readonly"
                     />
                   </td>
                 </tr>
@@ -1237,6 +1283,8 @@ const SA_A1001_603W: React.FC = () => {
                           footerCell={
                             item.sortOrder === 0
                               ? mainTotalFooterCell2
+                              : numberField2.includes(item.fieldName)
+                              ? editNumberFooterCell
                               : undefined
                           }
                         />
@@ -1248,6 +1296,12 @@ const SA_A1001_603W: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>시험상세디자인</GridTitle>
               </GridTitleContainer>
+              <div
+                style={{
+                  border: "solid 1px rgba(0, 0, 0, 0.08)",
+                  height: "65.5vh",
+                }}
+              ></div>
             </GridContainer>
           </GridContainerWrap>
         </TabStripTab>

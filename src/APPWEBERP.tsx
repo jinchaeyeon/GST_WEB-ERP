@@ -96,6 +96,7 @@ import HU_B3140W from "./routes/HU_B3140W";
 import HU_B3160W from "./routes/HU_B3160W";
 import HU_B4000W from "./routes/HU_B4000W";
 import HU_B4001W from "./routes/HU_B4001W";
+import HU_B4010W from "./routes/HU_B4010W";
 import MA_A0010W from "./routes/MA_A0010W";
 import MA_A1000W from "./routes/MA_A1000W";
 import MA_A2000W from "./routes/MA_A2000W";
@@ -602,6 +603,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/HU_B3220W" component={HU_B3220W} exact />
                   <AuthRoute path="/HU_B4001W" component={HU_B4001W} exact />
                   <AuthRoute path="/HU_B4000W" component={HU_B4000W} exact />
+                  <AuthRoute path="/HU_B4010W" component={HU_B4010W} exact />
 
                   {/* 회계관리 */}
                   <AuthRoute path="/AC_A0020W" component={AC_A0020W} exact />
