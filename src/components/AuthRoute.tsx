@@ -77,6 +77,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "PR_A9100W" ||
       link == "PR_B0020W" ||
       link == "PR_B3000W" ||
+      link == "PR_A2000W" ||
       link == "PR_A3000W" ||
       link == "PR_A6000W" ||
       link == "PR_A7000W" ||
