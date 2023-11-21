@@ -111,6 +111,15 @@ const NumberCommaField = [
   "discountamt",
   "amt",
 ];
+
+const NumberField2 = [
+  "marginamt",
+  "discountamt",
+  "wonamt",
+  "taxamt",
+  "amt",
+];
+
 const customField = ["insert_userid", "margin_div", "discount_div"];
 let temp = 0;
 const CustomComboBoxCell = (props: GridCellProps) => {
@@ -1373,6 +1382,20 @@ const SA_A1100_603W: React.FC = () => {
       </td>
     );
   };
+
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult2.data.forEach((item) =>
+      props.field !== undefined ? (sum += parseFloat(item[props.field])) : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    )
+  };
+
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -2621,6 +2644,8 @@ const SA_A1100_603W: React.FC = () => {
                           footerCell={
                             item.sortOrder === 0
                               ? mainTotalFooterCell2
+                              : NumberField2.includes(item.fieldName)
+                              ? editNumberFooterCell
                               : undefined
                           }
                         />
