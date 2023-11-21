@@ -340,7 +340,6 @@ const KendoWindow = ({
         setAttachmentNumber(newAttachmentNumber);
       } else {
         fetchGrid();
-        setAttachmentNumber(newAttachmentNumber);
       }
     }
   };

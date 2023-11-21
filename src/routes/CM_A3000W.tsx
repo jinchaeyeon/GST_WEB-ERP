@@ -723,7 +723,6 @@ const CM_A3000W: React.FC = () => {
         setAttachmentNumber(newAttachmentNumber);
       } else {
         fetchAttdatnumGrid();
-        setAttachmentNumber(newAttachmentNumber);
       }
     }
   };
@@ -998,9 +997,8 @@ const CM_A3000W: React.FC = () => {
     if (subDataResult.data.length == 0) {
       alert("데이터가 없습니다");
     } else {
-      const parameters = attDataResult.data.filter((item) => item.chk == true);
       let data: any;
-      parameters.forEach(async (parameter) => {
+      attDataResult.data.forEach(async (parameter) => {
         try {
           data = await processApi<any>("file-delete", {
             attached: parameter.saved_name,
@@ -1008,13 +1006,11 @@ const CM_A3000W: React.FC = () => {
         } catch (error) {
           data = null;
         }
-
-        if (data !== null) {
-          fetchAttdatnumGrid();
-        } else {
-          alert("처리 중 오류가 발생하였습니다.");
-        }
       });
+      setInfomation((prev) => ({
+        ...prev,
+        workType: "D"
+      }))
     }
   };
 
@@ -1242,12 +1238,7 @@ const CM_A3000W: React.FC = () => {
       } catch (error) {
         data = null;
       }
-
-      if (data !== null) {
-        fetchAttdatnumGrid();
-      } else {
-        alert("처리 중 오류가 발생하였습니다.");
-      }
+      fetchAttdatnumGrid();
     });
   };
 

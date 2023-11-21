@@ -117,7 +117,7 @@ const AC_B6080W: React.FC = () => {
       setDate9(new Date(year, month - 8, day));
       setDate10(new Date(year, month - 9, day));
       setDate11(new Date(year, month - 10, day));
-      setDate12(new Date(year - 1, month, day));
+      setDate12(new Date(year, month - 11, day));
     }
   }, [customOptionData]);
 
@@ -767,7 +767,7 @@ const AC_B6080W: React.FC = () => {
         setDate9(new Date(year, month - 8, day));
         setDate10(new Date(year, month - 9, day));
         setDate11(new Date(year, month - 10, day));
-        setDate12(new Date(year - 1, month, day));
+        setDate12(new Date(year, month - 11, day));
       }
     } catch (e) {
       alert(e);
