@@ -147,6 +147,7 @@ type TdataArr2 = {
   current_income_s: string[];
   dedt_rati_s: string[];
   totemp_s: string[];
+  attdatnum_s: string[];
 };
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
@@ -2441,13 +2442,26 @@ const BA_A0020_603: React.FC = () => {
 
   const onSaveClick = async () => {
     let valid = true;
+    const dataItem = subDataResult.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
     try {
-      subDataResult.data.map((item: any) => {
-        if (
-          convertDateToStr(item.yyyy).substring(0, 4) < "1997" ||
-          convertDateToStr(item.yyyy).substring(0, 4).length != 4
-        ) {
-          throw findMessage(messagesData, "BA_A0020W_603_006");
+      dataItem.map((item: any) => {
+        if(typeof item.yyyy == "string") {
+          if(item.yyyy.substring(0, 4) < "1997" || item.yyyy.substring(0, 4).length != 4) {
+            throw findMessage(messagesData, "BA_A0020W_603_006");
+          }
+        } else {
+          if (
+            convertDateToStr(item.yyyy).substring(0, 4) < "1997" ||
+            convertDateToStr(item.yyyy).substring(0, 4).length != 4
+          ) {
+            throw findMessage(messagesData, "BA_A0020W_603_006");
+          }
         }
       });
     } catch (e) {
@@ -2456,13 +2470,6 @@ const BA_A0020_603: React.FC = () => {
     }
 
     if (!valid) return false;
-
-    const dataItem = subDataResult.data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
 
     if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
     let dataArr: TdataArr2 = {
@@ -2478,6 +2485,7 @@ const BA_A0020_603: React.FC = () => {
       current_income_s: [],
       dedt_rati_s: [],
       totemp_s: [],
+      attdatnum_s: [],
     };
     dataItem.forEach((item: any, idx: number) => {
       const {
@@ -2498,7 +2506,7 @@ const BA_A0020_603: React.FC = () => {
       dataArr.rowstatus.push(rowstatus);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(convertDateToStr(yyyy).substring(0, 4));
+      dataArr.yyyy_s.push(typeof yyyy == "string" ? yyyy.substring(0,4) : convertDateToStr(yyyy).substring(0, 4));
       dataArr.totasset_s.push(totasset);
       dataArr.paid_up_capital_s.push(paid_up_capital);
       dataArr.totcaptial_s.push(totcapital);
@@ -2507,6 +2515,7 @@ const BA_A0020_603: React.FC = () => {
       dataArr.current_income_s.push(current_income);
       dataArr.dedt_rati_s.push(dedt_ratio);
       dataArr.totemp_s.push(totemp);
+      dataArr.attdatnum_s.push("");
     });
     deletedMainRows.forEach(async (item: any, idx: number) => {
       const {
@@ -2527,7 +2536,7 @@ const BA_A0020_603: React.FC = () => {
       dataArr.rowstatus.push(rowstatus);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(yyyy.substring(0, 4));
+      dataArr.yyyy_s.push(typeof yyyy == "string" ? yyyy.substring(0,4) : convertDateToStr(yyyy).substring(0, 4));
       dataArr.totasset_s.push(totasset);
       dataArr.paid_up_capital_s.push(paid_up_capital);
       dataArr.totcaptial_s.push(totcapital);
@@ -2536,6 +2545,7 @@ const BA_A0020_603: React.FC = () => {
       dataArr.current_income_s.push(current_income);
       dataArr.dedt_rati_s.push(dedt_ratio);
       dataArr.totemp_s.push(totemp);
+      dataArr.attdatnum_s.push("");
     });
     const item = Object.getOwnPropertyNames(selectedState)[0];
 
@@ -2595,7 +2605,7 @@ const BA_A0020_603: React.FC = () => {
       phoneno_s: "",
       email_s: "",
       rtrchk_s: "",
-      attdatnum_s: "",
+      attdatnum_s: dataArr.attdatnum_s.join("|"),
       sort_seq_s: "",
       seq_s: dataArr.seq_s.join("|"),
       yyyy_s: dataArr.yyyy_s.join("|"),
@@ -2871,6 +2881,8 @@ const BA_A0020_603: React.FC = () => {
         auto: "Y",
         totemp_s: "",
       });
+      deletedMainRows = [];
+      deletedMainRows2 = [];
     } else {
       console.log("[오류 발생]");
       console.log(data);

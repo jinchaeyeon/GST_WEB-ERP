@@ -149,6 +149,8 @@ type TdataArr2 = {
   operating_profits_s: string[];
   current_income_s: string[];
   dedt_rati_s: string[];
+  totemp_s: string[];
+  attdatnum_s: string[];
 };
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
@@ -2036,6 +2038,7 @@ const BA_A0020: React.FC = () => {
     operating_profits_s: "",
     current_income_s: "",
     dedt_rati_s: "",
+    totemp_s: "",
     user_id: userId,
     pc: pc,
     form_id: "BA_A0020W",
@@ -2129,7 +2132,7 @@ const BA_A0020: React.FC = () => {
       "@p_operating_profits_s": paraData.operating_profits_s,
       "@p_current_income_s": paraData.current_income_s,
       "@p_dedt_rati_s": paraData.dedt_rati_s,
-      "@p_totemp_s": "",
+      "@p_totemp_s": paraData.totemp_s,
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "BA_A0020W",
@@ -2488,13 +2491,26 @@ const BA_A0020: React.FC = () => {
 
   const onSaveClick3 = async () => {
     let valid = true;
+    const dataItem = subDataResult2.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
     try {
-      subDataResult2.data.map((item: any) => {
-        if (
-          convertDateToStr(item.yyyy).substring(0, 4) < "1997" ||
-          convertDateToStr(item.yyyy).substring(0, 4).length != 4
-        ) {
-          throw findMessage(messagesData, "BA_A0020W_007");
+      dataItem.map((item: any) => {
+        if(typeof item.yyyy == "string") {
+          if(item.yyyy.substring(0, 4) < "1997" || item.yyyy.substring(0, 4).length != 4) {
+            throw findMessage(messagesData, "BA_A0020W_007");
+          }
+        } else {
+          if (
+            convertDateToStr(item.yyyy).substring(0, 4) < "1997" ||
+            convertDateToStr(item.yyyy).substring(0, 4).length != 4
+          ) {
+            throw findMessage(messagesData, "BA_A0020W_007");
+          }
         }
       });
     } catch (e) {
@@ -2503,13 +2519,6 @@ const BA_A0020: React.FC = () => {
     }
 
     if (!valid) return false;
-
-    const dataItem = subDataResult2.data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
 
     if (dataItem.length === 0 && deletedMainRows2.length === 0) return false;
     let dataArr: TdataArr2 = {
@@ -2524,6 +2533,8 @@ const BA_A0020: React.FC = () => {
       operating_profits_s: [],
       current_income_s: [],
       dedt_rati_s: [],
+      totemp_s: [],
+      attdatnum_s: [],
     };
     dataItem.forEach((item: any, idx: number) => {
       const {
@@ -2543,7 +2554,7 @@ const BA_A0020: React.FC = () => {
       dataArr.rowstatus.push(rowstatus);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(convertDateToStr(yyyy).substring(0, 4));
+      dataArr.yyyy_s.push(typeof yyyy == "string" ? yyyy.substring(0,4) : convertDateToStr(yyyy).substring(0, 4));
       dataArr.totasset_s.push(totasset);
       dataArr.paid_up_capital_s.push(paid_up_capital);
       dataArr.totcaptial_s.push(totcapital);
@@ -2551,6 +2562,8 @@ const BA_A0020: React.FC = () => {
       dataArr.operating_profits_s.push(operating_profits);
       dataArr.current_income_s.push(current_income);
       dataArr.dedt_rati_s.push(dedt_ratio);
+      dataArr.totemp_s.push("0");
+      dataArr.attdatnum_s.push("");
     });
     deletedMainRows2.forEach(async (item: any, idx: number) => {
       const {
@@ -2570,7 +2583,7 @@ const BA_A0020: React.FC = () => {
       dataArr.rowstatus.push(rowstatus);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(yyyy.substring(0, 4));
+      dataArr.yyyy_s.push(typeof yyyy == "string" ? yyyy.substring(0,4) : convertDateToStr(yyyy).substring(0, 4));
       dataArr.totasset_s.push(totasset);
       dataArr.paid_up_capital_s.push(paid_up_capital);
       dataArr.totcaptial_s.push(totcapital);
@@ -2578,6 +2591,8 @@ const BA_A0020: React.FC = () => {
       dataArr.operating_profits_s.push(operating_profits);
       dataArr.current_income_s.push(current_income);
       dataArr.dedt_rati_s.push(dedt_ratio);
+      dataArr.totemp_s.push("0");
+      dataArr.attdatnum_s.push("");
     });
     const item = Object.getOwnPropertyNames(selectedState)[0];
 
@@ -2637,7 +2652,7 @@ const BA_A0020: React.FC = () => {
       phoneno_s: "",
       email_s: "",
       rtrchk_s: "",
-      attdatnum_s: "",
+      attdatnum_s: dataArr.attdatnum_s.join("|"),
       sort_seq_s: "",
       seq_s: dataArr.seq_s.join("|"),
       yyyy_s: dataArr.yyyy_s.join("|"),
@@ -2648,6 +2663,7 @@ const BA_A0020: React.FC = () => {
       operating_profits_s: dataArr.operating_profits_s.join("|"),
       current_income_s: dataArr.current_income_s.join("|"),
       dedt_rati_s: dataArr.dedt_rati_s.join("|"),
+      totemp_s: dataArr.totemp_s.join("|"),
     }));
   };
 
@@ -2928,12 +2944,15 @@ const BA_A0020: React.FC = () => {
         operating_profits_s: "",
         current_income_s: "",
         dedt_rati_s: "",
+        totemp_s: "",
         user_id: userId,
         pc: pc,
         form_id: "BA_A0020W",
         company_code: companyCode,
         auto: "Y",
       });
+      deletedMainRows = [];
+      deletedMainRows2 = [];
     } else {
       console.log("[오류 발생]");
       console.log(data);
