@@ -112,13 +112,7 @@ const NumberCommaField = [
   "amt",
 ];
 
-const NumberField2 = [
-  "marginamt",
-  "discountamt",
-  "wonamt",
-  "taxamt",
-  "amt",
-];
+const NumberField2 = ["marginamt", "discountamt", "wonamt", "taxamt", "amt"];
 
 const customField = ["insert_userid", "margin_div", "discount_div"];
 let temp = 0;
@@ -1386,14 +1380,16 @@ const SA_A1100_603W: React.FC = () => {
   const editNumberFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult2.data.forEach((item) =>
-      props.field !== undefined ? (sum += parseFloat(item[props.field])) : 0
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" ? 0 : item[props.field]))
+        : 0
     );
 
     return (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {numberWithCommas(sum)}
       </td>
-    )
+    );
   };
 
   //엑셀 내보내기

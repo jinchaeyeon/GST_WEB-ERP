@@ -51,6 +51,7 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   isValidDate,
+  numberWithCommas,
   toDate,
 } from "../CommonFunction";
 import {
@@ -720,6 +721,21 @@ const CopyWindow = ({
           : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
             (parts[1] ? "." + parts[1] : "")}
         건
+      </td>
+    );
+  };
+
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" ? 0 : item[props.field]))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
       </td>
     );
   };
@@ -1647,6 +1663,7 @@ const CopyWindow = ({
               title="수량"
               width="130px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn
               field="qtyunit"

@@ -64,6 +64,7 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   isValidDate,
+  numberWithCommas,
   useSysMessage,
 } from "../components/CommonFunction";
 import {
@@ -105,13 +106,13 @@ let temp2 = 0;
 const checkboxField = ["useyn", "rtrchk"];
 
 const NumberField = [
-  "employeesNumber",
-  "Totalassets",
-  "Totalliabilities",
-  "Totalcapital",
-  "Sales",
-  "businessprofits",
-  "Currentprofit",
+  "totemp",
+  "totasset",
+  "dedt_ratio",
+  "totcapital",
+  "salesmoney",
+  "operating_profits",
+  "current_income",
 ];
 
 const requiredField = ["prsnnm", "yyyy"];
@@ -145,6 +146,7 @@ type TdataArr2 = {
   operating_profits_s: string[];
   current_income_s: string[];
   dedt_rati_s: string[];
+  totemp_s: string[];
 };
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
@@ -904,6 +906,7 @@ const BA_A0020_603: React.FC = () => {
 
       const row = rows.map((item: any) => ({
         ...item,
+        yyyy: new Date(item.yyyy, 0 ,1)
       }));
 
       if (subfilters.find_row_value !== "") {
@@ -1337,22 +1340,21 @@ const BA_A0020_603: React.FC = () => {
     );
   };
 
-  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = "";
-    subDataResult2.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    subDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" ? 0 : item[props.field]))
+        : 0
     );
-
-    var parts = parseInt(sum).toString().split(".");
-    return parts[0] != "NaN" ? (
+  
+    return (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        {numberWithCommas(sum)}
       </td>
-    ) : (
-      <td></td>
     );
   };
+
   const onAddClick2 = () => {
     setWorkType("N");
     const defaultOption = GetPropertyValueByName(
@@ -1440,15 +1442,15 @@ const BA_A0020_603: React.FC = () => {
     const newDataItem = {
       [SUB_DATA_ITEM_KEY]: ++temp,
       custcd: infomation.custcd,
-      current_income: 0,
-      dedt_ratio: 0,
+      totemp: 0,
       operating_profits: 0,
-      paid_up_capital: 0,
+      current_income: 0,
       ramark: "",
       salesmoney: 0,
       seq: 0,
       totasset: 0,
       totcapital: 0,
+      dedt_ratio: 0,
       yyyy: new Date(),
       rowstatus: "N",
     };
@@ -1489,6 +1491,7 @@ const BA_A0020_603: React.FC = () => {
       phoneno: "",
       prsnnm: "",
       remark: "",
+      postcd: "",
       rtrchk: "N",
       sort_seq: 0,
       telno: "",
@@ -1994,6 +1997,7 @@ const BA_A0020_603: React.FC = () => {
     operating_profits_s: "",
     current_income_s: "",
     dedt_rati_s: "",
+    totemp_s: "",
     user_id: userId,
     pc: pc,
     form_id: "BA_A0020W",
@@ -2074,6 +2078,7 @@ const BA_A0020_603: React.FC = () => {
       "@p_operating_profits_s": paraData.operating_profits_s,
       "@p_current_income_s": paraData.current_income_s,
       "@p_dedt_rati_s": paraData.dedt_rati_s,
+      "@p_totemp_s": paraData.totemp_s,
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "BA_A0020W",
@@ -2154,6 +2159,7 @@ const BA_A0020_603: React.FC = () => {
       "@p_operating_profits_s": "",
       "@p_current_income_s": "",
       "@p_dedt_rati_s": "",
+      "@p_totemp_s": "",
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "BA_A0020W",
@@ -2249,6 +2255,7 @@ const BA_A0020_603: React.FC = () => {
       "@p_operating_profits_s": "",
       "@p_current_income_s": "",
       "@p_dedt_rati_s": "",
+      "@p_totemp_s": "",
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "BA_A0020W",
@@ -2303,7 +2310,7 @@ const BA_A0020_603: React.FC = () => {
         prsnnm = "",
         prsnnm_s = "",
         dptnm = "",
-        postcd_s = "",
+        postcd = "",
         telno = "",
         phoneno = "",
         email = "",
@@ -2317,7 +2324,7 @@ const BA_A0020_603: React.FC = () => {
       dataArr.custprsncd_s.push(custprsncd);
       dataArr.prsnnm_s.push(prsnnm);
       dataArr.dptnm.push(dptnm);
-      dataArr.postcd_s.push(postcd_s);
+      dataArr.postcd_s.push(postcd);
       dataArr.telno.push(telno);
       dataArr.phoneno_s.push(phoneno);
       dataArr.email_s.push(email);
@@ -2335,7 +2342,7 @@ const BA_A0020_603: React.FC = () => {
         prsnnm = "",
         prsnnm_s = "",
         dptnm = "",
-        postcd_s = "",
+        postcd = "",
         telno = "",
         phoneno = "",
         email = "",
@@ -2349,7 +2356,7 @@ const BA_A0020_603: React.FC = () => {
       dataArr.custprsncd_s.push(custprsncd);
       dataArr.prsnnm_s.push(prsnnm);
       dataArr.dptnm.push(dptnm);
-      dataArr.postcd_s.push(postcd_s);
+      dataArr.postcd_s.push(postcd);
       dataArr.telno.push(telno);
       dataArr.phoneno_s.push(phoneno);
       dataArr.email_s.push(email);
@@ -2427,8 +2434,10 @@ const BA_A0020_603: React.FC = () => {
       operating_profits_s: "",
       current_income_s: "",
       dedt_rati_s: "",
+      totemp_s: "",
     }));
   };
+
 
   const onSaveClick = async () => {
     let valid = true;
@@ -2468,6 +2477,7 @@ const BA_A0020_603: React.FC = () => {
       operating_profits_s: [],
       current_income_s: [],
       dedt_rati_s: [],
+      totemp_s: [],
     };
     dataItem.forEach((item: any, idx: number) => {
       const {
@@ -2482,6 +2492,7 @@ const BA_A0020_603: React.FC = () => {
         totasset = 0,
         totcapital = 0,
         yyyy = "",
+        totemp = ""
       } = item;
 
       dataArr.rowstatus.push(rowstatus);
@@ -2495,6 +2506,7 @@ const BA_A0020_603: React.FC = () => {
       dataArr.operating_profits_s.push(operating_profits);
       dataArr.current_income_s.push(current_income);
       dataArr.dedt_rati_s.push(dedt_ratio);
+      dataArr.totemp_s.push(totemp);
     });
     deletedMainRows.forEach(async (item: any, idx: number) => {
       const {
@@ -2509,6 +2521,7 @@ const BA_A0020_603: React.FC = () => {
         totasset = 0,
         totcapital = 0,
         yyyy = "",
+        totemp = ""
       } = item;
 
       dataArr.rowstatus.push(rowstatus);
@@ -2522,6 +2535,7 @@ const BA_A0020_603: React.FC = () => {
       dataArr.operating_profits_s.push(operating_profits);
       dataArr.current_income_s.push(current_income);
       dataArr.dedt_rati_s.push(dedt_ratio);
+      dataArr.totemp_s.push(totemp);
     });
     const item = Object.getOwnPropertyNames(selectedState)[0];
 
@@ -2592,6 +2606,7 @@ const BA_A0020_603: React.FC = () => {
       operating_profits_s: dataArr.operating_profits_s.join("|"),
       current_income_s: dataArr.current_income_s.join("|"),
       dedt_rati_s: dataArr.dedt_rati_s.join("|"),
+      totemp_s: dataArr.totemp_s.join("|"),
     }));
   };
 
@@ -2854,6 +2869,7 @@ const BA_A0020_603: React.FC = () => {
         form_id: "BA_A0020W",
         company_code: companyCode,
         auto: "Y",
+        totemp_s: "",
       });
     } else {
       console.log("[오류 발생]");
@@ -3453,6 +3469,8 @@ const BA_A0020_603: React.FC = () => {
                             footerCell={
                               item.sortOrder === 0
                                 ? subTotalFooterCell
+                                : NumberField.includes(item.fieldName)
+                                ? editNumberFooterCell
                                 : undefined
                             }
                           />
@@ -3578,8 +3596,6 @@ const BA_A0020_603: React.FC = () => {
                               footerCell={
                                 item.sortOrder === 0
                                   ? subTotalFooterCell2
-                                  : NumberField.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell
                                   : undefined
                               }
                             />

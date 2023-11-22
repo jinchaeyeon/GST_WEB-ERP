@@ -51,6 +51,7 @@ import {
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
+  numberWithCommas,
   toDate,
 } from "../CommonFunction";
 import {
@@ -1296,6 +1297,21 @@ const CopyWindow = ({
           : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
             (parts[1] ? "." + parts[1] : "")}
         건
+      </td>
+    );
+  };
+
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" ? 0 : item[props.field]))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
       </td>
     );
   };
@@ -2729,18 +2745,21 @@ const CopyWindow = ({
               title="단량"
               width="100px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn
               field="qty"
               title="수량"
               width="100px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn
               field="totwgt"
               title="중량"
               width="100px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn
               field="specialunp"
@@ -2759,24 +2778,28 @@ const CopyWindow = ({
               title="금액"
               width="100px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn
               field="wonamt"
               title="원화금액"
               width="100px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn
               field="taxamt"
               title="세액"
               width="100px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn
               field="dlramt"
               title="달러금액"
               width="100px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn field="remark" title="비고" width="200px" />
             <GridColumn field="itemlvl1" title="대분류" width="120px" />

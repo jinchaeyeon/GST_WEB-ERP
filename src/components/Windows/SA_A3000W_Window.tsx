@@ -46,6 +46,7 @@ import {
   isValidDate,
   toDate,
   GetPropertyValueByName,
+  numberWithCommas,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -631,6 +632,21 @@ const CopyWindow = ({
     );
   };
 
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" ? 0 : item[props.field]))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+  
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -1608,6 +1624,7 @@ const CopyWindow = ({
               title="수량"
               width="100px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn field="qtyunit" title="수량단위" width="120px" />
             <GridColumn

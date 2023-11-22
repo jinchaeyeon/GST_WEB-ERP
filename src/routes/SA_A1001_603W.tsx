@@ -717,7 +717,9 @@ const SA_A1001_603W: React.FC = () => {
   const editNumberFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult2.data.forEach((item) =>
-      props.field !== undefined ? (sum += parseFloat(item[props.field])) : 0
+       props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" ? 0 : item[props.field]))
+        : 0
     );
 
     return (

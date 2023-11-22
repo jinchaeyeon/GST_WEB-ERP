@@ -53,6 +53,7 @@ import {
   getItemQuery,
   getSelectedFirstData,
   handleKeyPressSearch,
+  numberWithCommas,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -1420,6 +1421,21 @@ const BA_A0050: React.FC = () => {
     );
   };
 
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    subData2Result.data.forEach((item) =>
+       props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" ? 0 : item[props.field]))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
@@ -2386,6 +2402,8 @@ const BA_A0050: React.FC = () => {
                           footerCell={
                             item.sortOrder === 0
                               ? sub2TotalFooterCell
+                              : NumberField.includes(item.fieldName)
+                              ? editNumberFooterCell
                               : undefined
                           }
                         />

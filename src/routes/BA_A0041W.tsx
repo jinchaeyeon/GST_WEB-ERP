@@ -47,6 +47,7 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
+  numberWithCommas,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -78,6 +79,7 @@ const CustomComboField = [
   "load_place",
   "invunit",
 ];
+const NumberField2 = ["unitwgt", "safeqty", "purqty"];
 const requiredField = ["useyn", "itemnm", "itemacnt"];
 let targetRowIndex: null | number = null;
 
@@ -501,6 +503,21 @@ const BA_A0041W: React.FC = () => {
           : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
             (parts[1] ? "." + parts[1] : "")}
         건
+      </td>
+    );
+  };
+
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" ? 0 : item[props.field]))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
       </td>
     );
   };
@@ -2004,7 +2021,11 @@ const BA_A0041W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 1 ? mainTotalFooterCell : undefined
+                        item.sortOrder === 1
+                          ? mainTotalFooterCell
+                          : NumberField2.includes(item.fieldName)
+                          ? editNumberFooterCell
+                          : undefined
                       }
                     />
                   )

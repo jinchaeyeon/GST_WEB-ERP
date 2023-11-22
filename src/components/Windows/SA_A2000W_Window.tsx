@@ -73,6 +73,7 @@ import {
   getQueryFromBizComponent,
   getUnpQuery,
   isValidDate,
+  numberWithCommas,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
@@ -2310,6 +2311,21 @@ const KendoWindow = ({
     );
   };
 
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" ? 0 : item[props.field]))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+
   const [values2, setValues2] = React.useState<boolean>(false);
   const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
     const changeCheck = () => {
@@ -3308,6 +3324,7 @@ const KendoWindow = ({
               width="120px"
               cell={NumberCell}
               headerCell={RequiredHeader}
+              footerCell={editNumberFooterCell}
               className="required"
             />
             <GridColumn
@@ -3329,18 +3346,21 @@ const KendoWindow = ({
               title="금액"
               width="120px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn
               field="taxamt"
               title="세액"
               width="120px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn
               field="totamt"
               title="합계금액"
               width="120px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn field="remark" title="비고" width="120px" />
             <GridColumn field="purcustnm" title="발주처" width="120px" />
@@ -3349,12 +3369,14 @@ const KendoWindow = ({
               title="출하수량"
               width="120px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn
               field="sale_qty"
               title="판매수량"
               width="120px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn
               field="finyn"
@@ -3367,6 +3389,7 @@ const KendoWindow = ({
               title="LOT수량"
               width="120px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn field="lotnum" title="LOT NO" width="120px" />
           </Grid>

@@ -67,6 +67,7 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   isValidDate,
+  numberWithCommas,
   useSysMessage,
 } from "../components/CommonFunction";
 import {
@@ -1363,22 +1364,21 @@ const BA_A0020: React.FC = () => {
     );
   };
 
-  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
-    let sum = "";
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
     subDataResult2.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" ? 0 : item[props.field]))
+        : 0
     );
 
-    var parts = parseInt(sum).toString().split(".");
-    return parts[0] != "NaN" ? (
+    return (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        {numberWithCommas(sum)}
       </td>
-    ) : (
-      <td></td>
     );
   };
+
   const onAddClick2 = () => {
     setWorkType("N");
     if (unsavedName.length > 0) {
@@ -1559,13 +1559,13 @@ const BA_A0020: React.FC = () => {
     } else {
       setsubFilters((prev) => ({
         ...prev,
-        workType: "MONEY",
+        workType: "CustPerson",
         isSearch: true,
       }));
 
       setsubFilters2((prev) => ({
         ...prev,
-        workType: "CustPerson",
+        workType: "MONEY",
         isSearch: true,
       }));
     }
@@ -2129,6 +2129,7 @@ const BA_A0020: React.FC = () => {
       "@p_operating_profits_s": paraData.operating_profits_s,
       "@p_current_income_s": paraData.current_income_s,
       "@p_dedt_rati_s": paraData.dedt_rati_s,
+      "@p_totemp_s": "",
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "BA_A0020W",
@@ -2209,6 +2210,7 @@ const BA_A0020: React.FC = () => {
       "@p_operating_profits_s": "",
       "@p_current_income_s": "",
       "@p_dedt_rati_s": "",
+      "@p_totemp_s": "",
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "BA_A0020W",
@@ -2302,6 +2304,7 @@ const BA_A0020: React.FC = () => {
       "@p_operating_profits_s": "",
       "@p_current_income_s": "",
       "@p_dedt_rati_s": "",
+      "@p_totemp_s": "",
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "BA_A0020W",
@@ -4038,7 +4041,7 @@ const BA_A0020: React.FC = () => {
                               item.sortOrder === 0
                                 ? subTotalFooterCell2
                                 : NumberField.includes(item.fieldName)
-                                ? gridSumQtyFooterCell
+                                ? editNumberFooterCell
                                 : undefined
                             }
                           />
