@@ -54,6 +54,7 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
+  numberWithCommas,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -579,6 +580,25 @@ const HU_A4100W: React.FC = () => {
           : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
             (parts[1] ? "." + parts[1] : "")}
         건
+      </td>
+    );
+  };
+
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
       </td>
     );
   };
@@ -1234,7 +1254,11 @@ const HU_A4100W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.sortOrder === 0
+                            ? mainTotalFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? editNumberFooterCell
+                            : undefined
                         }
                       />
                     )

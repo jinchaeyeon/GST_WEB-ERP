@@ -51,6 +51,7 @@ import {
   getQueryFromBizComponent,
   setDefaultDate,
   GetPropertyValueByName,
+  numberWithCommas,
 } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
@@ -397,6 +398,22 @@ const CopyWindow = ({ data, setData, setVisible, modal = false }: IWindow) => {
     );
   };
 
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+
+  
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -945,6 +962,7 @@ const CopyWindow = ({ data, setData, setVisible, modal = false }: IWindow) => {
               field="janamt"
               title="금액"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
               width="150px"
             />
             <GridColumn

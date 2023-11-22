@@ -50,6 +50,7 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
+  numberWithCommas,
   setDefaultDate,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -90,6 +91,8 @@ const numberField = [
   "doqty",
 ];
 const numberField2 = ["amt", "wonamt", "taxamt", "totamt"];
+const numberField3 = ["now_qty"];
+const numberField4 = ["doqty"];
 const requiredField = ["doqty"];
 type TdataArr = {
   rowstatus_s: string[];
@@ -1343,6 +1346,34 @@ const MA_A2400W: React.FC = () => {
     } else {
       return <td></td>;
     }
+  };
+
+  const editNumberFooterCell2 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    subDataResult2.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
+    );
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    subDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
+    );
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
   };
 
   const onAddClick = () => {
@@ -2717,8 +2748,10 @@ const MA_A2400W: React.FC = () => {
                             footerCell={
                               item.sortOrder === 0
                                 ? subTotalFooterCell
-                                : numberField2.includes(item.fieldName)
+                                : numberField3.includes(item.fieldName)
                                 ? gridSumQtyFooterCell2
+                                : numberField4.includes(item.fieldName)
+                                ? editNumberFooterCell
                                 : undefined
                             }
                             headerCell={
@@ -3082,7 +3115,11 @@ const MA_A2400W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? subTotalFooterCell2 : undefined
+                        item.sortOrder === 0
+                          ? subTotalFooterCell2
+                          : numberField4.includes(item.fieldName)
+                          ? editNumberFooterCell2
+                          : undefined
                       }
                     />
                   )

@@ -55,6 +55,7 @@ import {
   setDefaultDate,
   toDate,
   GetPropertyValueByName,
+  numberWithCommas,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -865,6 +866,21 @@ const QC_A6000: React.FC = () => {
     );
   };
 
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+
   const createColumn = () => {
     const array = [];
     array.push(
@@ -958,7 +974,7 @@ const QC_A6000: React.FC = () => {
         title={"불량수량"}
         width="100px"
         cell={ColumnCommandCell}
-        footerCell={gridSumQtyFooterCell}
+        footerCell={editNumberFooterCell}
       />
     );
     return array;

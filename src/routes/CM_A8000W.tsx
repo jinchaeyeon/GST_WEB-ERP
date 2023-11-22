@@ -42,6 +42,7 @@ import {
   findMessage,
   getGridItemChangedData,
   handleKeyPressSearch,
+  numberWithCommas,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -856,25 +857,19 @@ const CM_A8000W: React.FC = () => {
     );
   };
 
-  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
     );
-    if (sum != undefined) {
-      var parts = sum.toString().split(".");
 
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    } else {
-      return <td></td>;
-    }
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
   };
 
   const onMainSortChange = (e: any) => {
@@ -1968,7 +1963,7 @@ const CM_A8000W: React.FC = () => {
                           item.sortOrder === 0
                             ? mainTotalFooterCell
                             : NumberField2.includes(item.fieldName)
-                            ? gridSumQtyFooterCell
+                            ? editNumberFooterCell
                             : undefined
                         }
                       />

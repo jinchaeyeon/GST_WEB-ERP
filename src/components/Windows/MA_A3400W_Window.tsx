@@ -47,6 +47,7 @@ import {
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
+  numberWithCommas,
   toDate,
 } from "../CommonFunction";
 import {
@@ -690,6 +691,21 @@ const CopyWindow = ({
     );
   };
 
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+  
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -1682,6 +1698,7 @@ const CopyWindow = ({
               title="수량"
               width="120px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn
               field="unp"
@@ -1694,12 +1711,14 @@ const CopyWindow = ({
               title="금액"
               width="120px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn
               field="taxamt"
               title="세액"
               width="120px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn field="remark" title="비고" width="380px" />
             <GridColumn field="lotnum" title="LOT NO" width="200px" />

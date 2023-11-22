@@ -53,6 +53,7 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
+  numberWithCommas,
   useSysMessage,
 } from "../components/CommonFunction";
 import {
@@ -88,6 +89,8 @@ const CustomComboField = [
 ];
 
 const NumberField = ["procseq", "stdtime", "procqty"];
+
+const NumberField2 = ["procqty"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -886,6 +889,25 @@ const PR_A0040W: React.FC = () => {
           : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
             (parts[1] ? "." + parts[1] : "")}
         건
+      </td>
+    );
+  };
+
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    subData2Result.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
       </td>
     );
   };
@@ -2098,7 +2120,11 @@ const PR_A0040W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? sub2TotalFooterCell : undefined
+                          item.sortOrder === 0
+                            ? sub2TotalFooterCell
+                            : NumberField2.includes(item.fieldName)
+                            ? editNumberFooterCell
+                            : undefined
                         }
                       />
                     )

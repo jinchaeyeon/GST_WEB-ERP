@@ -62,6 +62,7 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
+  numberWithCommas,
   setDefaultDate,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -111,6 +112,7 @@ const numberField = [
   "planqty",
   "prodqty",
 ];
+const numberField2 = ["reqty"]
 const DateField = ["plandt", "finexpdt", "godt"];
 const customField = ["proccd", "prodmac", "prodemp"];
 const customHeaderField = ["proccd", "procseq", "reqty"];
@@ -1280,6 +1282,20 @@ const PR_A7000W: React.FC = () => {
           : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
             (parts[1] ? "." + parts[1] : "")}
         건
+      </td>
+    );
+  };
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    detailDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
       </td>
     );
   };
@@ -2711,6 +2727,8 @@ const PR_A7000W: React.FC = () => {
                           footerCell={
                             item.sortOrder === 0
                               ? detailTotalFooterCell
+                              : numberField2.includes(item.fieldName)
+                              ? editNumberFooterCell
                               : undefined
                           }
                         />

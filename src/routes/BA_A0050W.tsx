@@ -1425,7 +1425,7 @@ const BA_A0050: React.FC = () => {
     let sum = 0;
     subData2Result.data.forEach((item) =>
        props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" ? 0 : item[props.field]))
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
         : 0
     );
 

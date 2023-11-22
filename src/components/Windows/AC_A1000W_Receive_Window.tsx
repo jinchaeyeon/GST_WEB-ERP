@@ -48,6 +48,7 @@ import {
   getQueryFromBizComponent,
   setDefaultDate,
   GetPropertyValueByName,
+  numberWithCommas,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -398,6 +399,21 @@ const CopyWindow = ({ data, setData, setVisible, modal = false }: IWindow) => {
     );
   };
 
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+  
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -965,6 +981,7 @@ const CopyWindow = ({ data, setData, setVisible, modal = false }: IWindow) => {
               field="janamt"
               title="처리금액"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
               width="150px"
             />
             <GridColumn
@@ -978,12 +995,14 @@ const CopyWindow = ({ data, setData, setVisible, modal = false }: IWindow) => {
               title="발행금액"
               width="150px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn
               field="slipamt"
               title="할인금액"
               width="150px"
               cell={NumberCell}
+              footerCell={editNumberFooterCell}
             />
           </Grid>
         </GridContainer>

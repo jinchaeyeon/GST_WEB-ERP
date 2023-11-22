@@ -61,6 +61,7 @@ import {
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
+  numberWithCommas,
   toDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
@@ -1768,6 +1769,21 @@ const CopyWindow = ({
     );
   };
 
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+  
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -3551,12 +3567,14 @@ const CopyWindow = ({
                       title="차변금액"
                       width="100px"
                       cell={NumberCell}
+                                footerCell={editNumberFooterCell}
                     />
                     <GridColumn
                       field="slipamt_2"
                       title="대변금액"
                       width="100px"
                       cell={NumberCell}
+                      footerCell={editNumberFooterCell}
                     />
                     <GridColumn field="remark3" title="적요" width="300px" />
                     <GridColumn

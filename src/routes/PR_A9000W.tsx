@@ -56,6 +56,7 @@ import {
   getItemQuery,
   getQueryFromBizComponent,
   handleKeyPressSearch,
+  numberWithCommas,
   setDefaultDate,
   toDate,
 } from "../components/CommonFunction";
@@ -1505,46 +1506,42 @@ const PR_A9000W: React.FC = () => {
     }
   };
 
-  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
+        : 0
     );
-    if (sum != undefined) {
-      var parts = sum.toString().split(".");
 
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    } else {
-      return <td></td>;
-    }
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
   };
 
-  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
+  const editNumberFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
     detailDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
+        : 0
     );
-    if (sum != undefined) {
-      var parts = sum.toString().split(".");
 
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    } else {
-      return <td></td>;
-    }
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
   };
 
   const detailTotalFooterCell = (props: GridFooterCellProps) => {
@@ -2817,7 +2814,7 @@ const PR_A9000W: React.FC = () => {
                                 item.sortOrder === 0
                                   ? mainTotalFooterCell
                                   : numberField2.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell
+                                  ? editNumberFooterCell
                                   : undefined
                               }
                             />
@@ -2941,7 +2938,7 @@ const PR_A9000W: React.FC = () => {
                             item.sortOrder === 0
                               ? detailTotalFooterCell
                               : numberField2.includes(item.fieldName)
-                              ? gridSumQtyFooterCell2
+                              ? editNumberFooterCell2
                               : undefined
                           }
                         />

@@ -62,6 +62,7 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
+  numberWithCommas,
   setDefaultDate,
 } from "../components/CommonFunction";
 import {
@@ -1180,23 +1181,21 @@ const QC_A2000: React.FC = () => {
     );
   };
 
-  const gridSumQtyFooterCell3 = (props: GridFooterCellProps) => {
-    let sum = "";
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
     detailDataResult2.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
     );
 
-    var parts = parseInt(sum).toString().split(".");
-    return parts[0] != "NaN" ? (
+    return (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
+        {numberWithCommas(sum)}
       </td>
-    ) : (
-      <td></td>
     );
   };
-
+  
   const detailTotalFooterCell2 = (props: GridFooterCellProps) => {
     var parts = detailDataResult2.total.toString().split(".");
     return (
@@ -2869,7 +2868,7 @@ const QC_A2000: React.FC = () => {
                             item.sortOrder === 0
                               ? detailTotalFooterCell2
                               : numberField.includes(item.fieldName)
-                              ? gridSumQtyFooterCell3
+                              ? editNumberFooterCell
                               : undefined
                           }
                         />

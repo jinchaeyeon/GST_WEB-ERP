@@ -61,6 +61,7 @@ import {
   getItemQuery,
   getQueryFromBizComponent,
   handleKeyPressSearch,
+  numberWithCommas,
   setDefaultDate,
 } from "../components/CommonFunction";
 import {
@@ -961,26 +962,19 @@ const MA_A7000W: React.FC = () => {
     setCopyWindowVisible(true);
   };
 
-  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : 0
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
     );
 
-    if (sum != undefined) {
-      var parts = sum.toString().split(".");
-
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    } else {
-      return <td></td>;
-    }
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
   };
 
   //품목마스터 참조팝업 함수 => 선택한 데이터 필터 세팅
@@ -1950,7 +1944,7 @@ const MA_A7000W: React.FC = () => {
                             item.sortOrder === 0
                               ? mainTotalFooterCell
                               : numberField2.includes(item.fieldName)
-                              ? gridSumQtyFooterCell
+                              ? editNumberFooterCell
                               : undefined
                           }
                         ></GridColumn>

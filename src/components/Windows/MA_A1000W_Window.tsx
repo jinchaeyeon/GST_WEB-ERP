@@ -66,6 +66,7 @@ import {
   getGridItemChangedData,
   getItemQuery,
   getQueryFromBizComponent,
+  numberWithCommas,
   toDate,
 } from "../CommonFunction";
 import {
@@ -999,25 +1000,19 @@ const CopyWindow = ({
     }
   }, []);
 
-  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
     );
-    if (sum != undefined) {
-      var parts = sum.toString().split(".");
 
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    } else {
-      return <td></td>;
-    }
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -2009,6 +2004,7 @@ const CopyWindow = ({
                 width="100px"
                 cell={NumberCell}
                 headerCell={RequiredHeader}
+                footerCell={editNumberFooterCell}
               />
               <GridColumn
                 field="qtyunit"
@@ -2033,28 +2029,28 @@ const CopyWindow = ({
                 title="금액"
                 width="100px"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
+                footerCell={editNumberFooterCell}
               />
               <GridColumn
                 field="wonamt"
                 title="원화금액"
                 width="100px"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
+                footerCell={editNumberFooterCell}
               />
               <GridColumn
                 field="taxamt"
                 title="세액"
                 width="100px"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
+                footerCell={editNumberFooterCell}
               />
               <GridColumn
                 field="totamt"
                 title="합계금액"
                 width="100px"
                 cell={NumberCell}
-                footerCell={gridSumQtyFooterCell}
+                footerCell={editNumberFooterCell}
               />
               <GridColumn field="remark" title="비고" width="280px" />
               <GridColumn field="reqkey" title="청구번호" width="150px" />

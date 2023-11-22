@@ -7,6 +7,7 @@ import {
   GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
+  GridFooterCellProps,
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
@@ -50,6 +51,7 @@ import {
   getGridItemChangedData,
   getItemQuery,
   getSelectedFirstData,
+  numberWithCommas,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -1836,6 +1838,22 @@ const KendoWindow = ({
 
     paraData.work_type = ""; //초기화
   };
+
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult2.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+
   return (
     <>
       <Window
@@ -2104,12 +2122,14 @@ const KendoWindow = ({
                     title="소요량"
                     width="120px"
                     cell={NumberCell}
+                    footerCell={editNumberFooterCell}
                   />
                   <GridColumn
                     field="procqty"
                     title="재공생산량"
                     width="120px"
                     cell={NumberCell}
+                    footerCell={editNumberFooterCell}
                   />
                   <GridColumn
                     field="qtyunit"
