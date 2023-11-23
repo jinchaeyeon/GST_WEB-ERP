@@ -1407,7 +1407,7 @@ const HU_B4010W: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title style={{ height: "10%" }}>인사교과 모니터링</Title>
+        <Title style={{ height: "10%" }}>인사고과 모니터링</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

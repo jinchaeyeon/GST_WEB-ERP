@@ -65,6 +65,7 @@ const domain: any = {
   "html-query": { action: "get", url: "api/data/html-doc" },
   "html-save": { action: "post", url: "api/data/:folder" },
   "html-download": { action: "get", url: "api/data/html-doc/file"},
+  "excel-view": { action: "post", url: "api/data/emm-printout/:para" },
 };
 let isTokenRefreshing = false;
 let refreshSubscribers: any[] = [];

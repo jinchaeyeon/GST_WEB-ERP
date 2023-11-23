@@ -5,6 +5,7 @@ import { ExcelExport } from "@progress/kendo-react-excel-export";
 import React, { useEffect, useRef, useState } from "react";
 import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
 import ReactToPrint from "react-to-print";
+import { Buffer } from 'buffer';
 import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -110,20 +111,20 @@ const AC_B8100W: React.FC = () => {
     taxdt: new Date(),
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_AC_B8100W_Q",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": "Q",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_frdt": convertDateToStr(filters.frdt),
-      "@p_todt": convertDateToStr(filters.todt),
-      "@p_taxdt": convertDateToStr(filters.taxdt),
-      "@p_location": filters.location,
-    },
-  };
+  // //조회조건 파라미터
+  // const parameters: Iparameters = {
+  //   procedureName: "P_AC_B8100W_Q",
+  //   pageNumber: 0,
+  //   pageSize: 0,
+  //   parameters: {
+  //     "@p_work_type": "Q",
+  //     "@p_orgdiv": filters.orgdiv,
+  //     "@p_frdt": convertDateToStr(filters.frdt),
+  //     "@p_todt": convertDateToStr(filters.todt),
+  //     "@p_taxdt": convertDateToStr(filters.taxdt),
+  //     "@p_location": filters.location,
+  //   },
+  // };
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
@@ -131,29 +132,44 @@ const AC_B8100W: React.FC = () => {
     let data: any;
 
     setLoading(true);
+    const parameters = {
+      para: "document?id=S202327C173",
+    };
+
     try {
-      data = await processApi<any>("procedure", parameters);
+      data = await processApi<any>("excel-view", parameters);
     } catch (error) {
       data = null;
     }
 
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
-        ...row,
-        uri: row.xlsx,
-      }));
+    if (data !== null) {
+      //const blob = new Blob([data]);
+      // 특정 타입을 정의해야 경우에는 옵션을 사용해 MIME 유형을 정의 할 수 있습니다.
+
+      let json = JSON.stringify(data);
+      let buffer = Buffer.from(json);
+      let read = buffer.toString("utf8");
+      let blob = new Blob([read], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+      // blob을 사용해 객체 URL을 생성합니다.
+      const fileObjectUrl = window.URL.createObjectURL(blob);
 
       setMainDataResult((prev) => {
         return {
-          data: rows,
-          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+          data: [fileObjectUrl],
+          total: 1,
         };
       });
     } else {
-      console.log("[에러발생]");
-      console.log(data);
+      setMainDataResult((prev) => {
+        return {
+          data: [],
+          total: 0,
+        };
+      });
     }
+
+
     setLoading(false);
   };
 
@@ -274,18 +290,18 @@ const AC_B8100W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer>
+      <GridContainer height="82vh">
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
         >
-          {/* {mainDataResult.total > 0 ? (
+          {mainDataResult.total > 0 ? (
             <FileViewers file={mainDataResult.data[0]} type="xlsx" />
           ) : (
             ""
-          )} */}
+          )}
         </ExcelExport>
       </GridContainer>
     </>
