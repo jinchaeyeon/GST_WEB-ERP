@@ -204,6 +204,7 @@ import SA_B2226W from "./routes/SA_B2226W";
 import AC_B6080W from "./routes/AC_B6080W";
 import SA_B2216W from "./routes/SA_B2216W";
 import AC_B2080W from "./routes/AC_B2080W";
+import MainBIO from "./routes/MainBIO";
 const Login = lazy(() => import("./routes/Login"));
 const Main = lazy(() => import("./routes/Main"));
 
@@ -467,7 +468,16 @@ const AppInner: React.FC = () => {
 
                 <PanelBarNavContainerWEBERP>
                   {/* 메인 홈 */}
-                  <AuthRoute path="/Home" component={Main} exact />
+                  {/* 주팀장님 api수정 후 변경예정 */}
+                  {loginResult && loginResult.companyCode == "2302BA03" ? (
+                    isAdmin == true ? (
+                      <AuthRoute path="/Home" component={Main} exact />
+                    ) : (
+                      <AuthRoute path="/Home" component={MainBIO} exact />
+                    )
+                  ) : (
+                    <AuthRoute path="/Home" component={Main} exact />
+                  )}
 
                   {/* 기준정보 */}
                   <AuthRoute path="/AC_A0000W" component={AC_A0000W} exact />
@@ -649,7 +659,7 @@ const AppInner: React.FC = () => {
                   {/* 연구개발 */}
                   <AuthRoute path="/GANTT" component={GANTT} exact />
 
-                  <GlobalStyles style={{ fontFamily: "TheJamsil5Bold"}}>
+                  <GlobalStyles style={{ fontFamily: "TheJamsil5Bold" }}>
                     {/*KPI관리 */}
                     <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
                     <AuthRoute path="/PR_B1103W" component={PR_B1103W} exact />
@@ -696,7 +706,7 @@ const AppInner: React.FC = () => {
                     component={SA_A1000_603W}
                     exact
                   />
-                          <AuthRoute
+                  <AuthRoute
                     path="/SA_A1001_603W"
                     component={SA_A1001_603W}
                     exact
@@ -708,7 +718,7 @@ const AppInner: React.FC = () => {
                   />
                   <AuthRoute path="/CM_A5000W" component={CM_A5000W} exact />
                   <AuthRoute path="/CM_A5001W" component={CM_A5001W} exact />
-                  
+
                   {/* PDA */}
                   <AuthRoute
                     path="/SA_A2300W_PDA"

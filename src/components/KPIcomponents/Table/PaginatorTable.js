@@ -1,16 +1,16 @@
 import React, { useEffect } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { FilterMatchMode } from 'primereact/api';
-import { InputText } from 'primereact/inputtext';
-import { ColumnGroup } from 'primereact/columngroup';
-import { Row } from 'primereact/row';
+import { FilterMatchMode } from "primereact/api";
+import { InputText } from "primereact/inputtext";
+import { ColumnGroup } from "primereact/columngroup";
+import { Row } from "primereact/row";
 import { PAGE_SIZE } from "../../CommonString";
 
 const PaginatorTable = (props) => {
-    const [filters, setFilters] = React.useState({
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    });
+  const [filters, setFilters] = React.useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  });
 
   const [globalFilterValue, setGlobalFilterValue] = React.useState("");
 
@@ -27,14 +27,18 @@ const PaginatorTable = (props) => {
   const header = (
     <div className="flex flex-wrap align-items-center justify-content-between gap-2">
       <span className="text-xl text-900 font-bold">{props.title}</span>
-      <span className="p-input-icon-left">
-        <i className="pi pi-search" />
-        <InputText
-          value={globalFilterValue}
-          onChange={onGlobalFilterChange}
-          placeholder="Keyword Search"
-        />
-      </span>
+      {props.filters != false ? (
+        <span className="p-input-icon-left">
+          <i className="pi pi-search" />
+          <InputText
+            value={globalFilterValue}
+            onChange={onGlobalFilterChange}
+            placeholder="Keyword Search"
+          />
+        </span>
+      ) : (
+        ""
+      )}
     </div>
   );
 
@@ -42,36 +46,37 @@ const PaginatorTable = (props) => {
     var keys = Object.keys(props.column);
     var values = Object.values(props.column);
     let array = [];
-    
+
     for (var i = 0; i < keys.length; i++) {
       array.push(
-        <Column field={keys[i]} header={values[[i]]} style={{ minWidth: props.width[i]}} sortable></Column>
+        <Column
+          field={keys[i]}
+          header={values[[i]]}
+          style={{ minWidth: props.width[i] }}
+          sortable
+        ></Column>
       );
     }
     return array;
   }
 
-  useEffect(() => {
+  useEffect(() => {}, [props]);
 
-  }, [props]);
-  
   return (
     <>
       <div className="card">
         <DataTable
           value={props.value}
-          header={header}
-          tableStyle={{ minWidth: "20rem"}}
+          header={props.header == false ? undefined : header}
+          tableStyle={{ minWidth: "20rem" }}
           stripedRows
           paginator
-          rows={PAGE_SIZE}
+          rows={props.rows == undefined ? PAGE_SIZE : props.rows}
           selectionMode="single"
           dataKey={props.key}
-          filters={filters}
-          filterDisplay="row"
           emptyMessage="No DATA."
           selection={props.selection}
-          onSelectionChange={props.onSelectionChange} 
+          onSelectionChange={props.onSelectionChange}
         >
           {colums()}
         </DataTable>

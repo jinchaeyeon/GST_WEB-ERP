@@ -24,9 +24,21 @@ code {
 }
 
 .p-datatable .p-datatable-tbody > tr > td {
-  padding: 0.5rem 0.5rem !important;
-  height: 55px !important;
+  padding: 0rem 0.5rem !important;
+  height: 40px !important;
   vertical-align: middle !important;
+}
+
+.p-datatable .p-datatable-header {
+  padding: 0.7rem 1rem !important;
+}
+
+.p-input-icon-left > .p-inputtext {
+  padding-left: 2.5rem !important;
+}
+
+.p-inputtext {
+  padding: 0.5rem 0.75rem !important;
 }
 
 .p-datatable .p-column-header-content {
