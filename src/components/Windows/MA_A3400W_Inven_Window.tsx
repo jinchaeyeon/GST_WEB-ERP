@@ -21,7 +21,7 @@ import {
   GridFooterCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -33,7 +33,10 @@ import {
   ButtonContainer,
   ButtonInInput,
   FilterBox,
+  FormBox,
+  FormBoxWrap,
   GridContainer,
+  GridTitle,
   GridTitleContainer,
   TitleContainer,
 } from "../../CommonStyled";
@@ -51,10 +54,13 @@ import {
   convertDateToStr,
   getQueryFromBizComponent,
   handleKeyPressSearch,
-  rowsOfDataResult,
   setDefaultDate
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
@@ -366,6 +372,11 @@ const CopyWindow = ({
     isSearch: true,
   });
 
+  const [Information, setInformation] = useState({
+    lotnum: "",
+    isSearch: false,
+  });
+
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
@@ -389,6 +400,7 @@ const CopyWindow = ({
         "@p_insiz": filters.insiz,
         "@p_zeroyn": filters.zeroyn,
         "@p_itemgrade": filters.itemgrade,
+        "@p_lotnum": "",
       },
     };
     try {
@@ -466,6 +478,60 @@ const CopyWindow = ({
     setLoading(false);
   };
 
+  //그리드 데이터 조회
+  const fetchLotNoGrid = async () => {
+    //if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_MA_P3400W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.workType,
+        "@p_orgdiv": "01",
+        "@p_location": "01",
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_itemcd": filters.itemcd,
+        "@p_itemnm": filters.itemnm,
+        "@p_itemacnt": filters.itemacnt,
+        "@p_insiz": filters.insiz,
+        "@p_zeroyn": filters.zeroyn,
+        "@p_itemgrade": filters.itemgrade,
+        "@p_lotnum": Information.lotnum,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((row: any) => {
+        return {
+          ...row,
+        };
+      });
+
+      console.log(rows);
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setInformation((prev) => ({
+      ...prev,
+      lotnum: "",
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (
       customOptionData != null &&
@@ -478,6 +544,13 @@ const CopyWindow = ({
       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters, bizComponentData, customOptionData]);
+
+  useEffect(() => {
+    if (Information.isSearch) {
+      setInformation((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
+      fetchLotNoGrid();
+    }
+  }, [Information, bizComponentData, customOptionData]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -593,7 +666,7 @@ const CopyWindow = ({
           total: prev.total + 1,
         };
       });
-      setSubSelectedState({[rows[0][DATA_ITEM_KEY2]]: true});
+      setSubSelectedState({ [rows[0][DATA_ITEM_KEY2]]: true });
     }
   };
 
@@ -626,6 +699,31 @@ const CopyWindow = ({
     },
     [collapsedState]
   );
+
+  useEffect(() => {
+    var barcode = "";
+    var interval: any;
+
+    document.addEventListener("keydown", function (evt) {
+      if (interval) clearInterval(interval);
+
+      if (evt.code == "Enter") {
+        if (barcode) {
+          setInformation((prev) => ({
+            ...prev,
+            lotnum: barcode,
+            isSearch: true,
+          }));
+        }
+        barcode = "";
+        return;
+      }
+      if (evt.code != "ShiftLeft" && evt.code != "Shift") {
+        barcode += evt.key;
+      }
+      interval = setInterval(() => (barcode = ""), 20);
+    });
+  }, []);
 
   return (
     <>
@@ -808,6 +906,24 @@ const CopyWindow = ({
         </GridContainer>
         <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
           <GridTitleContainer>
+            <GridTitle>
+              <FormBoxWrap>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>LOT NO 입력칸</th>
+                      <td>
+                        <Input
+                          name="lotnum"
+                          type="text"
+                          value={Information.lotnum}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            </GridTitle>
             <ButtonContainer>
               <Button
                 onClick={onDeleteClick}
@@ -884,21 +1000,21 @@ const CopyWindow = ({
               cell={NumberCell}
             />
           </Grid>
+          <BottomContainer>
+            <ButtonContainer>
+              <Button themeColor={"primary"} onClick={selectData}>
+                확인
+              </Button>
+              <Button
+                themeColor={"primary"}
+                fillMode={"outline"}
+                onClick={onClose}
+              >
+                닫기
+              </Button>
+            </ButtonContainer>
+          </BottomContainer>
         </GridContainer>
-        <BottomContainer>
-          <ButtonContainer>
-            <Button themeColor={"primary"} onClick={selectData}>
-              확인
-            </Button>
-            <Button
-              themeColor={"primary"}
-              fillMode={"outline"}
-              onClick={onClose}
-            >
-              닫기
-            </Button>
-          </ButtonContainer>
-        </BottomContainer>
       </Window>
       {itemWindowVisible && (
         <ItemsWindow
