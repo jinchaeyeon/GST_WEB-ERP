@@ -54,10 +54,24 @@ const PaginatorTable = (props) => {
           header={values[[i]]}
           style={{ minWidth: props.width[i] }}
           sortable
+          body={custom(keys[i])}
         ></Column>
       );
     }
     return array;
+  }
+
+  function custom(key) {
+    if(props.customCell != undefined) {
+      for(var i = 0; i< props.customCell.length; i++) {
+        if(key == props.customCell[i][0]) {
+          return props.customCell[i][1];
+        } 
+      }
+    } else {
+      return undefined;
+    }
+
   }
 
   useEffect(() => {}, [props]);
@@ -71,7 +85,9 @@ const PaginatorTable = (props) => {
           tableStyle={{ minWidth: "20rem" }}
           stripedRows
           paginator
-          rows={props.rows == undefined ? PAGE_SIZE : props.rows}
+          scrollable
+          scrollHeight={props.height == undefined ? "100%" : props.height}
+          rows={PAGE_SIZE}
           selectionMode="single"
           dataKey={props.key}
           emptyMessage="No DATA."

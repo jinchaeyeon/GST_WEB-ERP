@@ -14,10 +14,12 @@ import {
 import { bytesToBase64 } from "byte-base64";
 import { useRecoilState } from "recoil";
 import {
+  AnswerIcon,
   GridContainer,
   GridContainerWrap,
   GridTitle,
-  GridTitleContainer
+  GridTitleContainer,
+  StatusIcon,
 } from "../CommonStyled";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
@@ -29,7 +31,7 @@ import {
   convertDateToStrWithTime2,
   dateformat2,
   getQueryFromBizComponent,
-  toDate2
+  toDate2,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import { LayoutSquareRead } from "../components/DnD/LayoutSquareRead";
@@ -61,6 +63,14 @@ const boardStyle: CSSProperties = {
 const containerStyle: CSSProperties = {
   width: "100%",
   height: "600px",
+};
+
+const answerynBodyTemplate = (rowData: any) => {
+  return (
+    <>
+      <AnswerIcon status={rowData.answeryn} />
+    </>
+  );
 };
 
 const Main: React.FC = () => {
@@ -203,11 +213,9 @@ const Main: React.FC = () => {
         )
       );
       const purposeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_BA400"
-        )
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA400")
       );
-      
+
       fetchQuery(purposeQueryStr, setPurposeData);
       fetchQuery(colorQueryStr, setColorData);
     }
@@ -768,7 +776,7 @@ const Main: React.FC = () => {
                   onSelectionChange={(e: any) => {
                     setSelected(e.value);
                   }}
-                  rows={3}
+                  height={"210px"}
                   filters={false}
                 />
               </GridMui>
@@ -788,8 +796,9 @@ const Main: React.FC = () => {
                   onSelectionChange={(e: any) => {
                     setSelected2(e.value);
                   }}
-                  rows={3}
+                  height={"210px"}
                   filters={false}
+                  customCell={[["answeryn", answerynBodyTemplate]]}
                 />
               </GridMui>
               <GridMui item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -807,7 +816,7 @@ const Main: React.FC = () => {
                   onSelectionChange={(e: any) => {
                     setSelected3(e.value);
                   }}
-                  rows={3}
+                  height={"210px"}
                   filters={false}
                 />
               </GridMui>

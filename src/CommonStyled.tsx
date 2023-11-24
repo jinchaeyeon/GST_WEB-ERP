@@ -5,6 +5,7 @@ import loginBgSrc from "./img/login_bg.png";
 import logoWEBERP from "./img/login_web_erp.png";
 import logoDDGD from "./img/login_ddgd.png";
 import processStsSrc from "./img/process_16.png";
+import successStsSrc from "./img/success_16.png";
 
 export const ScrollableContainerBox = styled.div`
   padding: 10px;
@@ -1142,6 +1143,24 @@ export const StatusIcon = styled.span<TStatusIcon>`
     props.status === "001"
       ? processStsSrc
       : ""});
+  background-size: contain;
+  background-repeat: no-repeat;
+  width: 15px;
+  height: 15px;
+  background-position: center;
+  display: inline-block;
+  margin-right: 5px;
+`;
+
+type TAnsweIcon = { status: string };
+
+export const AnswerIcon = styled.span<TAnsweIcon>`
+  background: url(${(props) =>
+    props.status === "N"
+      ? processStsSrc
+      : props.status === "Y"
+      ? successStsSrc
+      : processStsSrc});
   background-size: contain;
   background-repeat: no-repeat;
   width: 15px;

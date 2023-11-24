@@ -27,6 +27,7 @@ code {
   padding: 0rem 0.5rem !important;
   height: 40px !important;
   vertical-align: middle !important;
+  text-align: center !important;
 }
 
 .p-datatable .p-datatable-header {
