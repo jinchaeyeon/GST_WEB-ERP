@@ -471,7 +471,7 @@ const AppInner: React.FC = () => {
                   {/* 주팀장님 api수정 후 변경예정 */}
                   {loginResult && loginResult.companyCode == "2302BA03" ? (
                     isAdmin == true ? (
-                      <AuthRoute path="/Home" component={Main} exact />
+                      <AuthRoute path="/Home" component={SA_B2226W} exact />
                     ) : (
                       <AuthRoute path="/Home" component={MainBIO} exact />
                     )
