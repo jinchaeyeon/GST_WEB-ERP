@@ -576,14 +576,7 @@ const CopyWindow = ({
   };
 
   const setCopyData2 = (data: any) => {
-    const dataItem = data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
-
-    if (dataItem.length === 0) return false;
+    if (data.length === 0) return false;
 
     mainDataResult.data.map((item) => {
       if (item.num > temp) {

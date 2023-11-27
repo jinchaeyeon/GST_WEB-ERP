@@ -1095,7 +1095,7 @@ const SY_A0120: React.FC = () => {
       }
 
       deletedMainRows = [];
-
+      console.log(dataItem)
       for (const item of dataItem) {
         const {
           rowstatus,

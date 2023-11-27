@@ -54,7 +54,7 @@ import {
   convertDateToStr,
   getQueryFromBizComponent,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -72,11 +72,12 @@ type IWindow = {
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
 };
-
+let temp = 0;
 const topHeight = 140.13;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
 const initialGroup: GroupDescriptor[] = [{ field: "group_category_name" }];
+var barcode = "";
 
 const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
   const newDataState = groupBy(data, group);
@@ -479,16 +480,15 @@ const CopyWindow = ({
   };
 
   //그리드 데이터 조회
-  const fetchLotNoGrid = async () => {
+  const fetchLotNoGrid = async (Information: any) => {
     //if (!permissions?.view) return;
+    barcode = "";
     let data: any;
-    setLoading(true);
-
     //조회조건 파라미터
     const parameters: Iparameters = {
       procedureName: "P_MA_P3400W_Q",
-      pageNumber: filters.pgNum,
-      pageSize: filters.pgSize,
+      pageNumber: 1,
+      pageSize: 1,
       parameters: {
         "@p_work_type": filters.workType,
         "@p_orgdiv": "01",
@@ -511,14 +511,65 @@ const CopyWindow = ({
     }
 
     if (data.isSuccess === true) {
+      subDataResult.data.map((item) => {
+        if (item.num > temp) {
+          temp = item.num;
+        }
+      });
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
+          qty: row.now_qty,
+          rowstatus: "N",
+          amt: row.amt == null ? 0 : row.amt,
+          unp: row.unp == null ? 0 : row.unp,
+          wonamt: row.wonamt == null ? 0 : row.wonamt,
+          taxamt: row.taxamt == null ? 0 : row.taxamt,
+          totwgt: row.totwgt == null ? 0 : row.totwgt,
+          len: row.len == null ? 0 : row.len,
+          itemthick: row.itemthick == null ? 0 : row.itemthick,
+          width: row.width == null ? 0 : row.width,
+          pac: row.pac == null ? "A" : row.pac,
+          groupId: row.itemacnt + "itemacnt",
+          group_category_name:
+            "품목" +
+            " : " +
+            itemacntListData.find((item: any) => item.sub_code === row.itemacnt)
+              ?.code_name,
+          itemacnt: itemacntListData.find(
+            (item: any) => item.sub_code === row.itemacnt
+          )?.code_name,
+          [DATA_ITEM_KEY2]: ++temp,
         };
       });
 
-      console.log(rows);
+      if (totalRowCnt > 0) {
+        let valid = true;
+        for (var i = 0; i < subDataResult.data.length; i++) {
+          if (
+            rows[0].itemcd == subDataResult.data[i].itemcd &&
+            rows[0].lotnum == subDataResult.data[i].lotnum
+          ) {
+            alert("중복되는 품목이있습니다.");
+            valid = false;
+            return false;
+          }
+        }
+
+        if (valid == true) {
+          setSubDataResult((prev) => {
+            return {
+              data: [...prev.data, rows[0]],
+              total: prev.total + 1,
+            };
+          });
+          setSubSelectedState({ [rows[0][DATA_ITEM_KEY2]]: true });
+        }
+      } else {
+        alert("해당 LOT번호가 없습니다.");
+        barcode = "";
+      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -529,7 +580,6 @@ const CopyWindow = ({
       lotnum: "",
       isSearch: false,
     }));
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -546,9 +596,11 @@ const CopyWindow = ({
   }, [filters, bizComponentData, customOptionData]);
 
   useEffect(() => {
-    if (Information.isSearch) {
+    if (Information.isSearch && Information.lotnum != "") {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(Information);
       setInformation((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
-      fetchLotNoGrid();
+      fetchLotNoGrid(deepCopiedFilters);
     }
   }, [Information, bizComponentData, customOptionData]);
 
@@ -672,18 +724,31 @@ const CopyWindow = ({
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
-
+    let Object3: any[] = [];
+    let Object2: any[] = [];
+    let data;
     subDataResult.data.forEach((item: any, index: number) => {
       if (!subselectedState[item[DATA_ITEM_KEY2]]) {
         newData.push(item);
+        Object2.push(index);
+      } else {
+        Object3.push(index);
       }
     });
+
+    if (Math.min(...Object3) < Math.min(...Object2)) {
+      data = subDataResult.data[Math.min(...Object2)];
+    } else {
+      data = subDataResult.data[Math.min(...Object3) - 1];
+    }
+
     setSubDataResult((prev) => ({
       data: newData,
-      total: newData.length,
+      total: prev.total - Object3.length,
     }));
-
-    setSubDataState({});
+    setSubSelectedState({
+      [data != undefined ? data[DATA_ITEM_KEY2] : newData[0]]: true,
+    });
   };
 
   const onExpandChange = React.useCallback(
@@ -701,27 +766,21 @@ const CopyWindow = ({
   );
 
   useEffect(() => {
-    var barcode = "";
-    var interval: any;
-
     document.addEventListener("keydown", function (evt) {
-      if (interval) clearInterval(interval);
-
       if (evt.code == "Enter") {
-        if (barcode) {
+        if(barcode != "") {
           setInformation((prev) => ({
             ...prev,
             lotnum: barcode,
             isSearch: true,
           }));
         }
-        barcode = "";
-        return;
-      }
-      if (evt.code != "ShiftLeft" && evt.code != "Shift") {
+      } else if (evt.code != "ShiftLeft" && evt.code != "Shift" && evt.code != "Enter") {
         barcode += evt.key;
       }
-      interval = setInterval(() => (barcode = ""), 20);
+    });
+    document.addEventListener("click", function (evt) {
+      barcode = ""
     });
   }, []);
 
@@ -906,24 +965,6 @@ const CopyWindow = ({
         </GridContainer>
         <GridContainer height={`calc(50% - ${leftOverHeight}px)`}>
           <GridTitleContainer>
-            <GridTitle>
-              <FormBoxWrap>
-                <FormBox>
-                  <tbody>
-                    <tr>
-                      <th>LOT NO 입력칸</th>
-                      <td>
-                        <Input
-                          name="lotnum"
-                          type="text"
-                          value={Information.lotnum}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </FormBox>
-              </FormBoxWrap>
-            </GridTitle>
             <ButtonContainer>
               <Button
                 onClick={onDeleteClick}
