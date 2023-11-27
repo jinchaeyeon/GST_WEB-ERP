@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
 import {
   ComboBoxChangeEvent,
   MultiColumnComboBox,
 } from "@progress/kendo-react-dropdowns";
-import { useApi } from "../../hooks/api";
 import { GridCellProps } from "@progress/kendo-react-grid";
-import { getQueryFromBizComponent } from "../CommonFunction";
 import { bytesToBase64 } from "byte-base64";
+import { useCallback, useEffect, useState } from "react";
+import { useApi } from "../../hooks/api";
+import { getQueryFromBizComponent } from "../CommonFunction";
 
 interface item {
   color: string;
@@ -18,7 +18,9 @@ interface CustomCellProps extends GridCellProps {
   textField?: string;
   valueField?: string;
   myProp?: item[];
+  colorprops?: boolean;
 }
+
 const ComboBoxCell = (props: CustomCellProps) => {
   const {
     ariaColumnIndex,
@@ -32,6 +34,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
     valueField = "sub_code",
     textField = "code_name",
     myProp,
+    colorprops = false,
   } = props;
   const processApi = useApi();
   const [listData, setListData]: any = useState([]);
@@ -98,24 +101,46 @@ const ComboBoxCell = (props: CustomCellProps) => {
       });
     }
   };
- 
+
   const defaultRendering =
     myProp == undefined ? (
-      <td aria-colindex={ariaColumnIndex} data-grid-col-index={columnIndex}>
-        {isInEdit ? (
-          <MultiColumnComboBox
-            data={listData}
-            value={value}
-            columns={newColumns}
-            textField={textField}
-            onChange={handleChange}
-          />
-        ) : value ? (
-          value[textField]
-        ) : (
-          ""
-        )}
-      </td>
+      colorprops == true ? (
+        <td
+          aria-colindex={ariaColumnIndex}
+          data-grid-col-index={columnIndex}
+          style={{ backgroundColor: value.color }}
+        >
+          {isInEdit ? (
+            <MultiColumnComboBox
+              data={listData}
+              value={value}
+              columns={newColumns}
+              textField={textField}
+              onChange={handleChange}
+            />
+          ) : value ? (
+            value[textField]
+          ) : (
+            ""
+          )}
+        </td>
+      ) : (
+        <td aria-colindex={ariaColumnIndex} data-grid-col-index={columnIndex}>
+          {isInEdit ? (
+            <MultiColumnComboBox
+              data={listData}
+              value={value}
+              columns={newColumns}
+              textField={textField}
+              onChange={handleChange}
+            />
+          ) : value ? (
+            value[textField]
+          ) : (
+            ""
+          )}
+        </td>
+      )
     ) : (
       <td
         aria-colindex={ariaColumnIndex}

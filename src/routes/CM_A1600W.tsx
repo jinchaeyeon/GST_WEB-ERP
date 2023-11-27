@@ -95,17 +95,26 @@ let ok = true;
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_APPOINTMENT_COLOR", setBizComponentData);
+  UseBizComponent("L_APPOINTMENT_COLOR, L_BA400", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "colorID" ? "L_APPOINTMENT_COLOR" : "";
+  const bizComponentIdVal =
+    field === "colorID"
+      ? "L_APPOINTMENT_COLOR"
+      : field === "kind1"
+      ? "L_BA400"
+      : "";
 
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
 
   return bizComponent ? (
-    <ComboBoxCell bizComponent={bizComponent} {...props} />
+    field == "colorID" ? (
+      <ComboBoxCell bizComponent={bizComponent} colorprops={true} {...props} />
+    ) : (
+      <ComboBoxCell bizComponent={bizComponent} {...props} />
+    )
   ) : (
     <td />
   );
@@ -115,7 +124,7 @@ const dateField = ["strtime", "endtime"];
 const requiredField = ["contents"];
 const checkboxField = ["finyn"];
 const numberField = ["strhh", "strmm", "endhh", "endmm"];
-const comboField = ["colorID"];
+const comboField = ["colorID", "kind1"];
 const requiredField2 = [
   "strtime",
   "strhh",
@@ -2050,6 +2059,7 @@ const CM_A1600: React.FC = () => {
         rowstatus = "",
         contents = "",
         title = "",
+        kind1 = "",
         isAllDay,
         colorID,
       } = item;
@@ -2075,7 +2085,7 @@ const CM_A1600: React.FC = () => {
       dataArr.contents_s.push(contents);
       dataArr.person_s.push("");
       dataArr.finyn_s.push("");
-      dataArr.kind1_s.push("");
+      dataArr.kind1_s.push(kind1);
       dataArr.custcd_s.push("");
       dataArr.title_s.push(title);
       dataArr.colorid_s.push(
@@ -2099,6 +2109,7 @@ const CM_A1600: React.FC = () => {
         rowstatus = "",
         contents = "",
         title = "",
+        kind1 = "",
         isAllDay,
         colorID,
       } = item;
@@ -2123,7 +2134,7 @@ const CM_A1600: React.FC = () => {
       dataArr.contents_s.push(contents);
       dataArr.person_s.push("");
       dataArr.finyn_s.push("");
-      dataArr.kind1_s.push("");
+      dataArr.kind1_s.push(kind1);
       dataArr.custcd_s.push("");
       dataArr.title_s.push(title);
       dataArr.colorid_s.push(
@@ -2215,7 +2226,7 @@ const CM_A1600: React.FC = () => {
                 </FilterContainer>
               </GridTitleContainer>
               <GridTitleContainer>
-                <GridTitle>개인 스케줄러</GridTitle>
+                <GridTitle>개인 스케줄(표)</GridTitle>
               </GridTitleContainer>
               <Scheduler
                 height={"73vh"}
@@ -2525,7 +2536,7 @@ const CM_A1600: React.FC = () => {
             </Scheduler>
           </GridContainer>
         </TabStripTab>
-        <TabStripTab title="개인 스케줄러">
+        <TabStripTab title="개인 스케줄(표)">
           <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
@@ -2580,7 +2591,7 @@ const CM_A1600: React.FC = () => {
           </FilterContainer>
           <GridContainer width="100%">
             <GridTitleContainer>
-              <GridTitle>개인 스케줄러</GridTitle>
+              <GridTitle>개인 스케줄(표)</GridTitle>
 
               {permissions && (
                 <ButtonContainer>

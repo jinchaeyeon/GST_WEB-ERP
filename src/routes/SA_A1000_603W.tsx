@@ -104,6 +104,8 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1000_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import { Card } from "primereact/card";
+import { Timeline } from "primereact/timeline";
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -3306,6 +3308,37 @@ const SA_A1000_603W: React.FC = () => {
     }
   };
 
+  const customizedMarker = (item: any) => {
+    return (
+      <span
+        className="flex w-2rem h-2rem align-items-center justify-content-center text-white border-circle z-1 shadow-1"
+        style={{ backgroundColor: "#2289c340" }}
+      >
+        <i className="pi pi-cog"></i>
+      </span>
+    );
+  };
+
+  const customizedContent = (item: any) => {
+    return (
+      <Card
+        title={`${item.title}`}
+        style={{
+          fontSize: "15px",
+          fontFamily: "TheJamsil5Bold",
+          fontWeight: "lighter",
+          marginBottom: "10px",
+          backgroundImage: `url(/proccd.jpg)`,
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          opacity: 0.9,
+          height: "15vh"
+        }}
+      ></Card>
+    );
+  };
+
   return (
     <>
       <TitleContainer>
@@ -4227,19 +4260,34 @@ const SA_A1000_603W: React.FC = () => {
                   )}
               </Grid>
             </GridContainer>
-            <GridContainer width={`calc(15% - ${GAP}px)`}>
+            <GridContainer width={`calc(25% - ${GAP}px)`}>
               <GridTitleContainer>
                 <GridTitle>진행상황</GridTitle>
               </GridTitleContainer>
-              <Stepper
-                value={step}
-                items={items}
-                orientation={"vertical"}
-                item={CustomStep}
-                style={{ height: "80vh" }}
+              <Timeline
+                value={[
+                  {
+                    title: "시험계획서",
+                  },
+                  {
+                    title: "시험개시",
+                  },
+                  {
+                    title: "투여개시",
+                  },
+                  {
+                    title: "실험종료",
+                  },
+                  {
+                    title: "보고서",
+                  },
+                ]}
+                className="customized-timeline"
+                marker={customizedMarker}
+                content={customizedContent}
               />
             </GridContainer>
-            <GridContainer width={`calc(60% - ${GAP}px)`}>
+            <GridContainer width={`calc(50% - ${GAP}px)`}>
               <FormBoxWrap border={true}>
                 <GridContainer width={"100%"}>
                   <GridTitleContainer>

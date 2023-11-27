@@ -10,8 +10,8 @@ const CardBox = (props) => {
           width: "100%",
           marginRight: "15px",
           backgroundColor: props.backgroundColor,
-          color: "white",
-          cursor: props.form == "QC_B0100W" ? "pointer" : "not-allowed"
+          color: props.color == undefined ? "white" : props.color,
+          cursor: props.form == "QC_B0100W" ? "pointer" : ""
         }}
         title={props.title}
         onClick={(e) => props.Click(e)}

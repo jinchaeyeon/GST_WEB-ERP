@@ -41,6 +41,8 @@ import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import { useApi } from "../hooks/api";
 import { loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
+import { Button } from "@progress/kendo-react-buttons";
+import { Card as CardPrime } from "primereact/card";
 
 interface Tsize {
   width: number;
@@ -90,7 +92,7 @@ const Main: React.FC = () => {
   const [selected, setSelected] = useState<any>();
   const [selected2, setSelected2] = useState<any>();
   const [selected3, setSelected3] = useState<any>();
-
+  const userName = loginResult ? loginResult.userName : "";
   UseBizComponent("L_APPOINTMENT_COLOR, L_BA400", setBizComponentData);
 
   //그리드 데이터 스테이트
@@ -698,8 +700,38 @@ const Main: React.FC = () => {
         <GridContainer width="55%">
           <GridContainer style={{ marginTop: "20px" }}>
             <GridMui container spacing={2}>
+              <GridMui item xs={12} sm={6} md={4} lg={4} xl={4}>
+                <CardPrime
+                  style={{
+                    height: "140px",
+                    width: "100%",
+                    marginRight: "15px",
+                    backgroundColor: "white",
+                    color: "black",
+                  }}
+                  title={`${userName}님, 환영합니다.`}
+                >
+                  <p
+                    style={{
+                      fontSize: size.width < 600 ? "2.2rem" : "3rem",
+                      fontWeight: "900",
+                      color: "white",
+                      marginTop: 0,
+                      display: "flex",
+                      justifyContent: "end"
+                    }}
+                  >
+                    <Button
+                      // onClick={search}
+                      icon="email"
+                      themeColor={"primary"}
+                      title="쪽지"
+                    ></Button>
+                  </p>
+                </CardPrime>
+              </GridMui>
               {cardOption.map((item) => (
-                <GridMui item xs={6} sm={6} md={6} lg={6} xl={6}>
+                <GridMui item xs={12} sm={6} md={4} lg={4} xl={4}>
                   <Card
                     title={item.title}
                     data={item.data}

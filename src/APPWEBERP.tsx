@@ -443,7 +443,7 @@ const AppInner: React.FC = () => {
   useEffect(() => {
     switcher({ theme: "blue" });
   }, []);
-  console.log(loginResult)
+
   return (
     <>
       <LocalizationProvider

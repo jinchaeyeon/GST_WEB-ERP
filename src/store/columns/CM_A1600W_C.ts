@@ -37,13 +37,13 @@ export const gridList: Array<TGrid> = [
         id: "col_strhh",
         field: "strhh",
         caption: "시작시간",
-        width: 100,
+        width: 80,
       },
       {
         id: "col_strmm",
         field: "strmm",
         caption: "시작분",
-        width: 100,
+        width: 80,
       },
       {
         id: "col_endtime",
@@ -55,19 +55,25 @@ export const gridList: Array<TGrid> = [
         id: "col_endhh",
         field: "endhh",
         caption: "종료시간",
-        width: 100,
+        width: 80,
       },
       {
         id: "col_endmm",
         field: "endmm",
         caption: "종료분",
-        width: 100,
+        width: 80,
       },
       {
         id: "col_title",
         field: "title",
         caption: "제목",
         width: 150,
+      },
+      {
+        id: "col_kind1",
+        field: "kind1",
+        caption: "전체분류",
+        width: 120,
       },
       {
         id: "col_colorID",

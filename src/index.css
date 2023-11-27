@@ -23,7 +23,7 @@ code {
   min-width: 100% !important;
 }
 
-.p-datatable .p-datatable-tbody > tr > td {
+.p-datatable .p-datatable-tbody>tr>td {
   padding: 0rem 0.5rem !important;
   height: 40px !important;
   vertical-align: middle !important;
@@ -34,7 +34,7 @@ code {
   padding: 0.7rem 1rem !important;
 }
 
-.p-input-icon-left > .p-inputtext {
+.p-input-icon-left>.p-inputtext {
   padding-left: 2.5rem !important;
 }
 
@@ -53,11 +53,12 @@ code {
 }
 
 .k-splitter {
-  border-color: rgba(0,0,0,0) !important;
+  border-color: rgba(0, 0, 0, 0) !important;
 }
 
 /*step 설정*/
-.k-step-list-vertical, .k-progressbar {
+.k-step-list-vertical,
+.k-progressbar {
   height: 77vh !important;
 }
 
@@ -73,7 +74,7 @@ code {
 
 @media (max-width: 1200px) {
   .react-calendar {
-      height: 80%;
+    height: 80%;
   }
 }
 
@@ -209,11 +210,11 @@ code {
 }
 
 /*스케줄러 폼 변경*/
-#schulderform > .k-form-field > .k-label{
+#schulderform>.k-form-field>.k-label {
   width: 20% !important;
 }
 
-#schulderform > .k-form-field > .k-form-field-wrap{
+#schulderform>.k-form-field>.k-form-field-wrap {
   max-width: 100% !important;
 }
 
@@ -237,18 +238,21 @@ div.k-animation-container {
   min-height: 150px !important;
 }
 
-.k-scheduler-edit-dialog > .k-window, .k-dialog > .k-window-content, .k-prompt-container {
-  padding-bottom : 70px !important;
+.k-scheduler-edit-dialog>.k-window,
+.k-dialog>.k-window-content,
+.k-prompt-container {
+  padding-bottom: 70px !important;
 }
 
-.k-scheduler-edit-dialog > .k-window, .k-dialog > .k-window-actions {
-    display: flex !important;
-    justify-content: flex-end !important;
-  }
-  
+.k-scheduler-edit-dialog>.k-window,
+.k-dialog>.k-window-actions {
+  display: flex !important;
+  justify-content: flex-end !important;
+}
+
 .k-pager-md .k-pager-numbers-wrap {
-    justify-content: center !important;
-    width: 100%;
+  justify-content: center !important;
+  width: 100%;
 }
 
 .k-grouping-header {
@@ -309,6 +313,9 @@ div.k-animation-container {
   .customized-timeline .p-card {
     margin-top: 1rem;
   }
+}
+.customized-timeline .p-timeline-event-opposite {
+  display: none;
 }
 
 /* .k-grid tr {
@@ -477,7 +484,11 @@ input.readonly {
 }
 
 @media print {
-  .nonprintable {display: none};
+  .nonprintable {
+    display: none
+  }
+
+  ;
 }
 
 body {
