@@ -1,15 +1,27 @@
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { useSetRecoilState } from "recoil";
 import { useApi } from "../../hooks/api";
-import { GetPropertyValueByName, UseCustomOption, UseGetValueFromSessionItem, UseMessages, UseParaPc, UsePermissions, findMessage } from "../CommonFunction";
-import { isLoading } from "../../store/atoms";
+import { 
+  GetPropertyValueByName, 
+  UseCustomOption, 
+  UseGetValueFromSessionItem, 
+  UseMessages, 
+  UseParaPc, 
+  findMessage 
+} from "../CommonFunction";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { useEffect, useState } from "react";
-import { BottomContainer, ButtonContainer, FormBox, FormBoxWrap } from "../../CommonStyled";
+import { 
+  BottomContainer, 
+  ButtonContainer, 
+  FormBox, 
+  FormBoxWrap 
+} from "../../CommonStyled";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import { Iparameters, TPermissions } from "../../store/types";
+import { Iparameters } from "../../store/types";
 import React from "react";
 import { Button } from "@progress/kendo-react-buttons";
+import { useSetRecoilState } from "recoil";
+import { isLoading } from "../../store/atoms";
 
 type TData = {
   prodmac: string;
@@ -38,6 +50,7 @@ const KendoWindow = ({
   const pathname: string = window.location.pathname.replace("/", "");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const setLoading = useSetRecoilState(isLoading);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -123,6 +136,8 @@ const KendoWindow = ({
 
   const fetchTodoSave = async () => {
     let data: any;
+    setLoading(true);
+
     const parameters: Iparameters = {
       procedureName: "P_PR_A2000W_S",
       pageNumber: 0,
@@ -180,6 +195,8 @@ const KendoWindow = ({
       console.log(data);
       alert(data.resultMessage);
     }
+
+    setLoading(false);
   };
 
   return (

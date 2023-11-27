@@ -40,6 +40,7 @@ import { useApi } from "../hooks/api";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import {
   getGridItemChangedData,
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -106,6 +107,17 @@ const PR_B0020W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
+      onResetCard();
+    }
+  }, [customOptionData]);
 
   // 바코드구분
   UseBizComponent("L_BA090", setBizComponentData);
@@ -279,7 +291,6 @@ const PR_B0020W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
       fetchMainGrid(deepCopiedFilters);
-      onResetCard();
     }
   }, [filters, permissions]);
 
@@ -402,7 +413,6 @@ const PR_B0020W: React.FC = () => {
   const search = () => {
     resetAllGrid();
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-    onResetCard(); // 카드 초기화
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {

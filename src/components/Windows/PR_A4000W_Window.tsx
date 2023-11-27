@@ -37,7 +37,8 @@ import {
   UseMessages, 
   UseParaPc, 
   convertDateToStr, 
-  getGridItemChangedData 
+  getGridItemChangedData, 
+  numberWithCommas
 } from "../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -544,17 +545,17 @@ const DetailWindow = ({
 
   //그리드 데이터 변경 되었을 때
   useEffect(() => {
-      if (inDataResult.total > 0 && isInitSearch === false ) {
-        const firstRowData = inDataResult.data[0];
-        setInSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
+    if (inDataResult.total > 0 && isInitSearch === false ) {
+      const firstRowData = inDataResult.data[0];
+      setInSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
 
-        setFilters((prev) => ({
-          ...prev,
-          rekey: firstRowData.rekey,
-        }));
+      setFilters((prev) => ({
+        ...prev,
+        rekey: firstRowData.rekey,
+      }));
 
-        setIsInitSearch(true);
-      }
+      setIsInitSearch(true);
+    }
   }, [inDataResult]);
 
   useEffect(() => {
@@ -596,46 +597,34 @@ const DetailWindow = ({
     );
   };
 
-  const gridsumQtyFooterCell = (props: GridFooterCellProps) => {
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     inDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
     );
-    if (sum != undefined) {
-      var parts = sum.toString().split(".");
 
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    } else {
-      return <td></td>;
-    }
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
   };
 
-  const gridsumQtyFooterCell2 = (props: GridFooterCellProps) => {
+  const editNumberFooterCell2 = (props: GridFooterCellProps) => {
     let sum = 0;
     badDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
     );
 
-    if (sum != undefined) {
-      var parts = sum.toString().split(".");
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    } else {
-      return <td></td>;
-    }
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
   };
 
   const enterEdit = (dataItem: any, field: string) => {
@@ -1067,11 +1056,20 @@ const DetailWindow = ({
 
     setLoading(true);
 
-    if (dataItem.length > 0 || deletedMainRows.length > 0) 
-    {
+    if (dataItem.length > 0 || deletedMainRows.length > 0) {
       dataItem.forEach((item: any) => {
         const {
-          rowstatus, div, itemcd, itemnm, insiz, qty, qtyunit, lotnum, remark, keyfield, proccd
+          rowstatus, 
+          div, 
+          itemcd, 
+          itemnm, 
+          insiz, 
+          qty, 
+          qtyunit,
+          lotnum, 
+          remark, 
+          keyfield, 
+          proccd
         } = item;
   
         inArr.rowstatus.push(rowstatus);
@@ -1089,7 +1087,17 @@ const DetailWindow = ({
 
       deletedMainRows.forEach((item: any) => {
         const {
-          rowstatus, div, itemcd, itemnm, insiz, qty, qtyunit, lotnum, remark, keyfield, proccd
+          rowstatus, 
+          div, 
+          itemcd, 
+          itemnm, 
+          insiz, 
+          qty, 
+          qtyunit,
+          lotnum, 
+          remark, 
+          keyfield, 
+          proccd
         } = item;
   
         inArr.rowstatus.push(rowstatus);
@@ -1184,8 +1192,7 @@ const DetailWindow = ({
       }
     };
 
-    if (dataItem1.length > 0 || deletedMainRows1.length > 0)
-    {
+    if (dataItem1.length > 0 || deletedMainRows1.length > 0) {
       dataItem1.forEach((item: any) => {
         const { rowstatus, keyfield, baddt, badcd, qty, remark} = item;
         badArr.rowstatus.push(rowstatus);
@@ -1298,7 +1305,7 @@ const DetailWindow = ({
       }
     });
 
-    const newData = data.map((item, num) => ({
+    const newData = data.map((item) => ({
       ...item,
       num: ++temp,
       rowstatus: "N",
@@ -1410,7 +1417,7 @@ const DetailWindow = ({
               title="사용량"
               width="100px"
               cell={NumberCell}
-              footerCell={gridsumQtyFooterCell}
+              footerCell={editNumberFooterCell}
             />
             <GridColumn 
               field="qtyunit" 
@@ -1510,7 +1517,7 @@ const DetailWindow = ({
               title="불량수량"
               width="100px"
               cell={NumberCell}
-              footerCell={gridsumQtyFooterCell2}
+              footerCell={editNumberFooterCell2}
             />
             <GridColumn field="remark" title="비고" width="180px" />
           </Grid>
@@ -1542,7 +1549,7 @@ const DetailWindow = ({
       />
     )}
     </Window>
-  )
-}
+  );
+};
 
 export default DetailWindow;

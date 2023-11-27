@@ -4,7 +4,8 @@ import {
   UseGetValueFromSessionItem, 
   UseParaPc, 
   convertDateToStr, 
-  getGridItemChangedData 
+  getGridItemChangedData, 
+  numberWithCommas
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { useEffect, useRef, useState } from "react";
@@ -317,25 +318,19 @@ const KendoWindow = ({
     );
   };
 
-  const gridsumQtyFooterCell = (props: GridFooterCellProps) => {
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
     );
-    if (sum != undefined) {
-      var parts = sum.toString().split(".");
 
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    } else {
-      return <td></td>;
-    }
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
   };
 
   const onAddClick = () => {
@@ -344,7 +339,7 @@ const KendoWindow = ({
       if(item.num > temp) {
         temp = item.num
       }
-    })
+    });
 
     const newDataItem = {
       [DATA_ITEM_KEY]: ++temp,
@@ -371,7 +366,7 @@ const KendoWindow = ({
 
     //삭제 안 할 데이터 newData에 push
     mainDataResult.data.forEach((item: any, index: number) => {
-      if(!selectedState[item[DATA_ITEM_KEY]]) {
+      if (!selectedState[item[DATA_ITEM_KEY]]) {
         newData.push(item);
         Object2.push(index);
       } else {
@@ -580,9 +575,7 @@ const KendoWindow = ({
   }, [paraSaved]);
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (
-      field !== "rowstatus"
-    ) {
+    if (field !== "rowstatus") {
       const newData = mainDataResult.data.map((item) =>
       item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
         ? {
@@ -773,7 +766,7 @@ const KendoWindow = ({
             title="불량수량"
             width="100px"
             cell={NumberCell}
-            footerCell={gridsumQtyFooterCell}
+            footerCell={editNumberFooterCell}
           />
           <GridColumn field="remark" title="비고" width="200px"/>
         </Grid>

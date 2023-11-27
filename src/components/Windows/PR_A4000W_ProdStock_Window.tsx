@@ -13,6 +13,7 @@ import {
   getQueryFromBizComponent, 
   handleKeyPressSearch,
   GetPropertyValueByName,
+  numberWithCommas,
 } from "../CommonFunction";
 import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { bytesToBase64 } from "byte-base64";
@@ -509,25 +510,19 @@ const ProdStockWindow = ({ setVisible, setData }: IWindow) => {
     );
   };
 
-  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
     );
-    if (sum != undefined) {
-      var parts = sum.toString().split(".");
 
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    } else {
-      return <td></td>;
-    }
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
   };
 
   const search = () => {
@@ -602,12 +597,12 @@ const ProdStockWindow = ({ setVisible, setData }: IWindow) => {
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
-                      name="div"
-                      value={filters.div}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                      textField="code_name"
-                      valueField="code"
+                    name="div"
+                    value={filters.div}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    textField="code_name"
+                    valueField="code"
                   />
                 )}
               </td>
@@ -616,13 +611,13 @@ const ProdStockWindow = ({ setVisible, setData }: IWindow) => {
               <th>공정</th>
               <td>
               {bizComponentData !== null && (
-                  <BizComponentComboBox
-                      name="proccd"
-                      value={filters.proccd}
-                      bizComponentId="L_PR010"
-                      bizComponentData={bizComponentData}
-                      changeData={filterComboBoxChange}
-                  />
+                <BizComponentComboBox
+                  name="proccd"
+                  value={filters.proccd}
+                  bizComponentId="L_PR010"
+                  bizComponentData={bizComponentData}
+                  changeData={filterComboBoxChange}
+                />
                 )}
               </td>
               <th>LOT NO</th>
@@ -715,7 +710,7 @@ const ProdStockWindow = ({ setVisible, setData }: IWindow) => {
             title="재고량" 
             width="100px" 
             cell={NumberCell}
-            footerCell={gridSumQtyFooterCell}
+            footerCell={editNumberFooterCell}
           />
           <GridColumn field="qtyunit" title="단위" width="80px" />
         </Grid>
@@ -816,7 +811,7 @@ const ProdStockWindow = ({ setVisible, setData }: IWindow) => {
         />
       )}
     </Window>
-  )
+  );
 };
 
 export default ProdStockWindow;
