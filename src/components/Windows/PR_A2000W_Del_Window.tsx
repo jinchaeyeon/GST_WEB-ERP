@@ -11,7 +11,8 @@ import {
   UseMessages, 
   UseParaPc, 
   getGridItemChangedData, 
-  getQueryFromBizComponent 
+  getQueryFromBizComponent, 
+  numberWithCommas
 } from "../CommonFunction";
 import { 
   COM_CODE_DEFAULT_VALUE, 
@@ -349,25 +350,19 @@ const KendoWindow = ({
     );
   };
 
-  const gridsumQtyFooterCell = (props: GridFooterCellProps) => {
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
     );
-    if (sum != undefined) {
-      var parts = sum.toString().split(".");
 
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    } else {
-      return <td></td>;
-    }
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
   };
 
   const onRemoveClick = () => {
@@ -378,7 +373,7 @@ const KendoWindow = ({
 
     //삭제 안 할 데이터 newData에 push
     mainDataResult.data.forEach((item: any, index: number) => {
-      if(item.chk != true) {
+      if (item.chk != true) {
         newData.push(item);
         Object2.push(index);
       } else {
@@ -408,7 +403,6 @@ const KendoWindow = ({
     setSelectedState({
       [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
     });
-
   };
 
   type TRowsArr = {
@@ -650,149 +644,147 @@ const KendoWindow = ({
   };
 
   return (
-    <>
-      <Window
-        title={"생산계획참조"}
-        width={position.width}
-        height={position.height}
-        onMove={handleMove}
-        onResize={handleResize}
-        onClose={onClose}
-        modal={modal}
-      >
-        <GridContainer>
-          <GridTitleContainer>
-            <GridTitle>생산실적내역</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onRemoveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <Grid
-            style={{ height: "43vh" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                proccd: proccdListData.find(
-                  (items: any) => items.sub_code === row.proccd
-                )?.code_name,
-                prodemp: prodempListData.find(
-                  (items: any) => items.user_id === row.prodemp
-                )?.user_name,
-                prodmac: prodmacListData.find(
-                  (items: any) => items.fxcode === row.prodmac
-                )?.fxfull,
-                qtyunit: qtyunitListData.find(
-                  (items: any) => items.sub_code === row.qtyunit
-                )?.code_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)], // 선택된 데이터
-              })),
-              mainDataState
-            )}
-            onDataStateChange={onMainDataStateChange}
-            {...mainDataState}
-            // 선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onSelectionChange}
-            // 스크롤 조회기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
-            // 정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            // 컬럼순서조정
-            reorderable={true}
-            // 컬럼너비조정
-            resizable={true}
-            onItemChange={onMainItemChange}
-            // incell 수정
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
-          >
-            <GridColumn field="rowstatus" title=" " width="50px" editable={false} />
-            <GridColumn 
-              field="chk" 
-              title=" " 
-              width="45px"
-              headerCell={CustomCheckBoxCell}
-              cell={CheckBoxCell}
-            />
-            <GridColumn 
-              field="proddt" 
-              title= "생산일자" 
-              width="120px" 
-              cell={DateCell}
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn field="proccd" title="공정" width="120px" />
-            <GridColumn field="prodemp" title="작업자" width="120px" />
-            <GridColumn field="prodmac" title="설비" width="120px" />
-            <GridColumn field="itemcd" title="품목코드" width="120px" />
-            <GridColumn field="itemnm" title="품목명" width="150px" />
-            <GridColumn field="lotnum" title="LOT NO" width="120px" />
-            <GridColumn 
-              field="prodqty" 
-              title="생산량" 
-              width="100px" 
-              cell={NumberCell}
-              footerCell={gridsumQtyFooterCell}
-            />
-            <GridColumn 
-              field="qty" 
-              title="양품수량" 
-              width="100px"
-              cell={NumberCell}
-              footerCell={gridsumQtyFooterCell}
-            />
-            <GridColumn 
-              field="badqty" 
-              title="불량수량" 
-              width="100px" 
-              cell={NumberCell}
-              footerCell={gridsumQtyFooterCell}
-            />
-            <GridColumn field="qtyunit" title="단위" width="120px" />
-            <GridColumn field="strtime" title="시작시간" width="150px" />
-            <GridColumn field="endtime" title="종료시간" width="150px" />
-            <GridColumn field="remark" title="비고" width="150px" />
-          </Grid>
-        </GridContainer>
-        <BottomContainer>
+    <Window
+      title={"생산계획참조"}
+      width={position.width}
+      height={position.height}
+      onMove={handleMove}
+      onResize={handleResize}
+      onClose={onClose}
+      modal={modal}
+    >
+      <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>생산실적내역</GridTitle>
           <ButtonContainer>
-            <Button 
+            <Button
+              onClick={onRemoveClick}
+              fillMode="outline"
               themeColor={"primary"}
-              fillMode={"outline"}
-              onClick={onSaveClick}
-              icon="save"
-            >
-              저장
-            </Button>
-            <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
-              닫기
-            </Button>
+              icon="minus"
+              title="행 삭제"
+            ></Button>
           </ButtonContainer>
-        </BottomContainer>
-      </Window>
-    </>
-  )
+        </GridTitleContainer>
+        <Grid
+          style={{ height: "43vh" }}
+          data={process(
+            mainDataResult.data.map((row) => ({
+              ...row,
+              proccd: proccdListData.find(
+                (items: any) => items.sub_code === row.proccd
+              )?.code_name,
+              prodemp: prodempListData.find(
+                (items: any) => items.user_id === row.prodemp
+              )?.user_name,
+              prodmac: prodmacListData.find(
+                (items: any) => items.fxcode === row.prodmac
+              )?.fxfull,
+              qtyunit: qtyunitListData.find(
+                (items: any) => items.sub_code === row.qtyunit
+              )?.code_name,
+              [SELECTED_FIELD]: selectedState[idGetter(row)], // 선택된 데이터
+            })),
+            mainDataState
+          )}
+          onDataStateChange={onMainDataStateChange}
+          {...mainDataState}
+          // 선택 기능
+          dataItemKey={DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          onSelectionChange={onSelectionChange}
+          // 스크롤 조회기능
+          fixedScroll={true}
+          total={mainDataResult.total}
+          skip={page.skip}
+          take={page.take}
+          pageable={true}
+          onPageChange={pageChange}
+          //원하는 행 위치로 스크롤 기능
+          ref={gridRef}
+          rowHeight={30}
+          // 정렬기능
+          sortable={true}
+          onSortChange={onMainSortChange}
+          // 컬럼순서조정
+          reorderable={true}
+          // 컬럼너비조정
+          resizable={true}
+          onItemChange={onMainItemChange}
+          // incell 수정
+          cellRender={customCellRender}
+          rowRender={customRowRender}
+          editField={EDIT_FIELD}
+        >
+          <GridColumn field="rowstatus" title=" " width="50px" editable={false} />
+          <GridColumn 
+            field="chk" 
+            title=" " 
+            width="45px"
+            headerCell={CustomCheckBoxCell}
+            cell={CheckBoxCell}
+          />
+          <GridColumn 
+            field="proddt" 
+            title= "생산일자" 
+            width="120px" 
+            cell={DateCell}
+            footerCell={mainTotalFooterCell}
+          />
+          <GridColumn field="proccd" title="공정" width="120px" />
+          <GridColumn field="prodemp" title="작업자" width="120px" />
+          <GridColumn field="prodmac" title="설비" width="120px" />
+          <GridColumn field="itemcd" title="품목코드" width="120px" />
+          <GridColumn field="itemnm" title="품목명" width="150px" />
+          <GridColumn field="lotnum" title="LOT NO" width="120px" />
+          <GridColumn 
+            field="prodqty" 
+            title="생산량" 
+            width="100px" 
+            cell={NumberCell}
+            footerCell={editNumberFooterCell}
+          />
+          <GridColumn 
+            field="qty" 
+            title="양품수량" 
+            width="100px"
+            cell={NumberCell}
+            footerCell={editNumberFooterCell}
+          />
+          <GridColumn 
+            field="badqty" 
+            title="불량수량" 
+            width="100px" 
+            cell={NumberCell}
+            footerCell={editNumberFooterCell}
+          />
+          <GridColumn field="qtyunit" title="단위" width="120px" />
+          <GridColumn field="strtime" title="시작시간" width="150px" />
+          <GridColumn field="endtime" title="종료시간" width="150px" />
+          <GridColumn field="remark" title="비고" width="150px" />
+        </Grid>
+      </GridContainer>
+      <BottomContainer>
+        <ButtonContainer>
+          <Button 
+            themeColor={"primary"}
+            fillMode={"outline"}
+            onClick={onSaveClick}
+            icon="save"
+          >
+            저장
+          </Button>
+          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
+            닫기
+          </Button>
+        </ButtonContainer>
+      </BottomContainer>
+    </Window>
+  );
 };
 
 export default KendoWindow;

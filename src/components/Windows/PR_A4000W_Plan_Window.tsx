@@ -25,6 +25,7 @@ import {
   handleKeyPressSearch, 
   setDefaultDate,
   GetPropertyValueByName,
+  numberWithCommas,
 } from "../CommonFunction";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import { Input } from "@progress/kendo-react-inputs";
@@ -64,7 +65,12 @@ let temp = 0;
 
 let targetRowIndex: null | number = null;
 
-const PlanWindow = ({ setVisible, setData, modal = false, custdiv }: IWindow) => {
+const PlanWindow = ({ 
+  setVisible, 
+  setData, 
+  modal = false, 
+  custdiv 
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
@@ -106,11 +112,12 @@ const PlanWindow = ({ setVisible, setData, modal = false, custdiv }: IWindow) =>
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_BA171, L_BA172, L_BA173, L_BA015, L_PR010, R_YN",
-    // 대분류, 중분류, 소분류, 수량단위, 공정, 완료구분
-    setBizComponentData
+    UseBizComponent(
+      "L_BA171, L_BA172, L_BA173, L_BA015, L_PR010, R_YN",
+      // 대분류, 중분류, 소분류, 수량단위, 공정, 완료구분
+      setBizComponentData
   );
+
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -534,25 +541,19 @@ const PlanWindow = ({ setVisible, setData, modal = false, custdiv }: IWindow) =>
     );
   }
 
-  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+  const editNumberFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
-      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+      props.field !== undefined
+        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        : 0
     );
-    
-    if (sum != undefined) {
-      var parts = sum.toString().split(".");
-      return parts[0] != "NaN" ? (
-        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
-          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-            (parts[1] ? "." + parts[1] : "")}
-        </td>
-      ) : (
-        <td></td>
-      );
-    } else {
-      return <td></td>;
-    }
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
   };
 
   const search = () => {
@@ -629,18 +630,18 @@ const PlanWindow = ({ setVisible, setData, modal = false, custdiv }: IWindow) =>
               </td>
               <th>공정</th>
               <td>
-              {customOptionData !== null && (
-                <CustomOptionComboBox
-                  name="proccd"
-                  value={filters.proccd}
-                  customOptionData={customOptionData}
-                  changeData={filterComboBoxChange}
-                />
-              )}
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="proccd"
+                    value={filters.proccd}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
               </td>
               <th>생산계획번호</th>
               <td>
-              <Input
+                <Input
                   name="keyfield"
                   type="text"
                   value={filters.keyfield}
@@ -679,7 +680,7 @@ const PlanWindow = ({ setVisible, setData, modal = false, custdiv }: IWindow) =>
               </td>
               <th>품목명</th>
               <td>
-              <Input
+                <Input
                   name="itemnm"
                   type="text"
                   value={filters.itemnm}
@@ -715,13 +716,13 @@ const PlanWindow = ({ setVisible, setData, modal = false, custdiv }: IWindow) =>
               qtyunit: qtyunitListData.find(
                 (item: any) => item.sub_code === row.qtyunit
               )?.code_name,
-              itemlvl1 : itemlvl1ListData.find(
+              itemlvl1: itemlvl1ListData.find(
                 (item: any) => item.sub_code === row.itemlvl1
               )?.code_name,
-              itemlvl2 : itemlvl2ListData.find(
+              itemlvl2: itemlvl2ListData.find(
                 (item: any) => item.sub_code === row.itemlvl2
               )?.code_name,
-              itemlvl3 : itemlvl3ListData.find(
+              itemlvl3: itemlvl3ListData.find(
                 (item: any) => item.sub_code === row.itemlvl3
               )?.code_name,
               itemacnt: itemacntListData.find(
@@ -782,14 +783,14 @@ const PlanWindow = ({ setVisible, setData, modal = false, custdiv }: IWindow) =>
             title="계획량" 
             width="100px" 
             cell={NumberCell}
-            footerCell={gridSumQtyFooterCell}
+            footerCell={editNumberFooterCell}
           />
           <GridColumn 
             field="prodqty" 
             title="생산량" 
             width="100px" 
             cell={NumberCell}
-            footerCell={gridSumQtyFooterCell}
+            footerCell={editNumberFooterCell}
           />
           <GridColumn field="qtyunit" title="단위" width="80px" />
           <GridColumn field="plankey" title="생산계획번호" width="120px" />
@@ -811,13 +812,13 @@ const PlanWindow = ({ setVisible, setData, modal = false, custdiv }: IWindow) =>
               qtyunit: qtyunitListData.find(
                 (item: any) => item.sub_code === row.qtyunit
               )?.code_name,
-              itemlvl1 : itemlvl1ListData.find(
+              itemlvl1: itemlvl1ListData.find(
                 (item: any) => item.sub_code === row.itemlvl1
               )?.code_name,
-              itemlvl2 : itemlvl2ListData.find(
+              itemlvl2: itemlvl2ListData.find(
                 (item: any) => item.sub_code === row.itemlvl2
               )?.code_name,
-              itemlvl3 : itemlvl3ListData.find(
+              itemlvl3: itemlvl3ListData.find(
                 (item: any) => item.sub_code === row.itemlvl3
               )?.code_name,
               itemacnt: itemacntListData.find(
@@ -827,28 +828,28 @@ const PlanWindow = ({ setVisible, setData, modal = false, custdiv }: IWindow) =>
             })),
             keepingDataState
           )}
-        onDataStateChange={onKeepingDataStateChange}
-        {...keepingDataState}
-        // 선택 기능
-        dataItemKey={KEEPING_DATA_ITEM_KEY}
-        selectedField={SELECTED_FIELD}
-        selectable={{
-          enabled: true,
-          mode: "single",
-        }}
-        onSelectionChange={onKeepingSelectionChange}
-        // 스크롤 조회기능
-        fixedScroll={true}
-        total={keepingDataResult.total}
-        // 정렬기능
-        sortable={true}
-        onSortChange={onKeepingSortChange}
-        // 컬럼순서조정
-        reorderable={true}
-        // 컬럼너비조정
-        resizable={true}
-        // 더블클릭
-        onRowDoubleClick={onRemoveKeepRow}
+          onDataStateChange={onKeepingDataStateChange}
+          {...keepingDataState}
+          // 선택 기능
+          dataItemKey={KEEPING_DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          onSelectionChange={onKeepingSelectionChange}
+          // 스크롤 조회기능
+          fixedScroll={true}
+          total={keepingDataResult.total}
+          // 정렬기능
+          sortable={true}
+          onSortChange={onKeepingSortChange}
+          // 컬럼순서조정
+          reorderable={true}
+          // 컬럼너비조정
+          resizable={true}
+          // 더블클릭
+          onRowDoubleClick={onRemoveKeepRow}
         >
           <GridColumn 
             field="plandt" 
@@ -885,11 +886,16 @@ const PlanWindow = ({ setVisible, setData, modal = false, custdiv }: IWindow) =>
           <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
             확인
           </Button>
-          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
+          <Button 
+            themeColor={"primary"} 
+            fillMode={"outline"} 
+            onClick={onClose}
+          >
             취소
           </Button>
         </ButtonContainer>
       </BottomContainer>
+
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
@@ -898,7 +904,7 @@ const PlanWindow = ({ setVisible, setData, modal = false, custdiv }: IWindow) =>
         />
       )}
     </Window>
-
   );
 };
+
 export default PlanWindow;
