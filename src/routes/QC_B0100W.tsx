@@ -11,12 +11,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   convertDateToStr,
   getQueryFromBizComponent,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
 import DatePicker from "../components/KPIcomponents/Calendar/DatePicker";
@@ -108,7 +108,10 @@ const QC_B0100W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setFilters((prev) => ({
         ...prev,
@@ -313,10 +316,10 @@ const QC_B0100W: React.FC = () => {
           ...item,
         })
       );
-        
+
       setProccdData(rows);
 
-      if(filters.card_click == "F") {
+      if (filters.card_click == "F") {
         setStackChartAllLabel2(
           rows.map((items: { fxnm: any }) => {
             return items.fxnm;
@@ -513,193 +516,199 @@ const QC_B0100W: React.FC = () => {
         ...prev,
         card_click: "P",
         isSearch: true,
-      }))
+      }));
     } else if (title == "불량률 TOP 고객사") {
       setFilters((prev) => ({
         ...prev,
         card_click: "C",
         isSearch: true,
-      }))
+      }));
     } else if (title == "불량률 TOP 품목") {
       setFilters((prev) => ({
         ...prev,
         card_click: "I",
         isSearch: true,
-      }))
+      }));
     } else {
       setFilters((prev) => ({
         ...prev,
         card_click: "F",
         isSearch: true,
-      }))
+      }));
     }
   };
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <Container
-          maxWidth="xl"
-          style={{ width: "100%", marginBottom: "25px" }}
-        >
-          <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
-            <Title>공정불량률</Title>
-            <ButtonContainer>
-              <Button
-                icon="pi pi-search"
-                onClick={() =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    isSearch: true,
-                  }))
-                }
-                className="mr-2"
-              />
-            </ButtonContainer>
-          </TitleContainer>
-          <Toolbar start={startContent} />
-          <Divider />
-          <Box sx={{ flexGrow: 1 }}>
+      <div style={{ fontFamily: "TheJamsil5Bold" }}>
+        <ThemeProvider theme={theme}>
+          <Container
+            maxWidth="xl"
+            style={{ width: "100%", marginBottom: "25px" }}
+          >
+            <TitleContainer
+              style={{ paddingTop: "25px", paddingBottom: "25px" }}
+            >
+              <Title>공정불량률</Title>
+              <ButtonContainer>
+                <Button
+                  icon="pi pi-search"
+                  onClick={() =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      isSearch: true,
+                    }))
+                  }
+                  className="mr-2"
+                />
+              </ButtonContainer>
+            </TitleContainer>
+            <Toolbar start={startContent} />
+            <Divider />
+            <Box sx={{ flexGrow: 1 }}>
+              <Grid container spacing={2}>
+                {cardOption.map((item) => (
+                  <Grid item xs={12} sm={6} md={6} lg={6} xl={3}>
+                    <Card
+                      title={item.title}
+                      data={item.data}
+                      backgroundColor={item.backgroundColor}
+                      fontsize={
+                        size.width > 600 && size.width < 900
+                          ? "1.2rem"
+                          : "1.5rem"
+                      }
+                      form={"QC_B0100W"}
+                      Click={() => selectCard(item.title)}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+            <Divider />
             <Grid container spacing={2}>
-              {cardOption.map((item) => (
-                <Grid item xs={12} sm={6} md={6} lg={6} xl={3}>
-                  <Card
-                    title={item.title}
-                    data={item.data}
-                    backgroundColor={item.backgroundColor}
-                    fontsize={
-                      size.width > 600 && size.width < 900 ? "1.2rem" : "1.5rem"
-                    }
-                    form={"QC_B0100W"}
-                    Click={() => selectCard(item.title)}
-                  />
-                </Grid>
-              ))}
+              <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
+                <GridTitle title="전체 불량률" />
+                <DoughnutChart
+                  data={All}
+                  option={["okrate", "badrate"]}
+                  label={["양품율", "불량률"]}
+                  theme={theme}
+                  form={"QC_B0100W"}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
+                {filters.card_click == "P" ? (
+                  <>
+                    <GridTitle title="공정별 불량률" />
+                    <BarChart
+                      props={ProccdData}
+                      value="badrate"
+                      alllabel={stackChartAllLabel2}
+                      random={true}
+                      name="proccdnm"
+                      colorName={colorName}
+                    />
+                  </>
+                ) : filters.card_click == "C" ? (
+                  <>
+                    <GridTitle title="고객사별 불량률" />
+                    <BarChart
+                      props={ProccdData}
+                      value="badrate"
+                      alllabel={stackChartAllLabel2}
+                      random={true}
+                      name="proccdnm"
+                      colorName={colorName}
+                    />
+                  </>
+                ) : filters.card_click == "I" ? (
+                  <>
+                    <GridTitle title="품목별 불량률" />
+                    <BarChart
+                      props={ProccdData}
+                      value="badrate"
+                      alllabel={stackChartAllLabel2}
+                      random={true}
+                      name="proccdnm"
+                      colorName={colorName}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <GridTitle title="설비별 불량률" />
+                    <BarChart
+                      props={ProccdData}
+                      value="badrate"
+                      alllabel={stackChartAllLabel2}
+                      random={true}
+                      name="fxnm"
+                      colorName={colorName}
+                    />
+                  </>
+                )}
+              </Grid>
             </Grid>
-          </Box>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
-              <GridTitle title="전체 불량률" />
-              <DoughnutChart
-                data={All}
-                option={["okrate", "badrate"]}
-                label={["양품율", "불량률"]}
-                theme={theme}
-                form={"QC_B0100W"}
-              />
+            <Divider />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                <GroupTable
+                  value={AllList}
+                  column={{
+                    code_name: "공정명",
+                    gubun: "구분",
+                    yrmm01: "1월",
+                    yrmm02: "2월",
+                    yrmm03: "3월",
+                    yrmm04: "4월",
+                    yrmm05: "5월",
+                    yrmm06: "6월",
+                    yrmm07: "7월",
+                    yrmm08: "8월",
+                    yrmm09: "9월",
+                    yrmm10: "10월",
+                    yrmm11: "11월",
+                    yrmm12: "12월",
+                  }}
+                  width={[
+                    120, 110, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+                    100, 100,
+                  ]}
+                  title={
+                    filters.gubun == "A" ? "전체 목록 PPM" : "전체 목록 불량률"
+                  }
+                  key="num"
+                  selection={selected}
+                  onSelectionChange={(e: any) => {
+                    setSelected(e.value);
+                  }}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
-              {filters.card_click == "P" ? (
-                <>
-                  <GridTitle title="공정별 불량률" />
-                  <BarChart
-                    props={ProccdData}
-                    value="badrate"
-                    alllabel={stackChartAllLabel2}
-                    random={true}
-                    name="proccdnm"
-                    colorName={colorName}
-                  />
-                </>
-              ) : filters.card_click == "C" ? (
-                <>
-                  <GridTitle title="고객사별 불량률" />
-                  <BarChart
-                    props={ProccdData}
-                    value="badrate"
-                    alllabel={stackChartAllLabel2}
-                    random={true}
-                    name="proccdnm"
-                    colorName={colorName}
-                  />
-                </>
-              ) : filters.card_click == "I" ? (
-                <>
-                  <GridTitle title="품목별 불량률" />
-                  <BarChart
-                    props={ProccdData}
-                    value="badrate"
-                    alllabel={stackChartAllLabel2}
-                    random={true}
-                    name="proccdnm"
-                    colorName={colorName}
-                  />
-                </>
-              ) : (
-                <>
-                  <GridTitle title="설비별 불량률" />
-                  <BarChart
-                    props={ProccdData}
-                    value="badrate"
-                    alllabel={stackChartAllLabel2}
-                    random={true}
-                    name="fxnm"
-                    colorName={colorName}
-                  />
-                </>
-              )}
+            <Divider />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                <GridTitle title="월별 건수" />
+                <LineChart
+                  props={MonthData}
+                  value="value"
+                  alllabel={stackChartAllLabel}
+                  label={stackChartLabel}
+                  color={[
+                    theme.palette.primary.dark,
+                    theme.palette.primary.light,
+                  ]}
+                  borderColor={[
+                    theme.palette.primary.main,
+                    theme.palette.secondary.main,
+                  ]}
+                  name="series"
+                />
+              </Grid>
             </Grid>
-          </Grid>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-              <GroupTable
-                value={AllList}
-                column={{
-                  code_name: "공정명",
-                  gubun: "구분",
-                  yrmm01: "1월",
-                  yrmm02: "2월",
-                  yrmm03: "3월",
-                  yrmm04: "4월",
-                  yrmm05: "5월",
-                  yrmm06: "6월",
-                  yrmm07: "7월",
-                  yrmm08: "8월",
-                  yrmm09: "9월",
-                  yrmm10: "10월",
-                  yrmm11: "11월",
-                  yrmm12: "12월",
-                }}
-                width={[
-                  120, 110, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                  100, 100,
-                ]}
-                title={
-                  filters.gubun == "A" ? "전체 목록 PPM" : "전체 목록 불량률"
-                }
-                key="num"
-                selection={selected}
-                onSelectionChange={(e: any) => {
-                  setSelected(e.value);
-                }}
-              />
-            </Grid>
-          </Grid>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-              <GridTitle title="월별 건수" />
-              <LineChart
-                props={MonthData}
-                value="value"
-                alllabel={stackChartAllLabel}
-                label={stackChartLabel}
-                color={[
-                  theme.palette.primary.dark,
-                  theme.palette.primary.light,
-                ]}
-                borderColor={[
-                  theme.palette.primary.main,
-                  theme.palette.secondary.main,
-                ]}
-                name="series"
-              />
-            </Grid>
-          </Grid>
-        </Container>
-        <SpecialDial />
-      </ThemeProvider>
+          </Container>
+          <SpecialDial />
+        </ThemeProvider>
+      </div>
     </>
   );
 };

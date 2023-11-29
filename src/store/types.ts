@@ -42,6 +42,8 @@ export type TLoginResult = {
   serviceName: string;
   customerName: string;
   loginKey: string;
+  webTitle : string;
+  homeMenuWeb : string;
 };
 
 export type TCommonCode = {

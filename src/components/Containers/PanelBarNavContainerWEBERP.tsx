@@ -1,31 +1,18 @@
-import { useCallback, useState, useEffect } from "react";
+import { Button } from "@progress/kendo-react-buttons";
+import {
+  AutoComplete,
+  AutoCompleteCloseEvent,
+} from "@progress/kendo-react-dropdowns";
 import {
   PanelBar,
   PanelBarItem,
   PanelBarSelectEventArguments,
 } from "@progress/kendo-react-layout";
-import { useHistory, useLocation, withRouter } from "react-router-dom";
-import { Button } from "@progress/kendo-react-buttons";
-import { useRecoilState } from "recoil";
-import {
-  isMobileMenuOpendState,
-  menusState,
-  passwordExpirationInfoState,
-  loginResultState,
-  isMenuOpendState,
-  // accessTokenState,
-  deletedAttadatnumsState,
-  unsavedAttadatnumsState,
-  deletedNameState,
-  unsavedNameState,
-} from "../../store/atoms";
 import { Tooltip } from "@progress/kendo-react-tooltip";
-import UserOptionsWindow from "../Windows/CommonWindows/UserOptionsWindow";
-import ChangePasswordWindow from "../Windows/CommonWindows/ChangePasswordWindow";
-import SystemOptionWindow from "../Windows/CommonWindows/SystemOptionWindow";
-import { useApi } from "../../hooks/api";
-import { Iparameters, TLogParaVal, TPath } from "../../store/types";
-import Loading from "../Loading";
+import { useCallback, useEffect, useState } from "react";
+import cookie from "react-cookies";
+import { useHistory, useLocation, withRouter } from "react-router-dom";
+import { useRecoilState } from "recoil";
 import {
   AppName,
   ButtonContainer,
@@ -39,12 +26,25 @@ import {
   TopTitle,
   Wrapper,
 } from "../../CommonStyled";
-import { getBrowser, resetLocalStorage, UseGetIp } from "../CommonFunction";
+import { useApi } from "../../hooks/api";
 import {
-  AutoComplete,
-  AutoCompleteCloseEvent,
-} from "@progress/kendo-react-dropdowns";
-import cookie from "react-cookies";
+  // accessTokenState,
+  deletedAttadatnumsState,
+  deletedNameState,
+  isMenuOpendState,
+  isMobileMenuOpendState,
+  loginResultState,
+  menusState,
+  passwordExpirationInfoState,
+  unsavedAttadatnumsState,
+  unsavedNameState,
+} from "../../store/atoms";
+import { Iparameters, TLogParaVal, TPath } from "../../store/types";
+import { UseGetIp, getBrowser, resetLocalStorage } from "../CommonFunction";
+import Loading from "../Loading";
+import ChangePasswordWindow from "../Windows/CommonWindows/ChangePasswordWindow";
+import SystemOptionWindow from "../Windows/CommonWindows/SystemOptionWindow";
+import UserOptionsWindow from "../Windows/CommonWindows/UserOptionsWindow";
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
   const location = useLocation();
@@ -581,7 +581,7 @@ const PanelBarNavContainer = (props: any) => {
           <Gnv isMobileMenuOpend={isMobileMenuOpend} theme={"#2289c3"}>
             <AppName theme={"#2289c3"} onClick={() => setIsMenuOpend(false)}>
               <Logo size="32px" name={"GST WEB"} />
-              WEB ERP
+              {loginResult.webTitle}
             </AppName>
             {prgMenus && (
               <MenuSearchBox>

@@ -1,37 +1,37 @@
+import { Container } from "@mui/material";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { bytesToBase64 } from "byte-base64";
+import { Button } from "primereact/button";
+import { Divider } from "primereact/divider";
+import { DropdownChangeEvent } from "primereact/dropdown";
+import { Toast } from "primereact/toast";
+import { Toolbar } from "primereact/toolbar";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
-import { useApi } from "../hooks/api";
 import {
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
   convertDateToStr,
   dateformat2,
   getQueryFromBizComponent,
   setDefaultDate,
   toDate2,
-  UseBizComponent,
-  UseCustomOption,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { colors, isLoading } from "../store/atoms";
-import { Toolbar } from "primereact/toolbar";
-import { Divider } from "primereact/divider";
-import { Button } from "primereact/button";
-import { Container } from "@mui/material";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import ComboBox from "../components/KPIcomponents/ComboBox/ComboBox";
 import DatePicker from "../components/KPIcomponents/Calendar/DatePicker";
-import Radio from "../components/KPIcomponents/Radio/Radio";
 import Card from "../components/KPIcomponents/Card/CardBox";
-import GridTitle from "../components/KPIcomponents/Title/Title";
-import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
-import { Toast } from "primereact/toast";
-import Input from "../components/KPIcomponents/Input/Input";
-import { DropdownChangeEvent } from "primereact/dropdown";
 import LineChart from "../components/KPIcomponents/Chart/LineChart";
-import { bytesToBase64 } from "byte-base64";
+import ComboBox from "../components/KPIcomponents/ComboBox/ComboBox";
+import Input from "../components/KPIcomponents/Input/Input";
+import Radio from "../components/KPIcomponents/Radio/Radio";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
+import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
+import GridTitle from "../components/KPIcomponents/Title/Title";
+import { useApi } from "../hooks/api";
+import { colors, isLoading } from "../store/atoms";
 
 interface Tsize {
   width: number;
@@ -95,7 +95,10 @@ const PR_B1103W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setFilters((prev) => ({
         ...prev,
@@ -204,7 +207,7 @@ const PR_B1103W: React.FC = () => {
       "@p_itemlvl1": filters.itemlvl1,
       "@p_itemlvl2": filters.itemlvl2,
       "@p_itemlvl3": filters.itemlvl3,
-      "@p_proccd": filters.proccd
+      "@p_proccd": filters.proccd,
     },
   };
 
@@ -225,7 +228,7 @@ const PR_B1103W: React.FC = () => {
       "@p_itemlvl1": filters.itemlvl1,
       "@p_itemlvl2": filters.itemlvl2,
       "@p_itemlvl3": filters.itemlvl3,
-      "@p_proccd": filters.proccd
+      "@p_proccd": filters.proccd,
     },
   };
 
@@ -245,7 +248,7 @@ const PR_B1103W: React.FC = () => {
       "@p_itemlvl1": filters.itemlvl1,
       "@p_itemlvl2": filters.itemlvl2,
       "@p_itemlvl3": filters.itemlvl3,
-      "@p_proccd": filters.proccd
+      "@p_proccd": filters.proccd,
     },
   };
 
@@ -265,7 +268,7 @@ const PR_B1103W: React.FC = () => {
       "@p_itemlvl1": filters.itemlvl1,
       "@p_itemlvl2": filters.itemlvl2,
       "@p_itemlvl3": filters.itemlvl3,
-      "@p_proccd": filters.proccd
+      "@p_proccd": filters.proccd,
     },
   };
 
@@ -569,149 +572,153 @@ const PR_B1103W: React.FC = () => {
 
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <Container
-          maxWidth="xl"
-          style={{ width: "100%", marginBottom: "25px" }}
-        >
-          <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
-            <Toast ref={toast} position="top-center" />
-            <Title>시간당 생산량</Title>
-            <ButtonContainer>
-              <Button
-                icon="pi pi-search"
-                onClick={() => {
-                  var diffTime =
-                    (filters.todt.getTime() - filters.frdt.getTime()) /
-                    (1000 * 60 * 60 * 24);
+      <div style={{ fontFamily: "TheJamsil5Bold" }}>
+        <ThemeProvider theme={theme}>
+          <Container
+            maxWidth="xl"
+            style={{ width: "100%", marginBottom: "25px" }}
+          >
+            <TitleContainer
+              style={{ paddingTop: "25px", paddingBottom: "25px" }}
+            >
+              <Toast ref={toast} position="top-center" />
+              <Title>시간당 생산량</Title>
+              <ButtonContainer>
+                <Button
+                  icon="pi pi-search"
+                  onClick={() => {
+                    var diffTime =
+                      (filters.todt.getTime() - filters.frdt.getTime()) /
+                      (1000 * 60 * 60 * 24);
 
-                  if (diffTime > 31) {
-                    toast.current?.show({
-                      severity: "error",
-                      summary: "Error",
-                      detail: "기간을 31일 이내로 설정해주세요.",
-                      life: 3000,
-                    });
-                  } else {
-                    setFilters((prev) => ({
-                      ...prev,
-                      isSearch: true,
-                    }));
-                  }
-                }}
-                className="mr-2"
-              />
-            </ButtonContainer>
-          </TitleContainer>
-          <Toolbar start={startContent} />
-          <Divider />
-          <Box sx={{ flexGrow: 1 }}>
+                    if (diffTime > 31) {
+                      toast.current?.show({
+                        severity: "error",
+                        summary: "Error",
+                        detail: "기간을 31일 이내로 설정해주세요.",
+                        life: 3000,
+                      });
+                    } else {
+                      setFilters((prev) => ({
+                        ...prev,
+                        isSearch: true,
+                      }));
+                    }
+                  }}
+                  className="mr-2"
+                />
+              </ButtonContainer>
+            </TitleContainer>
+            <Toolbar start={startContent} />
+            <Divider />
+            <Box sx={{ flexGrow: 1 }}>
+              <Grid container spacing={2}>
+                {cardOption.map((item) => (
+                  <Grid item xs={12} sm={12} md={12} lg={4} xl={4}>
+                    <Card
+                      title={item.title}
+                      data={item.data}
+                      backgroundColor={item.backgroundColor}
+                      fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
+                      form={"PR_B1103W"}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+            <Divider />
             <Grid container spacing={2}>
-              {cardOption.map((item) => (
-                <Grid item xs={12} sm={12} md={12} lg={4} xl={4}>
-                  <Card
-                    title={item.title}
-                    data={item.data}
-                    backgroundColor={item.backgroundColor}
-                    fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
-                    form={"PR_B1103W"}
-                  />
-                </Grid>
-              ))}
+              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                <GridTitle title="일자별 시간당 생산량" />
+                <LineChart
+                  props={MonthData}
+                  value="uph_worktime"
+                  alllabel={stackChartAllLabel}
+                  label={stackChartLabel}
+                  color={[theme.palette.primary.dark]}
+                  borderColor={[theme.palette.primary.main]}
+                  name="series"
+                />
+              </Grid>
             </Grid>
-          </Box>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-              <GridTitle title="일자별 시간당 생산량" />
-              <LineChart
-                props={MonthData}
-                value="uph_worktime"
-                alllabel={stackChartAllLabel}
-                label={stackChartLabel}
-                color={[theme.palette.primary.dark]}
-                borderColor={[theme.palette.primary.main]}
-                name="series"
-              />
+            <Divider />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={12} md={12} lg={12} xl={6}>
+                <PaginatorTable
+                  value={AllList}
+                  column={{
+                    proddt: "일자",
+                    qty: "생산량",
+                    worktime: "작업시간",
+                    hr: "표준시간",
+                    prodempcnt: "작업자수",
+                    uph_worktime: "시간당 생산량",
+                  }}
+                  title={"전체 목록"}
+                  width={[110, 100, 120, 120, 120, 150]}
+                  key="num"
+                  selection={selected}
+                  onSelectionChange={(e: any) => {
+                    setSelected(e.value);
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12} lg={12} xl={6}>
+                <PaginatorTable
+                  value={
+                    DetailList != undefined
+                      ? DetailList.map((items: any) => ({
+                          ...items,
+                          prodemp:
+                            userListData == undefined
+                              ? items.prodemp
+                              : userListData.find(
+                                  (item: any) => item.user_id == items.prodemp
+                                )?.user_name == undefined
+                              ? items.prodemp
+                              : userListData.find(
+                                  (item: any) => item.user_id == items.prodemp
+                                )?.user_name,
+                        }))
+                      : []
+                  }
+                  column={{
+                    itemcd:
+                      filters.option == "I"
+                        ? "품목코드"
+                        : filters.option == "L"
+                        ? "대분류코드"
+                        : filters.option == "M"
+                        ? "중분류코드"
+                        : "소분류코드",
+                    itemnm:
+                      filters.option == "I"
+                        ? "품목명"
+                        : filters.option == "L"
+                        ? "대분류명"
+                        : filters.option == "M"
+                        ? "중분류명"
+                        : "소분류명",
+                    qty: "생산량",
+                    worktime: "작업시간",
+                    hr: "표준시간",
+                    prodemp: "작업자",
+                  }}
+                  width={[130, 140, 110, 120, 120, 110]}
+                  numberField={["qty"]}
+                  title={"상세 목록"}
+                  key="num"
+                  selection={detailSelected}
+                  onSelectionChange={(e: any) => {
+                    setDetailSelected(e.value);
+                  }}
+                />
+              </Grid>
             </Grid>
-          </Grid>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={6}>
-              <PaginatorTable
-                value={AllList}
-                column={{
-                  proddt: "일자",
-                  qty: "생산량",
-                  worktime: "작업시간",
-                  hr: "표준시간",
-                  prodempcnt: "작업자수",
-                  uph_worktime: "시간당 생산량",
-                }}
-                title={"전체 목록"}
-                width={[110, 100, 120, 120, 120, 150]}
-                key="num"
-                selection={selected}
-                onSelectionChange={(e: any) => {
-                  setSelected(e.value);
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={6}>
-              <PaginatorTable
-                value={
-                  DetailList != undefined
-                    ? DetailList.map((items: any) => ({
-                        ...items,
-                        prodemp:
-                          userListData == undefined
-                            ? items.prodemp
-                            : userListData.find(
-                                (item: any) => item.user_id == items.prodemp
-                              )?.user_name == undefined
-                            ? items.prodemp
-                            : userListData.find(
-                                (item: any) => item.user_id == items.prodemp
-                              )?.user_name,
-                      }))
-                    : []
-                }
-                column={{
-                  itemcd:
-                    filters.option == "I"
-                      ? "품목코드"
-                      : filters.option == "L"
-                      ? "대분류코드"
-                      : filters.option == "M"
-                      ? "중분류코드"
-                      : "소분류코드",
-                  itemnm:
-                    filters.option == "I"
-                      ? "품목명"
-                      : filters.option == "L"
-                      ? "대분류명"
-                      : filters.option == "M"
-                      ? "중분류명"
-                      : "소분류명",
-                  qty: "생산량",
-                  worktime: "작업시간",
-                  hr: "표준시간",
-                  prodemp: "작업자",
-                }}
-                width={[130, 140, 110, 120, 120, 110]}
-                numberField={["qty"]}
-                title={"상세 목록"}
-                key="num"
-                selection={detailSelected}
-                onSelectionChange={(e: any) => {
-                  setDetailSelected(e.value);
-                }}
-              />
-            </Grid>
-          </Grid>
-        </Container>
-        <SpecialDial />
-      </ThemeProvider>
+          </Container>
+          <SpecialDial />
+        </ThemeProvider>
+      </div>
     </>
   );
 };

@@ -13,14 +13,14 @@ import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import { convertDateToStr } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import Card from "../components/KPIcomponents/Card/CardBox";
+import ComboChart from "../components/KPIcomponents/Chart/ComboChart";
 import MultiChart from "../components/KPIcomponents/Chart/MultiChart";
 import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutChart";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
+import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
 import { colors, colorsName, isLoading } from "../store/atoms";
-import ComboChart from "../components/KPIcomponents/Chart/ComboChart";
-import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 
 interface TList {
   badcnt?: number;
@@ -481,166 +481,170 @@ const SA_B2226W: React.FC = () => {
 
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <Container
-          maxWidth="xl"
-          style={{ width: "100%", marginBottom: "50px" }}
-        >
-          <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
-            <Title>DASHBOARD(실적)</Title>
-            {isMobile ? (
-              <ButtonContainer>
-                <Button
-                  icon="pi pi-search"
-                  onClick={() =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      isSearch: true,
-                    }))
-                  }
-                  className="mr-2"
-                />
-              </ButtonContainer>
-            ) : (
-              ""
-            )}
-          </TitleContainer>
-          <Toolbar start={startContent} end={endContent} />
-          <Divider />
-          <Box sx={{ flexGrow: 1 }}>
-            <Grid container spacing={2}>
-              {cardOption.map((item) => (
-                <Grid item xs={12} sm={6} md={6} lg={3} xl={3}>
-                  <Card
-                    title={item.title}
-                    data={item.data}
-                    backgroundColor={item.backgroundColor}
-                    fontsize={size.width < 600 ? "2.2rem" : "3rem"}
-                    form={"SA_B2221W"}
+      <div style={{ fontFamily: "TheJamsil5Bold" }}>
+        <ThemeProvider theme={theme}>
+          <Container
+            maxWidth="xl"
+            style={{ width: "100%", marginBottom: "50px" }}
+          >
+            <TitleContainer
+              style={{ paddingTop: "25px", paddingBottom: "25px" }}
+            >
+              <Title>DASHBOARD(실적)</Title>
+              {isMobile ? (
+                <ButtonContainer>
+                  <Button
+                    icon="pi pi-search"
+                    onClick={() =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        isSearch: true,
+                      }))
+                    }
+                    className="mr-2"
                   />
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
-              <GridTitle
-                title={
-                  convertDateToStr(filters.frdt).substring(0, 4) +
-                  "년도 실적현황"
-                }
-              />
-              <MultiChart
-                props={ChartList}
-                value="value"
-                name="series"
-                color={["#1d7cef", "#f8a73a", "#00b050"]}
-                alllabel={stackChartAllLabel}
-                label={stackChartLabel}
-                random={false}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
-              <GridTitle
-                title={
-                  convertDateToStr(filters.frdt).substring(0, 4) +
-                  "년도 목표 대비 실적"
-                }
-              />
+                </ButtonContainer>
+              ) : (
+                ""
+              )}
+            </TitleContainer>
+            <Toolbar start={startContent} end={endContent} />
+            <Divider />
+            <Box sx={{ flexGrow: 1 }}>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
-                  <Card
-                    title={"목표 금액"}
-                    data={doughnut.target + "억"}
-                    backgroundColor={theme.palette.primary.main}
-                    fontsize={size.width < 600 ? "1.8rem" : "2rem"}
-                    form={"SA_B2226W"}
-                    height={"120px"}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
-                  <Card
-                    title={"실적 금액"}
-                    data={doughnut.performance + "억"}
-                    backgroundColor={theme.palette.primary.light}
-                    fontsize={size.width < 600 ? "1.8rem" : "2rem"}
-                    form={"SA_B2226W"}
-                    height={"120px"}
-                  />
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  sm={12}
-                  md={12}
-                  lg={12}
-                  xl={12}
-                  style={{ display: "flex", justifyContent: "center" }}
-                >
-                  <Knob
-                    value={doughnut.percent}
-                    size={250}
-                    valueTemplate={"{value}%"}
-                    valueColor={theme.palette.primary.dark}
-                    rangeColor={theme.palette.secondary.main}
-                    readOnly
-                    strokeWidth={10}
-                  />
+                {cardOption.map((item) => (
+                  <Grid item xs={12} sm={6} md={6} lg={3} xl={3}>
+                    <Card
+                      title={item.title}
+                      data={item.data}
+                      backgroundColor={item.backgroundColor}
+                      fontsize={size.width < 600 ? "2.2rem" : "3rem"}
+                      form={"SA_B2221W"}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+            <Divider />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
+                <GridTitle
+                  title={
+                    convertDateToStr(filters.frdt).substring(0, 4) +
+                    "년도 실적현황"
+                  }
+                />
+                <MultiChart
+                  props={ChartList}
+                  value="value"
+                  name="series"
+                  color={["#1d7cef", "#f8a73a", "#00b050"]}
+                  alllabel={stackChartAllLabel}
+                  label={stackChartLabel}
+                  random={false}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
+                <GridTitle
+                  title={
+                    convertDateToStr(filters.frdt).substring(0, 4) +
+                    "년도 목표 대비 실적"
+                  }
+                />
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
+                    <Card
+                      title={"목표 금액"}
+                      data={doughnut.target + "억"}
+                      backgroundColor={theme.palette.primary.main}
+                      fontsize={size.width < 600 ? "1.8rem" : "2rem"}
+                      form={"SA_B2226W"}
+                      height={"120px"}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
+                    <Card
+                      title={"실적 금액"}
+                      data={doughnut.performance + "억"}
+                      backgroundColor={theme.palette.primary.light}
+                      fontsize={size.width < 600 ? "1.8rem" : "2rem"}
+                      form={"SA_B2226W"}
+                      height={"120px"}
+                    />
+                  </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    sm={12}
+                    md={12}
+                    lg={12}
+                    xl={12}
+                    style={{ display: "flex", justifyContent: "center" }}
+                  >
+                    <Knob
+                      value={doughnut.percent}
+                      size={250}
+                      valueTemplate={"{value}%"}
+                      valueColor={theme.palette.primary.dark}
+                      rangeColor={theme.palette.secondary.main}
+                      readOnly
+                      strokeWidth={10}
+                    />
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Grid>
-          <Divider />
-          <GridTitle
-            title={
-              convertDateToStr(filters.frdt).substring(0, 4) +
-              "년도 품목별 계약 현황"
-            }
-          />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-              <ComboChart
-                data={ItemList}
-                value={["past_year", "current_year"]}
-                label={["직전년도 계약금액", "당해년도 계약금액"]}
-                alllabel={ItemList.map((item) => item.itemcd)}
-                random={true}
-                name="past_year"
-                colorName={colorName}
-                borderColor={theme.palette.primary.dark}
-              />
+            <Divider />
+            <GridTitle
+              title={
+                convertDateToStr(filters.frdt).substring(0, 4) +
+                "년도 품목별 계약 현황"
+              }
+            />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                <ComboChart
+                  data={ItemList}
+                  value={["past_year", "current_year"]}
+                  label={["직전년도 계약금액", "당해년도 계약금액"]}
+                  alllabel={ItemList.map((item) => item.itemcd)}
+                  random={true}
+                  name="past_year"
+                  colorName={colorName}
+                  borderColor={theme.palette.primary.dark}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12} lg={8} xl={8}>
+                <PaginatorTable
+                  value={ItemList}
+                  column={{
+                    itemcd: "품목명",
+                    cnt: "시험건수",
+                    amt: "계약금액",
+                  }}
+                  title={"목록"}
+                  width={[120, 100, 100]}
+                  key="num"
+                  selection={selected}
+                  onSelectionChange={(e: any) => {
+                    setSelected(e.value);
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={12} lg={4} xl={4}>
+                <MultiDoughnutChart
+                  data={ItemList}
+                  option={"value"}
+                  label={ItemList.map((item) => item.itemcd)}
+                  random={true}
+                  colorName={colorName}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={8} xl={8}>
-              <PaginatorTable
-                value={ItemList}
-                column={{
-                  itemcd: "품목명",
-                  cnt: "시험건수",
-                  amt: "계약금액",
-                }}
-                title={"목록"}
-                width={[120, 100, 100]}
-                key="num"
-                selection={selected}
-                onSelectionChange={(e: any) => {
-                  setSelected(e.value);
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={4} xl={4}>
-              <MultiDoughnutChart
-                data={ItemList}
-                option={"value"}
-                label={ItemList.map((item) => item.itemcd)}
-                random={true}
-                colorName={colorName}
-              />
-            </Grid>
-          </Grid>
-        </Container>
-        <SpecialDial />
-      </ThemeProvider>
+          </Container>
+          <SpecialDial />
+        </ThemeProvider>
+      </div>
     </>
   );
 };

@@ -470,367 +470,23 @@ const Main: React.FC = () => {
     setDetailWindowVisible2(true);
   };
 
-  const [adjustWindowVisible, setAdjustWindowVisible] = useState<boolean>(false);
+  const [adjustWindowVisible, setAdjustWindowVisible] =
+    useState<boolean>(false);
 
   const onAdjustWndClick = () => {
     setAdjustWindowVisible(true);
-  }
+  };
 
   return (
     <>
-      <TitleContainer>
-        <Title>{userName}님, 좋은 하루되세요</Title>
-      </TitleContainer>
-      <GridContainerWrap height={"90%"}>
-        {!isMobile ? (
-          <>
-            <GridContainer width="20%" height="100%">
-              <Card
-                style={{
-                  width: "100%",
-                  marginRight: "15px",
-                  borderRadius: "10px",
-                  backgroundColor: "#f5b901",
-                  height: "15vh",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: "20px",
-                }}
-              >
-                <CardContent
-                  style={{
-                    fontSize: "1.3rem",
-                    width: "95%",
-                    height: "85%",
-                    borderRadius: "10px",
-                    backgroundColor: "white",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <CurrentTime />
-                </CardContent>
-              </Card>
-              <FormBoxWrap>
-                <FormBox>
-                  <tbody>
-                    <tr>
-                      <th className="home">
-                        <GridTitle style={{ marginBottom: "0px" }}>
-                          등원예정 :
-                        </GridTitle>
-                      </th>
-                      <td>
-                        <div style={{ display: "flex", alignItems: "center" }}>
-                          <Button
-                            type={"button"}
-                            onClick={() => {
-                              const today = filters.frdt;
-                              const yesterday = new Date(today);
-                              yesterday.setDate(today.getDate() - 1);
-                              setFilters((prev: any) => ({
-                                ...prev,
-                                frdt: yesterday,
-                              }));
-                            }}
-                            icon="arrow-60-left"
-                            fillMode="flat"
-                          />
-
-                          <DatePicker
-                            name="frdt"
-                            value={filters.frdt}
-                            format="yyyy-MM-dd"
-                            onChange={filterInputChange}
-                          />
-                          <Button
-                            type={"button"}
-                            onClick={() => {
-                              const today = filters.frdt;
-                              const tomorrow = new Date(today);
-                              tomorrow.setDate(today.getDate() + 1);
-                              setFilters((prev: any) => ({
-                                ...prev,
-                                frdt: tomorrow,
-                              }));
-                            }}
-                            icon="arrow-60-right"
-                            fillMode="flat"
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </FormBox>
-              </FormBoxWrap>
-              <GridContainer
-                height="34vh"
-                style={{
-                  overflowY: "scroll",
-                  marginBottom: "20px",
-                  border: "3px solid #f5b901",
-                  borderRadius: "10px",
-                }}
-              >
-                <GridContainer style={{ margin: "10px" }}>
-                  <Grid container spacing={2}>
-                    {cardOptionData.total == 0 ? (
-                      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        <Card
-                          style={{
-                            width: "100%",
-                            marginRight: "15px",
-                            borderRadius: "10px",
-                            backgroundColor: "#f5b901",
-                          }}
-                        >
-                          <CardContent
-                            style={{
-                              fontSize: "1.2rem",
-                              display: "flex",
-                              justifyContent: "center",
-                            }}
-                          >
-                            X
-                          </CardContent>
-                        </Card>
-                      </Grid>
-                    ) : (
-                      cardOptionData.data.map((item: any) => (
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                          <Card
-                            style={{
-                              width: "100%",
-                              marginRight: "15px",
-                              borderRadius: "10px",
-                              backgroundColor: "#f5b901",
-                            }}
-                          >
-                            <CardContent
-                              style={{
-                                fontSize: "1.2rem",
-                                display: "flex",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <div style={{ float: "left" }}>
-                                {
-                                  classListData.find(
-                                    (items: any) => items.sub_code == item.class
-                                  )?.code_name
-                                }
-                              </div>
-                              <div style={{ float: "right" }}>
-                                {item.cnt}마리
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </Grid>
-                      ))
-                    )}
-                  </Grid>
-                </GridContainer>
-              </GridContainer>
-              <GridTitleContainer>
-                <GridTitle>변경권 신청 확인</GridTitle>
-              </GridTitleContainer>
-              <Card 
-                style={{
-                  width: "100%",
-                  marginRight: "15px",
-                  borderRadius: "10px",
-                  backgroundColor: "#f5b901",
-                  marginBottom: "30px",
-                  height: "10vh",
-                  cursor: "pointer",
-                }}
-                onClick={(e) => onAdjustWndClick()}
-              >
-                <CardContent
-                  style={{
-                    fontSize: "1.2rem",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    backgroundColor: "white",
-                  }}
-                >
-                  <div style={{ float: "left" }}>승인대기</div>
-                  <div style={{ float: "right" }}>{adjcnt}건</div>
-                </CardContent>
-              </Card>
-              <GridTitleContainer>
-                <GridTitle>부가서비스 신청 확인</GridTitle>
-              </GridTitleContainer>
-              <Card
-                style={{
-                  width: "100%",
-                  marginRight: "15px",
-                  borderRadius: "10px",
-                  backgroundColor: "#f5b901",
-                  height: "10vh",
-                }}
-              >
-                <CardContent
-                  style={{
-                    fontSize: "1.2rem",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    backgroundColor: "white",
-                  }}
-                >
-                  <div style={{ float: "left" }}>승인대기</div>
-                  <div style={{ float: "right" }}>{addcnt}건</div>
-                </CardContent>
-              </Card>
-            </GridContainer>
-            <GridContainer width="30%" height="87vh">
-              <GridTitleContainer>
-                <GridTitle>회원권 연장 확인</GridTitle>
-              </GridTitleContainer>
-              <ScrollableContainer>
-                <div className="scroll-wrapper">
-                  {questionDataResult.data.map((item, idx) => (
-                    <AdminQuestionBox key={idx}>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                        }}
-                      >
-                        <p
-                          style={{
-                            color: "#939393",
-                            fontSize: "0.7rem",
-                            marginBottom: "5px",
-                          }}
-                        >
-                          {
-                            classListData.find(
-                              (items: any) => items.sub_code == item.class
-                            )?.code_name
-                          }
-                        </p>
-                        <div
-                          className={`status ${
-                            item.janqty == 1 ? "Y" : item.janqty == 0 ? "R" : ""
-                          }`}
-                        >
-                          {item.custnm}
-                        </div>
-                      </div>
-                      <div>
-                        <p className="title" style={{ fontSize: "0.9rem" }}>
-                          유효기간 : {dateformat2(item.enddt)}
-                        </p>
-                        <p className="customer">잔여 등원 : {item.janqty}</p>
-                      </div>
-                      <div className="date">
-                        <p>
-                          <Button themeColor={"primary"}>카톡</Button>
-                        </p>
-                      </div>
-                    </AdminQuestionBox>
-                  ))}
-                </div>
-              </ScrollableContainer>
-            </GridContainer>
-            <GridContainer width="25%" height="100%">
-              잔여 포인트
-            </GridContainer>
-            <GridContainer width="25%" height="100%">
-              <GridContainer height="55vh">
-                <GridTitleContainer>
-                  <GridTitle>공지사항</GridTitle>
-                </GridTitleContainer>
-                <GridKendo
-                  style={{ height: "90%" }}
-                  data={process(
-                    mainnoticeDataResult.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: mainnoticeselectedState[idGetter2(row)],
-                    })),
-                    mainnoticeDataState
-                  )}
-                  {...mainnoticeDataState}
-                  onDataStateChange={onMainNoticeDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY2}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onMainNoticeSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainnoticeDataResult.total}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainNoticeSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                  onRowDoubleClick={onRowDoubleClick}
-                >
-                  <GridColumn field="title" title="제목" />
-                  <GridColumn field="contents2" title="내용" />
-                </GridKendo>
-              </GridContainer>
-              <GridContainer height="35vh">
-                <GridTitleContainer>
-                  <GridTitle>시스템 업데이트 공지사항</GridTitle>
-                </GridTitleContainer>
-                <GridKendo
-                  style={{ height: "90%" }}
-                  data={process(
-                    noticeDataResult.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: noticeselectedState[idGetter(row)],
-                    })),
-                    noticeDataState
-                  )}
-                  {...noticeDataState}
-                  onDataStateChange={onNoticeDataStateChange}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={noticeDataResult.total}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onNoticeSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                >
-                  <GridColumn field="title" title="제목" />
-                  <GridColumn field="contents" title="내용" />
-                </GridKendo>
-              </GridContainer>
-            </GridContainer>
-          </>
-        ) : (
-          <Swiper
-            className="mySwiper"
-            onSwiper={(swiper) => {
-              setSwiper(swiper);
-            }}
-          >
-            <SwiperSlide key={0}>
-              <GridContainer width="100%">
+      <div style={{ fontFamily: "TheJamsil5Bold" }}>
+        <TitleContainer>
+          <Title>{userName}님, 좋은 하루되세요</Title>
+        </TitleContainer>
+        <GridContainerWrap height={"90%"}>
+          {!isMobile ? (
+            <>
+              <GridContainer width="20%" height="100%">
                 <Card
                   style={{
                     width: "100%",
@@ -859,64 +515,94 @@ const Main: React.FC = () => {
                     <CurrentTime />
                   </CardContent>
                 </Card>
-                <GridTitleContainer>
-                  <GridTitle>등원예정</GridTitle>
-                  <div
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Button
-                      type={"button"}
-                      onClick={() => {
-                        const today = filters.frdt;
-                        const yesterday = new Date(today);
-                        yesterday.setDate(today.getDate() - 1);
-                        setFilters((prev: any) => ({
-                          ...prev,
-                          frdt: yesterday,
-                        }));
-                      }}
-                      icon="arrow-60-left"
-                      fillMode="flat"
-                    />
-                    <div style={{ width: `calc(100% - 60px)` }}>
-                      <DatePicker
-                        name="frdt"
-                        value={filters.frdt}
-                        format="yyyy-MM-dd"
-                        onChange={filterInputChange}
-                      />
-                    </div>
-                    <Button
-                      type={"button"}
-                      onClick={() => {
-                        const today = filters.frdt;
-                        const tomorrow = new Date(today);
-                        tomorrow.setDate(today.getDate() + 1);
-                        setFilters((prev: any) => ({
-                          ...prev,
-                          frdt: tomorrow,
-                        }));
-                      }}
-                      icon="arrow-60-right"
-                      fillMode="flat"
-                    />
-                  </div>
-                  <GridContainer
-                    height="34vh"
-                    style={{
-                      overflowY: "scroll",
-                      marginBottom: "20px",
-                      border: "3px solid #f5b901",
-                      borderRadius: "10px",
-                    }}
-                  >
-                    <GridContainer style={{ margin: "10px" }}>
-                      <Grid container spacing={2}>
-                        {cardOptionData.total == 0 ? (
+                <FormBoxWrap>
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th className="home">
+                          <GridTitle style={{ marginBottom: "0px" }}>
+                            등원예정 :
+                          </GridTitle>
+                        </th>
+                        <td>
+                          <div
+                            style={{ display: "flex", alignItems: "center" }}
+                          >
+                            <Button
+                              type={"button"}
+                              onClick={() => {
+                                const today = filters.frdt;
+                                const yesterday = new Date(today);
+                                yesterday.setDate(today.getDate() - 1);
+                                setFilters((prev: any) => ({
+                                  ...prev,
+                                  frdt: yesterday,
+                                }));
+                              }}
+                              icon="arrow-60-left"
+                              fillMode="flat"
+                            />
+
+                            <DatePicker
+                              name="frdt"
+                              value={filters.frdt}
+                              format="yyyy-MM-dd"
+                              onChange={filterInputChange}
+                            />
+                            <Button
+                              type={"button"}
+                              onClick={() => {
+                                const today = filters.frdt;
+                                const tomorrow = new Date(today);
+                                tomorrow.setDate(today.getDate() + 1);
+                                setFilters((prev: any) => ({
+                                  ...prev,
+                                  frdt: tomorrow,
+                                }));
+                              }}
+                              icon="arrow-60-right"
+                              fillMode="flat"
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+                <GridContainer
+                  height="34vh"
+                  style={{
+                    overflowY: "scroll",
+                    marginBottom: "20px",
+                    border: "3px solid #f5b901",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <GridContainer style={{ margin: "10px" }}>
+                    <Grid container spacing={2}>
+                      {cardOptionData.total == 0 ? (
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                          <Card
+                            style={{
+                              width: "100%",
+                              marginRight: "15px",
+                              borderRadius: "10px",
+                              backgroundColor: "#f5b901",
+                            }}
+                          >
+                            <CardContent
+                              style={{
+                                fontSize: "1.2rem",
+                                display: "flex",
+                                justifyContent: "center",
+                              }}
+                            >
+                              X
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                      ) : (
+                        cardOptionData.data.map((item: any) => (
                           <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             <Card
                               style={{
@@ -930,110 +616,83 @@ const Main: React.FC = () => {
                                 style={{
                                   fontSize: "1.2rem",
                                   display: "flex",
-                                  justifyContent: "center",
+                                  justifyContent: "space-between",
                                 }}
                               >
-                                X
+                                <div style={{ float: "left" }}>
+                                  {
+                                    classListData.find(
+                                      (items: any) =>
+                                        items.sub_code == item.class
+                                    )?.code_name
+                                  }
+                                </div>
+                                <div style={{ float: "right" }}>
+                                  {item.cnt}마리
+                                </div>
                               </CardContent>
                             </Card>
                           </Grid>
-                        ) : (
-                          cardOptionData.data.map((item: any) => (
-                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                              <Card
-                                style={{
-                                  width: "100%",
-                                  marginRight: "15px",
-                                  borderRadius: "10px",
-                                  backgroundColor: "#f5b901",
-                                }}
-                              >
-                                <CardContent
-                                  style={{
-                                    fontSize: "1.2rem",
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                  }}
-                                >
-                                  <div style={{ float: "left" }}>
-                                    {
-                                      classListData.find(
-                                        (items: any) =>
-                                          items.sub_code == item.class
-                                      )?.code_name
-                                    }
-                                  </div>
-                                  <div style={{ float: "right" }}>
-                                    {item.cnt}마리
-                                  </div>
-                                </CardContent>
-                              </Card>
-                            </Grid>
-                          ))
-                        )}
-                      </Grid>
-                    </GridContainer>
+                        ))
+                      )}
+                    </Grid>
                   </GridContainer>
-                  <GridTitleContainer>
-                    <GridTitle>변경권 신청 확인</GridTitle>
-                  </GridTitleContainer>
-                  <Card
-                    style={{
-                      width: "100%",
-                      marginRight: "15px",
-                      borderRadius: "10px",
-                      backgroundColor: "#f5b901",
-                      marginBottom: "30px",
-                      height: "10vh",
-                    }}
-                    onClick={(e) => onAdjustWndClick()}
-                  >
-                    <CardContent
-                      style={{
-                        fontSize: "1.2rem",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        backgroundColor: "white",
-                        height: "75%",
-                      }}
-                    >
-                      <div style={{ float: "left" }}>승인대기</div>
-                      <div style={{ float: "right" }}>{adjcnt}건</div>
-                    </CardContent>
-                  </Card>
-                  <GridTitleContainer>
-                    <GridTitle>부가서비스 신청 확인</GridTitle>
-                  </GridTitleContainer>
-                  <Card
-                    style={{
-                      width: "100%",
-                      marginRight: "15px",
-                      borderRadius: "10px",
-                      backgroundColor: "#f5b901",
-                      marginBottom: "20px",
-                      height: "10vh",
-                    }}
-                  >
-                    <CardContent
-                      style={{
-                        fontSize: "1.2rem",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        backgroundColor: "white",
-                        height: "75%",
-                      }}
-                    >
-                      <div style={{ float: "left" }}>승인대기</div>
-                      <div style={{ float: "right" }}>{addcnt}건</div>
-                    </CardContent>
-                  </Card>
+                </GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>변경권 신청 확인</GridTitle>
                 </GridTitleContainer>
+                <Card
+                  style={{
+                    width: "100%",
+                    marginRight: "15px",
+                    borderRadius: "10px",
+                    backgroundColor: "#f5b901",
+                    marginBottom: "30px",
+                    height: "10vh",
+                    cursor: "pointer",
+                  }}
+                  onClick={(e) => onAdjustWndClick()}
+                >
+                  <CardContent
+                    style={{
+                      fontSize: "1.2rem",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <div style={{ float: "left" }}>승인대기</div>
+                    <div style={{ float: "right" }}>{adjcnt}건</div>
+                  </CardContent>
+                </Card>
+                <GridTitleContainer>
+                  <GridTitle>부가서비스 신청 확인</GridTitle>
+                </GridTitleContainer>
+                <Card
+                  style={{
+                    width: "100%",
+                    marginRight: "15px",
+                    borderRadius: "10px",
+                    backgroundColor: "#f5b901",
+                    height: "10vh",
+                  }}
+                >
+                  <CardContent
+                    style={{
+                      fontSize: "1.2rem",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      backgroundColor: "white",
+                    }}
+                  >
+                    <div style={{ float: "left" }}>승인대기</div>
+                    <div style={{ float: "right" }}>{addcnt}건</div>
+                  </CardContent>
+                </Card>
               </GridContainer>
-            </SwiperSlide>
-            <SwiperSlide key={1}>
-              <GridContainer width="100%">
+              <GridContainer width="30%" height="87vh">
                 <GridTitleContainer>
                   <GridTitle>회원권 연장 확인</GridTitle>
                 </GridTitleContainer>
@@ -1043,78 +702,62 @@ const Main: React.FC = () => {
                       <AdminQuestionBox key={idx}>
                         <div
                           style={{
-                            width: "100%",
                             display: "flex",
-                            justifyContent: "space-between",
+                            flexDirection: "column",
                             alignItems: "center",
                           }}
                         >
-                          <div
+                          <p
                             style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              alignItems: "center",
+                              color: "#939393",
+                              fontSize: "0.7rem",
+                              marginBottom: "5px",
                             }}
                           >
-                            <p
-                              style={{
-                                color: "#939393",
-                                fontSize: "0.7rem",
-                                marginBottom: "5px",
-                              }}
-                            >
-                              {
-                                classListData.find(
-                                  (items: any) => items.sub_code == item.class
-                                )?.code_name
-                              }
-                            </p>
-                            <div
-                              className={`status ${
-                                item.janqty == 1
-                                  ? "Y"
-                                  : item.janqty == 0
-                                  ? "R"
-                                  : ""
-                              }`}
-                            >
-                              {item.custnm}
-                            </div>
+                            {
+                              classListData.find(
+                                (items: any) => items.sub_code == item.class
+                              )?.code_name
+                            }
+                          </p>
+                          <div
+                            className={`status ${
+                              item.janqty == 1
+                                ? "Y"
+                                : item.janqty == 0
+                                ? "R"
+                                : ""
+                            }`}
+                          >
+                            {item.custnm}
                           </div>
-                          <div className="title" style={{ margin: "0 2px" }}>
-                            <p
-                              style={{
-                                marginBottom: "3px",
-                                fontSize: "0.9rem",
-                              }}
-                            >
-                              유효기간 : {dateformat2(item.enddt)}
-                            </p>
-                            <p>잔여 등원 : {item.janqty}</p>
-                          </div>
-                          <div className="date">
-                            <p>
-                              <Button themeColor={"primary"}>카톡</Button>
-                            </p>
-                          </div>
+                        </div>
+                        <div>
+                          <p className="title" style={{ fontSize: "0.9rem" }}>
+                            유효기간 : {dateformat2(item.enddt)}
+                          </p>
+                          <p className="customer">잔여 등원 : {item.janqty}</p>
+                        </div>
+                        <div className="date">
+                          <p>
+                            <Button themeColor={"primary"}>카톡</Button>
+                          </p>
                         </div>
                       </AdminQuestionBox>
                     ))}
                   </div>
                 </ScrollableContainer>
               </GridContainer>
-            </SwiperSlide>
-            <SwiperSlide key={2}>
-              <GridContainer width="100%">잔여 포인트</GridContainer>
-            </SwiperSlide>
-            <SwiperSlide key={3}>
-              <GridContainer width="100%">
-                <GridContainer>
+              <GridContainer width="25%" height="100%">
+                잔여 포인트
+              </GridContainer>
+              <GridContainer width="25%" height="100%">
+                <GridContainer height="55vh">
                   <GridTitleContainer>
                     <GridTitle>공지사항</GridTitle>
                   </GridTitleContainer>
                   <GridKendo
-                    style={{ minHeight: "30vh" }}
+                    style={{ height: "90%" }}
                     data={process(
                       mainnoticeDataResult.data.map((row) => ({
                         ...row,
@@ -1149,12 +792,12 @@ const Main: React.FC = () => {
                     <GridColumn field="contents2" title="내용" />
                   </GridKendo>
                 </GridContainer>
-                <GridContainer>
+                <GridContainer height="35vh">
                   <GridTitleContainer>
                     <GridTitle>시스템 업데이트 공지사항</GridTitle>
                   </GridTitleContainer>
                   <GridKendo
-                    style={{ minHeight: "30vh" }}
+                    style={{ height: "90%" }}
                     data={process(
                       noticeDataResult.data.map((row) => ({
                         ...row,
@@ -1183,36 +826,411 @@ const Main: React.FC = () => {
                     //컬럼너비조정
                     resizable={true}
                   >
+                    <GridColumn field="title" title="제목" />
                     <GridColumn field="contents" title="내용" />
                   </GridKendo>
                 </GridContainer>
               </GridContainer>
-            </SwiperSlide>
-          </Swiper>
+            </>
+          ) : (
+            <Swiper
+              className="mySwiper"
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
+              }}
+            >
+              <SwiperSlide key={0}>
+                <GridContainer width="100%">
+                  <Card
+                    style={{
+                      width: "100%",
+                      marginRight: "15px",
+                      borderRadius: "10px",
+                      backgroundColor: "#f5b901",
+                      height: "15vh",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    <CardContent
+                      style={{
+                        fontSize: "1.3rem",
+                        width: "95%",
+                        height: "85%",
+                        borderRadius: "10px",
+                        backgroundColor: "white",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <CurrentTime />
+                    </CardContent>
+                  </Card>
+                  <GridTitleContainer>
+                    <GridTitle>등원예정</GridTitle>
+                    <div
+                      style={{
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Button
+                        type={"button"}
+                        onClick={() => {
+                          const today = filters.frdt;
+                          const yesterday = new Date(today);
+                          yesterday.setDate(today.getDate() - 1);
+                          setFilters((prev: any) => ({
+                            ...prev,
+                            frdt: yesterday,
+                          }));
+                        }}
+                        icon="arrow-60-left"
+                        fillMode="flat"
+                      />
+                      <div style={{ width: `calc(100% - 60px)` }}>
+                        <DatePicker
+                          name="frdt"
+                          value={filters.frdt}
+                          format="yyyy-MM-dd"
+                          onChange={filterInputChange}
+                        />
+                      </div>
+                      <Button
+                        type={"button"}
+                        onClick={() => {
+                          const today = filters.frdt;
+                          const tomorrow = new Date(today);
+                          tomorrow.setDate(today.getDate() + 1);
+                          setFilters((prev: any) => ({
+                            ...prev,
+                            frdt: tomorrow,
+                          }));
+                        }}
+                        icon="arrow-60-right"
+                        fillMode="flat"
+                      />
+                    </div>
+                    <GridContainer
+                      height="34vh"
+                      style={{
+                        overflowY: "scroll",
+                        marginBottom: "20px",
+                        border: "3px solid #f5b901",
+                        borderRadius: "10px",
+                      }}
+                    >
+                      <GridContainer style={{ margin: "10px" }}>
+                        <Grid container spacing={2}>
+                          {cardOptionData.total == 0 ? (
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                              <Card
+                                style={{
+                                  width: "100%",
+                                  marginRight: "15px",
+                                  borderRadius: "10px",
+                                  backgroundColor: "#f5b901",
+                                }}
+                              >
+                                <CardContent
+                                  style={{
+                                    fontSize: "1.2rem",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                  }}
+                                >
+                                  X
+                                </CardContent>
+                              </Card>
+                            </Grid>
+                          ) : (
+                            cardOptionData.data.map((item: any) => (
+                              <Grid
+                                item
+                                xs={12}
+                                sm={12}
+                                md={12}
+                                lg={12}
+                                xl={12}
+                              >
+                                <Card
+                                  style={{
+                                    width: "100%",
+                                    marginRight: "15px",
+                                    borderRadius: "10px",
+                                    backgroundColor: "#f5b901",
+                                  }}
+                                >
+                                  <CardContent
+                                    style={{
+                                      fontSize: "1.2rem",
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                    }}
+                                  >
+                                    <div style={{ float: "left" }}>
+                                      {
+                                        classListData.find(
+                                          (items: any) =>
+                                            items.sub_code == item.class
+                                        )?.code_name
+                                      }
+                                    </div>
+                                    <div style={{ float: "right" }}>
+                                      {item.cnt}마리
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              </Grid>
+                            ))
+                          )}
+                        </Grid>
+                      </GridContainer>
+                    </GridContainer>
+                    <GridTitleContainer>
+                      <GridTitle>변경권 신청 확인</GridTitle>
+                    </GridTitleContainer>
+                    <Card
+                      style={{
+                        width: "100%",
+                        marginRight: "15px",
+                        borderRadius: "10px",
+                        backgroundColor: "#f5b901",
+                        marginBottom: "30px",
+                        height: "10vh",
+                      }}
+                      onClick={(e) => onAdjustWndClick()}
+                    >
+                      <CardContent
+                        style={{
+                          fontSize: "1.2rem",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          backgroundColor: "white",
+                          height: "75%",
+                        }}
+                      >
+                        <div style={{ float: "left" }}>승인대기</div>
+                        <div style={{ float: "right" }}>{adjcnt}건</div>
+                      </CardContent>
+                    </Card>
+                    <GridTitleContainer>
+                      <GridTitle>부가서비스 신청 확인</GridTitle>
+                    </GridTitleContainer>
+                    <Card
+                      style={{
+                        width: "100%",
+                        marginRight: "15px",
+                        borderRadius: "10px",
+                        backgroundColor: "#f5b901",
+                        marginBottom: "20px",
+                        height: "10vh",
+                      }}
+                    >
+                      <CardContent
+                        style={{
+                          fontSize: "1.2rem",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          backgroundColor: "white",
+                          height: "75%",
+                        }}
+                      >
+                        <div style={{ float: "left" }}>승인대기</div>
+                        <div style={{ float: "right" }}>{addcnt}건</div>
+                      </CardContent>
+                    </Card>
+                  </GridTitleContainer>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={1}>
+                <GridContainer width="100%">
+                  <GridTitleContainer>
+                    <GridTitle>회원권 연장 확인</GridTitle>
+                  </GridTitleContainer>
+                  <ScrollableContainer>
+                    <div className="scroll-wrapper">
+                      {questionDataResult.data.map((item, idx) => (
+                        <AdminQuestionBox key={idx}>
+                          <div
+                            style={{
+                              width: "100%",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                              }}
+                            >
+                              <p
+                                style={{
+                                  color: "#939393",
+                                  fontSize: "0.7rem",
+                                  marginBottom: "5px",
+                                }}
+                              >
+                                {
+                                  classListData.find(
+                                    (items: any) => items.sub_code == item.class
+                                  )?.code_name
+                                }
+                              </p>
+                              <div
+                                className={`status ${
+                                  item.janqty == 1
+                                    ? "Y"
+                                    : item.janqty == 0
+                                    ? "R"
+                                    : ""
+                                }`}
+                              >
+                                {item.custnm}
+                              </div>
+                            </div>
+                            <div className="title" style={{ margin: "0 2px" }}>
+                              <p
+                                style={{
+                                  marginBottom: "3px",
+                                  fontSize: "0.9rem",
+                                }}
+                              >
+                                유효기간 : {dateformat2(item.enddt)}
+                              </p>
+                              <p>잔여 등원 : {item.janqty}</p>
+                            </div>
+                            <div className="date">
+                              <p>
+                                <Button themeColor={"primary"}>카톡</Button>
+                              </p>
+                            </div>
+                          </div>
+                        </AdminQuestionBox>
+                      ))}
+                    </div>
+                  </ScrollableContainer>
+                </GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={2}>
+                <GridContainer width="100%">잔여 포인트</GridContainer>
+              </SwiperSlide>
+              <SwiperSlide key={3}>
+                <GridContainer width="100%">
+                  <GridContainer>
+                    <GridTitleContainer>
+                      <GridTitle>공지사항</GridTitle>
+                    </GridTitleContainer>
+                    <GridKendo
+                      style={{ minHeight: "30vh" }}
+                      data={process(
+                        mainnoticeDataResult.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]:
+                            mainnoticeselectedState[idGetter2(row)],
+                        })),
+                        mainnoticeDataState
+                      )}
+                      {...mainnoticeDataState}
+                      onDataStateChange={onMainNoticeDataStateChange}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY2}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onMainNoticeSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainnoticeDataResult.total}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainNoticeSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      onRowDoubleClick={onRowDoubleClick}
+                    >
+                      <GridColumn field="title" title="제목" />
+                      <GridColumn field="contents2" title="내용" />
+                    </GridKendo>
+                  </GridContainer>
+                  <GridContainer>
+                    <GridTitleContainer>
+                      <GridTitle>시스템 업데이트 공지사항</GridTitle>
+                    </GridTitleContainer>
+                    <GridKendo
+                      style={{ minHeight: "30vh" }}
+                      data={process(
+                        noticeDataResult.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: noticeselectedState[idGetter(row)],
+                        })),
+                        noticeDataState
+                      )}
+                      {...noticeDataState}
+                      onDataStateChange={onNoticeDataStateChange}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={noticeDataResult.total}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onNoticeSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      <GridColumn field="contents" title="내용" />
+                    </GridKendo>
+                  </GridContainer>
+                </GridContainer>
+              </SwiperSlide>
+            </Swiper>
+          )}
+        </GridContainerWrap>
+        {detailWindowVisible2 && (
+          <DetailWindow2
+            getVisible={setDetailWindowVisible2}
+            workType={"U"} //신규 : N, 수정 : U
+            datnum={detailFilters.datnum}
+            reloadData={(returnString: string) => {
+              setMainNoticeFilters((prev) => ({
+                ...prev,
+                find_row_value: returnString,
+                isSearch: true,
+              }));
+            }}
+            para={detailParameters}
+            modal={true}
+          />
         )}
-      </GridContainerWrap>
-      {detailWindowVisible2 && (
-        <DetailWindow2
-          getVisible={setDetailWindowVisible2}
-          workType={"U"} //신규 : N, 수정 : U
-          datnum={detailFilters.datnum}
-          reloadData={(returnString: string) => {
-            setMainNoticeFilters((prev) => ({
-              ...prev,
-              find_row_value: returnString,
-              isSearch: true,
-            }));
-          }}
-          para={detailParameters}
-          modal={true}
-        />
-      )}
-      {adjustWindowVisible && (
-        <AdjustApprovalWindow
-          setVisible={setAdjustWindowVisible}
-          modal={true}
-        />
-      )}
+        {adjustWindowVisible && (
+          <AdjustApprovalWindow
+            setVisible={setAdjustWindowVisible}
+            modal={true}
+          />
+        )}
+      </div>
     </>
   );
 };

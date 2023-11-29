@@ -37,13 +37,21 @@ import AC_A0030W from "./routes/AC_A0030W";
 import AC_A0070W from "./routes/AC_A0070W";
 import AC_A1000W from "./routes/AC_A1000W";
 import AC_B1100W from "./routes/AC_B1100W";
+import AC_B1240W from "./routes/AC_B1240W";
 import AC_B1280W from "./routes/AC_B1280W";
 import AC_B1300W from "./routes/AC_B1300W";
+import AC_B1340W from "./routes/AC_B1340W";
+import AC_B2080W from "./routes/AC_B2080W";
+import AC_B3000W from "./routes/AC_B3000W";
 import AC_B5000W from "./routes/AC_B5000W";
 import AC_B5080W from "./routes/AC_B5080W";
+import AC_B6020W from "./routes/AC_B6020W";
 import AC_B6060W from "./routes/AC_B6060W";
+import AC_B6080W from "./routes/AC_B6080W";
 import AC_B8030W from "./routes/AC_B8030W";
+import AC_B8040W from "./routes/AC_B8040W";
 import AC_B8080W from "./routes/AC_B8080W";
+import AC_B8100W from "./routes/AC_B8100W";
 import BA_A0020W from "./routes/BA_A0020W";
 import BA_A0020W_603 from "./routes/BA_A0020W_603";
 import BA_A0040W from "./routes/BA_A0040W";
@@ -72,6 +80,7 @@ import CM_A8250W from "./routes/CM_A8250W";
 import CM_B1000W from "./routes/CM_B1000W";
 import CM_B1101W from "./routes/CM_B1101W";
 import CM_B8100W from "./routes/CM_B8100W";
+import CR_A0000W from "./routes/CR_A0000W";
 import CR_A0010W from "./routes/CR_A0010W";
 import CR_A0020W from "./routes/CR_A0020W";
 import CR_A0040W from "./routes/CR_A0040W";
@@ -90,10 +99,14 @@ import HU_A3020W from "./routes/HU_A3020W";
 import HU_A4100W from "./routes/HU_A4100W";
 import HU_A5020W from "./routes/HU_A5020W";
 import HU_B1020W from "./routes/HU_B1020W";
+import HU_B1040W from "./routes/HU_B1040W";
 import HU_B2100W from "./routes/HU_B2100W";
+import HU_B2120W from "./routes/HU_B2120W";
 import HU_B2140W from "./routes/HU_B2140W";
 import HU_B3140W from "./routes/HU_B3140W";
 import HU_B3160W from "./routes/HU_B3160W";
+import HU_B3180W from "./routes/HU_B3180W";
+import HU_B3220W from "./routes/HU_B3220W";
 import HU_B4000W from "./routes/HU_B4000W";
 import HU_B4001W from "./routes/HU_B4001W";
 import HU_B4010W from "./routes/HU_B4010W";
@@ -122,6 +135,7 @@ import MA_B3100W from "./routes/MA_B3100W";
 import MA_B7000W from "./routes/MA_B7000W";
 import MA_B7200W from "./routes/MA_B7200W";
 import MA_B7201W from "./routes/MA_B7201W";
+import MainBIO from "./routes/MainBIO";
 import NotFound from "./routes/NotFound";
 import PR_A0030W from "./routes/PR_A0030W";
 import PR_A0040W from "./routes/PR_A0040W";
@@ -154,6 +168,7 @@ import QC_B0100W from "./routes/QC_B0100W";
 import QC_B0200W from "./routes/QC_B0200W";
 import QC_B0300W from "./routes/QC_B0300W";
 import SA_A1000_603W from "./routes/SA_A1000_603W";
+import SA_A1001_603W from "./routes/SA_A1001_603W";
 import SA_A1100_603W from "./routes/SA_A1100_603W";
 import SA_A2000W from "./routes/SA_A2000W";
 import SA_A2010W from "./routes/SA_A2010W";
@@ -163,12 +178,12 @@ import SA_A3000W from "./routes/SA_A3000W";
 import SA_A5000W from "./routes/SA_A5000W";
 import SA_A5001W from "./routes/SA_A5001W";
 import SA_A5010W from "./routes/SA_A5010W";
-import HU_B1040W from "./routes/HU_B1040W";
-import SA_A1001_603W from "./routes/SA_A1001_603W";
 import SA_B1000W_603 from "./routes/SA_B1000W_603";
 import SA_B2200W from "./routes/SA_B2200W";
 import SA_B2211W from "./routes/SA_B2211W";
+import SA_B2216W from "./routes/SA_B2216W";
 import SA_B2221W from "./routes/SA_B2221W";
+import SA_B2226W from "./routes/SA_B2226W";
 import SA_B2410W from "./routes/SA_B2410W";
 import SA_B2410_290W from "./routes/SA_B2410_290W";
 import SA_B3000W from "./routes/SA_B3000W";
@@ -192,20 +207,6 @@ import {
   isMobileMenuOpendState,
   loginResultState,
 } from "./store/atoms";
-import HU_B2120W from "./routes/HU_B2120W";
-import HU_B3180W from "./routes/HU_B3180W";
-import HU_B3220W from "./routes/HU_B3220W";
-import AC_B1240W from "./routes/AC_B1240W";
-import AC_B1340W from "./routes/AC_B1340W";
-import AC_B6020W from "./routes/AC_B6020W";
-import AC_B8040W from "./routes/AC_B8040W";
-import AC_B3000W from "./routes/AC_B3000W";
-import AC_B8100W from "./routes/AC_B8100W";
-import SA_B2226W from "./routes/SA_B2226W";
-import AC_B6080W from "./routes/AC_B6080W";
-import SA_B2216W from "./routes/SA_B2216W";
-import AC_B2080W from "./routes/AC_B2080W";
-import MainBIO from "./routes/MainBIO";
 const Login = lazy(() => import("./routes/Login"));
 const Main = lazy(() => import("./routes/Main"));
 
@@ -445,6 +446,359 @@ const AppInner: React.FC = () => {
     switcher({ theme: "blue" });
   }, []);
 
+  function link(str: any) {
+    if (str == "Home" || str == "") {
+      if (loginResult.companyCode == "2302BA03") {
+        return MainBIO;
+      } else {
+        return Main;
+      }
+    } else if (str == "AC_A0000W") {
+      return AC_A0000W;
+    } else if (str == "BA_A0020W") {
+      return BA_A0020W;
+    } else if (str == "BA_A0040W") {
+      return BA_A0040W;
+    } else if (str == "BA_A0041W") {
+      return BA_A0041W;
+    } else if (str == "BA_A0050W") {
+      return BA_A0050W;
+    } else if (str == "BA_A0070W") {
+      return BA_A0070W;
+    } else if (str == "BA_A0080W") {
+      return BA_A0080W;
+    } else if (str == "BA_A0100W") {
+      return BA_A0100W;
+    } else if (str == "BA_B0080W") {
+      return BA_B0080W;
+    } else if (str == "CM_B8100W") {
+      return CM_B8100W;
+    } else if (str == "SY_A0125W") {
+      return SY_A0125W;
+    } else if (str == "SY_A0500W") {
+      return SY_A0500W;
+    } else if (str == "PS_A0060_301W") {
+      return PS_A0060_301W;
+    } else if (str == "MA_A0010W") {
+      return MA_A0010W;
+    } else if (str == "MA_A1000W") {
+      return MA_A1000W;
+    } else if (str == "MA_A2000W") {
+      return MA_A2000W;
+    } else if (str == "MA_A2300W") {
+      return MA_A2300W;
+    } else if (str == "MA_A2310_606W") {
+      return MA_A2310_606W;
+    } else if (str == "MA_A2400W") {
+      return MA_A2400W;
+    } else if (str == "MA_A2410W") {
+      return MA_A2410W;
+    } else if (str == "MA_A2500W") {
+      return MA_A2500W;
+    } else if (str == "MA_A2700W") {
+      return MA_A2700W;
+    } else if (str == "MA_A3000W") {
+      return MA_A3000W;
+    } else if (str == "MA_A7000W") {
+      return MA_A7000W;
+    } else if (str == "MA_A3300W") {
+      return MA_A3300W;
+    } else if (str == "MA_A3400W") {
+      return MA_A3400W;
+    } else if (str == "MA_A3500W") {
+      return MA_A3500W;
+    } else if (str == "MA_A9001W") {
+      return MA_A9001W;
+    } else if (str == "MA_B2000W") {
+      return MA_B2000W;
+    } else if (str == "MA_B2100W") {
+      return MA_B2100W;
+    } else if (str == "MA_B2500W") {
+      return MA_B2500W;
+    } else if (str == "MA_B2700W") {
+      return MA_B2700W;
+    } else if (str == "MA_B2800W") {
+      return MA_B2800W;
+    } else if (str == "MA_B3000W") {
+      return MA_B3000W;
+    } else if (str == "MA_B3100W") {
+      return MA_B3100W;
+    } else if (str == "MA_B7000W") {
+      return MA_B7000W;
+    } else if (str == "MA_B7200W") {
+      return MA_B7200W;
+    } else if (str == "MA_B7201W") {
+      return MA_B7201W;
+    } else if (str == "SA_A2000W") {
+      return SA_A2000W;
+    } else if (str == "SA_A2010W") {
+      return SA_A2010W;
+    } else if (str == "SA_A2300W") {
+      return SA_A2300W;
+    } else if (str == "SA_A2300W_PDA") {
+      return SA_A2300W_PDA;
+    } else if (str == "SA_A3000W") {
+      return SA_A3000W;
+    } else if (str == "SA_A5000W") {
+      return SA_A5000W;
+    } else if (str == "SA_A5001W") {
+      return SA_A5001W;
+    } else if (str == "SA_A5010W") {
+      return SA_A5010W;
+    } else if (str == "SA_B2200W") {
+      return SA_B2200W;
+    } else if (str == "SA_B2211W") {
+      return SA_B2211W;
+    } else if (str == "SA_B2221W") {
+      return SA_B2221W;
+    } else if (str == "SA_B2410W") {
+      return SA_B2410W;
+    } else if (str == "SA_B2410_290W") {
+      return SA_B2410_290W;
+    } else if (str == "SA_B3000W") {
+      return SA_B3000W;
+    } else if (str == "SA_B3100W") {
+      return SA_B3100W;
+    } else if (str == "SA_B3101W") {
+      return SA_B3101W;
+    } else if (str == "PR_A0030W") {
+      return PR_A0030W;
+    } else if (str == "PR_A0040W") {
+      return PR_A0040W;
+    } else if (str == "PR_A0060W") {
+      return PR_A0060W;
+    } else if (str == "PR_A4000W") {
+      return PR_A4000W;
+    } else if (str == "PR_A4100W") {
+      return PR_A4100W;
+    } else if (str == "PR_A5000W") {
+      return PR_A5000W;
+    } else if (str == "PR_A1100W") {
+      return PR_A1100W;
+    } else if (str == "PR_A9100W") {
+      return PR_A9100W;
+    } else if (str == "PR_B0020W") {
+      return PR_B0020W;
+    } else if (str == "PR_B3000W") {
+      return PR_B3000W;
+    } else if (str == "PR_A2000W") {
+      return PR_A2000W;
+    } else if (str == "PR_A3000W") {
+      return PR_A3000W;
+    } else if (str == "PR_A6000W") {
+      return PR_A6000W;
+    } else if (str == "PR_A7000W") {
+      return PR_A7000W;
+    } else if (str == "PR_A9000W") {
+      return PR_A9000W;
+    } else if (str == "QC_A0060W") {
+      return QC_A0060W;
+    } else if (str == "QC_A0120W") {
+      return QC_A0120W;
+    } else if (str == "QC_A2000W") {
+      return QC_A2000W;
+    } else if (str == "QC_A2500W") {
+      return QC_A2500W;
+    } else if (str == "QC_A3000W") {
+      return QC_A3000W;
+    } else if (str == "QC_A6000W") {
+      return QC_A6000W;
+    } else if (str == "QC_B0200W") {
+      return QC_B0200W;
+    } else if (str == "QC_B0300W") {
+      return QC_B0300W;
+    } else if (str == "QC_B0040W") {
+      return QC_B0040W;
+    } else if (str == "QC_B0030W") {
+      return QC_B0030W;
+    } else if (str == "SY_A0120W") {
+      return SY_A0120W;
+    } else if (str == "SY_A0110W") {
+      return SY_A0110W;
+    } else if (str == "SY_A0010W") {
+      return SY_A0010W;
+    } else if (str == "SY_A0010_301W") {
+      return SY_A0010_301W;
+    } else if (str == "SY_A0012W") {
+      return SY_A0012W;
+    } else if (str == "SY_A0013W") {
+      return SY_A0013W;
+    } else if (str == "SY_A0011W") {
+      return SY_A0011W;
+    } else if (str == "SY_A0100W") {
+      return SY_A0100W;
+    } else if (str == "SY_A0025W") {
+      return SY_A0025W;
+    } else if (str == "CM_A0000W") {
+      return CM_A0000W;
+    } else if (str == "CM_A1000W") {
+      return CM_A1000W;
+    } else if (str == "CM_A1600W") {
+      return CM_A1600W;
+    } else if (str == "CM_A1710W") {
+      return CM_A1710W;
+    } else if (str == "CM_A2000W") {
+      return CM_A2000W;
+    } else if (str == "CM_A3000W") {
+      return CM_A3000W;
+    } else if (str == "CM_A4100W") {
+      return CM_A4100W;
+    } else if (str == "CM_A5000W") {
+      return CM_A5000W;
+    } else if (str == "CM_A5001W") {
+      return CM_A5001W;
+    } else if (str == "CM_A7000W") {
+      return CM_A7000W;
+    } else if (str == "CM_A8000W") {
+      return CM_A8000W;
+    } else if (str == "CM_A8210W") {
+      return CM_A8210W;
+    } else if (str == "CM_A8250W") {
+      return CM_A8250W;
+    } else if (str == "CM_B1000W") {
+      return CM_B1000W;
+    } else if (str == "CM_B1101W") {
+      return CM_B1101W;
+    } else if (str == "EA_A1000W") {
+      return EA_A1000W;
+    } else if (str == "EA_A2000W") {
+      return EA_A2000W;
+    } else if (str == "CT_A0111W") {
+      return CT_A0111W;
+    } else if (str == "HU_A1000W") {
+      return HU_A1000W;
+    } else if (str == "HU_A2070W") {
+      return HU_A2070W;
+    } else if (str == "HU_A2100W") {
+      return HU_A2100W;
+    } else if (str == "HU_A2140W") {
+      return HU_A2140W;
+    } else if (str == "HU_A3020W") {
+      return HU_A3020W;
+    } else if (str == "HU_A4100W") {
+      return HU_A4100W;
+    } else if (str == "HU_A5020W") {
+      return HU_A5020W;
+    } else if (str == "HU_B1020W") {
+      return HU_B1020W;
+    } else if (str == "HU_B1040W") {
+      return HU_B1040W;
+    } else if (str == "HU_B2100W") {
+      return HU_B2100W;
+    } else if (str == "HU_B2120W") {
+      return HU_B2120W;
+    } else if (str == "HU_B2140W") {
+      return HU_B2140W;
+    } else if (str == "HU_B3140W") {
+      return HU_B3140W;
+    } else if (str == "HU_B3160W") {
+      return HU_B3140W;
+    } else if (str == "HU_B3180W") {
+      return HU_B3140W;
+    } else if (str == "HU_B3220W") {
+      return HU_B3220W;
+    } else if (str == "HU_B4001W") {
+      return HU_B4001W;
+    } else if (str == "HU_B4000W") {
+      return HU_B4000W;
+    } else if (str == "HU_B4010W") {
+      return HU_B4010W;
+    } else if (str == "AC_A0020W") {
+      return AC_A0020W;
+    } else if (str == "AC_A0030W") {
+      return AC_A0030W;
+    } else if (str == "AC_A0070W") {
+      return AC_A0070W;
+    } else if (str == "AC_A1000W") {
+      return AC_A1000W;
+    } else if (str == "AC_B1100W") {
+      return AC_B1100W;
+    } else if (str == "AC_B1240W") {
+      return AC_B1240W;
+    } else if (str == "AC_B1280W") {
+      return AC_B1280W;
+    } else if (str == "AC_B1300W") {
+      return AC_B1300W;
+    } else if (str == "AC_B1340W") {
+      return AC_B1340W;
+    } else if (str == "AC_B2080W") {
+      return AC_B2080W;
+    } else if (str == "AC_B3000W") {
+      return AC_B3000W;
+    } else if (str == "AC_B5000W") {
+      return AC_B5000W;
+    } else if (str == "AC_B5080W") {
+      return AC_B5080W;
+    } else if (str == "AC_B6020W") {
+      return AC_B6020W;
+    } else if (str == "AC_B6060W") {
+      return AC_B6060W;
+    } else if (str == "AC_B6080W") {
+      return AC_B6080W;
+    } else if (str == "AC_B8030W") {
+      return AC_B8030W;
+    } else if (str == "AC_B8040W") {
+      return AC_B8040W;
+    } else if (str == "AC_B8080W") {
+      return AC_B8080W;
+    } else if (str == "AC_B8100W") {
+      return AC_B8100W;
+    } else if (str == "TO_B0011W") {
+      return TO_B0011W;
+    } else if (str == "CHAT_A0001W") {
+      return CHAT_A0001W;
+    } else if (str == "CHAT_A0002W") {
+      return CHAT_A0002W;
+    } else if (str == "CHAT_TEST_TRAVEL_BOT") {
+      return CHAT_TEST_TRAVEL_BOT;
+    } else if (str == "GANTT") {
+      return GANTT;
+    } else if (str == "SA_B3600W") {
+      return SA_B3600W;
+    } else if (str == "PR_B1103W") {
+      return PR_B1103W;
+    } else if (str == "QC_B0100W") {
+      return QC_B0100W;
+    } else if (str == "PR_B1104W") {
+      return PR_B1104W;
+    } else if (str == "BA_A0020W_603") {
+      return BA_A0020W_603;
+    } else if (str == "CR_A0010W") {
+      return CR_A0010W;
+    } else if (str == "CR_A0020W") {
+      return CR_A0020W;
+    } else if (str == "CR_A0040W") {
+      return CR_A0040W;
+    } else if (str == "CR_A1001W") {
+      return CR_A1001W;
+    } else if (str == "CR_A1100W") {
+      return CR_A1100W;
+    } else if (str == "CR_A1101W") {
+      return CR_A1101W;
+    } else if (str == "QC_A2500_603W") {
+      return QC_A2500_603W;
+    } else if (str == "SA_A1000_603W") {
+      return SA_A1000_603W;
+    } else if (str == "SA_A1001_603W") {
+      return SA_A1001_603W;
+    } else if (str == "SA_A1100_603W") {
+      return SA_A1100_603W;
+    } else if (str == "SA_B1000W_603") {
+      return SA_B1000W_603;
+    } else if (str == "SA_B2216W") {
+      return SA_B2216W;
+    } else if (str == "SA_B2226W") {
+      return SA_B2226W;
+    } else if (str == "CR_A0000W") {
+      return CR_A0000W;
+    } else {
+      if (loginResult.companyCode == "2302BA03") {
+        return MainBIO;
+      } else {
+        return Main;
+      }
+    }
+  }
   return (
     <>
       <LocalizationProvider
@@ -469,13 +823,12 @@ const AppInner: React.FC = () => {
 
                 <PanelBarNavContainerWEBERP>
                   {/* 메인 홈 */}
-                  {/* 주팀장님 api수정 후 변경예정 */}
-                  {loginResult && loginResult.companyCode == "2302BA03" ? (
-                    isAdmin == true ? (
-                      <AuthRoute path="/Home" component={SA_B2226W} exact />
-                    ) : (
-                      <AuthRoute path="/Home" component={MainBIO} exact />
-                    )
+                  {loginResult ? (
+                    <AuthRoute
+                      path="/Home"
+                      component={link(loginResult.homeMenuWeb)}
+                      exact
+                    />
                   ) : (
                     <AuthRoute path="/Home" component={Main} exact />
                   )}
@@ -665,18 +1018,17 @@ const AppInner: React.FC = () => {
                   {/* 연구개발 */}
                   <AuthRoute path="/GANTT" component={GANTT} exact />
 
-                  <GlobalStyles style={{ fontFamily: "TheJamsil5Bold" }}>
-                    {/*KPI관리 */}
-                    <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
-                    <AuthRoute path="/PR_B1103W" component={PR_B1103W} exact />
-                    <AuthRoute path="/QC_B0100W" component={QC_B0100W} exact />
-                    <AuthRoute path="/PR_B1104W" component={PR_B1104W} exact />
-                    {/* DDGD 고객페이지 */}
-                    <AuthRoute path="/CR_A1101W" component={CR_A1101W} exact />
-                    {/* 바이오톡스텍 대쉬보드 */}
-                    <AuthRoute path="/SA_B2226W" component={SA_B2226W} exact />
-                    <AuthRoute path="/SA_B2216W" component={SA_B2216W} exact />
-                  </GlobalStyles>
+                  {/*KPI관리 */}
+                  <AuthRoute path="/SA_B3600W" component={SA_B3600W} exact />
+                  <AuthRoute path="/PR_B1103W" component={PR_B1103W} exact />
+                  <AuthRoute path="/QC_B0100W" component={QC_B0100W} exact />
+                  <AuthRoute path="/PR_B1104W" component={PR_B1104W} exact />
+                  {/* DDGD 고객페이지 */}
+                  <AuthRoute path="/CR_A0000W" component={CR_A0000W} exact />
+                  <AuthRoute path="/CR_A1101W" component={CR_A1101W} exact />
+                  {/* 바이오톡스텍 대쉬보드 */}
+                  <AuthRoute path="/SA_B2226W" component={SA_B2226W} exact />
+                  <AuthRoute path="/SA_B2216W" component={SA_B2216W} exact />
 
                   {/* DDGD 관리자페이지 */}
                   <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />

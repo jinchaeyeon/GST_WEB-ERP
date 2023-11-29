@@ -1,36 +1,35 @@
+import { Container } from "@mui/material";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { bytesToBase64 } from "byte-base64";
+import { Button } from "primereact/button";
+import { Divider } from "primereact/divider";
+import { Toolbar } from "primereact/toolbar";
 import React, { useCallback, useEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
-import { useApi } from "../hooks/api";
 import {
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
   convertDateToStr,
   dateformat2,
   getQueryFromBizComponent,
   setDefaultDate,
-  UseBizComponent,
-  UseCustomOption,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { colors, colorsName, isLoading } from "../store/atoms";
-import { Toolbar } from "primereact/toolbar";
-import { Divider } from "primereact/divider";
-import { Button } from "primereact/button";
-import { Container } from "@mui/material";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import DatePicker from "../components/KPIcomponents/Calendar/DatePicker";
-import Radio from "../components/KPIcomponents/Radio/Radio";
-import Card from "../components/KPIcomponents/Card/CardBox";
-import GridTitle from "../components/KPIcomponents/Title/Title";
-import Timelines from "../components/KPIcomponents/Timeline/Timelines";
-import Input from "../components/KPIcomponents/Input/Input";
 import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
-import { bytesToBase64 } from "byte-base64";
-import { ProgressBar } from "primereact/progressbar";
-import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
+import DatePicker from "../components/KPIcomponents/Calendar/DatePicker";
+import Card from "../components/KPIcomponents/Card/CardBox";
 import BarChart from "../components/KPIcomponents/Chart/BarChart";
+import Input from "../components/KPIcomponents/Input/Input";
+import Radio from "../components/KPIcomponents/Radio/Radio";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
+import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
+import Timelines from "../components/KPIcomponents/Timeline/Timelines";
+import GridTitle from "../components/KPIcomponents/Title/Title";
+import { useApi } from "../hooks/api";
+import { colors, colorsName, isLoading } from "../store/atoms";
 
 interface TList {
   planno: string;
@@ -58,9 +57,7 @@ const PR_B1104W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const pathname: string = window.location.pathname.replace("/", "");
   const [color, setColor] = useRecoilState(colors);
-  const [colorName, setColorName] = useRecoilState(
-    colorsName
-  );
+  const [colorName, setColorName] = useRecoilState(colorsName);
 
   useEffect(() => {}, [color]);
 
@@ -108,7 +105,10 @@ const PR_B1104W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setFilters((prev) => ({
         ...prev,
@@ -481,130 +481,138 @@ const PR_B1104W: React.FC = () => {
 
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <Container
-          maxWidth="xl"
-          style={{ width: "100%", marginBottom: "25px" }}
-        >
-          <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
-            <Title>작업공수</Title>
-            <ButtonContainer>
-              <Button
-                icon="pi pi-search"
-                onClick={() =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    isSearch: true,
-                  }))
-                }
-                className="mr-2"
-              />
-            </ButtonContainer>
-          </TitleContainer>
-          <Toolbar start={startContent} />
-          <Divider />
-          <Box sx={{ flexGrow: 1 }}>
+      <div style={{ fontFamily: "TheJamsil5Bold" }}>
+        <ThemeProvider theme={theme}>
+          <Container
+            maxWidth="xl"
+            style={{ width: "100%", marginBottom: "25px" }}
+          >
+            <TitleContainer
+              style={{ paddingTop: "25px", paddingBottom: "25px" }}
+            >
+              <Title>작업공수</Title>
+              <ButtonContainer>
+                <Button
+                  icon="pi pi-search"
+                  onClick={() =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      isSearch: true,
+                    }))
+                  }
+                  className="mr-2"
+                />
+              </ButtonContainer>
+            </TitleContainer>
+            <Toolbar start={startContent} />
+            <Divider />
+            <Box sx={{ flexGrow: 1 }}>
+              <Grid container spacing={2}>
+                {cardOption.map((item) => (
+                  <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
+                    <Card
+                      title={item.title}
+                      data={item.data}
+                      backgroundColor={item.backgroundColor}
+                      fontsize={
+                        size.width > 600 && size.width < 900
+                          ? "1.2rem"
+                          : "1.5rem"
+                      }
+                      form={"PR_B1104W"}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </Box>
+            <Divider />
             <Grid container spacing={2}>
-              {cardOption.map((item) => (
-                <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                  <Card
-                    title={item.title}
-                    data={item.data}
-                    backgroundColor={item.backgroundColor}
-                    fontsize={
-                      size.width > 600 && size.width < 900 ? "1.2rem" : "1.5rem"
-                    }
-                    form={"PR_B1104W"}
-                  />
-                </Grid>
-              ))}
+              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                <GridTitle title="평균 소요일수" />
+                <BarChart
+                  props={ProccdData}
+                  value="value"
+                  alllabel={stackChartAllLabel}
+                  random={true}
+                  name="argument"
+                  colorName={colorName}
+                />
+              </Grid>
             </Grid>
-          </Box>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-              <GridTitle title="평균 소요일수" />
-              <BarChart
-                props={ProccdData}
-                value="value"
-                alllabel={stackChartAllLabel}
-                random={true}
-                name="argument"
-                colorName={colorName}
-              />
+            <Divider />
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                <PaginatorTable
+                  value={
+                    AllList != undefined
+                      ? AllList.map((items: any) => ({
+                          ...items,
+                          itemlvl1:
+                            itemlvl1ListData == undefined
+                              ? items.itemlvl1
+                              : itemlvl1ListData.find(
+                                  (item: any) => item.sub_code == items.itemlvl1
+                                )?.code_name == undefined
+                              ? items.itemlvl1
+                              : itemlvl1ListData.find(
+                                  (item: any) => item.sub_code == items.itemlvl1
+                                )?.code_name,
+                          itemlvl2:
+                            itemlvl2ListData == undefined
+                              ? items.itemlvl2
+                              : itemlvl2ListData.find(
+                                  (item: any) => item.sub_code == items.itemlvl2
+                                )?.code_name == undefined
+                              ? items.itemlvl2
+                              : itemlvl2ListData.find(
+                                  (item: any) => item.sub_code == items.itemlvl2
+                                )?.code_name,
+                          itemlvl3:
+                            itemlvl3ListData == undefined
+                              ? items.itemlvl3
+                              : itemlvl3ListData.find(
+                                  (item: any) => item.sub_code == items.itemlvl3
+                                )?.code_name == undefined
+                              ? items.itemlvl3
+                              : itemlvl3ListData.find(
+                                  (item: any) => item.sub_code == items.itemlvl3
+                                )?.code_name,
+                        }))
+                      : []
+                  }
+                  column={{
+                    planno: "생산계획번호",
+                    itemcd: "품목코드",
+                    itemnm: "품목명",
+                    insiz: "규격",
+                    itemlvl1: "대분류",
+                    itemlvl2: "중분류",
+                    itemlvl3: "소분류",
+                    ordnum: "수주번호",
+                    orddt: "수주일자",
+                    dlvdt: "납기일자",
+                  }}
+                  width={[
+                    180, 150, 180, 150, 150, 120, 120, 120, 150, 150, 150,
+                  ]}
+                  title={"전체 목록"}
+                  key="num"
+                  selection={selected}
+                  onSelectionChange={(e: any) => {
+                    setSelected(e.value);
+                  }}
+                />
+              </Grid>
             </Grid>
-          </Grid>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-              <PaginatorTable
-                value={
-                  AllList != undefined
-                    ? AllList.map((items: any) => ({
-                        ...items,
-                        itemlvl1:
-                          itemlvl1ListData == undefined
-                            ? items.itemlvl1
-                            : itemlvl1ListData.find(
-                                (item: any) => item.sub_code == items.itemlvl1
-                              )?.code_name == undefined
-                            ? items.itemlvl1
-                            : itemlvl1ListData.find(
-                                (item: any) => item.sub_code == items.itemlvl1
-                              )?.code_name,
-                        itemlvl2:
-                          itemlvl2ListData == undefined
-                            ? items.itemlvl2
-                            : itemlvl2ListData.find(
-                                (item: any) => item.sub_code == items.itemlvl2
-                              )?.code_name == undefined
-                            ? items.itemlvl2
-                            : itemlvl2ListData.find(
-                                (item: any) => item.sub_code == items.itemlvl2
-                              )?.code_name,
-                        itemlvl3:
-                          itemlvl3ListData == undefined
-                            ? items.itemlvl3
-                            : itemlvl3ListData.find(
-                                (item: any) => item.sub_code == items.itemlvl3
-                              )?.code_name == undefined
-                            ? items.itemlvl3
-                            : itemlvl3ListData.find(
-                                (item: any) => item.sub_code == items.itemlvl3
-                              )?.code_name,
-                      }))
-                    : []
-                }
-                column={{
-                  planno: "생산계획번호",
-                  itemcd: "품목코드",
-                  itemnm: "품목명",
-                  insiz: "규격",
-                  itemlvl1: "대분류",
-                  itemlvl2: "중분류",
-                  itemlvl3: "소분류",
-                  ordnum: "수주번호",
-                  orddt: "수주일자",
-                  dlvdt: "납기일자",
-                }}
-                width={[180, 150, 180, 150, 150, 120, 120, 120, 150, 150, 150]}
-                title={"전체 목록"}
-                key="num"
-                selection={selected}
-                onSelectionChange={(e: any) => {
-                  setSelected(e.value);
-                }}
-              />
+            <Divider />
+            <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
+              <GridTitle title="작업공정정보" />
+              <Timelines value={DetailList} theme={theme} />
             </Grid>
-          </Grid>
-          <Divider />
-          <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
-            <GridTitle title="작업공정정보" />
-            <Timelines value={DetailList} theme={theme} />
-          </Grid>
-        </Container>
-        <SpecialDial />
-      </ThemeProvider>
+          </Container>
+          <SpecialDial />
+        </ThemeProvider>
+      </div>
     </>
   );
 };

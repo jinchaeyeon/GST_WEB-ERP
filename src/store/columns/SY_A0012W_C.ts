@@ -143,15 +143,9 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_home_menu_id",
-        field: "home_menu_id",
-        caption: "홈메뉴",
-        width: 120,
-      },
-      {
         id: "col_home_menu_id_web",
         field: "home_menu_id_web",
-        caption: "웹 홈메뉴",
+        caption: "홈메뉴(웹)",
         width: 120,
       },
       {

@@ -128,8 +128,10 @@ const Login: React.FC = () => {
           customerName,
           loginKey,
           passwordExpirationInfo,
+          webTitle,
+          homeMenuWeb
         } = response;
-
+ 
         localStorage.setItem("accessToken", token);
         localStorage.setItem("refreshToken", refreshToken);
         // AccessToken : Recoil 저장 / RefreshToken(만료기한 짧음) : Cash 저장
@@ -154,11 +156,14 @@ const Login: React.FC = () => {
           serviceName,
           customerName,
           loginKey,
+          webTitle,
+          homeMenuWeb
         });
 
         setPwExpInfo(passwordExpirationInfo);
 
         history.replace("/Home");
+
         setLoading(false);
       } catch (e: any) {
         console.log("login error", e);

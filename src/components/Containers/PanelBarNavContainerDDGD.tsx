@@ -582,7 +582,7 @@ const PanelBarNavContainer = (props: any) => {
           <Gnv isMobileMenuOpend={isMobileMenuOpend} theme={"#f5b901"}>
             <AppName theme={"#f5b901"} onClick={() => setIsMenuOpend(false)}>
               <Logo size="32px" name={"CRM_DDGD"} />
-              DDGD
+              {loginResult.webTitle}
             </AppName>
             {prgMenus && (
               <MenuSearchBox>
