@@ -239,7 +239,6 @@ const MA_A2310_606W: React.FC = () => {
     itemnm: "",
     insiz: "",
     finyn: "",
-    find_row_value: "",
     pgNum: 1,
     isSearch: true,
   });
@@ -284,7 +283,9 @@ const MA_A2310_606W: React.FC = () => {
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((row: any, num: number) => ({
+        ...row,
+      }));
 
       setMainDataResult((prev) => {
         return {
@@ -314,6 +315,7 @@ const MA_A2310_606W: React.FC = () => {
     //if (!permissions?.view) return;
     barcode = "";
     let data: any;
+
     //조회조건 파라미터
     const parameters: Iparameters = {
       procedureName: "P_MA_A2310_606W_Q",
@@ -349,8 +351,121 @@ const MA_A2310_606W: React.FC = () => {
           ...row,
         };
       });
-      console.log(data);
+
       if (totalRowCnt > 0) {
+        let valid = false;
+        mainDataResult2.data.map((item) => {
+          rows.map(
+            (item2: { lotnum: any; seq1: any; seq2: any; recdt: any }) => {
+              if (
+                item.lotnum == item2.lotnum &&
+                item.seq1 == item2.seq1 &&
+                item.seq2 == item2.seq2 &&
+                item.recdt == item2.recdt &&
+                valid == false
+              ) {
+                valid = true;
+              }
+            }
+          );
+        });
+
+        if (valid == false) {
+          rows.map(
+            (items: {
+              amt: any;
+              amtunit: any;
+              bnatur: any;
+              contractno: any;
+              custcd: any;
+              custnm: any;
+              doexdiv: any;
+              insiz: any;
+              itemacnt: any;
+              itemcd: any;
+              itemnm: any;
+              lcno: any;
+              location: any;
+              lotnum: any;
+              ordnum: any;
+              ordseq: any;
+              orgdiv: any;
+              outdt: any;
+              outdt2: any;
+              outkind: any;
+              outtype: any;
+              person: any;
+              pgmdiv: any;
+              qty: any;
+              rcvcustcd: any;
+              recdt: any;
+              reckey: any;
+              remark: any;
+              seq1: any;
+              seq2: any;
+              shipdt: any;
+              spec: any;
+              taxamt: any;
+              uschgrat: any;
+              wonchgrat: any;
+            }) => {
+              mainDataResult2.data.map((item) => {
+                if (item.num > temp) {
+                  temp = item.num;
+                }
+              });
+
+              const newDataItem = {
+                [DATA_ITEM_KEY2]: ++temp,
+                amt: items.amt,
+                amtunit: items.amtunit,
+                bnatur: items.bnatur,
+                contractno: items.contractno,
+                custcd: items.custcd,
+                custnm: items.custnm,
+                doexdiv: items.doexdiv,
+                insiz: items.insiz,
+                itemacnt: items.itemacnt,
+                itemcd: items.itemcd,
+                itemnm: items.itemnm,
+                lcno: items.lcno,
+                location: items.location,
+                lotnum: items.lotnum,
+                ordnum: items.ordnum,
+                ordseq: items.ordseq,
+                orgdiv: items.orgdiv,
+                outdt: items.outdt,
+                outdt2: items.outdt2,
+                outkind: items.outkind,
+                outtype: items.outtype,
+                person: items.person,
+                pgmdiv: items.pgmdiv,
+                qty: items.qty,
+                rcvcustcd: items.rcvcustcd,
+                recdt: items.recdt,
+                reckey: items.reckey,
+                remark: items.remark,
+                seq1: items.seq1,
+                seq2: items.seq2,
+                shipdt: items.shipdt,
+                spec: items.spec,
+                taxamt: items.taxamt,
+                uschgrat: items.uschgrat,
+                wonchgrat: items.wonchgrat,
+              };
+
+              setSelectedState2({ [newDataItem[DATA_ITEM_KEY2]]: true });
+              setMainDataResult2((prev) => {
+                return {
+                  data: [newDataItem, ...prev.data],
+                  total: prev.total + 1,
+                };
+              });
+            }
+          );
+        } else {
+          alert("동일한 행이 이미 추가되어있습니다.");
+        }
       } else {
         alert("해당 LOT번호가 없습니다.");
         barcode = "";
@@ -371,7 +486,7 @@ const MA_A2310_606W: React.FC = () => {
     if (filters.isSearch && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
-      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
@@ -458,7 +573,6 @@ const MA_A2310_606W: React.FC = () => {
         setFilters((prev: any) => ({
           ...prev,
           pgNum: 1,
-          find_row_value: "",
           isSearch: true,
         }));
       }
@@ -859,7 +973,6 @@ const MA_A2310_606W: React.FC = () => {
         ...prev,
         isSearch: true,
         pgNum: 1,
-        find_row_value: data.returnString,
       }));
 
       setParaData({

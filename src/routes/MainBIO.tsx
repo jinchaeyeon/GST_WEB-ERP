@@ -2,6 +2,7 @@ import { DataResult, State, process } from "@progress/kendo-data-query";
 import React, { CSSProperties, useCallback, useEffect, useState } from "react";
 // ES2015 module syntax
 import { Grid as GridMui } from "@mui/material";
+import { Button } from "@progress/kendo-react-buttons";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   DayView,
@@ -12,14 +13,14 @@ import {
   WeekView,
 } from "@progress/kendo-react-scheduler";
 import { bytesToBase64 } from "byte-base64";
+import { Card as CardPrime } from "primereact/card";
 import { useRecoilState } from "recoil";
 import {
   AnswerIcon,
   GridContainer,
   GridContainerWrap,
   GridTitle,
-  GridTitleContainer,
-  StatusIcon,
+  GridTitleContainer
 } from "../CommonStyled";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
@@ -29,20 +30,18 @@ import {
   UseGetValueFromSessionItem,
   convertDateToStr,
   convertDateToStrWithTime2,
-  dateformat2,
   getQueryFromBizComponent,
-  toDate2,
+  toDate2
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import { LayoutSquareRead } from "../components/DnD/LayoutSquareRead";
 import { PieceRead } from "../components/DnD/PieceRead";
 import Card from "../components/KPIcomponents/Card/CardBox";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
+import MessengerWindow from "../components/Windows/CommonWindows/MessengerWindow";
 import { useApi } from "../hooks/api";
 import { loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
-import { Button } from "@progress/kendo-react-buttons";
-import { Card as CardPrime } from "primereact/card";
 
 interface Tsize {
   width: number;
@@ -95,6 +94,10 @@ const Main: React.FC = () => {
   const userName = loginResult ? loginResult.userName : "";
   UseBizComponent("L_APPOINTMENT_COLOR, L_BA400", setBizComponentData);
 
+  const [windowVisible, setWindowVisible] = useState<boolean>(false);
+  const onMessengerClick = () => {
+    setWindowVisible(true);
+  };
   //그리드 데이터 스테이트
   const [allPanelDataState, setAllPanelDataState] = useState<State>({
     sort: [],
@@ -718,11 +721,11 @@ const Main: React.FC = () => {
                       color: "white",
                       marginTop: 0,
                       display: "flex",
-                      justifyContent: "end"
+                      justifyContent: "end",
                     }}
                   >
                     <Button
-                      // onClick={search}
+                      onClick={onMessengerClick}
                       icon="email"
                       themeColor={"primary"}
                       title="쪽지"
@@ -856,6 +859,9 @@ const Main: React.FC = () => {
           </GridContainer>
         </GridContainer>
       </GridContainerWrap>
+      {windowVisible && (
+        <MessengerWindow setVisible={setWindowVisible} modal={false} />
+      )}
     </>
   );
 };
