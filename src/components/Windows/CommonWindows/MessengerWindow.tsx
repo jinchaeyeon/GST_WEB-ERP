@@ -3,14 +3,14 @@ import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
-  Grid,
-  GridColumn,
-  GridDataStateChangeEvent,
-  GridFooterCellProps,
-  GridHeaderCellProps,
-  GridItemChangeEvent,
-  GridPageChangeEvent,
-  GridSelectionChangeEvent,
+    Grid,
+    GridColumn,
+    GridDataStateChangeEvent,
+    GridFooterCellProps,
+    GridHeaderCellProps,
+    GridItemChangeEvent,
+    GridPageChangeEvent,
+    GridSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -18,12 +18,12 @@ import { getSelectedState } from "@progress/kendo-react-treelist";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-  BottomContainer,
-  ButtonContainer,
-  FormBox,
-  FormBoxWrap,
-  GridContainer,
-  GridContainerWrap,
+    BottomContainer,
+    ButtonContainer,
+    FormBox,
+    FormBoxWrap,
+    GridContainer,
+    GridContainerWrap,
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
@@ -68,6 +68,11 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
     width: isMobile == true ? deviceWidth : 800,
     height: 800,
   });
+
+  const [Information, setInformation] = useState<{ [name: string]: any }>({
+    content: "",
+  });
+  
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
   };
@@ -105,7 +110,6 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
         workType: "new",
         receiver_id_s: dataArr.receiver_id_s.join("|"),
       }));
-      setVisible(false);
     }
   };
 
@@ -117,8 +121,25 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
     slip_content: "",
     pc: pc,
     slip_save: "",
+    sender_id: "",
     receiver_id_s: "",
   });
+
+  const para: Iparameters = {
+    procedureName: "sys_sav_messenger",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_slip_id": ParaData.slip_id,
+      "@p_receiver_id": ParaData.receiver_id,
+      "@p_slip_content": Information.content,
+      "@p_slip_save": ParaData.slip_save,
+      "@p_sender_id": userId,
+      "@p_pc": pc,
+      "@p_receiver_id_s": ParaData.receiver_id_s,
+    },
+  };
 
   useEffect(() => {
     if (ParaData.workType != "") {
@@ -129,20 +150,35 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
   const fetchTodoGridSaved = async () => {
     let data: any;
     setLoading(true);
-    // try {
-    //   data = await processApi<any>("procedure", para);
-    // } catch (error) {
-    //   data = null;
-    // }
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
 
     if (data.isSuccess === true) {
-
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
+      setFilters3((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
+      setInformation({
+        content: "",
+      });
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "",
         slip_id: "",
         receiver_id: "",
         slip_content: "",
+        sender_id: "",
         pc: pc,
         slip_save: "",
         receiver_id_s: "",
@@ -153,7 +189,6 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
     }
     setLoading(false);
   };
-
 
   const [tabSelected, setTabSelected] = useState(0);
   const handleSelectTab = (e: any) => {
@@ -214,10 +249,6 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
       [name]: value,
     }));
   };
-
-  const [Information, setInformation] = useState<{ [name: string]: any }>({
-    content: "",
-  });
 
   const [filters, setFilters] = useState({
     pgNum: 1,
