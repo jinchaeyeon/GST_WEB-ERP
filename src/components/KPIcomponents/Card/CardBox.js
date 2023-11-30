@@ -14,7 +14,7 @@ const CardBox = (props) => {
           cursor: props.form == "QC_B0100W" ? "pointer" : ""
         }}
         title={props.title}
-        onClick={(e) => props.Click(e)}
+        onClick={(e) => props.Click == undefined ? "" : props.Click(e)}
       >
         <p
           style={{

@@ -15,12 +15,13 @@ import {
 import { bytesToBase64 } from "byte-base64";
 import { Card as CardPrime } from "primereact/card";
 import { useRecoilState } from "recoil";
+import { Badge, BadgeContainer } from "@progress/kendo-react-indicators";
 import {
   AnswerIcon,
   GridContainer,
   GridContainerWrap,
   GridTitle,
-  GridTitleContainer
+  GridTitleContainer,
 } from "../CommonStyled";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
@@ -31,7 +32,7 @@ import {
   convertDateToStr,
   convertDateToStrWithTime2,
   getQueryFromBizComponent,
-  toDate2
+  toDate2,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import { LayoutSquareRead } from "../components/DnD/LayoutSquareRead";
@@ -294,6 +295,7 @@ const Main: React.FC = () => {
         ...prev,
         isSearch: true,
       }));
+      dataApi();
     }
   }, [customOptionData]);
 
@@ -697,6 +699,55 @@ const Main: React.FC = () => {
     );
   };
 
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let polling = setInterval(() => {
+      dataApi();
+    }, 30000);
+
+    // 페이지에 벗어날 경우 polling X
+    return () => {
+      clearInterval(polling);
+    };
+  }, []);
+
+  //그리드 조회
+  const dataApi = async () => {
+    let data: any;
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "sys_sel_messenger",
+      pageNumber: 1,
+      pageSize: PAGE_SIZE,
+      parameters: {
+        "@p_work_type": "new_slip",
+        "@p_user_id": userId,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+      }));
+      if (totalRowCnt > 0) {
+        setCount(rows[0].new_slip_count);
+      } else {
+        setCount(0);
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+  };
+
   return (
     <>
       <GridContainerWrap>
@@ -714,23 +765,28 @@ const Main: React.FC = () => {
                   }}
                   title={`${userName}님, 환영합니다.`}
                 >
-                  <p
-                    style={{
-                      fontSize: size.width < 600 ? "2.2rem" : "3rem",
-                      fontWeight: "900",
-                      color: "white",
-                      marginTop: 0,
-                      display: "flex",
-                      justifyContent: "end",
-                    }}
-                  >
-                    <Button
-                      onClick={onMessengerClick}
-                      icon="email"
-                      themeColor={"primary"}
-                      title="쪽지"
-                    ></Button>
-                  </p>
+                  {count == 0 ? (
+                    <div style={{ float: "right" }}>
+                      <Button
+                        onClick={onMessengerClick}
+                        icon="email"
+                        themeColor={"primary"}
+                        title="쪽지"
+                      ></Button>
+                    </div>
+                  ) : (
+                    <BadgeContainer style={{ float: "right" }}>
+                      <Button
+                        onClick={onMessengerClick}
+                        icon="email"
+                        themeColor={"primary"}
+                        title="쪽지"
+                      ></Button>
+                      <Badge themeColor={"primary"} fillMode={"outline"}>
+                        {count}
+                      </Badge>
+                    </BadgeContainer>
+                  )}
                 </CardPrime>
               </GridMui>
               {cardOption.map((item) => (
@@ -860,7 +916,11 @@ const Main: React.FC = () => {
         </GridContainer>
       </GridContainerWrap>
       {windowVisible && (
-        <MessengerWindow setVisible={setWindowVisible} modal={false} />
+        <MessengerWindow
+          setVisible={setWindowVisible}
+          reload={() => dataApi()}
+          modal={true}
+        />
       )}
     </>
   );

@@ -20,6 +20,8 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import {
     BottomContainer,
     ButtonContainer,
+    FilterBox,
+    FilterBoxWrap,
     FormBox,
     FormBoxWrap,
     GridContainer,
@@ -30,7 +32,11 @@ import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading, loginResultState } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import CheckBoxCell from "../../Cells/CheckBoxCell";
-import { UseParaPc, getGridItemChangedData } from "../../CommonFunction";
+import {
+    UseParaPc,
+    getGridItemChangedData,
+    useSysMessage
+} from "../../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
 
@@ -40,13 +46,14 @@ const leftOverHeight = (topHeight + bottomHeight) / 2;
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
+  reload(): void;
   modal?: boolean;
 };
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY3 = "num";
 
-const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
+const KendoWindow = ({ setVisible, reload, modal = false }: TKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
@@ -72,7 +79,17 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
   const [Information, setInformation] = useState<{ [name: string]: any }>({
     content: "",
   });
-  
+
+  //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
+  const filterInputChange = (e: any) => {
+    const { value, name } = e.target;
+
+    setFilters3((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
   };
@@ -87,6 +104,7 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
 
   const onClose = () => {
     setVisible(false);
+    reload();
   };
 
   const onConfirmClick = () => {
@@ -109,6 +127,8 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
         ...prev,
         workType: "new",
         receiver_id_s: dataArr.receiver_id_s.join("|"),
+        slip_content: Information.content,
+        sender_id: userId,
       }));
     }
   };
@@ -133,9 +153,9 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
       "@p_work_type": ParaData.workType,
       "@p_slip_id": ParaData.slip_id,
       "@p_receiver_id": ParaData.receiver_id,
-      "@p_slip_content": Information.content,
+      "@p_slip_content": ParaData.slip_content,
       "@p_slip_save": ParaData.slip_save,
-      "@p_sender_id": userId,
+      "@p_sender_id": ParaData.sender_id,
       "@p_pc": pc,
       "@p_receiver_id_s": ParaData.receiver_id_s,
     },
@@ -147,9 +167,33 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
     }
   }, [ParaData]);
 
+  const onSearch = () => {
+    setFilters((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+    }));
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum: 1,
+      isSearch: true,
+    }));
+    setFilters3((prev) => ({
+      ...prev,
+      user_id: "",
+      pgNum: 1,
+      check: false,
+      isSearch: true,
+    }));
+    setInformation({
+      content: "",
+    });
+  };
+
   const fetchTodoGridSaved = async () => {
     let data: any;
     setLoading(true);
+
     try {
       data = await processApi<any>("procedure", para);
     } catch (error) {
@@ -157,21 +201,31 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
     }
 
     if (data.isSuccess === true) {
-      setFilters((prev) => ({
-        ...prev,
-        isSearch: true,
-      }));
-      setFilters2((prev) => ({
-        ...prev,
-        isSearch: true,
-      }));
-      setFilters3((prev) => ({
-        ...prev,
-        isSearch: true,
-      }));
-      setInformation({
-        content: "",
-      });
+      if (ParaData.workType == "new") {
+        alert("쪽지가 전송되었습니다.");
+      }
+      if (ParaData.workType != "read") {
+        setFilters((prev) => ({
+          ...prev,
+          pgNum: 1,
+          isSearch: true,
+        }));
+        setFilters2((prev) => ({
+          ...prev,
+          pgNum: 1,
+          isSearch: true,
+        }));
+        setFilters3((prev) => ({
+          ...prev,
+          user_id: "",
+          pgNum: 1,
+          check: false,
+          isSearch: true,
+        }));
+        setInformation({
+          content: "",
+        });
+      }
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "",
@@ -192,27 +246,9 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
 
   const [tabSelected, setTabSelected] = useState(0);
   const handleSelectTab = (e: any) => {
-    if (e.selected == 0) {
-      setFilters((prev) => ({
-        ...prev,
-        isSearch: true,
-      }));
-    } else if (e.selected == 1) {
-      setFilters2((prev) => ({
-        ...prev,
-        isSearch: true,
-      }));
-    } else if (e.selected == 2) {
-      setFilters3((prev) => ({
-        ...prev,
-        isSearch: true,
-      }));
-      setInformation({
-        content: "",
-      });
-    }
     setTabSelected(e.selected);
   };
+
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -264,6 +300,7 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
 
   const [filters3, setFilters3] = useState({
     pgNum: 1,
+    user_id: "",
     isSearch: true,
     pgSize: PAGE_SIZE,
   });
@@ -298,6 +335,10 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
     });
 
     setSelectedState(newSelectedState);
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+
+    onRead(selectedRowData);
   };
 
   const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
@@ -472,6 +513,10 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
       });
       if (totalRowCnt > 0) {
         setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+
+        if (tabSelected == 0) {
+          onRead(rows[0]);
+        }
       }
     } else {
       console.log("[오류 발생]");
@@ -540,6 +585,7 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
   //그리드 조회
   const fetchMainGrid3 = async (filters: any) => {
     let data: any;
+
     //조회조건 파라미터
     const parameters: Iparameters = {
       procedureName: "sys_sel_messenger",
@@ -547,7 +593,7 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "users",
-        "@p_user_id": userId,
+        "@p_user_id": filters.user_id,
       },
     };
     try {
@@ -560,6 +606,7 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
+        chk: filters.check == true ? "Y" : "N",
       }));
 
       setMainDataResult3((prev) => {
@@ -674,6 +721,85 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
     });
   };
 
+  const questionToDelete = useSysMessage("QuestionToDelete");
+  const onDeleteClick = (e: any) => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+
+    if (mainDataResult.data.length != 0) {
+      const selectRows = mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: "d_received",
+        slip_id: selectRows.slip_id,
+        receiver_id: userId,
+        slip_content: selectRows.slip_content,
+        sender_id: selectRows.sender_id,
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
+  const onDeleteClick2 = (e: any) => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+
+    if (mainDataResult2.data.length != 0) {
+      const selectRows = mainDataResult2.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState2)[0]
+      )[0];
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: "d_sent",
+        slip_id: selectRows.slip_id,
+        slip_content: selectRows.slip_content,
+        sender_id: selectRows.sender_id,
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
+  const onRead = (selectRows: any) => {
+    if (selectRows != undefined) {
+      if (selectRows.read_time == "" || selectRows.read_time == null) {
+        setParaData((prev) => ({
+          ...prev,
+          workType: "read",
+          receiver_id: userId,
+          slip_id: selectRows.slip_id,
+          slip_content: selectRows.slip_content,
+          sender_id: selectRows.sender_id,
+        }));
+      }
+    }
+  };
+
+  const onReceive = () => {
+    if (mainDataResult.data.length != 0) {
+      const selectRows = mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+
+      setTabSelected(2);
+
+      setFilters3((prev) => ({
+        ...prev,
+        isSearch: true,
+        check: true,
+        pgNum: 1,
+        user_id: selectRows.sender_id,
+      }));
+    }
+  };
+
   return (
     <Window
       title={"Messenger"}
@@ -690,7 +816,7 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
         style={{ height: `calc(100% - ${leftOverHeight}px)` }}
       >
         <TabStripTab title="받은 쪽지">
-          <GridContainer height={"300px"}>
+          <GridContainer height={"270px"}>
             <Grid
               style={{ height: "100%" }}
               data={process(
@@ -741,6 +867,27 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
             </Grid>
           </GridContainer>
           <FormBoxWrap border={true}>
+            <ButtonContainer>
+              <Button onClick={onReceive} themeColor={"primary"} icon={"email"}>
+                답장
+              </Button>
+              <Button
+                onClick={onSearch}
+                themeColor={"primary"}
+                fillMode={"outline"}
+                icon={"refresh"}
+              >
+                재조회
+              </Button>
+              <Button
+                onClick={onDeleteClick}
+                themeColor={"primary"}
+                fillMode={"outline"}
+                icon={"delete"}
+              >
+                삭제
+              </Button>
+            </ButtonContainer>
             <FormBox>
               <tbody>
                 <tr>
@@ -863,7 +1010,7 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
           </FormBoxWrap>
         </TabStripTab>
         <TabStripTab title="보낸 쪽지">
-          <GridContainer height={"300px"}>
+          <GridContainer height={"270px"}>
             <Grid
               style={{ height: "100%" }}
               data={process(
@@ -912,6 +1059,24 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
             </Grid>
           </GridContainer>
           <FormBoxWrap border={true}>
+            <ButtonContainer>
+              <Button
+                onClick={onSearch}
+                themeColor={"primary"}
+                fillMode={"outline"}
+                icon={"refresh"}
+              >
+                재조회
+              </Button>
+              <Button
+                onClick={onDeleteClick2}
+                themeColor={"primary"}
+                fillMode={"outline"}
+                icon={"delete"}
+              >
+                삭제
+              </Button>
+            </ButtonContainer>
             <FormBox>
               <tbody>
                 <tr>
@@ -1034,7 +1199,40 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
           </FormBoxWrap>
         </TabStripTab>
         <TabStripTab title="쪽지 보내기">
-          <GridContainerWrap height={"580px"}>
+          <ButtonContainer>
+            <Button
+              onClick={() =>
+                setFilters3((prev) => ({
+                  ...prev,
+                  check: false,
+                  pgNum: 1,
+                  isSearch: true,
+                }))
+              }
+              icon="search"
+              themeColor={"primary"}
+            >
+              조회
+            </Button>
+          </ButtonContainer>
+          <FilterBoxWrap>
+            <FilterBox>
+              <tbody>
+                <tr>
+                  <th>사용자 ID</th>
+                  <td>
+                    <Input
+                      name="user_id"
+                      type="text"
+                      value={filters3.user_id}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterBoxWrap>
+          <GridContainerWrap height={"500px"}>
             <GridContainer width="50%">
               <Grid
                 style={{ height: "100%" }}
