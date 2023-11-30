@@ -599,8 +599,9 @@ const CopyWindow = ({
     if (Information.isSearch && Information.lotnum != "") {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(Information);
-      setInformation((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
+      setInformation((prev) => ({ ...prev, lotnum: "", isSearch: false })); // 한번만 조회되도록
       fetchLotNoGrid(deepCopiedFilters);
+      barcode="";
     }
   }, [Information, bizComponentData, customOptionData]);
 
@@ -774,6 +775,7 @@ const CopyWindow = ({
             lotnum: barcode,
             isSearch: true,
           }));
+             barcode = "";
         }
       } else if (evt.code != "ShiftLeft" && evt.code != "Shift" && evt.code != "Enter") {
         barcode += evt.key;

@@ -315,7 +315,7 @@ const MA_A2310_606W: React.FC = () => {
     //if (!permissions?.view) return;
     barcode = "";
     let data: any;
-
+    setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
       procedureName: "P_MA_A2310_606W_Q",
@@ -480,6 +480,7 @@ const MA_A2310_606W: React.FC = () => {
       lotnum: "",
       isSearch: false,
     }));
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -495,8 +496,9 @@ const MA_A2310_606W: React.FC = () => {
     if (Information.isSearch && Information.lotnum != "") {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(Information);
-      setInformation((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
+      setInformation((prev) => ({ ...prev, lotnum: "", isSearch: false })); // 한번만 조회되도록
       fetchLotNoGrid(deepCopiedFilters);
+      barcode="";
     }
   }, [Information, bizComponentData, customOptionData]);
 
