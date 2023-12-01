@@ -82,15 +82,15 @@ const Main: React.FC = () => {
   const geoLocation = useGeoLocation();
 
   useEffect(() => {
-    if (sessionUserId === "") fetchSessionItem();
+    fetchSessionItem();
     // if (token && sessionUserId === "") fetchSessionItem();
   }, [sessionUserId]);
 
   let sessionOrgdiv = sessionItem.find(
-    (sessionItem) => sessionItem.code === "orgdiv"
+    (sessionItem) => sessionItem.code == "orgdiv"
   )!.value;
   let sessionLocation = sessionItem.find(
-    (sessionItem) => sessionItem.code === "location"
+    (sessionItem) => sessionItem.code == "location"
   )!.value;
 
   if (sessionOrgdiv === "") sessionOrgdiv = "01";

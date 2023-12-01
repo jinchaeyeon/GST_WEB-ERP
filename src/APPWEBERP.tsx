@@ -133,6 +133,7 @@ import MA_B2800W from "./routes/MA_B2800W";
 import MA_B3000W from "./routes/MA_B3000W";
 import MA_B3100W from "./routes/MA_B3100W";
 import MA_B7000W from "./routes/MA_B7000W";
+import MA_B7000_606W from "./routes/MA_B7000_606W";
 import MA_B7200W from "./routes/MA_B7200W";
 import MA_B7201W from "./routes/MA_B7201W";
 import MainBIO from "./routes/MainBIO";
@@ -525,6 +526,8 @@ const AppInner: React.FC = () => {
       return MA_B3100W;
     } else if (str == "MA_B7000W") {
       return MA_B7000W;
+    } else if (str == "MA_B7000_606W") {
+      return MA_B7000_606W;
     } else if (str == "MA_B7200W") {
       return MA_B7200W;
     } else if (str == "MA_B7201W") {
@@ -874,6 +877,11 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/MA_B3000W" component={MA_B3000W} exact />
                   <AuthRoute path="/MA_B3100W" component={MA_B3100W} exact />
                   <AuthRoute path="/MA_B7000W" component={MA_B7000W} exact />
+                  <AuthRoute
+                    path="/MA_B7000_606W"
+                    component={MA_B7000_606W}
+                    exact
+                  />
                   <AuthRoute path="/MA_B7200W" component={MA_B7200W} exact />
                   <AuthRoute path="/MA_B7201W" component={MA_B7201W} exact />
                   {/* 영업관리 */}

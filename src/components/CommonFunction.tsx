@@ -845,6 +845,7 @@ export const getUnpQuery = (custcd: string) => {
 export const UseGetValueFromSessionItem = (code: string) => {
   const [sessionItem] = useRecoilState(sessionItemState);
   const codes = code == "UserID" ? "user_id" : code == "UserName" ? "user_name" : code;
+
   if (sessionItem) {
     return sessionItem.find((sessionItem) => sessionItem.code === codes)!.value;
   } else {

@@ -50,6 +50,7 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   convertDateToStr,
   getQueryFromBizComponent,
@@ -105,6 +106,7 @@ const CopyWindow = ({
   const DATA_ITEM_KEY2 = "num";
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
+  const location = UseGetValueFromSessionItem("location");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -359,7 +361,7 @@ const CopyWindow = ({
     pgSize: PAGE_SIZE,
     workType: "Q",
     orgdiv: "01",
-    location: "01",
+    location: location,
     frdt: new Date(),
     todt: new Date(),
     itemcd: "",
@@ -392,7 +394,7 @@ const CopyWindow = ({
       parameters: {
         "@p_work_type": filters.workType,
         "@p_orgdiv": "01",
-        "@p_location": "01",
+        "@p_location": location,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_itemcd": filters.itemcd,
@@ -492,7 +494,7 @@ const CopyWindow = ({
       parameters: {
         "@p_work_type": filters.workType,
         "@p_orgdiv": "01",
-        "@p_location": "01",
+        "@p_location": location,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_itemcd": filters.itemcd,
@@ -601,7 +603,6 @@ const CopyWindow = ({
       const deepCopiedFilters = _.cloneDeep(Information);
       setInformation((prev) => ({ ...prev, lotnum: "", isSearch: false })); // 한번만 조회되도록
       fetchLotNoGrid(deepCopiedFilters);
-      barcode="";
     }
   }, [Information, bizComponentData, customOptionData]);
 
@@ -775,7 +776,6 @@ const CopyWindow = ({
             lotnum: barcode,
             isSearch: true,
           }));
-             barcode = "";
         }
       } else if (evt.code != "ShiftLeft" && evt.code != "Shift" && evt.code != "Enter") {
         barcode += evt.key;

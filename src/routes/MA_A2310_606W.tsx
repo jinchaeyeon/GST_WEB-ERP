@@ -79,6 +79,7 @@ const MA_A2310_606W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+  const [isVisibleDetail, setIsVisableDetail] = useState(false);
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const companyCode = loginResult ? loginResult.companyCode : "";
@@ -203,20 +204,12 @@ const MA_A2310_606W: React.FC = () => {
   const [mainDataState2, setMainDataState2] = useState<State>({
     sort: [],
   });
-  const [subDataState, setSubDataState] = useState<State>({
-    sort: [],
-  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
   const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
     process([], mainDataState2)
   );
-
-  const [subDataResult, setSubDataResult] = useState<DataResult>(
-    process([], subDataState)
-  );
-
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -498,7 +491,7 @@ const MA_A2310_606W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(Information);
       setInformation((prev) => ({ ...prev, lotnum: "", isSearch: false })); // 한번만 조회되도록
       fetchLotNoGrid(deepCopiedFilters);
-      barcode="";
+      barcode = "";
     }
   }, [Information, bizComponentData, customOptionData]);
 
@@ -1172,126 +1165,136 @@ const MA_A2310_606W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-        >
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="check-circle"
-              >
-                확정
-              </Button>
-              <Button
-                onClick={onDeleteClick}
-                icon="close-circle"
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                삭제
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <Grid
-            style={{ height: "40vh" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                person: userListData.find(
-                  (items: any) => items.user_id == row.person
-                )?.user_name,
-                itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
-                )?.code_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-              })),
-              mainDataState
-            )}
-            onDataStateChange={onMainDataStateChange}
-            {...mainDataState}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+      {isVisibleDetail && (
+        <GridContainer>
+          <ExcelExport
+            data={mainDataResult.data}
+            ref={(exporter) => {
+              _export = exporter;
             }}
-            onSelectionChange={onMainSelectionChange}
-            //스크롤 조회기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onMainItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
           >
-            <GridColumn
-              field="chk"
-              title=" "
-              width="45px"
-              headerCell={CustomCheckBoxCell2}
-              cell={CheckBoxCell}
-            />
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : dateField.includes(item.fieldName)
-                          ? DateCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder === 0
-                          ? mainTotalFooterCell
-                          : numberField.includes(item.fieldName)
-                          ? gridSumQtyFooterCell
-                          : undefined
-                      }
-                    />
-                  )
+            <GridTitleContainer>
+              <GridTitle>요약정보</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onDeleteClick}
+                  icon="close-circle"
+                  fillMode="outline"
+                  themeColor={"primary"}
+                >
+                  삭제
+                </Button>
+                <Button
+                  onClick={onAddClick2}
+                  themeColor={"primary"}
+                  icon="plus"
+                  title="행 추가"
+                ></Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: "40vh" }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  person: userListData.find(
+                    (items: any) => items.user_id == row.person
+                  )?.user_name,
+                  itemacnt: itemacntListData.find(
+                    (item: any) => item.sub_code === row.itemacnt
+                  )?.code_name,
+                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                })),
+                mainDataState
               )}
-          </Grid>
-        </ExcelExport>
-      </GridContainer>
+              onDataStateChange={onMainDataStateChange}
+              {...mainDataState}
+              //선택 기능
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onMainSelectionChange}
+              //스크롤 조회기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              skip={page.skip}
+              take={page.take}
+              pageable={true}
+              onPageChange={pageChange}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onItemChange={onMainItemChange}
+              cellRender={customCellRender}
+              rowRender={customRowRender}
+              editField={EDIT_FIELD}
+            >
+              <GridColumn
+                field="chk"
+                title=" "
+                width="45px"
+                headerCell={CustomCheckBoxCell2}
+                cell={CheckBoxCell}
+              />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : dateField.includes(item.fieldName)
+                            ? DateCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 0
+                            ? mainTotalFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell
+                            : undefined
+                        }
+                      />
+                    )
+                )}
+            </Grid>
+          </ExcelExport>
+        </GridContainer>
+      )}
       <GridContainer>
         <GridTitleContainer>
-          <GridTitle>Keeping</GridTitle>
+          <GridTitle>
+            Keeping
+            <Button
+              themeColor={"primary"}
+              fillMode={"flat"}
+              icon={isVisibleDetail ? "chevron-up" : "chevron-down"}
+              onClick={() => setIsVisableDetail((prev) => !prev)}
+            ></Button>
+          </GridTitle>
           <ButtonContainer>
             <Button
-              onClick={onAddClick2}
+              onClick={onAddClick}
               themeColor={"primary"}
-              icon="plus"
-              title="행 추가"
-            ></Button>
+              icon="check-circle"
+            >
+              확정
+            </Button>
             <Button
               onClick={onDeleteClick2}
               themeColor={"primary"}
@@ -1302,7 +1305,7 @@ const MA_A2310_606W: React.FC = () => {
           </ButtonContainer>
         </GridTitleContainer>
         <Grid
-          style={{ height: "30vh" }}
+          style={{ height: isVisibleDetail ? "30vh" : "72vh" }}
           data={process(
             mainDataResult2.data.map((row) => ({
               ...row,

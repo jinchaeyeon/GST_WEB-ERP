@@ -50,6 +50,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "MA_B3000W" ||
       link == "MA_B3100W" ||
       link == "MA_B7000W" ||
+      link == "MA_B7000_606W" ||
       link == "MA_B7200W" ||
       link == "MA_B7201W" ||
       link == "SA_A2000W" ||
@@ -170,11 +171,11 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "QC_B0100W" ||
       link == "PR_B1104W" ||
       link == "BA_A0020W_603" ||
-      link == "CR_A1000W"||
-      link == "CR_A0010W"||
-      link == "CR_A0020W"||
-      link == "CR_A0040W"||
-      link == "CR_A1001W"||
+      link == "CR_A1000W" ||
+      link == "CR_A0010W" ||
+      link == "CR_A0020W" ||
+      link == "CR_A0040W" ||
+      link == "CR_A1001W" ||
       link == "CR_A1100W" ||
       link == "CR_A1101W" ||
       link == "QC_A2500_603W" ||
