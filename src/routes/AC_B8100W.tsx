@@ -298,7 +298,7 @@ const AC_B8100W: React.FC = () => {
           }}
         >
           {mainDataResult.total > 0 ? (
-            <FileViewers file={mainDataResult.data[0]} type="xlsx" />
+            <FileViewers file={`https://dev.gst-pw6.com/files/excel/sample_data.xlsx`} type="xlsx" />
           ) : (
             ""
           )}
