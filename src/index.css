@@ -12,6 +12,16 @@ code {
     monospace;
 }
 
+.swiper-button-next {
+  color: gray !important;
+  right: 0px !important;
+}
+
+.swiper-button-prev {
+  color: gray !important;
+  left: 0px !important;
+}
+
 /*Prime table css*/
 .incell-input {
   height: 70% !important;

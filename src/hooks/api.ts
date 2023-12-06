@@ -48,7 +48,7 @@ const domain: any = {
   },
   "popup-data": { action: "post", url: "api/data/biz-components/:para" },
   logout: { action: "post", url: "api/auth/logout" },
-  login: { action: "post", url: "api/auth/login" },
+  login: { action: "post", url: "api/auth/login?withImage=true&withConfig=true" },
   "login-old": { action: "post", url: "api/auth/login-old" },
   "company-codes": { action: "get", url: "api/auth/company-codes" },
   "file-list": { action: "get", url: "api/files/attached/:attached" },

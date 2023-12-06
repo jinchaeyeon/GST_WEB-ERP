@@ -44,6 +44,8 @@ export type TLoginResult = {
   loginKey: string;
   webTitle : string;
   homeMenuWeb : string;
+  profileImage: string;
+  dptnm: string;
 };
 
 export type TCommonCode = {

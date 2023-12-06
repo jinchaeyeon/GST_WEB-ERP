@@ -1,11 +1,7 @@
-import { DataResult, State, process } from "@progress/kendo-data-query";
-import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import React, { useEffect, useRef, useState } from "react";
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
-import ReactToPrint from "react-to-print";
-import { Buffer } from 'buffer';
+import { Viewer } from "@react-pdf-viewer/core";
+import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -30,8 +26,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
-import { Iparameters, TPermissions } from "../store/types";
-import FileViewers from "../components/Viewer/FileViewers";
+import { TPermissions } from "../store/types";
 
 const AC_B8100W: React.FC = () => {
   const processApi = useApi();
@@ -70,16 +65,7 @@ const AC_B8100W: React.FC = () => {
     }
   }, [customOptionData]);
 
-  //그리드 데이터 스테이트
-  const [mainDataState, setMainDataState] = useState<State>({
-    sort: [],
-  });
-
-  //그리드 데이터 결과값
-  const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], mainDataState)
-  );
-
+  const [url, setUrl] = useState<string>("");
   const [isInitSearch, setIsInitSearch] = useState(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -111,21 +97,6 @@ const AC_B8100W: React.FC = () => {
     taxdt: new Date(),
   });
 
-  // //조회조건 파라미터
-  // const parameters: Iparameters = {
-  //   procedureName: "P_AC_B8100W_Q",
-  //   pageNumber: 0,
-  //   pageSize: 0,
-  //   parameters: {
-  //     "@p_work_type": "Q",
-  //     "@p_orgdiv": filters.orgdiv,
-  //     "@p_frdt": convertDateToStr(filters.frdt),
-  //     "@p_todt": convertDateToStr(filters.todt),
-  //     "@p_taxdt": convertDateToStr(filters.taxdt),
-  //     "@p_location": filters.location,
-  //   },
-  // };
-
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
     if (!permissions?.view) return;
@@ -143,33 +114,18 @@ const AC_B8100W: React.FC = () => {
     }
 
     if (data !== null) {
-      //const blob = new Blob([data]);
-      // 특정 타입을 정의해야 경우에는 옵션을 사용해 MIME 유형을 정의 할 수 있습니다.
-
-      let json = JSON.stringify(data);
-      let buffer = Buffer.from(json);
-      let read = buffer.toString("utf8");
-      let blob = new Blob([read], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
-      // blob을 사용해 객체 URL을 생성합니다.
-      const fileObjectUrl = window.URL.createObjectURL(blob);
-
-      setMainDataResult((prev) => {
-        return {
-          data: [fileObjectUrl],
-          total: 1,
-        };
-      });
+      // const base64toBlob = (data: string) => {
+      //   const bytes = atob(data);
+      //   let length = bytes.length;
+      //   let out = new Uint8Array(length);
+      //   while (length--) {
+      //     out[length] = bytes.charCodeAt(length);
+      //   }
+      //   return new Blob([out], { type: "application/pdf" });
+      // };
+      // setUrl(URL.createObjectURL(base64toBlob(data)));
     } else {
-      setMainDataResult((prev) => {
-        return {
-          data: [],
-          total: 0,
-        };
-      });
     }
-
-
     setLoading(false);
   };
 
@@ -290,19 +246,8 @@ const AC_B8100W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer height="82vh">
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-        >
-          {mainDataResult.total > 0 ? (
-            <FileViewers file={`https://dev.gst-pw6.com/files/excel/sample_data.xlsx`} type="xlsx" />
-          ) : (
-            ""
-          )}
-        </ExcelExport>
+      <GridContainer height="85vh">
+        {url != "" ? <Viewer fileUrl={url} /> : ""}
       </GridContainer>
     </>
   );

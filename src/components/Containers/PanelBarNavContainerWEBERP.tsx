@@ -1,24 +1,48 @@
+import EditIcon from "@mui/icons-material/Edit";
+import EventNoteIcon from "@mui/icons-material/EventNote";
+import {
+  Chip,
+  Divider,
+  ListSubheader,
+  Avatar as MuiAvatar,
+} from "@mui/material";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import ListItemText from "@mui/material/ListItemText";
 import { Button } from "@progress/kendo-react-buttons";
+import { SvgIcon } from "@progress/kendo-react-common";
 import {
   AutoComplete,
   AutoCompleteCloseEvent,
 } from "@progress/kendo-react-dropdowns";
 import {
+  Avatar,
   PanelBar,
   PanelBarItem,
   PanelBarSelectEventArguments,
+  TabStrip,
+  TabStripTab,
 } from "@progress/kendo-react-layout";
+import { Popup } from "@progress/kendo-react-popup";
 import { Tooltip } from "@progress/kendo-react-tooltip";
+import { userIcon } from "@progress/kendo-svg-icons";
 import { useCallback, useEffect, useState } from "react";
 import cookie from "react-cookies";
 import { useHistory, useLocation, withRouter } from "react-router-dom";
 import { useRecoilState } from "recoil";
+import { Navigation } from "swiper";
+import "swiper/css";
+import "swiper/css/navigation";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   AppName,
   ButtonContainer,
   Content,
   Footer,
   Gnv,
+  GridContainer,
+  GridContainerWrap,
   Logo,
   MenuSearchBox,
   Modal,
@@ -45,6 +69,8 @@ import Loading from "../Loading";
 import ChangePasswordWindow from "../Windows/CommonWindows/ChangePasswordWindow";
 import SystemOptionWindow from "../Windows/CommonWindows/SystemOptionWindow";
 import UserOptionsWindow from "../Windows/CommonWindows/UserOptionsWindow";
+import HelpWindow from "../Windows/CommonWindows/HelpWindow";
+
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
   const location = useLocation();
@@ -72,6 +98,10 @@ const PanelBarNavContainer = (props: any) => {
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
+  const [helpWindowVisible, setHelpWindowVisible] = useState<boolean>(false);
+  const onHelpWndClick = () => {
+    setHelpWindowVisible(true);
+  };
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const customerName = loginResult ? loginResult.customerName : "";
@@ -573,6 +603,25 @@ const PanelBarNavContainer = (props: any) => {
   };
   const path = window.location.href;
 
+  const contact = [
+    {
+      avatar: loginResult.profileImage,
+      name: loginResult.userName,
+      position: loginResult.dptnm,
+    },
+  ];
+
+  const [show, setShow] = useState<boolean | undefined>(false);
+  const offset = {
+    left: 210,
+    top: 80,
+  };
+  const [tabSelected, setTabSelected] = useState(0);
+  const handleSelectTab = (e: any) => {
+    setTabSelected(e.selected);
+  };
+  const [chip, setChip] = useState(0);
+
   return (
     <>
       <Wrapper isMobileMenuOpend={isMobileMenuOpend}>
@@ -583,6 +632,271 @@ const PanelBarNavContainer = (props: any) => {
               <Logo size="32px" name={"GST WEB"} />
               {loginResult.webTitle}
             </AppName>
+            <GridContainerWrap height={"100px"} style={{ gap: "0px" }}>
+              <GridContainer
+                width="60%"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {contact[0].avatar == "" ? (
+                  <Avatar className="k-avatar-lg" rounded="full" type="icon">
+                    <SvgIcon icon={userIcon} size="large" />
+                  </Avatar>
+                ) : (
+                  <Avatar className="k-avatar-lg" rounded="full" type="image">
+                    <img
+                      src={"data:image/png;base64," + contact[0].avatar}
+                      alt="UserImage"
+                    />
+                  </Avatar>
+                )}
+                <div style={{ marginTop: "5px" }}>
+                  <h2
+                    style={{
+                      fontSize: "1.1em",
+                      fontWeight: "normal",
+                      marginBottom: "5px",
+                    }}
+                  >
+                    {contact[0].name}
+                  </h2>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: "0.8em",
+                    }}
+                  >
+                    {contact[0].position}
+                  </p>
+                </div>
+              </GridContainer>
+              <GridContainer
+                width="40%"
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Button
+                  icon="calendar"
+                  themeColor={"primary"}
+                  fillMode="outline"
+                >
+                  일정
+                </Button>
+                <Button
+                  icon="bell"
+                  themeColor={"primary"}
+                  onClick={() => setShow(!show)}
+                  fillMode="outline"
+                >
+                  알림
+                </Button>
+                <Button
+                  icon="info"
+                  themeColor={"primary"}
+                  onClick={onHelpWndClick}
+                  fillMode="outline"
+                >
+                  도움말
+                </Button>
+                <Popup
+                  offset={offset}
+                  show={show}
+                  style={{
+                    width: "400px",
+                    color: "#787878",
+                    backgroundColor: "#fcf7f8",
+                    border: "1px solid rgba(0,0,0,.05)",
+                    maxHeight: "600px",
+                  }}
+                >
+                  <TabStrip
+                    style={{ width: "100%", maxHeight: "600px" }}
+                    selected={tabSelected}
+                    onSelect={handleSelectTab}
+                  >
+                    <TabStripTab title="알림">
+                      <Swiper
+                        spaceBetween={1}
+                        slidesPerView={3}
+                        navigation={true}
+                        modules={[Navigation]}
+                        style={{ marginBottom: "10px" }}
+                      >
+                        <SwiperSlide>
+                          <Chip
+                            label="전체"
+                            color="primary"
+                            variant={chip == 0 ? "outlined" : "filled"}
+                            onClick={() => setChip(0)}
+                          />
+                        </SwiperSlide>
+                        <SwiperSlide>
+                          <Chip
+                            label="업무보고"
+                            color="primary"
+                            variant={chip == 1 ? "outlined" : "filled"}
+                            onClick={() => setChip(1)}
+                          />
+                        </SwiperSlide>
+                        <SwiperSlide>
+                          <Chip
+                            label="전자결재"
+                            color="primary"
+                            variant={chip == 2 ? "outlined" : "filled"}
+                            onClick={() => setChip(2)}
+                          />
+                        </SwiperSlide>
+                        <SwiperSlide>
+                          <Chip
+                            label="게시판"
+                            color="primary"
+                            variant={chip == 3 ? "outlined" : "filled"}
+                            onClick={() => setChip(3)}
+                          />
+                        </SwiperSlide>
+                        <SwiperSlide>
+                          <Chip
+                            label="미팅룸"
+                            color="primary"
+                            variant={chip == 4 ? "outlined" : "filled"}
+                            onClick={() => setChip(4)}
+                          />
+                        </SwiperSlide>
+                      </Swiper>
+                      <Divider />
+
+                      <List
+                        sx={{
+                          width: "100%",
+                          maxWidth: 360,
+                          bgcolor: "background.paper",
+                        }}
+                        subheader={
+                          <ListSubheader
+                            component="div"
+                            style={{
+                              fontWeight: 600,
+                            }}
+                          >
+                            12.05 목요일
+                          </ListSubheader>
+                        }
+                      >
+                        <ListItem>
+                          <ListItemAvatar>
+                            <MuiAvatar>
+                              <EditIcon />
+                            </MuiAvatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary="[결재진행] 결재자: 나똘똘"
+                            secondary="결재필요"
+                          />
+                        </ListItem>
+                      </List>
+                      <List
+                        sx={{
+                          width: "100%",
+                          maxWidth: 360,
+                          bgcolor: "background.paper",
+                        }}
+                        subheader={
+                          <ListSubheader
+                            component="div"
+                            style={{
+                              fontWeight: 600,
+                            }}
+                          >
+                            11.29 수요일
+                          </ListSubheader>
+                        }
+                      >
+                        <ListItem>
+                          <ListItemAvatar>
+                            <MuiAvatar>
+                              <EditIcon />
+                            </MuiAvatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary="[결재종결] 기안자: 나똘똘"
+                            secondary="(주)더존 관리부 나똘똘 20231129"
+                          />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemAvatar>
+                            <MuiAvatar>
+                              <EditIcon />
+                            </MuiAvatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary="[결재종결] 최종결재: 나똘똘"
+                            secondary="(주)더존 관리부 나똘똘 20231129"
+                          />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemAvatar>
+                            <MuiAvatar>
+                              <EditIcon />
+                            </MuiAvatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary="[결재도착] 기안자: 나똘똘"
+                            secondary="(주)더존 관리부 나똘똘 20231129"
+                          />
+                        </ListItem>
+                        <ListItem>
+                          <ListItemAvatar>
+                            <MuiAvatar>
+                              <EventNoteIcon />
+                            </MuiAvatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary="[게시판새글] 정구매"
+                            secondary="통합솔루션 사용 시점 공지"
+                          />
+                        </ListItem>
+                      </List>
+                      <List
+                        sx={{
+                          width: "100%",
+                          maxWidth: 360,
+                          bgcolor: "background.paper",
+                        }}
+                        subheader={
+                          <ListSubheader
+                            component="div"
+                            style={{
+                              fontWeight: 600,
+                            }}
+                          >
+                            11.23 목요일
+                          </ListSubheader>
+                        }
+                      >
+                        <ListItem>
+                          <ListItemAvatar>
+                            <MuiAvatar>
+                              <EditIcon />
+                            </MuiAvatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary="[결재도착] 기안자: 나똘똘"
+                            secondary="제목"
+                          />
+                        </ListItem>
+                      </List>
+                    </TabStripTab>
+                    <TabStripTab title="쪽지"></TabStripTab>
+                  </TabStrip>
+                </Popup>
+              </GridContainer>
+            </GridContainerWrap>
             {prgMenus && (
               <MenuSearchBox>
                 {searchedMenu === "" && (
@@ -604,7 +918,7 @@ const PanelBarNavContainer = (props: any) => {
             {paths.length > 0 && (
               <PanelBar
                 selected={selected}
-                expandMode={"single"}
+                expandMode={"multiple"}
                 onSelect={onSelect}
               >
                 {panelBars.map((path: TPath, idx: number) => {
@@ -680,7 +994,7 @@ const PanelBarNavContainer = (props: any) => {
               flexDirection={"column"}
               style={{ marginTop: "10px", gap: "5px", marginBottom: "30px" }}
             >
-              <Button
+              {/* <Button
                 onClick={onClickChatbot}
                 icon={"hyperlink-open-sm"}
                 fillMode={"solid"}
@@ -689,7 +1003,7 @@ const PanelBarNavContainer = (props: any) => {
                 size="small"
               >
                 Chatbot
-              </Button>
+              </Button> */}
               {isAdmin && (
                 <Button
                   onClick={() => setUserOptionsWindowVisible(true)}
@@ -761,6 +1075,12 @@ const PanelBarNavContainer = (props: any) => {
         </div>
         <div>{ip}</div>
       </Footer>
+      {helpWindowVisible && (
+        <HelpWindow
+          setVisible={setHelpWindowVisible}
+          modal={true}
+        />
+      )}
     </>
   );
 };

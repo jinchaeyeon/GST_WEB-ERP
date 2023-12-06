@@ -18,6 +18,7 @@ import {
 import { DEFAULT_LANG_CODE } from "../components/CommonString";
 import Loading from "../components/Loading";
 import { isLoading } from "../store/atoms";
+import { Iparameters } from "../store/types";
 
 interface IFormData {
   langCode: string;
@@ -97,7 +98,9 @@ const Login: React.FC = () => {
           loginKey,
           passwordExpirationInfo,
           webTitle,
-          homeMenuWeb
+          homeMenuWeb,
+          profileImage,
+          userConfig
         } = response;
 
         localStorage.setItem("accessToken", token);
@@ -125,7 +128,9 @@ const Login: React.FC = () => {
           customerName,
           loginKey,
           webTitle,
-          homeMenuWeb
+          homeMenuWeb,
+          profileImage,
+          dptnm : userConfig.Rows[6].value,
         });
 
         setPwExpInfo(passwordExpirationInfo);

@@ -51,6 +51,7 @@ import AC_B6080W from "./routes/AC_B6080W";
 import AC_B8030W from "./routes/AC_B8030W";
 import AC_B8040W from "./routes/AC_B8040W";
 import AC_B8080W from "./routes/AC_B8080W";
+import AC_B8000W from "./routes/AC_B8000W";
 import AC_B8100W from "./routes/AC_B8100W";
 import BA_A0020W from "./routes/BA_A0020W";
 import BA_A0020W_603 from "./routes/BA_A0020W_603";
@@ -744,6 +745,8 @@ const AppInner: React.FC = () => {
       return AC_B8040W;
     } else if (str == "AC_B8080W") {
       return AC_B8080W;
+    } else if (str == "AC_B8000W") {
+      return AC_B8000W;
     } else if (str == "AC_B8100W") {
       return AC_B8100W;
     } else if (str == "TO_B0011W") {
@@ -1004,6 +1007,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/AC_B8030W" component={AC_B8030W} exact />
                   <AuthRoute path="/AC_B8040W" component={AC_B8040W} exact />
                   <AuthRoute path="/AC_B8080W" component={AC_B8080W} exact />
+                  <AuthRoute path="/AC_B8000W" component={AC_B8000W} exact />
                   <AuthRoute path="/AC_B8100W" component={AC_B8100W} exact />
                   {/* 목형관리 */}
                   <AuthRoute path="/TO_B0011W" component={TO_B0011W} exact />

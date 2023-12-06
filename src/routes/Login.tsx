@@ -21,8 +21,9 @@ import {
 
 import { isLoading } from "../store/atoms";
 import Loading from "../components/Loading";
-import { DEFAULT_LANG_CODE } from "../components/CommonString";
+import { DEFAULT_LANG_CODE, PAGE_SIZE } from "../components/CommonString";
 import cookie from "react-cookies";
+import { Iparameters } from "../store/types";
 
 interface IFormData {
   langCode: string;
@@ -116,7 +117,7 @@ const Login: React.FC = () => {
         // );
 
         const response = await processApi<any>("login", para);
-        
+        console.log(response)
         const {
           token,
           refreshToken,
@@ -129,9 +130,11 @@ const Login: React.FC = () => {
           loginKey,
           passwordExpirationInfo,
           webTitle,
-          homeMenuWeb
+          homeMenuWeb,
+          profileImage,
+          userConfig
         } = response;
- 
+
         localStorage.setItem("accessToken", token);
         localStorage.setItem("refreshToken", refreshToken);
         // AccessToken : Recoil 저장 / RefreshToken(만료기한 짧음) : Cash 저장
@@ -157,7 +160,9 @@ const Login: React.FC = () => {
           customerName,
           loginKey,
           webTitle,
-          homeMenuWeb
+          homeMenuWeb,
+          profileImage,
+          dptnm : userConfig.Rows[6].value,
         });
 
         setPwExpInfo(passwordExpirationInfo);
