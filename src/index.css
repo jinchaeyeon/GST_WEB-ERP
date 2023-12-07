@@ -12,6 +12,10 @@ code {
     monospace;
 }
 
+.help-canvas {
+  height: 300px;
+}
+
 .swiper-button-next {
   color: gray !important;
   right: 0px !important;

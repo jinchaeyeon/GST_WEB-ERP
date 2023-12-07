@@ -126,7 +126,10 @@ export const unsavedNameState = atom<string[]>({
   key: "unsavedNameState",
   default: [],
 });
-
+export const menuList = atom<any[]>({
+  key: "menuList",
+  default: [],
+});
 export const colors = atom<string[]>({
   key: "colors",
   default: ["#2196f3", "#1976d2", "#64b5f6", "#bbdefb"],

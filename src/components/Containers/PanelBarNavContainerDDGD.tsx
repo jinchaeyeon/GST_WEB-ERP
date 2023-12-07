@@ -34,6 +34,7 @@ import {
   isMenuOpendState,
   isMobileMenuOpendState,
   loginResultState,
+  menuList,
   menusState,
   passwordExpirationInfoState,
   unsavedAttadatnumsState,
@@ -72,6 +73,9 @@ const PanelBarNavContainer = (props: any) => {
   // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
+  );
+  const [menulist, setMenuList] = useRecoilState(
+    menuList
   );
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
   const companyCode = loginResult ? loginResult.companyCode : "";
@@ -210,6 +214,7 @@ const PanelBarNavContainer = (props: any) => {
       };
       const menuResponse = await processApi<any>("menus", menuPara);
       setMenus(menuResponse.usableMenu);
+      setMenuList(menuResponse.usableMenu);
     } catch (e: any) {
       console.log("menus error", e);
     }

@@ -117,7 +117,7 @@ const Login: React.FC = () => {
         // );
 
         const response = await processApi<any>("login", para);
-        console.log(response)
+
         const {
           token,
           refreshToken,
@@ -132,7 +132,9 @@ const Login: React.FC = () => {
           webTitle,
           homeMenuWeb,
           profileImage,
-          userConfig
+          userConfig,
+          serviceCategory,
+          defaultCulture
         } = response;
 
         localStorage.setItem("accessToken", token);
@@ -163,6 +165,8 @@ const Login: React.FC = () => {
           homeMenuWeb,
           profileImage,
           dptnm : userConfig.Rows[6].value,
+          serviceCategory,
+          defaultCulture
         });
 
         setPwExpInfo(passwordExpirationInfo);

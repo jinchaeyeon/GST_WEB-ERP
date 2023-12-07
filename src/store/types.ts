@@ -46,6 +46,8 @@ export type TLoginResult = {
   homeMenuWeb : string;
   profileImage: string;
   dptnm: string;
+  serviceCategory: string;
+  defaultCulture: string;
 };
 
 export type TCommonCode = {

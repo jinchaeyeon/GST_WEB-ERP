@@ -1,6 +1,5 @@
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Viewer } from "@react-pdf-viewer/core";
 import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
@@ -24,6 +23,7 @@ import {
 } from "../components/CommonFunction";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { TPermissions } from "../store/types";
@@ -104,7 +104,7 @@ const AC_B8100W: React.FC = () => {
 
     setLoading(true);
     const parameters = {
-      para: "document?id=S202327C173",
+      para: "document-json?id=S202387E58E",
     };
 
     try {
@@ -114,21 +114,23 @@ const AC_B8100W: React.FC = () => {
     }
 
     if (data !== null) {
-      // const base64toBlob = (data: string) => {
-      //   const bytes = atob(data);
-      //   let length = bytes.length;
-      //   let out = new Uint8Array(length);
-      //   while (length--) {
-      //     out[length] = bytes.charCodeAt(length);
-      //   }
-      //   return new Blob([out], { type: "application/pdf" });
-      // };
-      // setUrl(URL.createObjectURL(base64toBlob(data)));
+      const byteCharacters = atob(data.data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      setUrl(URL.createObjectURL(blob));
     } else {
+      setUrl("");
     }
     setLoading(false);
   };
 
+  console.log(url)
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -247,7 +249,7 @@ const AC_B8100W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer height="85vh">
-        {url != "" ? <Viewer fileUrl={url} /> : ""}
+        {url != "" ? <FileViewers file={url} type="xlsx" /> : ""}
       </GridContainer>
     </>
   );

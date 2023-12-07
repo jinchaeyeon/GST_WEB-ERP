@@ -58,6 +58,7 @@ import {
   isMenuOpendState,
   isMobileMenuOpendState,
   loginResultState,
+  menuList,
   menusState,
   passwordExpirationInfoState,
   unsavedAttadatnumsState,
@@ -232,6 +233,9 @@ const PanelBarNavContainer = (props: any) => {
     }
   };
 
+  const [menulist, setMenuList] = useRecoilState(
+    menuList
+  );
   const fetchMenus = useCallback(async () => {
     try {
       let menuPara = {
@@ -239,6 +243,7 @@ const PanelBarNavContainer = (props: any) => {
       };
       const menuResponse = await processApi<any>("menus", menuPara);
       setMenus(menuResponse.usableMenu);
+      setMenuList(menuResponse.usableMenu);
     } catch (e: any) {
       console.log("menus error", e);
     }
