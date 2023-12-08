@@ -66,6 +66,7 @@ const domain: any = {
   "html-save": { action: "post", url: "api/data/:folder" },
   "html-download": { action: "get", url: "api/data/html-doc/file"},
   "excel-view": { action: "post", url: "api/data/emm-printout/:para" },
+  "excel-view-mail": { action: "get", url: "api/data/emm-printout/:para" },
   //메뉴얼
   "manual-list": { action: "get", url: "api/files/manual-json/:para" },
   "manual-upload": { action: "post", url: "api/files/manual/:para" },
@@ -141,16 +142,10 @@ export const useApi = () => {
           accept: "*/*",
         };
 
-      if (name === "manual-list")
+      if (name === "manual-list" || name === "excel-view")
         headers = {
           ...headers,
           responseType: "application/pdf",
-        };
-
-        if (name === "excel-view")
-        headers = {
-          ...headers,
-          responseType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         };
 
       if (name === "file-list" || name == "manual-upload" )

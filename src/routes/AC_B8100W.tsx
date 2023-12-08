@@ -105,6 +105,11 @@ const AC_B8100W: React.FC = () => {
     setLoading(true);
     const parameters = {
       para: "document-json?id=S202387E58E",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_location": filters.location,
+      "@p_taxdt": convertDateToStr(filters.taxdt),
+      "@p_frdt": convertDateToStr(filters.frdt),
+      "@p_todt": convertDateToStr(filters.todt),
     };
 
     try {
@@ -121,7 +126,7 @@ const AC_B8100W: React.FC = () => {
       }
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type: "application/pdf",
       });
       setUrl(URL.createObjectURL(blob));
     } else {
@@ -130,7 +135,6 @@ const AC_B8100W: React.FC = () => {
     setLoading(false);
   };
 
-  console.log(url)
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -248,8 +252,8 @@ const AC_B8100W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer height="85vh">
-        {url != "" ? <FileViewers file={url} type="xlsx" /> : ""}
+      <GridContainer>
+        {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
       </GridContainer>
     </>
   );

@@ -26,9 +26,10 @@ import {
 } from "../components/CommonFunction";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
-import { Iparameters, TPermissions } from "../store/types";
+import { TPermissions } from "../store/types";
 
 const AC_B8080W: React.FC = () => {
   const processApi = useApi();
@@ -125,47 +126,57 @@ const AC_B8080W: React.FC = () => {
     chasu: "01",
   });
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_AC_B8100W_Q",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": "Q",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_reqdt": convertDateToStr(filters.reqdt),
-      "@p_taxyy": convertDateToStr(filters.taxyy).substring(0, 4),
-      "@p_gisu": filters.gisu,
-      "@p_chasu": filters.chasu,
-      "@p_location": filters.location,
-    },
-  };
+  const [url, setUrl] = useState<string>("");
+  const [url2, setUrl2] = useState<string>("");
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
     if (!permissions?.view) return;
     let data: any;
+    let data2: any;
 
     setLoading(true);
+    const parameters = {
+      para: "list?emmId=AC_B8080_01",
+    };
+
     try {
-      data = await processApi<any>("procedure", parameters);
+      data = await processApi<any>("excel-view-mail", parameters);
     } catch (error) {
       data = null;
     }
 
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
-        ...row,
-        uri: row.xlsx,
-      }));
+    if (data.RowCount > 0) {
+      const rows = data.Rows;
 
-      setMainDataResult((prev) => {
-        return {
-          data: rows,
-          total: totalRowCnt == -1 ? 0 : totalRowCnt,
-        };
-      });
+      const parameters2 = {
+        para: "document-json?id=" + rows[0].document_id,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_taxyy": convertDateToStr(filters.taxyy).substring(0,4),
+        "@p_gisu": filters.gisu,
+        "@p_chasu": filters.chasu,
+        "@p_reqdt": convertDateToStr(filters.reqdt),
+      };
+      try {
+        data2 = await processApi<any>("excel-view", parameters2);
+      } catch (error) {
+        data2 = null;
+      }
+      if (data2 !== null) {
+        const byteCharacters = atob(data2.data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], {
+          type: "application/pdf",
+        });
+        setUrl(URL.createObjectURL(blob));
+      } else {
+        setUrl("");
+      }
     } else {
       console.log("[에러발생]");
       console.log(data);
@@ -177,27 +188,51 @@ const AC_B8080W: React.FC = () => {
   const fetchMainGrid2 = async () => {
     if (!permissions?.view) return;
     let data: any;
+    let data2: any;
 
     setLoading(true);
+    const parameters = {
+      para: "list?emmId=AC_B8080_02",
+
+    };
+
     try {
-      data = await processApi<any>("procedure", parameters);
+      data = await processApi<any>("excel-view-mail", parameters);
     } catch (error) {
       data = null;
     }
 
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
-        ...row,
-        uri: row.xlsx,
-      }));
+    if (data.RowCount > 0) {
+      const rows = data.Rows;
 
-      setMainDataResult2((prev) => {
-        return {
-          data: rows,
-          total: totalRowCnt == -1 ? 0 : totalRowCnt,
-        };
-      });
+      const parameters2 = {
+        para: "document-json?id=" + rows[0].document_id,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_taxyy": convertDateToStr(filters.taxyy).substring(0,4),
+        "@p_gisu": filters.gisu,
+        "@p_chasu": filters.chasu,
+        "@p_reqdt": convertDateToStr(filters.reqdt),
+      };
+      try {
+        data2 = await processApi<any>("excel-view", parameters2);
+      } catch (error) {
+        data2 = null;
+      }
+      if (data2 !== null) {
+        const byteCharacters = atob(data2.data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], {
+          type: "application/pdf",
+        });
+        setUrl2(URL.createObjectURL(blob));
+      } else {
+        setUrl2("");
+      }
     } else {
       console.log("[에러발생]");
       console.log(data);
@@ -311,7 +346,6 @@ const AC_B8080W: React.FC = () => {
               </td>
               <th>신고기수</th>
               <td>
-                {" "}
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
                     name="gisu"
@@ -338,12 +372,11 @@ const AC_B8080W: React.FC = () => {
               <td>
                 <DatePicker
                   name="reqdt"
-                  format="yyyy"
+                  format="yyyy-MM-dd"
                   value={filters.reqdt}
                   onChange={filterInputChange}
                   className="required"
                   placeholder=""
-                  calendar={YearCalendar}
                 />
               </td>
             </tr>
@@ -357,34 +390,12 @@ const AC_B8080W: React.FC = () => {
       >
         <TabStripTab title="수출실적 일괄제출명세서">
           <GridContainer>
-            <ExcelExport
-              data={mainDataResult.data}
-              ref={(exporter) => {
-                _export = exporter;
-              }}
-            >
-              {/* {mainDataResult.total > 0 ? (
-            <FileViewers file={mainDataResult.data[0]} type="xlsx" />
-          ) : (
-            ""
-          )} */}
-            </ExcelExport>
+            {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
           </GridContainer>
         </TabStripTab>
         <TabStripTab title="수출실적명세서">
           <GridContainer>
-            <ExcelExport
-              data={mainDataResult2.data}
-              ref={(exporter) => {
-                _export = exporter;
-              }}
-            >
-              {/* {mainDataResult2.total > 0 ? (
-            <FileViewers file={mainDataResult2.data[0]} type="xlsx" />
-          ) : (
-            ""
-          )} */}
-            </ExcelExport>
+            {url2 != "" ? <FileViewers file={url2} type="pdf" /> : ""}
           </GridContainer>
         </TabStripTab>
       </TabStrip>
