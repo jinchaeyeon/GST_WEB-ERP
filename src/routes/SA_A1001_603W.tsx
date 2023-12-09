@@ -39,9 +39,15 @@ import {
   ThreeNumberceil,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
   UsePermissions,
+  convertDateToStr,
+  dateformat2,
+  findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
+  handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -61,7 +67,8 @@ import EmailWindow from "../components/Windows/CommonWindows/EmailWindow";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1001_603W_C";
-import { TColumn, TGrid, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import CenterCell from "../components/Cells/CenterCell";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -70,11 +77,14 @@ const dateField = ["quodt"];
 
 const numberField = [
   "quoamt",
+  "quorev",
   "quowonamt",
   "marginamt",
   "discountamt",
   "finalquowonamt",
 ];
+
+const centerField = ["designyn"];
 
 const numberField2 = ["quowonamt", "finalquowonamt"];
 
@@ -98,6 +108,11 @@ const SA_A1001_603W: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
+  const orgdiv = UseGetValueFromSessionItem("orgdiv");
+
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -135,7 +150,6 @@ const SA_A1001_603W: React.FC = () => {
         customOptionData.menuCustomDefaultOptions,
         "query"
       );
-
       setFilters((prev) => ({
         ...prev,
         materialtype: defaultOption.find(
@@ -146,9 +160,11 @@ const SA_A1001_603W: React.FC = () => {
         rev: defaultOption.find((item: any) => item.id === "rev").valueCode,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
+
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent("L_sysUserMaster_001, L_SA001_603", setBizComponentData);
   const [userListData, setUserListData] = useState([
@@ -201,6 +217,35 @@ const SA_A1001_603W: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
+
+    if (e.selected == 1) {
+      const data = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+
+      setFilters2((prev) => ({
+        ...prev,
+        quonum: data.quonum,
+        quorev: data.quorev,
+        isSearch: true,
+        pgNum: 1,
+      }));
+
+      setInformation((prev) => ({
+        ...prev,
+        quonum: data.quonum,
+        custnm: data.custnm,
+        custprsnnm: data.custprsnnm,
+        materialtype: data.materialtype,
+        requestreason: data.requestreason,
+        quofinyn: data.quofinyn,
+        quorev: data.quorev,
+        quodt: data.quodt,
+        quoamt: data.quoamt,
+      }));
+    }
+
     setTabSelected(e.selected);
   };
 
@@ -236,12 +281,13 @@ const SA_A1001_603W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    work_type: "Q",
-    orgdiv: "",
-    location: "",
+    work_type: "LIST",
+    orgdiv: orgdiv,
     frdt: new Date(),
     todt: new Date(),
-    requestnum: "",
+    quonum: "",
+    quorev: 0,
+    quoseq: 0,
     custcd: "",
     custnm: "",
     custprsnnm: "",
@@ -253,19 +299,23 @@ const SA_A1001_603W: React.FC = () => {
     pgNum: 1,
     isSearch: true,
   });
+
   //조회조건 초기값
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
-    work_type: "Q",
-    requestnum: "",
+    work_type: "DETAIL",
+    quonum: "",
+    quorev: 0,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
   });
+
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
+
   interface ICustData {
     custcd: string;
     custnm: string;
@@ -280,16 +330,15 @@ const SA_A1001_603W: React.FC = () => {
 
   const [information, setInformation] = useState<{ [name: string]: any }>({
     num: 1,
-    requestnum: "TEST20231114",
-    custnm: "셀트리온",
-    custprsnnm: "손흥민",
-    materialtype: "01",
-    requestreason: "허가",
-    quonum: "E20231118",
+    quonum: "",
+    custnm: "",
+    custprsnnm: "",
+    materialtype: "",
+    requestreason: "",
     quofinyn: "",
-    quorev: "2",
-    quodt: "2023-11-18",
-    quoamt: "500000000",
+    quorev: 0,
+    quodt: "",
+    quoamt: 0,
   });
 
   const setCustData = (data: ICustData) => {
@@ -331,181 +380,71 @@ const SA_A1001_603W: React.FC = () => {
     if (!permissions?.view) return;
     let data: any;
     setLoading(true);
-    // //조회조건 파라미터
-    // const parameters: Iparameters = {
-    //   procedureName: "P_QC_A3000W_Q",
-    //   pageNumber: filters.pgNum,
-    //   pageSize: filters.pgSize,
-    //   parameters: {
-    //     "@p_work_type": "PRLIST",
-    //     "@p_orgdiv": filters.orgdiv,
-    //     "@p_location": filters.location,
-    //     "@p_frdt": convertDateToStr(filters.frdt),
-    //     "@p_todt": convertDateToStr(filters.todt),
-    //     "@p_proccd": filters.proccd,
-    //     "@p_itemcd": filters.itemcd,
-    //     "@p_itemnm": filters.itemnm,
-    //     "@p_prodemp": filters.prodemp,
-    //     "@p_prodmac": filters.prodmac,
-    //     "@p_qcyn": filters.qcyn,
-    //     "@p_lotnum": filters.lotnum,
-    //     "@p_plankey": filters.plankey,
-    //     "@p_rekey": filters.rekey,
-    //     "@p_renum": filters.renum,
-    //     "@p_reseq": filters.reseq,
-    //     "@p_qcnum": filters.qcnum,
-    //     "@p_company_code": filters.company_code,
-    //     "@p_find_row_value": filters.find_row_value,
-    //   },
-    // };
-    // try {
-    //   data = await processApi<any>("procedure", parameters);
-    // } catch (error) {
-    //   data = null;
-    // }
-    // if (data.isSuccess === true) {
-    // const totalRowCnt = data.tables[0].TotalRowCount;
-    // const rows = data.tables[0].Rows;
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "p_SA_A1001_603W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "LIST",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_quonum": filters.quonum,
+        "@p_quorev": filters.quorev,
+        "@p_quoseq": filters.quoseq,
+        "@p_custcd": filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_custprsnnm": filters.custprsnnm,
+        "@p_materialtype": filters.materialtype,
+        "@p_person": filters.person,
+        "@p_remark": filters.remark,
+        "@p_rev": filters.rev,
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
 
-    const totalRowCnt = 8;
-    const rows: any[] = [
-      {
-        num: 1,
-        requestnum: "TEST20231114",
-        custnm: "셀트리온",
-        custprsnnm: "손흥민",
-        materialtype: "01",
-        designyn: "",
-        quocalyn: "",
-        quofinyn: "",
-        quorev: "2",
-        quodt: "20231118",
-        quoamt: 500000000,
-        person: "admin",
-        total_quoamt: 750000000,
-      },
-      {
-        num: 2,
-        requestnum: "TEST20231115",
-        custnm: "",
-        custprsnnm: "",
-        materialtype: "",
-        designyn: "",
-        quocalyn: "",
-        quofinyn: "",
-        quorev: "1",
-        quodt: "20231120",
-        quoamt: 250000000,
-        person: "admin",
-        total_quoamt: 750000000,
-      },
-      {
-        num: 3,
-        requestnum: "TEST20231116",
-        custnm: "",
-        custprsnnm: "",
-        materialtype: "",
-        designyn: "",
-        quocalyn: "",
-        quofinyn: "",
-        quorev: "",
-        quodt: "",
-        quoamt: 0,
-        person: "admin",
-        total_quoamt: 750000000,
-      },
-      {
-        num: 4,
-        requestnum: "TEST20231117",
-        custnm: "",
-        custprsnnm: "",
-        materialtype: "",
-        designyn: "",
-        quocalyn: "",
-        quofinyn: "",
-        quorev: "",
-        quodt: "",
-        quoamt: 0,
-        person: "admin",
-        total_quoamt: 750000000,
-      },
-      {
-        num: 5,
-        requestnum: "TEST20231118",
-        custnm: "",
-        custprsnnm: "",
-        materialtype: "",
-        designyn: "",
-        quocalyn: "",
-        quofinyn: "",
-        quorev: "",
-        quodt: "",
-        quoamt: 0,
-        person: "admin",
-        total_quoamt: 750000000,
-      },
-      {
-        num: 6,
-        requestnum: "TEST20231119",
-        custnm: "",
-        custprsnnm: "",
-        materialtype: "",
-        designyn: "",
-        quocalyn: "",
-        quofinyn: "",
-        quorev: "",
-        quodt: "",
-        quoamt: 0,
-        person: "admin",
-        total_quoamt: 750000000,
-      },
-      {
-        num: 7,
-        requestnum: "TEST20231120",
-        custnm: "",
-        custprsnnm: "",
-        materialtype: "",
-        designyn: "",
-        quocalyn: "",
-        quofinyn: "",
-        quorev: "",
-        quodt: "",
-        quoamt: 0,
-        person: "admin",
-        total_quoamt: 750000000,
-      },
-      {
-        num: 8,
-        requestnum: "TEST20231121",
-        custnm: "",
-        custprsnnm: "",
-        materialtype: "",
-        designyn: "",
-        quocalyn: "",
-        quofinyn: "",
-        quorev: "",
-        quodt: "",
-        quoamt: 0,
-        person: "admin",
-        total_quoamt: 750000000,
-      },
-    ];
-
-    setMainDataResult((prev) => {
-      return {
-        data: rows,
-        // total: totalRowCnt == -1 ? 0 : totalRowCnt,
-        total: totalRowCnt,
-      };
-    });
-
-    if (totalRowCnt > 0) {
-      setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
     }
-    // } else {
-    //   console.log("[오류 발생]");
-    //   console.log(data);
-    // }
+
+    console.log(parameters);
+    console.log(data);
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        setInformation((prev) => ({
+          ...prev,
+          quonum: rows[0].quonum,
+          custnm: rows[0].custnm,
+          custprsnnm: rows[0].custprsnnm,
+          materialtype: rows[0].materialtype,
+          requestreason: rows[0].requestreason,
+          quofinyn: rows[0].quofinyn,
+          quorev: rows[0].quorev,
+          quodt: rows[0].quodt,
+          quoamt: rows[0].quoamt,
+        }));
+        
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+
     // 필터 isSearch false처리, pgNum 세팅
     setFilters((prev) => ({
       ...prev,
@@ -519,83 +458,58 @@ const SA_A1001_603W: React.FC = () => {
   };
 
   //그리드 데이터 조회
-  const fetchMainGrid2 = async (filters: any) => {
+  const fetchMainGrid2 = async (filters2: any) => {
     if (!permissions?.view) return;
     let data: any;
     setLoading(true);
-    // //조회조건 파라미터
-    // const parameters: Iparameters = {
-    //   procedureName: "P_QC_A3000W_Q",
-    //   pageNumber: filters.pgNum,
-    //   pageSize: filters.pgSize,
-    //   parameters: {
-    //     "@p_work_type": "PRLIST",
-    //     "@p_orgdiv": filters.orgdiv,
-    //     "@p_location": filters.location,
-    //     "@p_frdt": convertDateToStr(filters.frdt),
-    //     "@p_todt": convertDateToStr(filters.todt),
-    //     "@p_proccd": filters.proccd,
-    //     "@p_itemcd": filters.itemcd,
-    //     "@p_itemnm": filters.itemnm,
-    //     "@p_prodemp": filters.prodemp,
-    //     "@p_prodmac": filters.prodmac,
-    //     "@p_qcyn": filters.qcyn,
-    //     "@p_lotnum": filters.lotnum,
-    //     "@p_plankey": filters.plankey,
-    //     "@p_rekey": filters.rekey,
-    //     "@p_renum": filters.renum,
-    //     "@p_reseq": filters.reseq,
-    //     "@p_qcnum": filters.qcnum,
-    //     "@p_company_code": filters.company_code,
-    //     "@p_find_row_value": filters.find_row_value,
-    //   },
-    // };
-    // try {
-    //   data = await processApi<any>("procedure", parameters);
-    // } catch (error) {
-    //   data = null;
-    // }
-    // if (data.isSuccess === true) {
-    // const totalRowCnt = data.tables[0].TotalRowCount;
-    // const rows = data.tables[0].Rows;
-
-    const totalRowCnt = 2;
-    const rows: any[] = [
-      {
-        num: 1,
-        itemcd: "#000",
-        testitem: "시험품목1",
-        quowonamt: 100,
-        marginamt: 10,
-        discountamt: 5,
-        finalquowonamt: 104.5,
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "p_SA_A1001_603W_Q",
+      pageNumber: filters2.pgNum,
+      pageSize: filters2.pgSize,
+      parameters: {
+        "@p_work_type": "DETAIL",
+        "@p_orgdiv": orgdiv,
+        "@p_frdt": "",
+        "@p_todt": "",
+        "@p_quonum": filters2.quonum,
+        "@p_quorev": filters2.quorev,
+        "@p_quoseq": 0,
+        "@p_custcd": "",
+        "@p_custnm": "",
+        "@p_custprsnnm": "",
+        "@p_materialtype": "",
+        "@p_person": "",
+        "@p_remark": "",
+        "@p_rev": "",
+        "@p_find_row_value": "",
       },
-      {
-        num: 2,
-        itemcd: "#000",
-        testitem: "시험품목2",
-        quowonamt: 50,
-        marginamt: 0,
-        discountamt: 5,
-        finalquowonamt: 45,
-      },
-    ];
+    };
 
-    setMainDataResult2((prev) => {
-      return {
-        data: rows,
-        // total: totalRowCnt == -1 ? 0 : totalRowCnt,
-        total: totalRowCnt,
-      };
-    });
-
-    if (totalRowCnt > 0) {
-      setSelectedState2({ [rows[0][DATA_ITEM_KEY2]]: true });
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
     }
-    // } else {
-    //   console.log("[오류 발생]");
-    //   console.log(data);
-    // }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      setMainDataResult2((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        setSelectedState2({ [rows[0][DATA_ITEM_KEY2]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
     // 필터 isSearch false처리, pgNum 세팅
     setFilters2((prev) => ({
       ...prev,
@@ -740,18 +654,58 @@ const SA_A1001_603W: React.FC = () => {
   };
 
   const search = () => {
-    setPage(initialPageState); // 페이지 초기화
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-    setTabSelected(0);
+
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A1001_603W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A1001_603W_001");
+      } else {
+        setPage(initialPageState); // 페이지 초기화
+        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+        setTabSelected(0);
+        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const onRowDoubleClick = (props: any) => {
-    const datas = props.dataItem;
+
+    const datas = mainDataResult.data.filter(
+      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
+
     setFilters2((prev) => ({
       ...prev,
-      requestnum: datas.requestnum,
+      quonum: datas.quonum,
+      quorev: datas.quorev,
       isSearch: true,
       pgNum: 1,
+    }));
+
+    setInformation((prev) => ({
+      ...prev,
+      quonum: datas.quonum,
+      custnm: datas.custnm,
+      custprsnnm: datas.custprsnnm,
+      materialtype: datas.materialtype,
+      requestreason: datas.requestreason,
+      quofinyn: datas.quofinyn,
+      quorev: datas.quorev,
+      quodt: datas.quodt,
+      quoamt: datas.quoamt,
     }));
     setTabSelected(1);
   };
@@ -911,7 +865,7 @@ const SA_A1001_603W: React.FC = () => {
       >
         <TabStripTab title="견적(조회)">
           <FilterContainer>
-            <FilterBox style={{ height: "10%" }}>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)} style={{ height: "10%" }}>
               <tbody>
                 <tr>
                   <th>의뢰기간</th>
@@ -928,18 +882,19 @@ const SA_A1001_603W: React.FC = () => {
                           todt: e.value.end,
                         }))
                       }
+                      className="required"
                     />
                   </td>
-                  <th>의뢰번호</th>
+                  <th>프로젝트번호</th>
                   <td>
                     <Input
-                      name="requestnum"
+                      name="quonum"
                       type="text"
-                      value={filters.requestnum}
+                      value={filters.quonum}
                       onChange={filterInputChange}
                     />
                   </td>
-                  <th>의뢰기간코드</th>
+                  <th>의뢰기관코드</th>
                   <td>
                     <Input
                       name="custcd"
@@ -955,7 +910,7 @@ const SA_A1001_603W: React.FC = () => {
                       />
                     </ButtonInInput>
                   </td>
-                  <th>의뢰기간명</th>
+                  <th>의뢰기관명</th>
                   <td>
                     <Input
                       name="custnm"
@@ -1008,7 +963,7 @@ const SA_A1001_603W: React.FC = () => {
                       onChange={filterInputChange}
                     />
                   </td>
-                  <th>견적Rev</th>
+                  <th>리비전번호</th>
                   <td>
                     {customOptionData !== null && (
                       <CustomOptionRadioGroup
@@ -1091,6 +1046,8 @@ const SA_A1001_603W: React.FC = () => {
                               ? DateCell
                               : numberField.includes(item.fieldName)
                               ? NumberCell
+                              : centerField.includes(item.fieldName)
+                              ? CenterCell
                               : undefined
                           }
                           footerCell={
@@ -1126,12 +1083,12 @@ const SA_A1001_603W: React.FC = () => {
             <FormBox>
               <tbody>
                 <tr>
-                  <th>의뢰번호</th>
+                  <th>프로젝트번호</th>
                   <td>
                     <Input
-                      name="requestnum"
+                      name="quonum"
                       type="text"
-                      value={information.requestnum}
+                      value={information.quonum}
                       className="readonly"
                     />
                   </td>
@@ -1178,16 +1135,7 @@ const SA_A1001_603W: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
-                  <th>견적번호</th>
-                  <td>
-                    <Input
-                      name="quonum"
-                      type="text"
-                      value={information.quonum}
-                      className="readonly"
-                    />
-                  </td>
-                  <th>견적rev</th>
+                  <th>리비전번호</th>
                   <td>
                     <Input
                       name="quorev"
@@ -1198,12 +1146,12 @@ const SA_A1001_603W: React.FC = () => {
                   </td>
                   <th>견적 발행일</th>
                   <td>
-                    <Input
+                      <Input
                       name="quodt"
                       type="text"
-                      value={information.quodt}
+                      value={dateformat2(information.quodt)}
                       className="readonly"
-                    />
+                      />
                   </td>
                   <th>견적금액</th>
                   <td>
