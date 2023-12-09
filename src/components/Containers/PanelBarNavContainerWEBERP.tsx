@@ -101,6 +101,7 @@ const PanelBarNavContainer = (props: any) => {
   );
   const [helpWindowVisible, setHelpWindowVisible] = useState<boolean>(false);
   const onHelpWndClick = () => {
+    setShow(false);
     setHelpWindowVisible(true);
   };
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
@@ -639,7 +640,7 @@ const PanelBarNavContainer = (props: any) => {
             </AppName>
             <GridContainerWrap height={"100px"} style={{ gap: "0px" }}>
               <GridContainer
-                width="60%"
+                width="80%"
                 style={{
                   display: "flex",
                   justifyContent: "center",
@@ -679,7 +680,7 @@ const PanelBarNavContainer = (props: any) => {
                 </div>
               </GridContainer>
               <GridContainer
-                width="40%"
+                width="20%"
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
@@ -689,25 +690,25 @@ const PanelBarNavContainer = (props: any) => {
                 <Button
                   icon="calendar"
                   themeColor={"primary"}
-                  fillMode="outline"
+                  fillMode="flat"
+                  title="일정"
                 >
-                  일정
                 </Button>
                 <Button
                   icon="bell"
                   themeColor={"primary"}
                   onClick={() => setShow(!show)}
-                  fillMode="outline"
+                  fillMode="flat"
+                  title="알림"
                 >
-                  알림
                 </Button>
                 <Button
                   icon="info"
                   themeColor={"primary"}
                   onClick={onHelpWndClick}
-                  fillMode="outline"
+                  fillMode="flat"
+                  title="도움말"
                 >
-                  도움말
                 </Button>
                 <Popup
                   offset={offset}
@@ -830,7 +831,7 @@ const PanelBarNavContainer = (props: any) => {
                           </ListItemAvatar>
                           <ListItemText
                             primary="[결재종결] 기안자: 나똘똘"
-                            secondary="(주)더존 관리부 나똘똘 20231129"
+                            secondary="관리부 나똘똘 20231129"
                           />
                         </ListItem>
                         <ListItem>
@@ -841,7 +842,7 @@ const PanelBarNavContainer = (props: any) => {
                           </ListItemAvatar>
                           <ListItemText
                             primary="[결재종결] 최종결재: 나똘똘"
-                            secondary="(주)더존 관리부 나똘똘 20231129"
+                            secondary="관리부 나똘똘 20231129"
                           />
                         </ListItem>
                         <ListItem>
@@ -852,7 +853,7 @@ const PanelBarNavContainer = (props: any) => {
                           </ListItemAvatar>
                           <ListItemText
                             primary="[결재도착] 기안자: 나똘똘"
-                            secondary="(주)더존 관리부 나똘똘 20231129"
+                            secondary="관리부 나똘똘 20231129"
                           />
                         </ListItem>
                         <ListItem>

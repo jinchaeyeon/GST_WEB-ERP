@@ -106,6 +106,11 @@ import { gridList } from "../store/columns/SA_A1000_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import { Card } from "primereact/card";
 import { Timeline } from "primereact/timeline";
+import {
+  MultiSelect,
+  MultiSelectChangeEvent,
+} from "@progress/kendo-react-dropdowns";
+import SA_A1000_603W_Design_Window from "../components/Windows/SA_A1000_603W_Design_Window";
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -699,7 +704,7 @@ const SA_A1000_603W: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent(
-    "L_CM500_603, L_CM501_603, L_dptcd_001, L_sysUserMaster_001, L_SA016, L_SA004, L_SA001_603, R_Requestgb",
+    "L_SA011_603, L_CM500_603, L_CM501_603, L_dptcd_001, L_sysUserMaster_001, L_SA016, L_SA004, L_SA001_603, R_Requestgb",
     setBizComponentData
   );
   const [dptcdListData, setdptcdListData] = useState([
@@ -724,7 +729,9 @@ const SA_A1000_603W: React.FC = () => {
   const [statusListData, setStatusListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [statusListData2, setStatusListData2] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData.length > 0) {
       const userQueryStr = getQueryFromBizComponent(
@@ -735,6 +742,11 @@ const SA_A1000_603W: React.FC = () => {
       const statusQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId == "L_CM500_603"
+        )
+      );
+      const statusQueryStr2 = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_SA011_603"
         )
       );
       const meditypeQueryStr = getQueryFromBizComponent(
@@ -768,6 +780,7 @@ const SA_A1000_603W: React.FC = () => {
       fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
       fetchQueryData(meditypeQueryStr, setMeditypeListData);
       fetchQueryData(statusQueryStr, setStatusListData);
+      fetchQueryData(statusQueryStr2, setStatusListData2);
     }
   }, [bizComponentData]);
 
@@ -963,7 +976,18 @@ const SA_A1000_603W: React.FC = () => {
   }>({});
   const [projectWindowVisible, setProjectWindowVisible] =
     useState<boolean>(false);
+  const [designWindowVisible, setDesignWindowVisible] =
+    useState<boolean>(false);
+  const [designWindowVisible2, setDesignWindowVisible2] =
+    useState<boolean>(false);
+  const [designWindowVisible3, setDesignWindowVisible3] =
+    useState<boolean>(false);
+  const [designWindowVisible4, setDesignWindowVisible4] =
+    useState<boolean>(false);
 
+  const onDesignWndClick = () => {
+    setDesignWindowVisible(true);
+  };
   const onProejctWndClick = () => {
     setProjectWindowVisible(true);
   };
@@ -1368,6 +1392,7 @@ const SA_A1000_603W: React.FC = () => {
     custnm: "",
     testnum: "",
     finyn: "",
+    status: [],
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -1461,11 +1486,25 @@ const SA_A1000_603W: React.FC = () => {
     workType: "N",
   });
 
+  function getName(data: { sub_code: string }[]) {
+    let str = "";
+    data.map((item: { sub_code: string }) => (str += item.sub_code + "|"));
+    return data.length > 0 ? str.slice(0, -1) : str;
+  }
+
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+
+    const status =
+      filters.status.length == 0
+        ? "1|2|3|4|5"
+        : filters.status.length == 1
+        ? filters.status[0].sub_code
+        : getName(filters.status);
+
     //조회조건 파라미터
     const parameters: Iparameters = {
       procedureName: "P_SA_A1000_603W_Q",
@@ -1482,6 +1521,7 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": filters.quonum,
         "@p_quorev": filters.quorev,
         "@p_quoseq": filters.quoseq,
+        "@p_status": status,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -1498,7 +1538,6 @@ const SA_A1000_603W: React.FC = () => {
       // const rows = data.tables[0].Rows;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
-        status: 2,
       }));
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
@@ -1564,6 +1603,7 @@ const SA_A1000_603W: React.FC = () => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+
     //조회조건 파라미터
     const parameters: Iparameters = {
       procedureName: "P_SA_A1000_603W_Q",
@@ -1580,6 +1620,7 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": subfilters.quonum,
         "@p_quorev": subfilters.quorev,
         "@p_quoseq": filters.quoseq,
+        "@p_status": "",
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -1756,6 +1797,7 @@ const SA_A1000_603W: React.FC = () => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+
     //조회조건 파라미터
     const parameters: Iparameters = {
       procedureName: "P_SA_A1000_603W_Q",
@@ -1772,6 +1814,7 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": subfilters2.quonum,
         "@p_quorev": subfilters2.quorev,
         "@p_quoseq": filters.quoseq,
+        "@p_status": "",
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -1866,6 +1909,7 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": detailFilters.quonum,
         "@p_quorev": detailFilters.quorev,
         "@p_quoseq": 0,
+        "@p_status": "",
         "@p_find_row_value": "",
       },
     };
@@ -1928,6 +1972,7 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": detailFilters2.quonum,
         "@p_quorev": detailFilters2.quorev,
         "@p_quoseq": 0,
+        "@p_status": "",
         "@p_find_row_value": "",
       },
     };
@@ -1990,6 +2035,7 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": detailFilters3.quonum,
         "@p_quorev": detailFilters3.quorev,
         "@p_quoseq": 0,
+        "@p_status": "",
         "@p_find_row_value": "",
       },
     };
@@ -3333,10 +3379,20 @@ const SA_A1000_603W: React.FC = () => {
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           opacity: 0.9,
-          height: "15vh"
+          height: "15vh",
         }}
       ></Card>
     );
+  };
+
+  const filterMultiSelectChange = (event: MultiSelectChangeEvent) => {
+    const values = event.value;
+    const name = event.target.props.name ?? "";
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: values,
+    }));
   };
 
   return (
@@ -3423,6 +3479,17 @@ const SA_A1000_603W: React.FC = () => {
                       type="text"
                       value={filters.testnum}
                       onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>상태</th>
+                  <td>
+                    <MultiSelect
+                      name="status"
+                      data={statusListData2}
+                      onChange={filterMultiSelectChange}
+                      value={filters.status}
+                      textField="code_name"
+                      dataItemKey="sub_code"
                     />
                   </td>
                 </tr>
@@ -3539,16 +3606,9 @@ const SA_A1000_603W: React.FC = () => {
                       (items: any) => items.sub_code == row.materialtype
                     )?.code_name,
                     //status 임시
-                    status:
-                      row.status == "1"
-                        ? "문의"
-                        : row.status == "2"
-                        ? "컨설팅"
-                        : row.status == "3"
-                        ? "견적"
-                        : row.status == "4"
-                        ? "계약"
-                        : "시험관리",
+                    status: statusListData2.find(
+                      (items: any) => items.sub_code == row.status
+                    )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
                   mainDataState
@@ -3618,40 +3678,6 @@ const SA_A1000_603W: React.FC = () => {
           <FormBoxWrap border={true}>
             <GridTitleContainer>
               <GridTitle>1. 기준정보</GridTitle>
-              <ButtonContainer>
-                <Button themeColor={"primary"} icon="track-changes">
-                  리비전
-                </Button>
-                <Button
-                  themeColor={"primary"}
-                  fillMode="outline"
-                  icon="file"
-                  disabled={
-                    Information.quosts == "1" || Information.quosts == "0"
-                      ? worktype == "N"
-                        ? true
-                        : false
-                      : true
-                  }
-                  onClick={ChangeState}
-                >
-                  의뢰전환/전환취소
-                </Button>
-                <Button
-                  themeColor={"primary"}
-                  fillMode="outline"
-                  icon="palette"
-                >
-                  디자인설계전환
-                </Button>
-                <Button
-                  themeColor={"primary"}
-                  fillMode="outline"
-                  icon="folder-open"
-                >
-                  이전의뢰참조
-                </Button>
-              </ButtonContainer>
             </GridTitleContainer>
             <FormBox>
               <tbody>
@@ -4079,15 +4105,9 @@ const SA_A1000_603W: React.FC = () => {
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="palette"
+                      onClick={onDesignWndClick}
                     >
                       디자인상세
-                    </Button>
-                    <Button
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="folder"
-                    >
-                      패키지지정
                     </Button>
                     <Button
                       onClick={onAddClick}
@@ -4105,7 +4125,7 @@ const SA_A1000_603W: React.FC = () => {
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "25vh" }}
+                  style={{ height: `calc(80vh - 500px)` }}
                   data={process(
                     subDataResult.data.map((row) => ({
                       ...row,
@@ -4534,6 +4554,12 @@ const SA_A1000_603W: React.FC = () => {
         <ProjectsWindow
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
+          modal={true}
+        />
+      )}
+      {designWindowVisible && (
+        <SA_A1000_603W_Design_Window
+          setVisible={setDesignWindowVisible}
           modal={true}
         />
       )}

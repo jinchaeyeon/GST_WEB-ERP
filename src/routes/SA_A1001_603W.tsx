@@ -4,19 +4,19 @@ import { getter } from "@progress/kendo-react-common";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
-  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
   GridItemChangeEvent,
   GridPageChangeEvent,
-  GridRowDoubleClickEvent,
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
+import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -30,34 +30,21 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
+import TopButtons from "../components/Buttons/TopButtons";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
   ThreeNumberceil,
   UseBizComponent,
   UseCustomOption,
-  UseGetValueFromSessionItem,
-  UseParaPc,
   UsePermissions,
-  convertDateToStr,
   getGridItemChangedData,
   getQueryFromBizComponent,
   numberWithCommas,
   setDefaultDate,
 } from "../components/CommonFunction";
-import FilterContainer from "../components/Containers/FilterContainer";
-import { useApi } from "../hooks/api";
-import { gridList } from "../store/columns/SA_A1001_603W_C";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-
-import { bytesToBase64 } from "byte-base64";
-import { useHistory, useLocation } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
-import TopButtons from "../components/Buttons/TopButtons";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import NumberCommaCell from "../components/Cells/NumberCommaCell";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
@@ -65,11 +52,16 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import { isLoading } from "../store/atoms";
+import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import EmailWindow from "../components/Windows/CommonWindows/EmailWindow";
+import { useApi } from "../hooks/api";
+import { isLoading } from "../store/atoms";
+import { gridList } from "../store/columns/SA_A1001_603W_C";
+import { TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -84,10 +76,7 @@ const numberField = [
   "finalquowonamt",
 ];
 
-const numberField2 = [
-  "quowonamt",
-  "finalquowonamt",
-];
+const numberField2 = ["quowonamt", "finalquowonamt"];
 
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
@@ -717,8 +706,12 @@ const SA_A1001_603W: React.FC = () => {
   const editNumberFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult2.data.forEach((item) =>
-       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+      props.field !== undefined
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -726,7 +719,7 @@ const SA_A1001_603W: React.FC = () => {
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {numberWithCommas(sum)}
       </td>
-    )
+    );
   };
 
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
@@ -837,15 +830,19 @@ const SA_A1001_603W: React.FC = () => {
               rowstatus: item.rowstatus == "N" ? "N" : "U",
               finalquowonamt:
                 editedField != "finalquowonamt"
-                  ? ThreeNumberceil(item.quowonamt +
-                    ThreeNumberceil(item.quowonamt * (item.marginamt / 100)) -
-                    ThreeNumberceil(
-                      (item.quowonamt +
+                  ? ThreeNumberceil(
+                      item.quowonamt +
                         ThreeNumberceil(
                           item.quowonamt * (item.marginamt / 100)
-                        )) *
-                        (item.discountamt / 100)
-                    ))
+                        ) -
+                        ThreeNumberceil(
+                          (item.quowonamt +
+                            ThreeNumberceil(
+                              item.quowonamt * (item.marginamt / 100)
+                            )) *
+                            (item.discountamt / 100)
+                        )
+                    )
                   : item.finalquowonamt,
               [EDIT_FIELD]: undefined,
             }
@@ -885,6 +882,12 @@ const SA_A1001_603W: React.FC = () => {
         };
       });
     }
+  };
+
+  const [emailWindowVisible, setEmailWindowVisible] = useState<boolean>(false);
+
+  const onSendEmail = () => {
+    setEmailWindowVisible(true);
   };
 
   return (
@@ -1111,6 +1114,10 @@ const SA_A1001_603W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
             <ButtonContainer>
+              <Button themeColor={"primary"}>견적서 출력</Button>
+              <Button themeColor={"primary"} onClick={onSendEmail}>
+                이메일 전송
+              </Button>
               <Button themeColor={"primary"}>견적 산출</Button>
               <Button themeColor={"primary"}>계약 전환</Button>
             </ButtonContainer>
@@ -1315,6 +1322,9 @@ const SA_A1001_603W: React.FC = () => {
           setData={setCustData}
           modal={true}
         />
+      )}
+      {emailWindowVisible && (
+        <EmailWindow setVisible={setEmailWindowVisible} modal={true} />
       )}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
