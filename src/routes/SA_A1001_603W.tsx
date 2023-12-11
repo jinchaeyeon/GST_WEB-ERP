@@ -382,7 +382,7 @@ const SA_A1001_603W: React.FC = () => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "p_SA_A1001_603W_Q",
+      procedureName: "P_SA_A1001_603W_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -464,7 +464,7 @@ const SA_A1001_603W: React.FC = () => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "p_SA_A1001_603W_Q",
+      procedureName: "P_SA_A1001_603W_Q",
       pageNumber: filters2.pgNum,
       pageSize: filters2.pgSize,
       parameters: {
@@ -838,7 +838,7 @@ const SA_A1001_603W: React.FC = () => {
     }
   };
 
-  const [emailWindowVisible, setEmailWindowVisible] = useState<boolean>(false);
+  const [emailWindowVisible, setEmailWindowVisible] = useState<boolean>(true);
 
   const onSendEmail = () => {
     setEmailWindowVisible(true);
