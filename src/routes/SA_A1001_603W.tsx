@@ -297,7 +297,7 @@ const SA_A1001_603W: React.FC = () => {
     rev: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -409,9 +409,6 @@ const SA_A1001_603W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
-    console.log(parameters);
-    console.log(data);
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
