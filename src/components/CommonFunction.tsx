@@ -24,6 +24,15 @@ export const ThreeNumberceil = (number: number)  => {
 }
 
 // 숫자 3자리마다 컴마를 추가하여 반환, 3자리에서 반올림
+export const numberWithCommas4 = (num: string) => {
+  if (typeof num === "string") {
+    return ThreeNumberceil(parseInt(num)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  } else {
+    return num;
+  }
+};
+
+// 숫자 3자리마다 컴마를 추가하여 반환, 3자리에서 반올림
 export const numberWithCommas3 = (num: number) => {
   if (typeof num === "number") {
     return ThreeNumberceil(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");

@@ -36,7 +36,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1600,
-    height: 900,
+    height: 800,
   });
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
@@ -72,6 +72,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
   const [injectcycleListData, setInjectcycleListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
@@ -158,8 +159,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       const rows2 = data.tables[1].Rows;
-      const rows3 = data.tables[2].Rows;
-      const rows4 = data.tables[3].Rows;
+      const rows3 = data.tables[4].Rows;
 
       if (totalRowCnt > 0) {
         setInformation({
@@ -173,6 +173,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
           chlditemcd_base: rows2[0].chlditemcd,
           injectcnt_base: rows2[0].injectcnt,
           injectcycle_base: rows2[0].injectcycle,
+          chasussapce_base: rows2[0].chasuspace,
           chasu_base: rows2[0].chasu,
           testperiod_base: rows2[0].testperiod,
           experiment_week_base: rows2[0].experiment_week,
@@ -181,44 +182,28 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
           spareqty_base: rows2[0].spareqty,
           maleqty_base: rows2[0].maleqty,
           femaleqty_base: rows2[0].femaleqty,
-          chasuspace_base: rows2[0].chasuspace,
+          point_base: rows2[0].point,
           geomcheqty_base: rows2[0].geomcheqty,
           geomcheprodqty_base: rows2[0].geomcheprodqty,
           totgeomche_base: rows2[0].totgeomche,
           remark_base: rows2[0].remark,
-          //회복
+          //용량설정시헝
           yn_ex: rows3[0].yn == "Y" ? true : false,
+          injectroute_ex: rows3[0].injectroute,
+          teststs_ex: rows3[0].teststs,
+          chlditemcd_ex: rows3[0].chlditemcd,
           injectcnt_ex: rows3[0].injectcnt,
           injectcycle_ex: rows3[0].injectcycle,
-          recoverday_ex: rows3[0].recoverday,
           chasu_ex: rows3[0].chasu,
           testperiod_ex: rows3[0].testperiod,
-          recoverqty_ex: rows3[0].totqty,
+          experiment_week_ex: rows3[0].experiment_week,
+          totqty_ex: rows3[0].totqty,
           experimentqty_ex: rows3[0].experimentqty,
           spareqty_ex: rows3[0].spareqty,
           maleqty_ex: rows3[0].maleqty,
           femaleqty_ex: rows3[0].femaleqty,
-          geomcheqty_ex: rows3[0].geomcheqty,
-          geomcheprodqty_ex: rows3[0].geomcheprodqty,
-          totgeomche_ex: rows3[0].geomcheqty,
+          point_ex: rows3[0].point,
           remark_ex: rows3[0].remark,
-          //TK
-          yn_tk: rows4[0].yn == "Y" ? true : false,
-          bonyn_tk: rows4[0].bonyn == "Y" ? true : false,
-          testcnt_tk: rows4[0].testcnt,
-          injectcnt_tk: rows4[0].injectcnt,
-          injectcycle_tk: rows4[0].injectcycle,
-          point_tk: rows4[0].point,
-          chasu_tk: rows4[0].chasu,
-          testperiod_tk: rows4[0].testperiod,
-          pointqty_tk: rows4[0].pointqty,
-          tkqty_tk: rows4[0].totqty,
-          experimentqty_tk: rows4[0].experimentqty,
-          sampleqty_tk: rows4[0].sampleqty,
-          maleqty_tk: rows4[0].maleqty,
-          femaleqty_tk: rows4[0].femaleqty,
-          spareqty_tk: rows4[0].spareqty,
-          remark_tk: rows4[0].remark,
         });
       }
     } else {
@@ -243,6 +228,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
     chlditemcd_base: "",
     injectcnt_base: 0,
     injectcycle_base: "",
+    chasussapce_base: 0,
     chasu_base: 0,
     testperiod_base: 0,
     experiment_week_base: 0,
@@ -251,44 +237,28 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
     spareqty_base: 0,
     maleqty_base: 0,
     femaleqty_base: 0,
-    chasuspace_base: 0,
+    point_base: 0,
     geomcheqty_base: 0,
     geomcheprodqty_base: 0,
     totgeomche_base: 0,
     remark_base: "",
-    //회복
+    //용량설정시헝
     yn_ex: false,
+    injectroute_ex: "",
+    teststs_ex: "",
+    chlditemcd_ex: "",
     injectcnt_ex: 0,
     injectcycle_ex: "",
-    recoverday_ex: 0,
     chasu_ex: 0,
     testperiod_ex: 0,
-    recoverqty_ex: 0,
+    experiment_week_ex: 0,
+    totqty_ex: 0,
     experimentqty_ex: 0,
     spareqty_ex: 0,
     maleqty_ex: 0,
     femaleqty_ex: 0,
-    geomcheqty_ex: 0,
-    geomcheprodqty_ex: 0,
-    totgeomche_ex: 0,
+    point_ex: 0,
     remark_ex: "",
-    //TK
-    yn_tk: false,
-    bonyn_tk: false,
-    testcnt_tk: 0,
-    injectcnt_tk: 0,
-    injectcycle_tk: "",
-    point_tk: 0,
-    chasu_tk: 0,
-    testperiod_tk: 0,
-    pointqty_tk: 0,
-    tkqty_tk: 0,
-    experimentqty_tk: 0,
-    sampleqty_tk: 0,
-    maleqty_tk: 0,
-    femaleqty_tk: 0,
-    spareqty_tk: 0,
-    remark_tk: "",
   });
 
   return (
@@ -355,7 +325,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
         </FormBoxWrap>
         <FormBoxWrap border={true}>
           <GridTitleContainer>
-            <GridTitle>기본</GridTitle>
+            <GridTitle>본시험</GridTitle>
           </GridTitleContainer>
           <FormBox>
             <tbody>
@@ -424,6 +394,18 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                 </td>
               </tr>
               <tr>
+                <th>차수간격</th>
+                <td>
+                  <Input
+                    name="chasussapce_base"
+                    type="number"
+                    style={{
+                      textAlign: "right",
+                    }}
+                    value={numberWithCommas3(Information.chasussapce_base)}
+                    className="readonly"
+                  />
+                </td>
                 <th>차수</th>
                 <td>
                   <Input
@@ -472,8 +454,6 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
-                <th></th>
-                <td></td>
               </tr>
               <tr>
                 <th>실험동물수</th>
@@ -524,22 +504,20 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
-                <th></th>
-                <td></td>
-              </tr>
-              <tr>
-                <th>차수간격</th>
+                <th>측정 POINT</th>
                 <td>
                   <Input
-                    name="chasuspace_base"
+                    name="point_base"
                     type="number"
                     style={{
                       textAlign: "right",
                     }}
-                    value={numberWithCommas3(Information.chasuspace_base)}
+                    value={numberWithCommas3(Information.point_base)}
                     className="readonly"
                   />
                 </td>
+              </tr>
+              <tr>
                 <th>검체제작 마리 수</th>
                 <td>
                   <Input
@@ -576,6 +554,10 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
+                <th></th>
+                <td></td>
+                <th></th>
+                <td></td>
               </tr>
               <tr>
                 <th>비고</th>
@@ -593,14 +575,50 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
         </FormBoxWrap>
         <FormBoxWrap border={true}>
           <GridTitleContainer>
-            <GridTitle>회복</GridTitle>
+            <GridTitle>용량설정시험</GridTitle>
           </GridTitleContainer>
           <FormBox>
             <tbody>
               <tr>
-                <th>회복여부</th>
+                <th>용량설정시험여부</th>
                 <td>
                   <Checkbox checked={Information.yn_ex} readOnly></Checkbox>
+                </td>
+                <th>투여경로</th>
+                <td>
+                  <Input
+                    name="injectroute_ex"
+                    type="text"
+                    value={
+                      injectrouteListData.find(
+                        (item: any) =>
+                          item.sub_code == Information.injectroute_ex
+                      )?.code_name
+                    }
+                    className="readonly"
+                  />
+                </td>
+                <th>시험계</th>
+                <td>
+                  <Input
+                    name="teststs_ex"
+                    type="text"
+                    value={
+                      itemlvl3ListData.find(
+                        (item: any) => item.sub_code == Information.teststs_ex
+                      )?.code_name
+                    }
+                    className="readonly"
+                  />
+                </td>
+                <th>동물품번</th>
+                <td>
+                  <Input
+                    name="chlditemcd_ex"
+                    type="text"
+                    value={Information.chlditemcd_ex}
+                    className="readonly"
+                  />
                 </td>
                 <th>투여횟수</th>
                 <td>
@@ -614,6 +632,8 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
+              </tr>
+              <tr>
                 <th>투여주기</th>
                 <td>
                   <Input
@@ -628,20 +648,6 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
-                <th>회복기간(D)</th>
-                <td>
-                  <Input
-                    name="recoverday_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.recoverday_ex)}
-                    className="readonly"
-                  />
-                </td>
-              </tr>
-              <tr>
                 <th>차수</th>
                 <td>
                   <Input
@@ -666,15 +672,29 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
-                <th>동물 전체 마리수</th>
+              </tr>
+              <tr>
+                <th>실험기간(W)</th>
                 <td>
                   <Input
-                    name="recoverqty_ex"
+                    name="experiment_week_ex"
                     type="number"
                     style={{
                       textAlign: "right",
                     }}
-                    value={numberWithCommas3(Information.recoverqty_ex)}
+                    value={numberWithCommas3(Information.experiment_week_ex)}
+                    className="readonly"
+                  />
+                </td>
+                <th>동물 전체 마리수</th>
+                <td>
+                  <Input
+                    name="totqty_ex"
+                    type="number"
+                    style={{
+                      textAlign: "right",
+                    }}
+                    value={numberWithCommas3(Information.totqty_ex)}
                     className="readonly"
                   />
                 </td>
@@ -728,39 +748,15 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                     className="readonly"
                   />
                 </td>
-                <th>검체제작 마리 수</th>
+                <th>측정 POINT</th>
                 <td>
                   <Input
-                    name="geomcheqty_ex"
+                    name="point_ex"
                     type="number"
                     style={{
                       textAlign: "right",
                     }}
-                    value={numberWithCommas3(Information.geomcheqty_ex)}
-                    className="readonly"
-                  />
-                </td>
-                <th>검체제작 장기 수</th>
-                <td>
-                  <Input
-                    name="geomcheprodqty_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.geomcheprodqty_ex)}
-                    className="readonly"
-                  />
-                </td>
-                <th>총 장기수</th>
-                <td>
-                  <Input
-                    name="totgeomche_ex"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.totgeomche_ex)}
+                    value={numberWithCommas3(Information.point_ex)}
                     className="readonly"
                   />
                 </td>
@@ -771,198 +767,6 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
                   <TextArea
                     value={Information.remark_ex}
                     name="remark_ex"
-                    rows={2}
-                    className="readonly"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </FormBox>
-        </FormBoxWrap>
-        <FormBoxWrap border={true}>
-          <GridTitleContainer>
-            <GridTitle>TK</GridTitle>
-          </GridTitleContainer>
-          <FormBox>
-            <tbody>
-              <tr>
-                <th>TK여부</th>
-                <td>
-                  <Checkbox checked={Information.yn_tk} readOnly></Checkbox>
-                </td>
-                <th>본시험동물사용</th>
-                <td>
-                  <Checkbox checked={Information.bonyn_tk} readOnly></Checkbox>
-                </td>
-                <th>TK횟수</th>
-                <td>
-                  <Input
-                    name="testcnt_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.testcnt_tk)}
-                    className="readonly"
-                  />
-                </td>
-                <th>투여횟수</th>
-                <td>
-                  <Input
-                    name="injectcnt_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.injectcnt_tk)}
-                    className="readonly"
-                  />
-                </td>
-                <th>투여주기</th>
-                <td>
-                  <Input
-                    name="injectcycle_tk"
-                    type="text"
-                    value={
-                      injectcycleListData.find(
-                        (item: any) =>
-                          item.sub_code == Information.injectcycle_tk
-                      )?.code_name
-                    }
-                    className="readonly"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>TK POINT</th>
-                <td>
-                  <Input
-                    name="point_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.point_tk)}
-                    className="readonly"
-                  />
-                </td>
-                <th>차수</th>
-                <td>
-                  <Input
-                    name="chasu_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.chasu_tk)}
-                    className="readonly"
-                  />
-                </td>
-                <th>실험기간(D)</th>
-                <td>
-                  <Input
-                    name="testperiod_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.testperiod_tk)}
-                    className="readonly"
-                  />
-                </td>
-                <th>POINT 당 마리 수</th>
-                <td>
-                  <Input
-                    name="pointqty_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.pointqty_tk)}
-                    className="readonly"
-                  />
-                </td>
-                <th>동물 전체 마리수</th>
-                <td>
-                  <Input
-                    name="tkqty_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.tkqty_tk)}
-                    className="readonly"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>실험동물수</th>
-                <td>
-                  <Input
-                    name="experimentqty_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.experimentqty_tk)}
-                    className="readonly"
-                  />
-                </td>
-                <th>샘플수</th>
-                <td>
-                  <Input
-                    name="sampleqty_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.sampleqty_tk)}
-                    className="readonly"
-                  />
-                </td>
-                <th>수컷</th>
-                <td>
-                  <Input
-                    name="maleqty_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.maleqty_tk)}
-                    className="readonly"
-                  />
-                </td>
-                <th>암컷</th>
-                <td>
-                  <Input
-                    name="femaleqty_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.femaleqty_tk)}
-                    className="readonly"
-                  />
-                </td>
-                <th>여유동물</th>
-                <td>
-                  <Input
-                    name="spareqty_tk"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.spareqty_tk)}
-                    className="readonly"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <th>비고</th>
-                <td colSpan={9}>
-                  <TextArea
-                    value={Information.remark_tk}
-                    name="remark_tk"
                     rows={2}
                     className="readonly"
                   />
