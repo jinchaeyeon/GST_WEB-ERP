@@ -164,7 +164,7 @@ const Login: React.FC = () => {
           webTitle,
           homeMenuWeb,
           profileImage,
-          dptnm : userConfig.Rows[6].value,
+          dptnm : userConfig == undefined ? "" : userConfig.Rows[6].value,
           serviceCategory,
           defaultCulture
         });

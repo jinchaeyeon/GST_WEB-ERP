@@ -647,7 +647,7 @@ const PanelBarNavContainer = (props: any) => {
                   alignItems: "center",
                 }}
               >
-                {contact[0].avatar == "" ? (
+                {contact[0].avatar == "" ||  contact[0].avatar == undefined? (
                   <Avatar className="k-avatar-lg" rounded="full" type="icon">
                     <SvgIcon icon={userIcon} size="large" />
                   </Avatar>
