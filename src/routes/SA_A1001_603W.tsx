@@ -108,7 +108,6 @@ const SA_A1001_603W: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
-  const orgdiv = UseGetValueFromSessionItem("orgdiv");
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -282,7 +281,7 @@ const SA_A1001_603W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST",
-    orgdiv: orgdiv,
+    orgdiv: "01",
     frdt: new Date(),
     todt: new Date(),
     quonum: "",
@@ -377,7 +376,7 @@ const SA_A1001_603W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    if (!permissions?.view) return;
+    // if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -387,7 +386,7 @@ const SA_A1001_603W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "LIST",
-        "@p_orgdiv": filters.orgdiv,
+        "@p_orgdiv": "01",
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_quonum": filters.quonum,
@@ -456,7 +455,7 @@ const SA_A1001_603W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -466,7 +465,7 @@ const SA_A1001_603W: React.FC = () => {
       pageSize: filters2.pgSize,
       parameters: {
         "@p_work_type": "DETAIL",
-        "@p_orgdiv": orgdiv,
+        "@p_orgdiv": "01",
         "@p_frdt": "",
         "@p_todt": "",
         "@p_quonum": filters2.quonum,
