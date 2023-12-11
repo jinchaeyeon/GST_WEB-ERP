@@ -297,7 +297,7 @@ const SA_A1001_603W: React.FC = () => {
     rev: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값
@@ -382,7 +382,7 @@ const SA_A1001_603W: React.FC = () => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "p_SA_A1001_603W_Q",
+      procedureName: "P_SA_A1001_603W_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -409,9 +409,6 @@ const SA_A1001_603W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
-    console.log(parameters);
-    console.log(data);
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
@@ -464,7 +461,7 @@ const SA_A1001_603W: React.FC = () => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "p_SA_A1001_603W_Q",
+      procedureName: "P_SA_A1001_603W_Q",
       pageNumber: filters2.pgNum,
       pageSize: filters2.pgSize,
       parameters: {
