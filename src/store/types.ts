@@ -48,6 +48,8 @@ export type TLoginResult = {
   dptnm: string;
   serviceCategory: string;
   defaultCulture: string;
+  dptcd: string;
+  position: string;
 };
 
 export type TCommonCode = {

@@ -117,7 +117,7 @@ const Login: React.FC = () => {
         // );
 
         const response = await processApi<any>("login", para);
-
+      
         const {
           token,
           refreshToken,
@@ -166,7 +166,9 @@ const Login: React.FC = () => {
           profileImage,
           dptnm : userConfig == undefined ? "" : userConfig.Rows[6].value,
           serviceCategory,
-          defaultCulture
+          defaultCulture,
+          dptcd : userConfig == undefined ? "" : userConfig.Rows[5].value,
+          position: userConfig == undefined ? "" : userConfig.Rows[4].value,
         });
 
         setPwExpInfo(passwordExpirationInfo);
