@@ -111,6 +111,9 @@ import {
   MultiSelectChangeEvent,
 } from "@progress/kendo-react-dropdowns";
 import SA_A1000_603W_Design_Window from "../components/Windows/SA_A1000_603W_Design_Window";
+import SA_A1000_603W_Design2_Window from "../components/Windows/SA_A1000_603W_Design2_Window";
+import SA_A1000_603W_Design3_Window from "../components/Windows/SA_A1000_603W_Design3_Window";
+import SA_A1000_603W_Design4_Window from "../components/Windows/SA_A1000_603W_Design4_Window";
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -986,8 +989,29 @@ const SA_A1000_603W: React.FC = () => {
     useState<boolean>(false);
 
   const onDesignWndClick = () => {
-    setDesignWindowVisible(true);
+    const data = subDataResult.data.filter(
+      (item) =>
+        item[SUB_DATA_ITEM_KEY] ==
+        Object.getOwnPropertyNames(selectedsubDataState)[0]
+    )[0];
+
+    if (data != undefined) {
+      if (data.type == "Basics") {
+        setDesignWindowVisible(true);
+      } else if (data.type == "Cheomdan") {
+        setDesignWindowVisible2(true);
+      } else if (data.type == "Vitro") {
+        setDesignWindowVisible3(true);
+      } else if (data.type == "Analyze") {
+        setDesignWindowVisible4(true);
+      } else {
+        alert("미정")
+      }
+    } else {
+      alert("데이터가 없습니다.");
+    }
   };
+
   const onProejctWndClick = () => {
     setProjectWindowVisible(true);
   };
@@ -4560,6 +4584,80 @@ const SA_A1000_603W: React.FC = () => {
       {designWindowVisible && (
         <SA_A1000_603W_Design_Window
           setVisible={setDesignWindowVisible}
+          filters={filters}
+          item={
+            subDataResult.data.filter(
+              (item) =>
+                item[SUB_DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedsubDataState)[0]
+            )[0] != undefined
+              ? subDataResult.data.filter(
+                  (item) =>
+                    item[SUB_DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedsubDataState)[0]
+                )[0]
+              : ""
+          }
+          modal={true}
+        />
+      )}
+      {designWindowVisible2 && (
+        <SA_A1000_603W_Design2_Window
+          setVisible={setDesignWindowVisible2}
+          filters={filters}
+          item={
+            subDataResult.data.filter(
+              (item) =>
+                item[SUB_DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedsubDataState)[0]
+            )[0] != undefined
+              ? subDataResult.data.filter(
+                  (item) =>
+                    item[SUB_DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedsubDataState)[0]
+                )[0]
+              : ""
+          }
+          modal={true}
+        />
+      )}
+      {designWindowVisible3 && (
+        <SA_A1000_603W_Design3_Window
+          setVisible={setDesignWindowVisible3}
+          filters={filters}
+          item={
+            subDataResult.data.filter(
+              (item) =>
+                item[SUB_DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedsubDataState)[0]
+            )[0] != undefined
+              ? subDataResult.data.filter(
+                  (item) =>
+                    item[SUB_DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedsubDataState)[0]
+                )[0]
+              : ""
+          }
+          modal={true}
+        />
+      )}
+      {designWindowVisible4 && (
+        <SA_A1000_603W_Design4_Window
+          setVisible={setDesignWindowVisible4}
+          filters={filters}
+          item={
+            subDataResult.data.filter(
+              (item) =>
+                item[SUB_DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedsubDataState)[0]
+            )[0] != undefined
+              ? subDataResult.data.filter(
+                  (item) =>
+                    item[SUB_DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedsubDataState)[0]
+                )[0]
+              : ""
+          }
           modal={true}
         />
       )}
