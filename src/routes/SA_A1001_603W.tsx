@@ -834,7 +834,7 @@ const SA_A1001_603W: React.FC = () => {
     }
   };
 
-  const [emailWindowVisible, setEmailWindowVisible] = useState<boolean>(false);
+  const [emailWindowVisible, setEmailWindowVisible] = useState<boolean>(true);
 
   const onSendEmail = () => {
     setEmailWindowVisible(true);

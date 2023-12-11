@@ -134,7 +134,9 @@ const Login: React.FC = () => {
           profileImage,
           dptnm : userConfig.Rows[6].value,
           serviceCategory,
-          defaultCulture
+          defaultCulture,
+          dptcd : userConfig == undefined ? "" : userConfig.Rows[5].value,
+          position: userConfig == undefined ? "" : userConfig.Rows[4].value,
         });
 
         setPwExpInfo(passwordExpirationInfo);
