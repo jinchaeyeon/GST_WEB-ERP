@@ -49,18 +49,17 @@ let targetRowIndex: null | number = null;
 
 type TKendoWindow = {
   setVisible(isVisible: boolean): void;
-  quokey: string;
+  testnum: string;
   modal?: boolean;
 };
 
 const KendoWindow = ({
   setVisible,
-  quokey,
+  testnum,
   modal = false,
 }: TKendoWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
   const pathname: string = window.location.pathname.replace("/", "");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -254,12 +253,12 @@ const KendoWindow = ({
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "Q",
-    orgdiv: orgdiv,
+    orgdiv: "01",
     location: location,
     custcd: "",
     custnm: "",
-    testnum: "",
-    quonum: quokey,
+    testnum: testnum,
+    quonum: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -424,7 +423,7 @@ const KendoWindow = ({
     const origin = window.location.origin;
     window.open(
       origin +
-        `/SA_A1000_603W?go=` +
+      `/SA_A1000_603W?go=` +
         selectedRowData.quonum +
         "-" +
         selectedRowData.quorev
@@ -440,7 +439,7 @@ const KendoWindow = ({
     const origin = window.location.origin;
     window.open(
       origin +
-        `/SA_A1000_603?go=` +
+        `/SA_A1000_603W?go=` +
         selectedRowData.quonum +
         "-" +
         selectedRowData.quorev
@@ -472,7 +471,7 @@ const KendoWindow = ({
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th>견적번호</th>
+              <th>프로젝트번호</th>
               <td>
                 <Input
                   name="quonum"
@@ -574,7 +573,7 @@ const KendoWindow = ({
         >
           <GridColumn 
             field = "quokey" 
-            title = "견적번호" 
+            title = "프로젝트번호" 
             width = "150px"
             footerCell={mainTotalFooterCell}
           />

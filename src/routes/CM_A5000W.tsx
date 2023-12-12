@@ -70,7 +70,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import RichEditor from "../components/RichEditor";
 import CopyWindow from "../components/Windows/CM_A5000W_Copy_Window";
-import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
+import ProjectsWindow from "../components/Windows/CM_A5000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
@@ -375,7 +375,7 @@ const CM_A5000W: React.FC = () => {
     setInformation((prev: any) => {
       return {
         ...prev,
-        testnum: data.quokey,
+        testnum: data.quotestnum,
       };
     });
   };
@@ -423,11 +423,12 @@ const CM_A5000W: React.FC = () => {
       setUnsavedAttadatnums([]);
     }
 
-    if (e.selected == 1) {
-      if (mainDataResult.data.length == 0) {
-        alert("요약정보 데이터가 없습니다.");
-        return false;
-      }
+    if (e.selected == 0) {
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
+    } else if (e.selected == 1) {
       const selectedRowData = mainDataResult.data.filter(
         (item) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -762,6 +763,7 @@ const CM_A5000W: React.FC = () => {
           files: rows[0].files,
           ref_document_id: rows[0].ref_document_id,
         });
+        
       } else {
         setInformation2({
           document_id: "",
@@ -1732,7 +1734,7 @@ const CM_A5000W: React.FC = () => {
                     <p style={{ marginRight: "5px" }}>답변</p>
                     {workType == "N" ? (
                       ""
-                    ) : information2.ref_document_id != "" ? (
+                    ) : information2.document_id != "" ? (
                       <div
                         style={{
                           width: "80px",

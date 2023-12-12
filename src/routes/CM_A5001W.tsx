@@ -331,12 +331,12 @@ const CM_A5001W: React.FC = () => {
       setUnsavedAttadatnums([]);
     }
 
-    if (e.selected == 1) {
-      if (mainDataResult.data.length == 0) {
-        alert("요약정보 데이터가 없습니다.");
-        return false;
-      }
-
+    if (e.selected == 0) {
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
+    } else if (e.selected == 1) {
       const selectedRowData = mainDataResult.data.filter(
         (item) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -1613,7 +1613,7 @@ const CM_A5001W: React.FC = () => {
       {projectWindowVisible && (
         <ProjectsWindow
           setVisible={setProjectWindowVisible}
-          quokey={information.testnum}
+          testnum={information.testnum}
           modal={true}
         />
       )}

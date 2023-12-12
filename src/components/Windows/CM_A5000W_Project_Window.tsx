@@ -60,8 +60,8 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: isMobile == true ? deviceWidth : 1200,
-    height: 800,
+    width: isMobile == true ? deviceWidth : 1400,
+    height: 820,
   });
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -243,6 +243,8 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
     dtgb: "",
     frdt: new Date(),
     todt: new Date(),
+    quonum: "",
+    quotestnum: "",
     person: "",
     custcd: "",
     custnm: "",
@@ -260,7 +262,7 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
 
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_CM_A7000W_Sub1_Q",
+      procedureName: "P_CM_A5000W_Sub2_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -270,6 +272,8 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
         "@p_dtgb": filters.dtgb,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
+        "@p_quonum": filters.quonum,
+        "@p_quotestnum": filters.quotestnum,
         "@p_person": filters.person,
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
@@ -378,14 +382,14 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "CM_A7000W_001");
+        throw findMessage(messagesData, "CM_A5000W_001");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "CM_A7000W_001");
+        throw findMessage(messagesData, "CM_A5000W_001");
       } else {
         resetAllGrid();
         setPage(initialPageState); // 페이지 초기화
@@ -479,6 +483,37 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
                     className="required"
                   />
                 </td>
+                <th>프로젝트번호</th>
+                <td>
+                  <Input
+                    name="quonum"
+                    type="text"
+                    value={filters.quonum}
+                    onChange={filterInputChange}
+                  />
+                </td>
+                <th>예약시험번호</th>
+                <td>
+                  <Input
+                    name="quotestnum"
+                    type="text"
+                    value={filters.quotestnum}
+                    onChange={filterInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>견적상태</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="quosts"
+                      value={filters.quosts}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
+                </td>
                 <th>담당자</th>
                 <td>
                   {customOptionData !== null && (
@@ -492,46 +527,21 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
                     />
                   )}
                 </td>
-                <th>견적상태</th>
+                <th>고객사</th>
                 <td>
                   {customOptionData !== null && (
                     <CustomOptionComboBox
-                      name="quosts"
-                      value={filters.quosts}
+                      name="custcd"
+                      value={filters.custcd}
                       customOptionData={customOptionData}
                       changeData={filterComboBoxChange}
+                      valueField="custcd"
+                      textField="custnm"
                     />
                   )}
                 </td>
-              </tr>
-              <tr>
-                <th>업체코드</th>
-                <td>
-                  <Input
-                      name="custcd"
-                      type="text"
-                      value={filters.custcd}
-                      onChange={filterInputChange}
-                  />
-                  <ButtonInInput>
-                    <Button
-                      onClick={onCustWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
-                </td>
-                <th>업체명</th>
-                <td>
-                  <Input
-                    name="custnm"
-                    type="text"
-                    value={filters.custnm}
-                    onChange={filterInputChange}
-                  />
-                </td>
                 <th>시험물질명</th>
-                <td colSpan={3}>
+                <td>
                   <Input
                     name="materialnm"
                     type="text"
@@ -594,6 +604,7 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
               width="150px"
               footerCell={mainTotalFooterCell}
             />
+            <GridColumn field="quotestnum" title="예약시험번호" width="120px" />
             <GridColumn field="quotype" title="견적형태" width="120px" />
             <GridColumn field="quosts" title="견적상태" width="100px" />
             <GridColumn field="quodt" title="견적일자" width="100px" cell={DateCell}/>
