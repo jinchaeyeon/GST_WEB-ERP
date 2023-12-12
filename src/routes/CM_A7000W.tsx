@@ -1283,7 +1283,7 @@ const CM_A7000W: React.FC = () => {
                         <Input
                           name="custcd"
                           type="text"
-                          value={information.custcd ? information.custcd : ""}
+                          value={information.custcd}
                           onChange={InputChange}
                           className="readonly"
                         />
@@ -1430,7 +1430,6 @@ const CM_A7000W: React.FC = () => {
                         )}
                       </td>
                     </tr>
-                    <tr></tr>
                     <tr>
                       <th>회의 장소</th>
                       <td>
