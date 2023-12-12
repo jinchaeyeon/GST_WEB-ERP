@@ -12,6 +12,10 @@ code {
     monospace;
 }
 
+.css-zqhngk-MuiFormControl-root-MuiTextField-root {
+  width: 100% !important;
+}
+
 .pg-viewer-wrapper {
   overflow: hidden !important;
 }

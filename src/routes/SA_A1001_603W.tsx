@@ -1275,7 +1275,36 @@ const SA_A1001_603W: React.FC = () => {
         />
       )}
       {emailWindowVisible && (
-        <EmailWindow setVisible={setEmailWindowVisible} modal={true} />
+        <EmailWindow
+          setVisible={setEmailWindowVisible}
+          quonum={
+            mainDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0] != undefined
+              ? mainDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0].quonum
+              : ""
+          }
+          quorev={
+            mainDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0] != undefined
+              ? mainDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0].quorev
+              : 0
+          }
+          modal={true}
+        />
       )}
       {printWindowVisible && (
         <SA_A1001_603W_Window
