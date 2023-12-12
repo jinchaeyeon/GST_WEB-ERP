@@ -12,19 +12,9 @@ code {
     monospace;
 }
 
-.pdf-canvas {
-  display: flex !important;
-  justify-content: center !important;
+.pg-viewer-wrapper {
+  overflow: hidden !important;
 }
-
-.pdf-canvas > canvas {
-  width: 70% !important;
-}
-
-.help-canvas {
-  height: 300px;
-}
-
 .swiper-button-next {
   color: gray !important;
   right: 0px !important;

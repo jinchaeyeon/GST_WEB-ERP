@@ -391,7 +391,7 @@ const QC_B0200W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 

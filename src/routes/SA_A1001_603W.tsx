@@ -31,6 +31,7 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import CenterCell from "../components/Cells/CenterCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -39,7 +40,6 @@ import {
   ThreeNumberceil,
   UseBizComponent,
   UseCustomOption,
-  UseGetValueFromSessionItem,
   UseMessages,
   UsePermissions,
   convertDateToStr,
@@ -68,7 +68,7 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1001_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import CenterCell from "../components/Cells/CenterCell";
+import SA_A1001_603W_Window from "../components/Windows/SA_A1001_603W_Window";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -216,7 +216,6 @@ const SA_A1001_603W: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
-
     if (e.selected == 1) {
       const data = mainDataResult.data.filter(
         (item) =>
@@ -376,7 +375,7 @@ const SA_A1001_603W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    // if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -433,7 +432,7 @@ const SA_A1001_603W: React.FC = () => {
           quodt: rows[0].quodt,
           quoamt: rows[0].quoamt,
         }));
-        
+
         setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
     } else {
@@ -650,7 +649,6 @@ const SA_A1001_603W: React.FC = () => {
   };
 
   const search = () => {
-
     try {
       if (
         convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
@@ -678,7 +676,6 @@ const SA_A1001_603W: React.FC = () => {
   };
 
   const onRowDoubleClick = (props: any) => {
-
     const datas = mainDataResult.data.filter(
       (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
@@ -834,10 +831,15 @@ const SA_A1001_603W: React.FC = () => {
     }
   };
 
-  const [emailWindowVisible, setEmailWindowVisible] = useState<boolean>(true);
+  const [emailWindowVisible, setEmailWindowVisible] = useState<boolean>(false);
+  const [printWindowVisible, setPrintWindowVisible] = useState<boolean>(false);
 
   const onSendEmail = () => {
     setEmailWindowVisible(true);
+  };
+
+  const onPrint = () => {
+    setPrintWindowVisible(true);
   };
 
   return (
@@ -861,7 +863,10 @@ const SA_A1001_603W: React.FC = () => {
       >
         <TabStripTab title="견적(조회)">
           <FilterContainer>
-            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)} style={{ height: "10%" }}>
+            <FilterBox
+              onKeyPress={(e) => handleKeyPressSearch(e, search)}
+              style={{ height: "10%" }}
+            >
               <tbody>
                 <tr>
                   <th>의뢰기간</th>
@@ -1067,7 +1072,9 @@ const SA_A1001_603W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
             <ButtonContainer>
-              <Button themeColor={"primary"}>견적서 출력</Button>
+              <Button themeColor={"primary"} onClick={onPrint}>
+                견적서 출력
+              </Button>
               <Button themeColor={"primary"} onClick={onSendEmail}>
                 이메일 전송
               </Button>
@@ -1142,12 +1149,12 @@ const SA_A1001_603W: React.FC = () => {
                   </td>
                   <th>견적 발행일</th>
                   <td>
-                      <Input
+                    <Input
                       name="quodt"
                       type="text"
                       value={dateformat2(information.quodt)}
                       className="readonly"
-                      />
+                    />
                   </td>
                   <th>견적금액</th>
                   <td>
@@ -1269,6 +1276,38 @@ const SA_A1001_603W: React.FC = () => {
       )}
       {emailWindowVisible && (
         <EmailWindow setVisible={setEmailWindowVisible} modal={true} />
+      )}
+      {printWindowVisible && (
+        <SA_A1001_603W_Window
+          setVisible={setPrintWindowVisible}
+          quonum={
+            mainDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0] != undefined
+              ? mainDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0].quonum
+              : ""
+          }
+          quorev={
+            mainDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0] != undefined
+              ? mainDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0].quorev
+              : 0
+          }
+          modal={true}
+        />
       )}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (

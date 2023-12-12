@@ -877,6 +877,7 @@ const UserWindow = ({ setVisible, modal = false }: IWindow) => {
           height: "340px",
           border: "1px solid gray",
           marginBottom: "10px",
+          overflow: "scroll"
         }}
       >
         {url != "" ? ( <FileViewers file={url} type="pdf" />) : ("")}

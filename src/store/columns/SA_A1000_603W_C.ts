@@ -7,7 +7,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_quokey",
         field: "quokey",
-        caption: "견적번호",
+        caption: "프로젝트번호",
         width: 150,
       },
       {
@@ -88,21 +88,9 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList2",
     columns: [
       {
-        id: "col_group_seq",
-        field: "group_seq",
-        caption: "패키지번호",
-        width: 100,
-      },
-      {
-        id: "col_packagetype",
-        field: "packagetype",
-        caption: "패키지유형",
-        width: 120,
-      },
-      {
-        id: "col_sort_seq",
-        field: "sort_seq",
-        caption: "순번",
+        id: "col_quoseq",
+        field: "quoseq",
+        caption: "No",
         width: 100,
       },
       {
@@ -127,7 +115,7 @@ export const gridList: Array<TGrid> = [
         id: "col_glpyn",
         field: "glpyn",
         caption: "GLP구분",
-        width: 250,
+        width: 120,
       },
       {
         id: "col_startdt",

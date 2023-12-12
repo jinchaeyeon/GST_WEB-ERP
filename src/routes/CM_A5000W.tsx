@@ -1646,7 +1646,7 @@ const CM_A5000W: React.FC = () => {
                             />
                           </ButtonInInput>
                         </td>
-                        <th>시험번호</th>
+                        <th>예약시험번호</th>
                         <td>
                           <Input
                             name="testnum"
