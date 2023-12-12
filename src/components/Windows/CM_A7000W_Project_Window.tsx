@@ -591,7 +591,7 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
           >
             <GridColumn
               field="quokey"
-              title="견적 번호"
+              title="프로젝트번호"
               width="150px"
               footerCell={mainTotalFooterCell}
             />

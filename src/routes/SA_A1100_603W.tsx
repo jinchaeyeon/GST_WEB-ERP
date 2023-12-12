@@ -102,6 +102,7 @@ const NumberField = [
   "saleamt",
   "collamt",
   "janamt",
+  "quoseq"
 ];
 
 const NumberCommaField = [
@@ -1457,7 +1458,7 @@ const SA_A1100_603W: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "testnum") {
+    if (field != "rowstatus" && field != "quoseq" && field != "quotestnum") {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
@@ -2254,7 +2255,7 @@ const SA_A1100_603W: React.FC = () => {
             <FilterBox style={{ height: "10%" }}>
               <tbody>
                 <tr>
-                  <th>견적번호</th>
+                  <th>프로젝트번호</th>
                   <td>
                     <Input
                       name="quoekey"
@@ -2280,7 +2281,7 @@ const SA_A1100_603W: React.FC = () => {
                       />
                     </ButtonInInput>
                   </td>
-                  <th>시험번호</th>
+                  <th>예약시험번호</th>
                   <td>
                     <Input
                       name="testnum"
@@ -2289,8 +2290,6 @@ const SA_A1100_603W: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
-                  <th>진행상태</th>
-                  <td></td>
                 </tr>
               </tbody>
             </FilterBox>
@@ -2492,7 +2491,7 @@ const SA_A1100_603W: React.FC = () => {
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "55vh" }}
+                  style={{ height: `calc(79vh - 300px)` }}
                   data={process(
                     mainDataResult3.data.map((row) => ({
                       ...row,

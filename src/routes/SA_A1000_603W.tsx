@@ -17,18 +17,19 @@ import {
 } from "@progress/kendo-react-grid";
 
 import {
+  MultiSelect,
+  MultiSelectChangeEvent,
+} from "@progress/kendo-react-dropdowns";
+import {
   Checkbox,
   Input,
   InputChangeEvent,
   TextArea,
 } from "@progress/kendo-react-inputs";
-import {
-  Step,
-  Stepper,
-  TabStrip,
-  TabStripTab,
-} from "@progress/kendo-react-layout";
+import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
+import { Card } from "primereact/card";
+import { Timeline } from "primereact/timeline";
 import React, {
   createContext,
   useCallback,
@@ -56,6 +57,7 @@ import {
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
+import ComboBoxColorCell from "../components/Cells/ComboBoxColorCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import RadioGroupCell from "../components/Cells/RadioGroupCell";
@@ -93,6 +95,10 @@ import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import SA_A1000_603W_Design2_Window from "../components/Windows/SA_A1000_603W_Design2_Window";
+import SA_A1000_603W_Design3_Window from "../components/Windows/SA_A1000_603W_Design3_Window";
+import SA_A1000_603W_Design4_Window from "../components/Windows/SA_A1000_603W_Design4_Window";
+import SA_A1000_603W_Design_Window from "../components/Windows/SA_A1000_603W_Design_Window";
 import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
@@ -104,16 +110,6 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1000_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { Card } from "primereact/card";
-import { Timeline } from "primereact/timeline";
-import {
-  MultiSelect,
-  MultiSelectChangeEvent,
-} from "@progress/kendo-react-dropdowns";
-import SA_A1000_603W_Design_Window from "../components/Windows/SA_A1000_603W_Design_Window";
-import SA_A1000_603W_Design2_Window from "../components/Windows/SA_A1000_603W_Design2_Window";
-import SA_A1000_603W_Design3_Window from "../components/Windows/SA_A1000_603W_Design3_Window";
-import SA_A1000_603W_Design4_Window from "../components/Windows/SA_A1000_603W_Design4_Window";
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -125,9 +121,13 @@ type TdataArr = {
   startdt_s: string[];
   enddt_s: string[];
   remark_s: string[];
-  group_seq_s: string[];
-  sort_seq_s: string[];
-  packagetype_s: string[];
+};
+
+type TdataArr2 = {
+  rowstatus_s: string[];
+  quonum_s: string[];
+  quorev_s: string[];
+  progress_status_s: string[];
 };
 
 const DATA_ITEM_KEY = "num";
@@ -149,7 +149,7 @@ const dateField = [
   "completion_date",
 ];
 const RadioField = ["glpyn"];
-const numberField = ["group_seq", "sort_seq"];
+const numberField = ["quoseq"];
 const comboField = ["packagetype"];
 const itemField = ["itemcd"];
 const colorField = ["status"];
@@ -157,138 +157,64 @@ const colorField = ["status"];
 let temp = 0;
 let deletedMainRows: any[] = [];
 
-const items = [
-  {
-    label: "시험계획서",
-    icon: "k-icon k-i-gear",
-  },
-  {
-    label: "시험개시",
-    icon: "k-icon k-i-gear",
-  },
-  {
-    label: "투여개시",
-    icon: "k-icon k-i-gear",
-  },
-  {
-    label: "실험종료",
-    icon: "k-icon k-i-gear",
-  },
-  {
-    label: "보고서",
-    icon: "k-icon k-i-gear",
-  },
-];
-
-const CustomStep = (props: any) => {
-  return (
-    <Step {...props}>
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          fontSize: "1.1rem",
-          fontWeight: 600,
-        }}
-      >
-        <span style={{ marginRight: "5%" }} className={props.icon} />
-        <span
-          style={{
-            border: "1px solid black",
-            borderRadius: "15px",
-            width: "80%",
-            height: "13vh",
-            marginBottom: "3vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(34, 137, 195, 0.25)",
-          }}
-        >
-          {props.label}
-        </span>
-      </div>
-    </Step>
-  );
-};
-
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_SA003_603", setBizComponentData);
+  UseBizComponent("L_SA003_603, L_SA011_603", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "packagetype" ? "L_SA003_603" : "";
+  const bizComponentIdVal =
+    field === "packagetype"
+      ? "L_SA003_603"
+      : field === "status"
+      ? "L_SA011_603"
+      : "";
+
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
-  return bizComponent ? (
-    <ComboBoxCell bizComponent={bizComponent} {...props} />
-  ) : (
-    <td />
-  );
-};
 
-const CustomColorCell = (props: GridCellProps) => {
-  const { ariaColumnIndex, columnIndex, dataItem } = props;
+  const style =
+    props.dataItem.status == "1"
+      ? { backgroundColor: "#ff0000", color: "white" }
+      : props.dataItem.status == "2"
+      ? {
+          backgroundColor: "#ffc000",
+          color: "white",
+        }
+      : props.dataItem.status == "3"
+      ? {
+          backgroundColor: "#70ad47",
+          color: "white",
+        }
+      : props.dataItem.status == "4"
+      ? {
+          backgroundColor: "#0070c0",
+          color: "white",
+        }
+      : props.dataItem.status == "5"
+      ? {
+          backgroundColor: "#7030a0",
+          color: "white",
+        }
+      : {};
 
-  return dataItem.status == "문의" ? (
-    <td
-      aria-colindex={ariaColumnIndex}
-      data-grid-col-index={columnIndex}
-      style={{
-        backgroundColor: "#ff0000",
-        color: "white",
-      }}
-    >
-      {dataItem.status}
-    </td>
-  ) : dataItem.status == "컨설팅" ? (
-    <td
-      aria-colindex={ariaColumnIndex}
-      data-grid-col-index={columnIndex}
-      style={{
-        backgroundColor: "#ffc000",
-        color: "white",
-      }}
-    >
-      {dataItem.status}
-    </td>
-  ) : dataItem.status == "견적" ? (
-    <td
-      aria-colindex={ariaColumnIndex}
-      data-grid-col-index={columnIndex}
-      style={{
-        backgroundColor: "#70ad47",
-        color: "white",
-      }}
-    >
-      {dataItem.status}
-    </td>
-  ) : dataItem.status == "계약" ? (
-    <td
-      aria-colindex={ariaColumnIndex}
-      data-grid-col-index={columnIndex}
-      style={{
-        backgroundColor: "#0070c0",
-        color: "white",
-      }}
-    >
-      {dataItem.status}
-    </td>
-  ) : (
-    <td
-      aria-colindex={ariaColumnIndex}
-      data-grid-col-index={columnIndex}
-      style={{
-        backgroundColor: "#7030a0",
-        color: "white",
-      }}
-    >
-      {dataItem.status}
-    </td>
-  );
+  if (bizComponentIdVal == "L_SA011_603") {
+    return bizComponent ? (
+      <ComboBoxColorCell
+        bizComponent={bizComponent}
+        styles={style}
+        {...props}
+      />
+    ) : (
+      <td />
+    );
+  } else {
+    return bizComponent ? (
+      <ComboBoxCell bizComponent={bizComponent} {...props} />
+    ) : (
+      <td />
+    );
+  }
 };
 
 export const FormContext = createContext<{
@@ -563,10 +489,10 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
 const CustomRadioCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("R_Requestgb", setBizComponentData);
+  UseBizComponent("R_GLP", setBizComponentData);
   //합부판정
   const field = props.field ?? "";
-  const bizComponentIdVal = field == "glpyn" ? "R_Requestgb" : "";
+  const bizComponentIdVal = field == "glpyn" ? "R_GLP" : "";
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
@@ -934,7 +860,9 @@ const SA_A1000_603W: React.FC = () => {
   const [tempState, setTempState] = useState<State>({
     sort: [],
   });
-
+  const [tempState2, setTempState2] = useState<State>({
+    sort: [],
+  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -957,6 +885,9 @@ const SA_A1000_603W: React.FC = () => {
   );
   const [tempResult, setTempResult] = useState<DataResult>(
     process([], tempState)
+  );
+  const [tempResult2, setTempResult2] = useState<DataResult>(
+    process([], tempState2)
   );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -1005,7 +936,7 @@ const SA_A1000_603W: React.FC = () => {
       } else if (data.type == "Analyze") {
         setDesignWindowVisible4(true);
       } else {
-        alert("미정")
+        alert("미정");
       }
     } else {
       alert("데이터가 없습니다.");
@@ -1913,7 +1844,7 @@ const SA_A1000_603W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchDetailGrid = async (detailFilters: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -1976,7 +1907,7 @@ const SA_A1000_603W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchDetailGrid2 = async (detailFilters2: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -2039,7 +1970,7 @@ const SA_A1000_603W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchDetailGrid3 = async (detailFilters3: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -2394,8 +2325,18 @@ const SA_A1000_603W: React.FC = () => {
     setTabSelected(1);
   };
 
-  const onSubItemChange = (event: GridItemChangeEvent) => {
+  const onItemChange = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult,
+      setMainDataResult,
+      DATA_ITEM_KEY
+    );
+  };
+
+  const onSubItemChange = (event: GridItemChangeEvent) => {
+    setSubDataState((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
       event,
       subDataResult,
@@ -2413,6 +2354,15 @@ const SA_A1000_603W: React.FC = () => {
     />
   );
 
+  const customCellRender2 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+
   const customRowRender = (tr: any, props: any) => (
     <RowRender
       originalProps={props}
@@ -2422,8 +2372,17 @@ const SA_A1000_603W: React.FC = () => {
     />
   );
 
+  const customRowRender2 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "testnum") {
+    if (field != "rowstatus" && field != "testnum" && field != "quoseq") {
       const newData = subDataResult.data.map((item) =>
         item[SUB_DATA_ITEM_KEY] == dataItem[SUB_DATA_ITEM_KEY]
           ? {
@@ -2452,6 +2411,39 @@ const SA_A1000_603W: React.FC = () => {
       setTempResult((prev) => {
         return {
           data: subDataResult.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const enterEdit2 = (dataItem: any, field: string) => {
+    if (field == "status") {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
+
+      setTempResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult2((prev) => {
+        return {
+          data: mainDataResult.data,
           total: prev.total,
         };
       });
@@ -2505,6 +2497,53 @@ const SA_A1000_603W: React.FC = () => {
           total: prev.total,
         };
       });
+      setSubDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit2 = () => {
+    if (tempResult2.data != mainDataResult.data) {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setTempResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
       setMainDataResult((prev) => {
         return {
           data: newData,
@@ -2525,17 +2564,14 @@ const SA_A1000_603W: React.FC = () => {
       [SUB_DATA_ITEM_KEY]: ++temp,
       enddt: "",
       glpyn: "G",
-      group_seq: 0,
       itemcd: "",
       itemnm: "",
       quonum: Information.quonum,
       quorev: Information.quorev,
       quoseq: 0,
       remark: "",
-      sort_seq: 0,
       startdt: "",
       testnum: "",
-      packagetype: "",
       rowstatus: "N",
     };
     setSelectedsubDataState({ [newDataItem[SUB_DATA_ITEM_KEY]]: true });
@@ -2691,9 +2727,9 @@ const SA_A1000_603W: React.FC = () => {
     startdt_s: "",
     enddt_s: "",
     remark_s: "",
-    group_seq_s: "",
-    sort_seq_s: "",
-    packagetype_s: "",
+    quonum_s: "",
+    quorev_s: "",
+    progress_status_s: "",
     userid: "",
     pc: "",
     form_id: "",
@@ -2745,9 +2781,9 @@ const SA_A1000_603W: React.FC = () => {
       "@p_startdt_s": ParaData.startdt_s,
       "@p_enddt_s": ParaData.enddt_s,
       "@p_remark_s": ParaData.remark_s,
-      "@p_group_seq_s": ParaData.group_seq_s,
-      "@p_sort_seq_s": ParaData.sort_seq_s,
-      "@p_packagetype_s": ParaData.packagetype_s,
+      "@p_quonum_s": ParaData.quonum_s,
+      "@p_quorev_s": ParaData.quorev_s,
+      "@p_progress_status_s": ParaData.progress_status_s,
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "SA_A1000_603W",
@@ -2755,270 +2791,315 @@ const SA_A1000_603W: React.FC = () => {
   };
 
   const onSaveClick = () => {
-    const dataItem = subDataResult.data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
+    if (tabSelected == 0) {
+      const dataItem = mainDataResult.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
 
-    try {
-      if (
-        convertDateToStr(Information.quodt).substring(0, 4) < "1997" ||
-        convertDateToStr(Information.quodt).substring(6, 8) > "31" ||
-        convertDateToStr(Information.quodt).substring(6, 8) < "01" ||
-        convertDateToStr(Information.quodt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "SA_A1000_603W_001");
-      } else if (
-        Information.person == null ||
-        Information.person == "" ||
-        Information.person == undefined
-      ) {
-        throw findMessage(messagesData, "SA_A1000_603W_001");
-      } else if (
-        Information.quotype == null ||
-        Information.quotype == "" ||
-        Information.quotype == undefined
-      ) {
-        throw findMessage(messagesData, "SA_A1000_603W_001");
-      } else if (
-        convertDateToStr(Information.materialindt).substring(0, 4) < "1997" ||
-        convertDateToStr(Information.materialindt).substring(6, 8) > "31" ||
-        convertDateToStr(Information.materialindt).substring(6, 8) < "01" ||
-        convertDateToStr(Information.materialindt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "SA_A1000_603W_001");
-      } else {
-        const guid =
-          Information.guid1 +
-          "|" +
-          Information.guid2 +
-          "|" +
-          Information.guid3 +
-          "|" +
-          Information.guid4 +
-          "|" +
-          Information.guid5;
+      if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
 
-        const glp =
-          Information.glp1 +
-          "|" +
-          Information.glp2 +
-          "|" +
-          Information.glp3 +
-          "|" +
-          Information.glp4 +
-          "|" +
-          Information.glp5;
+      try {
+        let valid = true;
+        dataItem.map((item) => {
+          if (item.status == "") {
+            valid = false;
+          }
+        });
 
-        const translatereport =
-          Information.translate1 +
-          "|" +
-          Information.translate2 +
-          "|" +
-          Information.translate3 +
-          "|" +
-          Information.translate4;
-
-        if (dataItem.length === 0 && deletedMainRows.length === 0) {
-          setParaData({
-            workType: worktype,
-            orgdiv: "01",
-            location: "01",
-            quonum: Information.quonum,
-            quorev: Information.quorev,
-            quoseq: Information.quorev,
-            quotype: Information.quotype,
-            quosts: Information.quosts,
-            quodt: convertDateToStr(Information.quodt),
-            person: Information.person,
-            dptcd: Information.dptcd,
-            chkperson: Information.chkperson,
-            custcd: Information.custcd,
-            custnm: Information.custnm,
-            remark2: Information.remark2,
-            rcvcustnm: Information.rcvcustnm,
-            rcvcustprsnnm: Information.rcvcustprsnnm,
-            remark3: Information.remark3,
-            materialtype: Information.materialtype,
-            materialinfo: "",
-            materialindt: convertDateToStr(Information.materialindt),
-            materialnm: Information.materialnm,
-            guideline: guid,
-            translatereport: translatereport,
-            testenddt: isValidDate(Information.testenddt)
-              ? convertDateToStr(Information.testenddt)
-              : "",
-            teststdt: isValidDate(Information.teststdt)
-              ? convertDateToStr(Information.teststdt)
-              : "",
-            attdatnum: Information.attdatnum,
-            remark: Information.remark,
-            custprsnnm: Information.custprsnnm,
-            requestgb: Information.requestgb,
-            glpgb: glp,
-            rev_reason: Information.rev_reason,
-            validt: isValidDate(Information.validt)
-              ? convertDateToStr(Information.validt)
-              : "",
-            rowstatus_s: "",
-            quoseq_s: "",
-            itemcd_s: "",
-            itemnm_s: "",
-            testnum_s: "",
-            glpyn_s: "",
-            startdt_s: "",
-            enddt_s: "",
-            remark_s: "",
-            group_seq_s: "",
-            sort_seq_s: "",
-            packagetype_s: "",
-            userid: userId,
-            pc: pc,
-            form_id: "SA_A1000_603W",
-          });
+        if (valid != true) {
+          throw findMessage(messagesData, "SA_A1000_603W_002");
         } else {
-          let dataArr: TdataArr = {
+          let dataArr: TdataArr2 = {
             rowstatus_s: [],
-            quoseq_s: [],
-            itemcd_s: [],
-            itemnm_s: [],
-            testnum_s: [],
-            glpyn_s: [],
-            startdt_s: [],
-            enddt_s: [],
-            remark_s: [],
-            group_seq_s: [],
-            sort_seq_s: [],
-            packagetype_s: [],
+            quonum_s: [],
+            quorev_s: [],
+            progress_status_s: [],
           };
+
           dataItem.forEach((item: any, idx: number) => {
             const {
               rowstatus = "",
-              quoseq = "",
-              itemcd = "",
-              itemnm = "",
-              testnum = "",
-              glpyn = "",
-              startdt = "",
-              enddt = "",
-              remark = "",
-              group_seq = "",
-              sort_seq = "",
-              packagetype = "",
+              quonum = "",
+              quorev = "",
+              status = "",
             } = item;
 
             dataArr.rowstatus_s.push(rowstatus);
-            dataArr.quoseq_s.push(quoseq);
-            dataArr.itemcd_s.push(itemcd);
-            dataArr.itemnm_s.push(itemnm);
-            dataArr.testnum_s.push(testnum);
-            dataArr.glpyn_s.push(glpyn);
-            dataArr.startdt_s.push(
-              isValidDate(startdt) ? convertDateToStr(startdt) : startdt
-            );
-            dataArr.enddt_s.push(
-              isValidDate(enddt) ? convertDateToStr(enddt) : enddt
-            );
-            dataArr.remark_s.push(remark);
-            dataArr.group_seq_s.push(group_seq);
-            dataArr.sort_seq_s.push(sort_seq);
-            dataArr.packagetype_s.push(packagetype);
+            dataArr.quonum_s.push(quonum);
+            dataArr.quorev_s.push(quorev);
+            dataArr.progress_status_s.push(status);
           });
-          deletedMainRows.forEach((item: any, idx: number) => {
-            const {
-              rowstatus = "",
-              quoseq = "",
-              itemcd = "",
-              itemnm = "",
-              testnum = "",
-              glpyn = "",
-              startdt = "",
-              enddt = "",
-              remark = "",
-              group_seq = "",
-              sort_seq = "",
-              packagetype = "",
-            } = item;
 
-            dataArr.rowstatus_s.push("D");
-            dataArr.quoseq_s.push(quoseq);
-            dataArr.itemcd_s.push(itemcd);
-            dataArr.itemnm_s.push(itemnm);
-            dataArr.testnum_s.push(testnum);
-            dataArr.glpyn_s.push(glpyn);
-            dataArr.startdt_s.push(
-              isValidDate(startdt) ? convertDateToStr(startdt) : startdt
-            );
-            dataArr.enddt_s.push(
-              isValidDate(enddt) ? convertDateToStr(enddt) : enddt
-            );
-            dataArr.remark_s.push(remark);
-            dataArr.group_seq_s.push(group_seq);
-            dataArr.sort_seq_s.push(sort_seq);
-            dataArr.packagetype_s.push(packagetype);
-          });
-          setParaData({
-            workType: worktype,
+          setParaData((prev) => ({
+            ...prev,
+            workType: "STATE",
             orgdiv: "01",
-            location: "01",
-            quonum: Information.quonum,
-            quorev: Information.quorev,
-            quoseq: Information.quorev,
-            quotype: Information.quotype,
-            quosts: Information.quosts,
-            quodt: convertDateToStr(Information.quodt),
-            person: Information.person,
-            dptcd: Information.dptcd,
-            chkperson: Information.chkperson,
-            custcd: Information.custcd,
-            custnm: Information.custnm,
-            remark2: Information.remark2,
-            rcvcustnm: Information.rcvcustnm,
-            rcvcustprsnnm: Information.rcvcustprsnnm,
-            remark3: Information.remark3,
-            materialtype: Information.materialtype,
-            materialinfo: "",
-            materialindt: convertDateToStr(Information.materialindt),
-            materialnm: Information.materialnm,
-            guideline: guid,
-            translatereport: translatereport,
-            testenddt: isValidDate(Information.testenddt)
-              ? convertDateToStr(Information.testenddt)
-              : "",
-            teststdt: isValidDate(Information.teststdt)
-              ? convertDateToStr(Information.teststdt)
-              : "",
-            attdatnum: Information.attdatnum,
-            remark: Information.remark,
-            custprsnnm: Information.custprsnnm,
-            requestgb: Information.requestgb,
-            glpgb: glp,
-            rev_reason: Information.rev_reason,
-            validt: isValidDate(Information.validt)
-              ? convertDateToStr(Information.validt)
-              : "",
             rowstatus_s: dataArr.rowstatus_s.join("|"),
-            quoseq_s: dataArr.quoseq_s.join("|"),
-            itemcd_s: dataArr.itemcd_s.join("|"),
-            itemnm_s: dataArr.itemnm_s.join("|"),
-            testnum_s: dataArr.testnum_s.join("|"),
-            glpyn_s: dataArr.glpyn_s.join("|"),
-            startdt_s: dataArr.startdt_s.join("|"),
-            enddt_s: dataArr.enddt_s.join("|"),
-            remark_s: dataArr.remark_s.join("|"),
-            group_seq_s: dataArr.group_seq_s.join("|"),
-            sort_seq_s: dataArr.sort_seq_s.join("|"),
-            packagetype_s: dataArr.packagetype_s.join("|"),
+            quonum_s: dataArr.quonum_s.join("|"),
+            quorev_s: dataArr.quorev_s.join("|"),
+            progress_status_s: dataArr.progress_status_s.join("|"),
             userid: userId,
             pc: pc,
             form_id: "SA_A1000_603W",
-          });
+          }));
         }
+      } catch (e) {
+        alert(e);
       }
-    } catch (e) {
-      alert(e);
+    } else if (tabSelected == 1) {
+      const dataItem = subDataResult.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+
+      try {
+        if (
+          convertDateToStr(Information.quodt).substring(0, 4) < "1997" ||
+          convertDateToStr(Information.quodt).substring(6, 8) > "31" ||
+          convertDateToStr(Information.quodt).substring(6, 8) < "01" ||
+          convertDateToStr(Information.quodt).substring(6, 8).length != 2
+        ) {
+          throw findMessage(messagesData, "SA_A1000_603W_001");
+        } else if (
+          Information.person == null ||
+          Information.person == "" ||
+          Information.person == undefined
+        ) {
+          throw findMessage(messagesData, "SA_A1000_603W_001");
+        } else if (
+          Information.quotype == null ||
+          Information.quotype == "" ||
+          Information.quotype == undefined
+        ) {
+          throw findMessage(messagesData, "SA_A1000_603W_001");
+        } else if (
+          convertDateToStr(Information.materialindt).substring(0, 4) < "1997" ||
+          convertDateToStr(Information.materialindt).substring(6, 8) > "31" ||
+          convertDateToStr(Information.materialindt).substring(6, 8) < "01" ||
+          convertDateToStr(Information.materialindt).substring(6, 8).length != 2
+        ) {
+          throw findMessage(messagesData, "SA_A1000_603W_001");
+        } else {
+          const guid =
+            Information.guid1 +
+            "|" +
+            Information.guid2 +
+            "|" +
+            Information.guid3 +
+            "|" +
+            Information.guid4 +
+            "|" +
+            Information.guid5;
+
+          const glp =
+            Information.glp1 +
+            "|" +
+            Information.glp2 +
+            "|" +
+            Information.glp3 +
+            "|" +
+            Information.glp4 +
+            "|" +
+            Information.glp5;
+
+          const translatereport =
+            Information.translate1 +
+            "|" +
+            Information.translate2 +
+            "|" +
+            Information.translate3 +
+            "|" +
+            Information.translate4;
+
+          if (dataItem.length === 0 && deletedMainRows.length === 0) {
+            setParaData({
+              workType: worktype,
+              orgdiv: "01",
+              location: "01",
+              quonum: Information.quonum,
+              quorev: Information.quorev,
+              quoseq: Information.quorev,
+              quotype: Information.quotype,
+              quosts: Information.quosts,
+              quodt: convertDateToStr(Information.quodt),
+              person: Information.person,
+              dptcd: Information.dptcd,
+              chkperson: Information.chkperson,
+              custcd: Information.custcd,
+              custnm: Information.custnm,
+              remark2: Information.remark2,
+              rcvcustnm: Information.rcvcustnm,
+              rcvcustprsnnm: Information.rcvcustprsnnm,
+              remark3: Information.remark3,
+              materialtype: Information.materialtype,
+              materialinfo: "",
+              materialindt: convertDateToStr(Information.materialindt),
+              materialnm: Information.materialnm,
+              guideline: guid,
+              translatereport: translatereport,
+              testenddt: isValidDate(Information.testenddt)
+                ? convertDateToStr(Information.testenddt)
+                : "",
+              teststdt: isValidDate(Information.teststdt)
+                ? convertDateToStr(Information.teststdt)
+                : "",
+              attdatnum: Information.attdatnum,
+              remark: Information.remark,
+              custprsnnm: Information.custprsnnm,
+              requestgb: Information.requestgb,
+              glpgb: glp,
+              rev_reason: Information.rev_reason,
+              validt: isValidDate(Information.validt)
+                ? convertDateToStr(Information.validt)
+                : "",
+              rowstatus_s: "",
+              quoseq_s: "",
+              itemcd_s: "",
+              itemnm_s: "",
+              testnum_s: "",
+              glpyn_s: "",
+              startdt_s: "",
+              enddt_s: "",
+              remark_s: "",
+              quonum_s: "",
+              quorev_s: "",
+              progress_status_s: "",
+              userid: userId,
+              pc: pc,
+              form_id: "SA_A1000_603W",
+            });
+          } else {
+            let dataArr: TdataArr = {
+              rowstatus_s: [],
+              quoseq_s: [],
+              itemcd_s: [],
+              itemnm_s: [],
+              testnum_s: [],
+              glpyn_s: [],
+              startdt_s: [],
+              enddt_s: [],
+              remark_s: [],
+            };
+            dataItem.forEach((item: any, idx: number) => {
+              const {
+                rowstatus = "",
+                quoseq = "",
+                itemcd = "",
+                itemnm = "",
+                testnum = "",
+                glpyn = "",
+                startdt = "",
+                enddt = "",
+                remark = "",
+              } = item;
+
+              dataArr.rowstatus_s.push(rowstatus);
+              dataArr.quoseq_s.push(quoseq);
+              dataArr.itemcd_s.push(itemcd);
+              dataArr.itemnm_s.push(itemnm);
+              dataArr.testnum_s.push(testnum);
+              dataArr.glpyn_s.push(glpyn);
+              dataArr.startdt_s.push(
+                isValidDate(startdt) ? convertDateToStr(startdt) : startdt
+              );
+              dataArr.enddt_s.push(
+                isValidDate(enddt) ? convertDateToStr(enddt) : enddt
+              );
+              dataArr.remark_s.push(remark);
+            });
+            deletedMainRows.forEach((item: any, idx: number) => {
+              const {
+                rowstatus = "",
+                quoseq = "",
+                itemcd = "",
+                itemnm = "",
+                testnum = "",
+                glpyn = "",
+                startdt = "",
+                enddt = "",
+                remark = "",
+              } = item;
+
+              dataArr.rowstatus_s.push("D");
+              dataArr.quoseq_s.push(quoseq);
+              dataArr.itemcd_s.push(itemcd);
+              dataArr.itemnm_s.push(itemnm);
+              dataArr.testnum_s.push(testnum);
+              dataArr.glpyn_s.push(glpyn);
+              dataArr.startdt_s.push(
+                isValidDate(startdt) ? convertDateToStr(startdt) : startdt
+              );
+              dataArr.enddt_s.push(
+                isValidDate(enddt) ? convertDateToStr(enddt) : enddt
+              );
+              dataArr.remark_s.push(remark);
+            });
+            setParaData({
+              workType: worktype,
+              orgdiv: "01",
+              location: "01",
+              quonum: Information.quonum,
+              quorev: Information.quorev,
+              quoseq: Information.quorev,
+              quotype: Information.quotype,
+              quosts: Information.quosts,
+              quodt: convertDateToStr(Information.quodt),
+              person: Information.person,
+              dptcd: Information.dptcd,
+              chkperson: Information.chkperson,
+              custcd: Information.custcd,
+              custnm: Information.custnm,
+              remark2: Information.remark2,
+              rcvcustnm: Information.rcvcustnm,
+              rcvcustprsnnm: Information.rcvcustprsnnm,
+              remark3: Information.remark3,
+              materialtype: Information.materialtype,
+              materialinfo: "",
+              materialindt: convertDateToStr(Information.materialindt),
+              materialnm: Information.materialnm,
+              guideline: guid,
+              translatereport: translatereport,
+              testenddt: isValidDate(Information.testenddt)
+                ? convertDateToStr(Information.testenddt)
+                : "",
+              teststdt: isValidDate(Information.teststdt)
+                ? convertDateToStr(Information.teststdt)
+                : "",
+              attdatnum: Information.attdatnum,
+              remark: Information.remark,
+              custprsnnm: Information.custprsnnm,
+              requestgb: Information.requestgb,
+              glpgb: glp,
+              rev_reason: Information.rev_reason,
+              validt: isValidDate(Information.validt)
+                ? convertDateToStr(Information.validt)
+                : "",
+              rowstatus_s: dataArr.rowstatus_s.join("|"),
+              quoseq_s: dataArr.quoseq_s.join("|"),
+              itemcd_s: dataArr.itemcd_s.join("|"),
+              itemnm_s: dataArr.itemnm_s.join("|"),
+              testnum_s: dataArr.testnum_s.join("|"),
+              glpyn_s: dataArr.glpyn_s.join("|"),
+              startdt_s: dataArr.startdt_s.join("|"),
+              enddt_s: dataArr.enddt_s.join("|"),
+              remark_s: dataArr.remark_s.join("|"),
+              quonum_s: "",
+              quorev_s: "",
+              progress_status_s: "",
+              userid: userId,
+              pc: pc,
+              form_id: "SA_A1000_603W",
+            });
+          }
+        }
+      } catch (e) {
+        alert(e);
+      }
     }
   };
 
@@ -3087,9 +3168,9 @@ const SA_A1000_603W: React.FC = () => {
         startdt_s: "",
         enddt_s: "",
         remark_s: "",
-        group_seq_s: "",
-        sort_seq_s: "",
-        packagetype_s: "",
+        quonum_s: "",
+        quorev_s: "",
+        progress_status_s: "",
         userid: "",
         pc: "",
         form_id: "",
@@ -3163,9 +3244,9 @@ const SA_A1000_603W: React.FC = () => {
       "@p_startdt_s": "",
       "@p_enddt_s": "",
       "@p_remark_s": "",
-      "@p_group_seq_s": "",
-      "@p_sort_seq_s": "",
-      "@p_packagetype_s": "",
+      "@p_quonum_s": "",
+      "@p_quorev_s": "",
+      "@p_progress_status_s": "",
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "SA_A1000_603W",
@@ -3289,95 +3370,6 @@ const SA_A1000_603W: React.FC = () => {
     );
   };
 
-  const ChangeState = async () => {
-    if (!window.confirm("작성 중인 내용이 초기화 됩니다. 진행하시겠습니까?")) {
-      return false;
-    }
-    let data: any;
-    if (unsavedName.length > 0) {
-      setDeletedName(unsavedName);
-    }
-    if (unsavedAttadatnums.length > 0) {
-      setDeletedAttadatnums(unsavedAttadatnums);
-    }
-
-    const para: Iparameters = {
-      procedureName: "P_SA_A1000_603W_S",
-      pageNumber: 0,
-      pageSize: 0,
-      parameters: {
-        "@p_work_type": "QUOSTS",
-        "@p_orgdiv": "01",
-        "@p_location": "",
-        "@p_quonum": Information.quonum,
-        "@p_quorev": Information.quorev,
-        "@p_quotype": "",
-        "@p_quosts": "",
-        "@p_quodt": "",
-        "@p_person": "",
-        "@p_dptcd": "",
-        "@p_chkperson": "",
-        "@p_custcd": "",
-        "@p_custnm": "",
-        "@p_remark2": "",
-        "@p_rcvcustnm": "",
-        "@p_rcvcustprsnnm": "",
-        "@p_remark3": "",
-        "@p_materialtype": "",
-        "@p_materialinfo": "",
-        "@p_materialindt": "",
-        "@p_materialnm": "",
-        "@p_guideline": "",
-        "@p_translatereport": "",
-        "@p_teststdt": "",
-        "@p_testenddt": "",
-        "@p_attdatnum": "",
-        "@p_remark": "",
-        "@p_custprsnnm": "",
-        "@p_requestgb": "",
-        "@p_glpgb": "",
-        "@p_rev_reason": "",
-        "@p_validt": "",
-        "@p_rowstatus_s": "",
-        "@p_quoseq_s": "",
-        "@p_itemcd_s": "",
-        "@p_itemnm_s": "",
-        "@p_testnum_s": "",
-        "@p_glpyn_s": "",
-        "@p_startdt_s": "",
-        "@p_enddt_s": "",
-        "@p_remark_s": "",
-        "@p_group_seq_s": "",
-        "@p_sort_seq_s": "",
-        "@p_packagetype_s": "",
-        "@p_userid": userId,
-        "@p_pc": pc,
-        "@p_form_id": "SA_A1000_603W",
-      },
-    };
-
-    try {
-      data = await processApi<any>("procedure", para);
-    } catch (error) {
-      data = null;
-    }
-    if (data.isSuccess === true) {
-      setFilters((prev) => ({
-        ...prev,
-        find_row_value: data.returnString,
-        isSearch: true,
-      }));
-      setSubFilters((prev) => ({
-        ...prev,
-        isSearch: true,
-      }));
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-      alert(data.resultMessage);
-    }
-  };
-
   const customizedMarker = (item: any) => {
     return (
       <span
@@ -3463,7 +3455,7 @@ const SA_A1000_603W: React.FC = () => {
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
-                  <th>견적번호</th>
+                  <th>프로젝트번호</th>
                   <td>
                     <Input
                       name="quonum"
@@ -3629,10 +3621,6 @@ const SA_A1000_603W: React.FC = () => {
                     materialtype: materialtypeListData.find(
                       (items: any) => items.sub_code == row.materialtype
                     )?.code_name,
-                    //status 임시
-                    status: statusListData2.find(
-                      (items: any) => items.sub_code == row.status
-                    )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
                   mainDataState
@@ -3665,7 +3653,12 @@ const SA_A1000_603W: React.FC = () => {
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
+                onItemChange={onItemChange}
+                cellRender={customCellRender2}
+                rowRender={customRowRender2}
+                editField={EDIT_FIELD}
               >
+                <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdList"].map(
                     (item: any, idx: number) =>
@@ -3680,7 +3673,7 @@ const SA_A1000_603W: React.FC = () => {
                             dateField.includes(item.fieldName)
                               ? DateCell
                               : colorField.includes(item.fieldName)
-                              ? CustomColorCell
+                              ? CustomComboBoxCell
                               : undefined
                           }
                           footerCell={
@@ -3706,7 +3699,7 @@ const SA_A1000_603W: React.FC = () => {
             <FormBox>
               <tbody>
                 <tr>
-                  <th>견적번호</th>
+                  <th>프로젝트번호</th>
                   <td>
                     <div
                       className="filter-item-wrap"

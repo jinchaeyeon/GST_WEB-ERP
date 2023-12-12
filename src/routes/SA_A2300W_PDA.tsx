@@ -126,7 +126,7 @@ const SA_A2300_PDA: React.FC = () => {
   >([]);
 
   const fetchScheduler = async () => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -271,7 +271,7 @@ const SA_A2300_PDA: React.FC = () => {
   }, [customerFilters]);
 
   const fetchCustomerGrid = async () => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -615,7 +615,7 @@ const SA_A2300_PDA: React.FC = () => {
   }, [orderFilters]);
 
   const fetchOrderGrid = async () => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -839,7 +839,7 @@ const SA_A2300_PDA: React.FC = () => {
   const lotIdGetter = getter(LOT_ITEM_KEY);
 
   const saveLotGrid = async () => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -1008,7 +1008,7 @@ const SA_A2300_PDA: React.FC = () => {
   };
 
   const fetchLotGrid = async () => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 

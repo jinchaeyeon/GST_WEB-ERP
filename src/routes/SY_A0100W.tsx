@@ -254,7 +254,7 @@ const App: React.FC = () => {
     dataFilters: any,
     programFilters: any
   ) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 

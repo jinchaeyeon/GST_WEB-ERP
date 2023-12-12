@@ -1,5 +1,9 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import {
+  Input,
+  TextArea
+} from "@progress/kendo-react-inputs";
 import { useState } from "react";
 import {
   BottomContainer,
@@ -8,11 +12,6 @@ import {
   FormBoxWrap,
 } from "../../../CommonStyled";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import {
-  Input,
-  InputChangeEvent,
-  TextArea,
-} from "@progress/kendo-react-inputs";
 
 type TKendoWindow = {
   setVisible(isVisible: boolean): void;
@@ -26,7 +25,7 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 460,
-    height: 500,
+    height: 450,
   });
 
   const handleMove = (event: WindowMoveEvent) => {
@@ -55,7 +54,6 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
   };
 
   const [filters, setFilters] = useState({
-    senduser: "",
     recieveuser: "",
     title: "",
     contents: "",
@@ -76,17 +74,6 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
       <FormBoxWrap border={true}>
         <FormBox>
           <tbody>
-            <tr>
-              <th style={{ width: "20%" }}>보내는 사람</th>
-              <td>
-                <Input
-                  name="senduser"
-                  type="text"
-                  value={filters.senduser}
-                  onChange={InputChange}
-                />
-              </td>
-            </tr>
             <tr>
               <th style={{ width: "20%" }}>받는 사람</th>
               <td>
@@ -125,7 +112,7 @@ const KendoWindow = ({ setVisible, modal = false }: TKendoWindow) => {
       </FormBoxWrap>
       <BottomContainer>
         <ButtonContainer>
-          <Button themeColor={"primary"} fillMode={"outline"} onClick={onSend}>
+          <Button themeColor={"primary"} onClick={onSend}>
             확인
           </Button>
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>

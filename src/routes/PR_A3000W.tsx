@@ -312,7 +312,7 @@ const PR_A3000W: React.FC = () => {
 
   // 데이터 조회
   const fetchMain = async () => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     if (filters.plankey === "") return;
     let data: any;
     setLoading(true);
@@ -342,7 +342,7 @@ const PR_A3000W: React.FC = () => {
 
   // 시작정보 조회
   const fetchMaster = async () => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 

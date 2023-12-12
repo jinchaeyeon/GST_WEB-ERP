@@ -5,7 +5,7 @@ import { CustomErrorComponent } from "custom-error";
 class FileViewers extends Component {
   render() {
     return (
-      <div key={this.props.file}>
+      <div key={this.props.file} ref={this.props.ref != undefined ? this.props.ref : undefined}>
         <FileViewer
           fileType={this.props.type}
           filePath={this.props.file}

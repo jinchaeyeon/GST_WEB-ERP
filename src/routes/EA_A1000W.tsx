@@ -415,7 +415,7 @@ const EA_A1000: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    if (!permissions?.view) return;
+   //if (!permissions?.view) return;
     let data: any;
     setLoading(true); //조회조건 파라미터
     const parameters: Iparameters = {
@@ -466,7 +466,7 @@ const EA_A1000: React.FC = () => {
   };
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-    if (!permissions?.view) return;
+   //if (!permissions?.view) return;
     let data: any;
     setLoading(true); //조회조건 파라미터
     const parameters: Iparameters = {
@@ -547,7 +547,7 @@ const EA_A1000: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters3: any) => {
-    if (!permissions?.view) return;
+   //if (!permissions?.view) return;
     let data: any;
     setLoading(true); //조회조건 파라미터
     const parameters: Iparameters = {
@@ -628,7 +628,7 @@ const EA_A1000: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async (filters4: any) => {
-    if (!permissions?.view) return;
+   //if (!permissions?.view) return;
     let data: any;
     setLoading(true); //조회조건 파라미터
     const parameters: Iparameters = {

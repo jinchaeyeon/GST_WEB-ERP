@@ -658,7 +658,7 @@ const PR_A1100W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     //수주상세 조회 파라미터
     const parameters: Iparameters = {
@@ -772,7 +772,7 @@ const PR_A1100W: React.FC = () => {
   };
 
   const fetchPlanGrid = async (filters: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //생산계획 조회 파라미터

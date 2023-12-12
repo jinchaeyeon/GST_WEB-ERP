@@ -416,7 +416,7 @@ const HU_B4010W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -508,7 +508,7 @@ const HU_B4010W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (detailFilters: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -614,7 +614,7 @@ const HU_B4010W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters2: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -666,7 +666,7 @@ const HU_B4010W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async (filters3: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -718,7 +718,7 @@ const HU_B4010W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid5 = async (filters4: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -770,7 +770,7 @@ const HU_B4010W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid6 = async (filters5: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -822,7 +822,7 @@ const HU_B4010W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid7 = async (filters6: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터

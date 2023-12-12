@@ -618,7 +618,7 @@ const MA_A9001W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -867,7 +867,7 @@ const MA_A9001W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid1 = async (subfilters: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -931,7 +931,7 @@ const MA_A9001W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid2 = async (subfilters2: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -995,7 +995,7 @@ const MA_A9001W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid3 = async (subfilters3: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터

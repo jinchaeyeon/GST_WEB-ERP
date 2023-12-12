@@ -52,20 +52,15 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B1000_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import { MultiSelect } from "@progress/kendo-react-dropdowns/dist/npm/MultiSelect/MultiSelect";
+import { MultiSelectChangeEvent } from "@progress/kendo-react-dropdowns";
 
 const DATA_ITEM_KEY = "num";
-const SUB_DATA_ITEM_KEY = "num";
-const SUB_DATA_ITEM_KEY2 = "num";
-const SUB_DATA_ITEM_KEY3 = "num";
-
-const dateField = ["recdt", "request_date", "completion_date"];
 
 const SA_B1000W_603: React.FC = () => {
+  const [state, setState] = useState("0");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-  const [page2, setPage2] = useState(initialPageState);
-  const [page3, setPage3] = useState(initialPageState);
-  const [page4, setPage4] = useState(initialPageState);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -82,60 +77,9 @@ const SA_B1000W_603: React.FC = () => {
     });
   };
 
-  const pageChange2 = (event: GridPageChangeEvent) => {
-    const { page } = event;
-
-    setSubFilters((prev) => ({
-      ...prev,
-      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
-      isSearch: true,
-    }));
-
-    setPage2({
-      skip: page.skip,
-      take: initialPageState.take,
-    });
-  };
-
-  const pageChange3 = (event: GridPageChangeEvent) => {
-    const { page } = event;
-
-    setSubFilters2((prev) => ({
-      ...prev,
-      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
-      isSearch: true,
-    }));
-
-    setPage3({
-      skip: page.skip,
-      take: initialPageState.take,
-    });
-  };
-
-  const pageChange4 = (event: GridPageChangeEvent) => {
-    const { page } = event;
-
-    setSubFilters3((prev) => ({
-      ...prev,
-      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
-      isSearch: true,
-    }));
-
-    setPage4({
-      skip: page.skip,
-      take: initialPageState.take,
-    });
-  };
-
   const processApi = useApi();
   let gridRef: any = useRef(null);
-  let gridRef2: any = useRef(null);
-  let gridRef3: any = useRef(null);
-  let gridRef4: any = useRef(null);
   const idGetter = getter(DATA_ITEM_KEY);
-  const idGetter2 = getter(SUB_DATA_ITEM_KEY);
-  const idGetter3 = getter(SUB_DATA_ITEM_KEY2);
-  const idGetter4 = getter(SUB_DATA_ITEM_KEY3);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const pathname: string = window.location.pathname.replace("/", "");
@@ -167,7 +111,7 @@ const SA_B1000W_603: React.FC = () => {
     project: "",
     custcd: "",
     custnm: "",
-    status: "",
+    status: [],
     smperson: "",
     find_row_value: "",
     pgNum: 1,
@@ -207,6 +151,17 @@ const SA_B1000W_603: React.FC = () => {
     }));
   };
 
+  const filterMultiSelectChange = (event: MultiSelectChangeEvent) => {
+    const values = event.value;
+    const name = event.target.props.name ?? "";
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: values,
+    }));
+  };
+
+
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
 
@@ -216,12 +171,23 @@ const SA_B1000W_603: React.FC = () => {
     }));
   };
 
+  function getName(data: { sub_code: string }[]) {
+    let str = "";
+    data.map((item: { sub_code: string }) => (str += item.sub_code + "|"));
+    return data.length > 0 ? str.slice(0, -1) : str;
+  }
+
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    if (!permissions?.view) return;
+       //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
-
+    const status =
+      filters.status.length == 0
+        ? "1|2|3|4|5"
+        : filters.status.length == 1
+        ? filters.status[0].sub_code
+        : getName(filters.status);
     //조회조건 파라미터
     const parameters: Iparameters = {
       procedureName: "P_SA_B1000W_603_Q",
@@ -235,8 +201,7 @@ const SA_B1000W_603: React.FC = () => {
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
         "@p_smperson": filters.smperson,
-        "@p_status": filters.status,
-        "@p_datnum": "",
+        "@p_status_s": status,
         "@p_find_row_value": "",
       },
     };
@@ -259,7 +224,7 @@ const SA_B1000W_603: React.FC = () => {
 
       if (totalRowCnt > 0) {
         setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-
+        setState(rows[0].progress_status);
         setSubFilters((prev: any) => ({
           ...prev,
           pgNum: 1,
@@ -278,13 +243,14 @@ const SA_B1000W_603: React.FC = () => {
           ...prev,
           pgNum: 1,
           find_row_value: "",
-          ref_key: rows[0].quokey,
+          ref_key: rows[0].ref_key,
           isSearch: true,
         }));
       } else {
         setSubDataResult(process([], subDataState));
         setSubDataResult2(process([], subDataState2));
         setSubDataResult3(process([], subDataState3));
+        setState("0");
       }
     } else {
       console.log("[오류 발생]");
@@ -304,7 +270,7 @@ const SA_B1000W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid = async (subfilters: any) => {
-    if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -321,8 +287,7 @@ const SA_B1000W_603: React.FC = () => {
         "@p_custcd": "",
         "@p_custnm": "",
         "@p_smperson": "",
-        "@p_status": "",
-        "@p_datnum": "",
+        "@p_status_s": "",
         "@p_find_row_value": "",
       },
     };
@@ -343,10 +308,6 @@ const SA_B1000W_603: React.FC = () => {
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
-
-      if (totalRowCnt > 0) {
-        setsubSelectedState({ [rows[0][SUB_DATA_ITEM_KEY]]: true });
-      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -365,7 +326,7 @@ const SA_B1000W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid2 = async (subfilters2: any) => {
-    if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -382,8 +343,7 @@ const SA_B1000W_603: React.FC = () => {
         "@p_custcd": "",
         "@p_custnm": "",
         "@p_smperson": "",
-        "@p_status": "",
-        "@p_datnum": "",
+        "@p_status_s": "",
         "@p_find_row_value": "",
       },
     };
@@ -404,10 +364,6 @@ const SA_B1000W_603: React.FC = () => {
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
-
-      if (totalRowCnt > 0) {
-        setsubSelectedState2({ [rows[0][SUB_DATA_ITEM_KEY2]]: true });
-      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -426,7 +382,7 @@ const SA_B1000W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid3 = async (subfilters3: any) => {
-    if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -443,8 +399,7 @@ const SA_B1000W_603: React.FC = () => {
         "@p_custcd": "",
         "@p_custnm": "",
         "@p_smperson": "",
-        "@p_status": "",
-        "@p_datnum": "",
+        "@p_status_s": "",
         "@p_find_row_value": "",
       },
     };
@@ -465,10 +420,6 @@ const SA_B1000W_603: React.FC = () => {
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
-
-      if (totalRowCnt > 0) {
-        setsubSelectedState3({ [rows[0][SUB_DATA_ITEM_KEY3]]: true });
-      }
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -578,10 +529,12 @@ const SA_B1000W_603: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent(
-    "L_CM500_603, L_SA001_603, L_sysUserMaster_001,L_CM501_603",
+    "L_SA011_603, L_CM500_603, L_SA001_603, L_sysUserMaster_001,L_CM501_603",
     setBizComponentData
   );
-
+  const [statusListData2, setStatusListData2] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
@@ -607,6 +560,11 @@ const SA_B1000W_603: React.FC = () => {
           (item: any) => item.bizComponentId == "L_CM500_603"
         )
       );
+      const statusQueryStr2 = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_SA011_603"
+        )
+      );
       const materialtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_SA001_603"
@@ -617,6 +575,7 @@ const SA_B1000W_603: React.FC = () => {
           (item: any) => item.bizComponentId == "L_CM501_603"
         )
       );
+      fetchQueryData(statusQueryStr2, setStatusListData2);
       fetchQueryData(userQueryStr, setUserListData);
       fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
       fetchQueryData(meditypeQueryStr, setMeditypeListData);
@@ -685,88 +644,16 @@ const SA_B1000W_603: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [subselectedState, setsubSelectedState] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
-  const [subselectedState2, setsubSelectedState2] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
-  const [subselectedState3, setsubSelectedState3] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
-  };
-
-  const onSubSortChange = (e: any) => {
-    setSubDataState((prev) => ({ ...prev, sort: e.sort }));
-  };
-
-  const onSubSortChange2 = (e: any) => {
-    setSubDataState2((prev) => ({ ...prev, sort: e.sort }));
-  };
-
-  const onSubSortChange3 = (e: any) => {
-    setSubDataState3((prev) => ({ ...prev, sort: e.sort }));
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
 
-  const onSubDataStateChange = (event: GridDataStateChangeEvent) => {
-    setSubDataState(event.dataState);
-  };
-
-  const onSubDataStateChange2 = (event: GridDataStateChangeEvent) => {
-    setSubDataState2(event.dataState);
-  };
-
-  const onSubDataStateChange3 = (event: GridDataStateChangeEvent) => {
-    setSubDataState3(event.dataState);
-  };
-
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-        건
-      </td>
-    );
-  };
-
-  const subTotalFooterCell = (props: GridFooterCellProps) => {
-    var parts = subDataResult.total.toString().split(".");
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-        건
-      </td>
-    );
-  };
-
-  const subTotalFooterCell2 = (props: GridFooterCellProps) => {
-    var parts = subDataResult2.total.toString().split(".");
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-        건
-      </td>
-    );
-  };
-
-  const subTotalFooterCell3 = (props: GridFooterCellProps) => {
-    var parts = subDataResult3.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총{" "}
@@ -788,6 +675,7 @@ const SA_B1000W_603: React.FC = () => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
+    setState(selectedRowData.progress_status);
     setSubFilters((prev: any) => ({
       ...prev,
       pgNum: 1,
@@ -806,43 +694,13 @@ const SA_B1000W_603: React.FC = () => {
       ...prev,
       pgNum: 1,
       find_row_value: "",
-      ref_key: selectedRowData.quokey,
+      ref_key: selectedRowData.ref_key,
       isSearch: true,
     }));
   };
 
-  const onSubSelectionChange = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: subselectedState,
-      dataItemKey: SUB_DATA_ITEM_KEY,
-    });
-    setsubSelectedState(newSelectedState);
-  };
-
-  const onSubSelectionChange2 = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: subselectedState2,
-      dataItemKey: SUB_DATA_ITEM_KEY2,
-    });
-    setsubSelectedState2(newSelectedState);
-  };
-
-  const onSubSelectionChange3 = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: subselectedState3,
-      dataItemKey: SUB_DATA_ITEM_KEY3,
-    });
-    setsubSelectedState3(newSelectedState);
-  };
-
   const search = () => {
     setPage(initialPageState); // 페이지 초기화
-    setPage2(initialPageState);
-    setPage3(initialPageState);
-    setPage4(initialPageState);
     setFilters((prev: any) => ({
       ...prev,
       pgNum: 1,
@@ -923,16 +781,16 @@ const SA_B1000W_603: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
-                  <th>진행상태</th>
+                <th>상태</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="status"
-                        value={filters.status}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
+                    <MultiSelect
+                      name="status"
+                      data={statusListData2}
+                      onChange={filterMultiSelectChange}
+                      value={filters.status}
+                      textField="code_name"
+                      dataItemKey="sub_code"
+                    />
                   </td>
                   <th>SM담당자</th>
                   <td>
@@ -1026,6 +884,7 @@ const SA_B1000W_603: React.FC = () => {
           <ButtonContainer>
             <Button
               themeColor={"primary"}
+              fillMode={state == "1" ? "solid" : "outline"}
               icon="folder"
               style={{ width: "25%", height: "4vh" }}
             >
@@ -1034,6 +893,7 @@ const SA_B1000W_603: React.FC = () => {
             <Button
               themeColor={"primary"}
               icon="folder"
+              fillMode={state == "2" ? "solid" : "outline"}
               style={{ width: "25%", height: "4vh" }}
             >
               컨설팅
@@ -1041,6 +901,7 @@ const SA_B1000W_603: React.FC = () => {
             <Button
               themeColor={"primary"}
               icon="folder"
+              fillMode={state == "3" ? "solid" : "outline"}
               style={{ width: "25%", height: "4vh" }}
             >
               견적
@@ -1048,6 +909,7 @@ const SA_B1000W_603: React.FC = () => {
             <Button
               themeColor={"primary"}
               icon="folder"
+              fillMode={state == "4" ? "solid" : "outline"}
               style={{ width: "25%", height: "4vh" }}
             >
               계약
