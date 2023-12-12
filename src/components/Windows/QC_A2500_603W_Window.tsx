@@ -44,6 +44,7 @@ import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -57,8 +58,8 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: isMobile == true ? deviceWidth : 1000,
-    height: 800,
+    width: isMobile == true ? deviceWidth : 1400,
+    height: 820,
   });
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -172,6 +173,15 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     }));
   };
 
+  const filterComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
   };
@@ -274,7 +284,9 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     itemnm: "",
     custcd: "",
     custnm: "",
+    quonum: "",
     ordnum: "",
+    quotestnum: "",
     testnum: "",
     chkperson: "",
     isSearch: false,
@@ -300,7 +312,9 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
         "@p_itemnm": filters.itemnm,
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
+        "@p_quonum": filters.quonum,
         "@p_ordnum": filters.ordnum,
+        "@p_quotestnum": filters.quotestnum,
         "@p_testnum": filters.testnum,
         "@p_chkperson": filters.chkperson,
         "@p_find_row_value": "",
@@ -439,7 +453,7 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   return (
     <>
       <Window
-        title={"수주참조팝업"}
+        title={"견적참조팝업"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -462,7 +476,7 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
-                <th>수주일자</th>
+                <th>의뢰기간</th>
                 <td>
                   <CommonDateRangePicker
                     value={{
@@ -479,12 +493,30 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
                     className="required"
                   />
                 </td>
+                <th>프로젝트번호</th>
+                <td>
+                  <Input
+                    name="quonum"
+                    type="text"
+                    value={filters.quonum}
+                    onChange={filterInputChange}
+                  />
+                </td>
                 <th>수주번호</th>
                 <td>
                   <Input
                     name="ordnum"
                     type="text"
                     value={filters.ordnum}
+                    onChange={filterInputChange}
+                  />
+                </td>
+                <th>예약시험번호</th>
+                <td>
+                  <Input
+                    name="quotestnum"
+                    type="text"
+                    value={filters.quotestnum}
                     onChange={filterInputChange}
                   />
                 </td>
@@ -497,6 +529,8 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
                     onChange={filterInputChange}
                   />
                 </td>
+              </tr>
+              <tr>
                 <th>시험책임자</th>
                 <td>
                   <Input
@@ -506,8 +540,19 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
                     onChange={filterInputChange}
                   />
                 </td>
-              </tr>
-              <tr>
+                <th>고객사</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="custcd"
+                      value={filters.custcd}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                      textField="custnm"
+                      valueField="custcd"
+                    />
+                  )}
+                </td>
                 <th>품목코드</th>
                 <td>
                   <Input
@@ -525,36 +570,11 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
                   </ButtonInInput>
                 </td>
                 <th>품목명</th>
-                <td>
+                <td colSpan={3}>
                   <Input
                     name="itemnm"
                     type="text"
                     value={filters.itemnm}
-                    onChange={filterInputChange}
-                  />
-                </td>
-                <th>업체코드</th>
-                <td>
-                  <Input
-                    name="custcd"
-                    type="text"
-                    value={filters.custcd}
-                    onChange={filterInputChange}
-                  />
-                  <ButtonInInput>
-                    <Button
-                      onClick={onCustWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
-                </td>
-                <th>업체명</th>
-                <td>
-                  <Input
-                    name="custnm"
-                    type="text"
-                    value={filters.custnm}
                     onChange={filterInputChange}
                   />
                 </td>
@@ -608,11 +628,13 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
             resizable={true}
           >
             <GridColumn
-              field="ref_key"
+              field="quokey"
               title="프로젝트 번호"
               width="150px"
               footerCell={mainTotalFooterCell}
             />
+            <GridColumn field="ordnum" title="수주번호" width="150px" />
+            <GridColumn field="quotestnum" title="예약시험번호" width="150px" />
             <GridColumn field="testnum" title="시험번호" width="150px" />
             <GridColumn field="smperson" title="SM담당자" width="120px" />
             <GridColumn field="cpmperson" title="CPM담당자" width="120px" />

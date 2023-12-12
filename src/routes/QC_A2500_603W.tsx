@@ -366,6 +366,8 @@ const BA_A0020_603: React.FC = () => {
     orgdiv: "01",
     location: "01",
     ref_key: "",
+    ordnum: "",
+    quotestnum : "",
     custcd: "",
     custnm: "",
     testnum: "",
@@ -391,6 +393,7 @@ const BA_A0020_603: React.FC = () => {
   const [Information, setInformation] = useState({
     orgdiv: "01",
     ref_key: "",
+    quotestnum: "",
     testnum: "",
     smperson: "",
     cpmperson: "",
@@ -416,7 +419,7 @@ const BA_A0020_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -435,6 +438,7 @@ const BA_A0020_603: React.FC = () => {
         "@p_smperson": filters.smperson,
         "@p_cpmperson": filters.cpmperson,
         "@p_status": filters.status,
+        "@p_quotestnum": filters.quotestnum,
         "@p_datnum": filters.datnum,
         "@p_find_row_value": filters.find_row_value,
       },
@@ -445,7 +449,6 @@ const BA_A0020_603: React.FC = () => {
     } catch (error) {
       data = null;
     }
-
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -523,7 +526,7 @@ const BA_A0020_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchCommentGrid = async (commentFilter: any) => {
-    //if (!permissions?.view) return;
+    if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -543,6 +546,7 @@ const BA_A0020_603: React.FC = () => {
         "@p_cpmperson": filters.cpmperson,
         "@p_status": filters.status,
         "@p_datnum": commentFilter.datnum,
+        "@p_quotestnum": filters.quotestnum,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -587,6 +591,7 @@ const BA_A0020_603: React.FC = () => {
       setInformation({
         orgdiv: rows[0].orgdiv,
         ref_key: rows[0].ref_key,
+        quotestnum: rows[0].quotestnum,
         testnum: rows[0].testnum,
         smperson: rows[0].smperson,
         cpmperson: rows[0].cpmperson,
@@ -801,7 +806,8 @@ const BA_A0020_603: React.FC = () => {
 
     setInformation({
       orgdiv: data.orgdiv == undefined ? "01" : data.orgdiv,
-      ref_key: data.ref_key == undefined ? "" : data.ref_key,
+      ref_key: data.quokey == undefined ? "" : data.quokey,
+      quotestnum: data.quotestnum == undefined ? "" : data.quotestnum,
       testnum: data.testnum == undefined ? "" : data.testnum,
       smperson: smperson == undefined ? "" : smperson.user_id,
       cpmperson: cpmperson == undefined ? "" : cpmperson.user_id,
@@ -1135,8 +1141,9 @@ const BA_A0020_603: React.FC = () => {
         orgdiv: "01",
         location: "01",
         datnum: Information.datnum,
-        ordnum: workType == "N" ? Information.ordnum : "",
-        ordseq: workType == "N" ? Information.ordseq : 0,
+        quokey: workType == "N" ? Information.ref_key : "",
+        // ordnum: workType == "N" ? Information.ordnum : "",
+        // ordseq: workType == "N" ? Information.ordseq : 0,
         status: Information.status,
         ncrdiv: Information.ncrdiv,
         combytype: Information.combytype,
@@ -1171,8 +1178,9 @@ const BA_A0020_603: React.FC = () => {
     orgdiv: "01",
     location: "01",
     datnum: "",
-    ordnum: "",
-    ordseq: 0,
+    quokey: "",
+    // ordnum: "",
+    // ordseq: 0,
     status: "",
     ncrdiv: "",
     combytype: "",
@@ -1209,8 +1217,9 @@ const BA_A0020_603: React.FC = () => {
       "@p_orgdiv": paraData.orgdiv,
       "@p_location": paraData.location,
       "@p_datnum": paraData.datnum,
-      "@p_ordnum": paraData.ordnum,
-      "@p_ordseq": paraData.ordseq,
+      "@p_quokey":  paraData.quokey,
+      // "@p_ordnum": paraData.ordnum,
+      // "@p_ordseq": paraData.ordseq,
       "@p_status": paraData.status,
       "@p_ncrdiv": paraData.ncrdiv,
       "@p_combytype": paraData.combytype,
@@ -1420,7 +1429,7 @@ const BA_A0020_603: React.FC = () => {
             <FilterBox>
               <tbody>
                 <tr>
-                  <th>프로젝트 번호</th>
+                  <th>프로젝트번호</th>
                   <td>
                     <Input
                       name="ref_key"
@@ -1436,22 +1445,23 @@ const BA_A0020_603: React.FC = () => {
                       />
                     </ButtonInInput>
                   </td>
-                  <th>고객사</th>
+                  <th>수주번호</th>
                   <td>
                     <Input
-                      name="custnm"
+                      name="ordnum"
                       type="text"
-                      value={filters.custnm}
+                      value={filters.ref_key}
                       onChange={filterInputChange}
                     />
-                    <ButtonInInput>
-                      <Button
-                        type={"button"}
-                        onClick={onCustWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInInput>
+                  </td>
+                  <th>예약시험번호</th>
+                  <td>
+                    <Input
+                      name="quotestnum"
+                      type="text"
+                      value={filters.quotestnum}
+                      onChange={filterInputChange}
+                    />
                   </td>
                   <th>시험번호</th>
                   <td>
@@ -1471,6 +1481,23 @@ const BA_A0020_603: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
+                <th>고객사</th>
+                  <td>
+                    <Input
+                      name="custnm"
+                      type="text"
+                      value={filters.custnm}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        type={"button"}
+                        onClick={onCustWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
                   <th>진행상태</th>
                   <td>
                     {customOptionData !== null && (
@@ -1641,12 +1668,34 @@ const BA_A0020_603: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>프로젝트 번호</th>
+                      <th>프로젝트번호</th>
                       <td>
                         <Input
                           name="ref_key"
                           type="text"
                           value={Information.ref_key}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>수주번호</th>
+                      <td>
+                        <Input
+                          name="ordnum"
+                          type="text"
+                          value={Information.ordnum}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>예약시험번호</th>
+                      <td>
+                        <Input
+                          name="quotestnum"
+                          type="text"
+                          value={Information.quotestnum}
                           className="readonly"
                         />
                       </td>

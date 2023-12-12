@@ -11,6 +11,18 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
+        id: "col_ordnum",
+        field: "ordnum",
+        caption: "수주번호",
+        width: 120,
+      },
+      {
+        id: "col_quotestnum",
+        field: "quotestnum",
+        caption: "예약시험번호",
+        width: 120,
+      },
+      {
         id: "col_testnum",
         field: "testnum",
         caption: "시험번호",
