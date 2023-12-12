@@ -192,7 +192,6 @@ const CM_A7000W: React.FC = () => {
   let gridRef: any = useRef(null);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const userId = UseGetValueFromSessionItem("user_id");
   const [workType, setWorkType] = useState("");
   const [pc, setPc] = useState("");
@@ -504,7 +503,7 @@ const CM_A7000W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "LIST",
-    orgdiv: orgdiv,
+    orgdiv: "01",
     meetingnum: "",
     frdt: new Date(),
     todt: new Date(),
@@ -519,7 +518,7 @@ const CM_A7000W: React.FC = () => {
   });
 
   const [information, setInformation] = useState({
-    orgdiv: orgdiv,
+    orgdiv: "01",
     meetingnum: "",
     custcd: "",
     recdt: new Date(),
@@ -653,7 +652,7 @@ const CM_A7000W: React.FC = () => {
       (item) => item[DATA_ITEM_KEY] == mainDataId
     );
 
-    const id = orgdiv + "_" + selectedRowData["meetingnum"];
+    const id = "01" + "_" + selectedRowData["meetingnum"];
 
     const para = {
       folder: "CM_A7000W",
@@ -801,7 +800,7 @@ const CM_A7000W: React.FC = () => {
   //저장 파라미터 초기 값
   const [paraDataSaved, setParaDataSaved] = useState({
     workType: "",
-    orgdiv: orgdiv,
+    orgdiv: "01",
     meetingnum: "",
     meetingseq: 0,
     custcd: "",
@@ -844,7 +843,7 @@ const CM_A7000W: React.FC = () => {
 
     setParaDataSaved({
       workType: workType,
-      orgdiv: orgdiv,
+      orgdiv: "01",
       meetingnum: information.meetingnum,
       meetingseq: 0,
       custcd: information.custcd,
@@ -971,7 +970,7 @@ const CM_A7000W: React.FC = () => {
       "new"
     );
     setInformation({
-      orgdiv: orgdiv,
+      orgdiv: "01",
       meetingnum: "",
       custcd: "",
       recdt: new Date(),
@@ -1284,7 +1283,7 @@ const CM_A7000W: React.FC = () => {
                         <Input
                           name="custcd"
                           type="text"
-                          value={information.custcd ? information.custcd : ""}
+                          value={information.custcd}
                           onChange={InputChange}
                           className="readonly"
                         />
@@ -1431,7 +1430,6 @@ const CM_A7000W: React.FC = () => {
                         )}
                       </td>
                     </tr>
-                    <tr></tr>
                     <tr>
                       <th>회의 장소</th>
                       <td>
