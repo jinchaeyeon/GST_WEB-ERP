@@ -385,7 +385,7 @@ const SA_A1001_603W: React.FC = () => {
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "LIST",
-        "@p_orgdiv": filters.orgdiv,
+        "@p_orgdiv": "01",
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_quonum": filters.quonum,
