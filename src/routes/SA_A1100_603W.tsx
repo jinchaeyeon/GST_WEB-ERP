@@ -2258,9 +2258,9 @@ const SA_A1100_603W: React.FC = () => {
                   <th>프로젝트번호</th>
                   <td>
                     <Input
-                      name="quoekey"
+                      name="quokey"
                       type="text"
-                      value={filters.quoekey}
+                      value={filters.quokey}
                       onChange={InputChange}
                     />
                   </td>

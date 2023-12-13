@@ -69,6 +69,7 @@ import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1001_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import SA_A1001_603W_Window from "../components/Windows/SA_A1001_603W_Window";
+import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -154,8 +155,6 @@ const SA_A1001_603W: React.FC = () => {
         materialtype: defaultOption.find(
           (item: any) => item.id === "materialtype"
         ).valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
         rev: defaultOption.find((item: any) => item.id === "rev").valueCode,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
@@ -291,6 +290,7 @@ const SA_A1001_603W: React.FC = () => {
     custprsnnm: "",
     materialtype: "",
     person: "",
+    personnm: "",
     remark: "",
     rev: "",
     find_row_value: "",
@@ -396,6 +396,7 @@ const SA_A1001_603W: React.FC = () => {
         "@p_custprsnnm": filters.custprsnnm,
         "@p_materialtype": filters.materialtype,
         "@p_person": filters.person,
+        "@p_personnm": filters.personnm,
         "@p_remark": filters.remark,
         "@p_rev": filters.rev,
         "@p_find_row_value": filters.find_row_value,
@@ -475,6 +476,7 @@ const SA_A1001_603W: React.FC = () => {
         "@p_custprsnnm": "",
         "@p_materialtype": "",
         "@p_person": "",
+        "@p_personnm": "",
         "@p_remark": "",
         "@p_rev": "",
         "@p_find_row_value": "",
@@ -842,6 +844,27 @@ const SA_A1001_603W: React.FC = () => {
     setPrintWindowVisible(true);
   };
 
+  const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
+
+  const onUserWndClick = () => {
+    setUserWindowVisible(true);
+  };
+
+  interface IUser {
+    user_id: string;
+    user_name: string;
+  }
+
+  const setUserData = (data: IUser) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        personnm: data.user_name,
+        person: data.user_id,
+      };
+    });
+  };
+
   return (
     <>
       <TitleContainer>
@@ -944,16 +967,20 @@ const SA_A1001_603W: React.FC = () => {
                   </td>
                   <th>담당자</th>
                   <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="person"
-                        value={filters.person}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                        valueField="user_id"
-                        textField="user_name"
+                  <Input
+                      name="personnm"
+                      type="text"
+                      value={filters.personnm}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        type="button"
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onUserWndClick}
                       />
-                    )}
+                    </ButtonInInput>
                   </td>
                   <th>비고</th>
                   <td>
@@ -1335,6 +1362,14 @@ const SA_A1001_603W: React.FC = () => {
                 )[0].quorev
               : 0
           }
+          modal={true}
+        />
+      )}
+      {userWindowVisible && (
+        <UserWindow
+          setVisible={setUserWindowVisible}
+          workType={"N"}
+          setData={setUserData}
           modal={true}
         />
       )}

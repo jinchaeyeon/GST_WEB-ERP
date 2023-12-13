@@ -9,7 +9,7 @@ import {
   Grid as GridKendo,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -54,6 +54,7 @@ import { gridList } from "../store/columns/SA_B1000_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import { MultiSelect } from "@progress/kendo-react-dropdowns/dist/npm/MultiSelect/MultiSelect";
 import { MultiSelectChangeEvent } from "@progress/kendo-react-dropdowns";
+import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 
 const DATA_ITEM_KEY = "num";
 
@@ -113,6 +114,7 @@ const SA_B1000W_603: React.FC = () => {
     custnm: "",
     status: [],
     smperson: "",
+    smpersonnm: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -161,7 +163,6 @@ const SA_B1000W_603: React.FC = () => {
     }));
   };
 
-
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
 
@@ -179,7 +180,7 @@ const SA_B1000W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     const status =
@@ -201,6 +202,7 @@ const SA_B1000W_603: React.FC = () => {
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
         "@p_smperson": filters.smperson,
+        "@p_smpersonnm": filters.smpersonnm,
         "@p_status_s": status,
         "@p_find_row_value": "",
       },
@@ -287,6 +289,7 @@ const SA_B1000W_603: React.FC = () => {
         "@p_custcd": "",
         "@p_custnm": "",
         "@p_smperson": "",
+        "@p_smpersonnm": "",
         "@p_status_s": "",
         "@p_find_row_value": "",
       },
@@ -343,6 +346,7 @@ const SA_B1000W_603: React.FC = () => {
         "@p_custcd": "",
         "@p_custnm": "",
         "@p_smperson": "",
+        "@p_smpersonnm": "",
         "@p_status_s": "",
         "@p_find_row_value": "",
       },
@@ -399,6 +403,7 @@ const SA_B1000W_603: React.FC = () => {
         "@p_custcd": "",
         "@p_custnm": "",
         "@p_smperson": "",
+        "@p_smpersonnm": "",
         "@p_status_s": "",
         "@p_find_row_value": "",
       },
@@ -732,6 +737,27 @@ const SA_B1000W_603: React.FC = () => {
     );
   };
 
+  const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
+
+  const onUserWndClick = () => {
+    setUserWindowVisible(true);
+  };
+
+  interface IUser {
+    user_id: string;
+    user_name: string;
+  }
+
+  const setUserData = (data: IUser) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        smpersonnm: data.user_name,
+        smperson: data.user_id,
+      };
+    });
+  };
+
   return (
     <>
       <TitleContainer>
@@ -781,7 +807,7 @@ const SA_B1000W_603: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
-                <th>상태</th>
+                  <th>상태</th>
                   <td>
                     <MultiSelect
                       name="status"
@@ -794,12 +820,20 @@ const SA_B1000W_603: React.FC = () => {
                   </td>
                   <th>SM담당자</th>
                   <td>
-                    <Input
-                      name="smperson"
+                  <Input
+                      name="smpersonnm"
                       type="text"
-                      value={filters.smperson}
+                      value={filters.smpersonnm}
                       onChange={filterInputChange}
                     />
+                    <ButtonInInput>
+                      <Button
+                        type="button"
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onUserWndClick}
+                      />
+                    </ButtonInInput>
                   </td>
                 </tr>
               </tbody>
@@ -1136,6 +1170,14 @@ const SA_B1000W_603: React.FC = () => {
           setVisible={setCustWindowVisible}
           workType={"N"}
           setData={setCustData}
+          modal={true}
+        />
+      )}
+      {userWindowVisible && (
+        <UserWindow
+          setVisible={setUserWindowVisible}
+          workType={"N"}
+          setData={setUserData}
           modal={true}
         />
       )}

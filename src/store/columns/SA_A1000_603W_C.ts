@@ -96,7 +96,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_testnum",
         field: "testnum",
-        caption: "시험번호",
+        caption: "예약시험번호",
         width: 150,
       },
       {
@@ -143,7 +143,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_testnum1",
         field: "testnum",
-        caption: "시험번호",
+        caption: "예약시험번호",
         width: 120,
       },
       {

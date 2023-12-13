@@ -110,6 +110,7 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1000_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -129,6 +130,11 @@ type TdataArr2 = {
   quorev_s: string[];
   progress_status_s: string[];
 };
+
+interface IUser {
+  user_id: string;
+  user_name: string;
+}
 
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "num";
@@ -1348,6 +1354,10 @@ const SA_A1000_603W: React.FC = () => {
     testnum: "",
     finyn: "",
     status: [],
+    person: "",
+    personnm: "",
+    cpmperson: "",
+    cpmpersonnm: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -1476,6 +1486,10 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": filters.quonum,
         "@p_quorev": filters.quorev,
         "@p_quoseq": filters.quoseq,
+        "@p_person": filters.person,
+        "@p_personnm": filters.personnm,
+        "@p_cpmperson": filters.cpmperson,
+        "@p_cpmpersonnm": filters.cpmpersonnm,
         "@p_status": status,
         "@p_find_row_value": filters.find_row_value,
       },
@@ -1575,6 +1589,10 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": subfilters.quonum,
         "@p_quorev": subfilters.quorev,
         "@p_quoseq": filters.quoseq,
+        "@p_person": filters.person,
+        "@p_personnm": filters.personnm,
+        "@p_cpmperson": filters.cpmperson,
+        "@p_cpmpersonnm": filters.cpmpersonnm,
         "@p_status": "",
         "@p_find_row_value": filters.find_row_value,
       },
@@ -1769,6 +1787,10 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": subfilters2.quonum,
         "@p_quorev": subfilters2.quorev,
         "@p_quoseq": filters.quoseq,
+        "@p_person": filters.person,
+        "@p_personnm": filters.personnm,
+        "@p_cpmperson": filters.cpmperson,
+        "@p_cpmpersonnm": filters.cpmpersonnm,
         "@p_status": "",
         "@p_find_row_value": filters.find_row_value,
       },
@@ -1844,7 +1866,7 @@ const SA_A1000_603W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchDetailGrid = async (detailFilters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -1865,6 +1887,10 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quorev": detailFilters.quorev,
         "@p_quoseq": 0,
         "@p_status": "",
+        "@p_person": "",
+        "@p_personnm":"",
+        "@p_cpmperson": "",
+        "@p_cpmpersonnm": "",
         "@p_find_row_value": "",
       },
     };
@@ -1907,7 +1933,7 @@ const SA_A1000_603W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchDetailGrid2 = async (detailFilters2: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -1928,6 +1954,10 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quorev": detailFilters2.quorev,
         "@p_quoseq": 0,
         "@p_status": "",
+        "@p_person": "",
+        "@p_personnm":"",
+        "@p_cpmperson": "",
+        "@p_cpmpersonnm": "",
         "@p_find_row_value": "",
       },
     };
@@ -1970,7 +2000,7 @@ const SA_A1000_603W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchDetailGrid3 = async (detailFilters3: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -1991,6 +2021,10 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quorev": detailFilters3.quorev,
         "@p_quoseq": 0,
         "@p_status": "",
+        "@p_person": "",
+        "@p_personnm":"",
+        "@p_cpmperson": "",
+        "@p_cpmpersonnm": "",
         "@p_find_row_value": "",
       },
     };
@@ -3411,6 +3445,35 @@ const SA_A1000_603W: React.FC = () => {
     }));
   };
 
+  const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
+  const [userWindowVisible2, setUserWindowVisible2] = useState<boolean>(false);
+
+  const onUserWndClick = () => {
+    setUserWindowVisible(true);
+  };
+  const onUserWndClick2 = () => {
+    setUserWindowVisible2(true);
+  };
+  const setUserData = (data: IUser) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        cpmpersonnm: data.user_name,
+        cpmperson: data.user_id,
+      };
+    });
+  };
+
+  const setUserData2 = (data: IUser) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        personnm: data.user_name,
+        person: data.user_id,
+      };
+    });
+  };
+
   return (
     <>
       <TitleContainer>
@@ -3488,7 +3551,7 @@ const SA_A1000_603W: React.FC = () => {
                       />
                     </ButtonInInput>
                   </td>
-                  <th>시험번호</th>
+                  <th>예약시험번호</th>
                   <td>
                     <Input
                       name="testnum"
@@ -3497,6 +3560,8 @@ const SA_A1000_603W: React.FC = () => {
                       onChange={filterInputChange}
                     />
                   </td>
+                </tr>
+                <tr>
                   <th>상태</th>
                   <td>
                     <MultiSelect
@@ -3507,6 +3572,40 @@ const SA_A1000_603W: React.FC = () => {
                       textField="code_name"
                       dataItemKey="sub_code"
                     />
+                  </td>
+                  <th>담당자</th>
+                  <td>
+                    <Input
+                      name="personnm"
+                      type="text"
+                      value={filters.personnm}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        type="button"
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onUserWndClick2}
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>CS담당자</th>
+                  <td>
+                    <Input
+                      name="cpmpersonnm"
+                      type="text"
+                      value={filters.cpmpersonnm}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        type="button"
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onUserWndClick}
+                      />
+                    </ButtonInInput>
                   </td>
                 </tr>
               </tbody>
@@ -4651,6 +4750,22 @@ const SA_A1000_603W: React.FC = () => {
                 )[0]
               : ""
           }
+          modal={true}
+        />
+      )}
+      {userWindowVisible && (
+        <UserWindow
+          setVisible={setUserWindowVisible}
+          workType={"N"}
+          setData={setUserData}
+          modal={true}
+        />
+      )}
+      {userWindowVisible2 && (
+        <UserWindow
+          setVisible={setUserWindowVisible2}
+          workType={"N"}
+          setData={setUserData2}
           modal={true}
         />
       )}

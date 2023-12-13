@@ -60,6 +60,7 @@ import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/QC_A2500_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 
 const DATA_ITEM_KEY = "num";
 const COMMENT_DATA_ITEM_KEY = "num";
@@ -367,13 +368,15 @@ const BA_A0020_603: React.FC = () => {
     location: "01",
     ref_key: "",
     ordnum: "",
-    quotestnum : "",
+    quotestnum: "",
     custcd: "",
     custnm: "",
     testnum: "",
     status: "",
     smperson: "",
+    smpersonnm: "",
     cpmperson: "",
+    cpmpersonnm: "",
     datnum: "",
     find_row_value: "",
     pgNum: 1,
@@ -436,7 +439,9 @@ const BA_A0020_603: React.FC = () => {
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
         "@p_smperson": filters.smperson,
+        "@p_smpersonnm": filters.smpersonnm,
         "@p_cpmperson": filters.cpmperson,
+        "@p_cpmpersonnm": filters.cpmpersonnm,
         "@p_status": filters.status,
         "@p_quotestnum": filters.quotestnum,
         "@p_datnum": filters.datnum,
@@ -543,7 +548,9 @@ const BA_A0020_603: React.FC = () => {
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
         "@p_smperson": filters.smperson,
+        "@p_smpersonnm": filters.smpersonnm,
         "@p_cpmperson": filters.cpmperson,
+        "@p_cpmpersonnm": filters.cpmpersonnm,
         "@p_status": filters.status,
         "@p_datnum": commentFilter.datnum,
         "@p_quotestnum": filters.quotestnum,
@@ -1217,7 +1224,7 @@ const BA_A0020_603: React.FC = () => {
       "@p_orgdiv": paraData.orgdiv,
       "@p_location": paraData.location,
       "@p_datnum": paraData.datnum,
-      "@p_quokey":  paraData.quokey,
+      "@p_quokey": paraData.quokey,
       // "@p_ordnum": paraData.ordnum,
       // "@p_ordseq": paraData.ordseq,
       "@p_status": paraData.status,
@@ -1404,6 +1411,41 @@ const BA_A0020_603: React.FC = () => {
     }
   };
 
+  const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
+  const [userWindowVisible2, setUserWindowVisible2] = useState<boolean>(false);
+
+  const onUserWndClick = () => {
+    setUserWindowVisible(true);
+  };
+  const onUserWndClick2 = () => {
+    setUserWindowVisible2(true);
+  };
+
+  interface IUser {
+    user_id: string;
+    user_name: string;
+  }
+
+  const setUserData = (data: IUser) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        smperson: data.user_id,
+        smpersonnm: data.user_name,
+      };
+    });
+  };
+
+  const setUserData2 = (data: IUser) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        cpmperson: data.user_id,
+        cpmpersonnm: data.user_name,
+      };
+    });
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1481,7 +1523,7 @@ const BA_A0020_603: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
-                <th>고객사</th>
+                  <th>고객사</th>
                   <td>
                     <Input
                       name="custnm"
@@ -1511,21 +1553,37 @@ const BA_A0020_603: React.FC = () => {
                   </td>
                   <th>SM담당자</th>
                   <td>
-                    <Input
-                      name="smperson"
+                  <Input
+                      name="smpersonnm"
                       type="text"
-                      value={filters.smperson}
+                      value={filters.smpersonnm}
                       onChange={filterInputChange}
                     />
+                    <ButtonInInput>
+                      <Button
+                        type="button"
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onUserWndClick}
+                      />
+                    </ButtonInInput>
                   </td>
                   <th>CPM담당자</th>
                   <td>
                     <Input
-                      name="cpmperson"
+                      name="cpmpersonnm"
                       type="text"
-                      value={filters.cpmperson}
+                      value={filters.cpmpersonnm}
                       onChange={filterInputChange}
                     />
+                    <ButtonInInput>
+                      <Button
+                        type="button"
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onUserWndClick2}
+                      />
+                    </ButtonInInput>
                   </td>
                 </tr>
               </tbody>
@@ -2199,6 +2257,22 @@ const BA_A0020_603: React.FC = () => {
         <QC_A2500_603W_Window
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
+          modal={true}
+        />
+      )}
+      {userWindowVisible && (
+        <UserWindow
+          setVisible={setUserWindowVisible}
+          workType={"N"}
+          setData={setUserData}
+          modal={true}
+        />
+      )}
+      {userWindowVisible2 && (
+        <UserWindow
+          setVisible={setUserWindowVisible2}
+          workType={"N"}
+          setData={setUserData2}
           modal={true}
         />
       )}
