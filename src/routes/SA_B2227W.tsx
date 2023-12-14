@@ -57,12 +57,12 @@ const SA_B2227W: React.FC = () => {
   const cardOption = [
     {
       title: "3년간 수주 고객 수",
-      data: AllPanel.three_cnt != null ? AllPanel.three_cnt + "명" : 0 + "명",
+      data: AllPanel.three_cnt != null ? AllPanel.three_cnt + "개사" : 0 + "개사",
       backgroundColor: theme.palette.primary.dark,
     },
     {
       title: "올해 신규 고객 수",
-      data: AllPanel.cnt != null ? AllPanel.cnt + "명" : 0 + "명",
+      data: AllPanel.cnt != null ? AllPanel.cnt + "개사" : 0 + "개사",
       backgroundColor: theme.palette.primary.main,
     },
   ];
