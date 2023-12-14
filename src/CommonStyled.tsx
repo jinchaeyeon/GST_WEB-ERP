@@ -174,7 +174,7 @@ export const Title = styled.h3`
 
 export const SubTitle = styled.h5`
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 700;
   color: #7f7e7e;
   margin-bottom: 10px;
 `;

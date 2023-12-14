@@ -26,6 +26,7 @@ import BarChart from "../components/KPIcomponents/Chart/BarChart";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import Table from "../components/KPIcomponents/Table/Table";
 import { colors, colorsName } from "../store/atoms";
+import CardBox from "../components/CardBox";
 
 const SA_B2227W: React.FC = () => {
   let deviceWidth = window.innerWidth;
@@ -52,12 +53,15 @@ const SA_B2227W: React.FC = () => {
     three_cnt: 380,
     cnt: 21,
     contract_rate: 60,
+    new_question_cnt: 30,
+    new_contract_cnt: 20,
   });
 
   const cardOption = [
     {
       title: "3년간 수주 고객 수",
-      data: AllPanel.three_cnt != null ? AllPanel.three_cnt + "개사" : 0 + "개사",
+      data:
+        AllPanel.three_cnt != null ? AllPanel.three_cnt + "개사" : 0 + "개사",
       backgroundColor: theme.palette.primary.dark,
     },
     {
@@ -157,207 +161,242 @@ const SA_B2227W: React.FC = () => {
 
   const [map, setMap] = useState<any>(null);
   const ref = useRef<any>();
-  useEffect(()=>{
+  useEffect(() => {
     const newMap = new window.google.maps.Map(ref.current, {
-        center : { lat: 37.569227, lng: 126.9777256},
-        zoom : 16,
-    });     
-    
+      center: { lat: 37.569227, lng: 126.9777256 },
+      zoom: 16,
+    });
+
     setMap(newMap);
-},[])
+  }, []);
 
   return (
     <>
-      <div style={{ fontFamily: "TheJamsil5Bold", marginBottom: "50px", paddingTop: "25px" }}>
+      <div
+        style={{
+          fontFamily: "TheJamsil5Bold",
+          marginBottom: "50px",
+          paddingTop: "25px",
+        }}
+      >
         <ThemeProvider theme={theme}>
-            <GridContainerWrap mobilemaxWidth={1600}>
-              <GridContainer mobilemaxWidth={1600} width="50%">
-                <GridContainerWrap height="15vh">
-                  <GridContainer width="35%">
-                    <TitleContainer style={{ marginBottom: "0px" }}>
-                      <Title>신규 고객 유치현황</Title>
-                    </TitleContainer>
-                    <TitleContainer style={{ paddingBottom: "25px" }}>
-                      <SubTitle>
-                        {dateformat2(convertDateToStr(new Date()))}
-                      </SubTitle>
-                    </TitleContainer>
-                  </GridContainer>
-                  <GridContainer width={`calc(65% - ${GAP}px)`}>
-                    <Grid
-                      container
-                      spacing={2}
-                      style={{ marginBottom: "15px" }}
-                    >
-                      {cardOption.map((item) => (
-                        <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                          <Card
+          <GridContainerWrap mobilemaxWidth={1600}>
+            <GridContainer mobilemaxWidth={1600} width="50%">
+              <GridContainerWrap height="15vh">
+                <GridContainer width="35%">
+                  <TitleContainer
+                    style={{ marginBottom: "0px", justifyContent: "center" }}
+                  >
+                    <Title>신규 고객 유치현황</Title>
+                  </TitleContainer>
+                  <TitleContainer
+                    style={{ paddingBottom: "25px", justifyContent: "center" }}
+                  >
+                    <SubTitle>
+                      {dateformat2(convertDateToStr(new Date()))}
+                    </SubTitle>
+                  </TitleContainer>
+                </GridContainer>
+                <GridContainer width={`calc(65% - ${GAP}px)`}>
+                  <Grid container spacing={2} style={{ marginBottom: "15px" }}>
+                    {cardOption.map((item) => (
+                      <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
+                        <Card
+                          style={{
+                            height: "120px",
+                            width: "100%",
+                            marginRight: "15px",
+                            backgroundColor: item.backgroundColor,
+                            color: "white",
+                            fontFamily: "TheJamsil5Bold",
+                          }}
+                        >
+                          <CardContent
                             style={{
-                              height: "120px",
-                              width: "100%",
-                              marginRight: "15px",
-                              backgroundColor: item.backgroundColor,
-                              color: "white",
-                              fontFamily: "TheJamsil5Bold",
+                              display: "flex",
+                              justifyContent: "center",
+                              paddingBottom: 0,
                             }}
                           >
-                            <CardContent
+                            <Typography
                               style={{
+                                fontSize: "2rem",
+                                fontWeight: 900,
+                                color: "white",
+                                fontFamily: "TheJamsil5Bold",
                                 display: "flex",
-                                justifyContent: "center",
-                                paddingBottom: 0,
+                                alignItems: "center",
                               }}
                             >
-                              <Typography
-                                style={{
-                                  fontSize: "2rem",
-                                  fontWeight: 900,
-                                  color: "white",
-                                  fontFamily: "TheJamsil5Bold",
-                                  display: "flex",
-                                  alignItems: "center",
-                                }}
-                              >
-                                {item.data}
-                              </Typography>
-                            </CardContent>
-                            <CardHeader
-                              title={
-                                <>
-                                  <Typography
-                                    style={{
-                                      fontSize: "1.1rem",
-                                      color: "white",
-                                      fontWeight: 600,
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      fontFamily: "TheJamsil5Bold",
-                                    }}
-                                  >
-                                    {item.title}
-                                  </Typography>
-                                </>
-                              }
-                            />
-                          </Card>
-                        </Grid>
-                      ))}
-                    </Grid>
-                  </GridContainer>
-                </GridContainerWrap>
-                <GridContainer>
-                  <GridTitle>지도로 보는 고객사 현황</GridTitle>
-                   <div ref={ref} id="map" style={{width: "100%", height: "55vh"}}></div>
+                              {item.data}
+                            </Typography>
+                          </CardContent>
+                          <CardHeader
+                            title={
+                              <>
+                                <Typography
+                                  style={{
+                                    fontSize: "1.1rem",
+                                    color: "white",
+                                    fontWeight: 600,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontFamily: "TheJamsil5Bold",
+                                  }}
+                                >
+                                  {item.title}
+                                </Typography>
+                              </>
+                            }
+                          />
+                        </Card>
+                      </Grid>
+                    ))}
+                  </Grid>
                 </GridContainer>
+              </GridContainerWrap>
+              <GridContainer>
+                <GridTitle>지도로 보는 고객사 현황</GridTitle>
+                <div
+                  ref={ref}
+                  id="map"
+                  style={{ width: "100%", height: "55vh" }}
+                ></div>
               </GridContainer>
-              <GridContainer
-                mobilemaxWidth={1600}
-                width={`calc(50% - ${GAP}px)`}
-              >
-                <Grid container spacing={2}>
-                  <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={6}
-                    lg={6}
-                    xl={6}
-                    style={{ height: "35.5vh", marginBottom: "10px" }}
-                  >
-                    <GridTitle>신규 고객 계약율</GridTitle>
-                    <div style={{ display: "flex", justifyContent: "center" }}>
-                      <Knob
-                        value={AllPanel.contract_rate}
-                        size={250}
-                        valueTemplate={"{value}%"}
-                        valueColor={theme.palette.primary.dark}
-                        rangeColor={theme.palette.secondary.main}
-                        readOnly
-                        strokeWidth={10}
+            </GridContainer>
+            <GridContainer mobilemaxWidth={1600} width={`calc(50% - ${GAP}px)`}>
+              <Grid container spacing={2}>
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={6}
+                  lg={6}
+                  xl={6}
+                  style={{ height: "35.5vh", marginBottom: "10px" }}
+                >
+                  <GridTitle>신규 고객 계약율</GridTitle>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <div
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <Knob
+                          value={AllPanel.contract_rate}
+                          size={150}
+                          valueTemplate={"{value}%"}
+                          valueColor={theme.palette.primary.dark}
+                          rangeColor={theme.palette.secondary.main}
+                          readOnly
+                          strokeWidth={10}
+                        />
+                      </div>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
+                      <CardBox
+                        title={"신규고객 문의 건수"}
+                        titlefontsize={"1rem"}
+                        data={AllPanel.new_question_cnt + "건"}
+                        backgroundColor={theme.palette.primary.main}
+                        fontsize={"1.6rem"}
+                        form={"SA_B2227W"}
+                        height={"120px"}
                       />
-                    </div>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={6}
-                    lg={6}
-                    xl={6}
-                    style={{ height: "35.5vh", marginBottom: "10px" }}
-                  >
-                    <GridTitle>사업부별 신규 문의 건수</GridTitle>
-                    <BarChart
-                      props={ItemList}
-                      value="cnt"
-                      alllabel={ItemList.map((item) => item.testpart)}
-                      name="testpart"
-                      random={true}
-                      colorName={colorName}
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={6}
-                    lg={6}
-                    xl={6}
-                    style={{ height: "35.5vh", marginBottom: "10px" }}
-                  >
-                    <GridTitle>팀별 신규 고객 유치</GridTitle>
-                    <BarChart
-                      props={TeamList}
-                      value="cnt"
-                      alllabel={TeamList.map((item) => item.teamnm)}
-                      name="teamnm"
-                      random={true}
-                      colorName={colorName}
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={6}
-                    lg={6}
-                    xl={6}
-                    style={{ height: "35.5vh", marginBottom: "10px" }}
-                  >
-                    <GridTitle>3개년 신규고객 수 현황</GridTitle>
-                    <BarChart
-                      props={ThreeList}
-                      value="cnt"
-                      alllabel={ThreeList.map((item) => item.yyyy)}
-                      name="yyyy"
-                      random={true}
-                      colorName={colorName}
-                    />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
+                      <CardBox
+                        title={"신규고객 계약 건수"}
+                        titlefontsize={"1rem"}
+                        data={AllPanel.new_contract_cnt + "건"}
+                        backgroundColor={theme.palette.primary.main}
+                        fontsize={"1.6rem"}
+                        form={"SA_B2227W"}
+                        height={"120px"}
+                      />
+                    </Grid>
                   </Grid>
                 </Grid>
-              </GridContainer>
-            </GridContainerWrap>
-            <GridContainer style={{ marginTop: "25px" }}>
-              <GridTitleContainer>
-                <GridTitle>국가별 고객사 집계</GridTitle>
-              </GridTitleContainer>
-              <Table
-                value={CountryData}
-                column={{
-                  KR_cnt: "한국",
-                  JP_cnt: "일본",
-                  CN_cnt: "중국",
-                  US_cnt: "미국",
-                  DE_cnt: "독일",
-                  SE_cnt: "스웨덴",
-                  RU_cnt: "러시아",
-                  Any_cnt: "기타",
-                  total_cnt: "합계",
-                }}
-                width={[100, 100, 100, 100, 100, 100, 100, 100, 100, 100]}
-              />
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={6}
+                  lg={6}
+                  xl={6}
+                  style={{ height: "35.5vh", marginBottom: "10px" }}
+                >
+                  <GridTitle>사업부별 신규 문의 건수</GridTitle>
+                  <BarChart
+                    props={ItemList}
+                    value="cnt"
+                    alllabel={ItemList.map((item) => item.testpart)}
+                    name="testpart"
+                    random={true}
+                    colorName={colorName}
+                  />
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={6}
+                  lg={6}
+                  xl={6}
+                  style={{ height: "35.5vh", marginBottom: "10px" }}
+                >
+                  <GridTitle>팀별 신규 고객 유치</GridTitle>
+                  <BarChart
+                    props={TeamList}
+                    value="cnt"
+                    alllabel={TeamList.map((item) => item.teamnm)}
+                    name="teamnm"
+                    random={true}
+                    colorName={colorName}
+                  />
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={6}
+                  lg={6}
+                  xl={6}
+                  style={{ height: "35.5vh", marginBottom: "10px" }}
+                >
+                  <GridTitle>3개년 신규고객 수 현황</GridTitle>
+                  <BarChart
+                    props={ThreeList}
+                    value="cnt"
+                    alllabel={ThreeList.map((item) => item.yyyy)}
+                    name="yyyy"
+                    random={true}
+                    colorName={colorName}
+                  />
+                </Grid>
+              </Grid>
             </GridContainer>
+          </GridContainerWrap>
+          <GridContainer style={{ marginTop: "25px" }}>
+            <GridTitleContainer>
+              <GridTitle>국가별 고객사 집계</GridTitle>
+            </GridTitleContainer>
+            <Table
+              value={CountryData}
+              column={{
+                KR_cnt: "한국",
+                JP_cnt: "일본",
+                CN_cnt: "중국",
+                US_cnt: "미국",
+                DE_cnt: "독일",
+                SE_cnt: "스웨덴",
+                RU_cnt: "러시아",
+                Any_cnt: "기타",
+                total_cnt: "합계",
+              }}
+              width={[100, 100, 100, 100, 100, 100, 100, 100, 100, 100]}
+            />
+          </GridContainer>
           <SpecialDial />
         </ThemeProvider>
       </div>
