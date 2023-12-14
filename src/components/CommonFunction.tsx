@@ -721,9 +721,9 @@ export const getGridItemChangedData = (
 
 //Date 디폴트 값 반환
 export const setDefaultDate = (customOptionData: any, id: string) => {
-  const date = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query").find(
+  const date = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query")?.find(
     (item: any) => item.id === id,
-  );
+  ) ?? undefined;
 
   const addYear = date ? date.addYear : 0;
   const addMonth = date ? date.addMonth : 0;
