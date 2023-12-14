@@ -12,8 +12,8 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import { convertDateToStr } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
-import Card from "../components/KPIcomponents/Card/CardBox";
-import ComboChart from "../components/KPIcomponents/Chart/ComboChart";
+import Card from "../components/CardBox";
+import DoubleChart from "../components/KPIcomponents/Chart/DoubleChart";
 import MultiChart from "../components/KPIcomponents/Chart/MultiChart";
 import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutChart";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
@@ -21,6 +21,7 @@ import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
 import { colors, colorsName, isLoading } from "../store/atoms";
+import { Card as CardMui, CardContent as CardContentMui } from "@mui/material";
 
 interface TList {
   badcnt?: number;
@@ -46,11 +47,13 @@ const SA_B2226W: React.FC = () => {
   const [color, setColor] = useRecoilState(colors);
   const [colorName, setColorName] = useRecoilState(colorsName);
   const [selected, setSelected] = useState<any>({
-    itemcd: "일반독성",
+    testpart: "일반독성",
+    teststs: "설치류",
     value: 61,
     current_year: 100,
     past_year: 80,
     cnt: 5,
+    past_amt: 50,
     amt: 100,
     num: 1,
   });
@@ -111,188 +114,279 @@ const SA_B2226W: React.FC = () => {
 
   const [ItemList, setItemList] = useState<any[]>([
     {
-      itemcd: "일반독성",
+      testpart: "일반독성",
+      teststs: "설치류",
       value: 61,
       current_year: 100,
       past_year: 80,
       cnt: 5,
+      past_amt: 50,
       amt: 100,
       num: 1,
     },
     {
-      itemcd: "생식독성",
+      testpart: "일반독성",
+      teststs: "비설치류",
+      value: 10,
+      current_year: 20,
+      past_year: 30,
+      cnt: 2,
+      past_amt: 100,
+      amt: 50,
+      num: 2,
+    },
+    {
+      testpart: "생식독성",
+      teststs: "설치류",
       value: 1,
       current_year: 20,
       past_year: 20,
       cnt: 3,
+      past_amt: 0,
       amt: 20,
-      num: 2,
+      num: 3,
     },
     {
-      itemcd: "국소/면역",
+      testpart: "생식독성",
+      teststs: "비설치류",
+      value: 3,
+      current_year: 40,
+      past_year: 20,
+      cnt: 2,
+      past_amt: 2,
+      amt: 3,
+      num: 4,
+    },
+    {
+      testpart: "국소/면역",
+      teststs: "설치류",
       value: 5,
       current_year: 70,
       past_year: 0,
       cnt: 1,
+      past_amt: 0,
       amt: 70,
-      num: 3,
+      num: 5,
     },
     {
-      itemcd: "안전성약리",
+      testpart: "국소/면역",
+      teststs: "비설치류",
+      value: 5,
+      current_year: 70,
+      past_year: 0,
+      cnt: 1,
+      past_amt: 0,
+      amt: 70,
+      num: 6,
+    },
+    {
+      testpart: "안전성약리",
+      teststs: "설치류",
       value: 9,
       current_year: 200,
       past_year: 200,
       cnt: 50,
+      past_amt: 300,
       amt: 150,
-      num: 4,
+      num: 7,
     },
     {
-      itemcd: "유전독성",
+      testpart: "안전성약리",
+      teststs: "비설치류",
+      value: 9,
+      current_year: 200,
+      past_year: 200,
+      cnt: 50,
+      past_amt: 300,
+      amt: 150,
+      num: 8,
+    },
+    {
+      testpart: "유전독성",
+      teststs: "설치류",
       value: 6,
       current_year: 50,
       past_year: 0,
       cnt: 1,
+      past_amt: 200,
       amt: 50,
-      num: 5,
+      num: 9,
     },
     {
-      itemcd: "대체독성",
+      testpart: "유전독성",
+      teststs: "비설치류",
+      value: 6,
+      current_year: 50,
+      past_year: 0,
+      cnt: 1,
+      past_amt: 200,
+      amt: 50,
+      num: 10,
+    },
+    {
+      testpart: "대체독성",
+      teststs: "설치류",
       value: 6,
       current_year: 0,
       past_year: 0,
       cnt: 0,
+      past_amt: 0,
       amt: 0,
-      num: 6,
+      num: 11,
     },
     {
-      itemcd: "분석",
+      testpart: "대체독성",
+      teststs: "비설치류",
+      value: 6,
+      current_year: 0,
+      past_year: 0,
+      cnt: 0,
+      past_amt: 0,
+      amt: 0,
+      num: 12,
+    },
+    {
+      testpart: "분석",
+      teststs: "설치류",
       value: 12,
       current_year: 1,
       past_year: 1,
       cnt: 1,
+      past_amt: 10,
       amt: 1,
-      num: 7,
+      num: 13,
+    },
+    {
+      testpart: "분석",
+      teststs: "비설치류",
+      value: 12,
+      current_year: 1,
+      past_year: 1,
+      cnt: 1,
+      past_amt: 10,
+      amt: 1,
+      num: 14,
     },
   ]);
 
   const [ChartList, setChartList] = useState([
     {
-      series: "계약금액",
-      argument: "01월",
-      value: 100,
-    },
-    {
-      series: "계약금액",
-      argument: "02월",
-      value: 0,
-    },
-    {
-      series: "계약금액",
-      argument: "03월",
-      value: 200,
-    },
-    {
-      series: "계약금액",
-      argument: "04월",
-      value: 200,
-    },
-    {
-      series: "계약금액",
-      argument: "05월",
-      value: 0,
-    },
-    {
-      series: "계약금액",
-      argument: "06월",
-      value: 0,
-    },
-    {
-      series: "계약금액",
-      argument: "07월",
-      value: 50,
-    },
-    {
-      series: "계약금액",
-      argument: "08월",
-      value: 100,
-    },
-    {
-      series: "계약금액",
-      argument: "09월",
-      value: 200,
-    },
-    {
-      series: "계약금액",
-      argument: "10월",
-      value: 0,
-    },
-    {
-      series: "계약금액",
-      argument: "11월",
-      value: 100,
-    },
-    {
-      series: "계약금액",
-      argument: "12월",
-      value: 0,
-    },
-    {
-      series: "변경계약금액",
+      series: "목표계약금액",
       argument: "01월",
       value: 50,
     },
     {
-      series: "변경계약금액",
+      series: "목표계약금액",
       argument: "02월",
       value: 0,
     },
     {
-      series: "변경계약금액",
+      series: "목표계약금액",
       argument: "03월",
       value: 200,
     },
     {
-      series: "변경계약금액",
+      series: "목표계약금액",
       argument: "04월",
       value: 100,
     },
     {
-      series: "변경계약금액",
+      series: "목표계약금액",
       argument: "05월",
       value: 0,
     },
     {
-      series: "변경계약금액",
+      series: "목표계약금액",
       argument: "06월",
       value: 0,
     },
     {
-      series: "변경계약금액",
+      series: "목표계약금액",
       argument: "07월",
       value: 0,
     },
     {
-      series: "변경계약금액",
+      series: "목표계약금액",
       argument: "08월",
       value: 0,
     },
     {
-      series: "변경계약금액",
+      series: "목표계약금액",
       argument: "09월",
       value: 150,
     },
     {
-      series: "변경계약금액",
+      series: "목표계약금액",
       argument: "10월",
       value: 0,
     },
     {
-      series: "변경계약금액",
+      series: "목표계약금액",
       argument: "11월",
       value: 80,
     },
     {
-      series: "변경계약금액",
+      series: "목표계약금액",
+      argument: "12월",
+      value: 0,
+    },
+    {
+      series: "계약금액",
+      argument: "01월",
+      value: 100,
+    },
+    {
+      series: "계약금액",
+      argument: "02월",
+      value: 0,
+    },
+    {
+      series: "계약금액",
+      argument: "03월",
+      value: 200,
+    },
+    {
+      series: "계약금액",
+      argument: "04월",
+      value: 200,
+    },
+    {
+      series: "계약금액",
+      argument: "05월",
+      value: 0,
+    },
+    {
+      series: "계약금액",
+      argument: "06월",
+      value: 0,
+    },
+    {
+      series: "계약금액",
+      argument: "07월",
+      value: 50,
+    },
+    {
+      series: "계약금액",
+      argument: "08월",
+      value: 100,
+    },
+    {
+      series: "계약금액",
+      argument: "09월",
+      value: 200,
+    },
+    {
+      series: "계약금액",
+      argument: "10월",
+      value: 0,
+    },
+    {
+      series: "계약금액",
+      argument: "11월",
+      value: 100,
+    },
+    {
+      series: "계약금액",
       argument: "12월",
       value: 0,
     },
@@ -364,6 +458,7 @@ const SA_B2226W: React.FC = () => {
     year_count: 300,
     year_amt: 400,
     change_count: 300,
+    change_amt_past: -50,
     change_amt: -50,
     total_amt: 350,
   });
@@ -420,15 +515,39 @@ const SA_B2226W: React.FC = () => {
 
   const cardOption = [
     {
+      title: convertDateToStr(new Date()).substring(4, 6) + "월 계약금액",
+      data: AllPanel.month_amt != null ? AllPanel.month_amt + "억" : 0 + "원",
+    },
+    {
+      title: convertDateToStr(filters.frdt).substring(0, 4) + "년 계약금액",
+      data: AllPanel.year_amt != null ? AllPanel.year_amt + "억" : 0 + "원",
+    },
+    {
+      title:
+        (
+          parseInt(convertDateToStr(filters.frdt).substring(0, 4)) - 1
+        ).toString() + "년 변경계약금액",
+      data:
+        AllPanel.change_amt_past != null
+          ? AllPanel.change_amt_past + "억"
+          : 0 + "원",
+    },
+    {
+      title: convertDateToStr(filters.frdt).substring(0, 4) + "년 변경계약금액",
+      data: AllPanel.change_amt != null ? AllPanel.change_amt + "억" : 0 + "원",
+    },
+    {
+      title: convertDateToStr(filters.frdt).substring(0, 4) + "년 최종계약금액",
+      data: AllPanel.total_amt != null ? AllPanel.total_amt + "억" : 0 + "원",
+    },
+  ];
+
+  const cardOption2 = [
+    {
       title: convertDateToStr(new Date()).substring(4, 6) + "월 계약 수",
       data:
         AllPanel.month_count != null ? AllPanel.month_count + "건" : 0 + "건",
       backgroundColor: theme.palette.primary.dark,
-    },
-    {
-      title: convertDateToStr(new Date()).substring(4, 6) + "월 계약금액",
-      data: AllPanel.month_amt != null ? AllPanel.month_amt + "억" : 0 + "원",
-      backgroundColor: theme.palette.primary.main,
     },
     {
       title: convertDateToStr(filters.frdt).substring(0, 4) + "년 계약 수",
@@ -436,25 +555,10 @@ const SA_B2226W: React.FC = () => {
       backgroundColor: theme.palette.primary.light,
     },
     {
-      title: convertDateToStr(filters.frdt).substring(0, 4) + "년 계약금액",
-      data: AllPanel.year_amt != null ? AllPanel.year_amt + "억" : 0 + "원",
-      backgroundColor: theme.palette.secondary.main,
-    },
-    {
       title: convertDateToStr(filters.frdt).substring(0, 4) + "년 변경계약 수",
       data:
         AllPanel.change_count != null ? AllPanel.change_count + "건" : 0 + "건",
       backgroundColor: theme.palette.primary.dark,
-    },
-    {
-      title: convertDateToStr(filters.frdt).substring(0, 4) + "년 변경계약금액",
-      data: AllPanel.change_amt != null ? AllPanel.change_amt + "억" : 0 + "원",
-      backgroundColor: theme.palette.primary.main,
-    },
-    {
-      title: convertDateToStr(filters.frdt).substring(0, 4) + "년 최종계약금액",
-      data: AllPanel.total_amt != null ? AllPanel.total_amt + "억" : 0 + "원",
-      backgroundColor: theme.palette.primary.light,
     },
   ];
 
@@ -512,22 +616,112 @@ const SA_B2226W: React.FC = () => {
             <Divider />
             <Box sx={{ flexGrow: 1 }}>
               <Grid container spacing={2}>
-                {cardOption.map((item) => (
-                  <Grid item xs={12} sm={6} md={6} lg={3} xl={3}>
-                    <Card
-                      title={item.title}
-                      data={item.data}
-                      backgroundColor={item.backgroundColor}
-                      fontsize={size.width < 600 ? "2.2rem" : "3rem"}
-                      form={"SA_B2221W"}
-                    />
-                  </Grid>
-                ))}
+                <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
+                  <CardMui>
+                    <CardContentMui>
+                      <GridTitle
+                        title={
+                          convertDateToStr(filters.frdt).substring(0, 4) +
+                          "년도 실적 현황"
+                        }
+                      />
+                      <Grid
+                        container
+                        spacing={2}
+                        style={{ marginTop: "10px", marginBottom: "15px" }}
+                      >
+                        {cardOption.map((item) => (
+                          <Grid item xs={12} sm={6} md={4} lg={4} xl={2.4}>
+                            <Card
+                              title={item.title}
+                              data={item.data}
+                              backgroundColor={theme.palette.primary.dark}
+                              fontsize={"2.5rem"}
+                              titlefontsize={"1rem"}
+                              form={"SA_B2226W"}
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
+                      <Grid container spacing={2}>
+                        {cardOption2.map((item) => (
+                          <Grid item xs={12} sm={6} md={4} lg={4} xl={2.4}>
+                            <Card
+                              title={item.title}
+                              data={item.data}
+                              backgroundColor={"#D3D3D3"}
+                              fontsize={"2rem"}
+                              titlefontsize={"1rem"}
+                              color={"black"}
+                              height={"120px"}
+                              form={"SA_B2226W"}
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </CardContentMui>
+                  </CardMui>
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
+                  <CardMui>
+                    <CardContentMui>
+                      <GridTitle
+                        title={
+                          convertDateToStr(filters.frdt).substring(0, 4) +
+                          "년도 목표 현황"
+                        }
+                      />
+                      <Grid container spacing={2} style={{ marginTop: "10px" }}>
+                        <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
+                          <Card
+                            title={"목표 금액"}
+                            titlefontsize={"1.1rem"}
+                            data={doughnut.target + "억"}
+                            backgroundColor={theme.palette.primary.main}
+                            fontsize={"1.6rem"}
+                            form={"SA_B2226W"}
+                            height={"120px"}
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
+                          <Card
+                            title={"실적 금액"}
+                            titlefontsize={"1.1rem"}
+                            data={doughnut.performance + "억"}
+                            backgroundColor={theme.palette.primary.main}
+                            fontsize={"1.6rem"}
+                            form={"SA_B2226W"}
+                            height={"120px"}
+                          />
+                        </Grid>
+                        <Grid
+                          item
+                          xs={12}
+                          sm={12}
+                          md={12}
+                          lg={12}
+                          xl={12}
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
+                          <Knob
+                            value={doughnut.percent}
+                            size={deviceWidth < 1200 ? 250 : 150}
+                            valueTemplate={"{value}%"}
+                            valueColor={theme.palette.primary.dark}
+                            rangeColor={theme.palette.secondary.main}
+                            readOnly
+                            strokeWidth={10}
+                          />
+                        </Grid>
+                      </Grid>
+                    </CardContentMui>
+                  </CardMui>
+                </Grid>
               </Grid>
             </Box>
             <Divider />
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
+              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 <GridTitle
                   title={
                     convertDateToStr(filters.frdt).substring(0, 4) +
@@ -544,55 +738,6 @@ const SA_B2226W: React.FC = () => {
                   random={false}
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={3} xl={3}>
-                <GridTitle
-                  title={
-                    convertDateToStr(filters.frdt).substring(0, 4) +
-                    "년도 목표 대비 실적"
-                  }
-                />
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
-                    <Card
-                      title={"목표 금액"}
-                      data={doughnut.target + "억"}
-                      backgroundColor={theme.palette.primary.main}
-                      fontsize={size.width < 600 ? "1.8rem" : "2rem"}
-                      form={"SA_B2226W"}
-                      height={"120px"}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
-                    <Card
-                      title={"실적 금액"}
-                      data={doughnut.performance + "억"}
-                      backgroundColor={theme.palette.primary.light}
-                      fontsize={size.width < 600 ? "1.8rem" : "2rem"}
-                      form={"SA_B2226W"}
-                      height={"120px"}
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    sm={12}
-                    md={12}
-                    lg={12}
-                    xl={12}
-                    style={{ display: "flex", justifyContent: "center" }}
-                  >
-                    <Knob
-                      value={doughnut.percent}
-                      size={250}
-                      valueTemplate={"{value}%"}
-                      valueColor={theme.palette.primary.dark}
-                      rangeColor={theme.palette.secondary.main}
-                      readOnly
-                      strokeWidth={10}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
             </Grid>
             <Divider />
             <GridTitle
@@ -603,39 +748,45 @@ const SA_B2226W: React.FC = () => {
             />
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <ComboChart
+                <DoubleChart
                   data={ItemList}
                   value={["past_year", "current_year"]}
                   label={["직전년도 계약금액", "당해년도 계약금액"]}
-                  alllabel={ItemList.map((item) => item.itemcd)}
-                  random={true}
+                  alllabel={ItemList.map((item) => item.testpart + "_" + item.teststs)}
+                  color={[
+                    theme.palette.primary.light,
+                    theme.palette.primary.dark,
+                  ]}
                   name="past_year"
                   colorName={colorName}
                   borderColor={theme.palette.primary.dark}
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={8} xl={8}>
+              <Grid item xs={12} sm={12} md={12} lg={8.5} xl={8.5}>
                 <PaginatorTable
                   value={ItemList}
                   column={{
-                    itemcd: "품목명",
+                    testpart: "시험파트",
+                    teststs: "시험계",
                     cnt: "시험건수",
-                    amt: "계약금액",
+                    past_amt: "직전년도 계약금액",
+                    amt: "당해년도 계약금액",
                   }}
                   title={"목록"}
-                  width={[120, 100, 100]}
+                  width={[120, 120, 100, 100, 100]}
                   key="num"
                   selection={selected}
                   onSelectionChange={(e: any) => {
                     setSelected(e.value);
                   }}
+                  height={"300px"}
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={4} xl={4}>
+              <Grid item xs={12} sm={12} md={12} lg={3.5} xl={3.5}>
                 <MultiDoughnutChart
                   data={ItemList}
                   option={"value"}
-                  label={ItemList.map((item) => item.itemcd)}
+                  label={ItemList.map((item) => item.testpart + "_" + item.teststs)}
                   random={true}
                   colorName={colorName}
                 />
