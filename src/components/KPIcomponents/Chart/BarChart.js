@@ -69,6 +69,7 @@ export default function BarChart(props) {
 
       const options = {
         maintainAspectRatio: false,
+        responsive: true,
         aspectRatio: 0.8,
         plugins: {
           tooltips: {
@@ -116,7 +117,7 @@ export default function BarChart(props) {
   }, [props]);
 
   return (
-    <div className="card">
+    <div className="card" style={{height: "100%"}}>
       <Chart type="bar" data={chartData} plugins={[ChartDataLabels]} options={chartOptions} />
     </div>
   );

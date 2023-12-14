@@ -12,6 +12,10 @@ code {
     monospace;
 }
 
+.p-chart {
+  height: 100% !important;
+}
+
 .css-zqhngk-MuiFormControl-root-MuiTextField-root {
   width: 100% !important;
 }

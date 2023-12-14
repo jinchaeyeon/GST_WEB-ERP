@@ -187,6 +187,7 @@ import SA_B2211W from "./routes/SA_B2211W";
 import SA_B2216W from "./routes/SA_B2216W";
 import SA_B2221W from "./routes/SA_B2221W";
 import SA_B2226W from "./routes/SA_B2226W";
+import SA_B2227W from "./routes/SA_B2227W";
 import SA_B2410W from "./routes/SA_B2410W";
 import SA_B2410_290W from "./routes/SA_B2410_290W";
 import SA_B3000W from "./routes/SA_B3000W";
@@ -558,6 +559,8 @@ const AppInner: React.FC = () => {
       return SA_B2211W;
     } else if (str == "SA_B2221W") {
       return SA_B2221W;
+    } else if (str == "SA_B2227W") {
+      return SA_B2227W;
     } else if (str == "SA_B2410W") {
       return SA_B2410W;
     } else if (str == "SA_B2410_290W") {
@@ -1044,7 +1047,8 @@ const AppInner: React.FC = () => {
                   {/* 바이오톡스텍 대쉬보드 */}
                   <AuthRoute path="/SA_B2226W" component={SA_B2226W} exact />
                   <AuthRoute path="/SA_B2216W" component={SA_B2216W} exact />
-
+                  <AuthRoute path="/SA_B2227W" component={SA_B2227W} exact />
+                  
                   {/* DDGD 관리자페이지 */}
                   <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
                   <AuthRoute path="/CR_A0020W" component={CR_A0020W} exact />

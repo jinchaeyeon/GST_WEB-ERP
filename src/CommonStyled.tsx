@@ -171,6 +171,14 @@ export const Title = styled.h3`
   color: #424242;
   margin-bottom: 10px;
 `;
+
+export const SubTitle = styled.h5`
+  font-size: 15px;
+  font-weight: 500;
+  color: #7f7e7e;
+  margin-bottom: 10px;
+`;
+
 type TButtonContainer = {
   flexDirection?: "column" | "row";
 };
@@ -378,6 +386,7 @@ type TGridContainerWrap = {
   flexDirection?: "column" | "row" | "row-reverse" | "column-reverse";
   maxWidth?: string | number;
   height?: string | number;
+  mobilemaxWidth? : number;
 };
 
 export const GridContainerWrap = styled.div<TGridContainerWrap>`
@@ -392,7 +401,7 @@ export const GridContainerWrap = styled.div<TGridContainerWrap>`
   height: ${(props) =>
     typeof props.height === "number" ? props.height + "px" : props.height};
 
-  @media (max-width: 1200px) {
+  @media (max-width: ${(props) => props.mobilemaxWidth != undefined ? props.mobilemaxWidth :  1200}px) {
     flex-direction: column;
   }
 `;
@@ -407,6 +416,7 @@ type TGridContainer = {
   inTab?: boolean;
   margin?: TMargin;
   overflowY?: string;
+  mobilemaxWidth?:number;
 };
 
 type TMargin = {
@@ -476,7 +486,7 @@ export const GridContainer = styled.div<TGridContainer>`
     background-color: #fff0ef;
   } */
 
-  @media (max-width: 1200px) {
+  @media (max-width: ${(props) => props.mobilemaxWidth != undefined ? props.mobilemaxWidth : 1200}px) {
     width: auto;
 
     .k-chart.QC_A0120_TAB1 {
