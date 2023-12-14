@@ -8,7 +8,7 @@ import {
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Knob } from "primereact/knob";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Map } from "react-kakao-maps-sdk";
 import { useRecoilState } from "recoil";
 import {
@@ -155,17 +155,24 @@ const SA_B2227W: React.FC = () => {
     },
   ]);
 
+  const [map, setMap] = useState<any>(null);
+  const ref = useRef<any>();
+  useEffect(()=>{
+    const newMap = new window.google.maps.Map(ref.current, {
+        center : { lat: 37.569227, lng: 126.9777256},
+        zoom : 16,
+    });     
+    
+    setMap(newMap);
+},[])
+
   return (
     <>
-      <div style={{ fontFamily: "TheJamsil5Bold" }}>
+      <div style={{ fontFamily: "TheJamsil5Bold", marginBottom: "50px", paddingTop: "25px" }}>
         <ThemeProvider theme={theme}>
-          <Container
-            maxWidth="xl"
-            style={{ width: "100%", marginBottom: "50px", paddingTop: "25px" }}
-          >
             <GridContainerWrap mobilemaxWidth={1600}>
               <GridContainer mobilemaxWidth={1600} width="50%">
-                <GridContainerWrap>
+                <GridContainerWrap height="15vh">
                   <GridContainer width="35%">
                     <TitleContainer style={{ marginBottom: "0px" }}>
                       <Title>신규 고객 유치현황</Title>
@@ -241,11 +248,7 @@ const SA_B2227W: React.FC = () => {
                 </GridContainerWrap>
                 <GridContainer>
                   <GridTitle>지도로 보는 고객사 현황</GridTitle>
-                  <Map
-                    center={{ lat: 33.5563, lng: 126.79581 }} // 지도의 중심 좌표
-                    style={{ width: "100%", height: "500px" }} // 지도 크기
-                    level={3} // 지도 확대 레벨
-                  ></Map>
+                   <div ref={ref} id="map" style={{width: "100%", height: "55vh"}}></div>
                 </GridContainer>
               </GridContainer>
               <GridContainer
@@ -260,7 +263,7 @@ const SA_B2227W: React.FC = () => {
                     md={6}
                     lg={6}
                     xl={6}
-                    style={{ height: "320px", marginBottom: "10px" }}
+                    style={{ height: "35.5vh", marginBottom: "10px" }}
                   >
                     <GridTitle>신규 고객 계약율</GridTitle>
                     <div style={{ display: "flex", justifyContent: "center" }}>
@@ -282,7 +285,7 @@ const SA_B2227W: React.FC = () => {
                     md={6}
                     lg={6}
                     xl={6}
-                    style={{ height: "320px", marginBottom: "10px" }}
+                    style={{ height: "35.5vh", marginBottom: "10px" }}
                   >
                     <GridTitle>사업부별 신규 문의 건수</GridTitle>
                     <BarChart
@@ -301,7 +304,7 @@ const SA_B2227W: React.FC = () => {
                     md={6}
                     lg={6}
                     xl={6}
-                    style={{ height: "320px", marginBottom: "10px" }}
+                    style={{ height: "35.5vh", marginBottom: "10px" }}
                   >
                     <GridTitle>팀별 신규 고객 유치</GridTitle>
                     <BarChart
@@ -320,7 +323,7 @@ const SA_B2227W: React.FC = () => {
                     md={6}
                     lg={6}
                     xl={6}
-                    style={{ height: "320px", marginBottom: "10px" }}
+                    style={{ height: "35.5vh", marginBottom: "10px" }}
                   >
                     <GridTitle>3개년 신규고객 수 현황</GridTitle>
                     <BarChart
@@ -355,7 +358,6 @@ const SA_B2227W: React.FC = () => {
                 width={[100, 100, 100, 100, 100, 100, 100, 100, 100, 100]}
               />
             </GridContainer>
-          </Container>
           <SpecialDial />
         </ThemeProvider>
       </div>

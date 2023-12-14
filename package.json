@@ -155,6 +155,7 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@progress/kendo-theme-tasks": "^1.17.5",
     "@types/file-saver": "^2.0.5",
+    "@types/google.maps": "^3.54.10",
     "@types/pdf-viewer-reactjs": "^2.2.5",
     "@types/react-cookies": "^0.1.0",
     "@types/react-router-dom": "^5.3.3",
