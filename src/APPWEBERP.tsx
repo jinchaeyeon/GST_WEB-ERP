@@ -190,6 +190,7 @@ import SA_B2221W from "./routes/SA_B2221W";
 import SA_B2226W from "./routes/SA_B2226W";
 import SA_B2227W from "./routes/SA_B2227W";
 import SA_B2228W from "./routes/SA_B2228W";
+import SA_B2229W from "./routes/SA_B2229W";
 import SA_B2410W from "./routes/SA_B2410W";
 import SA_B2410_290W from "./routes/SA_B2410_290W";
 import SA_B3000W from "./routes/SA_B3000W";
@@ -807,8 +808,10 @@ const AppInner: React.FC = () => {
       return SA_B2226W;
     } else if (str == "CR_A0000W") {
       return CR_A0000W;
-    }  else if (str == "SA_B2228W") {
-      return CR_A0000W;
+    } else if (str == "SA_B2228W") {
+      return SA_B2228W;
+    } else if (str == "SA_B2229W") {
+      return SA_B2229W;
     } else {
       if (loginResult.companyCode == "2302BA03") {
         return MainBIO;
@@ -1055,7 +1058,8 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/SA_B2216W" component={SA_B2216W} exact />
                   <AuthRoute path="/SA_B2227W" component={SA_B2227W} exact />
                   <AuthRoute path="/SA_B2228W" component={SA_B2228W} exact />
-                  
+                  <AuthRoute path="/SA_B2229W" component={SA_B2229W} exact />
+
                   {/* DDGD 관리자페이지 */}
                   <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
                   <AuthRoute path="/CR_A0020W" component={CR_A0020W} exact />
