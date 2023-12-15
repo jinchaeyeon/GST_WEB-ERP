@@ -72,7 +72,7 @@ export default function MultiDoughnutChart(props) {
       };
 
       const options = {
-        cutout: "70%",
+        cutout: "50%",
         plugins: {
           datalabels: {
             color: 'black',
@@ -94,7 +94,7 @@ export default function MultiDoughnutChart(props) {
   return (
     <div
       className="card flex justify-content-center"
-      style={{ position: "relative" }}
+      style={{ position: "relative", display: "flex", justifyContent: "center" }}
     >
       <Chart
         type="doughnut"
