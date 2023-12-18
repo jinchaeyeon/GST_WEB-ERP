@@ -1593,6 +1593,7 @@ const SA_A5001W: React.FC = () => {
           setVisible={setCustWindowVisible}
           workType={workType}
           setData={setCustData}
+          modal={true}
         />
       )}
       {itemWindowVisible && (
@@ -1600,6 +1601,7 @@ const SA_A5001W: React.FC = () => {
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
+          modal={true}
         />
       )}
       {gridList.map((grid: TGrid) =>

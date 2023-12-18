@@ -304,6 +304,8 @@ const CM_A7000W: React.FC = () => {
       return {
         ...prev,
         ref_key: data.quokey,
+        custcd: data.custcd,
+        custnm: data.custnm,
       };
     });
   };
