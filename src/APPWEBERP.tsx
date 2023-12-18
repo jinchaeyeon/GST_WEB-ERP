@@ -23,7 +23,7 @@ import numbersEn from "cldr-numbers-full/main/en/numbers.json";
 import numbersJa from "cldr-numbers-full/main/ja/numbers.json";
 import numbersKo from "cldr-numbers-full/main/ko/numbers.json";
 import numbersZh from "cldr-numbers-full/main/zh/numbers.json";
-import React, { Suspense, lazy, useEffect, useState } from "react";
+import React, { Suspense, lazy, useCallback, useEffect, useState } from "react";
 import { useThemeSwitcher } from "react-css-theme-switcher";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
@@ -213,7 +213,11 @@ import {
   colors,
   isMobileMenuOpendState,
   loginResultState,
+  sessionItemState,
 } from "./store/atoms";
+import { UseGetValueFromSessionItem } from "./components/CommonFunction";
+import { Iparameters } from "./store/types";
+import { useApi } from "./hooks/api";
 const Login = lazy(() => import("./routes/Login"));
 const Main = lazy(() => import("./routes/Main"));
 
@@ -329,7 +333,54 @@ const AppInner: React.FC = () => {
   useEffect(() => {
     setThemeColor(color);
   }, [color]);
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  const token = localStorage.getItem("accessToken");
+  const userId = loginResult ? loginResult.userId : "";
+  const sessionUserId = UseGetValueFromSessionItem("user_id");
+  useEffect(() => {
+    if (token && userId != "" && (sessionUserId === "" || sessionUserId == null)) fetchSessionItem();
+  },[userId, sessionUserId]);
 
+  let sessionOrgdiv = sessionItem.find(
+    (sessionItem) => sessionItem.code == "orgdiv"
+  )!.value;
+  let sessionLocation = sessionItem.find(
+    (sessionItem) => sessionItem.code == "location"
+  )!.value;
+ 
+  if (sessionOrgdiv === "") sessionOrgdiv = "01";
+  if (sessionLocation === "") sessionLocation = "01";
+  const processApi = useApi();
+  const fetchSessionItem = async () => {
+    let data;
+    try {
+      const para: Iparameters = {
+        procedureName: "sys_biz_configuration",
+        pageNumber: 0,
+        pageSize: 0,
+        parameters: {
+          "@p_user_id": userId,
+        },
+      };
+
+      data = await processApi<any>("procedure", para);
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        setSessionItem(
+          rows
+            .filter((item: any) => item.class === "Session")
+            .map((item: any) => ({
+              code: item.code,
+              value: item.value,
+            }))
+        );
+      }
+    } catch (e: any) {
+      console.log("menus error", e);
+    }
+  };
+  
   const theme = createTheme({
     palette: {
       primary: {

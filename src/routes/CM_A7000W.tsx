@@ -86,7 +86,6 @@ import {
   deletedAttadatnumsState,
   deletedNameState,
   isLoading,
-  loginResultState,
   unsavedAttadatnumsState,
   unsavedNameState,
 } from "../store/atoms";
@@ -193,8 +192,7 @@ const CM_A7000W: React.FC = () => {
   let gridRef: any = useRef(null);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  const [loginResult] = useRecoilState(loginResultState);
-  const userId = loginResult ? loginResult.userId : "";
+  const userId = UseGetValueFromSessionItem("user_id");
   const [workType, setWorkType] = useState("");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
