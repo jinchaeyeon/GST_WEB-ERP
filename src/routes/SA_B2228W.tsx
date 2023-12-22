@@ -419,8 +419,8 @@ const SA_B2228W: React.FC = () => {
                   value="value"
                   name="series"
                   color={[
-                    theme.palette.primary.light,
-                    theme.palette.primary.dark,
+                    "#d3d3d3",
+                    "#70ad47",
                   ]}
                   alllabel={stackChartAllLabel}
                   label={stackChartLabel}
