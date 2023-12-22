@@ -436,6 +436,7 @@ const SA_B2228W: React.FC = () => {
                     percent: "총매출대비 비중(%)",
                     goal_percent: "달성률(%)",
                   }}
+                  numberCell={["target_amt", "amt", "goal_amt", "percent", "goal_percent"]}
                   width={[120, 100, 100, 100, 100, 100, 100, 100, 100, 100]}
                 />
               </GridContainer>

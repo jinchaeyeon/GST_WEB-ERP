@@ -15,6 +15,7 @@ import {
   pink,
   grey,
 } from "@mui/material/colors";
+import { numberWithCommas3 } from "../../CommonFunction";
 
 export default function MultiDoughnutChart(props) {
   const [chartData, setChartData] = useState({});
@@ -80,9 +81,7 @@ export default function MultiDoughnutChart(props) {
             font: {
               weight: 'bold'
             },
-            formatter: (value) => {
-              return value + "%";
-            },
+            formatter: function(value, context) { return numberWithCommas3(value) + "%"; },
           },
         },
       };

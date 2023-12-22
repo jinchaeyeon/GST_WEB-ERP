@@ -484,137 +484,137 @@ const SA_B3600W: React.FC = () => {
     <>
       <div style={{ fontFamily: "TheJamsil5Bold" }}>
         <ThemeProvider theme={theme}>
-          <Container maxWidth="xl" style={{ width: "100%" }}>
-            <TitleContainer
-              style={{ paddingTop: "25px", paddingBottom: "25px" }}
-            >
-              <Title>납기준수율</Title>
-              <ButtonContainer>
-                <Button
-                  icon="pi pi-search"
-                  onClick={() =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      isSearch: true,
-                    }))
-                  }
-                  className="mr-2"
-                />
-              </ButtonContainer>
-            </TitleContainer>
-            <Toolbar start={startContent} />
-            <Divider />
-            <Box sx={{ flexGrow: 1 }}>
-              <Grid container spacing={2}>
-                {cardOption.map((item) => (
-                  <Grid item xs={6} sm={6} md={6} lg={3} xl={3}>
-                    <Card
-                      title={item.title}
-                      data={item.data}
-                      backgroundColor={item.backgroundColor}
-                      fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
-                      form={"SA_B3600W"}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
-            <Divider />
+          <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
+            <Title>납기준수율</Title>
+            <ButtonContainer>
+              <Button
+                icon="pi pi-search"
+                onClick={() =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    isSearch: true,
+                  }))
+                }
+                className="mr-2"
+              />
+            </ButtonContainer>
+          </TitleContainer>
+          <Toolbar start={startContent} />
+          <Divider />
+          <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                <Table
-                  value={toppercentData}
-                  column={{
-                    custcd: "업체코드",
-                    custnm: "업체명",
-                    okcnt: "준수건수",
-                    totcnt: "총건수",
-                    percent: "준수율",
-                  }}
-                  width={[150, 160, 150, 130, 130]}
-                  title={"준수율 TOP5"}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                <Table
-                  value={topdelayData}
-                  column={{
-                    custcd: "업체코드",
-                    custnm: "업체명",
-                    badcnt: "지연건수",
-                    totcnt: "총건수",
-                    rate: "준수율",
-                  }}
-                  width={[150, 160, 150, 130, 130]}
-                  title={"지연건수 TOP5"}
-                />
-              </Grid>
+              {cardOption.map((item) => (
+                <Grid item xs={6} sm={6} md={6} lg={3} xl={3}>
+                  <Card
+                    title={item.title}
+                    data={item.data}
+                    backgroundColor={item.backgroundColor}
+                    fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
+                    form={"SA_B3600W"}
+                  />
+                </Grid>
+              ))}
             </Grid>
-            <Divider />
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <GridTitle title="전체 업체 준수율 월별 그래프" />
-                <BarChart
-                  props={AllList}
-                  value="rate"
-                  alllabel={AllChartAllLabel}
-                  random={true}
-                  name="custnm"
-                  colorName={colorName}
-                />
-              </Grid>
+          </Box>
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+              <Table
+                value={toppercentData}
+                column={{
+                  custcd: "업체코드",
+                  custnm: "업체명",
+                  okcnt: "준수건수",
+                  totcnt: "총건수",
+                  percent: "준수율",
+                }}
+                numberCell={["okcnt", "totcnt", "percent"]}
+                width={[150, 160, 150, 130, 130]}
+                title={"준수율 TOP5"}
+              />
             </Grid>
-            <Divider />
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <GridTitle title="업체 준수율 월별 그래프" />
-                <StackedChart
-                  props={ChartList}
-                  value="value"
-                  name="series"
-                  color={[
-                    theme.palette.primary.dark,
-                    theme.palette.primary.light,
-                  ]}
-                  alllabel={stackChartAllLabel}
-                  label={stackChartLabel}
-                  random={false}
-                />
-              </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+              <Table
+                value={topdelayData}
+                column={{
+                  custcd: "업체코드",
+                  custnm: "업체명",
+                  badcnt: "지연건수",
+                  totcnt: "총건수",
+                  rate: "준수율",
+                }}
+                numberCell={["badcnt", "totcnt", "rate"]}
+                width={[150, 160, 150, 130, 130]}
+                title={"지연건수 TOP5"}
+              />
             </Grid>
-            <Divider />
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={12} lg={7} xl={9}>
-                <PaginatorTable
-                  value={AllList}
-                  column={{
-                    custcd: "업체코드",
-                    custnm: "업체명",
-                    okcnt: "준수건수",
-                    badcnt: "지연건수",
-                    totcnt: "총건수",
-                    percent: "준수율",
-                  }}
-                  title={"전체 목록"}
-                  width={[190, 210, 180, 180, 170, 170]}
-                  key="num"
-                  selection={selected}
-                  onSelectionChange={(e: any) => {
-                    setSelected(e.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={5} xl={3}>
-                <GridTitle title="업체 건수 그래프" />
-                <DoughnutChart
-                  data={selected}
-                  option={["okcnt", "badcnt"]}
-                  label={["준수건수", "지연건수"]}
-                  theme={theme}
-                />
-              </Grid>
+          </Grid>
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <GridTitle title="전체 업체 준수율 월별 그래프" />
+              <BarChart
+                props={AllList}
+                value="rate"
+                alllabel={AllChartAllLabel}
+                random={true}
+                name="custnm"
+                colorName={colorName}
+              />
             </Grid>
-          </Container>
+          </Grid>
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <GridTitle title="업체 준수율 월별 그래프" />
+              <StackedChart
+                props={ChartList}
+                value="value"
+                name="series"
+                color={[
+                  theme.palette.primary.dark,
+                  theme.palette.primary.light,
+                ]}
+                alllabel={stackChartAllLabel}
+                label={stackChartLabel}
+                random={false}
+              />
+            </Grid>
+          </Grid>
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} lg={7} xl={9}>
+              <PaginatorTable
+                value={AllList}
+                column={{
+                  custcd: "업체코드",
+                  custnm: "업체명",
+                  okcnt: "준수건수",
+                  badcnt: "지연건수",
+                  totcnt: "총건수",
+                  percent: "준수율",
+                }}
+                percent
+                numberCell={["okcnt", "badcnt", "totcnt", "rate"]}
+                title={"전체 목록"}
+                width={[190, 210, 180, 180, 170, 170]}
+                key="num"
+                selection={selected}
+                onSelectionChange={(e: any) => {
+                  setSelected(e.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={5} xl={3}>
+              <GridTitle title="업체 건수 그래프" />
+              <DoughnutChart
+                data={selected}
+                option={["okcnt", "badcnt"]}
+                label={["준수건수", "지연건수"]}
+                theme={theme}
+              />
+            </Grid>
+          </Grid>
           <SpecialDial />
         </ThemeProvider>
       </div>

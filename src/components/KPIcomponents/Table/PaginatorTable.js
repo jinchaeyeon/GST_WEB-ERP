@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
 import { FilterMatchMode } from "primereact/api";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
-import { ColumnGroup } from "primereact/columngroup";
-import { Row } from "primereact/row";
+import React, { useEffect } from "react";
+import { numberWithCommas3 } from "../../CommonFunction";
 import { PAGE_SIZE } from "../../CommonString";
 
 const PaginatorTable = (props) => {
@@ -42,36 +41,70 @@ const PaginatorTable = (props) => {
     </div>
   );
 
+  const numberTemplate = (rowData, option) => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+        }}
+      >
+        <span>{numberWithCommas3(rowData[option.field])}</span>
+      </div>
+    );
+  };
+
   function colums() {
     var keys = Object.keys(props.column);
     var values = Object.values(props.column);
     let array = [];
-
     for (var i = 0; i < keys.length; i++) {
-      array.push(
-        <Column
-          field={keys[i]}
-          header={values[[i]]}
-          style={{ minWidth: props.width[i] }}
-          sortable
-          body={custom(keys[i])}
-        ></Column>
-      );
+      if (props.numberCell != undefined) {
+        if (props.numberCell.includes(keys[i])) {
+          array.push(
+            <Column
+              field={keys[i]}
+              header={values[[i]]}
+              style={{ minWidth: props.width[i] }}
+              body={numberTemplate}
+              sortable
+            ></Column>
+          );
+        } else {
+          array.push(
+            <Column
+              field={keys[i]}
+              header={values[[i]]}
+              style={{ minWidth: props.width[i] }}
+              sortable
+            ></Column>
+          );
+        }
+      } else {
+        array.push(
+          <Column
+            field={keys[i]}
+            header={values[[i]]}
+            style={{ minWidth: props.width[i] }}
+            sortable
+          ></Column>
+        );
+      }
     }
     return array;
   }
 
   function custom(key) {
-    if(props.customCell != undefined) {
-      for(var i = 0; i< props.customCell.length; i++) {
-        if(key == props.customCell[i][0]) {
+    if (props.customCell != undefined) {
+      for (var i = 0; i < props.customCell.length; i++) {
+        if (key == props.customCell[i][0]) {
           return props.customCell[i][1];
-        } 
+        }
       }
     } else {
       return undefined;
     }
-
   }
 
   useEffect(() => {}, [props]);
@@ -81,6 +114,7 @@ const PaginatorTable = (props) => {
       <div className="card">
         <DataTable
           value={props.value}
+          showGridlines
           header={props.header == false ? undefined : header}
           tableStyle={{ minWidth: "20rem" }}
           stripedRows

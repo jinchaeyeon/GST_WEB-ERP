@@ -775,6 +775,7 @@ const SA_B2226W: React.FC = () => {
                   title={"목록"}
                   width={[120, 120, 100, 100, 100]}
                   key="num"
+                  numberCell={["cnt", "past_amt", "amt"]}
                   selection={selected}
                   onSelectionChange={(e: any) => {
                     setSelected(e.value);

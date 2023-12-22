@@ -51,52 +51,52 @@ const SA_B2229W: React.FC = () => {
     {
       series: "상",
       argument: "2월",
-      value: 3,
+      value: 0,
     },
     {
       series: "상",
       argument: "3월",
-      value: 3,
+      value: 1,
     },
     {
       series: "상",
       argument: "4월",
-      value: 3,
+      value: 1,
     },
     {
       series: "상",
       argument: "5월",
-      value: 3,
+      value: 1,
     },
     {
       series: "상",
       argument: "6월",
-      value: 3,
+      value: 4,
     },
     {
       series: "상",
       argument: "7월",
-      value: 3,
+      value: 5,
     },
     {
       series: "상",
       argument: "8월",
-      value: 3,
+      value: 0,
     },
     {
       series: "상",
       argument: "9월",
-      value: 3,
+      value: 2,
     },
     {
       series: "상",
       argument: "10월",
-      value: 3,
+      value: 0,
     },
     {
       series: "상",
       argument: "11월",
-      value: 3,
+      value: 0,
     },
     {
       series: "상",
@@ -106,7 +106,7 @@ const SA_B2229W: React.FC = () => {
     {
       series: "중",
       argument: "1월",
-      value: 2,
+      value: 1,
     },
     {
       series: "중",
@@ -126,42 +126,42 @@ const SA_B2229W: React.FC = () => {
     {
       series: "중",
       argument: "5월",
-      value: 2,
+      value: 0,
     },
     {
       series: "중",
       argument: "6월",
-      value: 2,
+      value: 5,
     },
     {
       series: "중",
       argument: "7월",
-      value: 2,
+      value: 4,
     },
     {
       series: "중",
       argument: "8월",
-      value: 2,
+      value: 1,
     },
     {
       series: "중",
       argument: "9월",
-      value: 2,
+      value: 3,
     },
     {
       series: "중",
       argument: "10월",
-      value: 2,
+      value: 3,
     },
     {
       series: "중",
       argument: "11월",
-      value: 2,
+      value: 0,
     },
     {
       series: "중",
       argument: "12월",
-      value: 2,
+      value: 4,
     },
     {
       series: "하",
@@ -171,32 +171,215 @@ const SA_B2229W: React.FC = () => {
     {
       series: "하",
       argument: "2월",
-      value: 1,
+      value: 0,
     },
     {
       series: "하",
       argument: "3월",
-      value: 1,
+      value: 0,
     },
     {
       series: "하",
       argument: "4월",
-      value: 1,
+      value: 3,
     },
     {
       series: "하",
       argument: "5월",
-      value: 1,
+      value: 0,
     },
     {
       series: "하",
       argument: "6월",
-      value: 1,
+      value: 0,
     },
     {
       series: "하",
       argument: "7월",
+      value: 0,
+    },
+    {
+      series: "하",
+      argument: "8월",
+      value: 3,
+    },
+    {
+      series: "하",
+      argument: "9월",
+      value: 4,
+    },
+    {
+      series: "하",
+      argument: "10월",
+      value: 3,
+    },
+    {
+      series: "하",
+      argument: "11월",
+      value: 2,
+    },
+    {
+      series: "하",
+      argument: "12월",
+      value: 0,
+    },
+  ]);
+
+  const [ChartList2, setChartList2] = useState([
+    {
+      series: "상",
+      argument: "1월",
       value: 1,
+    },
+    {
+      series: "상",
+      argument: "2월",
+      value: 5,
+    },
+    {
+      series: "상",
+      argument: "3월",
+      value: 2,
+    },
+    {
+      series: "상",
+      argument: "4월",
+      value: 0,
+    },
+    {
+      series: "상",
+      argument: "5월",
+      value: 2,
+    },
+    {
+      series: "상",
+      argument: "6월",
+      value: 1,
+    },
+    {
+      series: "상",
+      argument: "7월",
+      value: 5,
+    },
+    {
+      series: "상",
+      argument: "8월",
+      value: 3,
+    },
+    {
+      series: "상",
+      argument: "9월",
+      value: 1,
+    },
+    {
+      series: "상",
+      argument: "10월",
+      value: 0,
+    },
+    {
+      series: "상",
+      argument: "11월",
+      value: 1,
+    },
+    {
+      series: "상",
+      argument: "12월",
+      value: 2,
+    },
+    {
+      series: "중",
+      argument: "1월",
+      value: 2,
+    },
+    {
+      series: "중",
+      argument: "2월",
+      value: 5,
+    },
+    {
+      series: "중",
+      argument: "3월",
+      value: 4,
+    },
+    {
+      series: "중",
+      argument: "4월",
+      value: 4,
+    },
+    {
+      series: "중",
+      argument: "5월",
+      value: 4,
+    },
+    {
+      series: "중",
+      argument: "6월",
+      value: 2,
+    },
+    {
+      series: "중",
+      argument: "7월",
+      value: 1,
+    },
+    {
+      series: "중",
+      argument: "8월",
+      value: 6,
+    },
+    {
+      series: "중",
+      argument: "9월",
+      value: 3,
+    },
+    {
+      series: "중",
+      argument: "10월",
+      value: 2,
+    },
+    {
+      series: "중",
+      argument: "11월",
+      value: 1,
+    },
+    {
+      series: "중",
+      argument: "12월",
+      value: 1,
+    },
+    {
+      series: "하",
+      argument: "1월",
+      value: 0,
+    },
+    {
+      series: "하",
+      argument: "2월",
+      value: 0,
+    },
+    {
+      series: "하",
+      argument: "3월",
+      value: 0,
+    },
+    {
+      series: "하",
+      argument: "4월",
+      value: 0,
+    },
+    {
+      series: "하",
+      argument: "5월",
+      value: 2,
+    },
+    {
+      series: "하",
+      argument: "6월",
+      value: 3,
+    },
+    {
+      series: "하",
+      argument: "7월",
+      value: 5,
     },
     {
       series: "하",
@@ -206,17 +389,17 @@ const SA_B2229W: React.FC = () => {
     {
       series: "하",
       argument: "9월",
-      value: 1,
+      value: 2,
     },
     {
       series: "하",
       argument: "10월",
-      value: 1,
+      value: 2,
     },
     {
       series: "하",
       argument: "11월",
-      value: 1,
+      value: 2,
     },
     {
       series: "하",
@@ -615,7 +798,7 @@ const SA_B2229W: React.FC = () => {
                       height: "130px",
                       width: "100%",
                       marginRight: "15px",
-                      backgroundColor: "#d3d3d3",
+                      backgroundColor: "#e9e9e9",
                       fontFamily: "TheJamsil5Bold",
                     }}
                   >
@@ -682,7 +865,7 @@ const SA_B2229W: React.FC = () => {
                 <GridTitle>Contract Weight</GridTitle>
               </GridTitleContainer>
               <MultiChart
-                props={ChartList}
+                props={ChartList2}
                 value="value"
                 name="series"
                 color={["#70ad47", "#ffc000", "#ed7d31"]}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Chart } from "primereact/chart";
 import { red, orange, yellow, lime, lightGreen, green, cyan, blue, indigo, purple, pink, grey } from '@mui/material/colors';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { numberWithCommas3 } from "../../CommonFunction";
 
 export default function BarChart(props) {
   const [chartData, setChartData] = useState({});
@@ -63,6 +64,10 @@ export default function BarChart(props) {
             data: propsData.map((items) => {
               return items[props.value];
             }),
+            datalabels: {
+              align: "end",
+              anchor: "end"
+            }
           },
         ],
       };
@@ -88,7 +93,7 @@ export default function BarChart(props) {
             font: {
               weight: 'bold'
             },
-            formatter: Math.round
+            formatter: function(value, context) { return numberWithCommas3(value); },
           }
         },
         scales: {

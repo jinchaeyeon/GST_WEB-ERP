@@ -164,7 +164,9 @@ const SA_B2227W: React.FC = () => {
   useEffect(() => {
     const newMap = new window.google.maps.Map(ref.current, {
       center: { lat: 37.569227, lng: 126.9777256 },
-      zoom: 16,
+      zoom: 2,
+      disableDefaultUI: true,
+      maxZoom: 16
     });
 
     setMap(newMap);
@@ -261,7 +263,7 @@ const SA_B2227W: React.FC = () => {
                 <div
                   ref={ref}
                   id="map"
-                  style={{ width: "100%", height: "55vh" }}
+                  style={{ width: "100%", height: "70vh" }}
                 ></div>
               </GridContainer>
             </GridContainer>
@@ -274,7 +276,7 @@ const SA_B2227W: React.FC = () => {
                   md={6}
                   lg={6}
                   xl={6}
-                  style={{ height: "35.5vh", marginBottom: "10px" }}
+                  style={{ marginBottom: "10px" }}
                 >
                   <GridTitle>신규 고객 계약율</GridTitle>
                   <Grid container spacing={2}>
@@ -284,7 +286,7 @@ const SA_B2227W: React.FC = () => {
                       >
                         <Knob
                           value={AllPanel.contract_rate}
-                          size={150}
+                          size={200}
                           valueTemplate={"{value}%"}
                           valueColor={theme.palette.primary.dark}
                           rangeColor={theme.palette.secondary.main}
@@ -298,7 +300,7 @@ const SA_B2227W: React.FC = () => {
                         title={"신규고객 문의 건수"}
                         titlefontsize={"1rem"}
                         data={AllPanel.new_question_cnt + "건"}
-                        backgroundColor={theme.palette.primary.main}
+                        backgroundColor={theme.palette.primary.dark}
                         fontsize={"1.6rem"}
                         form={"SA_B2227W"}
                         height={"120px"}
@@ -309,7 +311,7 @@ const SA_B2227W: React.FC = () => {
                         title={"신규고객 계약 건수"}
                         titlefontsize={"1rem"}
                         data={AllPanel.new_contract_cnt + "건"}
-                        backgroundColor={theme.palette.primary.main}
+                        backgroundColor={theme.palette.primary.dark}
                         fontsize={"1.6rem"}
                         form={"SA_B2227W"}
                         height={"120px"}
@@ -324,7 +326,7 @@ const SA_B2227W: React.FC = () => {
                   md={6}
                   lg={6}
                   xl={6}
-                  style={{ height: "35.5vh", marginBottom: "10px" }}
+                  style={{ marginBottom: "10px" }}
                 >
                   <GridTitle>사업부별 신규 문의 건수</GridTitle>
                   <BarChart
@@ -343,7 +345,7 @@ const SA_B2227W: React.FC = () => {
                   md={6}
                   lg={6}
                   xl={6}
-                  style={{ height: "35.5vh", marginBottom: "10px" }}
+                  style={{ marginBottom: "10px" }}
                 >
                   <GridTitle>팀별 신규 고객 유치</GridTitle>
                   <BarChart
@@ -362,7 +364,7 @@ const SA_B2227W: React.FC = () => {
                   md={6}
                   lg={6}
                   xl={6}
-                  style={{ height: "35.5vh", marginBottom: "10px" }}
+                  style={{ marginBottom: "10px" }}
                 >
                   <GridTitle>3개년 신규고객 수 현황</GridTitle>
                   <BarChart

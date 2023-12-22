@@ -32,6 +32,10 @@ export default function MultiChart(props) {
             data: propsData.filter(item => item[props.name] == props.label[idx]).map((items)=>{
               return items[props.value]
             }),
+            datalabels: {
+              align: "end",
+              anchor: "end"
+            }
           }
         }),
       };

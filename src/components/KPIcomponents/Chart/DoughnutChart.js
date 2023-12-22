@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Chart } from "primereact/chart";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import { numberWithCommas3 } from "../../CommonFunction";
 
 export default function DoughnutChart(props) {
   const [chartData, setChartData] = useState({});
@@ -40,7 +41,7 @@ export default function DoughnutChart(props) {
               font: {
                 weight: "bold",
               },
-              formatter: Math.round,
+              formatter: function(value, context) { return numberWithCommas3(value); },
             },
           },
         };

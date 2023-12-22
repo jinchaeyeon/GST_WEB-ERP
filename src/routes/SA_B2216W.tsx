@@ -544,6 +544,7 @@ const SA_B2216W: React.FC = () => {
                     convertDateToStr(filters.frdt).substring(0, 4) +
                     "년도 개인별 활동 현황"
                   }
+                  numberCell={["cnt1", "cnt2", "cnt3", "cnt4", "cnt5"]}
                   width={[120, 100, 100, 100, 100, 100, 100]}
                   key="num"
                   selection={selected}
@@ -559,6 +560,7 @@ const SA_B2216W: React.FC = () => {
                     user_name: "구분",
                     cnt: "담당 프로젝트 수",
                   }}
+                  numberCell={["cnt"]}
                   title={
                     convertDateToStr(filters.frdt).substring(0, 4) +
                     "년도 개인별 프로젝트 관리 수"

@@ -15,6 +15,7 @@ import {
   grey,
 } from "@mui/material/colors";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { numberWithCommas3 } from "../../CommonFunction";
 
 export default function DoubleChart(props) {
   const [chartData, setChartData] = useState({});
@@ -74,6 +75,10 @@ export default function DoubleChart(props) {
             data: propsData.map((items) => {
               return items[props.value[0]];
             }),
+            datalabels: {
+              align: "end",
+              anchor: "end"
+            }
           },
           {
             type: "bar",
@@ -82,6 +87,10 @@ export default function DoubleChart(props) {
             data: propsData.map((items) => {
               return items[props.value[1]];
             }),
+            datalabels: {
+              align: "end",
+              anchor: "end"
+            }
           },
         ],
       };
@@ -108,7 +117,7 @@ export default function DoubleChart(props) {
             font: {
               weight: 'bold'
             },
-            formatter: Math.round
+            formatter: function(value, context) { return numberWithCommas3(value); },
           }
         },
         scales: {

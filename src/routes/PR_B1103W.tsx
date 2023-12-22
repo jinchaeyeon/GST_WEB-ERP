@@ -574,10 +574,6 @@ const PR_B1103W: React.FC = () => {
     <>
       <div style={{ fontFamily: "TheJamsil5Bold" }}>
         <ThemeProvider theme={theme}>
-          <Container
-            maxWidth="xl"
-            style={{ width: "100%", marginBottom: "25px" }}
-          >
             <TitleContainer
               style={{ paddingTop: "25px", paddingBottom: "25px" }}
             >
@@ -655,6 +651,7 @@ const PR_B1103W: React.FC = () => {
                     uph_worktime: "시간당 생산량",
                   }}
                   title={"전체 목록"}
+                  numberCell={["qty", "worktime", "hr", "prodempcnt", "uph_worktime"]}
                   width={[110, 100, 120, 120, 120, 150]}
                   key="num"
                   selection={selected}
@@ -704,6 +701,7 @@ const PR_B1103W: React.FC = () => {
                     hr: "표준시간",
                     prodemp: "작업자",
                   }}
+                  numberCell={["qty", "worktime", "hr"]}
                   width={[130, 140, 110, 120, 120, 110]}
                   numberField={["qty"]}
                   title={"상세 목록"}
@@ -715,7 +713,6 @@ const PR_B1103W: React.FC = () => {
                 />
               </Grid>
             </Grid>
-          </Container>
           <SpecialDial />
         </ThemeProvider>
       </div>

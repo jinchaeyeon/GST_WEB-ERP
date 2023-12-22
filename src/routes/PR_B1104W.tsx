@@ -483,10 +483,6 @@ const PR_B1104W: React.FC = () => {
     <>
       <div style={{ fontFamily: "TheJamsil5Bold" }}>
         <ThemeProvider theme={theme}>
-          <Container
-            maxWidth="xl"
-            style={{ width: "100%", marginBottom: "25px" }}
-          >
             <TitleContainer
               style={{ paddingTop: "25px", paddingBottom: "25px" }}
             >
@@ -609,7 +605,6 @@ const PR_B1104W: React.FC = () => {
               <GridTitle title="작업공정정보" />
               <Timelines value={DetailList} theme={theme} />
             </Grid>
-          </Container>
           <SpecialDial />
         </ThemeProvider>
       </div>
