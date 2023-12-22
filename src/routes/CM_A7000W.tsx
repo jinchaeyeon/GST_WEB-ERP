@@ -1335,6 +1335,7 @@ const CM_A7000W: React.FC = () => {
         workType: "D",
         orgdiv: selectRows.orgdiv,
         meetingnum: selectRows.meetingnum,
+        attdatnum: selectRows.attdatnum,
       }));
     }
   };
