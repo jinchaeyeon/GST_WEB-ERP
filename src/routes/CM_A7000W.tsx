@@ -79,6 +79,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import RichEditor from "../components/RichEditor";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
+import CustomersPersonWindow from "../components/Windows/CommonWindows/CustomersPersonWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import SignWindow from "../components/Windows/CommonWindows/SignWindow";
 import { useApi } from "../hooks/api";
@@ -98,7 +99,6 @@ import {
   TGrid,
   TPermissions,
 } from "../store/types";
-import CustomersPersonWindow from "../components/Windows/CommonWindows/CustomersPersonWindow";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -277,6 +277,149 @@ const CM_A7000W: React.FC = () => {
   const onSignWndClick = () => {
     setSignWindowVisible(true);
   };
+
+  //비즈니스 컴포넌트 조회
+  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  UseBizComponent(
+    "L_SA019_603, L_Requestgb, L_SA001_603, L_SA012_603, L_SA013_603, L_SA014_603, L_SA015_603, L_SA016_603, L_SA017_603, L_SA018_603, L_sysUserMaster_001, L_CM700",
+    setBizComponentData
+  );
+
+  const [personListData, setPersonListData] = useState([
+    { user_id: "", user_name: "" },
+  ]);
+
+  const [usegbListData, setUsegbListData] = useState([COM_CODE_DEFAULT_VALUE]);
+
+  const [testtypeListData, setTestTypeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [requestgbListData, setrequestgbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [materialtypeListData, setmaterialtypeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [materialgbListData, setmaterialgbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [assaygbeListData, setassaygbeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [startschgbListData, setstartschgbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [financegbListData, setfinancegbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [amtgbListData, setamtgbListData] = useState([COM_CODE_DEFAULT_VALUE]);
+  const [addordgbListData, setaddordgbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [relationgbListData, setrelationgbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+
+  useEffect(() => {
+    if (bizComponentData.length > 0) {
+      const personQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
+        )
+      );
+
+      const usegbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId == "L_CM700")
+      );
+      const testtypeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA019_603"
+        )
+      );
+      const requestgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_Requestgb"
+        )
+      );
+      const materialtypeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA001_603"
+        )
+      );
+      const materialgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA012_603"
+        )
+      );
+      const assaygbeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA013_603"
+        )
+      );
+      const startschgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA014_603"
+        )
+      );
+      const financegbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA015_603"
+        )
+      );
+      const amtgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA016_603"
+        )
+      );
+      const addordgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA017_603"
+        )
+      );
+      const relationgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA018_603"
+        )
+      );
+      fetchQueryData(personQueryStr, setPersonListData);
+      fetchQueryData(usegbQueryStr, setUsegbListData);
+      fetchQueryData(testtypeQueryStr, setTestTypeListData);
+      fetchQueryData(requestgbQueryStr, setrequestgbListData);
+      fetchQueryData(materialtypeQueryStr, setmaterialtypeListData);
+      fetchQueryData(materialgbQueryStr, setmaterialgbListData);
+      fetchQueryData(assaygbeQueryStr, setassaygbeListData);
+      fetchQueryData(startschgbQueryStr, setstartschgbListData);
+      fetchQueryData(financegbQueryStr, setfinancegbListData);
+      fetchQueryData(amtgbQueryStr, setamtgbListData);
+      fetchQueryData(addordgbQueryStr, setaddordgbListData);
+      fetchQueryData(relationgbQueryStr, setrelationgbListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQueryData = useCallback(
+    async (queryStr: string, setListData: any) => {
+      let data: any;
+
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        setListData(rows);
+      }
+    },
+    []
+  );
 
   const setCustPersonData = (data: any) => {
     setInformation((prev: any) => {
@@ -506,149 +649,6 @@ const CM_A7000W: React.FC = () => {
       }
     }
   }, [customOptionData]);
-
-  //비즈니스 컴포넌트 조회
-  const [bizComponentData, setBizComponentData] = useState<any>([]);
-  UseBizComponent(
-    "L_SA019_603, L_Requestgb, L_SA001_603, L_SA012_603, L_SA013_603, L_SA014_603, L_SA015_603, L_SA016_603, L_SA017_603, L_SA018_603, L_sysUserMaster_001, L_CM700",
-    setBizComponentData
-  );
-
-  const [personListData, setPersonListData] = useState([
-    { user_id: "", user_name: "" },
-  ]);
-
-  const [usegbListData, setUsegbListData] = useState([COM_CODE_DEFAULT_VALUE]);
-
-  const [testtypeListData, setTestTypeListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [requestgbListData, setrequestgbListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [materialtypeListData, setmaterialtypeListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [materialgbListData, setmaterialgbListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [assaygbeListData, setassaygbeListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [startschgbListData, setstartschgbListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [financegbListData, setfinancegbListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [amtgbListData, setamtgbListData] = useState([COM_CODE_DEFAULT_VALUE]);
-  const [addordgbListData, setaddordgbListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [relationgbListData, setrelationgbListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-
-  useEffect(() => {
-    if (bizComponentData.length > 0) {
-      const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-
-      const usegbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizCommponentId == "L_CM700")
-      );
-      const testtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA019_603"
-        )
-      );
-      const requestgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_Requestgb"
-        )
-      );
-      const materialtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA001_603"
-        )
-      );
-      const materialgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA012_603"
-        )
-      );
-      const assaygbeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA013_603"
-        )
-      );
-      const startschgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA014_603"
-        )
-      );
-      const financegbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA015_603"
-        )
-      );
-      const amtgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA016_603"
-        )
-      );
-      const addordgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA017_603"
-        )
-      );
-      const relationgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA018_603"
-        )
-      );
-      fetchQueryData(personQueryStr, setPersonListData);
-      fetchQueryData(usegbQueryStr, setUsegbListData);
-      fetchQueryData(testtypeQueryStr, setTestTypeListData);
-      fetchQueryData(requestgbQueryStr, setrequestgbListData);
-      fetchQueryData(materialtypeQueryStr, setmaterialtypeListData);
-      fetchQueryData(materialgbQueryStr, setmaterialgbListData);
-      fetchQueryData(assaygbeQueryStr, setassaygbeListData);
-      fetchQueryData(startschgbQueryStr, setstartschgbListData);
-      fetchQueryData(financegbQueryStr, setfinancegbListData);
-      fetchQueryData(amtgbQueryStr, setamtgbListData);
-      fetchQueryData(addordgbQueryStr, setaddordgbListData);
-      fetchQueryData(relationgbQueryStr, setrelationgbListData);
-    }
-  }, [bizComponentData]);
-
-  const fetchQueryData = useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess === true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -1020,7 +1020,8 @@ const CM_A7000W: React.FC = () => {
       recdt: toDate(selectedRowData.recdt),
       title: selectedRowData.title,
       unshared: selectedRowData.unshared,
-      attdatnum: selectedRowData.attdatnum == undefined ? "" : selectedRowData.attdatnum,
+      attdatnum:
+        selectedRowData.attdatnum == undefined ? "" : selectedRowData.attdatnum,
       files: selectedRowData.files,
       ref_key: selectedRowData.ref_key,
       custcd: selectedRowData.custcd,
@@ -1245,7 +1246,7 @@ const CM_A7000W: React.FC = () => {
         userid: userId,
         pc: pc,
         formid: "CM_A7000W",
-      })
+      });
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
