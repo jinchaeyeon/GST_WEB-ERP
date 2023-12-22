@@ -61,6 +61,7 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
+  numberWithCommas3,
   setDefaultDate,
   toDate,
   useSysMessage,
@@ -97,6 +98,7 @@ import {
   TGrid,
   TPermissions,
 } from "../store/types";
+import CustomersPersonWindow from "../components/Windows/CommonWindows/CustomersPersonWindow";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -223,12 +225,11 @@ const CM_A7000W: React.FC = () => {
   const [tabSelected, setTabSelected] = React.useState(0);
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const [custpersonWindowVisible, setCustPersonWindowVisible] =
+    useState<boolean>(false);
   const [signWindowVisible, setSignWindowVisible] = useState<boolean>(false);
 
   const [projectWindowVisible, setProjectWindowVisible] =
-    useState<boolean>(false);
-
-  const [attachmentsWindowVisiblePr, setAttachmentsWindowVisiblePr] =
     useState<boolean>(false);
 
   const [attachmentsWindowVisiblePb, setAttachmentsWindowVisiblePb] =
@@ -244,18 +245,6 @@ const CM_A7000W: React.FC = () => {
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
-
-  const getAttachmentsDataPr = (data: IAttachmentData) => {
-    setInformation((prev) => {
-      return {
-        ...prev,
-        attdatnum_private: data.attdatnum,
-        files_private:
-          data.original_name +
-          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
-      };
-    });
-  };
 
   const getAttachmentsDataPb = (data: IAttachmentData) => {
     setInformation((prev) => {
@@ -273,12 +262,12 @@ const CM_A7000W: React.FC = () => {
     setCustWindowVisible(true);
   };
 
-  const onAttachPbWndClick = () => {
-    setAttachmentsWindowVisiblePb(true);
+  const onCustPersonWndClick = () => {
+    setCustPersonWindowVisible(true);
   };
 
-  const onAttachPrWndClick = () => {
-    setAttachmentsWindowVisiblePr(true);
+  const onAttachPbWndClick = () => {
+    setAttachmentsWindowVisiblePb(true);
   };
 
   const onProjectWndClick = () => {
@@ -289,12 +278,74 @@ const CM_A7000W: React.FC = () => {
     setSignWindowVisible(true);
   };
 
+  const setCustPersonData = (data: any) => {
+    setInformation((prev: any) => {
+      return {
+        ...prev,
+        custprsncd: data.custprsncd,
+        custprsnnm: data.prsnnm,
+        postnm: data.postnm,
+        dptnm: data.dptnm,
+        address: data.address,
+        telno: data.telno,
+        phoneno: data.phoneno,
+        email: data.email,
+        testtype: "",
+        requestgb: "",
+        materialtype: "",
+        materialgb: "",
+        grade1: 0,
+        assaygbe: "",
+        grade2: 0,
+        startschgb: "",
+        grade3: 0,
+        financegb: "",
+        grade4: 0,
+        totgrade1: 0,
+        amtgb: "",
+        grade5: 0,
+        addordgb: "",
+        grade6: 0,
+        relationgb: "",
+        grade7: 0,
+        totgrade2: 0,
+      };
+    });
+  };
+
   const setCustData = (data: ICustData) => {
     setInformation((prev: any) => {
       return {
         ...prev,
         custcd: data.custcd,
         custnm: data.custnm,
+        custprsncd: "",
+        custprsnnm: "",
+        postnm: "",
+        dptnm: "",
+        address: "",
+        telno: "",
+        phoneno: "",
+        email: "",
+        testtype: "",
+        requestgb: "",
+        materialtype: "",
+        materialgb: "",
+        grade1: 0,
+        assaygbe: "",
+        grade2: 0,
+        startschgb: "",
+        grade3: 0,
+        financegb: "",
+        grade4: 0,
+        totgrade1: 0,
+        amtgb: "",
+        grade5: 0,
+        addordgb: "",
+        grade6: 0,
+        relationgb: "",
+        grade7: 0,
+        totgrade2: 0,
       };
     });
   };
@@ -306,6 +357,52 @@ const CM_A7000W: React.FC = () => {
         ref_key: data.quokey,
         custcd: data.custcd,
         custnm: data.custnm,
+        custprsncd: data.custprsncd,
+        custprsnnm: data.custprsnnm,
+        postnm: data.postnm,
+        dptnm: data.dptnm,
+        address: data.address,
+        telno: data.telno,
+        phoneno: data.phoneno,
+        email: data.email,
+        testtype: testtypeListData.find(
+          (item: any) => item.code_name == data.testtype
+        )?.sub_code,
+        requestgb: requestgbListData.find(
+          (item: any) => item.code_name == data.requestgb
+        )?.sub_code,
+        materialtype: materialtypeListData.find(
+          (item: any) => item.code_name == data.materialtype
+        )?.sub_code,
+        materialgb: materialgbListData.find(
+          (item: any) => item.code_name == data.materialgb
+        )?.sub_code,
+        grade1: data.grade1,
+        assaygbe: assaygbeListData.find(
+          (item: any) => item.code_name == data.assaygbe
+        )?.sub_code,
+        grade2: data.grade2,
+        startschgb: startschgbListData.find(
+          (item: any) => item.code_name == data.startschgb
+        )?.sub_code,
+        grade3: data.grade3,
+        financegb: financegbListData.find(
+          (item: any) => item.code_name == data.financegb
+        )?.sub_code,
+        grade4: data.grade4,
+        totgrade1: data.totgrade1,
+        amtgb: amtgbListData.find((item: any) => item.code_name == data.amtgb)
+          ?.sub_code,
+        grade5: data.grade5,
+        addordgb: addordgbListData.find(
+          (item: any) => item.code_name == data.addordgb
+        )?.sub_code,
+        grade6: data.grade6,
+        relationgb: relationgbListData.find(
+          (item: any) => item.code_name == data.relationgb
+        )?.sub_code,
+        grade7: data.grade7,
+        totgrade2: data.totgrade2,
       };
     });
   };
@@ -330,20 +427,43 @@ const CM_A7000W: React.FC = () => {
       setInformation({
         orgdiv: data.orgidv,
         meetingnum: data.meetingnum,
-        custcd: data.custcd,
-        recdt: toDate(data.recdt),
-        meetingid: data.meetingid,
-        attdatnum: data.attdatnum,
-        files: data.files,
-        remark2: data.remark2,
-        unshared: data.unshared,
-        place: data.place,
-        meetingnm: data.meetingnm,
-        ref_key: data.ref_key,
-        title: data.title,
         usegb: data.usegb,
-        attdatnum_private: data.attdatnum_private,
-        files_private: data.files_private,
+        meetingid: data.meetingid,
+        recdt: toDate(data.recdt),
+        title: data.title,
+        unshared: data.unshared,
+        attdatnum: data.attdatnum == undefined ? "" : data.attdatnum,
+        files: data.files,
+        ref_key: data.ref_key,
+        custcd: data.custcd,
+        custnm: data.custnm,
+        custprsncd: data.custprsncd,
+        custprsnnm: data.custprsnnm,
+        postnm: data.postnm,
+        dptnm: data.dptnm,
+        address: data.address,
+        telno: data.telno,
+        phoneno: data.phoneno,
+        email: data.email,
+        testtype: data.testtype,
+        requestgb: data.requestgb,
+        materialtype: data.materialtype,
+        materialgb: data.materialgb,
+        grade1: data.grade1,
+        assaygbe: data.assaygbe,
+        grade2: data.grade2,
+        startschgb: data.startschgb,
+        grade3: data.grade3,
+        financegb: data.financegb,
+        grade4: data.grade4,
+        totgrade1: data.totgrade1,
+        amtgb: data.amtgb,
+        grade5: data.grade5,
+        addordgb: data.addordgb,
+        grade6: data.grade6,
+        relationgb: data.relationgb,
+        grade7: data.grade7,
+        totgrade2: data.totgrade2,
       });
 
       fetchDetail();
@@ -389,13 +509,45 @@ const CM_A7000W: React.FC = () => {
 
   //비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
-  UseBizComponent("L_sysUserMaster_001, L_CM700", setBizComponentData);
+  UseBizComponent(
+    "L_SA019_603, L_Requestgb, L_SA001_603, L_SA012_603, L_SA013_603, L_SA014_603, L_SA015_603, L_SA016_603, L_SA017_603, L_SA018_603, L_sysUserMaster_001, L_CM700",
+    setBizComponentData
+  );
 
   const [personListData, setPersonListData] = useState([
     { user_id: "", user_name: "" },
   ]);
 
   const [usegbListData, setUsegbListData] = useState([COM_CODE_DEFAULT_VALUE]);
+
+  const [testtypeListData, setTestTypeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [requestgbListData, setrequestgbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [materialtypeListData, setmaterialtypeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [materialgbListData, setmaterialgbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [assaygbeListData, setassaygbeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [startschgbListData, setstartschgbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [financegbListData, setfinancegbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [amtgbListData, setamtgbListData] = useState([COM_CODE_DEFAULT_VALUE]);
+  const [addordgbListData, setaddordgbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [relationgbListData, setrelationgbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
 
   useEffect(() => {
     if (bizComponentData.length > 0) {
@@ -408,9 +560,68 @@ const CM_A7000W: React.FC = () => {
       const usegbQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizCommponentId == "L_CM700")
       );
-
+      const testtypeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA019_603"
+        )
+      );
+      const requestgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_Requestgb"
+        )
+      );
+      const materialtypeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA001_603"
+        )
+      );
+      const materialgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA012_603"
+        )
+      );
+      const assaygbeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA013_603"
+        )
+      );
+      const startschgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA014_603"
+        )
+      );
+      const financegbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA015_603"
+        )
+      );
+      const amtgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA016_603"
+        )
+      );
+      const addordgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA017_603"
+        )
+      );
+      const relationgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA018_603"
+        )
+      );
       fetchQueryData(personQueryStr, setPersonListData);
       fetchQueryData(usegbQueryStr, setUsegbListData);
+      fetchQueryData(testtypeQueryStr, setTestTypeListData);
+      fetchQueryData(requestgbQueryStr, setrequestgbListData);
+      fetchQueryData(materialtypeQueryStr, setmaterialtypeListData);
+      fetchQueryData(materialgbQueryStr, setmaterialgbListData);
+      fetchQueryData(assaygbeQueryStr, setassaygbeListData);
+      fetchQueryData(startschgbQueryStr, setstartschgbListData);
+      fetchQueryData(financegbQueryStr, setfinancegbListData);
+      fetchQueryData(amtgbQueryStr, setamtgbListData);
+      fetchQueryData(addordgbQueryStr, setaddordgbListData);
+      fetchQueryData(relationgbQueryStr, setrelationgbListData);
     }
   }, [bizComponentData]);
 
@@ -522,20 +733,43 @@ const CM_A7000W: React.FC = () => {
   const [information, setInformation] = useState({
     orgdiv: "01",
     meetingnum: "",
-    custcd: "",
-    recdt: new Date(),
-    meetingid: "",
-    attdatnum: "",
-    files: "",
-    remark2: "",
-    unshared: "N",
-    place: "",
-    meetingnm: "",
-    ref_key: "",
-    title: "",
     usegb: "",
-    attdatnum_private: "",
-    files_private: "",
+    meetingid: "",
+    recdt: new Date(),
+    title: "",
+    unshared: "N",
+    files: "",
+    attdatnum: "",
+    ref_key: "",
+    custcd: "",
+    custnm: "",
+    custprsncd: "",
+    custprsnnm: "",
+    postnm: "",
+    dptnm: "",
+    address: "",
+    telno: "",
+    phoneno: "",
+    email: "",
+    testtype: "",
+    requestgb: "",
+    materialtype: "",
+    materialgb: "",
+    grade1: 0,
+    assaygbe: "",
+    grade2: 0,
+    startschgb: "",
+    grade3: 0,
+    financegb: "",
+    grade4: 0,
+    totgrade1: 0,
+    amtgb: "",
+    grade5: 0,
+    addordgb: "",
+    grade6: 0,
+    relationgb: "",
+    grade7: 0,
+    totgrade2: 0,
   });
 
   //그리드 데이터 조회
@@ -781,20 +1015,43 @@ const CM_A7000W: React.FC = () => {
     setInformation({
       orgdiv: selectedRowData.orgdiv,
       meetingnum: selectedRowData.meetingnum,
-      custcd: selectedRowData.custcd,
-      recdt: toDate(selectedRowData.recdt),
-      meetingid: selectedRowData.meetingid,
-      attdatnum: selectedRowData.attdatnum,
-      files: selectedRowData.files,
-      remark2: selectedRowData.remark2,
-      unshared: selectedRowData.unshared,
-      place: selectedRowData.place,
-      meetingnm: selectedRowData.meetingnm,
-      ref_key: selectedRowData.ref_key,
-      title: selectedRowData.title,
       usegb: selectedRowData.usegb,
-      attdatnum_private: selectedRowData.attdatnum_private,
-      files_private: selectedRowData.files_private,
+      meetingid: selectedRowData.meetingid,
+      recdt: toDate(selectedRowData.recdt),
+      title: selectedRowData.title,
+      unshared: selectedRowData.unshared,
+      attdatnum: selectedRowData.attdatnum == undefined ? "" : selectedRowData.attdatnum,
+      files: selectedRowData.files,
+      ref_key: selectedRowData.ref_key,
+      custcd: selectedRowData.custcd,
+      custnm: selectedRowData.custnm,
+      custprsncd: selectedRowData.custprsncd,
+      custprsnnm: selectedRowData.custprsnnm,
+      postnm: selectedRowData.postnm,
+      dptnm: selectedRowData.dptnm,
+      address: selectedRowData.address,
+      telno: selectedRowData.telno,
+      phoneno: selectedRowData.phoneno,
+      email: selectedRowData.email,
+      testtype: selectedRowData.testtype,
+      requestgb: selectedRowData.requestgb,
+      materialtype: selectedRowData.materialtype,
+      materialgb: selectedRowData.materialgb,
+      grade1: selectedRowData.grade1,
+      assaygbe: selectedRowData.assaygbe,
+      grade2: selectedRowData.grade2,
+      startschgb: selectedRowData.startschgb,
+      grade3: selectedRowData.grade3,
+      financegb: selectedRowData.financegb,
+      grade4: selectedRowData.grade4,
+      totgrade1: selectedRowData.totgrade1,
+      amtgb: selectedRowData.amtgb,
+      grade5: selectedRowData.grade5,
+      addordgb: selectedRowData.addordgb,
+      grade6: selectedRowData.grade6,
+      relationgb: selectedRowData.relationgb,
+      grade7: selectedRowData.grade7,
+      totgrade2: selectedRowData.totgrade2,
     });
     fetchDetail();
   };
@@ -805,18 +1062,24 @@ const CM_A7000W: React.FC = () => {
     orgdiv: "01",
     meetingnum: "",
     meetingseq: 0,
-    custcd: "",
     recdt: "",
+    usegb: "",
     meetingid: "",
     title: "",
     attdatnum: "",
-    remark2: "",
-    usegb: "",
-    unshared: "N",
-    place: "",
-    meetingnm: "",
     ref_key: "",
-    attdatnum_private: "",
+    custcd: "",
+    custprsncd: "",
+    testtype: "",
+    requestgb: "",
+    materialtype: "",
+    materialgb: "",
+    assaygbe: "",
+    startschgb: "",
+    financegb: "",
+    amtgb: "",
+    addordgb: "",
+    relationgb: "",
     contents: "",
     userid: userId,
     pc: pc,
@@ -833,8 +1096,8 @@ const CM_A7000W: React.FC = () => {
         convertDateToStr(information.recdt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "CM_A7000W_001");
-      } else if (information.custcd == "") {
-        throw findMessage(messagesData, "CM_A7000W_002");
+      } else if (information.title == "") {
+        throw findMessage(messagesData, "CM_A7000W_003");
       }
     } catch (e) {
       alert(e);
@@ -848,18 +1111,24 @@ const CM_A7000W: React.FC = () => {
       orgdiv: "01",
       meetingnum: information.meetingnum,
       meetingseq: 0,
-      custcd: information.custcd,
       recdt: convertDateToStr(information.recdt),
+      usegb: information.usegb,
       meetingid: information.meetingid,
       title: information.title,
       attdatnum: information.attdatnum,
-      remark2: information.remark2,
-      usegb: information.usegb,
-      unshared: information.unshared,
-      place: information.place,
-      meetingnm: information.meetingnm,
       ref_key: information.ref_key,
-      attdatnum_private: information.attdatnum_private,
+      custcd: information.custcd,
+      custprsncd: information.custprsncd,
+      testtype: information.testtype,
+      requestgb: information.requestgb,
+      materialtype: information.materialtype,
+      materialgb: information.materialgb,
+      assaygbe: information.assaygbe,
+      startschgb: information.startschgb,
+      financegb: information.financegb,
+      amtgb: information.amtgb,
+      addordgb: information.addordgb,
+      relationgb: information.relationgb,
       contents: "",
       userid: userId,
       pc: pc,
@@ -903,18 +1172,24 @@ const CM_A7000W: React.FC = () => {
         "@p_orgdiv": paraDataSaved.orgdiv,
         "@p_meetingnum": paraDataSaved.meetingnum,
         "@p_meetingseq": paraDataSaved.meetingseq,
-        "@p_custcd": paraDataSaved.custcd,
         "@p_recdt": paraDataSaved.recdt,
+        "@p_usegb": paraDataSaved.usegb,
         "@p_meetingid": paraDataSaved.meetingid,
         "@p_title": paraDataSaved.title,
         "@p_attdatnum": paraDataSaved.attdatnum,
-        "@p_remark2": paraDataSaved.remark2,
-        "@p_usegb": paraDataSaved.usegb,
-        "@p_unshared": paraDataSaved.unshared,
-        "@p_place": paraDataSaved.place,
-        "@p_meetingnm": paraDataSaved.meetingnm,
         "@p_ref_key": paraDataSaved.ref_key,
-        "@p_attdatnum_private": paraDataSaved.attdatnum_private,
+        "@p_custcd": paraDataSaved.custcd,
+        "@p_custprsncd": paraDataSaved.custprsncd,
+        "@p_testtype": paraDataSaved.testtype,
+        "@p_requestgb": paraDataSaved.requestgb,
+        "@p_materialtype": paraDataSaved.materialtype,
+        "@p_materialgb": paraDataSaved.materialgb,
+        "@p_assaygbe": paraDataSaved.assaygbe,
+        "@p_startschgb": paraDataSaved.startschgb,
+        "@p_financegb": paraDataSaved.financegb,
+        "@p_amtgb": paraDataSaved.amtgb,
+        "@p_addordgb": paraDataSaved.addordgb,
+        "@p_relationgb": paraDataSaved.relationgb,
         "@p_contents": paraDataSaved.contents,
         "@p_userid": userId,
         "@p_pc": pc,
@@ -934,9 +1209,6 @@ const CM_A7000W: React.FC = () => {
       if (workType == "D" && paraDataSaved.attdatnum != "") {
         array.push(paraDataSaved.attdatnum);
       }
-      if (workType == "D" && paraDataSaved.attdatnum_private != "") {
-        array.push(paraDataSaved.attdatnum_private);
-      }
       setDeletedAttadatnums(array);
       setUnsavedName([]);
       if (workType == "N" || workType == "D") {
@@ -946,6 +1218,34 @@ const CM_A7000W: React.FC = () => {
         fetchDetail();
       }
 
+      setParaDataSaved({
+        workType: "",
+        orgdiv: "01",
+        meetingnum: "",
+        meetingseq: 0,
+        recdt: "",
+        usegb: "",
+        meetingid: "",
+        title: "",
+        attdatnum: "",
+        ref_key: "",
+        custcd: "",
+        custprsncd: "",
+        testtype: "",
+        requestgb: "",
+        materialtype: "",
+        materialgb: "",
+        assaygbe: "",
+        startschgb: "",
+        financegb: "",
+        amtgb: "",
+        addordgb: "",
+        relationgb: "",
+        contents: "",
+        userid: userId,
+        pc: pc,
+        formid: "CM_A7000W",
+      })
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
@@ -974,21 +1274,44 @@ const CM_A7000W: React.FC = () => {
     setInformation({
       orgdiv: "01",
       meetingnum: "",
-      custcd: "",
-      recdt: new Date(),
+      usegb: "",
       meetingid: "",
-      attdatnum: "",
-      files: "",
-      remark2: "",
+      recdt: new Date(),
+      title: "",
       unshared: defaultOption.find((item: any) => item.id === "unshared")
         .valueCode,
-      place: "",
-      meetingnm: "",
+      files: "",
+      attdatnum: "",
       ref_key: "",
-      title: "",
-      usegb: "",
-      attdatnum_private: "",
-      files_private: "",
+      custcd: "",
+      custnm: "",
+      custprsncd: "",
+      custprsnnm: "",
+      postnm: "",
+      dptnm: "",
+      address: "",
+      telno: "",
+      phoneno: "",
+      email: "",
+      testtype: "",
+      requestgb: "",
+      materialtype: "",
+      materialgb: "",
+      grade1: 0,
+      assaygbe: "",
+      grade2: 0,
+      startschgb: "",
+      grade3: 0,
+      financegb: "",
+      grade4: 0,
+      totgrade1: 0,
+      amtgb: "",
+      grade5: 0,
+      addordgb: "",
+      grade6: 0,
+      relationgb: "",
+      grade7: 0,
+      totgrade2: 0,
     });
   };
 
@@ -1261,7 +1584,7 @@ const CM_A7000W: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <GridContainerWrap>
-            <GridContainer width="30%">
+            <GridContainer width="40%">
               <GridTitleContainer>
                 <GridTitle>회의록</GridTitle>
               </GridTitleContainer>
@@ -1278,55 +1601,17 @@ const CM_A7000W: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                    </tr>
-                    <tr>
-                      <th>업체코드</th>
-                      <td>
-                        <Input
-                          name="custcd"
-                          type="text"
-                          value={information.custcd}
-                          onChange={InputChange}
-                          className="readonly"
-                        />
-                        <ButtonInInput>
-                          <Button
-                            type="button"
-                            icon="more-horizontal"
-                            fillMode="flat"
-                            onClick={onCustWndClick}
-                          />
-                        </ButtonInInput>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>업체명</th>
+                      <th>회의록 구분</th>
                       <td>
                         {customOptionData !== null && (
                           <CustomOptionComboBox
-                            name="custcd"
-                            value={information.custcd}
+                            name="usegb"
+                            value={information.usegb}
                             type="new"
                             customOptionData={customOptionData}
                             changeData={ComboBoxChange}
-                            valueField="custcd"
-                            textField="custnm"
-                            className="required"
                           />
                         )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>회의일</th>
-                      <td>
-                        <DatePicker
-                          name="recdt"
-                          value={information.recdt}
-                          format="yyyy-MM-dd"
-                          onChange={InputChange}
-                          placeholder=""
-                          className="required"
-                        />
                       </td>
                     </tr>
                     <tr>
@@ -1339,10 +1624,21 @@ const CM_A7000W: React.FC = () => {
                           onChange={InputChange}
                         />
                       </td>
+                      <th>회의일자</th>
+                      <td>
+                        <DatePicker
+                          name="recdt"
+                          value={information.recdt}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
+                          className="required"
+                        />
+                      </td>
                     </tr>
                     <tr>
                       <th>회의록제목</th>
-                      <td>
+                      <td colSpan={3}>
                         <Input
                           name="title"
                           type="text"
@@ -1353,42 +1649,6 @@ const CM_A7000W: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>첨부파일</th>
-                      <td>
-                        <div className="filter-item-wrap">
-                          <Input
-                            name="files"
-                            value={information.files}
-                            className="readonly"
-                          />
-                          <ButtonInInput>
-                            <Button
-                              icon="more-horizontal"
-                              fillMode={"flat"}
-                              onClick={onAttachPbWndClick}
-                            />
-                          </ButtonInInput>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>비고</th>
-                      <td>
-                        <Input
-                          name="remark2"
-                          type="text"
-                          value={information.remark2}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </FormBox>
-              </FormBoxWrap>
-              <FormBoxWrap border={true}>
-                <FormBox>
-                  <tbody>
-                    <tr>
                       <th style={{ width: "10%" }}>
                         <Checkbox
                           name="unshared"
@@ -1397,7 +1657,7 @@ const CM_A7000W: React.FC = () => {
                           onChange={CheckChange}
                         />
                       </th>
-                      <td>
+                      <td colSpan={3}>
                         <Button
                           themeColor={"primary"}
                           style={{ width: "100%" }}
@@ -1419,44 +1679,33 @@ const CM_A7000W: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>회의록 구분</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="usegb"
-                            value={information.usegb}
-                            type="new"
-                            customOptionData={customOptionData}
-                            changeData={ComboBoxChange}
+                      <th>첨부파일</th>
+                      <td colSpan={3}>
+                        <div className="filter-item-wrap">
+                          <Input
+                            name="files"
+                            value={information.files}
+                            className="readonly"
                           />
-                        )}
+                          <ButtonInInput>
+                            <Button
+                              icon="more-horizontal"
+                              fillMode={"flat"}
+                              onClick={onAttachPbWndClick}
+                            />
+                          </ButtonInInput>
+                        </div>
                       </td>
                     </tr>
-                    <tr>
-                      <th>회의 장소</th>
-                      <td>
-                        <Input
-                          name="place"
-                          type="text"
-                          value={information.place}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>회의록명</th>
-                      <td>
-                        <Input
-                          name="meetingnm"
-                          type="text"
-                          value={information.meetingnm}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <FormBoxWrap border={true}>
+                <FormBox>
+                  <tbody>
                     <tr>
                       <th>프로젝트</th>
-                      <td>
+                      <td colSpan={3}>
                         <Input
                           name="ref_key"
                           type="text"
@@ -1473,27 +1722,420 @@ const CM_A7000W: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>첨부파일(비공개)</th>
+                      <th>의뢰기관코드</th>
                       <td>
                         <Input
-                          name="files_private"
-                          value={information.files_private}
+                          name="custcd"
+                          type="text"
+                          value={information.custcd}
                           className="readonly"
                         />
-                        <ButtonInInput>
-                          <Button
-                            icon="more-horizontal"
-                            fillMode="flat"
-                            onClick={onAttachPrWndClick}
+                        {information.ref_key == "" ? (
+                          <ButtonInInput>
+                            <Button
+                              type="button"
+                              icon="more-horizontal"
+                              fillMode="flat"
+                              onClick={onCustWndClick}
+                            />
+                          </ButtonInInput>
+                        ) : (
+                          ""
+                        )}
+                      </td>
+                      <th>의뢰기관명</th>
+                      <td>
+                        {information.ref_key == "" ? (
+                          customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="custcd"
+                              value={information.custcd}
+                              type="new"
+                              customOptionData={customOptionData}
+                              changeData={ComboBoxChange}
+                              valueField="custcd"
+                              textField="custnm"
+                            />
+                          )
+                        ) : (
+                          <Input
+                            name="custnm"
+                            type="text"
+                            value={information.custnm}
+                            className="readonly"
                           />
-                        </ButtonInInput>
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>의뢰자코드</th>
+                      <td>
+                        <Input
+                          name="custprsncd"
+                          type="text"
+                          value={information.custprsncd}
+                          className="readonly"
+                        />
+                        {information.custcd != "" ? (
+                          <ButtonInInput>
+                            <Button
+                              type="button"
+                              icon="more-horizontal"
+                              fillMode="flat"
+                              onClick={onCustPersonWndClick}
+                            />
+                          </ButtonInInput>
+                        ) : (
+                          ""
+                        )}
+                      </td>
+                      <th>의뢰기관명</th>
+                      <td>
+                        <Input
+                          name="custprsnnm"
+                          type="text"
+                          value={information.custprsnnm}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>직위/직책</th>
+                      <td>
+                        <Input
+                          name="postnm"
+                          type="text"
+                          value={information.postnm}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>부서</th>
+                      <td>
+                        <Input
+                          name="dptnm"
+                          type="text"
+                          value={information.dptnm}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>주소</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="address"
+                          type="text"
+                          value={information.address}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>전화번호</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="telno"
+                          type="text"
+                          value={information.telno}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>휴대폰</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="phoneno"
+                          type="text"
+                          value={information.phoneno}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>메일</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="email"
+                          type="text"
+                          value={information.email}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <FormBoxWrap border={true}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>시험분야</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="testtype"
+                            value={information.testtype}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>의뢰목적</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="requestgb"
+                            value={information.requestgb}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>물질분야</th>
+                      <td colSpan={3}>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="materialtype"
+                            value={information.materialtype}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <FormBoxWrap border={true}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>물질확보여부</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="materialgb"
+                            value={information.materialgb}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>점수</th>
+                      <td>
+                        <Input
+                          name="grade1"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(information.grade1)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>분석법 보유 여부</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="assaygbe"
+                            value={information.assaygbe}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>점수</th>
+                      <td>
+                        <Input
+                          name="grade2"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(information.grade2)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>시작예정</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="startschgb"
+                            value={information.startschgb}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>점수</th>
+                      <td>
+                        <Input
+                          name="grade3"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(information.grade3)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>재무/투자현황</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="financegb"
+                            value={information.financegb}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>점수</th>
+                      <td>
+                        <Input
+                          name="grade4"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(information.grade4)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>합계</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="totgrade1"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(information.totgrade1)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <FormBoxWrap border={true}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>금액</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="amtgb"
+                            value={information.amtgb}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>점수</th>
+                      <td>
+                        <Input
+                          name="grade5"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(information.grade5)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>추가수주</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="addordgb"
+                            value={information.addordgb}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>점수</th>
+                      <td>
+                        <Input
+                          name="grade6"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(information.grade6)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>BTT관계사 확장</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="relationgb"
+                            value={information.relationgb}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>점수</th>
+                      <td>
+                        <Input
+                          name="grade7"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(information.grade7)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>합계</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="totgrade2"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(information.totgrade2)}
+                          className="readonly"
+                        />
                       </td>
                     </tr>
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
             </GridContainer>
-            <GridContainer width={`calc(70% - ${GAP}px)`}>
+            <GridContainer width={`calc(60% - ${GAP}px)`}>
               <GridTitleContainer>
                 <GridTitle>참고자료</GridTitle>
               </GridTitleContainer>
@@ -1504,14 +2146,6 @@ const CM_A7000W: React.FC = () => {
           </GridContainerWrap>
         </TabStripTab>
       </TabStrip>
-      {attachmentsWindowVisiblePr && (
-        <AttachmentsWindow
-          setVisible={setAttachmentsWindowVisiblePr}
-          setData={getAttachmentsDataPr}
-          para={information.attdatnum_private}
-          modal={true}
-        />
-      )}
       {attachmentsWindowVisiblePb && (
         <AttachmentsWindow
           setVisible={setAttachmentsWindowVisiblePb}
@@ -1532,6 +2166,14 @@ const CM_A7000W: React.FC = () => {
         <ProjectsWindow
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
+          modal={true}
+        />
+      )}
+      {custpersonWindowVisible && (
+        <CustomersPersonWindow
+          setVisible={setCustPersonWindowVisible}
+          custcd={information.custcd}
+          setData={setCustPersonData}
           modal={true}
         />
       )}

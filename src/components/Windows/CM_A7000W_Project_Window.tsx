@@ -1,42 +1,47 @@
 import React, { useCallback, useEffect } from "react";
 import { useState } from "react";
 import { ICustData, IWindowPosition } from "../../hooks/interfaces";
-import { 
-  Grid, 
-  GridColumn, 
-  GridDataStateChangeEvent, 
-  GridFooterCellProps, 
-  GridPageChangeEvent, 
-  GridRowDoubleClickEvent, 
-  GridSelectionChangeEvent, 
-  getSelectedState 
+import {
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridRowDoubleClickEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../store/atoms";
-import { 
-  UseBizComponent, 
-  UseCustomOption, 
-  UseGetValueFromSessionItem, 
-  UseMessages, 
-  convertDateToStr, 
-  findMessage, 
-  getQueryFromBizComponent, 
-  handleKeyPressSearch, 
+import {
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  convertDateToStr,
+  findMessage,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
   setDefaultDate,
   GetPropertyValueByName,
 } from "../CommonFunction";
 import { bytesToBase64 } from "byte-base64";
 import { useApi } from "../../hooks/api";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { 
-  BottomContainer, 
-  ButtonContainer, 
-  ButtonInInput, 
-  FilterBox, 
-  GridContainer, 
-  TitleContainer } from "../../CommonStyled";
+import {
+  BottomContainer,
+  ButtonContainer,
+  ButtonInInput,
+  FilterBox,
+  GridContainer,
+  TitleContainer,
+} from "../../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
@@ -45,6 +50,7 @@ import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import { Iparameters } from "../../store/types";
 import DateCell from "../Cells/DateCell";
+import NumberCell from "../Cells/NumberCell";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -52,7 +58,7 @@ type IWindow = {
   modal?: boolean;
 };
 
-const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
+const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   const location = UseGetValueFromSessionItem("location");
   const processApi = useApi();
   let deviceWidth = window.innerWidth;
@@ -96,13 +102,15 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb")
-        .valueCode,
+        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
         isSearch: true,
       }));
     }
@@ -110,7 +118,7 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_SA016, L_SA004, L_sysUserMaster_001",
+    "L_SA019_603, L_Requestgb, L_SA001_603, L_SA012_603, L_SA013_603, L_SA014_603, L_SA015_603, L_SA016_603, L_SA017_603, L_SA018_603, L_SA016, L_SA004, L_sysUserMaster_001",
     //견적형태, 견적상태, 담당자
     setBizComponentData
   );
@@ -126,27 +134,110 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
   const [personListData, setPersonListData] = useState([
     { user_id: "", user_name: "" },
   ]);
-
+  const [testtypeListData, setTestTypeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [requestgbListData, setrequestgbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [materialtypeListData, setmaterialtypeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [materialgbListData, setmaterialgbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [assaygbeListData, setassaygbeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [startschgbListData, setstartschgbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [financegbListData, setfinancegbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [amtgbListData, setamtgbListData] = useState([COM_CODE_DEFAULT_VALUE]);
+  const [addordgbListData, setaddordgbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [relationgbListData, setrelationgbListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const quotypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA016"
-        )
+        bizComponentData.find((item: any) => item.bizComponentId === "L_SA016")
       );
       const quostsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA004"
-        )
+        bizComponentData.find((item: any) => item.bizComponentId === "L_SA004")
       );
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
+      const testtypeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA019_603"
+        )
+      );
+      const requestgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_Requestgb"
+        )
+      );
+      const materialtypeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA001_603"
+        )
+      );
+      const materialgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA012_603"
+        )
+      );
+      const assaygbeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA013_603"
+        )
+      );
+      const startschgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA014_603"
+        )
+      );
+      const financegbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA015_603"
+        )
+      );
+      const amtgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA016_603"
+        )
+      );
+      const addordgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA017_603"
+        )
+      );
+      const relationgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA018_603"
+        )
+      );
       fetchQuery(quotypeQueryStr, setQuotypeListData);
       fetchQuery(quostsQueryStr, setQuostsListData);
       fetchQuery(personQueryStr, setPersonListData);
+      fetchQuery(testtypeQueryStr, setTestTypeListData);
+      fetchQuery(requestgbQueryStr, setrequestgbListData);
+      fetchQuery(materialtypeQueryStr, setmaterialtypeListData);
+      fetchQuery(materialgbQueryStr, setmaterialgbListData);
+      fetchQuery(assaygbeQueryStr, setassaygbeListData);
+      fetchQuery(startschgbQueryStr, setstartschgbListData);
+      fetchQuery(financegbQueryStr, setfinancegbListData);
+      fetchQuery(amtgbQueryStr, setamtgbListData);
+      fetchQuery(addordgbQueryStr, setaddordgbListData);
+      fetchQuery(relationgbQueryStr, setrelationgbListData);
     }
   }, [bizComponentData]);
 
@@ -175,7 +266,7 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-  
+
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -183,11 +274,11 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-  
+
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
 
-   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
-   const filterInputChange = (e: any) => {
+  //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
+  const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
     setFilters((prev) => ({
@@ -369,7 +460,7 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-  
+
   const search = () => {
     try {
       if (
@@ -421,7 +512,6 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
     setData(selectedRowData);
     onClose();
   };
-
 
   return (
     <>
@@ -508,10 +598,10 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
                 <th>업체코드</th>
                 <td>
                   <Input
-                      name="custcd"
-                      type="text"
-                      value={filters.custcd}
-                      onChange={filterInputChange}
+                    name="custcd"
+                    type="text"
+                    value={filters.custcd}
+                    onChange={filterInputChange}
                   />
                   <ButtonInInput>
                     <Button
@@ -558,6 +648,36 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
                 person: personListData.find(
                   (item: any) => item.user_id == row.person
                 )?.user_name,
+                testtype: testtypeListData.find(
+                  (item: any) => item.sub_code == row.testtype
+                )?.code_name,
+                requestgb: requestgbListData.find(
+                  (item: any) => item.sub_code == row.requestgb
+                )?.code_name,
+                materialtype: materialtypeListData.find(
+                  (item: any) => item.sub_code == row.materialtype
+                )?.code_name,
+                materialgb: materialgbListData.find(
+                  (item: any) => item.sub_code == row.materialgb
+                )?.code_name,
+                assaygbe: assaygbeListData.find(
+                  (item: any) => item.sub_code == row.assaygbe
+                )?.code_name,
+                startschgb: startschgbListData.find(
+                  (item: any) => item.sub_code == row.startschgb
+                )?.code_name,
+                financegb: financegbListData.find(
+                  (item: any) => item.sub_code == row.financegb
+                )?.code_name,
+                amtgb: amtgbListData.find(
+                  (item: any) => item.sub_code == row.amtgb
+                )?.code_name,
+                addordgb: addordgbListData.find(
+                  (item: any) => item.sub_code == row.addordgb
+                )?.code_name,
+                relationgb: relationgbListData.find(
+                  (item: any) => item.sub_code == row.relationgb
+                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -596,24 +716,94 @@ const CopyWindow = ({ setVisible, setData, modal = false}: IWindow) => {
             />
             <GridColumn field="quotype" title="견적형태" width="120px" />
             <GridColumn field="quosts" title="견적상태" width="100px" />
-            <GridColumn field="quodt" title="견적일자" width="100px" cell={DateCell}/>
+            <GridColumn
+              field="quodt"
+              title="견적일자"
+              width="100px"
+              cell={DateCell}
+            />
             <GridColumn field="person" title="담당자" width="100px" />
             <GridColumn field="custnm" title="업체명" width="150px" />
+            <GridColumn field="custprsncd" title="의뢰자코드" width="120px" />
+            <GridColumn field="custprsnnm" title="의뢰자명" width="120px" />
+            <GridColumn field="postnm" title="직위/직책" width="120px" />
+            <GridColumn field="dptnm" title="부서명" width="120px" />
+            <GridColumn field="address" title="주소" width="120px" />
+            <GridColumn field="telno" title="전화번호" width="120px" />
+            <GridColumn field="phoneno" title="휴대폰" width="120px" />
+            <GridColumn field="email" title="메일" width="120px" />
+            <GridColumn field="testtype" title="시험분야" width="120px" />
+            <GridColumn field="requestgb" title="의뢰목적" width="120px" />
+            <GridColumn field="materialtype" title="물질분야" width="120px" />
+            <GridColumn field="materialgb" title="물질확보여부" width="120px" />
+            <GridColumn
+              field="grade1"
+              title="물질확보여부점수"
+              cell={NumberCell}
+              width="100px"
+            />
+            <GridColumn
+              field="assaygbe"
+              title="분석법 보유여부"
+              width="120px"
+            />
+            <GridColumn
+              field="grade2"
+              title="분석법 보유여부점수"
+              cell={NumberCell}
+              width="100px"
+            />
+            <GridColumn field="startschgb" title="시작예정" width="120px" />
+            <GridColumn
+              field="grade3"
+              title="시작예정점수"
+              cell={NumberCell}
+              width="100px"
+            />
+            <GridColumn field="financegb" title="재무/투자현황" width="120px" />
+            <GridColumn
+              field="grade4"
+              title="재무/투자현황점수"
+              cell={NumberCell}
+              width="100px"
+            />
+            <GridColumn field="amtgb" title="금액" width="120px" />
+            <GridColumn
+              field="grade5"
+              title="금액점수"
+              cell={NumberCell}
+              width="100px"
+            />
+            <GridColumn field="addordgb" title="추가수주" width="120px" />
+            <GridColumn
+              field="grade6"
+              title="추가수주점수"
+              cell={NumberCell}
+              width="100px"
+            />
+            <GridColumn
+              field="relationgb"
+              title="BTT관계사 확장"
+              width="120px"
+            />
+            <GridColumn
+              field="grade7"
+              title="BTT관계사 확장점수"
+              cell={NumberCell}
+              width="100px"
+            />
             <GridColumn field="materialnm" title="시험물질명" width="150px" />
-            <GridColumn 
-              field="materialindt" 
-              title="물질입고예상일" 
-              width="100px" 
-              cell={DateCell} 
+            <GridColumn
+              field="materialindt"
+              title="물질입고예상일"
+              width="100px"
+              cell={DateCell}
             />
           </Grid>
         </GridContainer>
         <BottomContainer>
           <ButtonContainer>
-            <Button
-              themeColor={"primary"}
-              onClick={onConfirmBtnClick}
-            >
+            <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
               확인
             </Button>
             <Button
