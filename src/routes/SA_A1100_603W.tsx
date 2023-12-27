@@ -70,7 +70,7 @@ import { isLoading } from "../store/atoms";
 
 type TdataArr = {
   rowstatus_s: string[];
-  quoseq_s: string[];
+  seq2_s: string[];
   wonamt_s: string[];
   taxamt_s: string[];
   amt_s: string[];
@@ -80,6 +80,9 @@ type TdataArr = {
   discount_s: string[];
   discount_div_s: string[];
   discountamt_s: string[];
+  outtype_s: string[];
+  ordnum_s: string[];
+  ordseq_s: string[];
 };
 
 const DATA_ITEM_KEY = "num";
@@ -102,7 +105,7 @@ const NumberField = [
   "saleamt",
   "collamt",
   "janamt",
-  "quoseq"
+  "ordseq",
 ];
 
 const NumberCommaField = [
@@ -115,12 +118,13 @@ const NumberCommaField = [
 
 const NumberField2 = ["marginamt", "discountamt", "wonamt", "taxamt", "amt"];
 
-const customField = ["insert_userid", "margin_div", "discount_div"];
+const customField = ["insert_userid", "margin_div", "discount_div", "outtype"];
 let temp = 0;
+let temp2 = 0;
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
-    "L_sysUserMaster_001, L_MARGIN, L_DISCOUNT",
+    "L_sysUserMaster_001, L_MARGIN, L_DISCOUNT, L_BA037",
     // 구분, 단위, 불량유형
     setBizComponentData
   );
@@ -133,6 +137,8 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_MARGIN"
       : field === "discount_div"
       ? "L_DISCOUNT"
+      : field === "outtype"
+      ? "L_BA037"
       : "";
 
   const fieldName = field === "insert_userid" ? "user_name" : undefined;
@@ -155,6 +161,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 let deletedMainRows: any[] = [];
+let deletedMainRows2: any[] = [];
 const SA_A1100_603W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
@@ -202,7 +209,7 @@ const SA_A1100_603W: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent(
-    "L_dptcd_001,L_sysUserMaster_001, L_SA016, L_SA004, L_SA001_603",
+    "L_dptcd_001,L_sysUserMaster_001, L_SA001_603",
     setBizComponentData
   );
   const [dptcdListData, setdptcdListData] = useState([
@@ -212,12 +219,6 @@ const SA_A1100_603W: React.FC = () => {
     { user_id: "", user_name: "" },
   ]);
 
-  const [quotypeListData, setQuotypeListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [quostsListData, setQuostsListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
   const [materialtypeListData, setMaterialtypeListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -234,13 +235,6 @@ const SA_A1100_603W: React.FC = () => {
           (item: any) => item.bizComponentId === "L_dptcd_001"
         )
       );
-      const quotypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA016")
-      );
-
-      const quostsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA004")
-      );
 
       const materialtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
@@ -248,8 +242,6 @@ const SA_A1100_603W: React.FC = () => {
         )
       );
       fetchQueryData(userQueryStr, setUserListData);
-      fetchQueryData(quotypeQueryStr, setQuotypeListData);
-      fetchQueryData(quostsQueryStr, setQuostsListData);
       fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
       fetchQueryData(dptcdQueryStr, setdptcdListData);
     }
@@ -300,8 +292,8 @@ const SA_A1100_603W: React.FC = () => {
     workType: "",
     orgdiv: "01",
     location: "01",
-    quonum: "",
-    quorev: 0,
+    recdt: "",
+    seq1: 0,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -312,8 +304,8 @@ const SA_A1100_603W: React.FC = () => {
     workType: "",
     orgdiv: "01",
     location: "01",
-    quonum: "",
-    quorev: 0,
+    recdt: "",
+    seq1: 0,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -321,10 +313,10 @@ const SA_A1100_603W: React.FC = () => {
   });
   const [subFilters3, setSubFilters3] = useState<{ [name: string]: any }>({
     workType: "",
-    quonum: "",
     orgdiv: "01",
     location: "01",
-    quorev: 0,
+    recdt: "",
+    seq1: 0,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -332,10 +324,10 @@ const SA_A1100_603W: React.FC = () => {
   });
   const [subFilters4, setSubFilters4] = useState<{ [name: string]: any }>({
     workType: "",
-    quonum: "",
     orgdiv: "01",
     location: "01",
-    quorev: 0,
+    recdt: "",
+    seq1: 0,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -346,8 +338,6 @@ const SA_A1100_603W: React.FC = () => {
     paymeth: "",
     materialnm: "",
     totamt: 0,
-    quorev: 0,
-    rev_reason: "",
     ordamt: 0,
     saleamt: 0,
     collamt: 0,
@@ -427,32 +417,32 @@ const SA_A1100_603W: React.FC = () => {
     setSubFilters((prev) => ({
       ...prev,
       workType: "DETAIL",
-      quonum: selectedRowData.quonum,
-      quorev: selectedRowData.quorev,
+      recdt: selectedRowData.recdt,
+      seq1: selectedRowData.seq1,
       pgNum: 1,
       isSearch: true,
     }));
     setSubFilters2((prev) => ({
       ...prev,
       workType: "COMMENT",
-      quonum: selectedRowData.quonum,
-      quorev: selectedRowData.quorev,
+      recdt: selectedRowData.recdt,
+      seq1: selectedRowData.seq1,
       pgNum: 1,
       isSearch: true,
     }));
     setSubFilters3((prev) => ({
       ...prev,
       workType: "SALE",
-      quonum: selectedRowData.quonum,
-      quorev: selectedRowData.quorev,
+      recdt: selectedRowData.recdt,
+      seq1: selectedRowData.seq1,
       pgNum: 1,
       isSearch: true,
     }));
     setSubFilters4((prev) => ({
       ...prev,
       workType: "MEETING",
-      quonum: selectedRowData.quonum,
-      quorev: selectedRowData.quorev,
+      recdt: selectedRowData.recdt,
+      seq1: selectedRowData.seq1,
       pgNum: 1,
       isSearch: true,
     }));
@@ -658,6 +648,7 @@ const SA_A1100_603W: React.FC = () => {
   //그리드 리셋
   const resetAllGrid = () => {
     deletedMainRows = [];
+    deletedMainRows2 = [];
     setPage(initialPageState);
     setPage2(initialPageState);
     setPage3(initialPageState);
@@ -690,9 +681,8 @@ const SA_A1100_603W: React.FC = () => {
         "@p_custnm": filters.custnm,
         "@p_testnum": filters.testnum,
         "@p_finyn": filters.finyn,
-        "@p_quonum": "",
-        "@p_quorev": 0,
-        "@p_quoseq": 0,
+        "@p_recdt": "",
+        "@p_seq1": 0,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -782,9 +772,8 @@ const SA_A1100_603W: React.FC = () => {
         "@p_custnm": "",
         "@p_testnum": "",
         "@p_finyn": "",
-        "@p_quonum": subFilters.quonum,
-        "@p_quorev": subFilters.quorev,
-        "@p_quoseq": 0,
+        "@p_recdt": subFilters.recdt,
+        "@p_seq1": subFilters.seq1,
         "@p_find_row_value": subFilters.find_row_value,
       },
     };
@@ -825,8 +814,6 @@ const SA_A1100_603W: React.FC = () => {
           paymeth: data.tables[0].Rows[0].paymeth,
           materialnm: data.tables[0].Rows[0].materialnm,
           totamt: data.tables[0].Rows[0].totamt,
-          quorev: data.tables[0].Rows[0].quorev,
-          rev_reason: data.tables[0].Rows[0].rev_reason,
           wonchgrat: data.tables[0].Rows[0].wonchgrat,
           amtunit: data.tables[0].Rows[0].amtunit,
         }));
@@ -837,8 +824,6 @@ const SA_A1100_603W: React.FC = () => {
           paymeth: "",
           materialnm: "",
           totamt: 0,
-          quorev: 0,
-          rev_reason: "",
           wonchgrat: 0,
         }));
       }
@@ -893,9 +878,8 @@ const SA_A1100_603W: React.FC = () => {
         "@p_custnm": "",
         "@p_testnum": "",
         "@p_finyn": "",
-        "@p_quonum": subFilters2.quonum,
-        "@p_quorev": subFilters2.quorev,
-        "@p_quoseq": 0,
+        "@p_recdt": subFilters2.recdt,
+        "@p_seq1": subFilters2.seq1,
         "@p_find_row_value": subFilters2.find_row_value,
       },
     };
@@ -981,9 +965,8 @@ const SA_A1100_603W: React.FC = () => {
         "@p_custnm": "",
         "@p_testnum": "",
         "@p_finyn": "",
-        "@p_quonum": subFilters3.quonum,
-        "@p_quorev": subFilters3.quorev,
-        "@p_quoseq": 0,
+        "@p_recdt": subFilters3.recdt,
+        "@p_seq1": subFilters3.seq1,
         "@p_find_row_value": subFilters3.find_row_value,
       },
     };
@@ -994,8 +977,8 @@ const SA_A1100_603W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[1].TotalRowCount;
-      const rows = data.tables[1].Rows;
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
       if (subFilters3.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef4.current) {
@@ -1083,9 +1066,8 @@ const SA_A1100_603W: React.FC = () => {
         "@p_custnm": "",
         "@p_testnum": "",
         "@p_finyn": "",
-        "@p_quonum": subFilters4.quonum,
-        "@p_quorev": subFilters4.quorev,
-        "@p_quoseq": 0,
+        "@p_recdt": subFilters4.recdt,
+        "@p_seq1": subFilters4.seq1,
         "@p_find_row_value": subFilters4.find_row_value,
       },
     };
@@ -1382,7 +1364,11 @@ const SA_A1100_603W: React.FC = () => {
     let sum = 0;
     mainDataResult2.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -1458,7 +1444,7 @@ const SA_A1100_603W: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "quoseq" && field != "quotestnum") {
+    if (field != "rowstatus" && field != "testnum") {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
@@ -1950,7 +1936,7 @@ const SA_A1100_603W: React.FC = () => {
 
   const [ParaData, setParaData] = useState({
     rowstatus_s: "",
-    quoseq_s: "",
+    seq2_s: "",
     wonamt_s: "",
     taxamt_s: "",
     amt_s: "",
@@ -1960,6 +1946,9 @@ const SA_A1100_603W: React.FC = () => {
     discount_s: "",
     discount_div_s: "",
     discountamt_s: "",
+    outtype_s: "",
+    ordnum_s: "",
+    ordseq_s: "",
   });
 
   const infopara: Iparameters = {
@@ -1969,23 +1958,26 @@ const SA_A1100_603W: React.FC = () => {
     parameters: {
       "@p_work_type": "N",
       "@p_orgdiv": "01",
-      "@p_quonum": subFilters.quonum,
-      "@p_quorev": Information.quorev,
+      "@p_recdt": subFilters.recdt,
+      "@p_seq1": subFilters.seq1,
       "@p_location": "01",
       "@p_paymeth": Information.paymeth,
       "@p_wonchgrat": Information.wonchgrat,
       "@p_amtunit": Information.amtunit,
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_seq2_s": ParaData.seq2_s,
       "@p_amt_s": ParaData.amt_s,
+      "@p_wonamt_s": ParaData.wonamt_s,
+      "@p_taxamt_s": ParaData.taxamt_s,
       "@p_margin_s": ParaData.margin_s,
       "@p_margin_div_s": ParaData.margin_div_s,
       "@p_marginamt_s": ParaData.marginamt_s,
       "@p_discount_s": ParaData.discount_s,
       "@p_discount_div_s": ParaData.discount_div_s,
       "@p_discountamt_s": ParaData.discountamt_s,
-      "@p_rowstatus_s": ParaData.rowstatus_s,
-      "@p_quoseq_s": ParaData.quoseq_s,
-      "@p_wonamt_s": ParaData.wonamt_s,
-      "@p_taxamt_s": ParaData.taxamt_s,
+      "@p_outtype_s": ParaData.outtype_s,
+      "@p_ordnum_s": ParaData.ordnum_s,
+      "@p_ordseq_s": ParaData.ordseq_s,
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "SA_A1100_603W",
@@ -1999,10 +1991,11 @@ const SA_A1100_603W: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
+    if (dataItem.length === 0 && deletedMainRows2.length === 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
-      quoseq_s: [],
+      seq2_s: [],
       wonamt_s: [],
       taxamt_s: [],
       amt_s: [],
@@ -2012,6 +2005,9 @@ const SA_A1100_603W: React.FC = () => {
       discount_s: [],
       discount_div_s: [],
       discountamt_s: [],
+      outtype_s: [],
+      ordnum_s: [],
+      ordseq_s: [],
     };
 
     dataItem.forEach((item: any, idx: number) => {
@@ -2024,13 +2020,16 @@ const SA_A1100_603W: React.FC = () => {
         discount = "",
         discount_div = "",
         discountamt = "",
-        quoseq = "",
+        seq2 = "",
         wonamt = "",
         taxamt = "",
+        outtype = "",
+        ordnum = "",
+        ordseq = ""
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.quoseq_s.push(quoseq);
+      dataArr.seq2_s.push(seq2);
       dataArr.wonamt_s.push(wonamt);
       dataArr.taxamt_s.push(taxamt);
       dataArr.amt_s.push(amt);
@@ -2040,12 +2039,49 @@ const SA_A1100_603W: React.FC = () => {
       dataArr.discount_s.push(discount);
       dataArr.discount_div_s.push(discount_div);
       dataArr.discountamt_s.push(discountamt);
+      dataArr.outtype_s.push(outtype);
+      dataArr.ordnum_s.push(ordnum);
+      dataArr.ordseq_s.push(ordseq);
+    });
+
+    deletedMainRows2.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        amt = "",
+        margin = "",
+        margin_div = "",
+        marginamt = "",
+        discount = "",
+        discount_div = "",
+        discountamt = "",
+        seq2 = "",
+        wonamt = "",
+        taxamt = "",
+        outtype = "",
+        ordnum = "",
+        ordseq = ""
+      } = item;
+
+      dataArr.rowstatus_s.push("D");
+      dataArr.seq2_s.push(seq2);
+      dataArr.wonamt_s.push(wonamt);
+      dataArr.taxamt_s.push(taxamt);
+      dataArr.amt_s.push(amt);
+      dataArr.margin_s.push(margin);
+      dataArr.margin_div_s.push(margin_div);
+      dataArr.marginamt_s.push(marginamt);
+      dataArr.discount_s.push(discount);
+      dataArr.discount_div_s.push(discount_div);
+      dataArr.discountamt_s.push(discountamt);
+      dataArr.outtype_s.push(outtype);
+      dataArr.ordnum_s.push(ordnum);
+      dataArr.ordseq_s.push(ordseq);
     });
 
     setParaData((prev) => ({
       ...prev,
       rowstatus_s: dataArr.rowstatus_s.join("|"),
-      quoseq_s: dataArr.quoseq_s.join("|"),
+      seq2_s: dataArr.seq2_s.join("|"),
       wonamt_s: dataArr.wonamt_s.join("|"),
       taxamt_s: dataArr.taxamt_s.join("|"),
       amt_s: dataArr.amt_s.join("|"),
@@ -2055,6 +2091,9 @@ const SA_A1100_603W: React.FC = () => {
       discount_s: dataArr.discount_s.join("|"),
       discount_div_s: dataArr.discount_div_s.join("|"),
       discountamt_s: dataArr.discountamt_s.join("|"),
+      outtype_s: dataArr.outtype_s.join("|"),
+      ordnum_s: dataArr.ordnum_s.join("|"),
+      ordseq_s: dataArr.ordseq_s.join("|"),
     }));
   };
 
@@ -2083,7 +2122,7 @@ const SA_A1100_603W: React.FC = () => {
       }));
       setParaData({
         rowstatus_s: "",
-        quoseq_s: "",
+        seq2_s: "",
         wonamt_s: "",
         taxamt_s: "",
         amt_s: "",
@@ -2093,6 +2132,9 @@ const SA_A1100_603W: React.FC = () => {
         discount_s: "",
         discount_div_s: "",
         discountamt_s: "",
+        outtype_s: "",
+        ordnum_s: "",
+        ordseq_s: ""
       });
     } else {
       console.log("[오류 발생]");
@@ -2231,6 +2273,91 @@ const SA_A1100_603W: React.FC = () => {
     if (paraDataSaved.work_type !== "") fetchTodoGridSaved2();
   }, [paraDataSaved]);
 
+  const onCopyClick = () => {
+    mainDataResult2.data.map((item) => {
+      if (item.num > temp2) {
+        temp2 = item.num;
+      }
+    });
+
+    if (mainDataResult2.total > 0) {
+      const selectRow = mainDataResult2.data.filter(
+        (item) => item.num == Object.getOwnPropertyNames(selectedState2)[0]
+      )[0];
+
+      const newDataItem = {
+        [DATA_ITEM_KEY2]: ++temp2,
+        amt: selectRow.amt,
+        discount: selectRow.discount,
+        discount_div: selectRow.discount_div,
+        discountamt: selectRow.discountamt,
+        itemnm: selectRow.itemnm,
+        margin: selectRow.margin,
+        margin_div: selectRow.margin_div,
+        marginamt: selectRow.marginamt,
+        outtype: "B",
+        ordnum: selectRow.ordnum,
+        ordseq: selectRow.ordseq,
+        recdt: selectRow.recdt,
+        remark: selectRow.remark,
+        seq1: 0,
+        seq2: 0,
+        taxamt: selectRow.taxamt,
+        testnum: selectRow.testnum,
+        wonamt: selectRow.wonamt,
+        rowstatus: "N",
+      };
+
+      setMainDataResult2((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+      setSelectedState2({ [newDataItem[DATA_ITEM_KEY2]]: true });
+    } else {
+      alert("복사할 데이터가 없습니다.");
+    }
+  };
+
+  const onDeleteClick2 = (e: any) => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
+    mainDataResult2.data.forEach((item: any, index: number) => {
+      if (!selectedState2[item[DATA_ITEM_KEY2]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows2.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult2.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult2.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult2((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    if (Object.length > 0) {
+      setSelectedState2({
+        [data != undefined ? data[DATA_ITEM_KEY2] : newData[0]]: true,
+      });
+    }
+  };
+
   return (
     <>
       <TitleContainer>
@@ -2300,12 +2427,6 @@ const SA_A1100_603W: React.FC = () => {
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
-                  quotype: quotypeListData.find(
-                    (items: any) => items.sub_code == row.quotype
-                  )?.code_name,
-                  quosts: quostsListData.find(
-                    (items: any) => items.sub_code == row.quosts
-                  )?.code_name,
                   person: userListData.find(
                     (items: any) => items.user_id == row.person
                   )?.user_name,
@@ -2409,7 +2530,6 @@ const SA_A1100_603W: React.FC = () => {
                         />
                       </td>
                     </tr>
-
                     <tr>
                       <th style={{ textAlign: "right" }}> 시험물질명 </th>
                       <td>
@@ -2571,6 +2691,20 @@ const SA_A1100_603W: React.FC = () => {
                   >
                     상세정보 저장
                   </Button>
+                  <Button
+                    themeColor={"primary"}
+                    fillMode="outline"
+                    onClick={onCopyClick}
+                    icon="copy"
+                    title="행 복사"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                  ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
               <Grid

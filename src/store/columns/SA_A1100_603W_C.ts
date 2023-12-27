@@ -6,21 +6,15 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList",
     columns: [ 
       {
+        id: "col_reckey_list",
+        field: "reckey",
+        caption: "청구번호",
+        width: 120,
+      },
+      {
         id: "col_quokey_list",
         field: "quokey",
         caption: "프로젝트번호",
-        width: 120,
-      },
-      {
-        id: "col_quotype_list",
-        field: "quotype",
-        caption: "견적형태",
-        width: 120,
-      },
-      {
-        id: "col_quosts_list",
-        field: "quosts",
-        caption: "견적상태",
         width: 120,
       },
       {
@@ -78,22 +72,34 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList2",
     columns: [
       {
-        id: "col_quoseq",
-        field: "quoseq",
-        caption: "No",
-        width: 100,
+        id: "col_testnum",
+        field: "testnum",
+        caption: "시험번호",
+        width: 150,
       },
       {
-        id: "col_quotestnum",
-        field: "quotestnum",
-        caption: "예약시험번호",
+        id: "col_ordnum",
+        field: "ordnum",
+        caption: "수주번호",
         width: 150,
+      },
+      {
+        id: "col_ordseq",
+        field: "ordseq",
+        caption: "수주순번",
+        width: 100,
       },
       {
         id: "col_itemnm",
         field: "itemnm",
         caption: "품목명",
         width: 150,
+      },
+      {
+        id: "col_outtype",
+        field: "outtype",
+        caption: "출고형태",
+        width: 120,
       },
       {
         id: "col_amt_detail",
