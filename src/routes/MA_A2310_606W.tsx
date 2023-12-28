@@ -57,7 +57,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { isLoading, loginResultState, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A2310_606W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -216,12 +216,17 @@ const MA_A2310_606W: React.FC = () => {
   const [selectedState2, setSelectedState2] = useState<{
     [id: string]: boolean | number[];
   }>({});
+  const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
+  let sessionLocation = sessionItem.find(
+    (sessionItem: { code: string; }) => sessionItem.code == "location"
+  )!.value;
+  if (sessionLocation === "") sessionLocation = "01";
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     worktype: "LIST",
     orgdiv: "01",
-    location: "",
+    location: sessionLocation,
     frdt: new Date(),
     todt: new Date(),
     custcd: "",
@@ -753,7 +758,7 @@ const MA_A2310_606W: React.FC = () => {
         ...prev,
         workType: "D",
         orgdiv: "01",
-        location: "01",
+        location: filters.location,
         indt: convertDateToStr(new Date()),
         rekey_s: dataArr.rekey_s.join("|"),
         recdt_s: dataArr.recdt_s.join("|"),
@@ -790,7 +795,7 @@ const MA_A2310_606W: React.FC = () => {
         ...prev,
         workType: "N",
         orgdiv: "01",
-        location: "01",
+        location: filters.location,
         indt: convertDateToStr(new Date()),
         rekey_s: dataArr.rekey_s.join("|"),
         recdt_s: dataArr.recdt_s.join("|"),
