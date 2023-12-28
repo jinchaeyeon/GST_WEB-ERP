@@ -223,7 +223,7 @@ const AC_B1260W: React.FC = () => {
         workType === "CHART4" ||
         workType === "CHART5"
       ) {
-        let newRows = { companies: [""], series: [0] };
+        let newRows : any = { companies: [], series: [] };
 
         rows.forEach((row: any) => {
           if (!newRows.companies.includes(row.argument)) {
