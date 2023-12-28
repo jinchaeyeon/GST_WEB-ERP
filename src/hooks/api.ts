@@ -71,6 +71,8 @@ const domain: any = {
   "manual-list": { action: "get", url: "api/files/manual-json/:para" },
   "manual-upload": { action: "post", url: "api/files/manual/:para" },
   "manual-delete": { action: "delete", url: "api/files/manual/:para" },
+
+  "excel-view2": { action: "post", url: "api/data/emm-printout/send-mail?id=S2023744A53" },
 };
 
 let isTokenRefreshing = false;
@@ -135,7 +137,7 @@ export const useApi = () => {
 
       let headers: any = {};
 
-      if (name === "file-upload" || name === "file-download")
+      if (name === "file-upload" || name === "file-download"|| name === "excel-view2")
         headers = {
           "Content-Type": "multipart/form-data",
           responseType: "stream",

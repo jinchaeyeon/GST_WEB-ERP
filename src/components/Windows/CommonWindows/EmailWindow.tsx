@@ -1,18 +1,21 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { Input, TextArea } from "@progress/kendo-react-inputs";
+import { Input } from "@progress/kendo-react-inputs";
 import { MuiChipsInput, MuiChipsInputChip } from "mui-chips-input";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
   FormBox,
   FormBoxWrap,
+  GridContainer,
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
+import { TEditorHandle } from "../../../store/types";
+import RichEditor from "../../RichEditor";
 
 type TKendoWindow = {
   setVisible(isVisible: boolean): void;
@@ -35,7 +38,7 @@ const KendoWindow = ({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1000,
-    height: 600,
+    height: 780,
   });
 
   const handleMove = (event: WindowMoveEvent) => {
@@ -71,8 +74,8 @@ const KendoWindow = ({
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     recieveuser: [],
     title: "",
-    contents: "",
   });
+  const [files, setFiles] = useState<FileList | null>();
 
   const onSend = async () => {
     let data: any;
@@ -90,26 +93,38 @@ const KendoWindow = ({
       });
 
       if (valid == true) {
-        const parameters = {
-          para: "send-mail?id=S2023744A53",
-          to: filters.recieveuser,
-          title: filters.title,
-          textBody: filters.contents,
-          printoutName: `견적서_${quonum}.pdf`,
-          queryParamValues: {
-            "@p_orgidv": "01",
-            "@p_quonum": quonum,
-            "@p_quorev": quorev,
-          },
-        };
+        let editorContent: any = "";
+        if (docEditorRef.current) {
+          editorContent = docEditorRef.current.getContent();
+        }
+        const formData = new FormData();
+        filters.recieveuser.map((item: string | Blob) => {
+          formData.append("to", item);
+        });
+        formData.append("title", filters.title);
+        formData.append("htmlBody", editorContent);
+        formData.append("printoutName", `견적서_${quonum}.pdf`);
+        formData.append(
+          "queryParamValues",
+          `{
+          "@p_orgidv": "01",
+          "@p_quonum": ${quonum},
+          "@p_quorev": ${quorev},
+        }`
+        );
+        if (files != null) {
+          for (const file of files) {
+            formData.append("files", file);
+          }
+        }
 
         try {
-          data = await processApi<any>("excel-view", parameters);
+          data = await processApi<any>("excel-view2", formData);
         } catch (error) {
           data = null;
         }
 
-        alert("발송했습니다.");
+        alert("전송했습니다.");
         onClose();
       } else {
         alert("이메일 형식을 맞춰주세요.");
@@ -118,6 +133,14 @@ const KendoWindow = ({
     setLoading(false);
   };
 
+  const docEditorRef = useRef<TEditorHandle>(null);
+  const excelInput: any = useRef();
+  const upload = () => {
+    const uploadInput = document.getElementById("uploadAttachment");
+    uploadInput!.click();
+  };
+
+  const [placeholder, setPlaceholder] = useState("파일 선택");
   return (
     <Window
       title={"Email"}
@@ -131,6 +154,17 @@ const KendoWindow = ({
       <FormBoxWrap border={true}>
         <FormBox>
           <tbody>
+            <tr>
+              <th style={{ width: "10%" }}>보내는 사람</th>
+              <td>
+                <Input
+                  name="sender_name"
+                  type="text"
+                  value={"no-reply@gsti.co.kr"}
+                  className="readonly"
+                />
+              </td>
+            </tr>
             <tr>
               <th style={{ width: "10%" }}>받는 사람</th>
               <td>
@@ -155,23 +189,55 @@ const KendoWindow = ({
               </td>
             </tr>
             <tr>
-              <th style={{ width: "10%" }}>내용</th>
+              <th>첨부파일</th>
               <td>
-                <TextArea
-                  value={filters.contents}
-                  name="contents"
-                  rows={15}
-                  onChange={InputChange}
-                />
+                <Button
+                  onClick={upload}
+                  themeColor={"primary"}
+                  fillMode={"outline"}
+                  icon={"upload"}
+                  style={{ width: "100%" }}
+                >
+                  {placeholder}
+                  <input
+                    id="uploadAttachment"
+                    style={{ display: "none" }}
+                    type="file"
+                    accept="*"
+                    multiple
+                    ref={excelInput}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setFiles(event.target.files);
+                      if(event.target.files != null) {
+                        if(event.target.files.length > 0) {
+                          setPlaceholder(
+                            "현재 파일 : " + (event.target.files.length > 1
+                              ? (event.target.files[0].name +
+                                  "외 " +
+                                  (event.target.files.length -
+                                  1) +
+                                  "건")
+                              : event.target.files[0].name)
+                          );
+                        } else {
+                          setPlaceholder("파일 선택")
+                        }
+                      }
+                    }}
+                  />
+                </Button>
               </td>
             </tr>
           </tbody>
         </FormBox>
       </FormBoxWrap>
+      <GridContainer height="400px">
+        <RichEditor id="docEditor" ref={docEditorRef} />
+      </GridContainer>
       <BottomContainer>
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={onSend}>
-            발송
+            전송
           </Button>
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             닫기

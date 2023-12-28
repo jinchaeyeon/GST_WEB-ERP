@@ -118,13 +118,13 @@ const NumberCommaField = [
 
 const NumberField2 = ["marginamt", "discountamt", "wonamt", "taxamt", "amt"];
 
-const customField = ["insert_userid", "margin_div", "discount_div", "outtype"];
+const customField = ["insert_userid", "margin_div", "discount_div"];
 let temp = 0;
 let temp2 = 0;
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
-    "L_sysUserMaster_001, L_MARGIN, L_DISCOUNT, L_BA037",
+    "L_sysUserMaster_001, L_MARGIN, L_DISCOUNT",
     // 구분, 단위, 불량유형
     setBizComponentData
   );
@@ -137,8 +137,6 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_MARGIN"
       : field === "discount_div"
       ? "L_DISCOUNT"
-      : field === "outtype"
-      ? "L_BA037"
       : "";
 
   const fieldName = field === "insert_userid" ? "user_name" : undefined;
@@ -209,7 +207,7 @@ const SA_A1100_603W: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent(
-    "L_dptcd_001,L_sysUserMaster_001, L_SA001_603",
+    "L_dptcd_001,L_sysUserMaster_001, L_SA001_603, L_BA037",
     setBizComponentData
   );
   const [dptcdListData, setdptcdListData] = useState([
@@ -218,13 +216,20 @@ const SA_A1100_603W: React.FC = () => {
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
-
+  const [outtypeListData, setOuttypeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   const [materialtypeListData, setMaterialtypeListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
 
   useEffect(() => {
     if (bizComponentData.length > 0) {
+      const outtypeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_BA037"
+        )
+      );
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
@@ -241,6 +246,7 @@ const SA_A1100_603W: React.FC = () => {
           (item: any) => item.bizComponentId === "L_SA001_603"
         )
       );
+      fetchQueryData(outtypeQueryStr, setOuttypeListData);
       fetchQueryData(userQueryStr, setUserListData);
       fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
       fetchQueryData(dptcdQueryStr, setdptcdListData);
@@ -1444,7 +1450,7 @@ const SA_A1100_603W: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "testnum") {
+    if (field != "rowstatus" && field != "testnum" && field != "outtype") {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
@@ -2330,14 +2336,20 @@ const SA_A1100_603W: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-        if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
-          deletedMainRows2.push(newData2);
+        if(item.outtype == "A") {
+          alert("계약된 건은 행 삭제가 불가능합니다.");
+          newData.push(item);
+          Object2.push(index);
+        } else {
+          if (!item.rowstatus || item.rowstatus != "N") {
+            const newData2 = {
+              ...item,
+              rowstatus: "D",
+            };
+            deletedMainRows2.push(newData2);
+          }
+          Object.push(index);
         }
-        Object.push(index);
       }
     });
 
@@ -2712,6 +2724,9 @@ const SA_A1100_603W: React.FC = () => {
                 data={process(
                   mainDataResult2.data.map((row) => ({
                     ...row,
+                    outtype: outtypeListData.find(
+                      (items: any) => items.sub_code == row.outtype
+                    )?.code_name,
                     [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                   })),
                   mainDataState2

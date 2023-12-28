@@ -288,7 +288,7 @@ const AC_B1260W: React.FC = () => {
         convertDateToStr(filters.yyyymm).substring(6, 8) < "01" ||
         convertDateToStr(filters.yyyymm).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "HU_A2070W_001");
+        throw findMessage(messagesData, "AC_B1260W_001");
       } else {
         setDates(
           convertDateToStr(filters.yyyymm).substring(0, 4) +

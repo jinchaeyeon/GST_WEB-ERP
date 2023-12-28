@@ -108,7 +108,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
         <td
           aria-colindex={ariaColumnIndex}
           data-grid-col-index={columnIndex}
-          style={{ backgroundColor: value.color }}
+          style={{ backgroundColor: value == undefined ? "" : value.color }}
         >
           {isInEdit ? (
             <MultiColumnComboBox
