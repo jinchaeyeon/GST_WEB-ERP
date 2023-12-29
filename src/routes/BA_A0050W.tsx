@@ -423,7 +423,7 @@ const BA_A0050: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [editIndex, setEditIndex] = useState<number | undefined>();
@@ -489,7 +489,7 @@ const BA_A0050: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("BA_A0050W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -2072,6 +2072,7 @@ const BA_A0050: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="BA_A0050W"
             />
           )}
         </ButtonContainer>
@@ -2434,6 +2435,7 @@ const BA_A0050: React.FC = () => {
           }
           setData={reloadData}
           modal={true}
+          pathname="BA_A0050W"
         />
       )}
 

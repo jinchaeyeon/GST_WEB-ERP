@@ -92,7 +92,7 @@ const CM_A0000W: React.FC = () => {
     });
   };
 
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   // 삭제할 첨부파일 리스트를 담는 함수
@@ -100,11 +100,11 @@ const CM_A0000W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("CM_A0000W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("CM_A0000W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -702,6 +702,7 @@ const CM_A0000W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="CM_A0000W"
             />
           )}
         </ButtonContainer>
@@ -902,6 +903,7 @@ const CM_A0000W: React.FC = () => {
           }}
           para={detailParameters}
           modal={true}
+          pathname="CM_A0000W"
         />
       )}
       {detailWindowVisible2 && (
@@ -918,6 +920,7 @@ const CM_A0000W: React.FC = () => {
           }}
           para={detailParameters}
           modal={true}
+          pathname="CM_A0000W"
         />
       )}
       {gridList.map((grid: TGrid) =>

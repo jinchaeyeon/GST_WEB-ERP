@@ -73,6 +73,7 @@ type TKendoWindow = {
   setVisible(isVisible: boolean): void;
   rekey: string;
   setData(badqty: number): void;
+  pathname: string;
 };
 
 let deletedRows: object[] = [];
@@ -410,7 +411,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     </GridContainer>
   );
 };
-const KendoWindow = ({ setVisible, rekey, setData }: TKendoWindow) => {
+const KendoWindow = ({ setVisible, rekey, setData, pathname }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -513,7 +514,7 @@ const KendoWindow = ({ setVisible, rekey, setData }: TKendoWindow) => {
     }
   };
 
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   //메시지 조회
   const [messagesData, setMessagesData] = useState<any>(null);

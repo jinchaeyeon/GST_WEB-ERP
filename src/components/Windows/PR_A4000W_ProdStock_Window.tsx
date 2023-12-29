@@ -49,6 +49,7 @@ import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
+  pathname: string;
 };
 
 const DATA_ITEM_KEY = "num";
@@ -57,7 +58,7 @@ let temp = 0;
 
 let targetRowIndex: null | number = null;
 
-const ProdStockWindow = ({ setVisible, setData }: IWindow) => {
+const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const keepingIdGetter = getter(KEEPING_DATA_ITEM_KEY);
@@ -91,7 +92,7 @@ const ProdStockWindow = ({ setVisible, setData }: IWindow) => {
   };
 
   //메시지 조회
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 

@@ -137,7 +137,7 @@ const SA_A6000W: React.FC = () => {
   const processApi = useApi();
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
   const dptcd = loginResult ? loginResult.dptcd : "";
@@ -163,7 +163,7 @@ const SA_A6000W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SA_A6000W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -773,6 +773,7 @@ const SA_A6000W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="SA_A6000W"
             />
           )}
         </ButtonContainer>

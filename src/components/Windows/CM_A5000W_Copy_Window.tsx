@@ -64,6 +64,7 @@ type TKendoWindow = {
   setVisible(isVisible: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
+  pathname: string;
 };
 
 interface IUser {
@@ -75,12 +76,13 @@ const KendoWindow = ({
   setVisible,
   setData,
   modal = false,
+  pathname
 }: TKendoWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const idGetter = getter(DATA_ITEM_KEY);

@@ -90,14 +90,14 @@ const MA_A2500W: React.FC = () => {
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("MA_A2500W", setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -138,7 +138,7 @@ const MA_A2500W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("MA_A2500W", setCustomOptionData);
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -982,6 +982,7 @@ const MA_A2500W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="MA_A2500W"
             />
           )}
         </ButtonContainer>
@@ -1309,6 +1310,7 @@ const MA_A2500W: React.FC = () => {
                 )[0]
           }
           modal={true}
+          pathname="MA_A2500W"
         />
       )}
       {custWindowVisible && (

@@ -53,6 +53,7 @@ type TKendoWindow = {
   plankey: string;
   setData(data: object): void;
   modal?: boolean;
+  pathname: string;
 };
 
 const DATA_ITEM_KEY =  "num";
@@ -62,6 +63,7 @@ const KendoWindow = ({
   plankey,
   setData,
   modal = false,
+  pathname
 }: TKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -73,7 +75,7 @@ const KendoWindow = ({
   const userId = UseGetValueFromSessionItem("user_id");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
 

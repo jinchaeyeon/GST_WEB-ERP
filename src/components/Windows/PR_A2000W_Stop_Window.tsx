@@ -33,6 +33,7 @@ type TKendoWindow = {
   data: TData;
   setData(workType: string): void;  // 비가동 입력시 workType 전달
   modal? : boolean;
+  pathname: string;
 };
 
 const KendoWindow = ({ 
@@ -40,6 +41,7 @@ const KendoWindow = ({
   data, 
   setData,
   modal = false,
+  pathname
 }: TKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -47,7 +49,7 @@ const KendoWindow = ({
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const setLoading = useSetRecoilState(isLoading);

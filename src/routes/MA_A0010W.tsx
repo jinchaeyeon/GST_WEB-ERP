@@ -77,7 +77,7 @@ const MA_A0010W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -99,7 +99,7 @@ const MA_A0010W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("MA_A0010W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -737,6 +737,7 @@ const MA_A0010W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="MA_A0010W"
             />
           )}
         </ButtonContainer>

@@ -35,6 +35,7 @@ type TKendoWindow = {
   orgdiv: string;
   custcd?: string;
   modal?: boolean;
+  pathname: string;
 };
 
 const KendoWindow = ({
@@ -44,6 +45,7 @@ const KendoWindow = ({
   orgdiv,
   custcd,
   modal = false,
+  pathname
 }: TKendoWindow) => {
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -83,7 +85,7 @@ const KendoWindow = ({
     }));
   };
 
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);

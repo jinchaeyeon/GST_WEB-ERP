@@ -59,6 +59,7 @@ type TKendoWindow = {
   isCopy: boolean;
   membership_id?: string;
   modal?: boolean;
+  pathname: string;
 };
 
 const KendoWindow = ({
@@ -68,6 +69,7 @@ const KendoWindow = ({
   isCopy,
   membership_id,
   modal = false,
+  pathname
 }: TKendoWindow) => {
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -159,7 +161,7 @@ const KendoWindow = ({
     }
   };
 
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);

@@ -67,6 +67,7 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object, filter: object): void;
   modal?: boolean;
+  pathname: string;
 };
 
 type IData = {
@@ -300,6 +301,7 @@ const CopyWindow = ({
   setVisible,
   setData,
   modal = false,
+  pathname
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -317,7 +319,7 @@ const CopyWindow = ({
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
   const [acntcd, setAcntcd] = useState<string>("");

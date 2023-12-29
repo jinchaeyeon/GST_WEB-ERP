@@ -55,14 +55,15 @@ type IWindow = {
   setData(str: any): void;
   renum: string;
   modal?: boolean;
+  pathname: string;
 };
 
-const Badwindow = ({ setVisible, setData, renum, modal = false }: IWindow) => {
+const Badwindow = ({ setVisible, setData, renum, modal = false, pathname }: IWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
   let deviceWidth = window.innerWidth;

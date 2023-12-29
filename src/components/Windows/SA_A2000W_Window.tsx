@@ -114,6 +114,7 @@ type TKendoWindow = {
   isCopy: boolean;
   para?: Iparameters; //{};
   modal?: boolean;
+  pathname: string;
 };
 
 type TDetailData = {
@@ -430,11 +431,12 @@ const KendoWindow = ({
   isCopy,
   para,
   modal = false,
+  pathname
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

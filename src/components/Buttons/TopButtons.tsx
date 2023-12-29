@@ -12,6 +12,7 @@ interface ITopButtons {
   exportExcel?: () => void;
   permissions: TPermissions;
   disable?: boolean;
+  pathname: string;
 }
 
 const TopButtons = ({
@@ -19,8 +20,9 @@ const TopButtons = ({
   exportExcel,
   permissions,
   disable = false,
+  pathname
 }: ITopButtons) => {
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const processApi = useApi();
   const [menus, setMenus] = useRecoilState(menusState);
   const userId = UseGetValueFromSessionItem("user_id");

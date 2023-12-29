@@ -45,6 +45,7 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
+  pathname: string;
 };
 
 const AC_A1000W_Note_Window = ({
@@ -52,6 +53,7 @@ const AC_A1000W_Note_Window = ({
   setVisible,
   setData,
   modal = false,
+  pathname
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -82,7 +84,7 @@ const AC_A1000W_Note_Window = ({
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-  const pathname: string = window.location.pathname.replace("/", "");
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);

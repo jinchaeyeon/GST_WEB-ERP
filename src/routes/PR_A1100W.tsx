@@ -249,15 +249,15 @@ const PR_A1100W: React.FC = () => {
 
   const userId = UseGetValueFromSessionItem("user_id");
 
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("PR_A1100W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("PR_A1100W", setCustomOptionData);
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
@@ -2485,6 +2485,7 @@ const PR_A1100W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="PR_A1100W"
             />
           )}
         </ButtonContainer>
@@ -3050,6 +3051,7 @@ const PR_A1100W: React.FC = () => {
           ordkey={ordkey}
           itemcd={itemcd}
           modal={true}
+          pathname="PR_A1100W"
         />
       )}
       {custWindowVisible && (

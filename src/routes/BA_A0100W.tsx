@@ -106,14 +106,14 @@ const BA_A0100W: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const userId = UseGetValueFromSessionItem("user_id");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
 
   UsePermissions(setPermissions);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("BA_A0100W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1392,6 +1392,7 @@ const BA_A0100W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="BA_A0100W"
             />
           )}
         </ButtonContainer>

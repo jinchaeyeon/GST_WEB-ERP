@@ -66,6 +66,7 @@ type TKendoWindow = {
   categories?: string;
   para?: Iparameters; //{};
   modal?: boolean;
+  pathname: string;
 };
 
 type TDetailData = {
@@ -83,12 +84,13 @@ const KendoWindow = ({
   categories,
   para,
   modal = false,
+  pathname
 }: TKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const userId = UseGetValueFromSessionItem("user_id");
   const user_name = UseGetValueFromSessionItem("user_name");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   //커스텀 옵션 조회

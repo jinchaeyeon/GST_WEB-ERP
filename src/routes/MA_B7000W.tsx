@@ -92,7 +92,7 @@ const MA_B7000: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   // 권한
@@ -101,7 +101,7 @@ const MA_B7000: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("MA_B7000W", setCustomOptionData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -616,7 +616,7 @@ const MA_B7000: React.FC = () => {
   }, [detail2DataResult]);
 
   const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("MA_B7000W", setMessagesData);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -883,6 +883,7 @@ const MA_B7000: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="MA_B7000W"
             />
           )}
         </ButtonContainer>

@@ -136,7 +136,7 @@ const BA_A0040: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const userId = UseGetValueFromSessionItem("user_id");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   // 삭제할 첨부파일 리스트를 담는 함수
@@ -157,11 +157,11 @@ const BA_A0040: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("BA_A0040W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("BA_A0040W", setCustomOptionData);
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
 
@@ -1986,6 +1986,7 @@ const BA_A0040: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="BA_A0040W"
             />
           )}
         </ButtonContainer>

@@ -66,7 +66,7 @@ const CM_A2000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -92,11 +92,11 @@ const CM_A2000W: React.FC = () => {
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("CM_A2000W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("CM_A2000W", setCustomOptionData);
 
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
@@ -603,6 +603,7 @@ const CM_A2000W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="CM_A2000W"
             />
           )}
         </ButtonContainer>
@@ -807,6 +808,7 @@ const CM_A2000W: React.FC = () => {
                 )[0]
           }
           modal={true}
+          pathname="CM_A2000W"
         />
       )}
       {gridList.map((grid: TGrid) =>

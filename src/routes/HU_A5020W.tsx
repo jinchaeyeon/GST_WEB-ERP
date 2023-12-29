@@ -323,14 +323,14 @@ const HU_A5020W: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
 
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("HU_A5020W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("HU_A5020W", setCustomOptionData);
 
   useEffect(() => {
     if (customOptionData !== null) {
@@ -1188,6 +1188,7 @@ const HU_A5020W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="HU_A5020W"
             />
           )}
         </ButtonContainer>

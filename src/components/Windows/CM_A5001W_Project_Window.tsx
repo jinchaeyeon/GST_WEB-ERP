@@ -51,17 +51,19 @@ type TKendoWindow = {
   setVisible(isVisible: boolean): void;
   testnum: string;
   modal?: boolean;
+  pathname: string;
 };
 
 const KendoWindow = ({
   setVisible,
   testnum,
   modal = false,
+  pathname
 }: TKendoWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const location = UseGetValueFromSessionItem("location");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const idGetter = getter(DATA_ITEM_KEY);

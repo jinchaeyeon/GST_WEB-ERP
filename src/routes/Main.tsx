@@ -99,11 +99,11 @@ const Main: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
 
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("HOME", setCustomOptionData);
 
   const [noticeDataState, setNoticeDataState] = useState<State>({
     sort: [],

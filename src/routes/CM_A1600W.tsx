@@ -139,7 +139,7 @@ const CM_A1600: React.FC = () => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const processApi = useApi();
@@ -196,13 +196,13 @@ const CM_A1600: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("CM_A1600W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   if (!OLD_COMPANY.includes(companyCode)) {
     UsePermissions(setPermissions);
-    UseCustomOption(pathname, setCustomOptionData);
+    UseCustomOption("CM_A1600W", setCustomOptionData);
   }
   const [colorData, setColorData] = useState<any[]>([]);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
@@ -1004,7 +1004,7 @@ const CM_A1600: React.FC = () => {
     amt: 0,
     ref_key: "",
     pgmid: "",
-    form_id: pathname,
+    form_id: "CM_A1600W",
   });
 
   //프로시저 파라미터
@@ -1712,7 +1712,7 @@ const CM_A1600: React.FC = () => {
     amt: 0,
     ref_key: "",
     pgmid: "",
-    form_id: pathname,
+    form_id: "CM_A1600W",
   });
 
   const todoParaSaved: Iparameters = {
@@ -2174,6 +2174,7 @@ const CM_A1600: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="CM_A1600W"
             />
           )}
         </ButtonContainer>

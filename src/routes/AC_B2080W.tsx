@@ -84,11 +84,11 @@ const AC_B2080W: React.FC = () => {
   const [tabSelected, setTabSelected] = React.useState(0);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("AC_B2080W", setCustomOptionData);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("AC_B2080W", setMessagesData);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -906,6 +906,7 @@ const AC_B2080W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="AC_B2080W"
             />
           )}
         </ButtonContainer>

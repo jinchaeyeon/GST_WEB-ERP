@@ -79,7 +79,7 @@ const MA_A1000W: React.FC = () => {
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
@@ -124,11 +124,11 @@ const MA_A1000W: React.FC = () => {
   };
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("MA_A1000W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("MA_A1000W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -995,6 +995,7 @@ const MA_A1000W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="MA_A1000W"
             />
           )}
         </ButtonContainer>
@@ -1344,6 +1345,7 @@ const MA_A1000W: React.FC = () => {
                 )[0]
           }
           modal={true}
+          pathname="MA_A1000W"
         />
       )}
       {custWindowVisible && (

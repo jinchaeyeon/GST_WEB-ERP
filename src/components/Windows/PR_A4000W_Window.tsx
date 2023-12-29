@@ -102,6 +102,7 @@ type TKendoWindow = {
   rekey?: string;
   reloadData(saveyn: string): void;   // 저장 유무
   modal?: boolean;
+  pathname: string;
 };
 
 type TInData = {
@@ -132,9 +133,10 @@ const DetailWindow = ({
   rekey,
   reloadData,
   modal = false,
+  pathname
 }: TKendoWindow) => {
   const setLoading = useSetRecoilState(isLoading);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [pc, setPc] = useState("");
   const processApi = useApi();
   const [isInitSearch, setIsInitSearch] = useState(false);
@@ -1546,6 +1548,7 @@ const DetailWindow = ({
       <StockWindow
         setVisible={setStockWindowVisible}
         setData={setCopyData}
+        pathname={pathname}
       />
     )}
     </Window>

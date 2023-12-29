@@ -435,7 +435,7 @@ const BA_A0080: React.FC = () => {
   const [editedField, setEditedField] = useState("");
 
   const userId = UseGetValueFromSessionItem("user_id");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
@@ -447,11 +447,11 @@ const BA_A0080: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("BA_A0080W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("BA_A0080W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1805,6 +1805,7 @@ const BA_A0080: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="BA_A0080W"
             />
           )}
         </ButtonContainer>
@@ -2132,10 +2133,11 @@ const BA_A0080: React.FC = () => {
           setData={setCopyData}
           itemacnt={filters.itemacnt}
           modal={true}
+          pathname="BA_A0080W"
         />
       )}
       {CopyWindowVisible2 && (
-        <CopyWindow2 setVisible={setCopyWindowVisible2} modal={true} />
+        <CopyWindow2 setVisible={setCopyWindowVisible2} modal={true}   pathname="BA_A0080W"/>
       )}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (

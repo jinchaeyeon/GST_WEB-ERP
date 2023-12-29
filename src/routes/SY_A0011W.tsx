@@ -118,13 +118,13 @@ const Page: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(USER_MENU_DATA_ITEM_KEY);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SY_A0011W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1326,6 +1326,7 @@ const Page: React.FC = () => {
               search={search}
               permissions={permissions}
               disable={true}
+              pathname="SY_A0011W"
             />
           )}
         </ButtonContainer>
@@ -1568,6 +1569,7 @@ const Page: React.FC = () => {
             },
           }}
           modal={true}
+          pathname="SY_A0011W"
         />
       )}
       {/* 컨트롤 네임 불러오기 용 */}

@@ -55,13 +55,14 @@ type IWindow = {
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   custcd: string;
   custnm: string;
+  pathname: string;
 };
 
 const topHeight = 140.13;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
 let temp = 0;
-const CopyWindow = ({ setVisible, setData, custcd,custnm }: IWindow) => {
+const CopyWindow = ({ setVisible, setData, custcd,custnm,pathname }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -93,7 +94,7 @@ const CopyWindow = ({ setVisible, setData, custcd,custnm }: IWindow) => {
   };
 
   //메시지 조회s
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
   const [loginResult] = useRecoilState(loginResultState);

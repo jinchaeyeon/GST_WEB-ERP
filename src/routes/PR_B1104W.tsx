@@ -55,7 +55,7 @@ interface TimelineEvent {
 const PR_B1104W: React.FC = () => {
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [color, setColor] = useRecoilState(colors);
   const [colorName, setColorName] = useRecoilState(colorsName);
 
@@ -100,7 +100,7 @@ const PR_B1104W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("PR_B1104W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -483,128 +483,124 @@ const PR_B1104W: React.FC = () => {
     <>
       <div style={{ fontFamily: "TheJamsil5Bold" }}>
         <ThemeProvider theme={theme}>
-            <TitleContainer
-              style={{ paddingTop: "25px", paddingBottom: "25px" }}
-            >
-              <Title>작업공수</Title>
-              <ButtonContainer>
-                <Button
-                  icon="pi pi-search"
-                  onClick={() =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      isSearch: true,
-                    }))
-                  }
-                  className="mr-2"
-                />
-              </ButtonContainer>
-            </TitleContainer>
-            <Toolbar start={startContent} />
-            <Divider />
-            <Box sx={{ flexGrow: 1 }}>
-              <Grid container spacing={2}>
-                {cardOption.map((item) => (
-                  <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                    <Card
-                      title={item.title}
-                      data={item.data}
-                      backgroundColor={item.backgroundColor}
-                      fontsize={
-                        size.width > 600 && size.width < 900
-                          ? "1.2rem"
-                          : "1.5rem"
-                      }
-                      form={"PR_B1104W"}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
-            <Divider />
+          <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
+            <Title>작업공수</Title>
+            <ButtonContainer>
+              <Button
+                icon="pi pi-search"
+                onClick={() =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    isSearch: true,
+                  }))
+                }
+                className="mr-2"
+              />
+            </ButtonContainer>
+          </TitleContainer>
+          <Toolbar start={startContent} />
+          <Divider />
+          <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <GridTitle title="평균 소요일수" />
-                <BarChart
-                  props={ProccdData}
-                  value="value"
-                  alllabel={stackChartAllLabel}
-                  random={true}
-                  name="argument"
-                  colorName={colorName}
-                />
-              </Grid>
+              {cardOption.map((item) => (
+                <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
+                  <Card
+                    title={item.title}
+                    data={item.data}
+                    backgroundColor={item.backgroundColor}
+                    fontsize={
+                      size.width > 600 && size.width < 900 ? "1.2rem" : "1.5rem"
+                    }
+                    form={"PR_B1104W"}
+                  />
+                </Grid>
+              ))}
             </Grid>
-            <Divider />
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <PaginatorTable
-                  value={
-                    AllList != undefined
-                      ? AllList.map((items: any) => ({
-                          ...items,
-                          itemlvl1:
-                            itemlvl1ListData == undefined
-                              ? items.itemlvl1
-                              : itemlvl1ListData.find(
-                                  (item: any) => item.sub_code == items.itemlvl1
-                                )?.code_name == undefined
-                              ? items.itemlvl1
-                              : itemlvl1ListData.find(
-                                  (item: any) => item.sub_code == items.itemlvl1
-                                )?.code_name,
-                          itemlvl2:
-                            itemlvl2ListData == undefined
-                              ? items.itemlvl2
-                              : itemlvl2ListData.find(
-                                  (item: any) => item.sub_code == items.itemlvl2
-                                )?.code_name == undefined
-                              ? items.itemlvl2
-                              : itemlvl2ListData.find(
-                                  (item: any) => item.sub_code == items.itemlvl2
-                                )?.code_name,
-                          itemlvl3:
-                            itemlvl3ListData == undefined
-                              ? items.itemlvl3
-                              : itemlvl3ListData.find(
-                                  (item: any) => item.sub_code == items.itemlvl3
-                                )?.code_name == undefined
-                              ? items.itemlvl3
-                              : itemlvl3ListData.find(
-                                  (item: any) => item.sub_code == items.itemlvl3
-                                )?.code_name,
-                        }))
-                      : []
-                  }
-                  column={{
-                    planno: "생산계획번호",
-                    itemcd: "품목코드",
-                    itemnm: "품목명",
-                    insiz: "규격",
-                    itemlvl1: "대분류",
-                    itemlvl2: "중분류",
-                    itemlvl3: "소분류",
-                    ordnum: "수주번호",
-                    orddt: "수주일자",
-                    dlvdt: "납기일자",
-                  }}
-                  width={[
-                    180, 150, 180, 150, 150, 120, 120, 120, 150, 150, 150,
-                  ]}
-                  title={"전체 목록"}
-                  key="num"
-                  selection={selected}
-                  onSelectionChange={(e: any) => {
-                    setSelected(e.value);
-                  }}
-                />
-              </Grid>
+          </Box>
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <GridTitle title="평균 소요일수" />
+              <BarChart
+                props={ProccdData}
+                value="value"
+                alllabel={stackChartAllLabel}
+                random={true}
+                name="argument"
+                colorName={colorName}
+              />
             </Grid>
-            <Divider />
+          </Grid>
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <PaginatorTable
+                value={
+                  AllList != undefined
+                    ? AllList.map((items: any) => ({
+                        ...items,
+                        itemlvl1:
+                          itemlvl1ListData == undefined
+                            ? items.itemlvl1
+                            : itemlvl1ListData.find(
+                                (item: any) => item.sub_code == items.itemlvl1
+                              )?.code_name == undefined
+                            ? items.itemlvl1
+                            : itemlvl1ListData.find(
+                                (item: any) => item.sub_code == items.itemlvl1
+                              )?.code_name,
+                        itemlvl2:
+                          itemlvl2ListData == undefined
+                            ? items.itemlvl2
+                            : itemlvl2ListData.find(
+                                (item: any) => item.sub_code == items.itemlvl2
+                              )?.code_name == undefined
+                            ? items.itemlvl2
+                            : itemlvl2ListData.find(
+                                (item: any) => item.sub_code == items.itemlvl2
+                              )?.code_name,
+                        itemlvl3:
+                          itemlvl3ListData == undefined
+                            ? items.itemlvl3
+                            : itemlvl3ListData.find(
+                                (item: any) => item.sub_code == items.itemlvl3
+                              )?.code_name == undefined
+                            ? items.itemlvl3
+                            : itemlvl3ListData.find(
+                                (item: any) => item.sub_code == items.itemlvl3
+                              )?.code_name,
+                      }))
+                    : []
+                }
+                column={{
+                  planno: "생산계획번호",
+                  itemcd: "품목코드",
+                  itemnm: "품목명",
+                  insiz: "규격",
+                  itemlvl1: "대분류",
+                  itemlvl2: "중분류",
+                  itemlvl3: "소분류",
+                  ordnum: "수주번호",
+                  orddt: "수주일자",
+                  dlvdt: "납기일자",
+                }}
+                width={[180, 150, 180, 150, 150, 120, 120, 120, 150, 150, 150]}
+                title={"전체 목록"}
+                key="num"
+                selection={selected}
+                onSelectionChange={(e: any) => {
+                  setSelected(e.value);
+                }}
+              />
+            </Grid>
+          </Grid>
+          <Divider />
+          <Grid container spacing={2} style={{ marginBottom: "50px" }}>
             <Grid item xs={12} sm={12} md={12} lg={9} xl={9}>
               <GridTitle title="작업공정정보" />
               <Timelines value={DetailList} theme={theme} />
             </Grid>
+          </Grid>
           <SpecialDial />
         </ThemeProvider>
       </div>

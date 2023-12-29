@@ -91,7 +91,7 @@ let targetRowIndex3: null | number = null;
 const SA_B2221: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
@@ -103,7 +103,7 @@ const SA_B2221: React.FC = () => {
   let isMobile = deviceWidth <= 1200;
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("SA_B2221W", setMessagesData);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -150,10 +150,10 @@ const SA_B2221: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SA_B2221W", setCustomOptionData);
 
   const [wordInfoData, setWordInfoData] = React.useState<any>(null);
-  UseDesignInfo(pathname, setWordInfoData);
+  UseDesignInfo("SA_B2221W", setWordInfoData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -583,6 +583,7 @@ const SA_B2221: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="SA_B2221W"
             />
           )}
         </ButtonContainer>

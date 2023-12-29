@@ -59,9 +59,10 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal: boolean;
+  pathname: string;
 };
 
-const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
+const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -78,7 +79,7 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   const companyCode = loginResult ? loginResult.companyCode : "";
 
   //메시지 조회
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 

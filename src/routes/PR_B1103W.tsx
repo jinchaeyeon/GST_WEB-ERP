@@ -41,7 +41,7 @@ interface Tsize {
 const PR_B1103W: React.FC = () => {
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const toast = useRef<Toast>(null);
   const [color, setColor] = useRecoilState(colors);
 
@@ -90,7 +90,7 @@ const PR_B1103W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("PR_B1103W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -638,7 +638,7 @@ const PR_B1103W: React.FC = () => {
               </Grid>
             </Grid>
             <Divider />
-            <Grid container spacing={2}>
+            <Grid container spacing={2} style={{ marginBottom: "50px" }}>
               <Grid item xs={12} sm={12} md={12} lg={12} xl={6}>
                 <PaginatorTable
                   value={AllList}

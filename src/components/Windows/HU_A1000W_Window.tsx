@@ -41,6 +41,7 @@ type TKendoWindow = {
   prsnnum?: string;
   para?: Iparameters; //{};
   modal?: boolean;
+  pathname: string;
 };
 
 const KendoWindow = ({
@@ -49,12 +50,13 @@ const KendoWindow = ({
   workType,
   prsnnum,
   modal = false,
+  pathname
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
 
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const processApi = useApi();
   const [isInitSearch, setIsInitSearch] = useState(false);
 

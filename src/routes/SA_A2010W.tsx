@@ -138,17 +138,17 @@ const SA_B2000: React.FC = () => {
       take: initialPageState.take,
     });
   };
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("SA_A2010W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SA_A2010W", setCustomOptionData);
 
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -1120,6 +1120,7 @@ const SA_B2000: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="SA_A2010W"
             />
           )}
         </ButtonContainer>
@@ -1549,6 +1550,7 @@ const SA_B2000: React.FC = () => {
             },
           }}
           modal={true}
+          pathname="SA_A2010W"
         />
       )}
       {custWindowVisible && (

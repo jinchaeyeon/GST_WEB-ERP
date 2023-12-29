@@ -214,7 +214,7 @@ const CR_A0040W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   //const [permissions, setPermissions] = useState<TPermissions>({view:true, print:true, save:true, delete:true});
@@ -224,7 +224,7 @@ const CR_A0040W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("CR_A0040W", setMessagesData);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -243,7 +243,7 @@ const CR_A0040W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("CR_A0040W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -568,7 +568,7 @@ const CR_A0040W: React.FC = () => {
         "@p_dayofweek": 0,
         "@p_userid": userId,
         "@p_pc": pc,
-        "@p_form_id": pathname,
+        "@p_form_id": "CR_A0040W",
       },
     };
 
@@ -743,7 +743,7 @@ const CR_A0040W: React.FC = () => {
           "@p_dayofweek": dayofweek,
           "@p_userid": userId,
           "@p_pc": pc,
-          "@p_form_id": pathname,
+          "@p_form_id": "CR_A0040W",
         },
       };
 
@@ -796,6 +796,7 @@ const CR_A0040W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="CR_A0040W"
             />
           )}
         </ButtonContainer>
@@ -1018,6 +1019,7 @@ const CR_A0040W: React.FC = () => {
             )?.membership_id ?? ""
           }
           modal={true}
+          pathname="CR_A0040W"
         />
       )}
       {attachmentsWindowVisible && (

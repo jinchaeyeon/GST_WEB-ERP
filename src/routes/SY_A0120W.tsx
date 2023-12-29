@@ -67,13 +67,13 @@ const SY_A0120: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  const pathname: string = window.location.pathname.replace("/", "");
-  UseMessages(pathname, setMessagesData);
+
+  UseMessages("SY_A0120W", setMessagesData);
   //커스텀 옵션 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("L_BA001,L_BA002", setBizComponentData);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SY_A0120W", setCustomOptionData);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -402,6 +402,7 @@ const SY_A0120: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="SY_A0120W"
             />
           )}
         </ButtonContainer>

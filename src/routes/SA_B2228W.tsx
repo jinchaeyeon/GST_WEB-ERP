@@ -1,8 +1,15 @@
+import {
+  Card,
+  CardHeader,
+  Typography
+} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { Knob } from "primereact/knob";
-import React, { useEffect, useRef, useState } from "react";
-import { Map } from "react-kakao-maps-sdk";
+import { Button } from "primereact/button";
+import { Calendar } from "primereact/calendar";
+import { Divider } from "primereact/divider";
+import { Toolbar } from "primereact/toolbar";
+import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -10,33 +17,19 @@ import {
   GridContainerWrap,
   GridTitle,
   GridTitleContainer,
-  SubTitle,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../CommonStyled";
 import {
   convertDateToStr,
-  dateformat2,
-  numberWithCommas3,
+  numberWithCommas3
 } from "../components/CommonFunction";
 import { GAP } from "../components/CommonString";
-import BarChart from "../components/KPIcomponents/Chart/BarChart";
+import MultiChart from "../components/KPIcomponents/Chart/MultiChart";
+import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutChart";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import Table from "../components/KPIcomponents/Table/Table";
 import { colors, colorsName } from "../store/atoms";
-import { Button } from "primereact/button";
-import { Divider } from "primereact/divider";
-import { Calendar } from "primereact/calendar";
-import { Toolbar } from "primereact/toolbar";
-import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutChart";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Container,
-  Typography,
-} from "@mui/material";
-import MultiChart from "../components/KPIcomponents/Chart/MultiChart";
 
 const SA_B2228W: React.FC = () => {
   let deviceWidth = window.innerWidth;
@@ -320,128 +313,126 @@ const SA_B2228W: React.FC = () => {
         }}
       >
         <ThemeProvider theme={theme}>
-          <Container
-            maxWidth="xl"
-            style={{ width: "100%", marginBottom: "50px" }}
-          >
-            <TitleContainer>
-              <Title>영업활동보고</Title>
-              {isMobile ? (
-                <ButtonContainer>
-                  <Button
-                    icon="pi pi-search"
-                    onClick={() =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        isSearch: true,
-                      }))
-                    }
-                    className="mr-2"
+          <TitleContainer>
+            <Title>영업활동보고</Title>
+            {isMobile ? (
+              <ButtonContainer>
+                <Button
+                  icon="pi pi-search"
+                  onClick={() =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      isSearch: true,
+                    }))
+                  }
+                  className="mr-2"
+                />
+              </ButtonContainer>
+            ) : (
+              ""
+            )}
+          </TitleContainer>
+          <Toolbar start={startContent} end={endContent} />
+          <Divider />
+          <GridContainerWrap>
+            <GridContainer width="25%">
+              <GridTitleContainer>
+                <GridTitle>사업부별 매출</GridTitle>
+              </GridTitleContainer>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <MultiDoughnutChart
+                    data={ItemList}
+                    option={"value"}
+                    label={ItemList.map((item) => item.testpart)}
+                    random={true}
+                    colorName={colorName}
                   />
-                </ButtonContainer>
-              ) : (
-                ""
-              )}
-            </TitleContainer>
-            <Toolbar start={startContent} end={endContent} />
-            <Divider />
-            <GridContainerWrap>
-              <GridContainer width="25%">
-                <GridTitleContainer>
-                  <GridTitle>사업부별 매출</GridTitle>
-                </GridTitleContainer>
-                <Grid container spacing={2}>
+                </Grid>
+                {cardOption.map((item) => (
                   <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <MultiDoughnutChart
-                      data={ItemList}
-                      option={"value"}
-                      label={ItemList.map((item) => item.testpart)}
-                      random={true}
-                      colorName={colorName}
-                    />
-                  </Grid>
-                  {cardOption.map((item) => (
-                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                      <Card
-                        style={{
-                          height: "50px",
-                          width: "100%",
-                          marginRight: "15px",
-                          backgroundColor: theme.palette.primary.dark,
-                          color: "white",
-                          fontFamily: "TheJamsil5Bold",
-                        }}
-                      >
-                        <CardHeader
-                          style={{ paddingBottom: 0, paddingTop: 10 }}
-                          title={
-                            <>
+                    <Card
+                      style={{
+                        height: "50px",
+                        width: "100%",
+                        marginRight: "15px",
+                        backgroundColor: theme.palette.primary.dark,
+                        color: "white",
+                        fontFamily: "TheJamsil5Bold",
+                      }}
+                    >
+                      <CardHeader
+                        style={{ paddingBottom: 0, paddingTop: 10 }}
+                        title={
+                          <>
+                            <Typography
+                              style={{
+                                fontSize: "1rem",
+                                color: "white",
+                                fontWeight: 600,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontFamily: "TheJamsil5Bold",
+                              }}
+                            >
+                              {item.title} : &nbsp;
                               <Typography
                                 style={{
-                                  fontSize: "1rem",
+                                  fontSize: "1.3rem",
                                   color: "white",
-                                  fontWeight: 600,
+                                  fontWeight: 700,
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "center",
                                   fontFamily: "TheJamsil5Bold",
                                 }}
                               >
-                                {item.title} : &nbsp;
-                                <Typography
-                                  style={{
-                                    fontSize: "1.3rem",
-                                    color: "white",
-                                    fontWeight: 700,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    fontFamily: "TheJamsil5Bold",
-                                  }}
-                                >
-                                  {item.data}
-                                </Typography>
+                                {item.data}
                               </Typography>
-                            </>
-                          }
-                        />
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
-              </GridContainer>
-              <GridContainer width={`calc(75% - ${GAP}px)`}>
-                <GridTitleContainer>
-                  <GridTitle>사업부별 목표대비 실적 달성</GridTitle>
-                </GridTitleContainer>
-                <MultiChart
-                  props={ChartList}
-                  value="value"
-                  name="series"
-                  color={[
-                    "#d3d3d3",
-                    "#70ad47",
-                  ]}
-                  alllabel={stackChartAllLabel}
-                  label={stackChartLabel}
-                  random={false}
-                />
-                <Table
-                  value={ItemList}
-                  column={{
-                    testpart: "시험파트",
-                    target_amt: "목표금액",
-                    amt: "매출실적",
-                    goal_amt: "목표대비달성금액",
-                    percent: "총매출대비 비중(%)",
-                    goal_percent: "달성률(%)",
-                  }}
-                  numberCell={["target_amt", "amt", "goal_amt", "percent", "goal_percent"]}
-                  width={[120, 100, 100, 100, 100, 100, 100, 100, 100, 100]}
-                />
-              </GridContainer>
-            </GridContainerWrap>
-          </Container>
+                            </Typography>
+                          </>
+                        }
+                      />
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            </GridContainer>
+            <GridContainer width={`calc(75% - ${GAP}px)`}>
+              <GridTitleContainer>
+                <GridTitle>사업부별 목표대비 실적 달성</GridTitle>
+              </GridTitleContainer>
+              <MultiChart
+                props={ChartList}
+                value="value"
+                name="series"
+                color={["#d3d3d3", "#70ad47"]}
+                alllabel={stackChartAllLabel}
+                label={stackChartLabel}
+                random={false}
+              />
+              <Table
+                value={ItemList}
+                column={{
+                  testpart: "시험파트",
+                  target_amt: "목표금액",
+                  amt: "매출실적",
+                  goal_amt: "목표대비달성금액",
+                  percent: "총매출대비 비중(%)",
+                  goal_percent: "달성률(%)",
+                }}
+                numberCell={[
+                  "target_amt",
+                  "amt",
+                  "goal_amt",
+                  "percent",
+                  "goal_percent",
+                ]}
+                width={[120, 100, 100, 100, 100, 100, 100, 100, 100, 100]}
+              />
+            </GridContainer>
+          </GridContainerWrap>
           <SpecialDial />
         </ThemeProvider>
       </div>

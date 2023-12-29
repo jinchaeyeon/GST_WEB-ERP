@@ -48,11 +48,11 @@ const CR_A1101W: React.FC = () => {
   UseParaPc(setPc);
   const [inputValue, setInputValue] = useState("");
   const [count, setCount] = useState(30);
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("CR_A1101W", setMessagesData);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],

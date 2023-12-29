@@ -90,7 +90,7 @@ const MA_A2410W: React.FC = () => {
   const processApi = useApi();
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -105,11 +105,11 @@ const MA_A2410W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("MA_A2410W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("MA_A2410W", setCustomOptionData);
 
   useEffect(() => {
     if (customOptionData !== null) {
@@ -912,6 +912,7 @@ const MA_A2410W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="MA_A2410W"
             />
           )}
         </ButtonContainer>
@@ -1240,6 +1241,7 @@ const MA_A2410W: React.FC = () => {
             }));
           }}
           modal={true}
+          pathname="MA_A2410W"
         />
       )}
       {itemWindowVisible && (

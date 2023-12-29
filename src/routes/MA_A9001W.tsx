@@ -148,13 +148,13 @@ const MA_A9001W: React.FC = () => {
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [tabSelected, setTabSelected] = React.useState(0);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("MA_A9001W", setMessagesData);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   let gridRef: any = useRef(null);
@@ -242,7 +242,7 @@ const MA_A9001W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("MA_A9000W", setCustomOptionData);
 
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
@@ -2396,6 +2396,7 @@ const MA_A9001W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="MA_A9001W"
             />
           )}
         </ButtonContainer>
@@ -3183,6 +3184,7 @@ const MA_A9001W: React.FC = () => {
           }
           setData={setCopyData}
           modal={true}
+          pathname="MA_A9001W"
         />
       )}
       {dataWindowVisible && (
@@ -3190,6 +3192,7 @@ const MA_A9001W: React.FC = () => {
           setVisible={setDataWindowVisible}
           setData={setCopyData2}
           modal={true}
+          pathname="MA_A9001W"
         />
       )}
       {gridList.map((grid: TGrid) =>

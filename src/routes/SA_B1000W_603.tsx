@@ -83,10 +83,10 @@ const SA_B1000W_603: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SA_B1000W_603", setCustomOptionData);
   const setLoading = useSetRecoilState(isLoading);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -769,6 +769,7 @@ const SA_B1000W_603: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="SA_B1000W_603"
             />
           )}
         </ButtonContainer>

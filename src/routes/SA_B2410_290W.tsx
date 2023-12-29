@@ -83,7 +83,7 @@ const SA_B2410: React.FC = () => {
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
   const detailId2Getter = getter(DETAIL_DATA_ITEM_KEY2);
   const processApi = useApi();
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -188,9 +188,9 @@ const SA_B2410: React.FC = () => {
   };
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SA_B2410_290W", setCustomOptionData);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("SA_B2410_290W", setMessagesData);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -1199,6 +1199,7 @@ const SA_B2410: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="SA_B2410_290W"
             />
           )}
         </ButtonContainer>

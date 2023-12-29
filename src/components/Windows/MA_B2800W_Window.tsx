@@ -51,6 +51,7 @@ interface IFilter {
 type IKendoWindow = {
   setVisible(t: boolean): void;
   para: IFilter;
+  pathname: string;
 };
 
 const DATA_ITEM_KEY = "num";
@@ -80,7 +81,7 @@ const numberField2 = [
 ];
 let targetRowIndex: null | number = null;
 
-const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
+const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -88,7 +89,7 @@ const KendoWindow = ({ setVisible, para }: IKendoWindow) => {
     height: 550,
   });
 
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   const setLoading = useSetRecoilState(isLoading);
 

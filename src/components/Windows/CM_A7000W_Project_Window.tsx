@@ -56,9 +56,10 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
+  pathname: string;
 };
 
-const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
+const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) => {
   const location = UseGetValueFromSessionItem("location");
   const processApi = useApi();
   let deviceWidth = window.innerWidth;
@@ -91,7 +92,7 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 

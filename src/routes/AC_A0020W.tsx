@@ -763,7 +763,7 @@ const AC_A0020W: React.FC = () => {
   const idGetter5 = getter(DATA_ITEM_KEY5);
   const idGetter6 = getter(DATA_ITEM_KEY6);
   const processApi = useApi();
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [acntcd, setAcntcd] = useState<string>("");
@@ -895,11 +895,11 @@ const AC_A0020W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("AC_A0020W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("AC_A0020W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -4673,6 +4673,7 @@ const AC_A0020W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="AC_A0020W"
             />
           )}
         </ButtonContainer>

@@ -1,4 +1,3 @@
-import { Container } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -47,7 +46,7 @@ interface Tsize {
 const SA_B3600W: React.FC = () => {
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [color, setColor] = useRecoilState(colors);
   const [colorName, setColorName] = useRecoilState(colorsName);
 
@@ -96,7 +95,7 @@ const SA_B3600W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SA_B3600W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -582,7 +581,7 @@ const SA_B3600W: React.FC = () => {
             </Grid>
           </Grid>
           <Divider />
-          <Grid container spacing={2}>
+          <Grid container spacing={2} style={{ marginBottom: "50px" }}>
             <Grid item xs={12} sm={12} md={12} lg={7} xl={9}>
               <PaginatorTable
                 value={AllList}

@@ -34,6 +34,7 @@ type IWindow = {
   stopcd: Idata3[];
   prodemp: Idata4[];
   modal?: boolean;
+  pathname: string;
 };
 
 type Idata = {
@@ -70,6 +71,7 @@ const CopyWindow = ({
   stopcd,
   prodemp,
   modal = false,
+  pathname
 }: IWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   let deviceWidth = window.innerWidth;
@@ -84,7 +86,7 @@ const CopyWindow = ({
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
   const processApi = useApi();
-  const pathname: string = window.location.pathname.replace("/", "");
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);

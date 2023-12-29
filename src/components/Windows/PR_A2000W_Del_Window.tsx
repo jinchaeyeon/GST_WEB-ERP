@@ -77,7 +77,7 @@ const KendoWindow = ({
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [pc, setPc] = useState("");

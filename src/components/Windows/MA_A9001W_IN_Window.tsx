@@ -64,6 +64,7 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
+  pathname: string;
 };
 
 const topHeight = 140.13;
@@ -72,7 +73,7 @@ const leftOverHeight = (topHeight + bottomHeight) / 2;
 let targetRowIndex: null | number = null;
 let temp = 0;
 
-const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
+const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [loginResult] = useRecoilState(loginResultState);
@@ -89,7 +90,7 @@ const CopyWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };

@@ -94,17 +94,17 @@ const PS_A0060_301W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("PS_A0060_301W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("PS_A0060_301W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -956,6 +956,7 @@ const PS_A0060_301W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="PS_A0060_301W"
             />
           )}
         </ButtonContainer>

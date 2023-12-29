@@ -68,7 +68,7 @@ const centerField = ["proddt", "strtime", "endtime"];
 const PR_B3000W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -89,11 +89,11 @@ const PR_B3000W: React.FC = () => {
   };
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("PR_B3000W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("PR_B3000W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -481,6 +481,7 @@ const PR_B3000W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="PR_B3000W"
             />
           )}
         </ButtonContainer>

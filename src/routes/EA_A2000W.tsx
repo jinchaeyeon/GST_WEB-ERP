@@ -80,15 +80,15 @@ const EA_A2000W: React.FC = () => {
   let gridRef3: any = useRef(null);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("EA_A2000W", setCustomOptionData);
 
   const [wordInfoData, setWordInfoData] = React.useState<any>(null);
-  UseDesignInfo(pathname, setWordInfoData);
+  UseDesignInfo("EA_A2000W", setWordInfoData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -170,7 +170,7 @@ const EA_A2000W: React.FC = () => {
   }, []);
   //메시지 조회
   const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("EA_A2000W", setMessagesData);
 
   const setLoading = useSetRecoilState(isLoading);
   const userId = UseGetValueFromSessionItem("user_id");
@@ -878,7 +878,7 @@ const EA_A2000W: React.FC = () => {
     pc: pc,
     pagediv: "",
     comment: "",
-    form_id: pathname,
+    form_id: "EA_A2000W",
     rowstatus_s: "",
     commseq_s: "",
     time_s: "",
@@ -979,6 +979,7 @@ const EA_A2000W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="EA_A2000W"
             />
           )}
         </ButtonContainer>
@@ -1432,7 +1433,7 @@ const EA_A2000W: React.FC = () => {
             <GridContainer width={`calc(40% - ${GAP}px)`}>
               <CommentsGrid
                 ref_key={filters2.appnum}
-                form_id={pathname}
+                form_id={"EA_A2000W"}
                 table_id={"EA100T"}
                 style={{ height: "47.7vh" }}
               ></CommentsGrid>

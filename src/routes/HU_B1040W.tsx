@@ -138,10 +138,10 @@ const HU_B1040W: React.FC = () => {
   const processApi = useApi();
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("HU_B1040W", setCustomOptionData);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -533,6 +533,7 @@ const HU_B1040W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="HU_B1040W"
             />
           )}
         </ButtonContainer>

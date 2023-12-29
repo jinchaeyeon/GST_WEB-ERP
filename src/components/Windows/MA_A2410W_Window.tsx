@@ -68,6 +68,7 @@ type TKendoWindow = {
   setVisible(t: boolean): void;
   reload(str: string): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
+  pathname: string;
 };
 
 const DATA_ITEM_KEY = "num";
@@ -134,6 +135,7 @@ const DetailWindow = ({
   setVisible,
   reload,
   modal = false,
+  pathname
 }: TKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -147,7 +149,7 @@ const DetailWindow = ({
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
   const processApi = useApi();
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -1488,12 +1490,14 @@ const DetailWindow = ({
         <PlanWindow
           setVisible={setPlanWindowVisible}
           setData={setPlanData}
+          pathname={pathname}
         />
       )}
       {stockWindowVisible && (
         <StockWindow
           setVisible={setStockWindowVisible}
           setData={setStockData}
+          pathname={pathname}
         />
       )}
       {custWindowVisible && (

@@ -415,6 +415,7 @@ type TKendoWindow = {
   ordkey?: string;
   itemcd?: string;
   modal?: boolean;
+  pathname: string;
 };
 
 const KendoWindow = ({
@@ -424,9 +425,10 @@ const KendoWindow = ({
   ordkey,
   itemcd,
   modal = false,
+  pathname
 }: TKendoWindow) => {
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const [editIndex, setEditIndex] = useState<number | undefined>();

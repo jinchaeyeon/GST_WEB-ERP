@@ -509,7 +509,7 @@ const SY_A0120: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -520,7 +520,7 @@ const SY_A0120: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("SY_A0012W", setMessagesData);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -539,7 +539,7 @@ const SY_A0120: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SY_A0012W", setCustomOptionData);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
 
@@ -1364,6 +1364,7 @@ const SY_A0120: React.FC = () => {
               search={search}
               permissions={permissions}
               disable={true}
+              pathname="SY_A0012W"
             />
           )}
         </ButtonContainer>

@@ -94,9 +94,9 @@ let targetRowIndex2: null | number = null;
 
 const SA_A1001_603W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SA_A1001_603W", setCustomOptionData);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const processApi = useApi();
@@ -112,7 +112,7 @@ const SA_A1001_603W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("SA_A1001_603W", setMessagesData);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -875,6 +875,7 @@ const SA_A1001_603W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="SA_A1001_603W"
             />
           )}
         </ButtonContainer>

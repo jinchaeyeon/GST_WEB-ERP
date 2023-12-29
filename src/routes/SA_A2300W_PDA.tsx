@@ -63,7 +63,7 @@ const SA_A2300_PDA: React.FC = () => {
   const location = UseGetValueFromSessionItem("location");
 
   UseParaPc(setPc);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   // const [permissions, setPermissions] = useState<TPermissions | null>(null);
   // UsePermissions(setPermissions);
   const [permissions, setPermissions] = useState<TPermissions | null>({
@@ -80,7 +80,7 @@ const SA_A2300_PDA: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("SA_A2300W_PDA", setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
 
   const [tabPage, setTabPage] = useState<number>(1);
@@ -117,7 +117,7 @@ const SA_A2300_PDA: React.FC = () => {
       "@p_qty_s": "",
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": pathname,
+      "@p_form_id": "SA_A2300W_PDA",
     },
   };
 

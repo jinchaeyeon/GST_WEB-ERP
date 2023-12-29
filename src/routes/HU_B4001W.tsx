@@ -72,7 +72,7 @@ const HU_B4001W: React.FC = () => {
   const processApi = useApi();
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const userId = UseGetValueFromSessionItem("user_id");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -83,11 +83,11 @@ const HU_B4001W: React.FC = () => {
   let adjTargetRowIndex: null | number = null;
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("HU_B4001W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("HU_B4001W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -715,6 +715,7 @@ const HU_B4001W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="HU_B4001W"
             />
           )}
         </ButtonContainer>

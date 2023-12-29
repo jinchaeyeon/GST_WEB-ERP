@@ -69,7 +69,7 @@ const DATA_ITEM_KEY = "num";
 const QC_A0120: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  const pathname: string = window.location.pathname.replace("/", "");
+
   let gridRef: any = useRef(null);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -94,9 +94,9 @@ const QC_A0120: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("QC_A0120W", setCustomOptionData);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("QC_A0120W", setMessagesData);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -631,6 +631,7 @@ const QC_A0120: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="QC_A0120W"
             />
           )}
         </ButtonContainer>

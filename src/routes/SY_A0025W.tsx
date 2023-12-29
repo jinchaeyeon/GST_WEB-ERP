@@ -74,7 +74,7 @@ const SY_A0025W: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const userId = UseGetValueFromSessionItem("user_id");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
 
   UsePermissions(setPermissions);
@@ -83,11 +83,11 @@ const SY_A0025W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("SY_A0025W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SY_A0025W", setCustomOptionData);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -1128,6 +1128,7 @@ const SY_A0025W: React.FC = () => {
               search={search}
               permissions={permissions}
               disable={true}
+              pathname="SY_A0025W"
             />
           )}
         </ButtonContainer>

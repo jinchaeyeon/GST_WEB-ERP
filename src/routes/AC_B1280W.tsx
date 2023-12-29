@@ -56,15 +56,15 @@ const AC_B1280W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [previewVisible, setPreviewVisible] = React.useState<boolean>(false);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("AC_B1280W", setMessagesData);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("AC_B1280W", setCustomOptionData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -370,6 +370,7 @@ const AC_B1280W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="AC_B1280W"
             />
           )}
         </ButtonContainer>

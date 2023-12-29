@@ -80,6 +80,7 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(str: string): void;
   modal?: boolean;
+  pathname: string;
 };
 
 type TdataArr = {
@@ -618,6 +619,7 @@ const CopyWindow = ({
   setVisible,
   setData,
   modal = false,
+  pathname
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -664,7 +666,7 @@ const CopyWindow = ({
   const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   //메시지 조회
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
   const [editIndex, setEditIndex] = useState<number | undefined>();
@@ -5303,6 +5305,7 @@ const CopyWindow = ({
           setVisible={setNoteWindowVisible}
           workType={"ROW_ADD"}
           setData={setNoteData}
+          pathname={pathname}
         />
       )}
       {attachmentsWindowVisible && (

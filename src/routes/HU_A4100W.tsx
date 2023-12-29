@@ -233,7 +233,7 @@ const HU_A4100W: React.FC = () => {
 
   const [prsnnm, setPrsnnm] = useState<string>("");
   const [prsnnum, setPrsnnum] = useState<string>("");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
 
@@ -252,11 +252,11 @@ const HU_A4100W: React.FC = () => {
     });
   };
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("HU_A4100W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("HU_A4100W", setCustomOptionData);
 
   useEffect(() => {
     if (customOptionData !== null) {
@@ -1064,6 +1064,7 @@ const HU_A4100W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="HU_A4100W"
             />
           )}
         </ButtonContainer>

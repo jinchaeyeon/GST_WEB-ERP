@@ -56,14 +56,14 @@ const Page: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("CR_A1001W", setCustomOptionData);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("CR_A1001W", setMessagesData);
 
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -500,6 +500,7 @@ const Page: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="CR_A1001W"
             />
           )}
         </ButtonContainer>

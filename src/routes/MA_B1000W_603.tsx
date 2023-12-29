@@ -63,15 +63,15 @@ const MA_B1000W_603: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   // const [permissions, setPermissions] = useState<TPermissions | null>(null);
   // UsePermissions(setPermissions); 2134
   const permissions:TPermissions = {view:true, save: true, delete:true, print:true};
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("MA_B1000W_603", setMessagesData);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("MA_B1000W_603", setCustomOptionData);
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -322,6 +322,7 @@ const MA_B1000W_603: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="MA_B1000W_603"
             />
           )}
         </ButtonContainer>

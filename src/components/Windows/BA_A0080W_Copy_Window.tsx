@@ -53,6 +53,7 @@ type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
+  pathname: string;
 };
 
 const topHeight = 181.13;
@@ -66,6 +67,7 @@ const CopyWindow = ({
   setVisible,
   setData,
   modal = false,
+  pathname
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -88,7 +90,7 @@ const CopyWindow = ({
   const companyCode = loginResult ? loginResult.companyCode : "";
 
   //메시지 조회
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);

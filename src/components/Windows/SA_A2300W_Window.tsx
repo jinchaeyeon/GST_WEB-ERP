@@ -71,6 +71,7 @@ type IWindow = {
   setVisible(t: boolean): void;
   reload(str: string): void;
   modal?: boolean;
+  pathname: string;
 };
 let temp = 0;
 
@@ -174,6 +175,7 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
+  pathname
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -193,7 +195,7 @@ const CopyWindow = ({
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 
@@ -1705,7 +1707,7 @@ const CopyWindow = ({
         />
       )}
       {CopyWindowVisible && (
-        <CopyWindow2 setVisible={setCopyWindowVisible} setData={setCopyData} />
+        <CopyWindow2 setVisible={setCopyWindowVisible} setData={setCopyData} pathname={pathname}/>
       )}
       {attachmentsWindowVisible && (
         <PopUpAttachmentsWindow

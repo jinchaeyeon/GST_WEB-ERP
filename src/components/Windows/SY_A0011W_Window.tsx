@@ -27,6 +27,7 @@ type TKendoWindow = {
   isCopy?: boolean;
   para?: Iparameters; //{};
   modal? : boolean;
+  pathname: string;
 };
 
 const KendoWindow = ({
@@ -37,7 +38,8 @@ const KendoWindow = ({
   user_group_id = "",
   isCopy,
   para,
-  modal = false
+  modal = false,
+  pathname
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
@@ -138,7 +140,7 @@ const KendoWindow = ({
     }
   };
   
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = useState<any>(null);
   UseMessages(pathname, setMessagesData);
 

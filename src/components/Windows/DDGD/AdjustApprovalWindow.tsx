@@ -80,13 +80,14 @@ const centerField = ["classnm", "orgdt", "adjdt"];
 type IWindow = {
   setVisible(t: boolean): void;
   modal?: boolean;
+  pathname: string;
 };
 
 const DATA_ITEM_KEY = "membership_key";
 
 let targetRowIndex: null | number = null;
 
-const AdjustApprovalWindow = ({ setVisible, modal = false }: IWindow) => {
+const AdjustApprovalWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
   const processApi = useApi();
 
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -95,7 +96,7 @@ const AdjustApprovalWindow = ({ setVisible, modal = false }: IWindow) => {
 
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;

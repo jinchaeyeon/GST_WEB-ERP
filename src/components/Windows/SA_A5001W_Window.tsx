@@ -71,6 +71,7 @@ type IWindow = {
   setVisible(t: boolean): void;
   reload(str: string): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
+  pathname: string;
 };
 let temp = 0;
 let targetRowIndex: null | number = null;
@@ -206,6 +207,7 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
+  pathname
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -223,7 +225,7 @@ const CopyWindow = ({
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
   //메시지 조회
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
   const [loginResult] = useRecoilState(loginResultState);
@@ -2842,6 +2844,7 @@ const CopyWindow = ({
           setData={setCopyData}
           custcd={filters.custcd}
           custnm={filters.custnm == undefined ? "" : filters.custnm}
+          pathname={pathname}
         />
       )}
       {attachmentsWindowVisible && (

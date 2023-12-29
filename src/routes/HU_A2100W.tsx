@@ -114,7 +114,7 @@ const HU_A2100W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -132,9 +132,9 @@ const HU_A2100W: React.FC = () => {
   };
   const [page, setPage] = useState(initialPageState);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("HU_A2100W", setMessagesData);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("HU_A2100W", setCustomOptionData);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   useEffect(() => {
@@ -865,6 +865,7 @@ const HU_A2100W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="HU_A2100W"
             />
           )}
         </ButtonContainer>

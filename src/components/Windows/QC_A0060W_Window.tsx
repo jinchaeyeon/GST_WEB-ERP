@@ -71,6 +71,7 @@ type IWindow = {
   reloadData(workType: string): void;
   rev: boolean;
   modal?: boolean;
+  pathname: string;
 };
 
 type TdataArr = {
@@ -146,6 +147,7 @@ const CopyWindow = ({
   reloadData,
   rev,
   modal = false,
+  pathname
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -164,7 +166,7 @@ const CopyWindow = ({
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 
@@ -1556,7 +1558,7 @@ const CopyWindow = ({
         </BottomContainer>
       </Window>
       {CopyWindowVisible && (
-        <CopyWindow2 setVisible={setCopyWindowVisible} setData={setCopyData} />
+        <CopyWindow2 setVisible={setCopyWindowVisible} setData={setCopyData} pathname={pathname}/>
       )}
       {attachmentsWindowVisible && (
         <PopUpAttachmentsWindow

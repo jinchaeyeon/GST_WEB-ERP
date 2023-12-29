@@ -130,7 +130,7 @@ const StatusCell = (props: GridCellProps) => {
 
 const CM_A5001W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   let gridRef: any = useRef(null);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
@@ -149,11 +149,11 @@ const CM_A5001W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("CM_A5001W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("CM_A5001W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1080,6 +1080,7 @@ const CM_A5001W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="CM_A5001W"
             />
           )}
         </ButtonContainer>
@@ -1615,6 +1616,7 @@ const CM_A5001W: React.FC = () => {
           setVisible={setProjectWindowVisible}
           testnum={information.testnum}
           modal={true}
+          pathname="CM_A5001W"
         />
       )}
       {gridList.map((grid: TGrid) =>

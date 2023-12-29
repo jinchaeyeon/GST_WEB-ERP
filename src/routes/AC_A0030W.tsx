@@ -139,7 +139,6 @@ const AC_A0030W: React.FC = () => {
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
-  const pathname = window.location.pathname.replace("/", "");
   // const [loginResult] = useRecoilState(loginResultState);
   // const companyCode = loginResult ? loginResult.companyCode : "";
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -147,13 +146,9 @@ const AC_A0030W: React.FC = () => {
   const PAGE_SIZE = 40;
   let gridRef: any = useRef(null); // 요약정보 그리드
 
-  //폼 메시지 조회
-  // const [messagesData, setMessagesData] = React.useState<any>(null);
-  // UseMessages(pathname, setMessagesData);
-
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("AC_A0030W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1141,7 +1136,7 @@ const AC_A0030W: React.FC = () => {
   
         "@p_insert_userid": userId,
         "@p_insert_pc": pc,
-        "@p_form_id": pathname,
+        "@p_form_id": "AC_A0030W",
       },
     };
 
@@ -1237,7 +1232,7 @@ const AC_A0030W: React.FC = () => {
 
         "@p_userid": userId,
         "@p_pc": pc,
-        "@p_form_id": pathname,
+        "@p_form_id": "AC_A0030W",
       },
     };
 
@@ -1271,6 +1266,7 @@ const AC_A0030W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="AC_A0030W"
             />
           )}
         </ButtonContainer>

@@ -68,6 +68,7 @@ type TKendoWindow = {
   group_code?: string;
   isCopy: boolean;
   modal?: boolean;
+  pathname: string;
 };
 let targetRowIndex: null | number = null;
 let temp = 0;
@@ -79,6 +80,7 @@ const KendoWindow = ({
   group_code = "",
   isCopy,
   modal = false,
+  pathname
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
@@ -144,7 +146,7 @@ const KendoWindow = ({
     });
   };
 
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);

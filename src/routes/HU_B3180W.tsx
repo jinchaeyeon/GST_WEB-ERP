@@ -139,7 +139,7 @@ const CustomColorCell2 = (props: GridCellProps) => {
 
 const HU_B3180W: React.FC = () => {
   const processApi = useApi();
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
@@ -163,7 +163,7 @@ const HU_B3180W: React.FC = () => {
   };
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("HU_B3180W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -466,6 +466,7 @@ const HU_B3180W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="HU_B3180W"
             />
           )}
         </ButtonContainer>

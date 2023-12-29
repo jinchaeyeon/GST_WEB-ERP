@@ -160,15 +160,15 @@ const CM_B1101W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [tabSelected, setTabSelected] = React.useState(0);
   //커스텀 옵션 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("", setBizComponentData);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("CM_B1101W", setCustomOptionData);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("CM_B1101W", setMessagesData);
   useEffect(() => {
     if (customOptionData !== null) {
       const defaultOption = GetPropertyValueByName(
@@ -762,6 +762,7 @@ const CM_B1101W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="CM_B1101W"
             />
           )}
         </ButtonContainer>

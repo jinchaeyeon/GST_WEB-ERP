@@ -251,7 +251,7 @@ const BA_A0020_603: React.FC = () => {
   UseParaPc(setPc);
 
   const userId = UseGetValueFromSessionItem("user_id");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -277,11 +277,11 @@ const BA_A0020_603: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("BA_A0020W_603", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("BA_A0020W_603", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -907,7 +907,7 @@ const BA_A0020_603: React.FC = () => {
 
       const row = rows.map((item: any) => ({
         ...item,
-        yyyy: new Date(item.yyyy, 0 ,1)
+        yyyy: new Date(item.yyyy, 0, 1),
       }));
 
       if (subfilters.find_row_value !== "") {
@@ -1345,10 +1345,14 @@ const BA_A0020_603: React.FC = () => {
     let sum = 0;
     subDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
-  
+
     return (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {numberWithCommas(sum)}
@@ -2439,7 +2443,6 @@ const BA_A0020_603: React.FC = () => {
     }));
   };
 
-
   const onSaveClick = async () => {
     let valid = true;
     const dataItem = subDataResult.data.filter((item: any) => {
@@ -2451,8 +2454,11 @@ const BA_A0020_603: React.FC = () => {
 
     try {
       dataItem.map((item: any) => {
-        if(typeof item.yyyy == "string") {
-          if(item.yyyy.substring(0, 4) < "1997" || item.yyyy.substring(0, 4).length != 4) {
+        if (typeof item.yyyy == "string") {
+          if (
+            item.yyyy.substring(0, 4) < "1997" ||
+            item.yyyy.substring(0, 4).length != 4
+          ) {
             throw findMessage(messagesData, "BA_A0020W_603_006");
           }
         } else {
@@ -2500,13 +2506,17 @@ const BA_A0020_603: React.FC = () => {
         totasset = 0,
         totcapital = 0,
         yyyy = "",
-        totemp = ""
+        totemp = "",
       } = item;
 
       dataArr.rowstatus.push(rowstatus);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(typeof yyyy == "string" ? yyyy.substring(0,4) : convertDateToStr(yyyy).substring(0, 4));
+      dataArr.yyyy_s.push(
+        typeof yyyy == "string"
+          ? yyyy.substring(0, 4)
+          : convertDateToStr(yyyy).substring(0, 4)
+      );
       dataArr.totasset_s.push(totasset);
       dataArr.paid_up_capital_s.push(paid_up_capital);
       dataArr.totcaptial_s.push(totcapital);
@@ -2530,13 +2540,17 @@ const BA_A0020_603: React.FC = () => {
         totasset = 0,
         totcapital = 0,
         yyyy = "",
-        totemp = ""
+        totemp = "",
       } = item;
 
       dataArr.rowstatus.push(rowstatus);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(typeof yyyy == "string" ? yyyy.substring(0,4) : convertDateToStr(yyyy).substring(0, 4));
+      dataArr.yyyy_s.push(
+        typeof yyyy == "string"
+          ? yyyy.substring(0, 4)
+          : convertDateToStr(yyyy).substring(0, 4)
+      );
       dataArr.totasset_s.push(totasset);
       dataArr.paid_up_capital_s.push(paid_up_capital);
       dataArr.totcaptial_s.push(totcapital);
@@ -3023,6 +3037,7 @@ const BA_A0020_603: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="BA_A0020W_603"
             />
           )}
         </ButtonContainer>

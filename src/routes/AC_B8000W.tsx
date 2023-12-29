@@ -194,9 +194,9 @@ const AC_B8000W: React.FC = () => {
   const idGetter6 = getter(DATA_ITEM_KEY6);
   const processApi = useApi();
   const [tabSelected, setTabSelected] = React.useState(0);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("AC_B8000W", setCustomOptionData);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   //customOptionData 조회 후 디폴트 값 세팅
@@ -2186,6 +2186,7 @@ const AC_B8000W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+                   pathname="AC_B8000W"
             />
           )}
         </ButtonContainer>

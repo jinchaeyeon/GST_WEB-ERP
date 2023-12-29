@@ -72,14 +72,14 @@ const AC_B6080W: React.FC = () => {
   const [tabSelected, setTabSelected] = React.useState(0);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("AC_B6080W", setCustomOptionData);
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
 
@@ -157,7 +157,7 @@ const AC_B6080W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("AC_B6080W", setMessagesData);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
@@ -937,6 +937,7 @@ const AC_B6080W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="AC_B6080W"
             />
           )}
         </ButtonContainer>

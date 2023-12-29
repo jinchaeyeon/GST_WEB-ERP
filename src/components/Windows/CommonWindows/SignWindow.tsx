@@ -60,7 +60,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   const [loginResult] = useRecoilState(loginResultState);
   const role = loginResult ? loginResult.role : "";

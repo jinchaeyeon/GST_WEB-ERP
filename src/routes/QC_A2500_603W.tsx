@@ -94,7 +94,7 @@ const BA_A0020_603: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [tabSelected, setTabSelected] = React.useState(0);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [workType, setWorkType] = useState("");
   let gridRef: any = useRef(null);
   const setLoading = useSetRecoilState(isLoading);
@@ -125,7 +125,7 @@ const BA_A0020_603: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("QC_A2500_603W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1457,6 +1457,7 @@ const BA_A0020_603: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="QC_A2500_603W"
             />
           )}
         </ButtonContainer>
@@ -2251,6 +2252,7 @@ const BA_A0020_603: React.FC = () => {
           setVisible={setDetailWindowVisible}
           setData={setData}
           modal={true}
+          pathname="QC_A2500_603W"
         />
       )}
       {projectWindowVisible && (
@@ -2258,6 +2260,7 @@ const BA_A0020_603: React.FC = () => {
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
+          pathname="QC_A2500_603W"
         />
       )}
       {userWindowVisible && (

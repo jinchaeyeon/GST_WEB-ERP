@@ -218,14 +218,14 @@ const Page: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(USER_MENU_DATA_ITEM_KEY);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SY_A0013W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -504,7 +504,7 @@ const Page: React.FC = () => {
         "@p_menu_name": filters.menu_name,
         "@p_layout_key": filters.layout_key,
         "@p_category": filters.category,
-        "@p_service_id": pathname,
+        "@p_service_id": "SY_A0013W",
       },
     };
 
@@ -615,7 +615,7 @@ const Page: React.FC = () => {
         "@p_menu_name": filters.menu_name,
         "@p_layout_key": filters.layout_key,
         "@p_category": filters.category,
-        "@p_service_id": pathname,
+        "@p_service_id": "SY_A0013W",
       },
     };
     try {
@@ -726,7 +726,7 @@ const Page: React.FC = () => {
         "@p_menu_name": filters.menu_name,
         "@p_layout_key": filters.layout_key,
         "@p_category": filters.category,
-        "@p_service_id": pathname,
+        "@p_service_id": "SY_A0013W",
       },
     };
 
@@ -1963,6 +1963,7 @@ const Page: React.FC = () => {
               search={search}
               permissions={permissions}
               disable={true}
+              pathname="SY_A0013W"
             />
           )}
         </ButtonContainer>

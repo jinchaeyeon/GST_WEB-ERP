@@ -47,6 +47,7 @@ type IWindow = {
   reloadData(workType: string): void;
   basicdata?: Idata2;
   modal?: boolean;
+  pathname: string;
 };
 
 type Idata = {
@@ -96,6 +97,7 @@ const CopyWindow = ({
   reloadData,
   basicdata,
   modal = false,
+  pathname
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -111,7 +113,7 @@ const CopyWindow = ({
   UseParaPc(setPc);
   const processApi = useApi();
   //메시지 조회
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 

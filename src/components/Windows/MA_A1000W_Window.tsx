@@ -88,6 +88,7 @@ type IWindow = {
   setVisible(t: boolean): void;
   reload(str: string): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
+  pathname: string;
 };
 
 export const FormContext = createContext<{
@@ -438,6 +439,7 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
+  pathname
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -456,7 +458,7 @@ const CopyWindow = ({
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
   //메시지 조회
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
   const [editIndex, setEditIndex] = useState<number | undefined>();
@@ -2097,6 +2099,7 @@ const CopyWindow = ({
           setVisible={setCopyWindowVisible3}
           setData={setCopyData}
           itemacnt={""}
+          pathname={pathname}
         />
       )}
       {attachmentsWindowVisible && (

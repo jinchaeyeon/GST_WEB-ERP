@@ -73,7 +73,7 @@ let targetRowIndex: null | number = null;
 const QC_B0300W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -97,11 +97,11 @@ const QC_B0300W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("QC_B0300W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("QC_B0300W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -480,6 +480,7 @@ const QC_B0300W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="QC_B0300W"
             />
           )}
         </ButtonContainer>

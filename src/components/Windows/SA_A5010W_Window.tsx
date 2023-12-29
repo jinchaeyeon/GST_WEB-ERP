@@ -85,6 +85,7 @@ type IWindow = {
   setVisible(t: boolean): void;
   reload(str: string): void; //data : 선택한 품목 데이터를 전달하는 함수
   modal?: boolean;
+  pathname: string;
 };
 
 type TdataArr = {
@@ -459,6 +460,7 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
+  pathname
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -487,7 +489,7 @@ const CopyWindow = ({
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   //메시지 조회
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
@@ -3107,6 +3109,7 @@ const CopyWindow = ({
           setVisible={setItemMultiWindowVisible}
           setData={setCopyData}
           itemacnt={""}
+          pathname={pathname}
         />
       )}
     </>

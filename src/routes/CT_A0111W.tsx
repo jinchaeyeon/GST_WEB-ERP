@@ -57,7 +57,7 @@ const DATA_ITEM_KEY = "idx";
 const CT_A0111W: React.FC = () => {
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
@@ -256,6 +256,7 @@ const CT_A0111W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="CT_A0111W"
             />
           )}
 

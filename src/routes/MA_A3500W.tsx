@@ -196,13 +196,13 @@ const MA_A2400W: React.FC = () => {
       take: initialPageState.take,
     });
   };
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [tabSelected, setTabSelected] = React.useState(0);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("MA_A3500W", setMessagesData);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   let gridRef: any = useRef(null);
@@ -212,7 +212,7 @@ const MA_A2400W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("MA_A3500W", setCustomOptionData);
 
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
@@ -2383,6 +2383,7 @@ const MA_A2400W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+               pathname="MA_A3500W"
             />
           )}
         </ButtonContainer>

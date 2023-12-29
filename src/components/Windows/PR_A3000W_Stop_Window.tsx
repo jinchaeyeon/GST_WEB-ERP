@@ -33,9 +33,10 @@ type TKendoWindow = {
   setVisible(visible: boolean): void;
   data: TData;
   setData(): void;
+  pathname: string;
 };
 
-const KendoWindow = ({ setVisible, data, setData }: TKendoWindow) => {
+const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -117,7 +118,7 @@ const KendoWindow = ({ setVisible, data, setData }: TKendoWindow) => {
     resetForm();
   }, [detailDataResult]);
 
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({

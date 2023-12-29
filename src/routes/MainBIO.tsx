@@ -76,7 +76,7 @@ const answerynBodyTemplate = (rowData: any) => {
 };
 
 const Main: React.FC = () => {
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const processApi = useApi();
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -266,7 +266,7 @@ const Main: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("HOME", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {

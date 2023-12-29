@@ -57,6 +57,7 @@ type TKendoWindow = {
   setData(data: object, itemcd: string): void;
   para: any;
   modal?: boolean;
+  pathname: string;
 };
 
 let targetRowIndex: null | number = null;
@@ -68,10 +69,11 @@ const KendoWindow = ({
   para = "",
   setData,
   modal = false,
+  pathname
 }: TKendoWindow) => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const setLoading = useSetRecoilState(isLoading);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);

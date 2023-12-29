@@ -169,7 +169,7 @@ const SA_A1100_603W: React.FC = () => {
   const idGetter5 = getter(DATA_ITEM_KEY5);
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [pc, setPc] = useState("");
@@ -523,7 +523,7 @@ const SA_A1100_603W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SA_A1100_603W", setCustomOptionData);
 
   const history = useHistory();
   const location = useLocation();
@@ -2380,6 +2380,7 @@ const SA_A1100_603W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="SA_A1100_603W"
             />
           )}
         </ButtonContainer>

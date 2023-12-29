@@ -75,10 +75,10 @@ const MA_A2310_606W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("MA_A2310_606W", setCustomOptionData);
   const [isVisibleDetail, setIsVisableDetail] = useState(false);
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -102,7 +102,7 @@ const MA_A2310_606W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("MA_A2310_606W", setMessagesData);
   const processApi = useApi();
 
   // 비즈니스 컴포넌트 조회
@@ -237,6 +237,7 @@ const MA_A2310_606W: React.FC = () => {
     itemnm: "",
     insiz: "",
     finyn: "",
+    invoiceno: "",
     pgNum: 1,
     isSearch: true,
   });
@@ -270,6 +271,7 @@ const MA_A2310_606W: React.FC = () => {
         "@p_itemnm": filters.itemnm,
         "@p_insiz": filters.insiz,
         "@p_finyn": filters.finyn,
+        "@p_invoiceno": filters.invoiceno,
         "@p_lotnum2": "",
       },
     };
@@ -333,6 +335,7 @@ const MA_A2310_606W: React.FC = () => {
         "@p_itemnm": filters.itemnm,
         "@p_insiz": filters.insiz,
         "@p_finyn": filters.finyn,
+        "@p_invoiceno": filters.invoiceno,
         "@p_lotnum2": Information.lotnum,
       },
     };
@@ -465,7 +468,6 @@ const MA_A2310_606W: React.FC = () => {
           alert("동일한 행이 이미 추가되어있습니다.");
         }
       } else {
-        alert("해당 LOT번호가 없습니다.");
         barcode = "";
       }
     } else {
@@ -1077,6 +1079,7 @@ const MA_A2310_606W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="MA_A2310_606W"
             />
           )}
         </ButtonContainer>
@@ -1117,6 +1120,15 @@ const MA_A2310_606W: React.FC = () => {
                   name="lotnum"
                   type="text"
                   value={filters.lotnum}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>invoice No</th>
+              <td>
+              <Input
+                  name="invoiceno"
+                  type="text"
+                  value={filters.invoiceno}
                   onChange={filterInputChange}
                 />
               </td>

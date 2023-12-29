@@ -55,6 +55,7 @@ type TKendoWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void;
   modal?: boolean;
+  pathname: string;
 };
 
 const DATA_ITEM_KEY = "num";
@@ -63,6 +64,7 @@ const KendoWindow = ({
   setVisible,
   setData,
   modal = false,
+  pathname
 }: TKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -83,7 +85,7 @@ const KendoWindow = ({
   });
 
   //메시지 조회
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 

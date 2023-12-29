@@ -113,13 +113,13 @@ const CM_A1710W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   //커스텀 옵션 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent("", setBizComponentData);
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("CM_A1710W", setCustomOptionData);
 
   useEffect(() => {
     if (customOptionData !== null) {
@@ -627,6 +627,7 @@ const CM_A1710W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="CM_A1710W"
             />
           )}
         </ButtonContainer>

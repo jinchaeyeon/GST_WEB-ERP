@@ -98,11 +98,11 @@ const SY_A0500W: React.FC = () => {
   const layout = useMemo(() => new Layout(), []);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   //커스텀 옵션 조회
   const setLoading = useSetRecoilState(isLoading);
   const [customOptionData, setCustomOptionData] = useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SY_A0500W", setCustomOptionData);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
   const [[knightX, knightY, indexs], setKnightPos] = useState<Position>(
@@ -122,7 +122,7 @@ const SY_A0500W: React.FC = () => {
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("SY_A0500W", setMessagesData);
 
   useEffect(() => {
     if (bizComponentData !== null) {
@@ -1169,6 +1169,7 @@ const SY_A0500W: React.FC = () => {
               search={search}
               permissions={permissions}
               disable={true}
+              pathname="SY_A0500W"
             />
           )}
         </ButtonContainer>

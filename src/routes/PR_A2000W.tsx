@@ -44,7 +44,7 @@ const PR_A2000W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -59,7 +59,7 @@ const PR_A2000W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("PR_A2000W", setCustomOptionData);
 
   useEffect(() => {
     if (customOptionData !== null)  {
@@ -828,6 +828,7 @@ const PR_A2000W: React.FC = () => {
           setVisible={setPlanWindowVisible}
           setData={setPlanData}
           modal={true}
+          pathname="PR_A2000W"
         />
       )}
       {inLotWinVisible && (
@@ -836,6 +837,7 @@ const PR_A2000W: React.FC = () => {
           plankey={filters.plankey}
           setData={setInLotData}
           modal={true}
+          pathname="PR_A2000W"
         />
       )}
       {stopWindowVisible && (
@@ -847,6 +849,7 @@ const PR_A2000W: React.FC = () => {
           }}
           setData={setStopData}
           modal={true}
+          pathname="PR_A2000W"
         />
       )}
       {defectWindowVisible && (

@@ -72,7 +72,7 @@ const App: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [usedUserCnt, setUsedUserCnt] = useState(0);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [group, setGroup] = React.useState(initialGroup);
@@ -83,7 +83,7 @@ const App: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("SY_A0100W", setMessagesData);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -105,7 +105,7 @@ const App: React.FC = () => {
   };
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SY_A0100W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -664,6 +664,7 @@ const App: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="SY_A0100W"
             />
           )}
         </ButtonContainer>

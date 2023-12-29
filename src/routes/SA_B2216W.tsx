@@ -1,4 +1,3 @@
-import { Container } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Button } from "primereact/button";
@@ -37,7 +36,7 @@ const SA_B2216W: React.FC = () => {
   let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [color, setColor] = useRecoilState(colors);
   const [colorName, setColorName] = useRecoilState(colorsName);
   const [selected, setSelected] = useState<any>({
@@ -457,124 +456,117 @@ const SA_B2216W: React.FC = () => {
     <>
       <div style={{ fontFamily: "TheJamsil5Bold" }}>
         <ThemeProvider theme={theme}>
-          <Container
-            maxWidth="xl"
-            style={{ width: "100%", marginBottom: "50px" }}
-          >
-            <TitleContainer
-              style={{ paddingTop: "25px", paddingBottom: "25px" }}
-            >
-              <Title>DASHBOARD(담당자별)</Title>
-              {isMobile ? (
-                <ButtonContainer>
-                  <Button
-                    icon="pi pi-search"
-                    onClick={() =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        isSearch: true,
-                      }))
-                    }
-                    className="mr-2"
-                  />
-                </ButtonContainer>
-              ) : (
-                ""
-              )}
-            </TitleContainer>
-            <Toolbar start={startContent} end={endContent} />
-            <Divider />
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <GridTitle
-                  title={
-                    convertDateToStr(filters.frdt).substring(0, 4) +
-                    "년도 개인별 실적 현황"
+          <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
+            <Title>DASHBOARD(담당자별)</Title>
+            {isMobile ? (
+              <ButtonContainer>
+                <Button
+                  icon="pi pi-search"
+                  onClick={() =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      isSearch: true,
+                    }))
                   }
+                  className="mr-2"
                 />
-                <MultiChart
-                  props={ChartList}
-                  value="value"
-                  name="series"
-                  color={[
-                    theme.palette.primary.dark,
-                    theme.palette.primary.light,
-                  ]}
-                  alllabel={stackChartAllLabel}
-                  label={stackChartLabel}
-                  random={false}
-                />
-              </Grid>
+              </ButtonContainer>
+            ) : (
+              ""
+            )}
+          </TitleContainer>
+          <Toolbar start={startContent} end={endContent} />
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <GridTitle
+                title={
+                  convertDateToStr(filters.frdt).substring(0, 4) +
+                  "년도 개인별 실적 현황"
+                }
+              />
+              <MultiChart
+                props={ChartList}
+                value="value"
+                name="series"
+                color={[
+                  theme.palette.primary.dark,
+                  theme.palette.primary.light,
+                ]}
+                alllabel={stackChartAllLabel}
+                label={stackChartLabel}
+                random={false}
+              />
             </Grid>
-            <Divider />
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <GridTitle
-                  title={
-                    convertDateToStr(filters.frdt).substring(0, 4) +
-                    "년도 개인별 담당프로젝트 수"
-                  }
-                />
-                <MultiChart
-                  props={BarData}
-                  value="value"
-                  name="date"
-                  color={["#1d7cef", "#f8a73a", "#00b050", "#e72969"]}
-                  alllabel={stackChartAllLabel2}
-                  label={stackChartLabel2}
-                  random={false}
-                />
-              </Grid>
+          </Grid>
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <GridTitle
+                title={
+                  convertDateToStr(filters.frdt).substring(0, 4) +
+                  "년도 개인별 담당프로젝트 수"
+                }
+              />
+              <MultiChart
+                props={BarData}
+                value="value"
+                name="date"
+                color={["#1d7cef", "#f8a73a", "#00b050", "#e72969"]}
+                alllabel={stackChartAllLabel2}
+                label={stackChartLabel2}
+                random={false}
+              />
             </Grid>
-            <Divider />
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={7}>
-                <PaginatorTable
-                  value={UserList}
-                  column={{
-                    user_name: "구분",
-                    cnt1: "방문",
-                    cnt2: "상담",
-                    cnt3: "컨설팅",
-                    cnt4: "견적",
-                    cnt5: "계약",
-                    percent: "견적 대비 계약 현황",
-                  }}
-                  title={
-                    convertDateToStr(filters.frdt).substring(0, 4) +
-                    "년도 개인별 활동 현황"
-                  }
-                  numberCell={["cnt1", "cnt2", "cnt3", "cnt4", "cnt5"]}
-                  width={[120, 100, 100, 100, 100, 100, 100]}
-                  key="num"
-                  selection={selected}
-                  onSelectionChange={(e: any) => {
-                    setSelected(e.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={5}>
-                <PaginatorTable
-                  value={ProjectList}
-                  column={{
-                    user_name: "구분",
-                    cnt: "담당 프로젝트 수",
-                  }}
-                  numberCell={["cnt"]}
-                  title={
-                    convertDateToStr(filters.frdt).substring(0, 4) +
-                    "년도 개인별 프로젝트 관리 수"
-                  }
-                  width={[120, 100]}
-                  key="num"
-                  selection={selected2}
-                  onSelectionChange={(e: any) => {
-                    setSelected2(e.value);
-                  }}
-                />
-              </Grid>
+          </Grid>
+          <Divider />
+          <Grid container spacing={2} style={{marginBottom: "50px"}}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={7}>
+              <PaginatorTable
+                value={UserList}
+                column={{
+                  user_name: "구분",
+                  cnt1: "방문",
+                  cnt2: "상담",
+                  cnt3: "컨설팅",
+                  cnt4: "견적",
+                  cnt5: "계약",
+                  percent: "견적 대비 계약 현황",
+                }}
+                title={
+                  convertDateToStr(filters.frdt).substring(0, 4) +
+                  "년도 개인별 활동 현황"
+                }
+                numberCell={["cnt1", "cnt2", "cnt3", "cnt4", "cnt5"]}
+                width={[120, 100, 100, 100, 100, 100, 100]}
+                key="num"
+                selection={selected}
+                onSelectionChange={(e: any) => {
+                  setSelected(e.value);
+                }}
+              />
             </Grid>
-          </Container>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={5}>
+              <PaginatorTable
+                value={ProjectList}
+                column={{
+                  user_name: "구분",
+                  cnt: "담당 프로젝트 수",
+                }}
+                numberCell={["cnt"]}
+                title={
+                  convertDateToStr(filters.frdt).substring(0, 4) +
+                  "년도 개인별 프로젝트 관리 수"
+                }
+                width={[120, 100]}
+                key="num"
+                selection={selected2}
+                onSelectionChange={(e: any) => {
+                  setSelected2(e.value);
+                }}
+              />
+            </Grid>
+          </Grid>
           <SpecialDial />
         </ThemeProvider>
       </div>

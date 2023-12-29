@@ -108,11 +108,11 @@ const Page: React.FC = () => {
     sort: [],
   });
 
-  const pathname: string = window.location.pathname.replace("/", "");
+
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SY_A0010_301W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -986,7 +986,7 @@ const Page: React.FC = () => {
         pageSize: 100000,
         parameters: {
           "@p_work_type": "Q",
-          "@p_form_id": pathname,
+          "@p_form_id": "SY_A0010_301W",
           "@p_table_id": "comCodeMaster",
           "@p_orgdiv": "01",
           "@p_ref_key": mainDataResult.data.filter(
@@ -1046,7 +1046,7 @@ const Page: React.FC = () => {
             "@p_recdt": dataArr.recdt.join("|"),
             "@p_comment": dataArr.comment.join("|"),
             "@p_user_id": dataArr.user_id.join("|"),
-            "@p_form_id": pathname,
+            "@p_form_id": "SY_A0010_301W",
             "@p_table_id": "comCodeMaster",
             "@p_orgdiv": "01",
             "@p_ref_key": mainDataResult.data.filter(
@@ -1166,6 +1166,7 @@ const Page: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="SY_A0010_301W"
             />
           )}
         </ButtonContainer>
@@ -1510,6 +1511,7 @@ const Page: React.FC = () => {
           isCopy={isCopy}
           reloadData={reloadData}
           modal={true}
+          pathname="SY_A0010_301W"
         />
       )}
 

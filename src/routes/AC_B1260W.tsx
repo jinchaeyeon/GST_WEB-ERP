@@ -76,15 +76,15 @@ const DATA_ITEM_KEY = "num";
 const AC_B1260W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   //커스텀 옵션 조회
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("AC_B1260W", setMessagesData);
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("AC_B1260W", setCustomOptionData);
 
   useEffect(() => {
     if (customOptionData !== null) {
@@ -822,6 +822,7 @@ const AC_B1260W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="AC_B1260W"
             />
           )}
         </ButtonContainer>

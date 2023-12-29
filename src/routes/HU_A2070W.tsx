@@ -159,14 +159,14 @@ const HU_A2070W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   //커스텀 옵션 조회
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("HU_A2070W", setMessagesData);
 
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("HU_A2070W", setCustomOptionData);
 
   useEffect(() => {
     if (customOptionData !== null) {
@@ -1013,6 +1013,7 @@ const HU_A2070W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="HU_A2070W"
             />
           )}
         </ButtonContainer>

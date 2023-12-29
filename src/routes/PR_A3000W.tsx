@@ -42,7 +42,7 @@ const PR_A3000W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const userId = UseGetValueFromSessionItem("user_id");
   const setLoading = useSetRecoilState(isLoading);
 
@@ -187,7 +187,7 @@ const PR_A3000W: React.FC = () => {
     serviceid: "",
     userid: userId,
     pc: pc,
-    form_id: pathname,
+    form_id: "PR_A3000W",
   });
 
   //조회조건 파라미터
@@ -688,6 +688,7 @@ const PR_A3000W: React.FC = () => {
             setStopStartOrEnd("end");
             fetchStopData();
           }}
+          pathname="PR_A3000W"
         />
       )}
       {defectWindowVisible && (
@@ -695,6 +696,7 @@ const PR_A3000W: React.FC = () => {
           setVisible={setDefectWindowVisible}
           rekey={masterDataResult.rekey}
           setData={(badqty) => setFiltersSaved((prev) => ({ ...prev, badqty }))}
+          pathname="PR_A3000W"
         />
       )}
     </>

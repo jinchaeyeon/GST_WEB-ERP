@@ -71,6 +71,12 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
+        id: "col_invoiceno",
+        field: "invoiceno",
+        caption: "invoiceno",
+        width: 150,
+      },
+      {
         id: "col_lotnum",
         field: "lotnum",
         caption: "LOT NO",

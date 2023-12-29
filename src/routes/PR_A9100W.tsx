@@ -382,7 +382,7 @@ const PR_A9100W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
@@ -406,11 +406,11 @@ const PR_A9100W: React.FC = () => {
   };
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("PR_A9100W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("PR_A9100W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -1430,7 +1430,7 @@ const PR_A9100W: React.FC = () => {
     pgmdiv_s: "",
     userid: userId,
     pc: pc,
-    form_id: pathname,
+    form_id: "PR_A9100W",
   });
 
   const paraSaved: Iparameters = {
@@ -1496,6 +1496,7 @@ const PR_A9100W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="PR_A9100W"
             />
           )}
         </ButtonContainer>

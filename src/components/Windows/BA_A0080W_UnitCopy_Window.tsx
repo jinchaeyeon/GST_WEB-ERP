@@ -54,6 +54,7 @@ import { CellRender, RowRender } from "../Renderers/Renderers";
 type IWindow = {
   setVisible(t: boolean): void;
   modal?: boolean;
+  pathname: string;
 };
 
 type TdataArr = {
@@ -80,7 +81,7 @@ const CustomNumberCell = (props: GridCellProps) => {
 };
 
 let targetRowIndex: null | number = null;
-const CopyWindow = ({ setVisible, modal = false }: IWindow) => {
+const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -98,7 +99,7 @@ const CopyWindow = ({ setVisible, modal = false }: IWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
   //메시지 조회
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
 

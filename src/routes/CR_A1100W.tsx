@@ -116,17 +116,17 @@ const CR_A1100W: React.FC = () => {
   UseParaPc(setPc);
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
-  const pathname: string = window.location.pathname.replace("/", "");
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("CR_A1100W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("CR_A1100W", setCustomOptionData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   // 반, 종, 성별
@@ -742,6 +742,7 @@ const CR_A1100W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="CR_A1100W"
             />
           )}
         </ButtonContainer>

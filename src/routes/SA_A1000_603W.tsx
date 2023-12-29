@@ -530,7 +530,7 @@ const SA_A1000_603W: React.FC = () => {
 
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const pathname: string = window.location.pathname.replace("/", "");
+
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
   let gridRef3: any = useRef(null);
@@ -543,14 +543,14 @@ const SA_A1000_603W: React.FC = () => {
   const processApi = useApi();
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption(pathname, setCustomOptionData);
+  UseCustomOption("SA_A1000_603W", setCustomOptionData);
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   const [worktype, setWorktype] = useState<"N" | "U">("U");
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages(pathname, setMessagesData);
+  UseMessages("SA_A1000_603W", setMessagesData);
   useEffect(() => {
     (async () => {
       const newData = subDataResult.data.map((item) =>
@@ -3504,6 +3504,7 @@ const SA_A1000_603W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
+              pathname="SA_A1000_603W"
             />
           )}
         </ButtonContainer>
@@ -4671,6 +4672,7 @@ const SA_A1000_603W: React.FC = () => {
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
+          pathname="SA_A1000_603W"
         />
       )}
       {designWindowVisible && (
