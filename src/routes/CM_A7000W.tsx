@@ -510,38 +510,57 @@ const CM_A7000W: React.FC = () => {
         email: data.email,
         testtype: testtypeListData.find(
           (item: any) => item.code_name == data.testtype
+        )?.sub_code == undefined ? "" : testtypeListData.find(
+          (item: any) => item.code_name == data.testtype
         )?.sub_code,
         requestgb: requestgbListData.find(
+          (item: any) => item.code_name == data.requestgb
+        )?.sub_code == undefined ? "" : requestgbListData.find(
           (item: any) => item.code_name == data.requestgb
         )?.sub_code,
         materialtype: materialtypeListData.find(
           (item: any) => item.code_name == data.materialtype
+        )?.sub_code == undefined ? "" : materialtypeListData.find(
+          (item: any) => item.code_name == data.materialtype
         )?.sub_code,
         materialgb: materialgbListData.find(
+          (item: any) => item.code_name == data.materialgb
+        )?.sub_code == undefined ? "" : materialgbListData.find(
           (item: any) => item.code_name == data.materialgb
         )?.sub_code,
         grade1: data.grade1,
         assaygbe: assaygbeListData.find(
           (item: any) => item.code_name == data.assaygbe
+        )?.sub_code == undefined ? "" : assaygbeListData.find(
+          (item: any) => item.code_name == data.assaygbe
         )?.sub_code,
         grade2: data.grade2,
         startschgb: startschgbListData.find(
+          (item: any) => item.code_name == data.startschgb
+        )?.sub_code == undefined ? "" : startschgbListData.find(
           (item: any) => item.code_name == data.startschgb
         )?.sub_code,
         grade3: data.grade3,
         financegb: financegbListData.find(
           (item: any) => item.code_name == data.financegb
+        )?.sub_code == undefined ? "" : financegbListData.find(
+          (item: any) => item.code_name == data.financegb
         )?.sub_code,
         grade4: data.grade4,
         totgrade1: data.totgrade1,
         amtgb: amtgbListData.find((item: any) => item.code_name == data.amtgb)
+          ?.sub_code == undefined ? "" : amtgbListData.find((item: any) => item.code_name == data.amtgb)
           ?.sub_code,
         grade5: data.grade5,
         addordgb: addordgbListData.find(
           (item: any) => item.code_name == data.addordgb
+        )?.sub_code == undefined ? "" : addordgbListData.find(
+          (item: any) => item.code_name == data.addordgb
         )?.sub_code,
         grade6: data.grade6,
         relationgb: relationgbListData.find(
+          (item: any) => item.code_name == data.relationgb
+        )?.sub_code == undefined ? "" : relationgbListData.find(
           (item: any) => item.code_name == data.relationgb
         )?.sub_code,
         grade7: data.grade7,
@@ -1106,7 +1125,7 @@ const CM_A7000W: React.FC = () => {
     }
 
     if (!valid) return false;
-
+    console.log(information);
     setParaDataSaved({
       workType: workType,
       orgdiv: "01",
