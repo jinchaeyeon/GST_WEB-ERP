@@ -1811,7 +1811,7 @@ const CM_A7000W: React.FC = () => {
                           ""
                         )}
                       </td>
-                      <th>의뢰기관명</th>
+                      <th>의뢰자명</th>
                       <td>
                         <Input
                           name="custprsnnm"

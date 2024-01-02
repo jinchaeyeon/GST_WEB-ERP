@@ -47,6 +47,7 @@ import AC_B3000W from "./routes/AC_B3000W";
 import AC_B5000W from "./routes/AC_B5000W";
 import AC_B5080W from "./routes/AC_B5080W";
 import AC_B6020W from "./routes/AC_B6020W";
+import AC_B6040W from "./routes/AC_B6040W";
 import AC_B6060W from "./routes/AC_B6060W";
 import AC_B6080W from "./routes/AC_B6080W";
 import AC_B8000W from "./routes/AC_B8000W";
@@ -800,6 +801,8 @@ const AppInner: React.FC = () => {
       return AC_B5080W;
     } else if (str == "AC_B6020W") {
       return AC_B6020W;
+    } else if (str == "AC_B6040W") {
+      return AC_B6040W;
     } else if (str == "AC_B6060W") {
       return AC_B6060W;
     } else if (str == "AC_B6080W") {
@@ -1072,6 +1075,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/AC_B5000W" component={AC_B5000W} exact />
                   <AuthRoute path="/AC_B5080W" component={AC_B5080W} exact />
                   <AuthRoute path="/AC_B6020W" component={AC_B6020W} exact />
+                  <AuthRoute path="/AC_B6040W" component={AC_B6040W} exact />
                   <AuthRoute path="/AC_B6060W" component={AC_B6060W} exact />
                   <AuthRoute path="/AC_B6080W" component={AC_B6080W} exact />
                   <AuthRoute path="/AC_B8030W" component={AC_B8030W} exact />
