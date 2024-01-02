@@ -903,6 +903,7 @@ const MA_A2000W: React.FC = () => {
   };
 
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

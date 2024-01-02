@@ -1345,6 +1345,7 @@ const QC_A2000: React.FC = () => {
   };
 
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

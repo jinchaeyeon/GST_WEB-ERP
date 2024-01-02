@@ -510,6 +510,7 @@ const SA_B1000W_603: React.FC = () => {
     setCustWindowVisible(true);
   };
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

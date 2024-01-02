@@ -466,6 +466,7 @@ const MA_B2500W: React.FC = () => {
   };
 
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

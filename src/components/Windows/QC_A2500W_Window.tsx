@@ -229,6 +229,7 @@ const CopyWindow = ({
     custitemnm: string;
   }
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

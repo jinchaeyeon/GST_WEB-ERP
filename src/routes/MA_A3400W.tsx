@@ -853,6 +853,7 @@ const MA_A3400W: React.FC = () => {
   };
 
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

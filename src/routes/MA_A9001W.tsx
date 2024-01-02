@@ -1771,6 +1771,7 @@ const MA_A9001W: React.FC = () => {
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

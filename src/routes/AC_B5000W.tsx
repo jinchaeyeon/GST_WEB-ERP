@@ -329,6 +329,7 @@ const AC_B5000W: React.FC = () => {
   };
 
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

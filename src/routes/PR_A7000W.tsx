@@ -1926,6 +1926,7 @@ const PR_A7000W: React.FC = () => {
     setCustWindowVisible(true);
   };
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

@@ -183,6 +183,7 @@ const SA_A1100_603W: React.FC = () => {
   const [checked, setChecked] = useState(false);
 
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

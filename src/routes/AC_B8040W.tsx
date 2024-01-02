@@ -679,6 +679,7 @@ const AC_B8040W: React.FC = () => {
     setCustWindowVisible(true);
   };
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

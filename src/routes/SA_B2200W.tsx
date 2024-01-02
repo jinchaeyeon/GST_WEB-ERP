@@ -439,6 +439,7 @@ const SA_B2200: React.FC = () => {
   };
 
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

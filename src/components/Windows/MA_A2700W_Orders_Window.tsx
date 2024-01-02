@@ -249,6 +249,7 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) =
   };
 
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

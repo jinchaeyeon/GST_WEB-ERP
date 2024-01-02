@@ -867,6 +867,7 @@ const CopyWindow = ({
     setAttachmentsWindowVisible(true);
   };
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

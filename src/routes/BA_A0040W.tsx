@@ -1190,6 +1190,7 @@ const BA_A0040: React.FC = () => {
   };
 
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

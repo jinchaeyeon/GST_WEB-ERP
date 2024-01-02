@@ -51,7 +51,7 @@ const CustomOptionComboBox = ({
   }
   const onChangeHandle = (e: ComboBoxChangeEvent) => {
     let value = e.target.value === null ? "" : e.target.value[valueField];
-    changeData({ name, value });
+    changeData({ name, value, e });
   };
 
   return (

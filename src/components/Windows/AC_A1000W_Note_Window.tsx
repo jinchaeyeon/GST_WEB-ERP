@@ -282,6 +282,7 @@ const AC_A1000W_Note_Window = ({
     setCustWindowVisible(true);
   };
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;

@@ -95,6 +95,7 @@ import { gridList } from "../store/columns/BA_A0020W_603_C";
 
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
 const DATA_ITEM_KEY = "custcd";
 const SUB_DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY2 = "num";
@@ -118,6 +119,25 @@ const NumberField = [
 const requiredField = ["prsnnm", "yyyy"];
 const commandField = ["files"];
 const YearDateField = ["yyyy"];
+const comboField = ["postcd"]
+
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_HU005", setBizComponentData);
+
+  const field = props.field ?? "";
+  const bizComponentIdVal = field === "postcd" ? "L_HU005" : "";
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <ComboBoxCell bizComponent={bizComponent} {...props} />
+  ) : (
+    <td />
+  );
+};
 
 type TdataArr = {
   rowstatus: string[];
@@ -1555,6 +1575,7 @@ const BA_A0020_603: React.FC = () => {
   };
 
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;
@@ -3618,6 +3639,8 @@ const BA_A0020_603: React.FC = () => {
                               cell={
                                 commandField.includes(item.fieldName)
                                   ? ColumnCommandCell //추후 작업
+                                  : comboField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
                                   : undefined
                               }
                               footerCell={

@@ -466,7 +466,7 @@ const CM_A7000W: React.FC = () => {
         custprsnnm: "",
         postnm: "",
         dptnm: "",
-        address: "",
+        address: data.address,
         telno: "",
         phoneno: "",
         email: "",
@@ -714,10 +714,86 @@ const CM_A7000W: React.FC = () => {
   const ComboBoxChange = (e: any) => {
     const { name, value } = e;
 
-    setInformation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if(name == "custcd") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        custprsncd: "",
+        custprsnnm: "",
+        postnm: "",
+        dptnm: "",
+        address: "",
+        telno: "",
+        phoneno: "",
+        email: "",
+        testtype: "",
+        requestgb: "",
+        materialtype: "",
+        materialgb: "",
+        grade1: 0,
+        assaygbe: "",
+        grade2: 0,
+        startschgb: "",
+        grade3: 0,
+        financegb: "",
+        grade4: 0,
+        totgrade1: 0,
+        amtgb: "",
+        grade5: 0,
+        addordgb: "",
+        grade6: 0,
+        relationgb: "",
+        grade7: 0,
+        totgrade2: 0,
+      }));
+    } else if(name == "materialgb") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        grade1: e.e.value.numref1
+      }));
+    } else if(name == "assaygbe") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        grade2: e.e.value.numref1
+      }));
+    } else if(name == "startschgb") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        grade3: e.e.value.numref1
+      }));
+    } else if(name == "financegb") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        grade4: e.e.value.numref1
+      }));
+    } else if(name == "amtgb") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        grade5: e.e.value.numref1
+      }));
+    } else if(name == "addordgb") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        grade6: e.e.value.numref1
+      }));
+    } else if(name == "relationgb") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        grade7: e.e.value.numref1
+      }));
+    } else {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const CheckChange = (e: any) => {

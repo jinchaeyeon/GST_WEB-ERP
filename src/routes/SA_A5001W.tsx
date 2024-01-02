@@ -1032,6 +1032,7 @@ const SA_A5001W: React.FC = () => {
   };
 
   interface ICustData {
+    address: string;
     custcd: string;
     custnm: string;
     custabbr: string;
