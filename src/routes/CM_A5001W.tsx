@@ -366,6 +366,11 @@ const CM_A5001W: React.FC = () => {
         attdatnum: selectedRowData.answer_attdatnum,
         files: selectedRowData.answer_files,
         ref_document_id: selectedRowData.document_id,
+        person: selectedRowData.answer_person,
+        recdt:
+          selectedRowData.answer_recdt == ""
+            ? null
+            : toDate(selectedRowData.answer_recdt),
       });
       fetchHtmlDocument(
         selectedRowData,
@@ -420,13 +425,22 @@ const CM_A5001W: React.FC = () => {
     }));
   };
 
+  const InputChange = (e: any) => {
+    const { value, name } = e.target;
+
+    setInformation2((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const ComboBoxChange = (e: any) => {
     const { name, value } = e;
 
-    // setInformation((prev) => ({
-    //   ...prev,
-    //   [name]: value,
-    // }));
+    setInformation2((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const CheckChange = (e: any) => {
@@ -486,11 +500,13 @@ const CM_A5001W: React.FC = () => {
     files: "",
   });
 
-  const [information2, setInformation2] = useState({
+  const [information2, setInformation2] = useState<{ [name: string]: any }>({
     document_id: "",
     attdatnum: "",
     files: "",
     ref_document_id: "",
+    person: "",
+    recdt: null,
   });
 
   function getName(data: { sub_code: string }[]) {
@@ -661,6 +677,8 @@ const CM_A5001W: React.FC = () => {
           attdatnum: rows[0].attdatnum,
           files: rows[0].files,
           ref_document_id: rows[0].ref_document_id,
+          person: rows[0].person,
+          recdt: rows[0].recdt == "" ? null : toDate(rows[0].recdt),
         });
       } else {
         setInformation2({
@@ -668,6 +686,8 @@ const CM_A5001W: React.FC = () => {
           attdatnum: "",
           files: "",
           ref_document_id: "",
+          person: "",
+          recdt: null,
         });
       }
     } else {
@@ -934,6 +954,8 @@ const CM_A5001W: React.FC = () => {
       attdatnum: selectedRowData.answer_attdatnum,
       files: selectedRowData.answer_files,
       ref_document_id: selectedRowData.document_id,
+      person: selectedRowData.person,
+      recdt: selectedRowData.recdt,
     });
     fetchHtmlDocument(
       selectedRowData,
@@ -947,27 +969,44 @@ const CM_A5001W: React.FC = () => {
     document_id: "",
     document_id_Q: "", // 요청문서ID
     attdatnum: "",
+    person: "",
+    recdt: "",
     userid: "",
     pc: pc,
     formid: "CM_A5001W",
   });
 
   const onSaveClick = () => {
-    const selectedRowData = mainDataResult.data.filter(
-      (item) =>
-        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-    )[0];
+    if (
+      information2.person == "" ||
+      convertDateToStr(information2.recdt).substring(0, 4) < "1997" ||
+      convertDateToStr(information2.recdt).substring(6, 8) > "31" ||
+      convertDateToStr(information2.recdt).substring(6, 8) < "01" ||
+      convertDateToStr(information2.recdt).substring(6, 8).length != 2 ||
+      information2.recdt == null ||
+      information2.recdt == undefined ||
+      information2.recdt == ""
+    ) {
+      alert("필수값을 입력해주세요.");
+    } else {
+      const selectedRowData = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
 
-    // 답변 문서 ID가 없을 경우 신규, 있으면 업데이트
-    setParaDataSaved({
-      workType: selectedRowData.ref_document_id == "" ? "N" : "U",
-      document_id: selectedRowData.ref_document_id,
-      document_id_Q: information.document_id,
-      attdatnum: information2.attdatnum,
-      userid: userId,
-      pc: pc,
-      formid: "CM_A5001W",
-    });
+      // 답변 문서 ID가 없을 경우 신규, 있으면 업데이트
+      setParaDataSaved({
+        workType: selectedRowData.ref_document_id == "" ? "N" : "U",
+        document_id: selectedRowData.ref_document_id,
+        document_id_Q: information.document_id,
+        attdatnum: information2.attdatnum,
+        person: information2.person,
+        recdt: convertDateToStr(information2.recdt),
+        userid: userId,
+        pc: pc,
+        formid: "CM_A5001W",
+      });
+    }
   };
 
   useEffect(() => {
@@ -997,6 +1036,8 @@ const CM_A5001W: React.FC = () => {
         "@p_document_id": paraDataSaved.document_id,
         "@p_document_id_Q": paraDataSaved.document_id_Q, // 요청 문서 ID
         "@p_attdatnum": paraDataSaved.attdatnum,
+        "@p_person": paraDataSaved.person,
+        "@p_recdt": paraDataSaved.recdt,
         "@p_userid": userId,
         "@p_pc": paraDataSaved.pc,
       },
@@ -1515,25 +1556,26 @@ const CM_A5001W: React.FC = () => {
                       <th>답변일</th>
                       <td>
                         <DatePicker
-                          name="insert_time"
-                          value={new Date()}
+                          name="recdt"
+                          value={information2.recdt}
                           format="yyyy-MM-dd"
                           placeholder=""
-                          className="readonly"
+                          onChange={InputChange}
+                          className="required"
                         />
                       </td>
                       <th>담당자</th>
                       <td>
                         {customOptionData !== null && (
                           <CustomOptionComboBox
-                            name="insert_userid"
-                            value={userId}
+                            name="person"
+                            value={information2.person}
                             type="new"
                             customOptionData={customOptionData}
                             changeData={ComboBoxChange}
                             textField="user_name"
                             valueField="user_id"
-                            className="readonly"
+                            className="required"
                           />
                         )}
                       </td>
