@@ -35,6 +35,7 @@ import AC_A0000W from "./routes/AC_A0000W";
 import AC_A0020W from "./routes/AC_A0020W";
 import AC_A0030W from "./routes/AC_A0030W";
 import AC_A0070W from "./routes/AC_A0070W";
+import AC_A0090W from "./routes/AC_A0090W";
 import AC_A1000W from "./routes/AC_A1000W";
 import AC_B1100W from "./routes/AC_B1100W";
 import AC_B1240W from "./routes/AC_B1240W";
@@ -782,6 +783,8 @@ const AppInner: React.FC = () => {
       return AC_A0030W;
     } else if (str == "AC_A0070W") {
       return AC_A0070W;
+    } else if (str == "AC_A0090W") {
+      return AC_A0090W;
     } else if (str == "AC_A1000W") {
       return AC_A1000W;
     } else if (str == "AC_B1100W") {
@@ -1072,6 +1075,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/AC_A0020W" component={AC_A0020W} exact />
                   <AuthRoute path="/AC_A0030W" component={AC_A0030W} exact />
                   <AuthRoute path="/AC_A0070W" component={AC_A0070W} exact />
+                  <AuthRoute path="/AC_A0090W" component={AC_A0090W} exact />
                   <AuthRoute path="/AC_A1000W" component={AC_A1000W} exact />
                   <AuthRoute path="/AC_B1100W" component={AC_B1100W} exact />
                   <AuthRoute path="/AC_B1240W" component={AC_B1240W} exact />

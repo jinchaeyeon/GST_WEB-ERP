@@ -26,6 +26,8 @@ const RadioGroupCell = (props: CustomCellProps) => {
   const dataList =
     bizComponentData !== null ? bizComponentData.data.Rows : null;
 
+    let isInEdit = field === dataItem.inEdit;
+  
   let newRadioGroup = RADIO_GROUP_DEFAULT_DATA;
 
   if (dataList) {

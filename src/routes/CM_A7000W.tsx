@@ -508,61 +508,88 @@ const CM_A7000W: React.FC = () => {
         telno: data.telno,
         phoneno: data.phoneno,
         email: data.email,
-        testtype: testtypeListData.find(
-          (item: any) => item.code_name == data.testtype
-        )?.sub_code == undefined ? "" : testtypeListData.find(
-          (item: any) => item.code_name == data.testtype
-        )?.sub_code,
-        requestgb: requestgbListData.find(
-          (item: any) => item.code_name == data.requestgb
-        )?.sub_code == undefined ? "" : requestgbListData.find(
-          (item: any) => item.code_name == data.requestgb
-        )?.sub_code,
-        materialtype: materialtypeListData.find(
-          (item: any) => item.code_name == data.materialtype
-        )?.sub_code == undefined ? "" : materialtypeListData.find(
-          (item: any) => item.code_name == data.materialtype
-        )?.sub_code,
-        materialgb: materialgbListData.find(
-          (item: any) => item.code_name == data.materialgb
-        )?.sub_code == undefined ? "" : materialgbListData.find(
-          (item: any) => item.code_name == data.materialgb
-        )?.sub_code,
+        testtype:
+          testtypeListData.find((item: any) => item.code_name == data.testtype)
+            ?.sub_code == undefined
+            ? ""
+            : testtypeListData.find(
+                (item: any) => item.code_name == data.testtype
+              )?.sub_code,
+        requestgb:
+          requestgbListData.find(
+            (item: any) => item.code_name == data.requestgb
+          )?.sub_code == undefined
+            ? ""
+            : requestgbListData.find(
+                (item: any) => item.code_name == data.requestgb
+              )?.sub_code,
+        materialtype:
+          materialtypeListData.find(
+            (item: any) => item.code_name == data.materialtype
+          )?.sub_code == undefined
+            ? ""
+            : materialtypeListData.find(
+                (item: any) => item.code_name == data.materialtype
+              )?.sub_code,
+        materialgb:
+          materialgbListData.find(
+            (item: any) => item.code_name == data.materialgb
+          )?.sub_code == undefined
+            ? ""
+            : materialgbListData.find(
+                (item: any) => item.code_name == data.materialgb
+              )?.sub_code,
         grade1: data.grade1,
-        assaygbe: assaygbeListData.find(
-          (item: any) => item.code_name == data.assaygbe
-        )?.sub_code == undefined ? "" : assaygbeListData.find(
-          (item: any) => item.code_name == data.assaygbe
-        )?.sub_code,
+        assaygbe:
+          assaygbeListData.find((item: any) => item.code_name == data.assaygbe)
+            ?.sub_code == undefined
+            ? ""
+            : assaygbeListData.find(
+                (item: any) => item.code_name == data.assaygbe
+              )?.sub_code,
         grade2: data.grade2,
-        startschgb: startschgbListData.find(
-          (item: any) => item.code_name == data.startschgb
-        )?.sub_code == undefined ? "" : startschgbListData.find(
-          (item: any) => item.code_name == data.startschgb
-        )?.sub_code,
+        startschgb:
+          startschgbListData.find(
+            (item: any) => item.code_name == data.startschgb
+          )?.sub_code == undefined
+            ? ""
+            : startschgbListData.find(
+                (item: any) => item.code_name == data.startschgb
+              )?.sub_code,
         grade3: data.grade3,
-        financegb: financegbListData.find(
-          (item: any) => item.code_name == data.financegb
-        )?.sub_code == undefined ? "" : financegbListData.find(
-          (item: any) => item.code_name == data.financegb
-        )?.sub_code,
+        financegb:
+          financegbListData.find(
+            (item: any) => item.code_name == data.financegb
+          )?.sub_code == undefined
+            ? ""
+            : financegbListData.find(
+                (item: any) => item.code_name == data.financegb
+              )?.sub_code,
         grade4: data.grade4,
         totgrade1: data.totgrade1,
-        amtgb: amtgbListData.find((item: any) => item.code_name == data.amtgb)
-          ?.sub_code == undefined ? "" : amtgbListData.find((item: any) => item.code_name == data.amtgb)
-          ?.sub_code,
+        amtgb:
+          amtgbListData.find((item: any) => item.code_name == data.amtgb)
+            ?.sub_code == undefined
+            ? ""
+            : amtgbListData.find((item: any) => item.code_name == data.amtgb)
+                ?.sub_code,
         grade5: data.grade5,
-        addordgb: addordgbListData.find(
-          (item: any) => item.code_name == data.addordgb
-        )?.sub_code == undefined ? "" : addordgbListData.find(
-          (item: any) => item.code_name == data.addordgb
-        )?.sub_code,
+        addordgb:
+          addordgbListData.find((item: any) => item.code_name == data.addordgb)
+            ?.sub_code == undefined
+            ? ""
+            : addordgbListData.find(
+                (item: any) => item.code_name == data.addordgb
+              )?.sub_code,
         grade6: data.grade6,
-        relationgb: relationgbListData.find(
-          (item: any) => item.code_name == data.relationgb
-        )?.sub_code == undefined ? "" : relationgbListData.find(
-          (item: any) => item.code_name == data.relationgb
-        )?.sub_code,
+        relationgb:
+          relationgbListData.find(
+            (item: any) => item.code_name == data.relationgb
+          )?.sub_code == undefined
+            ? ""
+            : relationgbListData.find(
+                (item: any) => item.code_name == data.relationgb
+              )?.sub_code,
         grade7: data.grade7,
         totgrade2: data.totgrade2,
       };
@@ -714,7 +741,7 @@ const CM_A7000W: React.FC = () => {
   const ComboBoxChange = (e: any) => {
     const { name, value } = e;
 
-    if(name == "custcd") {
+    if (name == "custcd") {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
@@ -746,47 +773,70 @@ const CM_A7000W: React.FC = () => {
         grade7: 0,
         totgrade2: 0,
       }));
-    } else if(name == "materialgb") {
+    } else if (name == "materialgb") {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade1: e.e.value.numref1
+        grade1: e.e.value.numref1,
+        totgrade1:
+          e.e.value.numref1 +
+          information.grade2 +
+          information.grade3 +
+          information.grade4,
       }));
-    } else if(name == "assaygbe") {
+    } else if (name == "assaygbe") {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade2: e.e.value.numref1
+        grade2: e.e.value.numref1,
+        totgrade1:
+          information.grade1 +
+          e.e.value.numref1 +
+          information.grade3 +
+          information.grade4,
       }));
-    } else if(name == "startschgb") {
+    } else if (name == "startschgb") {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade3: e.e.value.numref1
+        grade3: e.e.value.numref1,
+        totgrade1:
+          information.grade1 +
+          information.grade2 +
+          e.e.value.numref1 +
+          information.grade4,
       }));
-    } else if(name == "financegb") {
+    } else if (name == "financegb") {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade4: e.e.value.numref1
+        grade4: e.e.value.numref1,
+        totgrade1:
+          information.grade1 +
+          information.grade2 +
+          information.grade3 +
+          e.e.value.numref1,
       }));
-    } else if(name == "amtgb") {
+    } else if (name == "amtgb") {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade5: e.e.value.numref1
+        grade5: e.e.value.numref1,
+        totgrade2: e.e.value.numref1 + information.grade6 + information.grade7,
       }));
-    } else if(name == "addordgb") {
+    } else if (name == "addordgb") {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade6: e.e.value.numref1
+        grade6: e.e.value.numref1,
+        totgrade2: information.grade5 + e.e.value.numref1 + information.grade7,
       }));
-    } else if(name == "relationgb") {
+    } else if (name == "relationgb") {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade7: e.e.value.numref1
+        grade7: e.e.value.numref1,
+        totgrade2: information.grade5 + information.grade6 + e.e.value.numref1,
       }));
     } else {
       setInformation((prev) => ({

@@ -14,7 +14,6 @@ function AuthRoute({ component, ...rest }: RouteProps) {
     if (
       link == "" ||
       link == "Home" ||
-      link == "AC_A0000W" ||
       link == "BA_A0020W" ||
       link == "BA_A0040W" ||
       link == "BA_A0041W" ||
@@ -144,9 +143,11 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "HU_B4001W" ||
       link == "HU_B4000W" ||
       link == "HU_B4010W" ||
+      link == "AC_A0000W" ||
       link == "AC_A0020W" ||
       link == "AC_A0030W" ||
       link == "AC_A0070W" ||
+      link == "AC_A0090W" ||
       link == "AC_A1000W" ||
       link == "AC_B1100W" ||
       link == "AC_B1240W" ||
