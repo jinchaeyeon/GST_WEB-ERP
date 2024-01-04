@@ -131,6 +131,7 @@ import MA_A3300W from "./routes/MA_A3300W";
 import MA_A3400W from "./routes/MA_A3400W";
 import MA_A3500W from "./routes/MA_A3500W";
 import MA_A7000W from "./routes/MA_A7000W";
+import MA_A8000W from "./routes/MA_A8000W";
 import MA_A9001W from "./routes/MA_A9001W";
 import MA_B1000W_603 from "./routes/MA_B1000W_603";
 import MA_B2000W from "./routes/MA_B2000W";
@@ -567,6 +568,8 @@ const AppInner: React.FC = () => {
       return MA_A3000W;
     } else if (str == "MA_A7000W") {
       return MA_A7000W;
+    } else if (str == "MA_A8000W") {
+      return MA_A8000W;
     } else if (str == "MA_A3300W") {
       return MA_A3300W;
     } else if (str == "MA_A3400W") {
@@ -952,6 +955,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/MA_A2700W" component={MA_A2700W} exact />
                   <AuthRoute path="/MA_A3000W" component={MA_A3000W} exact />
                   <AuthRoute path="/MA_A7000W" component={MA_A7000W} exact />
+                  <AuthRoute path="/MA_A8000W" component={MA_A8000W} exact />
                   <AuthRoute path="/MA_A3300W" component={MA_A3300W} exact />
                   <AuthRoute path="/MA_A3400W" component={MA_A3400W} exact />
                   <AuthRoute path="/MA_A3500W" component={MA_A3500W} exact />

@@ -47,6 +47,7 @@ import {
   convertDateToStrWithTime2,
   getQueryFromBizComponent,
   toDate,
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -1272,7 +1273,7 @@ const BA_A0020_603: React.FC = () => {
       data = null;
     }
     if (data.isSuccess === true) {
-      if (workType == "N") {
+      if (workType == "N" || paraData.workType == "D") {
         setTabSelected(0);
       } else {
         setTabSelected(1);
@@ -1284,6 +1285,38 @@ const BA_A0020_603: React.FC = () => {
         find_row_value: data.returnString,
         isSearch: true,
       }));
+      setParaData({
+        workType: "",
+        orgdiv: "01",
+        location: "01",
+        datnum: "",
+        quokey: "",
+        status: "",
+        ncrdiv: "",
+        combytype: "",
+        baddt: "",
+        requiretext: "",
+        protext: "",
+        errtext: "",
+        devperson: "",
+        chkperson: "",
+        apperson: "",
+        row_status_cause_s: "",
+        id_cause_s: "",
+        seq_cause_s: "",
+        comment_cause_s: "",
+        row_status_plan_s: "",
+        id_plan_s: "",
+        seq_plan_s: "",
+        comment_plan_s: "",
+        row_status_feed_s: "",
+        id_feed_s: "",
+        seq_feed_s: "",
+        comment_feed_s: "",
+        userid: userId,
+        pc: pc,
+        form_id: "QC_A2500_603W",
+      })
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1447,6 +1480,56 @@ const BA_A0020_603: React.FC = () => {
     });
   };
 
+  
+  const questionToDelete = useSysMessage("QuestionToDelete");
+  const onDeleteClick = () => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+
+    if (mainDataResult.total > 0) {
+      const selectRows = mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+  
+      setParaData({
+        workType: "D",
+        orgdiv: "01",
+        location: "01",
+        datnum: selectRows.datnum,
+        quokey: "",
+        status: "",
+        ncrdiv: "",
+        combytype: "",
+        baddt: "",
+        requiretext: "",
+        protext: "",
+        errtext: "",
+        devperson: "",
+        chkperson: "",
+        apperson: "",
+        row_status_cause_s: "",
+        id_cause_s: "",
+        seq_cause_s: "",
+        comment_cause_s: "",
+        row_status_plan_s: "",
+        id_plan_s: "",
+        seq_plan_s: "",
+        comment_plan_s: "",
+        row_status_feed_s: "",
+        id_feed_s: "",
+        seq_feed_s: "",
+        comment_feed_s: "",
+        userid: userId,
+        pc: pc,
+        form_id: "QC_A2500_603W",
+      })
+    } else {
+      alert("등록된 답변이 없습니다.");
+      return;
+    }
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1607,6 +1690,14 @@ const BA_A0020_603: React.FC = () => {
                     icon="file-add"
                   >
                     신규 등록
+                  </Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    icon="delete"
+                  >
+                    삭제
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
