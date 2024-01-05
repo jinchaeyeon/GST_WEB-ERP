@@ -559,7 +559,6 @@ const CM_A8210W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
         ...prev,
-        pgNum: 1,
         find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
@@ -574,8 +573,7 @@ const CM_A8210W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(subfilters);
       setSubFilters((prev) => ({
         ...prev,
-        pgNum: 1,
-        find_row_value: "",
+                find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchSubGrid(deepCopiedFilters);

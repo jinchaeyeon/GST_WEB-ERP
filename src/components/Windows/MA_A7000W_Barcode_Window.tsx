@@ -139,8 +139,7 @@ const CopyWindow = ({
     if (barcodeFilters.isSearch) {
       setBarCodeFilters((prev) => ({
         ...prev,
-        pgNum: 1,
-        find_row_value: "",
+                find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchBarcordGrid();

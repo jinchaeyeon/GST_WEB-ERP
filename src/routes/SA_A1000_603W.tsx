@@ -2113,8 +2113,7 @@ const SA_A1000_603W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailfilters);
       setDetailFilters((prev) => ({
         ...prev,
-        pgNum: 1,
-        find_row_value: "",
+                find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
@@ -2128,8 +2127,7 @@ const SA_A1000_603W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailfilters2);
       setDetailFilters2((prev) => ({
         ...prev,
-        pgNum: 1,
-        find_row_value: "",
+                find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid2(deepCopiedFilters);
@@ -2143,8 +2141,7 @@ const SA_A1000_603W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailfilters3);
       setDetailFilters3((prev) => ({
         ...prev,
-        pgNum: 1,
-        find_row_value: "",
+                find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid3(deepCopiedFilters);

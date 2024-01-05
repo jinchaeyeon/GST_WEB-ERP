@@ -269,8 +269,7 @@ const Main: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(mainNoticefilters);
       setMainNoticeFilters((prev) => ({
         ...prev,
-        pgNum: 1,
-        find_row_value: "",
+                find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);

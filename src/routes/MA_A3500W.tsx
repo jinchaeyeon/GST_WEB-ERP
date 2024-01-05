@@ -982,7 +982,6 @@ const MA_A2400W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
         ...prev,
-        pgNum: 1,
         find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
@@ -997,8 +996,7 @@ const MA_A2400W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(infomation);
       setInfomation((prev) => ({
         ...prev,
-        pgNum: 1,
-        find_row_value: "",
+                find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchSubGrid(deepCopiedFilters);
@@ -1012,8 +1010,7 @@ const MA_A2400W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(infomation2);
       setInfomation2((prev) => ({
         ...prev,
-        pgNum: 1,
-        find_row_value: "",
+                find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchSubGrid2(deepCopiedFilters);
@@ -1027,8 +1024,7 @@ const MA_A2400W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(infomation3);
       setInfomation3((prev) => ({
         ...prev,
-        pgNum: 1,
-        find_row_value: "",
+                find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchSubGrid3(deepCopiedFilters);

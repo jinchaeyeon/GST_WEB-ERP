@@ -714,7 +714,6 @@ const EA_A1000: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
         ...prev,
-        pgNum: 1,
         find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
@@ -729,8 +728,7 @@ const EA_A1000: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
         ...prev,
-        pgNum: 1,
-        find_row_value: "",
+                find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
@@ -744,8 +742,7 @@ const EA_A1000: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({
         ...prev,
-        pgNum: 1,
-        find_row_value: "",
+                find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
@@ -759,8 +756,7 @@ const EA_A1000: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters4);
       setFilters4((prev) => ({
         ...prev,
-        pgNum: 1,
-        find_row_value: "",
+                find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchMainGrid4(deepCopiedFilters);

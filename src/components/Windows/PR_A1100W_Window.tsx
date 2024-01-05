@@ -764,7 +764,6 @@ const KendoWindow = ({
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
         ...prev,
-        pgNum: 1,
         find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
@@ -779,8 +778,7 @@ const KendoWindow = ({
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
         ...prev,
-        pgNum: 1,
-        find_row_value: "",
+                find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);

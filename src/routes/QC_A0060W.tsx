@@ -591,7 +591,6 @@ const QC_A0060W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
         ...prev,
-        pgNum: 1,
         find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
@@ -606,8 +605,7 @@ const QC_A0060W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
         ...prev,
-        pgNum: 1,
-        find_row_value: "",
+                find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
