@@ -1,66 +1,4 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
-import { Button } from "@progress/kendo-react-buttons";
-import { getter } from "@progress/kendo-react-common";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import {
-  Grid,
-  GridCellProps,
-  GridColumn,
-  GridDataStateChangeEvent,
-  GridFooterCellProps,
-  GridItemChangeEvent,
-  GridPageChangeEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
-} from "@progress/kendo-react-grid";
-import { Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
-import {
-  ButtonContainer,
-  ButtonInInput,
-  FilterBox,
-  GridContainer,
-  GridContainerWrap,
-  Title,
-  TitleContainer,
-} from "../CommonStyled";
-import TopButtons from "../components/Buttons/TopButtons";
-import MonthCalendar from "../components/Calendars/MonthCalendar";
-import NumberCell from "../components/Cells/NumberCell";
-import RadioGroupCell from "../components/Cells/RadioGroupCell";
-import {
-  GetPropertyValueByName,
-  UseBizComponent,
-  UseCustomOption,
-  UseMessages,
-  UsePermissions,
-  convertDateToStr,
-  findMessage,
-  getGridItemChangedData,
-  handleKeyPressSearch,
-  numberWithCommas,
-  setDefaultDate,
-} from "../components/CommonFunction";
-import {
-  CLIENT_WIDTH,
-  EDIT_FIELD,
-  GAP,
-  GNV_WIDTH,
-  GRID_MARGIN,
-  PAGE_SIZE,
-  SELECTED_FIELD,
-} from "../components/CommonString";
-import FilterContainer from "../components/Containers/FilterContainer";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
-import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
-import { gridList } from "../store/columns/AC_B1240W_C";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   Chart,
   ChartCategoryAxis,
@@ -70,6 +8,55 @@ import {
   ChartValueAxis,
   ChartValueAxisItem,
 } from "@progress/kendo-react-charts";
+import { getter } from "@progress/kendo-react-common";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
+import {
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState
+} from "@progress/kendo-react-grid";
+import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import React, { useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import {
+  ButtonContainer,
+  FilterBox,
+  GridContainer,
+  GridContainerWrap,
+  Title,
+  TitleContainer
+} from "../CommonStyled";
+import TopButtons from "../components/Buttons/TopButtons";
+import MonthCalendar from "../components/Calendars/MonthCalendar";
+import NumberCell from "../components/Cells/NumberCell";
+import {
+  GetPropertyValueByName,
+  UseCustomOption,
+  UseMessages,
+  UsePermissions,
+  convertDateToStr,
+  findMessage,
+  handleKeyPressSearch,
+  numberWithCommas,
+  setDefaultDate
+} from "../components/CommonFunction";
+import {
+  CLIENT_WIDTH,
+  GNV_WIDTH,
+  GRID_MARGIN,
+  PAGE_SIZE,
+  SELECTED_FIELD
+} from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
+import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import { useApi } from "../hooks/api";
+import { isLoading } from "../store/atoms";
+import { Iparameters, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 
@@ -223,7 +210,7 @@ const AC_B1260W: React.FC = () => {
         workType === "CHART4" ||
         workType === "CHART5"
       ) {
-        let newRows : any = { companies: [], series: [] };
+        let newRows: any = { companies: [], series: [] };
 
         rows.forEach((row: any) => {
           if (!newRows.companies.includes(row.argument)) {

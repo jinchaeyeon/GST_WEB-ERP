@@ -1,4 +1,3 @@
-import React, { useCallback, useEffect, useState } from "react";
 import { GridCellProps } from "@progress/kendo-react-grid";
 import {
   RadioGroup,
@@ -8,7 +7,7 @@ import { RADIO_GROUP_DEFAULT_DATA } from "../CommonString";
 
 interface CustomCellProps extends GridCellProps {
   bizComponentData: any;
-  disabled? : boolean;
+  disabled?: boolean;
 }
 const RadioGroupCell = (props: CustomCellProps) => {
   const {
@@ -26,8 +25,8 @@ const RadioGroupCell = (props: CustomCellProps) => {
   const dataList =
     bizComponentData !== null ? bizComponentData.data.Rows : null;
 
-    let isInEdit = field === dataItem.inEdit;
-  
+  let isInEdit = field === dataItem.inEdit;
+
   let newRadioGroup = RADIO_GROUP_DEFAULT_DATA;
 
   if (dataList) {
@@ -49,17 +48,22 @@ const RadioGroupCell = (props: CustomCellProps) => {
     }
   };
 
-  const defaultRendering = (
-    <td aria-colindex={ariaColumnIndex} data-grid-col-index={columnIndex}>
-      <RadioGroup
-        data={newRadioGroup}
-        layout={"horizontal"}
-        value={value}
-        disabled={disabled}
-        onChange={onChangeHandle}
-      />
-    </td>
-  );
+  const defaultRendering =
+    disabled == false ? (
+      <td aria-colindex={ariaColumnIndex} data-grid-col-index={columnIndex}>
+        <RadioGroup
+          data={newRadioGroup}
+          layout={"horizontal"}
+          value={value}
+          disabled={disabled}
+          onChange={onChangeHandle}
+        />
+      </td>
+    ) : (
+      <td aria-colindex={ariaColumnIndex} data-grid-col-index={columnIndex}>
+        <RadioGroup data={newRadioGroup} layout={"horizontal"} value={value} />
+      </td>
+    );
 
   return render === undefined
     ? null
