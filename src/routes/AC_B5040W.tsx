@@ -66,6 +66,42 @@ const DATA_ITEM_KEY = "num";
 const numberField = ["splyamt", "taxamt", "amt"];
 const dateField = ["recdt"];
 
+type TDetailData = {
+  rowstatus_s: string[];
+  recnum_s: string[];
+  recdt_s: string[];
+  baldt_s: string[];
+  trsdt_s: string[];
+  bizregnum_s: string[];
+  bizregnum2_s: string[];
+  bizname_s: string[];
+  bizceoname_s: string[];
+  custregnum_s: string[];
+  custregnum2_s: string[];
+  custname_s: string[];
+  custceoname_s: string[];
+  amt_s: string[];
+  splyamt_s: string[];
+  taxamt_s: string[];
+  taxdiv_s: string[];
+  taxkind_s: string[];
+  balkind_s: string[];
+  remark_s: string[];
+  remark2_s: string[];
+  taxgubun_s: string[];
+  bizemail_s: string[];
+  custemail_s: string[];
+  custemail2_s: string[];
+  itemdt_s: string[];
+  itemnm_s: string[];
+  spec_s: string[];
+  itemqty_s: string[];
+  itemunp_s: string[];
+  itemsplyamt_s: string[];
+  itemtaxamt_s: string[];
+  remark3_s: string[];
+};
+
 const AC_B5040W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
@@ -80,7 +116,7 @@ const AC_B5040W: React.FC = () => {
   UseCustomOption("AC_B5040W", setCustomOptionData);
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
-    "R_Override, R_gubunD, L_BA029, L_AC003, L_AC403, L_AC404",
+    "L_AC405, R_Override, R_gubunD, L_AC402, L_AC003, L_AC403, L_AC404",
     setBizComponentData
   );
 
@@ -96,10 +132,16 @@ const AC_B5040W: React.FC = () => {
   const [balkindListData, setBalkindListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+  const [taxgubunListData, setTaxgubunListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
+      const taxgubunQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_AC405")
+      );
       const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
+        bizComponentData.find((item: any) => item.bizComponentId === "L_AC402")
       );
       const inoutdivQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_AC003")
@@ -114,6 +156,7 @@ const AC_B5040W: React.FC = () => {
       fetchQuery(inoutdivQueryStr, setInoutdivListData);
       fetchQuery(taxkindQueryStr, setTaxkindListData);
       fetchQuery(balkindQueryStr, setBalkindListData);
+      fetchQuery(taxgubunQueryStr, setTaxgubunListData);
     }
   }, [bizComponentData]);
 
@@ -224,8 +267,8 @@ const AC_B5040W: React.FC = () => {
 
   //조회조건 초기값
   const [information, setInformation] = useState({
-    override: "A",
-    gubun: "A",
+    listyn: "A",
+    inoutdiv: "1",
   });
 
   const search = () => {
@@ -632,65 +675,250 @@ const AC_B5040W: React.FC = () => {
   };
 
   const saveExcel = (jsonArr: any[]) => {
-    // if (jsonArr.length == 0) {
-    //   alert("데이터가 없습니다.");
-    //   return;
-    // }
-    // console.log(jsonArr); //
-    // const columns: string[] = ["코드", "코드명"];
-    // setLoading(true);
-    // jsonArr.map((items: any) => {
-    //   Object.keys(items).map((item: any) => {
-    //     if (!columns.includes(item)) {
-    //       alert("양식이 맞지 않습니다.");
-    //       return;
-    //     }
-    //   });
-    // });
-    // detailDataResult.data.map((item) => {
-    //   if (item.num > temp) {
-    //     temp = item.num;
-    //   }
-    // });
-    // jsonArr.forEach(async (item: any) => {
-    //   let numref1 = 0;
-    //   let numref2 = 0;
-    //   let numref3 = 0;
-    //   if (item.hasOwnProperty("정원")) {
-    //     numref1 = item.정원;
-    //   } else if (item.hasOwnProperty("등원가능횟수")) {
-    //     numref1 = item.등원가능횟수;
-    //     numref2 = item.변경가능횟수;
-    //     numref3 = item.금액;
-    //   }
-    //   const { 코드 = "", 코드명 = "" } = item;
-    //   const newDataItem = {
-    //     [DATA_ITEM_KEY]: ++temp,
-    //     sort_seq: 0,
-    //     use_yn: "Y",
-    //     numref1: numref1,
-    //     numref2: numref2,
-    //     numref3: numref3,
-    //     numref4: 0,
-    //     numref5: 0,
-    //     rowstatus: "N",
-    //     sub_code: 코드,
-    //     code_name: 코드명,
-    //   };
-    //   setDetailSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
-    //   setDetailDataResult((prev) => {
-    //     return {
-    //       data: [newDataItem, ...prev.data],
-    //       total: prev.total + 1,
-    //     };
-    //   });
-    //   setPage((prev) => ({
-    //     ...prev,
-    //     skip: 0,
-    //     take: prev.take + 1,
-    //   }));
-    // });
-    // setLoading(false);
+    if (jsonArr.length == 0) {
+      alert("데이터가 없습니다.");
+      return;
+    }
+    console.log(jsonArr); //
+    const columns: string[] = [
+      "공급가액",
+      "공급받는자사업자번호",
+      "공급받는자이메일주소1",
+      "공급받는자이메일주소2",
+      "공급자사업자등록번호",
+      "공급자이메일주소",
+      "대표자명",
+      "대표자명_1",
+      "발행유형",
+      "발행일자",
+      "번호",
+      "비고",
+      "상호",
+      "상호_1",
+      "세액",
+      "승인번호",
+      "영수/청구 구분",
+      "작성일자",
+      "전송일자",
+      "전자세금계산서분류",
+      "전자세금계산서종류",
+      "종사업장번호",
+      "종사업장번호_1",
+      "품목공급가액",
+      "품목규격",
+      "품목단가",
+      "품목명",
+      "품목비고",
+      "품목세액",
+      "품목수량",
+      "품목일자",
+      "합계금액",
+    ];
+    setLoading(true);
+    jsonArr.map((items: any) => {
+      Object.keys(items).map((item: any) => {
+        if (!columns.includes(item)) {
+          alert("양식이 맞지 않습니다.");
+          return;
+        }
+      });
+    });
+
+    let detailArr: TDetailData = {
+      rowstatus_s: [],
+      recnum_s: [],
+      recdt_s: [],
+      baldt_s: [],
+      trsdt_s: [],
+      bizregnum_s: [],
+      bizregnum2_s: [],
+      bizname_s: [],
+      bizceoname_s: [],
+      custregnum_s: [],
+      custregnum2_s: [],
+      custname_s: [],
+      custceoname_s: [],
+      amt_s: [],
+      splyamt_s: [],
+      taxamt_s: [],
+      taxdiv_s: [],
+      taxkind_s: [],
+      balkind_s: [],
+      remark_s: [],
+      remark2_s: [],
+      taxgubun_s: [],
+      bizemail_s: [],
+      custemail_s: [],
+      custemail2_s: [],
+      itemdt_s: [],
+      itemnm_s: [],
+      spec_s: [],
+      itemqty_s: [],
+      itemunp_s: [],
+      itemsplyamt_s: [],
+      itemtaxamt_s: [],
+      remark3_s: [],
+    };
+
+    jsonArr.forEach(async (item: any) => {
+      const {
+        공급가액 = "",
+        공급받는자사업자번호 = "",
+        공급받는자이메일주소1 = "",
+        공급받는자이메일주소2 = "",
+        공급자사업자등록번호 = "",
+        공급자이메일주소 = "",
+        대표자명 = "",
+        대표자명_1 = "",
+        발행유형 = "",
+        발행일자 = "",
+        비고 = "",
+        상호 = "",
+        상호_1 = "",
+        세액 = "",
+        승인번호 = "",
+        작성일자 = "",
+        전송일자 = "",
+        전자세금계산서분류 = "",
+        전자세금계산서종류 = "",
+        종사업장번호 = "",
+        종사업장번호_1 = "",
+        품목공급가액 = "",
+        품목규격 = "",
+        품목단가 = "",
+        품목명 = "",
+        품목비고 = "",
+        품목세액 = "",
+        품목수량 = "",
+        품목일자 = "",
+        합계금액 = "",
+      } = item;
+      const 세금계산서 =
+        전자세금계산서분류 == "전자세금계산서"
+          ? "세금계산서"
+          : 전자세금계산서분류 == "수정전자세금계산서"
+          ? "수정세금계산서"
+          : 전자세금계산서분류;
+      detailArr.rowstatus_s.push("N");
+      detailArr.recnum_s.push(승인번호 == undefined ? "" : 승인번호);
+      detailArr.recdt_s.push(작성일자 == undefined ? "" : 작성일자);
+      detailArr.baldt_s.push(발행일자 == undefined ? "" : 발행일자);
+      detailArr.trsdt_s.push(전송일자 == undefined ? "" : 전송일자);
+      detailArr.bizregnum_s.push(
+        공급자사업자등록번호 == undefined ? "" : 공급자사업자등록번호
+      );
+      detailArr.bizregnum2_s.push(
+        종사업장번호 == undefined ? "" : 종사업장번호
+      );
+      detailArr.bizname_s.push(상호 == undefined ? "" : 상호);
+      detailArr.bizceoname_s.push(대표자명 == undefined ? "" : 대표자명);
+      detailArr.custregnum_s.push(
+        공급받는자사업자번호 == undefined ? "" : 공급받는자사업자번호
+      );
+      detailArr.custregnum2_s.push(
+        종사업장번호_1 == undefined ? "" : 종사업장번호_1
+      );
+      detailArr.custname_s.push(상호_1 == undefined ? "" : 상호_1);
+      detailArr.custceoname_s.push(대표자명_1 == undefined ? "" : 대표자명_1);
+      detailArr.amt_s.push(합계금액 == undefined ? "" : 합계금액);
+      detailArr.splyamt_s.push(공급가액 == undefined ? "" : 공급가액);
+      detailArr.taxamt_s.push(세액 == undefined ? "" : 세액);
+      detailArr.taxdiv_s.push(
+        taxdivListData.find((item: any) => item.code_name == 세금계산서)
+          ?.sub_code == undefined
+          ? 세금계산서
+          : taxdivListData.find((item: any) => item.code_name == 세금계산서)
+              ?.sub_code
+      );
+      detailArr.taxkind_s.push(
+        taxkindListData.find(
+          (item: any) => item.code_name == 전자세금계산서종류
+        )?.sub_code == undefined
+          ? 전자세금계산서종류
+          : taxkindListData.find(
+              (item: any) => item.code_name == 전자세금계산서종류
+            )?.sub_code
+      );
+      detailArr.balkind_s.push(
+        balkindListData.find((item: any) => item.code_name == 발행유형)
+          ?.sub_code == undefined
+          ? 발행유형
+          : balkindListData.find((item: any) => item.code_name == 발행유형)
+              ?.sub_code
+      );
+      detailArr.remark_s.push(비고 == undefined ? "" : 비고);
+      detailArr.remark2_s.push("");
+      detailArr.taxgubun_s.push(
+        taxgubunListData.find(
+          (items: any) => items.code_name == item["영수/청구 구분"]
+        )?.sub_code == undefined
+          ? item["영수/청구 구분"]
+          : taxgubunListData.find(
+              (items: any) => items.code_name == item["영수/청구 구분"]
+            )?.sub_code
+      );
+      detailArr.bizemail_s.push(
+        공급자이메일주소 == undefined ? "" : 공급자이메일주소
+      );
+      detailArr.custemail_s.push(
+        공급받는자이메일주소1 == undefined ? "" : 공급받는자이메일주소1
+      );
+      detailArr.custemail2_s.push(
+        공급받는자이메일주소2 == undefined ? "" : 공급받는자이메일주소2
+      );
+      detailArr.itemdt_s.push(품목일자 == undefined ? "" : 품목일자);
+      detailArr.itemnm_s.push(품목명 == undefined ? "" : 품목명);
+      detailArr.spec_s.push(품목규격 == undefined ? "" : 품목규격);
+      detailArr.itemqty_s.push(품목수량 == undefined ? "" : 품목수량);
+      detailArr.itemunp_s.push(품목단가 == undefined ? "" : 품목단가);
+      detailArr.itemsplyamt_s.push(
+        품목공급가액 == undefined ? "" : 품목공급가액
+      );
+      detailArr.itemtaxamt_s.push(품목세액 == undefined ? "" : 품목세액);
+      detailArr.remark3_s.push(품목비고 == undefined ? "" : 품목비고);
+    });
+
+    setParaData({
+      workType: "N",
+      orgdiv: "01",
+      inoutdiv: information.inoutdiv,
+      listyn: information.listyn,
+      rowstatus_s: detailArr.rowstatus_s.join("|"),
+      recnum_s: detailArr.recnum_s.join("|"),
+      recdt_s: detailArr.recdt_s.join("|"),
+      baldt_s: detailArr.baldt_s.join("|"),
+      trsdt_s: detailArr.trsdt_s.join("|"),
+      bizregnum_s: detailArr.bizregnum_s.join("|"),
+      bizregnum2_s: detailArr.bizregnum2_s.join("|"),
+      bizname_s: detailArr.bizname_s.join("|"),
+      bizceoname_s: detailArr.bizceoname_s.join("|"),
+      custregnum_s: detailArr.custregnum_s.join("|"),
+      custregnum2_s: detailArr.custregnum2_s.join("|"),
+      custname_s: detailArr.custname_s.join("|"),
+      custceoname_s: detailArr.custceoname_s.join("|"),
+      amt_s: detailArr.amt_s.join("|"),
+      splyamt_s: detailArr.splyamt_s.join("|"),
+      taxamt_s: detailArr.taxamt_s.join("|"),
+      taxdiv_s: detailArr.taxdiv_s.join("|"),
+      taxkind_s: detailArr.taxkind_s.join("|"),
+      balkind_s: detailArr.balkind_s.join("|"),
+      remark_s: detailArr.remark_s.join("|"),
+      remark2_s: detailArr.remark2_s.join("|"),
+      taxgubun_s: detailArr.taxgubun_s.join("|"),
+      bizemail_s: detailArr.bizemail_s.join("|"),
+      custemail_s: detailArr.custemail_s.join("|"),
+      custemail2_s: detailArr.custemail2_s.join("|"),
+      itemdt_s: detailArr.itemdt_s.join("|"),
+      itemnm_s: detailArr.itemnm_s.join("|"),
+      spec_s: detailArr.spec_s.join("|"),
+      itemqty_s: detailArr.itemqty_s.join("|"),
+      itemunp_s: detailArr.itemunp_s.join("|"),
+      itemsplyamt_s: detailArr.itemsplyamt_s.join("|"),
+      itemtaxamt_s: detailArr.itemtaxamt_s.join("|"),
+      remark3_s: detailArr.remark3_s.join("|"),
+    });
+
+    setLoading(false);
   };
 
   const questionToDelete = useSysMessage("QuestionToDelete");
@@ -706,7 +934,7 @@ const AC_B5040W: React.FC = () => {
       const selectRow = mainDataResult.data.filter(
         (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
       )[0];
-        
+
       setParaData((prev) => ({
         ...prev,
         workType: "D",
@@ -942,8 +1170,8 @@ const AC_B5040W: React.FC = () => {
                   <td>
                     {bizComponentData !== null && (
                       <BizComponentRadioGroup
-                        name="gubun"
-                        value={information.gubun}
+                        name="inoutdiv"
+                        value={information.inoutdiv}
                         bizComponentId="R_gubunD"
                         bizComponentData={bizComponentData}
                         changeData={RadioChange}
@@ -954,8 +1182,8 @@ const AC_B5040W: React.FC = () => {
                   <td>
                     {bizComponentData !== null && (
                       <BizComponentRadioGroup
-                        name="override"
-                        value={information.override}
+                        name="listyn"
+                        value={information.listyn}
                         bizComponentId="R_Override"
                         bizComponentData={bizComponentData}
                         changeData={RadioChange}
@@ -1004,16 +1232,16 @@ const AC_B5040W: React.FC = () => {
                   mainDataResult.data.map((row) => ({
                     ...row,
                     taxdiv: taxdivListData.find(
-                      (item: any) => item.sub_code === row.taxdiv
+                      (item: any) => item.sub_code == row.taxdiv
                     )?.code_name,
                     inoutdiv: inoutdivListData.find(
-                      (item: any) => item.sub_code === row.inoutdiv
+                      (item: any) => item.sub_code == row.inoutdiv
                     )?.code_name,
                     taxkind: taxkindListData.find(
-                      (item: any) => item.sub_code === row.taxkind
+                      (item: any) => item.sub_code == row.taxkind
                     )?.code_name,
                     balkind: balkindListData.find(
-                      (item: any) => item.sub_code === row.balkind
+                      (item: any) => item.sub_code == row.balkind
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),

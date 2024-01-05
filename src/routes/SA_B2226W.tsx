@@ -13,6 +13,7 @@ import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import Card from "../components/CardBox";
 import {
   GetPropertyValueByName,
+  ThreeNumberceil,
   UseCustomOption,
   convertDateToStr,
   numberWithCommas3,
@@ -156,6 +157,17 @@ const SA_B2226W: React.FC = () => {
     },
   };
 
+  const parameters4 = {
+    procedureName: "P_SA_B2226W_Q",
+    pageNumber: 1,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "Q4",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_yyyy": convertDateToStr(filters.frdt).substring(0, 4),
+    },
+  };
+
   const fetchMainGrid = async () => {
     setLoading(true);
     let data: any;
@@ -225,6 +237,29 @@ const SA_B2226W: React.FC = () => {
       setSelected(rows3[0]);
     }
 
+    let data4: any;
+    try {
+      data4 = await processApi<any>("procedure", parameters4);
+    } catch (error) {
+      data4 = null;
+    }
+
+    if (data4.isSuccess === true) {
+      const rows3 = data4.tables[0].Rows;
+
+      const target = ThreeNumberceil(rows3[0].target);
+      const performance = ThreeNumberceil(rows3[0].performance);
+      const percent = parseFloat(
+        (Math.ceil((performance / target) * 100 * 1000) / 1000).toFixed(0)
+      );
+
+      setDoughnut({
+        target: target,
+        performance: performance,
+        percent: performance == 0 || target == 0 ? 0 : percent,
+      });
+    }
+
     setLoading(false);
   };
 
@@ -256,9 +291,9 @@ const SA_B2226W: React.FC = () => {
   const [stackChartLabel, setStackChartLabel] = useState<any[]>([]);
   const [stackChartAllLabel, setStackChartAllLabel] = useState<any[]>([]);
   const [doughnut, setDoughnut] = useState({
-    target: 350,
-    performance: 500,
-    percent: 60,
+    target: 0,
+    performance: 0,
+    percent: 0,
   });
 
   const startContent = (
@@ -400,6 +435,7 @@ const SA_B2226W: React.FC = () => {
                             fontsize={"2.3rem"}
                             titlefontsize={"1rem"}
                             form={"SA_B2226W"}
+                            height={"140px"}
                           />
                         </Grid>
                       ))}
@@ -436,23 +472,23 @@ const SA_B2226W: React.FC = () => {
                       <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
                         <Card
                           title={"목표 금액"}
-                          titlefontsize={"1.1rem"}
+                          titlefontsize={"1rem"}
                           data={doughnut.target + "억"}
                           backgroundColor={theme.palette.primary.main}
-                          fontsize={"1.6rem"}
+                          fontsize={"1.5rem"}
                           form={"SA_B2226W"}
-                          height={"120px"}
+                          height={"100px"}
                         />
                       </Grid>
                       <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
                         <Card
                           title={"실적 금액"}
-                          titlefontsize={"1.1rem"}
+                          titlefontsize={"1rem"}
                           data={doughnut.performance + "억"}
                           backgroundColor={theme.palette.primary.main}
-                          fontsize={"1.6rem"}
+                          fontsize={"1.5rem"}
                           form={"SA_B2226W"}
-                          height={"120px"}
+                          height={"100px"}
                         />
                       </Grid>
                       <Grid
@@ -465,9 +501,11 @@ const SA_B2226W: React.FC = () => {
                         style={{ display: "flex", justifyContent: "center" }}
                       >
                         <Knob
-                          value={doughnut.percent}
-                          size={deviceWidth < 1200 ? 250 : 150}
-                          valueTemplate={"{value}%"}
+                          value={
+                            doughnut.percent > 100 ? 100 : doughnut.percent
+                          }
+                          size={deviceWidth < 1200 ? 250 : 160}
+                          valueTemplate={`${doughnut.percent}%`}
                           valueColor={theme.palette.primary.dark}
                           rangeColor={theme.palette.secondary.main}
                           readOnly
@@ -507,7 +545,7 @@ const SA_B2226W: React.FC = () => {
               "년도 품목별 계약 현황"
             }
           />
-          <Grid container spacing={2} style={{marginBottom: "50px"}}>
+          <Grid container spacing={2} style={{ marginBottom: "50px" }}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <DoubleChart
                 data={ItemList}

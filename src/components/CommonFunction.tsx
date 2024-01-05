@@ -28,7 +28,7 @@ export const numberWithCommas4 = (num: string) => {
   if (typeof num === "string") {
     return ThreeNumberceil(parseInt(num)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   } else {
-    return num;
+    return parseFloat(num);
   }
 };
 
