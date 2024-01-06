@@ -7,10 +7,9 @@ import {
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
-  GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState,
+  getSelectedState
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -37,7 +36,6 @@ import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
-  ThreeNumberceil,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -45,31 +43,28 @@ import {
   convertDateToStr,
   dateformat2,
   findMessage,
-  getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
-  EDIT_FIELD,
   GAP,
   PAGE_SIZE,
-  SELECTED_FIELD,
+  SELECTED_FIELD
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import EmailWindow from "../components/Windows/CommonWindows/EmailWindow";
+import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import SA_A1001_603W_Window from "../components/Windows/SA_A1001_603W_Window";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1001_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import SA_A1001_603W_Window from "../components/Windows/SA_A1001_603W_Window";
-import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -104,8 +99,6 @@ const SA_A1001_603W: React.FC = () => {
   const idGetter2 = getter(DATA_ITEM_KEY2);
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
-  const [editIndex, setEditIndex] = useState<number | undefined>();
-  const [editedField, setEditedField] = useState("");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -355,12 +348,6 @@ const SA_A1001_603W: React.FC = () => {
   const [mainDataState2, setMainDataState2] = useState<State>({
     sort: [],
   });
-  const [tempState, setTempState] = useState<State>({
-    sort: [],
-  });
-  const [tempResult, setTempResult] = useState<DataResult>(
-    process([], tempState)
-  );
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -706,134 +693,6 @@ const SA_A1001_603W: React.FC = () => {
     setTabSelected(1);
   };
 
-  const onItemChange = (event: GridItemChangeEvent) => {
-    setMainDataState2((prev) => ({ ...prev, sort: [] }));
-    getGridItemChangedData(
-      event,
-      mainDataResult2,
-      setMainDataResult2,
-      DATA_ITEM_KEY2
-    );
-  };
-
-  const customCellRender = (td: any, props: any) => (
-    <CellRender
-      originalProps={props}
-      td={td}
-      enterEdit={enterEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const customRowRender = (tr: any, props: any) => (
-    <RowRender
-      originalProps={props}
-      tr={tr}
-      exitEdit={exitEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const enterEdit = (dataItem: any, field: string) => {
-    if (field != "itemcd" && field != "testitem" && field != "rowstatus") {
-      const newData = mainDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
-          ? {
-              ...item,
-              [EDIT_FIELD]: field,
-            }
-          : { ...item, [EDIT_FIELD]: undefined }
-      );
-      setEditIndex(dataItem[DATA_ITEM_KEY2]);
-      if (field) {
-        setEditedField(field);
-      }
-
-      setTempResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult2((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    } else {
-      setTempResult((prev) => {
-        return {
-          data: mainDataResult2.data,
-          total: prev.total,
-        };
-      });
-    }
-  };
-
-  const exitEdit = () => {
-    if (tempResult.data != mainDataResult2.data) {
-      const newData = mainDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus == "N" ? "N" : "U",
-              finalquowonamt:
-                editedField != "finalquowonamt"
-                  ? ThreeNumberceil(
-                      item.quowonamt +
-                        ThreeNumberceil(
-                          item.quowonamt * (item.marginamt / 100)
-                        ) -
-                        ThreeNumberceil(
-                          (item.quowonamt +
-                            ThreeNumberceil(
-                              item.quowonamt * (item.marginamt / 100)
-                            )) *
-                            (item.discountamt / 100)
-                        )
-                    )
-                  : item.finalquowonamt,
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
-
-      setTempResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult2((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    } else {
-      const newData = mainDataResult2.data.map((item) => ({
-        ...item,
-        [EDIT_FIELD]: undefined,
-      }));
-      setTempResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult2((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    }
-  };
-
   const [emailWindowVisible, setEmailWindowVisible] = useState<boolean>(false);
   const [printWindowVisible, setPrintWindowVisible] = useState<boolean>(false);
 
@@ -969,7 +828,7 @@ const SA_A1001_603W: React.FC = () => {
                   </td>
                   <th>담당자</th>
                   <td>
-                  <Input
+                    <Input
                       name="personnm"
                       type="text"
                       value={filters.personnm}
@@ -1249,10 +1108,6 @@ const SA_A1001_603W: React.FC = () => {
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
-                onItemChange={onItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
               >
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdList2"].map(

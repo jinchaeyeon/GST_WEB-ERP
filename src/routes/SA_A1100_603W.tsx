@@ -44,6 +44,7 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   numberWithCommas,
+  numberWithCommas3,
 } from "../components/CommonFunction";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
@@ -227,9 +228,7 @@ const SA_A1100_603W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData.length > 0) {
       const outtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_BA037"
-        )
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA037")
       );
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
@@ -299,6 +298,7 @@ const SA_A1100_603W: React.FC = () => {
     workType: "",
     orgdiv: "01",
     location: "01",
+    quokey: "",
     recdt: "",
     seq1: 0,
     find_row_value: "",
@@ -311,6 +311,7 @@ const SA_A1100_603W: React.FC = () => {
     workType: "",
     orgdiv: "01",
     location: "01",
+    quokey: "",
     recdt: "",
     seq1: 0,
     find_row_value: "",
@@ -322,6 +323,7 @@ const SA_A1100_603W: React.FC = () => {
     workType: "",
     orgdiv: "01",
     location: "01",
+    quokey: "",
     recdt: "",
     seq1: 0,
     find_row_value: "",
@@ -333,6 +335,7 @@ const SA_A1100_603W: React.FC = () => {
     workType: "",
     orgdiv: "01",
     location: "01",
+    quokey: "",
     recdt: "",
     seq1: 0,
     find_row_value: "",
@@ -424,6 +427,7 @@ const SA_A1100_603W: React.FC = () => {
     setSubFilters((prev) => ({
       ...prev,
       workType: "DETAIL",
+      quokey: selectedRowData.quokey,
       recdt: selectedRowData.recdt,
       seq1: selectedRowData.seq1,
       pgNum: 1,
@@ -432,6 +436,7 @@ const SA_A1100_603W: React.FC = () => {
     setSubFilters2((prev) => ({
       ...prev,
       workType: "COMMENT",
+      quokey: selectedRowData.quokey,
       recdt: selectedRowData.recdt,
       seq1: selectedRowData.seq1,
       pgNum: 1,
@@ -440,6 +445,7 @@ const SA_A1100_603W: React.FC = () => {
     setSubFilters3((prev) => ({
       ...prev,
       workType: "SALE",
+      quokey: selectedRowData.quokey,
       recdt: selectedRowData.recdt,
       seq1: selectedRowData.seq1,
       pgNum: 1,
@@ -448,6 +454,7 @@ const SA_A1100_603W: React.FC = () => {
     setSubFilters4((prev) => ({
       ...prev,
       workType: "MEETING",
+      quokey: selectedRowData.quokey,
       recdt: selectedRowData.recdt,
       seq1: selectedRowData.seq1,
       pgNum: 1,
@@ -774,7 +781,7 @@ const SA_A1100_603W: React.FC = () => {
         "@p_work_type": "DETAIL",
         "@p_orgdiv": subFilters.orgdiv,
         "@p_location": subFilters.location,
-        "@p_quokey": "",
+        "@p_quokey": subFilters.quokey,
         "@p_custcd": "",
         "@p_custnm": "",
         "@p_testnum": "",
@@ -880,7 +887,7 @@ const SA_A1100_603W: React.FC = () => {
         "@p_work_type": "COMMENT",
         "@p_orgdiv": subFilters2.orgdiv,
         "@p_location": subFilters2.location,
-        "@p_quokey": "",
+        "@p_quokey": subFilters2.quokey,
         "@p_custcd": "",
         "@p_custnm": "",
         "@p_testnum": "",
@@ -967,7 +974,7 @@ const SA_A1100_603W: React.FC = () => {
         "@p_work_type": "SALE",
         "@p_orgdiv": subFilters3.orgdiv,
         "@p_location": subFilters3.location,
-        "@p_quokey": "",
+        "@p_quokey": subFilters3.quokey,
         "@p_custcd": "",
         "@p_custnm": "",
         "@p_testnum": "",
@@ -1068,7 +1075,7 @@ const SA_A1100_603W: React.FC = () => {
         "@p_work_type": "MEETING",
         "@p_orgdiv": subFilters4.orgdiv,
         "@p_location": subFilters4.location,
-        "@p_quokey": "",
+        "@p_quokey": subFilters4.quokey,
         "@p_custcd": "",
         "@p_custnm": "",
         "@p_testnum": "",
@@ -1942,6 +1949,7 @@ const SA_A1100_603W: React.FC = () => {
   };
 
   const [ParaData, setParaData] = useState({
+    workType: "",
     rowstatus_s: "",
     seq2_s: "",
     wonamt_s: "",
@@ -1963,7 +1971,7 @@ const SA_A1100_603W: React.FC = () => {
     pageNumber: 0,
     pageSize: 0,
     parameters: {
-      "@p_work_type": "N",
+      "@p_work_type": ParaData.workType,
       "@p_orgdiv": "01",
       "@p_recdt": subFilters.recdt,
       "@p_seq1": subFilters.seq1,
@@ -1998,114 +2006,120 @@ const SA_A1100_603W: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0 && deletedMainRows2.length === 0) return false;
+    if (dataItem.length === 0 && deletedMainRows2.length === 0) {
+      setParaData((prev) => ({
+        ...prev,
+        workType: "N",
+      }));
+    } else {
+      let dataArr: TdataArr = {
+        rowstatus_s: [],
+        seq2_s: [],
+        wonamt_s: [],
+        taxamt_s: [],
+        amt_s: [],
+        margin_s: [],
+        margin_div_s: [],
+        marginamt_s: [],
+        discount_s: [],
+        discount_div_s: [],
+        discountamt_s: [],
+        outtype_s: [],
+        ordnum_s: [],
+        ordseq_s: [],
+      };
 
-    let dataArr: TdataArr = {
-      rowstatus_s: [],
-      seq2_s: [],
-      wonamt_s: [],
-      taxamt_s: [],
-      amt_s: [],
-      margin_s: [],
-      margin_div_s: [],
-      marginamt_s: [],
-      discount_s: [],
-      discount_div_s: [],
-      discountamt_s: [],
-      outtype_s: [],
-      ordnum_s: [],
-      ordseq_s: [],
-    };
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          amt = "",
+          margin = "",
+          margin_div = "",
+          marginamt = "",
+          discount = "",
+          discount_div = "",
+          discountamt = "",
+          seq2 = "",
+          wonamt = "",
+          taxamt = "",
+          outtype = "",
+          ordnum = "",
+          ordseq = "",
+        } = item;
 
-    dataItem.forEach((item: any, idx: number) => {
-      const {
-        rowstatus = "",
-        amt = "",
-        margin = "",
-        margin_div = "",
-        marginamt = "",
-        discount = "",
-        discount_div = "",
-        discountamt = "",
-        seq2 = "",
-        wonamt = "",
-        taxamt = "",
-        outtype = "",
-        ordnum = "",
-        ordseq = ""
-      } = item;
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.seq2_s.push(seq2);
+        dataArr.wonamt_s.push(wonamt);
+        dataArr.taxamt_s.push(taxamt);
+        dataArr.amt_s.push(amt);
+        dataArr.margin_s.push(margin);
+        dataArr.margin_div_s.push(margin_div);
+        dataArr.marginamt_s.push(marginamt);
+        dataArr.discount_s.push(discount);
+        dataArr.discount_div_s.push(discount_div);
+        dataArr.discountamt_s.push(discountamt);
+        dataArr.outtype_s.push(outtype);
+        dataArr.ordnum_s.push(ordnum);
+        dataArr.ordseq_s.push(ordseq);
+      });
 
-      dataArr.rowstatus_s.push(rowstatus);
-      dataArr.seq2_s.push(seq2);
-      dataArr.wonamt_s.push(wonamt);
-      dataArr.taxamt_s.push(taxamt);
-      dataArr.amt_s.push(amt);
-      dataArr.margin_s.push(margin);
-      dataArr.margin_div_s.push(margin_div);
-      dataArr.marginamt_s.push(marginamt);
-      dataArr.discount_s.push(discount);
-      dataArr.discount_div_s.push(discount_div);
-      dataArr.discountamt_s.push(discountamt);
-      dataArr.outtype_s.push(outtype);
-      dataArr.ordnum_s.push(ordnum);
-      dataArr.ordseq_s.push(ordseq);
-    });
+      deletedMainRows2.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          amt = "",
+          margin = "",
+          margin_div = "",
+          marginamt = "",
+          discount = "",
+          discount_div = "",
+          discountamt = "",
+          seq2 = "",
+          wonamt = "",
+          taxamt = "",
+          outtype = "",
+          ordnum = "",
+          ordseq = "",
+        } = item;
 
-    deletedMainRows2.forEach((item: any, idx: number) => {
-      const {
-        rowstatus = "",
-        amt = "",
-        margin = "",
-        margin_div = "",
-        marginamt = "",
-        discount = "",
-        discount_div = "",
-        discountamt = "",
-        seq2 = "",
-        wonamt = "",
-        taxamt = "",
-        outtype = "",
-        ordnum = "",
-        ordseq = ""
-      } = item;
+        dataArr.rowstatus_s.push("D");
+        dataArr.seq2_s.push(seq2);
+        dataArr.wonamt_s.push(wonamt);
+        dataArr.taxamt_s.push(taxamt);
+        dataArr.amt_s.push(amt);
+        dataArr.margin_s.push(margin);
+        dataArr.margin_div_s.push(margin_div);
+        dataArr.marginamt_s.push(marginamt);
+        dataArr.discount_s.push(discount);
+        dataArr.discount_div_s.push(discount_div);
+        dataArr.discountamt_s.push(discountamt);
+        dataArr.outtype_s.push(outtype);
+        dataArr.ordnum_s.push(ordnum);
+        dataArr.ordseq_s.push(ordseq);
+      });
 
-      dataArr.rowstatus_s.push("D");
-      dataArr.seq2_s.push(seq2);
-      dataArr.wonamt_s.push(wonamt);
-      dataArr.taxamt_s.push(taxamt);
-      dataArr.amt_s.push(amt);
-      dataArr.margin_s.push(margin);
-      dataArr.margin_div_s.push(margin_div);
-      dataArr.marginamt_s.push(marginamt);
-      dataArr.discount_s.push(discount);
-      dataArr.discount_div_s.push(discount_div);
-      dataArr.discountamt_s.push(discountamt);
-      dataArr.outtype_s.push(outtype);
-      dataArr.ordnum_s.push(ordnum);
-      dataArr.ordseq_s.push(ordseq);
-    });
-
-    setParaData((prev) => ({
-      ...prev,
-      rowstatus_s: dataArr.rowstatus_s.join("|"),
-      seq2_s: dataArr.seq2_s.join("|"),
-      wonamt_s: dataArr.wonamt_s.join("|"),
-      taxamt_s: dataArr.taxamt_s.join("|"),
-      amt_s: dataArr.amt_s.join("|"),
-      margin_s: dataArr.margin_s.join("|"),
-      margin_div_s: dataArr.margin_div_s.join("|"),
-      marginamt_s: dataArr.marginamt_s.join("|"),
-      discount_s: dataArr.discount_s.join("|"),
-      discount_div_s: dataArr.discount_div_s.join("|"),
-      discountamt_s: dataArr.discountamt_s.join("|"),
-      outtype_s: dataArr.outtype_s.join("|"),
-      ordnum_s: dataArr.ordnum_s.join("|"),
-      ordseq_s: dataArr.ordseq_s.join("|"),
-    }));
+      setParaData((prev) => ({
+        ...prev,
+        workType: "N",
+        rowstatus_s: dataArr.rowstatus_s.join("|"),
+        seq2_s: dataArr.seq2_s.join("|"),
+        wonamt_s: dataArr.wonamt_s.join("|"),
+        taxamt_s: dataArr.taxamt_s.join("|"),
+        amt_s: dataArr.amt_s.join("|"),
+        margin_s: dataArr.margin_s.join("|"),
+        margin_div_s: dataArr.margin_div_s.join("|"),
+        marginamt_s: dataArr.marginamt_s.join("|"),
+        discount_s: dataArr.discount_s.join("|"),
+        discount_div_s: dataArr.discount_div_s.join("|"),
+        discountamt_s: dataArr.discountamt_s.join("|"),
+        outtype_s: dataArr.outtype_s.join("|"),
+        ordnum_s: dataArr.ordnum_s.join("|"),
+        ordseq_s: dataArr.ordseq_s.join("|"),
+      }));
+    }
   };
 
   useEffect(() => {
-    if (ParaData.rowstatus_s != "") {
+    if (ParaData.workType != "") {
       fetchTodoGridSaved();
     }
   }, [ParaData]);
@@ -2128,6 +2142,7 @@ const SA_A1100_603W: React.FC = () => {
         isSearch: true,
       }));
       setParaData({
+        workType: "",
         rowstatus_s: "",
         seq2_s: "",
         wonamt_s: "",
@@ -2141,7 +2156,7 @@ const SA_A1100_603W: React.FC = () => {
         discountamt_s: "",
         outtype_s: "",
         ordnum_s: "",
-        ordseq_s: ""
+        ordseq_s: "",
       });
     } else {
       console.log("[오류 발생]");
@@ -2337,7 +2352,7 @@ const SA_A1100_603W: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-        if(item.outtype == "A") {
+        if (item.outtype == "A") {
           alert("계약된 건은 행 삭제가 불가능합니다.");
           newData.push(item);
           Object2.push(index);
@@ -2561,8 +2576,11 @@ const SA_A1100_603W: React.FC = () => {
                       <td>
                         <Input
                           name="totamt"
-                          type="number"
-                          value={numberWithCommas(Information.totamt)}
+                          type="text"
+                          value={numberWithCommas3(Information.totamt)}
+                          style={{
+                            textAlign: "end",
+                          }}
                           className="readonly"
                         />
                       </td>
@@ -2821,7 +2839,10 @@ const SA_A1100_603W: React.FC = () => {
                         <Input
                           name="saleamt"
                           type="text"
-                          value={numberWithCommas(Information.saleamt)}
+                          value={numberWithCommas3(Information.saleamt)}
+                          style={{
+                            textAlign: "end",
+                          }}
                           readOnly={true}
                         />
                       </td>
@@ -2829,7 +2850,10 @@ const SA_A1100_603W: React.FC = () => {
                         <Input
                           name="collamt"
                           type="text"
-                          value={numberWithCommas(Information.collamt)}
+                          value={numberWithCommas3(Information.collamt)}
+                          style={{
+                            textAlign: "end",
+                          }}
                           readOnly={true}
                         />
                       </td>
@@ -2837,7 +2861,10 @@ const SA_A1100_603W: React.FC = () => {
                         <Input
                           name="ordamt"
                           type="text"
-                          value={numberWithCommas(Information.ordamt)}
+                          value={numberWithCommas3(Information.ordamt)}
+                          style={{
+                            textAlign: "end",
+                          }}
                           readOnly={true}
                         />
                       </td>
@@ -2845,7 +2872,10 @@ const SA_A1100_603W: React.FC = () => {
                         <Input
                           name="janamt"
                           type="text"
-                          value={numberWithCommas(Information.janamt)}
+                          value={numberWithCommas3(Information.janamt)}
+                          style={{
+                            textAlign: "end",
+                          }}
                           readOnly={true}
                         />
                       </td>

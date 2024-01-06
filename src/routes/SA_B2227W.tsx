@@ -27,6 +27,7 @@ import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import Table from "../components/KPIcomponents/Table/Table";
 import { colors, colorsName } from "../store/atoms";
 import CardBox from "../components/CardBox";
+import ClusterMap from "../components/ClusterMap";
 
 const SA_B2227W: React.FC = () => {
   let deviceWidth = window.innerWidth;
@@ -166,7 +167,7 @@ const SA_B2227W: React.FC = () => {
       center: { lat: 37.569227, lng: 126.9777256 },
       zoom: 2,
       disableDefaultUI: true,
-      maxZoom: 16
+      maxZoom: 16,
     });
 
     setMap(newMap);
@@ -265,6 +266,7 @@ const SA_B2227W: React.FC = () => {
                   id="map"
                   style={{ width: "100%", height: "70vh" }}
                 ></div>
+                {/* <ClusterMap /> */}
               </GridContainer>
             </GridContainer>
             <GridContainer mobilemaxWidth={1600} width={`calc(50% - ${GAP}px)`}>
