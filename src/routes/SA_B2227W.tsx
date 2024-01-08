@@ -160,19 +160,6 @@ const SA_B2227W: React.FC = () => {
     },
   ]);
 
-  const [map, setMap] = useState<any>(null);
-  const ref = useRef<any>();
-  useEffect(() => {
-    const newMap = new window.google.maps.Map(ref.current, {
-      center: { lat: 37.569227, lng: 126.9777256 },
-      zoom: 2,
-      disableDefaultUI: true,
-      maxZoom: 16,
-    });
-
-    setMap(newMap);
-  }, []);
-
   return (
     <>
       <div
@@ -261,12 +248,7 @@ const SA_B2227W: React.FC = () => {
               </GridContainerWrap>
               <GridContainer>
                 <GridTitle>지도로 보는 고객사 현황</GridTitle>
-                <div
-                  ref={ref}
-                  id="map"
-                  style={{ width: "100%", height: "70vh" }}
-                ></div>
-                {/* <ClusterMap /> */}
+                <ClusterMap />
               </GridContainer>
             </GridContainer>
             <GridContainer mobilemaxWidth={1600} width={`calc(50% - ${GAP}px)`}>

@@ -259,8 +259,7 @@ const SA_A1100_603W: React.FC = () => {
     },
     []
   );
-  const [editIndex, setEditIndex] = useState<number | undefined>();
-  const [editedField, setEditedField] = useState("");
+
   // 조회조건
   const [filters, setFilters] = useState<{ [name: string]: any }>({
     orgdiv: "01",
@@ -1466,7 +1465,12 @@ const SA_A1100_603W: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "testnum" && field != "outtype") {
+    if (
+      field == "amt" ||
+      field == "wonamt" ||
+      field == "taxamt" ||
+      field == "remark"
+    ) {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
@@ -1475,11 +1479,6 @@ const SA_A1100_603W: React.FC = () => {
             }
           : { ...item, [EDIT_FIELD]: undefined }
       );
-
-      setEditIndex(dataItem[DATA_ITEM_KEY]);
-      if (field) {
-        setEditedField(field);
-      }
 
       setTempResult((prev) => {
         return {
@@ -1515,11 +1514,13 @@ const SA_A1100_603W: React.FC = () => {
                   ? item.amt
                   : item.amt * Information.wonchgrat
               ),
-              taxamt: ThreeNumberceil(ThreeNumberceil(
-                Information.amtunit == "KRW"
-                  ? item.amt
-                  : item.amt * Information.wonchgrat
-              ) * 0.1),
+              taxamt: ThreeNumberceil(
+                ThreeNumberceil(
+                  Information.amtunit == "KRW"
+                    ? item.amt
+                    : item.amt * Information.wonchgrat
+                ) * 0.1
+              ),
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -1880,6 +1881,24 @@ const SA_A1100_603W: React.FC = () => {
         pgNum: 1,
         isSearch: true,
       }));
+      setSubFilters2((prev) => ({
+        ...prev,
+        workType: "COMMENT",
+        pgNum: 1,
+        isSearch: true,
+      }));
+      setSubFilters3((prev) => ({
+        ...prev,
+        workType: "SALE",
+        pgNum: 1,
+        isSearch: true,
+      }));
+      setSubFilters4((prev) => ({
+        ...prev,
+        workType: "MEETING",
+        pgNum: 1,
+        isSearch: true,
+      }));
       setParaData({
         workType: "",
         rowstatus_s: "",
@@ -1961,7 +1980,7 @@ const SA_A1100_603W: React.FC = () => {
       seq: dataArr.seq.join("|"),
       recdt: dataArr.recdt.join("|"),
       user_id: dataArr.user_id.join("|"),
-      ref_key: subFilters.quonum + "-" + subFilters.quorev,
+      ref_key: subFilters.recdt + "-" + subFilters.seq1,
     }));
   };
 
@@ -2007,9 +2026,27 @@ const SA_A1100_603W: React.FC = () => {
       data = null;
     }
     if (data.isSuccess === true) {
+      setSubFilters((prev) => ({
+        ...prev,
+        workType: "DETAIL",
+        pgNum: 1,
+        isSearch: true,
+      }));
       setSubFilters2((prev) => ({
         ...prev,
         workType: "COMMENT",
+        pgNum: 1,
+        isSearch: true,
+      }));
+      setSubFilters3((prev) => ({
+        ...prev,
+        workType: "SALE",
+        pgNum: 1,
+        isSearch: true,
+      }));
+      setSubFilters4((prev) => ({
+        ...prev,
+        workType: "MEETING",
         pgNum: 1,
         isSearch: true,
       }));
