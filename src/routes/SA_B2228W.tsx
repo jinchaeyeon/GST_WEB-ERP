@@ -1,8 +1,4 @@
-import {
-  Card,
-  CardHeader,
-  Typography
-} from "@mui/material";
+import { Card, CardHeader, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Button } from "primereact/button";
@@ -10,7 +6,7 @@ import { Calendar } from "primereact/calendar";
 import { Divider } from "primereact/divider";
 import { Toolbar } from "primereact/toolbar";
 import React, { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   GridContainer,
@@ -18,24 +14,27 @@ import {
   GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import {
   convertDateToStr,
-  numberWithCommas3
+  numberWithCommas3,
 } from "../components/CommonFunction";
-import { GAP } from "../components/CommonString";
+import { GAP, PAGE_SIZE } from "../components/CommonString";
 import MultiChart from "../components/KPIcomponents/Chart/MultiChart";
 import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutChart";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import Table from "../components/KPIcomponents/Table/Table";
-import { colors, colorsName } from "../store/atoms";
+import { colors, colorsName, isLoading } from "../store/atoms";
+import { useApi } from "../hooks/api";
 
 const SA_B2228W: React.FC = () => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [color, setColor] = useRecoilState(colors);
   const [colorName, setColorName] = useRecoilState(colorsName);
+  const processApi = useApi();
+  const setLoading = useSetRecoilState(isLoading);
 
   const theme = createTheme({
     palette: {
@@ -54,9 +53,123 @@ const SA_B2228W: React.FC = () => {
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
+    pgSize: PAGE_SIZE,
+    orgdiv: "01",
     frdt: new Date(),
     isSearch: true,
   });
+
+  //조회조건 파라미터
+  const parameters = {
+    procedureName: "P_SA_B2228W_Q",
+    pageNumber: 1,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "Q",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_yyyymm": convertDateToStr(filters.frdt).substring(0, 6),
+    },
+  };
+
+  const parameters2 = {
+    procedureName: "P_SA_B2228W_Q",
+    pageNumber: 1,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "Q2",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_yyyymm": convertDateToStr(filters.frdt).substring(0, 6),
+    },
+  };
+
+  const parameters3 = {
+    procedureName: "P_SA_B2228W_Q",
+    pageNumber: 1,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "Q3",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_yyyymm": convertDateToStr(filters.frdt).substring(0, 6),
+    },
+  };
+
+  const fetchMainGrid = async () => {
+    setLoading(true);
+    let data: any;
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+
+      setItemList(rows);
+    }
+
+    let data2: any;
+    try {
+      data2 = await processApi<any>("procedure", parameters2);
+    } catch (error) {
+      data2 = null;
+    }
+
+    if (data2.isSuccess === true) {
+      const rows2 = data2.tables[0].Rows;
+
+      setAllPanel(rows2[0]);
+    }
+
+    let data3: any;
+    try {
+      data3 = await processApi<any>("procedure", parameters3);
+    } catch (error) {
+      data3 = null;
+    }
+
+    if (data3.isSuccess === true) {
+      const rows3 = data3.tables[0].Rows;
+
+      setChartList(rows3);
+      let array = rows3
+        .filter(
+          (arr: { series: any }, index: any, callback: any[]) =>
+            index === callback.findIndex((t) => t.series === arr.series)
+        )
+        .map((item: { series: any }) => {
+          return item.series;
+        });
+
+      let array2 = rows3
+        .filter(
+          (item: { series: any }) =>
+            item.series ==
+            rows3.filter(
+              (arr: { series: any }, index: any, callback: any[]) =>
+                index === callback.findIndex((t) => t.series === arr.series)
+            )[0].series
+        )
+        .map((items: { argument: any }) => {
+          return items.argument;
+        });
+
+      setStackChartLabel(array);
+      setStackChartAllLabel(array2);
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (filters.isSearch) {
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: false,
+      }));
+      fetchMainGrid();
+    }
+  }, [filters]);
 
   const startContent = (
     <React.Fragment>
@@ -102,175 +215,21 @@ const SA_B2228W: React.FC = () => {
     </React.Fragment>
   );
 
-  const [ItemList, setItemList] = useState<any[]>([
-    {
-      testpart: "일반독성",
-      value: 61,
-      target_amt: numberWithCommas3(4230000),
-      amt: numberWithCommas3(8835000),
-      goal_amt: numberWithCommas3(4605000),
-      percent: 22.4,
-      goal_percent: 208.9,
-    },
-    {
-      testpart: "생식독성",
-      value: 1,
-      target_amt: numberWithCommas3(3000000),
-      amt: numberWithCommas3(7005000),
-      goal_amt: numberWithCommas3(4005000),
-      percent: 17.8,
-      goal_percent: 233.5,
-    },
-    {
-      testpart: "국소/면역",
-      value: 5,
-      target_amt: numberWithCommas3(5008000),
-      amt: numberWithCommas3(7615000),
-      goal_amt: numberWithCommas3(2607000),
-      percent: 19.3,
-      goal_percent: 152.1,
-    },
-    {
-      testpart: "안전성약리",
-      value: 9,
-      target_amt: numberWithCommas3(4960000),
-      amt: numberWithCommas3(3415000),
-      goal_amt: numberWithCommas3(-1545000),
-      percent: 8.7,
-      goal_percent: 68.9,
-    },
-    {
-      testpart: "유전독성",
-      value: 6,
-      target_amt: numberWithCommas3(9600000),
-      amt: numberWithCommas3(12510000),
-      goal_amt: numberWithCommas3(2910000),
-      percent: 31.8,
-      goal_percent: 130.3,
-    },
-    {
-      testpart: "대체독성",
-      value: 6,
-      target_amt: 0,
-      amt: 0,
-      goal_amt: 0,
-      percent: 0,
-      goal_percent: 0,
-    },
-    {
-      testpart: "분석",
-      value: 12,
-      target_amt: 0,
-      amt: 0,
-      goal_amt: 0,
-      percent: 0,
-      goal_percent: 0,
-    },
-  ]);
+  const [ItemList, setItemList] = useState<any[]>([]);
 
-  const [ChartList, setChartList] = useState([
-    {
-      series: "목표금액",
-      argument: "일반독성",
-      value: 4230000,
-    },
-    {
-      series: "목표금액",
-      argument: "생식독성",
-      value: 3000000,
-    },
-    {
-      series: "목표금액",
-      argument: "국소/면역",
-      value: 5008000,
-    },
-    {
-      series: "목표금액",
-      argument: "안전성약리",
-      value: 4960000,
-    },
-    {
-      series: "목표금액",
-      argument: "유전독성",
-      value: 9600000,
-    },
-    {
-      series: "목표금액",
-      argument: "대체독성",
-      value: 0,
-    },
-    {
-      series: "목표금액",
-      argument: "분석",
-      value: 0,
-    },
-    {
-      series: "달성금액",
-      argument: "일반독성",
-      value: 8835000,
-    },
-    {
-      series: "달성금액",
-      argument: "생식독성",
-      value: 7005000,
-    },
-    {
-      series: "달성금액",
-      argument: "국소/면역",
-      value: 7615000,
-    },
-    {
-      series: "달성금액",
-      argument: "안전성약리",
-      value: 3415000,
-    },
+  const [ChartList, setChartList] = useState([]);
 
-    {
-      series: "달성금액",
-      argument: "유전독성",
-      value: 12510000,
-    },
-    {
-      series: "달성금액",
-      argument: "대체독성",
-      value: 0,
-    },
-    {
-      series: "달성금액",
-      argument: "분석",
-      value: 0,
-    },
-  ]);
+  const [stackChartAllLabel, setStackChartAllLabel] = useState<any[]>([]);
 
-  const [stackChartAllLabel, setStackChartAllLabel] = useState<any[]>(
-    ChartList.filter(
-      (item: { series: any }) =>
-        item.series ==
-        ChartList.filter(
-          (arr: { series: any }, index: any, callback: any[]) =>
-            index === callback.findIndex((t) => t.series === arr.series)
-        )[0].series
-    ).map((items: { argument: any }) => {
-      return items.argument;
-    })
-  );
-
-  const [stackChartLabel, setStackChartLabel] = useState<any[]>(
-    ChartList.filter(
-      (arr: { series: any }, index: any, callback: any[]) =>
-        index === callback.findIndex((t) => t.series === arr.series)
-    ).map((item: { series: any }) => {
-      return item.series;
-    })
-  );
+  const [stackChartLabel, setStackChartLabel] = useState<any[]>([]);
 
   const [AllPanel, setAllPanel] = useState({
-    pastmonth_amt: 30,
-    month_amt: 39,
-    increase_amt: 9,
-    year_amt: 250,
-    bestamt_dptcd: "1팀",
-    bestcnt_dptcd: "3팀",
+    pastmonth_amt: 0,
+    month_amt: 0,
+    increase_amt: 0,
+    year_amt: 0,
+    bestamt_dptcd: "",
+    bestcnt_dptcd: "",
   });
 
   const cardOption = [
@@ -278,21 +237,21 @@ const SA_B2228W: React.FC = () => {
       title: "지난달 계약금액",
       data:
         AllPanel.pastmonth_amt != null
-          ? AllPanel.pastmonth_amt + "억"
+          ? AllPanel.pastmonth_amt + "원"
           : 0 + "원",
     },
     {
       title: "이번달 계약금액",
-      data: AllPanel.month_amt != null ? AllPanel.month_amt + "억" : 0 + "원",
+      data: AllPanel.month_amt != null ? AllPanel.month_amt + "원" : 0 + "원",
     },
     {
       title: "전달대비 증감액",
       data:
-        AllPanel.increase_amt != null ? AllPanel.increase_amt + "억" : 0 + "원",
+        AllPanel.increase_amt != null ? AllPanel.increase_amt + "원" : 0 + "원",
     },
     {
       title: convertDateToStr(filters.frdt).substring(0, 4) + "년 누적계약금액",
-      data: AllPanel.year_amt != null ? AllPanel.year_amt + "억" : 0 + "원",
+      data: AllPanel.year_amt != null ? AllPanel.year_amt + "원" : 0 + "원",
     },
     {
       title: "당월 최고 매출액 사업부",
@@ -419,14 +378,14 @@ const SA_B2228W: React.FC = () => {
                   target_amt: "목표금액",
                   amt: "매출실적",
                   goal_amt: "목표대비달성금액",
-                  percent: "총매출대비 비중(%)",
+                  _percent: "총매출대비 비중(%)",
                   goal_percent: "달성률(%)",
                 }}
                 numberCell={[
                   "target_amt",
                   "amt",
                   "goal_amt",
-                  "percent",
+                  "_percent",
                   "goal_percent",
                 ]}
                 width={[120, 100, 100, 100, 100, 100, 100, 100, 100, 100]}

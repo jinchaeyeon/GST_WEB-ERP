@@ -1,42 +1,47 @@
 import React, { useCallback, useEffect } from "react";
 import { useState } from "react";
 import { ICustData, IWindowPosition } from "../../hooks/interfaces";
-import { 
-  Grid, 
-  GridColumn, 
-  GridDataStateChangeEvent, 
-  GridFooterCellProps, 
-  GridPageChangeEvent, 
-  GridRowDoubleClickEvent, 
-  GridSelectionChangeEvent, 
-  getSelectedState 
+import {
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridRowDoubleClickEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../store/atoms";
-import { 
-  UseBizComponent, 
-  UseCustomOption, 
-  UseGetValueFromSessionItem, 
-  UseMessages, 
-  convertDateToStr, 
-  findMessage, 
-  getQueryFromBizComponent, 
-  handleKeyPressSearch, 
+import {
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  convertDateToStr,
+  findMessage,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
   setDefaultDate,
   GetPropertyValueByName,
 } from "../CommonFunction";
 import { bytesToBase64 } from "byte-base64";
 import { useApi } from "../../hooks/api";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { 
-  BottomContainer, 
-  ButtonContainer, 
-  ButtonInInput, 
-  FilterBox, 
-  GridContainer, 
-  TitleContainer } from "../../CommonStyled";
+import {
+  BottomContainer,
+  ButtonContainer,
+  ButtonInInput,
+  FilterBox,
+  GridContainer,
+  TitleContainer,
+} from "../../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
 import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
@@ -53,7 +58,12 @@ type IWindow = {
   pathname: string;
 };
 
-const CopyWindow = ({ setVisible, setData, modal = false, pathname}: IWindow) => {
+const CopyWindow = ({
+  setVisible,
+  setData,
+  modal = false,
+  pathname,
+}: IWindow) => {
   const location = UseGetValueFromSessionItem("location");
   const processApi = useApi();
   let deviceWidth = window.innerWidth;
@@ -97,13 +107,15 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname}: IWindow) =>
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb")
-        .valueCode,
+        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
         isSearch: true,
       }));
     }
@@ -131,14 +143,10 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname}: IWindow) =>
   useEffect(() => {
     if (bizComponentData !== null) {
       const quotypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA016"
-        )
+        bizComponentData.find((item: any) => item.bizComponentId === "L_SA016")
       );
       const quostsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA004"
-        )
+        bizComponentData.find((item: any) => item.bizComponentId === "L_SA004")
       );
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
@@ -176,7 +184,7 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname}: IWindow) =>
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-  
+
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -184,11 +192,11 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname}: IWindow) =>
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-  
+
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
 
-   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
-   const filterInputChange = (e: any) => {
+  //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
+  const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
     setFilters((prev) => ({
@@ -247,6 +255,7 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname}: IWindow) =>
     quonum: "",
     quotestnum: "",
     person: "",
+    smperson: "",
     custcd: "",
     custnm: "",
     materialnm: "",
@@ -276,6 +285,7 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname}: IWindow) =>
         "@p_quonum": filters.quonum,
         "@p_quotestnum": filters.quotestnum,
         "@p_person": filters.person,
+        "@p_smperson": filters.smperson,
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
         "@p_materialnm": filters.materialnm,
@@ -374,7 +384,7 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname}: IWindow) =>
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-  
+
   const search = () => {
     try {
       if (
@@ -426,7 +436,6 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname}: IWindow) =>
     setData(selectedRowData);
     onClose();
   };
-
 
   return (
     <>
@@ -502,6 +511,8 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname}: IWindow) =>
                     onChange={filterInputChange}
                   />
                 </td>
+                <th></th>
+                <td></td>
               </tr>
               <tr>
                 <th>견적상태</th>
@@ -521,6 +532,19 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname}: IWindow) =>
                     <CustomOptionComboBox
                       name="person"
                       value={filters.person}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                      valueField="user_id"
+                      textField="user_name"
+                    />
+                  )}
+                </td>
+                <th>SM담당자</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="smperson"
+                      value={filters.smperson}
                       customOptionData={customOptionData}
                       changeData={filterComboBoxChange}
                       valueField="user_id"
@@ -569,6 +593,9 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname}: IWindow) =>
                 person: personListData.find(
                   (item: any) => item.user_id == row.person
                 )?.user_name,
+                smperson: personListData.find(
+                  (item: any) => item.user_id == row.smperson
+                )?.user_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -605,27 +632,30 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname}: IWindow) =>
               width="150px"
               footerCell={mainTotalFooterCell}
             />
-            <GridColumn field="quotestnum" title="예약시험번호" width="120px" />
+            <GridColumn field="quotestnum" title="예약시험번호" width="150px" />
             <GridColumn field="quotype" title="견적형태" width="120px" />
-            <GridColumn field="quosts" title="견적상태" width="100px" />
-            <GridColumn field="quodt" title="견적일자" width="100px" cell={DateCell}/>
-            <GridColumn field="person" title="담당자" width="100px" />
+            <GridColumn field="quosts" title="견적상태" width="120px" />
+            <GridColumn
+              field="quodt"
+              title="견적일자"
+              width="120px"
+              cell={DateCell}
+            />
+            <GridColumn field="person" title="담당자" width="120px" />
+            <GridColumn field="smperson" title="SM담당자" width="120px" />
             <GridColumn field="custnm" title="업체명" width="150px" />
             <GridColumn field="materialnm" title="시험물질명" width="150px" />
-            <GridColumn 
-              field="materialindt" 
-              title="물질입고예상일" 
-              width="100px" 
-              cell={DateCell} 
+            <GridColumn
+              field="materialindt"
+              title="물질입고예상일"
+              width="120px"
+              cell={DateCell}
             />
           </Grid>
         </GridContainer>
         <BottomContainer>
           <ButtonContainer>
-            <Button
-              themeColor={"primary"}
-              onClick={onConfirmBtnClick}
-            >
+            <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
               확인
             </Button>
             <Button

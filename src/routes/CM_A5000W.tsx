@@ -376,6 +376,9 @@ const CM_A5000W: React.FC = () => {
       return {
         ...prev,
         testnum: data.quotestnum,
+        user_name: data.smperson,
+        customer_code: data.custcd,
+        customernm: data.custnm,
       };
     });
   };

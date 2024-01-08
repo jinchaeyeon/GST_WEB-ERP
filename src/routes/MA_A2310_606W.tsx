@@ -218,7 +218,7 @@ const MA_A2310_606W: React.FC = () => {
   }>({});
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   let sessionLocation = sessionItem.find(
-    (sessionItem: { code: string; }) => sessionItem.code == "location"
+    (sessionItem: { code: string }) => sessionItem.code == "location"
   )!.value;
   if (sessionLocation === "") sessionLocation = "01";
 
@@ -1125,7 +1125,7 @@ const MA_A2310_606W: React.FC = () => {
               </td>
               <th>invoice No</th>
               <td>
-              <Input
+                <Input
                   name="invoiceno"
                   type="text"
                   value={filters.invoiceno}
@@ -1296,13 +1296,13 @@ const MA_A2310_606W: React.FC = () => {
       <GridContainer>
         <GridTitleContainer>
           <GridTitle>
-            Keeping
             <Button
               themeColor={"primary"}
               fillMode={"flat"}
               icon={isVisibleDetail ? "chevron-up" : "chevron-down"}
               onClick={() => setIsVisableDetail((prev) => !prev)}
             ></Button>
+            Keeping
           </GridTitle>
           <ButtonContainer>
             <Button

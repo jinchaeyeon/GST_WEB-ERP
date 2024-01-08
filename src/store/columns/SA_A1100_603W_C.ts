@@ -106,42 +106,6 @@ export const gridList: Array<TGrid> = [
         field: "amt",
         caption: "금액",
         width: 100,
-      },    
-      {
-        id: "col_margin_detail",
-        field: "margin",
-        caption: "마진",
-        width: 100,
-      },      
-      {
-        id: "col_margin_div_detail",
-        field: "margin_div",
-        caption: "마진적용구분",
-        width: 120,
-      },   
-      {
-        id: "col_marginamt_detail",
-        field: "marginamt",
-        caption: "마진적용금액",
-        width: 100,
-      },   
-      {
-        id: "col_discount_detail",
-        field: "discount",
-        caption: "할인",
-        width: 100,
-      },    
-      {
-        id: "col_discount_div_detail",
-        field: "discount_div",
-        caption: "할인적용구분",
-        width: 120,
-      },   
-      {
-        id: "col_discountamt_detail",
-        field: "discountamt",
-        caption: "할인적용금액",
-        width: 100,
       },      
       {
         id: "col_wonamt_detail",
