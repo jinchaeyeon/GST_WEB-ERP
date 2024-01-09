@@ -56,6 +56,8 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import DetailWindow from "../components/Windows/MA_A8000W_Popup_Window";
+import DetailWindow2 from "../components/Windows/MA_A8000W_Window";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_A8000W_C";
@@ -241,7 +243,8 @@ const MA_A8000W: React.FC = () => {
 
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
-
+  const [detailWindowVisible2, setDetailWindowVisible2] =
+    useState<boolean>(false);
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
@@ -249,7 +252,7 @@ const MA_A8000W: React.FC = () => {
       setSelectedState({ [rowData[DATA_ITEM_KEY]]: true });
 
       setWorkType("U");
-      setDetailWindowVisible(true);
+      setDetailWindowVisible2(true);
     };
 
     return (
@@ -449,7 +452,7 @@ const MA_A8000W: React.FC = () => {
         setMainDataResult2(process([], mainDataState2));
       }
     }
-    setFilters2((prev) => ({
+    setFilters((prev) => ({
       ...prev,
       pgNum:
         data && data.hasOwnProperty("pageNumber")
@@ -497,7 +500,9 @@ const MA_A8000W: React.FC = () => {
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
-      setSelectedState2({ [rows[0][DATA_ITEM_KEY2]]: true });
+      if (totalRowCnt > 0) {
+        setSelectedState2({ [rows[0][DATA_ITEM_KEY2]]: true });
+      }
     }
     setFilters2((prev) => ({
       ...prev,
@@ -512,7 +517,7 @@ const MA_A8000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -526,7 +531,7 @@ const MA_A8000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch && permissions !== null) {
+    if (filters2.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -675,6 +680,7 @@ const MA_A8000W: React.FC = () => {
     setWorkType("N");
     setDetailWindowVisible(true);
   };
+
   const questionToDelete = useSysMessage("QuestionToDelete");
 
   const onDeleteClick = (e: any) => {
@@ -847,6 +853,22 @@ const MA_A8000W: React.FC = () => {
   useEffect(() => {
     if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
+
+  const [List, setList] = useState([]);
+  const ListSetting = (arr: any) => {
+    if (arr.length == 0) return false;
+    else {
+      setList(arr);
+    }
+  };
+
+  useEffect(() => {
+    if (List.length > 0) {
+      setDetailWindowVisible2(true);
+    } else {
+      setDetailWindowVisible2(false);
+    }
+  }, [List]);
 
   return (
     <>
@@ -1117,6 +1139,39 @@ const MA_A8000W: React.FC = () => {
           workType={workType}
           setData={setCustData}
           modal={true}
+        />
+      )}
+      {detailWindowVisible && (
+        <DetailWindow
+          setVisible={setDetailWindowVisible}
+          reload={(arr) => ListSetting(arr)}
+          modal={true}
+          pathname="MA_A8000W"
+        />
+      )}
+      {detailWindowVisible2 && (
+        <DetailWindow2
+          setVisible={setDetailWindowVisible2}
+          workType={workType} //신규 : N, 수정 : U
+          reload={(str: any) => {
+            setFilters((prev) => ({
+              ...prev,
+              find_row_value: str,
+              isSearch: true,
+            }));
+          }}
+          data={
+            mainDataResult.total == 0
+              ? ""
+              : mainDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0]
+          }
+          list={List}
+          modal={true}
+          pathname="MA_A8000W"
         />
       )}
       {gridList.map((grid: TGrid) =>

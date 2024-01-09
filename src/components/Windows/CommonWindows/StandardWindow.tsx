@@ -84,6 +84,8 @@ const StandardWindow = ({
     setFilters((prev) => ({
       ...prev,
       mngitemcd: mng,
+      pgNum: 1,
+      isSearch: true,
     }));
   }, []);
 
@@ -154,7 +156,7 @@ const StandardWindow = ({
     div: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   useEffect(() => {

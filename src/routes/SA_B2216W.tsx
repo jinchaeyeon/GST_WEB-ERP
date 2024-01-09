@@ -15,6 +15,7 @@ import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import GridTitle from "../components/KPIcomponents/Title/Title";
 import { useApi } from "../hooks/api";
 import { colors, colorsName, isLoading } from "../store/atoms";
+import LineBarChart from "../components/KPIcomponents/Chart/LineBarChart";
 
 interface Tsize {
   width: number;
@@ -197,7 +198,7 @@ const SA_B2216W: React.FC = () => {
         .map((items: { series: any }) => {
           return items.series;
         });
-      console.log(array);
+   
       let array2 = rows2
         .filter(
           (arr: { date: any }, index: any, callback: any[]) =>
@@ -364,7 +365,7 @@ const SA_B2216W: React.FC = () => {
                   "년도 개인별 실적 현황"
                 }
               />
-              <MultiChart
+              <LineBarChart
                 props={ChartList}
                 value="value"
                 name="series"

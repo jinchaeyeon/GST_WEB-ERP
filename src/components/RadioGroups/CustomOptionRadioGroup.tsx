@@ -12,6 +12,7 @@ type TCustomOptionRadioGroup = {
   customOptionData: any;
   changeData(e: any): void;
   excludedCodes?: any[]; // 제외할 코드값
+  disabled? :boolean;
 };
 const CustomOptionRadioGroup = ({
   type = "query", 
@@ -19,6 +20,7 @@ const CustomOptionRadioGroup = ({
   customOptionData,
   changeData,
   excludedCodes = [],
+  disabled = false,
 }: TCustomOptionRadioGroup) => {
   //커스텀 옵션에 저장된 값으로 디폴트 값
   const dataList =
@@ -84,6 +86,7 @@ const CustomOptionRadioGroup = ({
       layout={"horizontal"}
       defaultValue={state}
       onChange={onChangeHandle}
+      disabled={disabled}
     />
   );
 };

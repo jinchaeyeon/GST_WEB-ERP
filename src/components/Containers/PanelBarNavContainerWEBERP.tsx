@@ -823,7 +823,7 @@ const PanelBarNavContainer = (props: any) => {
                             </MuiAvatar>
                           </ListItemAvatar>
                           <ListItemText
-                            primary="[결재진행] 결재자: 나똘똘"
+                            primary="[결재진행] 결재자: 송준헌"
                             secondary="결재필요"
                           />
                         </ListItem>
@@ -852,8 +852,8 @@ const PanelBarNavContainer = (props: any) => {
                             </MuiAvatar>
                           </ListItemAvatar>
                           <ListItemText
-                            primary="[결재종결] 기안자: 나똘똘"
-                            secondary="관리부 나똘똘 20231129"
+                            primary="[결재종결] 기안자: 송준헌"
+                            secondary="관리부 송준헌 20231129"
                           />
                         </ListItem>
                         <ListItem>
@@ -863,8 +863,8 @@ const PanelBarNavContainer = (props: any) => {
                             </MuiAvatar>
                           </ListItemAvatar>
                           <ListItemText
-                            primary="[결재종결] 최종결재: 나똘똘"
-                            secondary="관리부 나똘똘 20231129"
+                            primary="[결재종결] 최종결재: 송준헌"
+                            secondary="관리부 송준헌 20231129"
                           />
                         </ListItem>
                         <ListItem>
@@ -874,8 +874,8 @@ const PanelBarNavContainer = (props: any) => {
                             </MuiAvatar>
                           </ListItemAvatar>
                           <ListItemText
-                            primary="[결재도착] 기안자: 나똘똘"
-                            secondary="관리부 나똘똘 20231129"
+                            primary="[결재도착] 기안자: 송준헌"
+                            secondary="관리부 송준헌 20231129"
                           />
                         </ListItem>
                         <ListItem>
@@ -885,7 +885,7 @@ const PanelBarNavContainer = (props: any) => {
                             </MuiAvatar>
                           </ListItemAvatar>
                           <ListItemText
-                            primary="[게시판새글] 정구매"
+                            primary="[게시판새글] 서다영"
                             secondary="통합솔루션 사용 시점 공지"
                           />
                         </ListItem>
@@ -914,7 +914,7 @@ const PanelBarNavContainer = (props: any) => {
                             </MuiAvatar>
                           </ListItemAvatar>
                           <ListItemText
-                            primary="[결재도착] 기안자: 나똘똘"
+                            primary="[결재도착] 기안자: 송준헌"
                             secondary="제목"
                           />
                         </ListItem>

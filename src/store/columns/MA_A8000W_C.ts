@@ -124,8 +124,8 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_acntsrtnum",
-        field: "acntsrtnum",
+        id: "col_acntsrtnm",
+        field: "acntsrtnm",
         caption: "예적금명",
         width: 120,
       },
