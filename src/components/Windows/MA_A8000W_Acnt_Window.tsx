@@ -49,6 +49,7 @@ import CustomersWindow from "./CommonWindows/CustomersWindow";
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
+  custcd: string;
   modal?: boolean;
   pathname: string;
 };
@@ -58,6 +59,7 @@ let targetRowIndex: null | number = null;
 const CopyWindow = ({
   setVisible,
   setData,
+  custcd,
   modal = false,
   pathname,
 }: IWindow) => {
@@ -398,8 +400,26 @@ const CopyWindow = ({
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     const datas = mainDataResult.data.filter((item) => item.chk == true);
-    setData(datas);
-    onClose();
+    const error = datas.filter((item) => item.custcd != custcd);
+    if (custcd != undefined && error.length > 0) {
+      alert("동일한 업체만 선택가능합니다.");
+    } else {
+      let valid = true;
+      for (var i = 0; i < datas.length; i++) {
+        for (var j = 0; j < datas.length; j++) {
+          if (datas[i].custcd != datas[j].custcd) {
+            valid = false;
+          }
+        }
+      }
+
+      if (valid != true) {
+        alert("동일한 업체만 선택가능합니다.");
+      } else {
+        setData(datas);
+        onClose();
+      }
+    }
   };
 
   const [values2, setValues2] = React.useState<boolean>(false);

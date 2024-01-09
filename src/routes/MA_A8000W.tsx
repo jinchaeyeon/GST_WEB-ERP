@@ -517,7 +517,7 @@ const MA_A8000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch) {
+    if (filters.isSearch && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -531,7 +531,7 @@ const MA_A8000W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters2.isSearch) {
+    if (filters2.isSearch && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
@@ -864,6 +864,7 @@ const MA_A8000W: React.FC = () => {
 
   useEffect(() => {
     if (List.length > 0) {
+      setWorkType("N");
       setDetailWindowVisible2(true);
     } else {
       setDetailWindowVisible2(false);
@@ -992,11 +993,11 @@ const MA_A8000W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 location: locationListData.find(
-                  (items: any) => items.code_name == row.location
-                )?.sub_code,
+                  (items: any) => items.sub_code == row.location
+                )?.code_name,
                 position: positionListData.find(
-                  (items: any) => items.code_name == row.position
-                )?.sub_code,
+                  (items: any) => items.sub_code == row.position
+                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState

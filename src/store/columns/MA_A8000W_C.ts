@@ -82,8 +82,8 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_stdmkcd",
-        field: "stdmkcd",
+        id: "col_stdrmkcd",
+        field: "stdrmkcd",
         caption: "단축코드",
         width: 120,
       },
@@ -94,8 +94,8 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_stdmknm",
-        field: "stdmknm",
+        id: "col_stdrmknm",
+        field: "stdrmknm",
         caption: "단축코드명",
         width: 120,
       },

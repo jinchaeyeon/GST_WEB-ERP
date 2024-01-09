@@ -13,13 +13,14 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input } from "@progress/kendo-react-inputs";
+import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
+  ButtonInInput,
   FormBox,
   FormBoxWrap,
   GridContainer,
@@ -38,17 +39,52 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
+  UseParaPc,
+  convertDateToStr,
   getGridItemChangedData,
   numberWithCommas,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
+import AccountWindow from "./CommonWindows/AccountWindow";
+import CodeWindow from "./CommonWindows/CodeWindow";
+import CustomersWindow from "./CommonWindows/CustomersWindow";
+import DepositWindow from "./CommonWindows/DepositWindow";
 import MA_A8000W_Acnt_Window from "./MA_A8000W_Acnt_Window";
 
 let temp = 0;
 let deletedMainRows: object[] = [];
+
+type TdataArr = {
+  row_status_s: string[];
+  paymentseq_s: string[];
+  drcrdiv_s: string[];
+  acntcd_s: string[];
+  rcvcustcd_s: string[];
+  rcvcustnm_s: string[];
+  amt_s: string[];
+  notediv_s: string[];
+  notenum_s: string[];
+  pubdt_s: string[];
+  enddt_s: string[];
+  pubbank_s: string[];
+  pubperson_s: string[];
+  bankcd_s: string[];
+  acntnum_s: string[];
+  stdrmkcd_s: string[];
+  remark1_s: string[];
+  doexdiv_s: string[];
+  closeyn_s: string[];
+  dptcd_s: string[];
+  taxnum_s: string[];
+  advanceinfo_s: string[];
+  custcd_s: string[];
+  custnm_s: string[];
+  datnum_s: string[];
+};
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -77,6 +113,395 @@ const CustomRadioCell = (props: GridCellProps) => {
   );
 };
 
+interface IDepositData {
+  acntsrtnm: string;
+  acntsrtnum: string;
+  bankacntnum: string;
+}
+
+interface ICustData {
+  custcd: string;
+  custnm: string;
+}
+
+interface IAccountData {
+  acntcd: string;
+  acntnm: string;
+}
+
+interface ICodeData {
+  stdrmkcd: string;
+  stdrmknm1: string;
+  acntcd: string;
+  acntnm: string;
+}
+
+const FormContext = createContext<{
+  acntcd: string;
+  setAcntcd: (d: any) => void;
+  acntnm: string;
+  setAcntnm: (d: any) => void;
+  mainDataState: State;
+  setMainDataState: (d: any) => void;
+}>({} as any);
+
+const FormContext2 = createContext<{
+  custcd: string;
+  setCustcd: (d: any) => void;
+  custnm: string;
+  setCustnm: (d: any) => void;
+  mainDataState: State;
+  setMainDataState: (d: any) => void;
+}>({} as any);
+
+const FormContext3 = createContext<{
+  stdrmkcd: string;
+  setStdrmkcd: (d: any) => void;
+  stdrmknm: string;
+  setStdrmknm: (d: any) => void;
+  acntcd: string;
+  setAcntcd: (d: any) => void;
+  acntnm: string;
+  setAcntnm: (d: any) => void;
+  mainDataState: State;
+  setMainDataState: (d: any) => void;
+}>({} as any);
+
+const FormContext4 = createContext<{
+  acntnum: string;
+  setAcntnum: (d: any) => void;
+  acntsrtnm: string;
+  setAcntsrtnm: (d: any) => void;
+  mainDataState: State;
+  setMainDataState: (d: any) => void;
+}>({} as any);
+
+const ColumnCommandCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const {
+    acntcd,
+    acntnm,
+    setAcntcd,
+    setAcntnm,
+    mainDataState,
+    setMainDataState,
+  } = useContext(FormContext);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+  const [accountWindowVisible, setAccountWindowVisible] =
+    useState<boolean>(false);
+
+  const onAccountWndClick = () => {
+    setAccountWindowVisible(true);
+  };
+
+  const setAcntData = (data: IAccountData) => {
+    setAcntcd(data.acntcd);
+    setAcntnm(data.acntnm);
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {isInEdit ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
+      <ButtonInInput>
+        <Button
+          onClick={onAccountWndClick}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {accountWindowVisible && (
+        <AccountWindow
+          setVisible={setAccountWindowVisible}
+          setData={setAcntData}
+        />
+      )}
+    </>
+  );
+};
+
+const ColumnCommandCell2 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const {
+    custcd,
+    custnm,
+    setCustcd,
+    setCustnm,
+    mainDataState,
+    setMainDataState,
+  } = useContext(FormContext2);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+
+  const onCustWndClick = () => {
+    setCustWindowVisible(true);
+  };
+
+  const setCustData = (data: ICustData) => {
+    setCustcd(data.custcd);
+    setCustnm(data.custnm);
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {isInEdit ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
+      <ButtonInInput>
+        <Button
+          onClick={onCustWndClick}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {custWindowVisible && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible}
+          workType={"N"}
+          setData={setCustData}
+        />
+      )}
+    </>
+  );
+};
+
+const ColumnCommandCell3 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const {
+    stdrmkcd,
+    stdrmknm,
+    acntcd,
+    acntnm,
+    setStdrmkcd,
+    setStdrmknm,
+    setAcntcd,
+    setAcntnm,
+    mainDataState,
+    setMainDataState,
+  } = useContext(FormContext3);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+  const [codeWindowVisible, setCodeWindowVisible] = useState<boolean>(false);
+
+  const onCodeWndClick = () => {
+    setCodeWindowVisible(true);
+  };
+
+  const setCodeData = (data: ICodeData) => {
+    setStdrmkcd(data.stdrmkcd);
+    setStdrmknm(data.stdrmknm1);
+    setAcntcd(data.acntcd);
+    setAcntnm(data.acntnm);
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {isInEdit ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
+      <ButtonInInput>
+        <Button
+          onClick={onCodeWndClick}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {codeWindowVisible && (
+        <CodeWindow setVisible={setCodeWindowVisible} setData={setCodeData} />
+      )}
+    </>
+  );
+};
+
+const ColumnCommandCell4 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const {
+    acntnum,
+    acntsrtnm,
+    setAcntnum,
+    setAcntsrtnm,
+    mainDataState,
+    setMainDataState,
+  } = useContext(FormContext4);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+  const [depositWindowVisible, setDepositWindowVisible] =
+    useState<boolean>(false);
+
+  const onDepositWndClick = () => {
+    setDepositWindowVisible(true);
+  };
+
+  const setDepositData = (data: IDepositData) => {
+    setAcntnum(data.acntsrtnum);
+    setAcntsrtnm(data.acntsrtnm);
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {isInEdit ? (
+        <Input value={value} onChange={handleChange} type="text" />
+      ) : (
+        value
+      )}
+      <ButtonInInput>
+        <Button
+          onClick={onDepositWndClick}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {depositWindowVisible && (
+        <DepositWindow
+          setVisible={setDepositWindowVisible}
+          setData={setDepositData}
+        />
+      )}
+    </>
+  );
+};
+
 const CopyWindow = ({
   workType,
   data,
@@ -94,6 +519,17 @@ const CopyWindow = ({
     width: isMobile == true ? deviceWidth : 1600,
     height: 900,
   });
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+  const userId = UseGetValueFromSessionItem("user_id");
+  const [acntcd, setAcntcd] = useState<string>("");
+  const [acntnm, setAcntnm] = useState<string>("");
+  const [custcd, setCustcd] = useState<string>("");
+  const [custnm, setCustnm] = useState<string>("");
+  const [stdrmkcd, setStdrmkcd] = useState<string>("");
+  const [stdrmknm, setStdrmknm] = useState<string>("");
+  const [acntsrtnm, setAcntsrtnm] = useState<string>("");
+  const [acntnum, setAcntnum] = useState<string>("");
 
   const DATA_ITEM_KEY = "num";
 
@@ -117,6 +553,10 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
+        location: defaultOption.find((item: any) => item.id === "location")
+          .valueCode,
+        position: defaultOption.find((item: any) => item.id === "position")
+          .valueCode,
       }));
     }
   }, [customOptionData]);
@@ -145,8 +585,20 @@ const CopyWindow = ({
       ...prev,
       [name]: value,
     }));
-  };
 
+    const newData = mainDataResult.data.map((item) => ({
+      ...item,
+      [name]: value,
+      rowstatus: item.rowstatus === "N" ? "N" : "U",
+    }));
+
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
@@ -155,6 +607,19 @@ const CopyWindow = ({
       ...prev,
       [name]: value,
     }));
+
+    const newData = mainDataResult.data.map((item) => ({
+      ...item,
+      [name]: value,
+      rowstatus: item.rowstatus === "N" ? "N" : "U",
+    }));
+
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
   };
 
   const handleMove = (event: WindowMoveEvent) => {
@@ -235,15 +700,16 @@ const CopyWindow = ({
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
-      setFilters((prev) => ({
-        ...prev,
-        isSearch: false,
-        paymentnum: data.paymentnum,
-        indt: toDate(data.indt),
-        location: data.location,
-        position: data.position,
-      }));
+
       if (totalRowCnt > 0) {
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: false,
+          paymentnum: rows[0].paymentnum,
+          indt: toDate(rows[0].indt),
+          location: rows[0].location,
+          position: rows[0].position,
+        }));
         setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
     } else {
@@ -262,7 +728,7 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (filters.isSearch && workType == "U") {
+    if (filters.isSearch && workType == "U" && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -271,7 +737,16 @@ const CopyWindow = ({
         isSearch: false,
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
-    } else if (filters.isSearch && workType == "N") {
+    } else if (
+      filters.isSearch &&
+      workType == "N" &&
+      customOptionData !== null
+    ) {
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
       const arr: any[] = [];
       //차변
       list.map((item: any) => {
@@ -295,14 +770,14 @@ const CopyWindow = ({
           dptcd: "",
           drcrdiv: "1",
           enddt: "",
-          indt: item.reqdt == "" ? new Date() : toDate(item.reqdt),
-          location: item.location,
+          indt: convertDateToStr(filters.indt),
+          location: filters.location,
           notediv: "",
           notenum: "",
-          orgdiv: item.orgdiv,
-          paymentnum: "",
+          orgdiv: filters.orgdiv,
+          paymentnum: filters.paymentnum,
           paymentseq: 0,
-          position: "",
+          position: filters.position,
           pubbank: "",
           pubdt: "",
           pubperson: "",
@@ -357,14 +832,14 @@ const CopyWindow = ({
           dptcd: "",
           drcrdiv: "2",
           enddt: "",
-          indt: datas[0].reqdt == "" ? new Date() : toDate(datas[0].reqdt),
-          location: datas[0].location,
+          indt: convertDateToStr(filters.indt),
+          location: filters.location,
           notediv: "",
           notenum: "",
-          orgdiv: datas[0].orgdiv,
-          paymentnum: "",
+          orgdiv: filters.orgdiv,
+          paymentnum: filters.paymentnum,
           paymentseq: 0,
-          position: "",
+          position: filters.position,
           pubbank: "",
           pubdt: "",
           pubperson: "",
@@ -388,14 +863,8 @@ const CopyWindow = ({
           total: arr.length == -1 ? 0 : arr.length,
         };
       });
+
       setSelectedState({ [arr[0][DATA_ITEM_KEY]]: true });
-      setFilters((prev) => ({
-        ...prev,
-        location: arr[0].location,
-        position: arr[0].position,
-        find_row_value: "",
-        isSearch: false,
-      }));
     }
   }, [filters]);
 
@@ -451,7 +920,343 @@ const CopyWindow = ({
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = () => {
-    const newData = mainDataResult.data.filter((item: any) => item.chk == true);
+    if (mainDataResult.data.length == 0) {
+      alert("데이터가 없습니다.");
+    } else {
+      const dataItem = mainDataResult.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+      if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
+
+      let dataArr: TdataArr = {
+        row_status_s: [],
+        paymentseq_s: [],
+        drcrdiv_s: [],
+        acntcd_s: [],
+        rcvcustcd_s: [],
+        rcvcustnm_s: [],
+        amt_s: [],
+        notediv_s: [],
+        notenum_s: [],
+        pubdt_s: [],
+        enddt_s: [],
+        pubbank_s: [],
+        pubperson_s: [],
+        bankcd_s: [],
+        acntnum_s: [],
+        stdrmkcd_s: [],
+        remark1_s: [],
+        doexdiv_s: [],
+        closeyn_s: [],
+        dptcd_s: [],
+        taxnum_s: [],
+        advanceinfo_s: [],
+        custcd_s: [],
+        custnm_s: [],
+        datnum_s: [],
+      };
+
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          paymentseq = "",
+          drcrdiv = "",
+          acntcd = "",
+          rcvcustcd = "",
+          rcvcustnm = "",
+          amt = "",
+          notediv = "",
+          notenum = "",
+          pubdt = "",
+          enddt = "",
+          pubbank = "",
+          pubperson = "",
+          bankcd = "",
+          acntnum = "",
+          stdrmkcd = "",
+          remark1 = "",
+          doexdiv = "",
+          closeyn = "",
+          dptcd = "",
+          taxnum = "",
+          advanceinfo = "",
+          custcd = "",
+          custnm = "",
+          datnum = "",
+        } = item;
+        dataArr.row_status_s.push(rowstatus);
+        dataArr.paymentseq_s.push(paymentseq == undefined ? 0 : paymentseq);
+        dataArr.drcrdiv_s.push(drcrdiv == undefined ? "" : drcrdiv);
+        dataArr.acntcd_s.push(acntcd == undefined ? "" : acntcd);
+        dataArr.rcvcustcd_s.push(rcvcustcd == undefined ? "" : rcvcustcd);
+        dataArr.rcvcustnm_s.push(rcvcustnm == undefined ? "" : rcvcustnm);
+        dataArr.amt_s.push(amt == undefined ? 0 : amt);
+        dataArr.notediv_s.push(notediv == undefined ? "" : notediv);
+        dataArr.notenum_s.push(notenum == undefined ? "" : notenum);
+        dataArr.pubdt_s.push(
+          typeof pubdt == "string" ? pubdt : convertDateToStr(pubdt)
+        );
+        dataArr.enddt_s.push(
+          typeof enddt == "string" ? enddt : convertDateToStr(enddt)
+        );
+        dataArr.pubbank_s.push(pubbank == undefined ? "" : pubbank);
+        dataArr.pubperson_s.push(pubperson == undefined ? "" : pubperson);
+        dataArr.bankcd_s.push(bankcd == undefined ? "" : bankcd);
+        dataArr.acntnum_s.push(acntnum == undefined ? "" : acntnum);
+        dataArr.stdrmkcd_s.push(stdrmkcd == undefined ? "" : stdrmkcd);
+        dataArr.remark1_s.push(remark1 == undefined ? "" : remark1);
+        dataArr.doexdiv_s.push(doexdiv == undefined ? "" : doexdiv);
+        dataArr.closeyn_s.push(closeyn == undefined ? "" : closeyn);
+        dataArr.dptcd_s.push(dptcd == undefined ? "" : dptcd);
+        dataArr.taxnum_s.push(taxnum == undefined ? "" : taxnum);
+        dataArr.advanceinfo_s.push(advanceinfo == undefined ? "" : advanceinfo);
+        dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
+        dataArr.custnm_s.push(custnm == undefined ? "" : custnm);
+        dataArr.datnum_s.push(datnum == undefined ? "" : datnum);
+      });
+
+      deletedMainRows.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          paymentseq = "",
+          drcrdiv = "",
+          acntcd = "",
+          rcvcustcd = "",
+          rcvcustnm = "",
+          amt = "",
+          notediv = "",
+          notenum = "",
+          pubdt = "",
+          enddt = "",
+          pubbank = "",
+          pubperson = "",
+          bankcd = "",
+          acntnum = "",
+          stdrmkcd = "",
+          remark1 = "",
+          doexdiv = "",
+          closeyn = "",
+          dptcd = "",
+          taxnum = "",
+          advanceinfo = "",
+          custcd = "",
+          custnm = "",
+          datnum = "",
+        } = item;
+        dataArr.row_status_s.push(rowstatus);
+        dataArr.paymentseq_s.push(paymentseq == undefined ? 0 : paymentseq);
+        dataArr.drcrdiv_s.push(drcrdiv == undefined ? "" : drcrdiv);
+        dataArr.acntcd_s.push(acntcd == undefined ? "" : acntcd);
+        dataArr.rcvcustcd_s.push(rcvcustcd == undefined ? "" : rcvcustcd);
+        dataArr.rcvcustnm_s.push(rcvcustnm == undefined ? "" : rcvcustnm);
+        dataArr.amt_s.push(amt == undefined ? 0 : amt);
+        dataArr.notediv_s.push(notediv == undefined ? "" : notediv);
+        dataArr.notenum_s.push(notenum == undefined ? "" : notenum);
+        dataArr.pubdt_s.push(
+          typeof pubdt == "string" ? pubdt : convertDateToStr(pubdt)
+        );
+        dataArr.enddt_s.push(
+          typeof enddt == "string" ? enddt : convertDateToStr(enddt)
+        );
+        dataArr.pubbank_s.push(pubbank == undefined ? "" : pubbank);
+        dataArr.pubperson_s.push(pubperson == undefined ? "" : pubperson);
+        dataArr.bankcd_s.push(bankcd == undefined ? "" : bankcd);
+        dataArr.acntnum_s.push(acntnum == undefined ? "" : acntnum);
+        dataArr.stdrmkcd_s.push(stdrmkcd == undefined ? "" : stdrmkcd);
+        dataArr.remark1_s.push(remark1 == undefined ? "" : remark1);
+        dataArr.doexdiv_s.push(doexdiv == undefined ? "" : doexdiv);
+        dataArr.closeyn_s.push(closeyn == undefined ? "" : closeyn);
+        dataArr.dptcd_s.push(dptcd == undefined ? "" : dptcd);
+        dataArr.taxnum_s.push(taxnum == undefined ? "" : taxnum);
+        dataArr.advanceinfo_s.push(advanceinfo == undefined ? "" : advanceinfo);
+        dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
+        dataArr.custnm_s.push(custnm == undefined ? "" : custnm);
+        dataArr.datnum_s.push(datnum == undefined ? "" : datnum);
+      });
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: workType,
+        orgdiv: filters.orgdiv,
+        paymentnum: filters.paymentnum,
+        indt: convertDateToStr(filters.indt),
+        location: filters.location,
+        position: filters.position,
+        row_status_s: dataArr.row_status_s.join("|"),
+        paymentseq_s: dataArr.paymentseq_s.join("|"),
+        drcrdiv_s: dataArr.drcrdiv_s.join("|"),
+        acntcd_s: dataArr.acntcd_s.join("|"),
+        rcvcustcd_s: dataArr.rcvcustcd_s.join("|"),
+        rcvcustnm_s: dataArr.rcvcustnm_s.join("|"),
+        amt_s: dataArr.amt_s.join("|"),
+        notediv_s: dataArr.notediv_s.join("|"),
+        notenum_s: dataArr.notenum_s.join("|"),
+        pubdt_s: dataArr.pubdt_s.join("|"),
+        enddt_s: dataArr.enddt_s.join("|"),
+        pubbank_s: dataArr.pubbank_s.join("|"),
+        pubperson_s: dataArr.pubperson_s.join("|"),
+        bankcd_s: dataArr.bankcd_s.join("|"),
+        acntnum_s: dataArr.acntnum_s.join("|"),
+        stdrmkcd_s: dataArr.stdrmkcd_s.join("|"),
+        remark1_s: dataArr.remark1_s.join("|"),
+        doexdiv_s: dataArr.doexdiv_s.join("|"),
+        closeyn_s: dataArr.closeyn_s.join("|"),
+        dptcd_s: dataArr.dptcd_s.join("|"),
+        taxnum_s: dataArr.taxnum_s.join("|"),
+        advanceinfo_s: dataArr.advanceinfo_s.join("|"),
+        custcd_s: dataArr.custcd_s.join("|"),
+        custnm_s: dataArr.custnm_s.join("|"),
+        datnum_s: dataArr.datnum_s.join("|"),
+      }));
+    }
+  };
+
+  const [ParaData, setParaData] = useState({
+    workType: "",
+    orgdiv: "",
+    location: "",
+    position: "",
+    indt: "",
+    paymentnum: "",
+    row_status_s: "",
+    paymentseq_s: "",
+    drcrdiv_s: "",
+    acntcd_s: "",
+    rcvcustcd_s: "",
+    rcvcustnm_s: "",
+    amt_s: "",
+    notediv_s: "",
+    notenum_s: "",
+    pubdt_s: "",
+    enddt_s: "",
+    pubbank_s: "",
+    pubperson_s: "",
+    bankcd_s: "",
+    acntnum_s: "",
+    stdrmkcd_s: "",
+    remark1_s: "",
+    doexdiv_s: "",
+    closeyn_s: "",
+    dptcd_s: "",
+    taxnum_s: "",
+    advanceinfo_s: "",
+    custcd_s: "",
+    custnm_s: "",
+    datnum_s: "",
+  });
+
+  //삭제 프로시저 파라미터
+  const para: Iparameters = {
+    procedureName: "P_MA_A8000W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_location": ParaData.location,
+      "@p_position": ParaData.position,
+      "@p_indt": ParaData.indt,
+      "@p_paymentnum": ParaData.paymentnum,
+      "@p_row_status_s": ParaData.row_status_s,
+      "@p_paymentseq_s": ParaData.paymentseq_s,
+      "@p_drcrdiv_s": ParaData.drcrdiv_s,
+      "@p_acntcd_s": ParaData.acntcd_s,
+      "@p_rcvcustcd_s": ParaData.rcvcustcd_s,
+      "@p_rcvcustnm_s": ParaData.rcvcustnm_s,
+      "@p_amt_s": ParaData.amt_s,
+      "@p_notediv_s": ParaData.notediv_s,
+      "@p_notenum_s": ParaData.notenum_s,
+      "@p_pubdt_s": ParaData.pubdt_s,
+      "@p_enddt_s": ParaData.enddt_s,
+      "@p_pubbank_s": ParaData.pubbank_s,
+      "@p_pubperson_s": ParaData.pubperson_s,
+      "@p_bankcd_s": ParaData.bankcd_s,
+      "@p_acntnum_s": ParaData.acntnum_s,
+      "@p_stdrmkcd_s": ParaData.stdrmkcd_s,
+      "@p_remark1_s": ParaData.remark1_s,
+      "@p_doexdiv_s": ParaData.doexdiv_s,
+      "@p_closeyn_s": ParaData.closeyn_s,
+      "@p_dptcd_s": ParaData.dptcd_s,
+      "@p_taxnum_s": ParaData.taxnum_s,
+      "@p_advanceinfo_s": ParaData.advanceinfo_s,
+      "@p_custcd_s": ParaData.custcd_s,
+      "@p_custnm_s": ParaData.custnm_s,
+      "@p_datnum_s": ParaData.datnum_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "MA_A8000W",
+    },
+  };
+
+  useEffect(() => {
+    if (ParaData.workType != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      reload(data.returnString);
+      deletedMainRows = [];
+      if (ParaData.workType == "N") {
+        setVisible(false);
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: data.returnString,
+          isSearch: true,
+        }));
+      }
+      setParaData({
+        workType: "",
+        orgdiv: "",
+        location: "",
+        position: "",
+        indt: "",
+        paymentnum: "",
+        row_status_s: "",
+        paymentseq_s: "",
+        drcrdiv_s: "",
+        acntcd_s: "",
+        rcvcustcd_s: "",
+        rcvcustnm_s: "",
+        amt_s: "",
+        notediv_s: "",
+        notenum_s: "",
+        pubdt_s: "",
+        enddt_s: "",
+        pubbank_s: "",
+        pubperson_s: "",
+        bankcd_s: "",
+        acntnum_s: "",
+        stdrmkcd_s: "",
+        remark1_s: "",
+        doexdiv_s: "",
+        closeyn_s: "",
+        dptcd_s: "",
+        taxnum_s: "",
+        advanceinfo_s: "",
+        custcd_s: "",
+        custnm_s: "",
+        datnum_s: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
@@ -485,7 +1290,7 @@ const CopyWindow = ({
   const enterEdit = (dataItem: any, field: string) => {
     if (
       field != "rowstatus" &&
-      field != "stdmknm" &&
+      field != "stdrmknm" &&
       field != "acntnm" &&
       field != "custnm" &&
       field != "acntsrtnum" &&
@@ -601,6 +1406,8 @@ const CopyWindow = ({
       }
     });
 
+    const cust = mainDataResult.data.filter((item) => item.custcd != "");
+
     const newDataItem = {
       [DATA_ITEM_KEY]: ++temp,
       acntcd: "",
@@ -614,21 +1421,21 @@ const CopyWindow = ({
       amtunit: "",
       bankcd: "",
       closeyn: "",
-      custcd: "",
-      custnm: "",
+      custcd: workType == "N" ? cust.length > 0 ? cust[0].custcd : "" : data.custcd,
+      custnm: workType == "N" ? cust.length > 0 ? cust[0].custnm : "" : data.custnm,
       datnum: "",
       doexdiv: "",
       dptcd: "",
       drcrdiv: "1",
       enddt: "",
-      indt: new Date(),
+      indt: convertDateToStr(filters.indt),
       location: filters.location,
       notediv: "",
       notenum: "",
-      orgdiv: "01",
-      paymentnum: "",
+      orgdiv: filters.orgdiv,
+      paymentnum: filters.paymentnum,
       paymentseq: 0,
-      position: "",
+      position: filters.position,
       pubbank: "",
       pubdt: "",
       pubperson: "",
@@ -689,63 +1496,224 @@ const CopyWindow = ({
   };
 
   const setDatas = (data: any) => {
-    console.log(data)
     mainDataResult.data.map((item) => {
       if (item.num > temp) {
         temp = item.num;
       }
     });
 
-    const newDataItem = {
-      [DATA_ITEM_KEY]: ++temp,
-      acntcd: "",
-      acntnm: "",
-      acntnum: data.item1,
-      acntsrtnm: data.item2,
-      advanceinfo: "0",
-      amt: 0,
-      amt_1: 0,
-      amt_2: 0,
-      amtunit: "",
-      bankcd: "",
-      closeyn: "",
-      custcd: "",
-      custnm: "",
-      datnum: "",
-      doexdiv: "",
-      dptcd: "",
-      drcrdiv: "1",
-      enddt: "",
-      indt: new Date(),
-      location: filters.location,
-      notediv: "",
-      notenum: "",
-      orgdiv: "01",
-      paymentnum: "",
-      paymentseq: 0,
-      position: "",
-      pubbank: "",
-      pubdt: "",
-      pubperson: "",
-      ratedt: "",
-      rcvcustcd: "",
-      rcvcustnm: "",
-      remark1: "",
-      stdrmkcd: "",
-      stdrmknm: "",
-      taxnum: "",
-      wonchgrat: 0,
-      rowstatus: "N",
-    };
+    data.map((item: any) => {
+      const newDataItem = {
+        [DATA_ITEM_KEY]: ++temp,
+        acntcd: item.acntcd,
+        acntnm: item.acntnm,
+        acntnum: "",
+        acntsrtnm: "",
+        advanceinfo: "0",
+        amt: item.janamt,
+        amt_1: item.janamt,
+        amt_2: 0,
+        amtunit: item.amtunit,
+        bankcd: "",
+        closeyn: "",
+        custcd: item.custcd,
+        custnm: item.custnm,
+        datnum: item.datnum,
+        doexdiv: "",
+        dptcd: "",
+        drcrdiv: "1",
+        enddt: "",
+        indt: convertDateToStr(filters.indt),
+        location: filters.location,
+        notediv: "",
+        notenum: "",
+        orgdiv: filters.orgdiv,
+        paymentnum: filters.paymentnum,
+        paymentseq: 0,
+        position: filters.position,
+        pubbank: "",
+        pubdt: "",
+        pubperson: "",
+        ratedt: "",
+        rcvcustcd: "",
+        rcvcustnm: "",
+        remark1: item.custnm + " 지급",
+        stdrmkcd: "",
+        stdrmknm: "",
+        taxnum: "",
+        wonchgrat: 0,
+        rowstatus: "N",
+      };
 
-    setMainDataResult((prev) => {
+      setMainDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+      setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+
+      const newDataItem2 = {
+        [DATA_ITEM_KEY]: ++temp,
+        acntcd: "1110130",
+        acntnm: "보통예금",
+        acntnum: "",
+        acntsrtnm: "",
+        advanceinfo: "0",
+        amt: item.janamt,
+        amt_1: 0,
+        amt_2: item.janamt,
+        amtunit: item.amtunit,
+        bankcd: "",
+        closeyn: "",
+        custcd: item.custcd,
+        custnm: item.custnm,
+        datnum: item.datnum,
+        doexdiv: "",
+        dptcd: "",
+        drcrdiv: "2",
+        enddt: "",
+        indt: convertDateToStr(filters.indt),
+        location: filters.location,
+        notediv: "",
+        notenum: "",
+        orgdiv: filters.orgdiv,
+        paymentnum: filters.paymentnum,
+        paymentseq: 0,
+        position: filters.position,
+        pubbank: "",
+        pubdt: "",
+        pubperson: "",
+        ratedt: "",
+        rcvcustcd: "",
+        rcvcustnm: "",
+        remark1: item.custnm + " 지급",
+        stdrmkcd: "",
+        stdrmknm: "",
+        taxnum: "",
+        wonchgrat: 0,
+        rowstatus: "N",
+      };
+
+      setMainDataResult((prev) => {
+        return {
+          data: [newDataItem2, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+      setSelectedState({ [newDataItem2[DATA_ITEM_KEY]]: true });
+    });
+  };
+
+  useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+        ? {
+            ...item,
+            acntcd: acntcd,
+            acntnm: acntnm,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+    setTempResult((prev: { total: any }) => {
       return {
-        data: [newDataItem, ...prev.data],
-        total: prev.total + 1,
+        data: newData,
+        total: prev.total,
       };
     });
-    setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
-  };
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [acntcd, acntnm]);
+
+  useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+        ? {
+            ...item,
+            custcd: custcd,
+            custnm: custnm,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+    setTempResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [custcd, custnm]);
+
+  useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+        ? {
+            ...item,
+            acntcd: acntcd,
+            acntnm: acntnm,
+            stdrmkcd: stdrmkcd,
+            stdrmknm: stdrmknm,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+    setTempResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [stdrmkcd, stdrmknm]);
+
+  useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+        ? {
+            ...item,
+            acntsrtnm: acntsrtnm,
+            acntnum: acntnum,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+    setTempResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [acntsrtnm, acntnum]);
 
   return (
     <>
@@ -810,125 +1778,221 @@ const CopyWindow = ({
             </tbody>
           </FormBox>
         </FormBoxWrap>
-        <GridContainer height="calc(100% - 150px) ">
-          <GridTitleContainer>
-            <GridTitle>기본정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                themeColor={"primary"}
-                onClick={onDetailClick}
-                icon="folder-open"
-              >
-                기초잔액
-              </Button>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="plus"
-                title="행 추가"
-              ></Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <Grid
-            style={{ height: "calc(100% - 50px)" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                rowstatus:
-                  row.rowstatus == null ||
-                  row.rowstatus == "" ||
-                  row.rowstatus == undefined
-                    ? ""
-                    : row.rowstatus,
-                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-              })),
-              mainDataState
-            )}
-            onDataStateChange={onMainDataStateChange}
-            {...mainDataState}
-            //선택 subDataState
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+        <FormContext.Provider
+          value={{
+            acntcd,
+            acntnm,
+            setAcntcd,
+            setAcntnm,
+            mainDataState,
+            setMainDataState,
+            // fetchGrid,
+          }}
+        >
+          <FormContext2.Provider
+            value={{
+              custcd,
+              custnm,
+              setCustcd,
+              setCustnm,
+              mainDataState,
+              setMainDataState,
+              // fetchGrid,
             }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onMainItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
           >
-            <GridColumn field="rowstatus" title=" " width="50px" />
-            <GridColumn
-              field="drcrdiv"
-              title="차대구분"
-              width="150px"
-              cell={CustomRadioCell}
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn
-              field="amt_1"
-              title="차변금액"
-              width="100px"
-              cell={NumberCell}
-              footerCell={editNumberFooterCell}
-            />
-            <GridColumn
-              field="amt_2"
-              title="대변금액"
-              width="100px"
-              cell={NumberCell}
-              footerCell={editNumberFooterCell}
-            />
-            <GridColumn field="stdmkcd" title="단축코드" width="120px" />
-            <GridColumn field="acntcd" title="계정과목코드" width="120px" />
-            <GridColumn field="stdmknm" title="단축명" width="120px" />
-            <GridColumn field="acntnm" title="계정과목명" width="120px" />
-            <GridColumn field="custcd" title="업체코드" width="120px" />
-            <GridColumn field="custnm" title="업체명" width="120px" />
-            <GridColumn field="acntnum" title="예적금코드" width="120px" />
-            <GridColumn field="acntsrtnm" title="예적금명" width="120px" />
-            <GridColumn field="remark1" title="적요" width="200px" />
-            <GridColumn field="taxnum" title="계산서번호" width="150px" />
-            <GridColumn field="notenum" title="어음번호" width="150px" />
-            <GridColumn
-              field="enddt"
-              title="만기일자"
-              width="120px"
-              cell={DateCell}
-            />
-            <GridColumn field="pubbank" title="발행은행명" width="120px" />
-            <GridColumn
-              field="pubdt"
-              title="발행일자"
-              width="120px"
-              cell={DateCell}
-            />
-            <GridColumn field="pubperson" title="발행인" width="120px" />
-          </Grid>
-        </GridContainer>
+            <FormContext3.Provider
+              value={{
+                stdrmkcd,
+                stdrmknm,
+                acntcd,
+                acntnm,
+                setAcntcd,
+                setAcntnm,
+                setStdrmkcd,
+                setStdrmknm,
+                mainDataState,
+                setMainDataState,
+                // fetchGrid,
+              }}
+            >
+              <FormContext4.Provider
+                value={{
+                  acntsrtnm,
+                  acntnum,
+                  setAcntsrtnm,
+                  setAcntnum,
+                  mainDataState,
+                  setMainDataState,
+                  // fetchGrid,
+                }}
+              >
+                <GridContainer height="calc(100% - 150px) ">
+                  <GridTitleContainer>
+                    <GridTitle>기본정보</GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        themeColor={"primary"}
+                        onClick={onDetailClick}
+                        icon="folder-open"
+                      >
+                        기초잔액
+                      </Button>
+                      <Button
+                        onClick={onAddClick}
+                        themeColor={"primary"}
+                        icon="plus"
+                        title="행 추가"
+                      ></Button>
+                      <Button
+                        onClick={onDeleteClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="minus"
+                        title="행 삭제"
+                      ></Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <Grid
+                    style={{ height: "calc(100% - 50px)" }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        rowstatus:
+                          row.rowstatus == null ||
+                          row.rowstatus == "" ||
+                          row.rowstatus == undefined
+                            ? ""
+                            : row.rowstatus,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                      })),
+                      mainDataState
+                    )}
+                    onDataStateChange={onMainDataStateChange}
+                    {...mainDataState}
+                    //선택 subDataState
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    <GridColumn
+                      field="drcrdiv"
+                      title="차대구분"
+                      width="150px"
+                      cell={CustomRadioCell}
+                      footerCell={mainTotalFooterCell}
+                    />
+                    <GridColumn
+                      field="amt_1"
+                      title="차변금액"
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={editNumberFooterCell}
+                    />
+                    <GridColumn
+                      field="amt_2"
+                      title="대변금액"
+                      width="100px"
+                      cell={NumberCell}
+                      footerCell={editNumberFooterCell}
+                    />
+                    <GridColumn
+                      field="stdrmkcd"
+                      title="단축코드"
+                      width="120px"
+                      cell={ColumnCommandCell3}
+                    />
+                    <GridColumn
+                      field="acntcd"
+                      title="계정과목코드"
+                      width="120px"
+                      cell={ColumnCommandCell}
+                    />
+                    <GridColumn field="stdrmknm" title="단축명" width="120px" />
+                    <GridColumn
+                      field="acntnm"
+                      title="계정과목명"
+                      width="120px"
+                    />
+                    <GridColumn
+                      field="custcd"
+                      title="업체코드"
+                      width="120px"
+                      cell={ColumnCommandCell2}
+                    />
+                    <GridColumn field="custnm" title="업체명" width="120px" />
+                    <GridColumn
+                      field="acntnum"
+                      title="예적금코드"
+                      width="120px"
+                      cell={ColumnCommandCell4}
+                    />
+                    <GridColumn
+                      field="acntsrtnm"
+                      title="예적금명"
+                      width="120px"
+                    />
+                    <GridColumn field="remark1" title="적요" width="200px" />
+                    <GridColumn
+                      field="taxnum"
+                      title="계산서번호"
+                      width="150px"
+                    />
+                    <GridColumn
+                      field="notenum"
+                      title="어음번호"
+                      width="150px"
+                    />
+                    <GridColumn
+                      field="enddt"
+                      title="만기일자"
+                      width="120px"
+                      cell={DateCell}
+                    />
+                    <GridColumn
+                      field="pubbank"
+                      title="발행은행명"
+                      width="120px"
+                    />
+                    <GridColumn
+                      field="pubdt"
+                      title="발행일자"
+                      width="120px"
+                      cell={DateCell}
+                    />
+                    <GridColumn
+                      field="pubperson"
+                      title="발행인"
+                      width="120px"
+                    />
+                  </Grid>
+                </GridContainer>
+              </FormContext4.Provider>
+            </FormContext3.Provider>
+          </FormContext2.Provider>
+        </FormContext.Provider>
         <BottomContainer>
           <ButtonContainer>
             <Button themeColor={"primary"} onClick={selectData}>
@@ -948,6 +2012,7 @@ const CopyWindow = ({
         <MA_A8000W_Acnt_Window
           setVisible={setDetailWindowVisible}
           setData={setDatas}
+          custcd={workType == "N" ? undefined : data.custcd}
           pathname={pathname}
         />
       )}

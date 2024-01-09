@@ -127,7 +127,7 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
   const parameters = {
     para:
       "popup-data?id=" +
-      "P_ACNTSRTNUM" +
+      "P_AC900" +
       "&page=" +
       mainPgNum +
       "&pageSize=" +
