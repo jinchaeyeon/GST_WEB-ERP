@@ -45,7 +45,7 @@ import {
   convertDateToStr,
   getGridItemChangedData,
   numberWithCommas,
-  toDate
+  toDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -59,13 +59,16 @@ let temp = 0;
 let deletedMainRows: object[] = [];
 
 type TdataArr = {
-  row_status_s: string[];
-  paymentseq_s: string[];
+  rowstatus_s: string[];
+  collectseq: string[];
   drcrdiv_s: string[];
   acntcd_s: string[];
-  rcvcustcd_s: string[];
-  rcvcustnm_s: string[];
+  custcd_s: string[];
+  custnm_s: string[];
   amt_s: string[];
+  amtunit_s: string[];
+  wonchgrat_s: string[];
+  ratedt_s: string[];
   notediv_s: string[];
   notenum_s: string[];
   pubdt_s: string[];
@@ -76,13 +79,11 @@ type TdataArr = {
   acntnum_s: string[];
   stdrmkcd_s: string[];
   remark1_s: string[];
-  doexdiv_s: string[];
-  closeyn_s: string[];
   dptcd_s: string[];
   taxnum_s: string[];
-  advanceinfo_s: string[];
-  custcd_s: string[];
-  custnm_s: string[];
+  fornamt_s: string[];
+  ordnum_s: string[];
+  salekey_s: string[];
   datnum_s: string[];
 };
 
@@ -598,7 +599,7 @@ const CopyWindow = ({
         total: prev.total,
       };
     });
-  }
+  };
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
@@ -652,7 +653,8 @@ const CopyWindow = ({
     indt: new Date(),
     location: "",
     position: "",
-    paymentnum: "",
+    doexdiv: "",
+    collectnum: "",
     pgNum: 1,
     isSearch: true,
   });
@@ -663,13 +665,13 @@ const CopyWindow = ({
 
     let data2: any;
     const parameters: Iparameters = {
-      procedureName: "P_MA_A8000W_Q",
+      procedureName: "P_SA_A8000W_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "DETAIL",
         "@p_orgdiv": filters.orgdiv,
-        "@p_paymentnum": data.paymentnum,
+        "@p_collectnum": data.collectnum,
         "@p_location": filters.location,
         "@p_frdt": "",
         "@p_todt": "",
@@ -705,10 +707,11 @@ const CopyWindow = ({
         setFilters((prev) => ({
           ...prev,
           isSearch: false,
-          paymentnum: rows[0].paymentnum,
+          collectnum: rows[0].collectnum,
           indt: toDate(rows[0].indt),
           location: rows[0].location,
           position: rows[0].position,
+          doexdiv: rows[0].doexdiv,
         }));
         setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
@@ -752,31 +755,30 @@ const CopyWindow = ({
       list.map((item: any) => {
         const newDataItem = {
           [DATA_ITEM_KEY]: ++temp,
-          acntcd: "2110101",
-          acntnm: "외상매입금",
+          acntcd: "1110401",
+          acntnm: "외상매출금",
           acntnum: "",
           acntsrtnm: "",
-          advanceinfo: "0",
-          amt: item.collecttotal,
-          amt_1: item.collecttotal,
-          amt_2: 0,
-          amtunit: "",
+          amt: item.calamt,
+          amt_1: 0,
+          amt_2: item.calamt,
+          amtunit: item.amtunit,
           bankcd: "",
-          closeyn: "",
+          collectnum: "",
+          collectseq: 0,
           custcd: item.custcd,
           custnm: item.custnm,
           datnum: "",
-          doexdiv: "",
+          doexdiv: item.doexdiv,
           dptcd: "",
-          drcrdiv: "1",
+          drcrdiv: "2",
           enddt: "",
+          fornamt: 0,
           indt: convertDateToStr(filters.indt),
           location: filters.location,
           notediv: "",
           notenum: "",
           orgdiv: filters.orgdiv,
-          paymentnum: filters.paymentnum,
-          paymentseq: 0,
           position: filters.position,
           pubbank: "",
           pubdt: "",
@@ -784,10 +786,11 @@ const CopyWindow = ({
           ratedt: "",
           rcvcustcd: "",
           rcvcustnm: "",
-          remark1: item.custnm + " 지급",
+          remark1: item.custnm + " 수금",
+          salekey: "",
           stdrmkcd: "",
           stdrmknm: "",
-          taxnum: item.taxnum,
+          taxnum: item.reqkey,
           wonchgrat: 0,
           rowstatus: "N",
         };
@@ -808,8 +811,8 @@ const CopyWindow = ({
         );
 
         var sum = 0;
-        datas.map((item: { collecttotal: number }) => {
-          sum += item.collecttotal;
+        datas.map((item: { calamt: number }) => {
+          sum += item.calamt;
         });
 
         const newDataItem = {
@@ -818,27 +821,26 @@ const CopyWindow = ({
           acntnm: "보통예금",
           acntnum: "",
           acntsrtnm: "",
-          advanceinfo: "0",
           amt: sum,
-          amt_1: 0,
-          amt_2: sum,
-          amtunit: "",
+          amt_1: sum,
+          amt_2: 0,
+          amtunit: datas[0].amtunit,
           bankcd: "",
-          closeyn: "",
+          collectnum: "",
+          collectseq: 0,
           custcd: datas[0].custcd,
           custnm: datas[0].custnm,
           datnum: "",
-          doexdiv: "",
+          doexdiv: datas[0].doexdiv,
           dptcd: "",
-          drcrdiv: "2",
+          drcrdiv: "1",
           enddt: "",
+          fornamt: 0,
           indt: convertDateToStr(filters.indt),
           location: filters.location,
           notediv: "",
           notenum: "",
           orgdiv: filters.orgdiv,
-          paymentnum: filters.paymentnum,
-          paymentseq: 0,
           position: filters.position,
           pubbank: "",
           pubdt: "",
@@ -846,7 +848,8 @@ const CopyWindow = ({
           ratedt: "",
           rcvcustcd: "",
           rcvcustnm: "",
-          remark1: datas[0].custnm + " 지급",
+          remark1: datas[0].custnm + " 수금",
+          salekey: "",
           stdrmkcd: "",
           stdrmknm: "",
           taxnum: "",
@@ -932,13 +935,16 @@ const CopyWindow = ({
       if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
 
       let dataArr: TdataArr = {
-        row_status_s: [],
-        paymentseq_s: [],
+        rowstatus_s: [],
+        collectseq: [],
         drcrdiv_s: [],
         acntcd_s: [],
-        rcvcustcd_s: [],
-        rcvcustnm_s: [],
+        custcd_s: [],
+        custnm_s: [],
         amt_s: [],
+        amtunit_s: [],
+        wonchgrat_s: [],
+        ratedt_s: [],
         notediv_s: [],
         notenum_s: [],
         pubdt_s: [],
@@ -949,26 +955,27 @@ const CopyWindow = ({
         acntnum_s: [],
         stdrmkcd_s: [],
         remark1_s: [],
-        doexdiv_s: [],
-        closeyn_s: [],
         dptcd_s: [],
         taxnum_s: [],
-        advanceinfo_s: [],
-        custcd_s: [],
-        custnm_s: [],
+        fornamt_s: [],
+        ordnum_s: [],
+        salekey_s: [],
         datnum_s: [],
       };
 
       dataItem.forEach((item: any, idx: number) => {
         const {
           rowstatus = "",
-          paymentseq = "",
+          collectseq = "",
           drcrdiv = "",
           acntcd = "",
-          rcvcustcd = "",
-          rcvcustnm = "",
+          custcd = "",
+          custnm = "",
           amt_1 = "",
           amt_2 = "",
+          amtunit = "",
+          wonchgrat = "",
+          ratedt = "",
           notediv = "",
           notenum = "",
           pubdt = "",
@@ -979,22 +986,23 @@ const CopyWindow = ({
           acntnum = "",
           stdrmkcd = "",
           remark1 = "",
-          doexdiv = "",
-          closeyn = "",
           dptcd = "",
           taxnum = "",
-          advanceinfo = "",
-          custcd = "",
-          custnm = "",
+          fornamt = "",
+          ordnum = "",
+          salekey = "",
           datnum = "",
         } = item;
-        dataArr.row_status_s.push(rowstatus);
-        dataArr.paymentseq_s.push(paymentseq == undefined ? 0 : paymentseq);
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.collectseq.push(collectseq == undefined ? 0 : collectseq);
         dataArr.drcrdiv_s.push(drcrdiv == undefined ? "" : drcrdiv);
         dataArr.acntcd_s.push(acntcd == undefined ? "" : acntcd);
-        dataArr.rcvcustcd_s.push(rcvcustcd == undefined ? "" : rcvcustcd);
-        dataArr.rcvcustnm_s.push(rcvcustnm == undefined ? "" : rcvcustnm);
+        dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
+        dataArr.custnm_s.push(custnm == undefined ? "" : custnm);
         dataArr.amt_s.push(drcrdiv == "1" ? amt_1 : amt_2);
+        dataArr.amtunit_s.push(amtunit == undefined ? "" : amtunit);
+        dataArr.wonchgrat_s.push(wonchgrat == undefined ? 0 : wonchgrat);
+        dataArr.ratedt_s.push(ratedt == undefined ? "" : ratedt);
         dataArr.notediv_s.push(notediv == undefined ? "" : notediv);
         dataArr.notenum_s.push(notenum == undefined ? "" : notenum);
         dataArr.pubdt_s.push(
@@ -1009,26 +1017,27 @@ const CopyWindow = ({
         dataArr.acntnum_s.push(acntnum == undefined ? "" : acntnum);
         dataArr.stdrmkcd_s.push(stdrmkcd == undefined ? "" : stdrmkcd);
         dataArr.remark1_s.push(remark1 == undefined ? "" : remark1);
-        dataArr.doexdiv_s.push(doexdiv == undefined ? "" : doexdiv);
-        dataArr.closeyn_s.push(closeyn == undefined ? "" : closeyn);
         dataArr.dptcd_s.push(dptcd == undefined ? "" : dptcd);
         dataArr.taxnum_s.push(taxnum == undefined ? "" : taxnum);
-        dataArr.advanceinfo_s.push(advanceinfo == undefined ? "" : advanceinfo);
-        dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
-        dataArr.custnm_s.push(custnm == undefined ? "" : custnm);
+        dataArr.fornamt_s.push(fornamt == undefined ? 0 : fornamt);
+        dataArr.ordnum_s.push(ordnum == undefined ? "" : ordnum);
+        dataArr.salekey_s.push(salekey == undefined ? "" : salekey);
         dataArr.datnum_s.push(datnum == undefined ? "" : datnum);
       });
 
       deletedMainRows.forEach((item: any, idx: number) => {
         const {
           rowstatus = "",
-          paymentseq = "",
+          collectseq = "",
           drcrdiv = "",
           acntcd = "",
-          rcvcustcd = "",
-          rcvcustnm = "",
+          custcd = "",
+          custnm = "",
           amt_1 = "",
           amt_2 = "",
+          amtunit = "",
+          wonchgrat = "",
+          ratedt= "",
           notediv = "",
           notenum = "",
           pubdt = "",
@@ -1039,22 +1048,23 @@ const CopyWindow = ({
           acntnum = "",
           stdrmkcd = "",
           remark1 = "",
-          doexdiv = "",
-          closeyn = "",
           dptcd = "",
           taxnum = "",
-          advanceinfo = "",
-          custcd = "",
-          custnm = "",
+          fornamt = "",
+          ordnum = "",
+          salekey = "",
           datnum = "",
         } = item;
-        dataArr.row_status_s.push(rowstatus);
-        dataArr.paymentseq_s.push(paymentseq == undefined ? 0 : paymentseq);
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.collectseq.push(collectseq == undefined ? 0 : collectseq);
         dataArr.drcrdiv_s.push(drcrdiv == undefined ? "" : drcrdiv);
         dataArr.acntcd_s.push(acntcd == undefined ? "" : acntcd);
-        dataArr.rcvcustcd_s.push(rcvcustcd == undefined ? "" : rcvcustcd);
-        dataArr.rcvcustnm_s.push(rcvcustnm == undefined ? "" : rcvcustnm);
+        dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
+        dataArr.custnm_s.push(custnm == undefined ? "" : custnm);
         dataArr.amt_s.push(drcrdiv == "1" ? amt_1 : amt_2);
+        dataArr.amtunit_s.push(amtunit == undefined ? "" : amtunit);
+        dataArr.wonchgrat_s.push(wonchgrat == undefined ? 0 : wonchgrat);
+        dataArr.ratedt_s.push(ratedt == undefined ? "" : ratedt);
         dataArr.notediv_s.push(notediv == undefined ? "" : notediv);
         dataArr.notenum_s.push(notenum == undefined ? "" : notenum);
         dataArr.pubdt_s.push(
@@ -1069,13 +1079,11 @@ const CopyWindow = ({
         dataArr.acntnum_s.push(acntnum == undefined ? "" : acntnum);
         dataArr.stdrmkcd_s.push(stdrmkcd == undefined ? "" : stdrmkcd);
         dataArr.remark1_s.push(remark1 == undefined ? "" : remark1);
-        dataArr.doexdiv_s.push(doexdiv == undefined ? "" : doexdiv);
-        dataArr.closeyn_s.push(closeyn == undefined ? "" : closeyn);
         dataArr.dptcd_s.push(dptcd == undefined ? "" : dptcd);
         dataArr.taxnum_s.push(taxnum == undefined ? "" : taxnum);
-        dataArr.advanceinfo_s.push(advanceinfo == undefined ? "" : advanceinfo);
-        dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
-        dataArr.custnm_s.push(custnm == undefined ? "" : custnm);
+        dataArr.fornamt_s.push(fornamt == undefined ? 0 : fornamt);
+        dataArr.ordnum_s.push(ordnum == undefined ? "" : ordnum);
+        dataArr.salekey_s.push(salekey == undefined ? "" : salekey);
         dataArr.datnum_s.push(datnum == undefined ? "" : datnum);
       });
 
@@ -1083,17 +1091,21 @@ const CopyWindow = ({
         ...prev,
         workType: workType,
         orgdiv: filters.orgdiv,
-        paymentnum: filters.paymentnum,
+        collectnum: filters.collectnum,
         indt: convertDateToStr(filters.indt),
         location: filters.location,
         position: filters.position,
-        row_status_s: dataArr.row_status_s.join("|"),
-        paymentseq_s: dataArr.paymentseq_s.join("|"),
+        doexdiv: filters.doexdiv,
+        rowstatus_s: dataArr.rowstatus_s.join("|"),
+        collectseq: dataArr.collectseq.join("|"),
         drcrdiv_s: dataArr.drcrdiv_s.join("|"),
         acntcd_s: dataArr.acntcd_s.join("|"),
-        rcvcustcd_s: dataArr.rcvcustcd_s.join("|"),
-        rcvcustnm_s: dataArr.rcvcustnm_s.join("|"),
+        custcd_s: dataArr.custcd_s.join("|"),
+        custnm_s: dataArr.custnm_s.join("|"),
         amt_s: dataArr.amt_s.join("|"),
+        amtunit_s: dataArr.amtunit_s.join("|"),
+        wonchgrat_s: dataArr.wonchgrat_s.join("|"),
+        ratedt_s: dataArr.ratedt_s.join("|"),
         notediv_s: dataArr.notediv_s.join("|"),
         notenum_s: dataArr.notenum_s.join("|"),
         pubdt_s: dataArr.pubdt_s.join("|"),
@@ -1104,13 +1116,11 @@ const CopyWindow = ({
         acntnum_s: dataArr.acntnum_s.join("|"),
         stdrmkcd_s: dataArr.stdrmkcd_s.join("|"),
         remark1_s: dataArr.remark1_s.join("|"),
-        doexdiv_s: dataArr.doexdiv_s.join("|"),
-        closeyn_s: dataArr.closeyn_s.join("|"),
         dptcd_s: dataArr.dptcd_s.join("|"),
         taxnum_s: dataArr.taxnum_s.join("|"),
-        advanceinfo_s: dataArr.advanceinfo_s.join("|"),
-        custcd_s: dataArr.custcd_s.join("|"),
-        custnm_s: dataArr.custnm_s.join("|"),
+        fornamt_s: dataArr.fornamt_s.join("|"),
+        ordnum_s: dataArr.ordnum_s.join("|"),
+        salekey_s: dataArr.salekey_s.join("|"),
         datnum_s: dataArr.datnum_s.join("|"),
       }));
     }
@@ -1122,14 +1132,18 @@ const CopyWindow = ({
     location: "",
     position: "",
     indt: "",
-    paymentnum: "",
-    row_status_s: "",
-    paymentseq_s: "",
+    collectnum: "",
+    doexdiv: "",
+    rowstatus_s: "",
+    collectseq: "",
     drcrdiv_s: "",
     acntcd_s: "",
-    rcvcustcd_s: "",
-    rcvcustnm_s: "",
+    custcd_s: "",
+    custnm_s: "",
     amt_s: "",
+    amtunit_s: "",
+    wonchgrat_s: "",
+    ratedt_s: "",
     notediv_s: "",
     notenum_s: "",
     pubdt_s: "",
@@ -1140,19 +1154,17 @@ const CopyWindow = ({
     acntnum_s: "",
     stdrmkcd_s: "",
     remark1_s: "",
-    doexdiv_s: "",
-    closeyn_s: "",
     dptcd_s: "",
     taxnum_s: "",
-    advanceinfo_s: "",
-    custcd_s: "",
-    custnm_s: "",
+    fornamt_s: "",
+    ordnum_s: "",
+    salekey_s: "",
     datnum_s: "",
   });
 
   //삭제 프로시저 파라미터
   const para: Iparameters = {
-    procedureName: "P_MA_A8000W_S",
+    procedureName: "P_SA_A8000W_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
@@ -1161,14 +1173,18 @@ const CopyWindow = ({
       "@p_location": ParaData.location,
       "@p_position": ParaData.position,
       "@p_indt": ParaData.indt,
-      "@p_paymentnum": ParaData.paymentnum,
-      "@p_row_status_s": ParaData.row_status_s,
-      "@p_paymentseq_s": ParaData.paymentseq_s,
+      "@p_collectnum": ParaData.collectnum,
+      "@p_doexdiv": ParaData.doexdiv,
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_collectseq": ParaData.collectseq,
       "@p_drcrdiv_s": ParaData.drcrdiv_s,
       "@p_acntcd_s": ParaData.acntcd_s,
-      "@p_rcvcustcd_s": ParaData.rcvcustcd_s,
-      "@p_rcvcustnm_s": ParaData.rcvcustnm_s,
+      "@p_custcd_s": ParaData.custcd_s,
+      "@p_custnm_s": ParaData.custnm_s,
       "@p_amt_s": ParaData.amt_s,
+      "@p_amtunit_s": ParaData.amtunit_s,
+      "@p_wonchgrat_s": ParaData.wonchgrat_s,
+      "@p_ratedt_s": ParaData.ratedt_s,
       "@p_notediv_s": ParaData.notediv_s,
       "@p_notenum_s": ParaData.notenum_s,
       "@p_pubdt_s": ParaData.pubdt_s,
@@ -1179,17 +1195,15 @@ const CopyWindow = ({
       "@p_acntnum_s": ParaData.acntnum_s,
       "@p_stdrmkcd_s": ParaData.stdrmkcd_s,
       "@p_remark1_s": ParaData.remark1_s,
-      "@p_doexdiv_s": ParaData.doexdiv_s,
-      "@p_closeyn_s": ParaData.closeyn_s,
       "@p_dptcd_s": ParaData.dptcd_s,
       "@p_taxnum_s": ParaData.taxnum_s,
-      "@p_advanceinfo_s": ParaData.advanceinfo_s,
-      "@p_custcd_s": ParaData.custcd_s,
-      "@p_custnm_s": ParaData.custnm_s,
+      "@p_fornamt_s": ParaData.fornamt_s,
+      "@p_ordnum_s": ParaData.ordnum_s,
+      "@p_salekey_s": ParaData.salekey_s,
       "@p_datnum_s": ParaData.datnum_s,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "MA_A8000W",
+      "@p_form_id": "SA_A8000W",
     },
   };
 
@@ -1226,14 +1240,18 @@ const CopyWindow = ({
         location: "",
         position: "",
         indt: "",
-        paymentnum: "",
-        row_status_s: "",
-        paymentseq_s: "",
+        collectnum: "",
+        doexdiv: "",
+        rowstatus_s: "",
+        collectseq: "",
         drcrdiv_s: "",
         acntcd_s: "",
-        rcvcustcd_s: "",
-        rcvcustnm_s: "",
+        custcd_s: "",
+        custnm_s: "",
         amt_s: "",
+        amtunit_s: "",
+        wonchgrat_s: "",
+        ratedt_s: "",
         notediv_s: "",
         notenum_s: "",
         pubdt_s: "",
@@ -1244,13 +1262,11 @@ const CopyWindow = ({
         acntnum_s: "",
         stdrmkcd_s: "",
         remark1_s: "",
-        doexdiv_s: "",
-        closeyn_s: "",
         dptcd_s: "",
         taxnum_s: "",
-        advanceinfo_s: "",
-        custcd_s: "",
-        custnm_s: "",
+        fornamt_s: "",
+        ordnum_s: "",
+        salekey_s: "",
         datnum_s: "",
       });
     } else {
@@ -1416,27 +1432,28 @@ const CopyWindow = ({
       acntnm: "",
       acntnum: "",
       acntsrtnm: "",
-      advanceinfo: "0",
       amt: 0,
       amt_1: 0,
       amt_2: 0,
-      amtunit: "",
+      amtunit: 0,
       bankcd: "",
-      closeyn: "",
-      custcd: workType == "N" ? cust.length > 0 ? cust[0].custcd : "" : data.custcd,
-      custnm: workType == "N" ? cust.length > 0 ? cust[0].custnm : "" : data.custnm,
+      collectnum: "",
+      collectseq: 0,
+      custcd:
+        workType == "N" ? (cust.length > 0 ? cust[0].custcd : "") : data.custcd,
+      custnm:
+        workType == "N" ? (cust.length > 0 ? cust[0].custnm : "") : data.custnm,
       datnum: "",
       doexdiv: "",
       dptcd: "",
       drcrdiv: "1",
       enddt: "",
+      fornamt: 0,
       indt: convertDateToStr(filters.indt),
       location: filters.location,
       notediv: "",
       notenum: "",
       orgdiv: filters.orgdiv,
-      paymentnum: filters.paymentnum,
-      paymentseq: 0,
       position: filters.position,
       pubbank: "",
       pubdt: "",
@@ -1445,6 +1462,7 @@ const CopyWindow = ({
       rcvcustcd: "",
       rcvcustnm: "",
       remark1: "",
+      salekey: "",
       stdrmkcd: "",
       stdrmknm: "",
       taxnum: "",
@@ -1511,27 +1529,26 @@ const CopyWindow = ({
         acntnm: item.acntnm,
         acntnum: "",
         acntsrtnm: "",
-        advanceinfo: "0",
         amt: item.janamt,
         amt_1: item.janamt,
         amt_2: 0,
         amtunit: item.amtunit,
         bankcd: "",
-        closeyn: "",
+        collectnum: filters.collectnum,
+        collectseq: 0,
         custcd: item.custcd,
         custnm: item.custnm,
         datnum: item.datnum,
-        doexdiv: "",
+        doexdiv: filters.doexdiv,
         dptcd: "",
         drcrdiv: "1",
         enddt: "",
+        fornamt: 0,
         indt: convertDateToStr(filters.indt),
         location: filters.location,
         notediv: "",
         notenum: "",
         orgdiv: filters.orgdiv,
-        paymentnum: filters.paymentnum,
-        paymentseq: 0,
         position: filters.position,
         pubbank: "",
         pubdt: "",
@@ -1539,7 +1556,7 @@ const CopyWindow = ({
         ratedt: "",
         rcvcustcd: "",
         rcvcustnm: "",
-        remark1: item.custnm + " 지급",
+        remark1: item.custnm + " 수금",
         stdrmkcd: "",
         stdrmknm: "",
         taxnum: "",
@@ -1561,27 +1578,26 @@ const CopyWindow = ({
         acntnm: "보통예금",
         acntnum: "",
         acntsrtnm: "",
-        advanceinfo: "0",
         amt: item.janamt,
         amt_1: 0,
         amt_2: item.janamt,
         amtunit: item.amtunit,
         bankcd: "",
-        closeyn: "",
+        collectnum: filters.collectnum,
+        collectseq: 0,
         custcd: item.custcd,
         custnm: item.custnm,
         datnum: item.datnum,
-        doexdiv: "",
+        doexdiv: filters.doexdiv,
         dptcd: "",
         drcrdiv: "2",
         enddt: "",
+        fornamt: 0,
         indt: convertDateToStr(filters.indt),
         location: filters.location,
         notediv: "",
         notenum: "",
         orgdiv: filters.orgdiv,
-        paymentnum: filters.paymentnum,
-        paymentseq: 0,
         position: filters.position,
         pubbank: "",
         pubdt: "",
@@ -1589,7 +1605,7 @@ const CopyWindow = ({
         ratedt: "",
         rcvcustcd: "",
         rcvcustnm: "",
-        remark1: item.custnm + " 지급",
+        remark1: item.custnm + " 수금",
         stdrmkcd: "",
         stdrmknm: "",
         taxnum: "",
@@ -1720,7 +1736,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType == "N" ? "지급처리생성" : "지급처리수정"}
+        title={workType == "N" ? "수금처리생성" : "수금처리수정"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -1732,16 +1748,16 @@ const CopyWindow = ({
           <FormBox>
             <tbody>
               <tr>
-                <th>지급번호</th>
+                <th>입금번호</th>
                 <td>
                   <Input
-                    name="paymentnum"
+                    name="collectnum"
                     type="text"
-                    value={filters.paymentnum}
+                    value={filters.collectnum}
                     className="readonly"
                   />
                 </td>
-                <th>일자</th>
+                <th>수금일자</th>
                 <td>
                   <div className="filter-item-wrap">
                     <DatePicker
@@ -1773,6 +1789,20 @@ const CopyWindow = ({
                       value={filters.position}
                       customOptionData={customOptionData}
                       changeData={filterComboBoxChange}
+                    />
+                  )}
+                </td>
+                <th>내수구분</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="doexdiv"
+                      value={filters.doexdiv}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                      type="new"
+                      className="readonly"
+                      disabled={true}
                     />
                   )}
                 </td>
@@ -1926,13 +1956,13 @@ const CopyWindow = ({
                       width="120px"
                       cell={ColumnCommandCell3}
                     />
+                    <GridColumn field="stdrmknm" title="단축명" width="120px" />
                     <GridColumn
                       field="acntcd"
                       title="계정과목코드"
                       width="120px"
                       cell={ColumnCommandCell}
                     />
-                    <GridColumn field="stdrmknm" title="단축명" width="120px" />
                     <GridColumn
                       field="acntnm"
                       title="계정과목명"
@@ -1968,6 +1998,12 @@ const CopyWindow = ({
                       width="150px"
                     />
                     <GridColumn
+                      field="pubdt"
+                      title="발행일자"
+                      width="120px"
+                      cell={DateCell}
+                    />
+                    <GridColumn
                       field="enddt"
                       title="만기일자"
                       width="120px"
@@ -1977,12 +2013,6 @@ const CopyWindow = ({
                       field="pubbank"
                       title="발행은행명"
                       width="120px"
-                    />
-                    <GridColumn
-                      field="pubdt"
-                      title="발행일자"
-                      width="120px"
-                      cell={DateCell}
                     />
                     <GridColumn
                       field="pubperson"

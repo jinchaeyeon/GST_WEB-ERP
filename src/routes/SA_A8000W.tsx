@@ -58,11 +58,11 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import DetailWindow from "../components/Windows/MA_A8000W_Popup_Window";
-import DetailWindow2 from "../components/Windows/MA_A8000W_Window";
+import DetailWindow from "../components/Windows/SA_A8000W_Popup_Window";
+import DetailWindow2 from "../components/Windows/SA_A8000W_Window";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
-import { gridList } from "../store/columns/MA_A8000W_C";
+import { gridList } from "../store/columns/SA_A8000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
@@ -95,7 +95,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   );
 };
 
-const MA_A8000W: React.FC = () => {
+const SA_A8000W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [workType, setWorkType] = useState<"N" | "U">("N");
@@ -148,9 +148,10 @@ const MA_A8000W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("MA_A8000W", setCustomOptionData);
+  UseCustomOption("SA_A8000W", setCustomOptionData);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("MA_A8000W", setMessagesData);
+  UseMessages("SA_A8000W", setMessagesData);
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -330,14 +331,14 @@ const MA_A8000W: React.FC = () => {
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "MA_A8000W_001");
+        throw findMessage(messagesData, "SA_A8000W_001");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "MA_A8000W_001");
+        throw findMessage(messagesData, "SA_A8000W_001");
       } else {
         resetAllGrid();
         setPage(initialPageState); // 페이지 초기화
@@ -366,7 +367,7 @@ const MA_A8000W: React.FC = () => {
     location: "01",
     frdt: new Date(),
     todt: new Date(),
-    paymentnum: "",
+    collectnum: "",
     position: "",
     custcd: "",
     custnm: "",
@@ -377,7 +378,7 @@ const MA_A8000W: React.FC = () => {
 
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
-    paymentnum: "",
+    collectnum: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -394,13 +395,13 @@ const MA_A8000W: React.FC = () => {
 
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_MA_A8000W_Q",
+      procedureName: "P_SA_A8000W_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "LIST",
         "@p_orgdiv": filters.orgdiv,
-        "@p_paymentnum": filters.paymentnum,
+        "@p_collectnum": filters.collectnum,
         "@p_location": filters.location,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
@@ -424,7 +425,7 @@ const MA_A8000W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.paymentnum == filters.find_row_value
+            (row: any) => row.collectnum == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -452,13 +453,13 @@ const MA_A8000W: React.FC = () => {
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.paymentnum == filters.find_row_value);
+            : rows.find((row: any) => row.collectnum == filters.find_row_value);
 
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
           setFilters2((prev) => ({
             ...prev,
-            paymentnum: selectedRow.paymentnum,
+            collectnum: selectedRow.collectnum,
             isSearch: true,
             pgNum: 1,
           }));
@@ -466,7 +467,7 @@ const MA_A8000W: React.FC = () => {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
           setFilters2((prev) => ({
             ...prev,
-            paymentnum: rows[0].paymentnum,
+            collectnum: rows[0].collectnum,
             isSearch: true,
             pgNum: 1,
           }));
@@ -491,13 +492,13 @@ const MA_A8000W: React.FC = () => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_MA_A8000W_Q",
+      procedureName: "P_SA_A8000W_Q",
       pageNumber: filters2.pgNum,
       pageSize: filters2.pgSize,
       parameters: {
         "@p_work_type": "DETAIL",
         "@p_orgdiv": filters.orgdiv,
-        "@p_paymentnum": filters2.paymentnum,
+        "@p_collectnum": filters2.collectnum,
         "@p_location": filters.location,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
@@ -602,7 +603,7 @@ const MA_A8000W: React.FC = () => {
 
     setFilters2((prev) => ({
       ...prev,
-      paymentnum: selectedRowData.paymentnum,
+      collectnum: selectedRowData.collectnum,
       pgNum: 1,
       find_row_value: "",
       isSearch: true,
@@ -718,7 +719,8 @@ const MA_A8000W: React.FC = () => {
       setParaDataDeleted((prev) => ({
         ...prev,
         work_type: "D",
-        paymentnum: data.paymentnum,
+        collectnum: data.collectnum,
+        indt: data.indt,
       }));
     } else {
       alert("데이터가 없습니다.");
@@ -767,12 +769,13 @@ const MA_A8000W: React.FC = () => {
   //삭제 프로시저 초기값
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
-    paymentnum: "",
+    collectnum: "",
+    indt: "",
   });
 
   //삭제 프로시저 파라미터
   const paraDeleted: Iparameters = {
-    procedureName: "P_MA_A8000W_S",
+    procedureName: "P_SA_A8000W_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
@@ -780,15 +783,19 @@ const MA_A8000W: React.FC = () => {
       "@p_orgdiv": "01",
       "@p_location": filters.location,
       "@p_position": filters.position,
-      "@p_indt": "",
-      "@p_paymentnum": paraDataDeleted.paymentnum,
-      "@p_row_status_s": "",
-      "@p_paymentseq_s": "",
+      "@p_indt": paraDataDeleted.indt,
+      "@p_collectnum": paraDataDeleted.collectnum,
+      "@p_doexdiv": "",
+      "@p_rowstatus_s": "",
+      "@p_collectseq": "",
       "@p_drcrdiv_s": "",
       "@p_acntcd_s": "",
-      "@p_rcvcustcd_s": "",
-      "@p_rcvcustnm_s": "",
+      "@p_custcd_s": "",
+      "@p_custnm_s": "",
       "@p_amt_s": "",
+      "@p_amtunit_s": "",
+      "@p_wonchgrat_s": "",
+      "@p_ratedt_s": "",
       "@p_notediv_s": "",
       "@p_notenum_s": "",
       "@p_pubdt_s": "",
@@ -799,17 +806,15 @@ const MA_A8000W: React.FC = () => {
       "@p_acntnum_s": "",
       "@p_stdrmkcd_s": "",
       "@p_remark1_s": "",
-      "@p_doexdiv_s": "",
-      "@p_closeyn_s": "",
       "@p_dptcd_s": "",
       "@p_taxnum_s": "",
-      "@p_advanceinfo_s": "",
-      "@p_custcd_s": "",
-      "@p_custnm_s": "",
+      "@p_fornamt_s": "",
+      "@p_ordnum_s": "",
+      "@p_salekey_s": "",
       "@p_datnum_s": "",
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "MA_A8000W",
+      "@p_form_id": "SA_A8000W",
     },
   };
 
@@ -855,7 +860,7 @@ const MA_A8000W: React.FC = () => {
           ...prev,
           find_row_value:
             mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
-              .paymentnum,
+              .collectnum,
           pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
           isSearch: true,
         }));
@@ -869,7 +874,8 @@ const MA_A8000W: React.FC = () => {
     //초기화
     setParaDataDeleted((prev) => ({
       work_type: "",
-      paymentnum: "",
+      collectnum: "",
+      indt: "",
     }));
   };
 
@@ -897,14 +903,14 @@ const MA_A8000W: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>지급처리</Title>
+        <Title>수금처리</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="MA_A8000W"
+              pathname="SA_A8000W"
             />
           )}
         </ButtonContainer>
@@ -998,7 +1004,7 @@ const MA_A8000W: React.FC = () => {
                 themeColor={"primary"}
                 icon="file-add"
               >
-                지급처리생성
+                수금처리생성
               </Button>
               <Button
                 onClick={onDeleteClick}
@@ -1006,7 +1012,7 @@ const MA_A8000W: React.FC = () => {
                 fillMode="outline"
                 themeColor={"primary"}
               >
-                지급처리삭제
+                수금처리삭제
               </Button>
             </ButtonContainer>
           </GridTitleContainer>
@@ -1170,7 +1176,7 @@ const MA_A8000W: React.FC = () => {
           setVisible={setDetailWindowVisible}
           reload={(arr) => ListSetting(arr)}
           modal={true}
-          pathname="MA_A8000W"
+          pathname="SA_A8000W"
         />
       )}
       {detailWindowVisible2 && (
@@ -1195,7 +1201,7 @@ const MA_A8000W: React.FC = () => {
           }
           list={List}
           modal={true}
-          pathname="MA_A8000W"
+          pathname="SA_A8000W"
         />
       )}
       {gridList.map((grid: TGrid) =>
@@ -1215,4 +1221,4 @@ const MA_A8000W: React.FC = () => {
   );
 };
 
-export default MA_A8000W;
+export default SA_A8000W;

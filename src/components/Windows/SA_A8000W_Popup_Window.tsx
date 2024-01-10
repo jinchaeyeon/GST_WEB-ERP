@@ -31,6 +31,7 @@ import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
+import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
@@ -97,6 +98,8 @@ const CopyWindow = ({
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
+          .valueCode,
       }));
     }
   }, [customOptionData]);
@@ -195,11 +198,14 @@ const CopyWindow = ({
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
+    location: "",
+    position: "",
     frdt: new Date(),
     todt: new Date(),
     custcd: "",
     custnm: "",
-    location: "",
+    taxnum: "",
+    doexdiv: "A",
     finyn: "N",
     pgNum: 1,
     isSearch: true,
@@ -210,19 +216,21 @@ const CopyWindow = ({
     //if (!permissions?.view) return;
     let data: any;
     const parameters: Iparameters = {
-      procedureName: "P_MA_P8000W_Q",
+      procedureName: "P_SA_A8000W_Sub1_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
         "@p_work_type": "Q",
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
-        "@p_dtgb": "",
+        "@p_position": filters.position,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
+        "@p_taxnum": filters.taxnum,
         "@p_finyn": filters.finyn,
+        "@p_doexdiv": filters.doexdiv,
       },
     };
 
@@ -332,9 +340,23 @@ const CopyWindow = ({
   const selectData = () => {
     const newData = mainDataResult.data.filter((item: any) => item.chk == true);
 
+    let valid = true;
+
     if (newData.length > 0) {
-      reload(newData);
-      onClose();
+      for (var i = 0; i < newData.length; i++) {
+        for (var j = 0; j < newData.length; j++) {
+          if (newData[i].custcd != newData[j].custcd) {
+            valid = false;
+          }
+        }
+      }
+
+      if (valid != true) {
+        alert("동일한 업체만 선택가능합니다.");
+      } else {
+        reload(newData);
+        onClose();
+      }
     } else {
       alert("데이터가 없습니다.");
     }
@@ -394,7 +416,7 @@ const CopyWindow = ({
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field == "chk" || field == "collecttotal") {
+    if (field == "chk" || field == "calamt") {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
@@ -435,12 +457,12 @@ const CopyWindow = ({
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",
-              collecttotal:
+              calamt:
                 item.chk == false
                   ? 0
-                  : item.chk == true && item.collecttotal == 0
+                  : item.chk == true && item.calamt == 0
                   ? item.janamt
-                  : item.collecttotal,
+                  : item.calamt,
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -505,14 +527,14 @@ const CopyWindow = ({
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "MA_A8000W_001");
+        throw findMessage(messagesData, "SA_A8000W_001");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "MA_A8000W_001");
+        throw findMessage(messagesData, "SA_A8000W_001");
       } else {
         setPage(initialPageState); // 페이지 초기화
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
@@ -525,7 +547,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={"BaseForm"}
+        title={"매출자료참조 팝업"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -566,6 +588,39 @@ const CopyWindow = ({
                     className="required"
                   />
                 </td>
+                <th>사업장</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="location"
+                      value={filters.location}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
+                </td>
+                <th>사업부</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="position"
+                      value={filters.position}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
+                </td>
+                <th>매출번호</th>
+                <td>
+                  <Input
+                    name="taxnum"
+                    type="text"
+                    value={filters.taxnum}
+                    onChange={filterInputChange}
+                  />
+                </td>
+              </tr>
+              <tr>
                 <th>업체코드</th>
                 <td>
                   <div className="filter-item-wrap">
@@ -593,24 +648,21 @@ const CopyWindow = ({
                     onChange={filterInputChange}
                   />
                 </td>
-              </tr>
-              <tr>
-                <th>사업장</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="location"
-                      value={filters.location}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                    />
-                  )}
-                </td>
                 <th>완료여부</th>
                 <td>
                   {customOptionData !== null && (
                     <CustomOptionRadioGroup
                       name="finyn"
+                      customOptionData={customOptionData}
+                      changeData={filterRadioChange}
+                    />
+                  )}
+                </td>
+                <th>내수구분</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionRadioGroup
+                      name="doexdiv"
                       customOptionData={customOptionData}
                       changeData={filterRadioChange}
                     />
@@ -680,16 +732,21 @@ const CopyWindow = ({
               cell={CheckBoxCell}
             />
             <GridColumn
-              field="taxnum"
-              title="계산서번호"
+              field="reqkey"
+              title="매출번호"
               width="150px"
               footerCell={mainTotalFooterCell}
             />
-            <GridColumn field="custcd" title="업체코드" width="150px" />
             <GridColumn field="custnm" title="업체명" width="150px" />
             <GridColumn
+              field="taxdt"
+              title="계산서일자"
+              width="120px"
+              cell={DateCell}
+            />
+            <GridColumn
               field="splyamt"
-              title="원화금액"
+              title="공급가액"
               width="100px"
               cell={NumberCell}
               footerCell={editNumberFooterCell}
@@ -702,8 +759,15 @@ const CopyWindow = ({
               footerCell={editNumberFooterCell}
             />
             <GridColumn
-              field="sumamt"
+              field="totamt"
               title="합계금액"
+              width="100px"
+              cell={NumberCell}
+              footerCell={editNumberFooterCell}
+            />
+            <GridColumn
+              field="collamt"
+              title="기수금액"
               width="100px"
               cell={NumberCell}
               footerCell={editNumberFooterCell}
@@ -716,7 +780,7 @@ const CopyWindow = ({
               footerCell={editNumberFooterCell}
             />
             <GridColumn
-              field="collecttotal"
+              field="calamt"
               title="처리금액"
               width="100px"
               cell={NumberCell}

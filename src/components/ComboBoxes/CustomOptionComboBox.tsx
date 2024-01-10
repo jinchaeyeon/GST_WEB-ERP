@@ -14,6 +14,7 @@ type TCustomOptionComboBox = {
   textField?: string;
   valueField?: string;
   className?: string;
+  disabled?: boolean;
 };
 const CustomOptionComboBox = ({
   type = "query",
@@ -24,6 +25,7 @@ const CustomOptionComboBox = ({
   textField = "code_name",
   valueField = "sub_code",
   className = "",
+  disabled = false
 }: TCustomOptionComboBox) => {
   const dataList = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, type);
   const dataItem = dataList.find((item: any) => item.id === name);
@@ -66,6 +68,7 @@ const CustomOptionComboBox = ({
       id={name}
       required={required}
       className={className}
+      disabled={disabled}
     />
   );
 };
