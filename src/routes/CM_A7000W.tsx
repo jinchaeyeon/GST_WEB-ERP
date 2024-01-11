@@ -1369,7 +1369,7 @@ const CM_A7000W: React.FC = () => {
     }
 
     if (!valid) return false;
-    console.log(information);
+
     setParaDataSaved({
       workType: workType,
       orgdiv: "01",

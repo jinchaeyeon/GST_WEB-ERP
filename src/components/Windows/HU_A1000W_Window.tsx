@@ -1893,7 +1893,7 @@ const CopyWindow = ({
               <FormBox>
                 <tbody>
                   <tr>
-                    
+
                   </tr>
                 </tbody>
               </FormBox>
@@ -1953,7 +1953,7 @@ const CopyWindow = ({
               닫기
             </Button>
           </ButtonContainer>
-          <div>※ 저장 후 현재 탭만 저장되며, 저장 후 새로고침됩니다.</div>
+          <div>※ 현재 탭만 저장되며, 저장 후 새로고침됩니다.</div>
         </BottomContainer>
       </Window>
       {zipCodeWindowVisible && (
