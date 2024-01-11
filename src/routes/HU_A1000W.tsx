@@ -405,9 +405,8 @@ const HU_A1000W: React.FC = () => {
   };
 
   const decrypt = (encrypted: any, secretKey: any) => {
-    var decrypted = CryptoJS.AES.decrypt(encrypted, secretKey);
-    var text = decrypted.toString(CryptoJS.enc.Utf8);
-    return text;
+    var decrypted = CryptoJS.AES.decrypt(encrypted, secretKey).toString(CryptoJS.enc.Utf8);
+    return decrypted;
   };
 
   //그리드 푸터
@@ -797,9 +796,9 @@ const HU_A1000W: React.FC = () => {
                 postcd: postcdListData.find(
                   (item: any) => item.sub_code === row.postcd
                 )?.code_name,
-                // perregnum: decrypt(row.perregnum, row.salt),
-                // telephon: decrypt(row.telephon, row.salt),
-                // phonenum: decrypt(row.phonenum, row.salt),
+                perregnum: decrypt(row.perregnum, row.salt),
+                telephon: decrypt(row.telephon, row.salt),
+                phonenum: decrypt(row.phonenum, row.salt),
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState

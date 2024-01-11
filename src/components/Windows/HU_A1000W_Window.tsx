@@ -1,7 +1,12 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { Input, MaskedTextBox, TextArea } from "@progress/kendo-react-inputs";
+import {
+  Checkbox,
+  Input,
+  MaskedTextBox,
+  TextArea,
+} from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import CryptoJS from "crypto-js";
 import { useEffect, useState } from "react";
@@ -29,13 +34,17 @@ import {
   UseCustomOption,
   UseParaPc,
   convertDateToStr,
+  numberWithCommas3,
   toDate,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
+import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
+import BankCDWindow from "./CommonWindows/BankCDWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import ZipCodeWindow from "./CommonWindows/ZipCodeWindow";
+import DetailWindow from "./HU_A1000W_Sub_Window";
 
 type IWindow = {
   workType: "N" | "U";
@@ -56,6 +65,8 @@ const CopyWindow = ({
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
+  const [tabSelected, setTabSelected] = useState(0);
+
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -66,7 +77,7 @@ const CopyWindow = ({
   const userId = loginResult ? loginResult.userId : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const [tabSelected, setTabSelected] = useState(0);
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption("HU_A1000W", setCustomOptionData);
@@ -97,6 +108,25 @@ const CopyWindow = ({
   };
 
   const handleSelectTab = (e: any) => {
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+      setUnsavedName([]);
+
+      if (tabSelected == 0) {
+        setInformation((prev) => ({
+          ...prev,
+          attdatnum: tempattach.attdatnum,
+          files: tempattach.files,
+        }));
+      } else if (tabSelected == 1) {
+        setInformation((prev) => ({
+          ...prev,
+          bankdatnum: tempattach.bankdatnum,
+          bankfiles: tempattach.bankfiles,
+        }));
+      }
+    }
+
     setTabSelected(e.selected);
   };
   const [zipCodeWindowVisible, setZipCodeWindowVisibile] =
@@ -104,6 +134,12 @@ const CopyWindow = ({
   const [zipCodeWindowVisible2, setZipCodeWindowVisibile2] =
     useState<boolean>(false);
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+  const [attachmentsWindowVisible2, setAttachmentsWindowVisible2] =
+    useState<boolean>(false);
+  const [overtimeWindowVisible, setOvertimeWindowVisible] =
+    useState<boolean>(false);
+  const [bankcdWindowVisible, setBankcdWindowVisible] =
     useState<boolean>(false);
 
   const onZipCodeWndClick = () => {
@@ -114,6 +150,15 @@ const CopyWindow = ({
   };
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
+  };
+  const onAttachmentsWndClick2 = () => {
+    setAttachmentsWindowVisible2(true);
+  };
+  const onOvertimeWndClick = () => {
+    setOvertimeWindowVisible(true);
+  };
+  const onBankcdWndClick = () => {
+    setBankcdWindowVisible(true);
   };
   const getZipCodeData = (zipcode: string, address: string) => {
     setInformation((prev) => {
@@ -133,7 +178,15 @@ const CopyWindow = ({
       };
     });
   };
-
+  const getbankcdData = (bankcd: string, banknm: string) => {
+    setInformation((prev) => {
+      return {
+        ...prev,
+        bankcd: bankcd,
+        banknm: banknm,
+      };
+    });
+  };
   const getAttachmentsData = (data: IAttachmentData) => {
     setInformation((prev: any) => {
       return {
@@ -142,6 +195,53 @@ const CopyWindow = ({
         files:
           data.original_name +
           (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
+      };
+    });
+    if (tempattach.one == false) {
+      setTempAttach((prev) => ({
+        ...prev,
+        attdatnum: information.attdatnum,
+        files: information.files,
+        one: true,
+      }));
+    }
+  };
+
+  const getAttachmentsData2 = (data: IAttachmentData) => {
+    setInformation((prev: any) => {
+      return {
+        ...prev,
+        bankdatnum: data.attdatnum,
+        bankfiles:
+          data.original_name +
+          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
+      };
+    });
+
+    if (tempattach.two == false) {
+      setTempAttach((prev) => ({
+        ...prev,
+        bankdatnum: information.bankdatnum,
+        bankfiles: information.bankfiles,
+        two: true,
+      }));
+    }
+  };
+
+  const [tempattach, setTempAttach] = useState({
+    attdatnum: "",
+    files: "",
+    bankdatnum: "",
+    bankfiles: "",
+    one: false,
+    two: false,
+  });
+
+  const getOvertime = (overtime: string) => {
+    setInformation((prev) => {
+      return {
+        ...prev,
+        overtime: overtime,
       };
     });
   };
@@ -188,13 +288,28 @@ const CopyWindow = ({
             .valueCode,
           workcls: defaultOption.find((item: any) => item.id === "workcls")
             .valueCode,
+          dayoffdiv: defaultOption.find((item: any) => item.id === "dayoffdiv")
+            .valueCode,
+          rtrtype: defaultOption.find((item: any) => item.id === "rtrtype")
+            .valueCode,
+          taxcd: defaultOption.find((item: any) => item.id === "taxcd")
+            .valueCode,
+          exmtaxgb: defaultOption.find((item: any) => item.id === "exmtaxgb")
+            .valueCode,
+          houseyn: defaultOption.find((item: any) => item.id === "houseyn")
+            .valueCode,
+          incgb: defaultOption.find((item: any) => item.id === "incgb")
+            .valueCode,
         }));
       }
     }
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("R_BIRCD,R_SEXCD", setBizComponentData);
+  UseBizComponent(
+    "R_BIRCD,R_SEXCD,R_dayoffdiv,R_Rtrtype, R_HOUSEYN",
+    setBizComponentData
+  );
 
   const [information, setInformation] = useState<{ [name: string]: any }>({
     orgdiv: "01",
@@ -242,21 +357,23 @@ const CopyWindow = ({
     schcd: "",
     gradutype: "",
     directyn: "",
-    laboryn: "",
-    dfmyn: "",
-    milyn: "",
+    laboryn: "N",
+    dfmyn: "N",
+    milyn: "N",
     paycd: "",
     taxcd: "",
-    hirinsuyn: "",
-    payyn: "",
+    hirinsuyn: "N",
+    payyn: "N",
     rtrgivdiv: "",
     yrgivdiv: "",
     mongivdiv: "",
-    caltaxyn: "",
-    yrdclyn: "",
+    caltaxyn: "N",
+    yrdclyn: "N",
     bankcd: "",
+    banknm: "",
     bankacnt: "",
     bankacntuser: "",
+    bankfiles: "",
     bankdatnum: "",
     insuzon: "",
     medgrad: "",
@@ -265,8 +382,8 @@ const CopyWindow = ({
     meddate: "",
     anudate: "",
     hirdate: "",
-    sps: "",
-    wmn: "",
+    sps: "N",
+    wmn: "N",
     sptnum: 0,
     dfmnum: 0,
     agenum: 0,
@@ -274,14 +391,14 @@ const CopyWindow = ({
     brngchlnum: 0,
     fam1: 0,
     fam2: 0,
-    notaxe: "",
+    notaxe: "N",
     otkind: "",
-    bnskind: "",
+    bnskind: "N",
     payprovyn: "",
     mailid: "",
     workmail: "",
     childnum: 0,
-    dfmyn2: "",
+    dfmyn2: "N",
     houseyn: "",
     remark: "",
     costdiv1: "",
@@ -307,8 +424,8 @@ const CopyWindow = ({
     mngdata4: "",
     mngdata5: "",
     mngdata6: "",
-    workchk: "",
-    yrchk: "",
+    workchk: "N",
+    yrchk: "N",
 
     //개인정보
     height: 0,
@@ -340,8 +457,9 @@ const CopyWindow = ({
     armykind: "",
     armyspeciality: "",
 
-    below2kyn: "",
+    below2kyn: "N",
     occudate: "",
+    overtime: 0,
   });
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -417,9 +535,10 @@ const CopyWindow = ({
   }
 
   const decrypt = (encrypted: any, secretKey: any) => {
-    var decrypted = CryptoJS.AES.decrypt(encrypted, secretKey);
-    var text = decrypted.toString(CryptoJS.enc.Utf8);
-    return text;
+    var decrypted = CryptoJS.AES.decrypt(encrypted, secretKey).toString(
+      CryptoJS.enc.Utf8
+    );
+    return decrypted;
   };
 
   const encrypt = (val: any, secretKey: any) => {
@@ -456,11 +575,19 @@ const CopyWindow = ({
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      const perregnum = decrypt(rows[0].perregnum, rows[0].salt);
-      const telephon = decrypt(rows[0].telephon, rows[0].salt);
-      const phonenum = decrypt(rows[0].phonenum, rows[0].salt);
 
       if (totalRowCnt > 0) {
+        const perregnum = decrypt(rows[0].perregnum, rows[0].salt);
+        const telephon = decrypt(rows[0].telephon, rows[0].salt);
+        const phonenum = decrypt(rows[0].phonenum, rows[0].salt);
+        setTempAttach({
+          attdatnum: rows[0].attdatnum,
+          files: rows[0].files,
+          bankdatnum: rows[0].bankdatnum,
+          bankfiles: rows[0].bankfiles,
+          one: false,
+          two: false,
+        });
         setInformation({
           orgdiv: "01",
           prsnnum: rows[0].prsnnum,
@@ -507,60 +634,61 @@ const CopyWindow = ({
           schcd: rows[0].schcd,
           gradutype: "",
           directyn: "",
-          laboryn: "",
-          dfmyn: "",
-          milyn: "",
+          laboryn: rows[0].laboryn == "" ? "N" : rows[0].laboryn,
+          dfmyn: rows[0].dfmyn == "" ? "N" : rows[0].dfmyn,
+          milyn: rows[0].milyn == "" ? "N" : rows[0].milyn,
           paycd: rows[0].paycd,
-
-          taxcd: "",
-          hirinsuyn: "",
-          payyn: "",
+          taxcd: rows[0].taxcd,
+          hirinsuyn: rows[0].hirinsuyn == "" ? "N" : rows[0].hirinsuyn,
+          payyn: rows[0].payyn == "" ? "N" : rows[0].payyn,
           rtrgivdiv: "",
           yrgivdiv: "",
           mongivdiv: "",
-          caltaxyn: "",
-          yrdclyn: "",
-          bankcd: "",
-          bankacnt: "",
-          bankacntuser: "",
-          bankdatnum: "",
+          caltaxyn: rows[0].caltaxyn == "" ? "N" : rows[0].caltaxyn,
+          yrdclyn: rows[0].yrdclyn == "" ? "N" : rows[0].yrdclyn,
+          bankcd: rows[0].bankcd,
+          banknm: rows[0].banknm,
+          bankacnt: rows[0].bankacnt,
+          bankacntuser: rows[0].bankacntuser,
+          bankfiles: rows[0].bankfiles,
+          bankdatnum: rows[0].bankdatnum,
           insuzon: "",
-          medgrad: "",
-          medinsunum: "",
-          pnsgrad: "",
-          meddate: "",
-          anudate: "",
-          hirdate: "",
-          sps: "",
-          wmn: "",
-          sptnum: 0,
-          dfmnum: 0,
-          agenum: 0,
-          agenum70: 0,
-          brngchlnum: 0,
-          fam1: 0,
-          fam2: 0,
-          notaxe: "",
+          medgrad: rows[0].medgrad,
+          medinsunum: rows[0].medinsunum,
+          pnsgrad: rows[0].pnsgrad,
+          meddate: rows[0].meddate == "" ? null : toDate(rows[0].meddate),
+          anudate: rows[0].anudate == "" ? null : toDate(rows[0].anudate),
+          hirdate: rows[0].hirdate == "" ? null : toDate(rows[0].hirdate),
+          sps: rows[0].sps == "" ? "N" : rows[0].sps,
+          wmn: rows[0].wmn == "" ? "N" : rows[0].wmn,
+          sptnum: rows[0].sptnum,
+          dfmnum: rows[0].dfmnum,
+          agenum: rows[0].agenum,
+          agenum70: rows[0].agenum70,
+          brngchlnum: rows[0].brngchlnum,
+          fam1: rows[0].fam1,
+          fam2: rows[0].fam2,
+          notaxe: rows[0].notaxe == "" ? "N" : rows[0].notaxe,
           otkind: "",
-          bnskind: "",
+          bnskind: rows[0].bnskind == "" ? "N" : rows[0].bnskind,
           payprovyn: "",
           mailid: rows[0].mailid,
           workmail: rows[0].workmail,
-          childnum: 0,
-          dfmyn2: "",
-          houseyn: "",
+          childnum: rows[0].childnum,
+          dfmyn2: rows[0].dfmyn2 == "" ? "N" : rows[0].dfmyn2,
+          houseyn: rows[0].houseyn,
           remark: rows[0].remark,
           costdiv1: "",
           costdiv2: "",
           path: rows[0].path,
           files: rows[0].files,
           attdatnum: rows[0].attdatnum,
-          incgb: "",
-          exmtaxgb: "",
-          exstartdt: "",
-          exenddt: "",
-          dayoffdiv: "",
-          rtrtype: "",
+          incgb: rows[0].incgb,
+          exmtaxgb: rows[0].exmtaxgb,
+          exstartdt: rows[0].exstartdt == "" ? null : toDate(rows[0].exstartdt),
+          exenddt: rows[0].exenddt == "" ? null : toDate(rows[0].exenddt),
+          dayoffdiv: rows[0].dayoffdiv,
+          rtrtype: rows[0].rtrtype,
 
           mngitemcd1: "",
           mngitemcd2: "",
@@ -574,8 +702,8 @@ const CopyWindow = ({
           mngdata4: "",
           mngdata5: "",
           mngdata6: "",
-          workchk: "",
-          yrchk: "",
+          workchk: rows[0].workchk == "" ? "N" : rows[0].workchk,
+          yrchk: rows[0].yrchk == "" ? "N" : rows[0].yrchk,
 
           //개인정보
           height: 0,
@@ -607,8 +735,9 @@ const CopyWindow = ({
           armykind: "",
           armyspeciality: "",
 
-          below2kyn: "",
+          below2kyn: rows[0].below2kyn == "" ? "N" : rows[0].below2kyn,
           occudate: rows[0].occudate == "" ? null : toDate(rows[0].occudate),
+          overtime: rows[0].overtime,
         });
       } else {
         setInformation({
@@ -657,21 +786,23 @@ const CopyWindow = ({
           schcd: "",
           gradutype: "",
           directyn: "",
-          laboryn: "",
-          dfmyn: "",
-          milyn: "",
+          laboryn: "N",
+          dfmyn: "N",
+          milyn: "N",
           paycd: "",
           taxcd: "",
-          hirinsuyn: "",
-          payyn: "",
+          hirinsuyn: "N",
+          payyn: "N",
           rtrgivdiv: "",
           yrgivdiv: "",
           mongivdiv: "",
-          caltaxyn: "",
-          yrdclyn: "",
+          caltaxyn: "N",
+          yrdclyn: "N",
           bankcd: "",
+          banknm: "",
           bankacnt: "",
           bankacntuser: "",
+          bankfiles: "",
           bankdatnum: "",
           insuzon: "",
           medgrad: "",
@@ -680,8 +811,8 @@ const CopyWindow = ({
           meddate: "",
           anudate: "",
           hirdate: "",
-          sps: "",
-          wmn: "",
+          sps: "N",
+          wmn: "N",
           sptnum: 0,
           dfmnum: 0,
           agenum: 0,
@@ -689,14 +820,14 @@ const CopyWindow = ({
           brngchlnum: 0,
           fam1: 0,
           fam2: 0,
-          notaxe: "",
+          notaxe: "N",
           otkind: "",
-          bnskind: "",
+          bnskind: "N",
           payprovyn: "",
           mailid: "",
           workmail: "",
           childnum: 0,
-          dfmyn2: "",
+          dfmyn2: "N",
           houseyn: "",
           remark: "",
           costdiv1: "",
@@ -722,8 +853,8 @@ const CopyWindow = ({
           mngdata4: "",
           mngdata5: "",
           mngdata6: "",
-          workchk: "",
-          yrchk: "",
+          workchk: "N",
+          yrchk: "N",
 
           //개인정보
           height: 0,
@@ -755,8 +886,9 @@ const CopyWindow = ({
           armykind: "",
           armyspeciality: "",
 
-          below2kyn: "",
+          below2kyn: "N",
           occudate: "",
+          overtime: 0,
         });
       }
     } else {
@@ -871,6 +1003,69 @@ const CopyWindow = ({
           alert("유효한 주민번호를 입력해주세요.");
         }
       }
+    } else if (tabSelected == 1) {
+      setParaData((prev) => ({
+        ...prev,
+        work_type: "DETAIL_U",
+        orgdiv: "01",
+        prsnnum: information.prsnnum,
+        payyn: information.payyn == true ? "Y" : "N",
+        bnskind: information.bnskind == true ? "Y" : "N",
+        workchk: information.workchk == true ? "Y" : "N",
+        yrchk: information.yrchk == true ? "Y" : "N",
+        hirinsuyn: information.hirinsuyn == true ? "Y" : "N",
+        meddate:
+          information.meddate == null || information.meddate == ""
+            ? ""
+            : convertDateToStr(information.meddate),
+        anudate:
+          information.anudate == null || information.anudate == ""
+            ? ""
+            : convertDateToStr(information.meddate),
+        hirdate:
+          information.hirdate == null || information.hirdate == ""
+            ? ""
+            : convertDateToStr(information.hirdate),
+        medinsunum: information.medinsunum,
+        medgrad: information.medgrad,
+        pnsgrad: information.pnsgrad,
+        bankcd: information.bankcd,
+        bankacnt: information.bankacnt,
+        bankacntuser: information.bankacntuser,
+        bankdatnum: information.bankdatnum,
+        exstartdt:
+          information.exstartdt == null || information.exstartdt == ""
+            ? ""
+            : convertDateToStr(information.exstartdt),
+        exenddt:
+          information.exenddt == null || information.exenddt == ""
+            ? ""
+            : convertDateToStr(information.exenddt),
+        taxcd: information.taxcd,
+        dayoffdiv: information.dayoffdiv,
+        rtrtype: information.rtrtype,
+        exmtaxgb: information.exmtaxgb,
+        houseyn: information.houseyn,
+        incgb: information.incgb,
+        below2kyn: information.below2kyn == true ? "Y" : "N",
+        caltaxyn: information.caltaxyn == true ? "Y" : "N",
+        yrdclyn: information.yrdclyn == true ? "Y" : "N",
+        wmn: information.wmn == true ? "Y" : "N",
+        sps: information.sps == true ? "Y" : "N",
+        laboryn: information.laboryn == true ? "Y" : "N",
+        dfmyn: information.dfmyn == true ? "Y" : "N",
+        milyn: information.milyn == true ? "Y" : "N",
+        dfmyn2: information.dfmyn2 == true ? "Y" : "N",
+        notaxe: information.notaxe == true ? "Y" : "N",
+        agenum: information.agenum,
+        agenum70: information.agenum70,
+        sptnum: information.sptnum,
+        brngchlnum: information.brngchlnum,
+        dfmnum: information.dfmnum,
+        childnum: information.childnum,
+        fam1: information.fam1,
+        fam2: information.fam2,
+      }));
     }
   };
 
@@ -921,18 +1116,18 @@ const CopyWindow = ({
     schcd: "",
     gradutype: "",
     directyn: "",
-    laboryn: "",
-    dfmyn: "",
-    milyn: "",
+    laboryn: "N",
+    dfmyn: "N",
+    milyn: "N",
     paycd: "",
     taxcd: "",
-    hirinsuyn: "",
-    payyn: "",
+    hirinsuyn: "N",
+    payyn: "N",
     rtrgivdiv: "",
     yrgivdiv: "",
     mongivdiv: "",
-    caltaxyn: "",
-    yrdclyn: "",
+    caltaxyn: "N",
+    yrdclyn: "N",
     bankcd: "",
     bankacnt: "",
     bankacntuser: "",
@@ -944,8 +1139,8 @@ const CopyWindow = ({
     meddate: "",
     anudate: "",
     hirdate: "",
-    sps: "",
-    wmn: "",
+    sps: "N",
+    wmn: "N",
     sptnum: 0,
     dfmnum: 0,
     agenum: 0,
@@ -953,14 +1148,14 @@ const CopyWindow = ({
     brngchlnum: 0,
     fam1: 0,
     fam2: 0,
-    notaxe: "",
+    notaxe: "N",
     otkind: "",
-    bnskind: "",
+    bnskind: "N",
     payprovyn: "",
     mailid: "",
     workmail: "",
     childnum: 0,
-    dfmyn2: "",
+    dfmyn2: "N",
     houseyn: "",
     remark: "",
     costdiv1: "",
@@ -986,8 +1181,8 @@ const CopyWindow = ({
     mngdata4: "",
     mngdata5: "",
     mngdata6: "",
-    workchk: "",
-    yrchk: "",
+    workchk: "N",
+    yrchk: "N",
 
     //개인정보
     height: 0,
@@ -1019,7 +1214,7 @@ const CopyWindow = ({
     armykind: "",
     armyspeciality: "",
 
-    below2kyn: "",
+    below2kyn: "N",
     occudate: "",
   });
 
@@ -1192,7 +1387,7 @@ const CopyWindow = ({
     }
 
     if (data.isSuccess === true) {
-      if (tabSelected == 0) {
+      if (tabSelected == 0 || tabSelected == 1) {
         setUnsavedName([]);
       }
 
@@ -1207,6 +1402,14 @@ const CopyWindow = ({
           find_row_value: data.returnString,
         }));
       }
+      setTempAttach({
+        attdatnum: "",
+        files: "",
+        bankdatnum: "",
+        bankfiles: "",
+        one: false,
+        two: false,
+      });
       setParaData({
         work_type: "",
         orgdiv: "01",
@@ -1254,18 +1457,18 @@ const CopyWindow = ({
         schcd: "",
         gradutype: "",
         directyn: "",
-        laboryn: "",
-        dfmyn: "",
-        milyn: "",
+        laboryn: "N",
+        dfmyn: "N",
+        milyn: "N",
         paycd: "",
         taxcd: "",
-        hirinsuyn: "",
-        payyn: "",
+        hirinsuyn: "N",
+        payyn: "N",
         rtrgivdiv: "",
         yrgivdiv: "",
         mongivdiv: "",
-        caltaxyn: "",
-        yrdclyn: "",
+        caltaxyn: "N",
+        yrdclyn: "N",
         bankcd: "",
         bankacnt: "",
         bankacntuser: "",
@@ -1277,8 +1480,8 @@ const CopyWindow = ({
         meddate: "",
         anudate: "",
         hirdate: "",
-        sps: "",
-        wmn: "",
+        sps: "N",
+        wmn: "N",
         sptnum: 0,
         dfmnum: 0,
         agenum: 0,
@@ -1286,14 +1489,14 @@ const CopyWindow = ({
         brngchlnum: 0,
         fam1: 0,
         fam2: 0,
-        notaxe: "",
+        notaxe: "N",
         otkind: "",
-        bnskind: "",
+        bnskind: "N",
         payprovyn: "",
         mailid: "",
         workmail: "",
         childnum: 0,
-        dfmyn2: "",
+        dfmyn2: "N",
         houseyn: "",
         remark: "",
         costdiv1: "",
@@ -1319,8 +1522,8 @@ const CopyWindow = ({
         mngdata4: "",
         mngdata5: "",
         mngdata6: "",
-        workchk: "",
-        yrchk: "",
+        workchk: "N",
+        yrchk: "N",
 
         //개인정보
         height: 0,
@@ -1352,7 +1555,7 @@ const CopyWindow = ({
         armykind: "",
         armyspeciality: "",
 
-        below2kyn: "",
+        below2kyn: "N",
         occudate: "",
       });
     } else {
@@ -1893,7 +2096,580 @@ const CopyWindow = ({
               <FormBox>
                 <tbody>
                   <tr>
-
+                    <th>공지게시여부</th>
+                    <td>
+                      <Checkbox
+                        name="payyn"
+                        value={
+                          information.payyn == "Y"
+                            ? true
+                            : information.payyn == "N"
+                            ? false
+                            : information.payyn
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>상여금계산구분</th>
+                    <td>
+                      <Checkbox
+                        name="bnskind"
+                        value={
+                          information.bnskind == "Y"
+                            ? true
+                            : information.bnskind == "N"
+                            ? false
+                            : information.bnskind
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>근태관리여부</th>
+                    <td>
+                      <Checkbox
+                        name="workchk"
+                        value={
+                          information.workchk == "Y"
+                            ? true
+                            : information.workchk == "N"
+                            ? false
+                            : information.workchk
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>연차관리여부</th>
+                    <td>
+                      <Checkbox
+                        name="yrchk"
+                        value={
+                          information.yrchk == "Y"
+                            ? true
+                            : information.yrchk == "N"
+                            ? false
+                            : information.yrchk
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>고용보험여부</th>
+                    <td>
+                      <Checkbox
+                        name="hirinsuyn"
+                        value={
+                          information.hirinsuyn == "Y"
+                            ? true
+                            : information.hirinsuyn == "N"
+                            ? false
+                            : information.hirinsuyn
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>건강보험취득일</th>
+                    <td>
+                      <DatePicker
+                        name="meddate"
+                        value={information.meddate}
+                        format="yyyy-MM-dd"
+                        onChange={InputChange}
+                        placeholder=""
+                      />
+                    </td>
+                    <th>국민연금취득일</th>
+                    <td>
+                      <DatePicker
+                        name="anudate"
+                        value={information.anudate}
+                        format="yyyy-MM-dd"
+                        onChange={InputChange}
+                        placeholder=""
+                      />
+                    </td>
+                    <th>고용보험취득일</th>
+                    <td>
+                      <DatePicker
+                        name="hirdate"
+                        value={information.hirdate}
+                        format="yyyy-MM-dd"
+                        onChange={InputChange}
+                        placeholder=""
+                      />
+                    </td>
+                    <th>의료보험번호</th>
+                    <td>
+                      <Input
+                        name="medinsunum"
+                        type="text"
+                        value={information.medinsunum}
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>의료보험등급</th>
+                    <td>
+                      <Input
+                        name="medgrad"
+                        type="text"
+                        value={information.medgrad}
+                        onChange={InputChange}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>국민보험등급</th>
+                    <td>
+                      <Input
+                        name="pnsgrad"
+                        type="text"
+                        value={information.pnsgrad}
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>연장시간</th>
+                    <td>
+                      <Input
+                        name="overtime"
+                        type="text"
+                        value={information.overtime}
+                        className="readonly"
+                      />
+                      <ButtonInInput>
+                        <Button
+                          type={"button"}
+                          onClick={onOvertimeWndClick}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                      </ButtonInInput>
+                    </td>
+                    <th>은행코드</th>
+                    <td>
+                      <Input
+                        name="bankcd"
+                        type="text"
+                        value={information.bankcd}
+                        className="readonly"
+                      />
+                      <ButtonInInput>
+                        <Button
+                          type={"button"}
+                          onClick={onBankcdWndClick}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                      </ButtonInInput>
+                    </td>
+                    <th>은행명</th>
+                    <td>
+                      <Input
+                        name="banknm"
+                        type="text"
+                        value={information.banknm}
+                        className="readonly"
+                      />
+                    </td>
+                    <th>계좌번호</th>
+                    <td>
+                      <Input
+                        name="bankacnt"
+                        type="text"
+                        value={information.bankacnt}
+                        onChange={InputChange}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>예금주</th>
+                    <td>
+                      <Input
+                        name="bankacntuser"
+                        type="text"
+                        value={information.bankacntuser}
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>통장사본</th>
+                    <td>
+                      <Input
+                        name="bankfiles"
+                        type="text"
+                        value={information.bankfiles}
+                        className="readonly"
+                      />
+                      <ButtonInInput>
+                        <Button
+                          type={"button"}
+                          onClick={onAttachmentsWndClick2}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                      </ButtonInInput>
+                    </td>
+                    <th>감면시작</th>
+                    <td colSpan={3}>
+                      <CommonDateRangePicker
+                        value={{
+                          start: information.exstartdt,
+                          end: information.exenddt,
+                        }}
+                        onChange={(e: { value: { start: any; end: any } }) =>
+                          setInformation((prev) => ({
+                            ...prev,
+                            exstartdt: e.value.start,
+                            exenddt: e.value.end,
+                          }))
+                        }
+                      />
+                    </td>
+                    <th>세액구분</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="taxcd"
+                          value={information.taxcd}
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                          type="new"
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>연차발생기준</th>
+                    <td colSpan={3}>
+                      {workType == "N"
+                        ? customOptionData !== null && (
+                            <CustomOptionRadioGroup
+                              name="dayoffdiv"
+                              customOptionData={customOptionData}
+                              changeData={RadioChange}
+                              type="new"
+                            />
+                          )
+                        : bizComponentData !== null && (
+                            <BizComponentRadioGroup
+                              name="dayoffdiv"
+                              value={information.dayoffdiv}
+                              bizComponentId="R_dayoffdiv"
+                              bizComponentData={bizComponentData}
+                              changeData={RadioChange}
+                            />
+                          )}
+                    </td>
+                    <th>퇴직급여기준</th>
+                    <td colSpan={3}>
+                      {workType == "N"
+                        ? customOptionData !== null && (
+                            <CustomOptionRadioGroup
+                              name="rtrtype"
+                              customOptionData={customOptionData}
+                              changeData={RadioChange}
+                              type="new"
+                            />
+                          )
+                        : bizComponentData !== null && (
+                            <BizComponentRadioGroup
+                              name="rtrtype"
+                              value={information.rtrtype}
+                              bizComponentId="R_Rtrtype"
+                              bizComponentData={bizComponentData}
+                              changeData={RadioChange}
+                            />
+                          )}
+                    </td>
+                    <th>업청년세액감면</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="exmtaxgb"
+                          value={information.exmtaxgb}
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                          type="new"
+                        />
+                      )}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>세대주여부</th>
+                    <td colSpan={3}>
+                      {workType == "N"
+                        ? customOptionData !== null && (
+                            <CustomOptionRadioGroup
+                              name="houseyn"
+                              customOptionData={customOptionData}
+                              changeData={RadioChange}
+                              type="new"
+                            />
+                          )
+                        : bizComponentData !== null && (
+                            <BizComponentRadioGroup
+                              name="houseyn"
+                              value={information.houseyn}
+                              bizComponentId="R_HOUSEYN"
+                              bizComponentData={bizComponentData}
+                              changeData={RadioChange}
+                            />
+                          )}
+                    </td>
+                    <th>소득세조정률</th>
+                    <td colSpan={2}>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="incgb"
+                          value={information.incgb}
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                          type="new"
+                        />
+                      )}
+                    </td>
+                    <th colSpan={2}>직전년도 총급여액 2500만원 이하</th>
+                    <td>
+                      <Checkbox
+                        name="below2kyn"
+                        value={
+                          information.below2kyn == "Y"
+                            ? true
+                            : information.below2kyn == "N"
+                            ? false
+                            : information.below2kyn
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>세액계산대상여부</th>
+                    <td>
+                      <Checkbox
+                        name="caltaxyn"
+                        value={
+                          information.caltaxyn == "Y"
+                            ? true
+                            : information.caltaxyn == "N"
+                            ? false
+                            : information.caltaxyn
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>연말정산신고대</th>
+                    <td>
+                      <Checkbox
+                        name="yrdclyn"
+                        value={
+                          information.yrdclyn == "Y"
+                            ? true
+                            : information.yrdclyn == "N"
+                            ? false
+                            : information.yrdclyn
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>부녀자</th>
+                    <td>
+                      <Checkbox
+                        name="wmn"
+                        value={
+                          information.wmn == "Y"
+                            ? true
+                            : information.wmn == "N"
+                            ? false
+                            : information.wmn
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>배우자유무</th>
+                    <td>
+                      <Checkbox
+                        name="sps"
+                        value={
+                          information.sps == "Y"
+                            ? true
+                            : information.sps == "N"
+                            ? false
+                            : information.sps
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>노조가입</th>
+                    <td>
+                      <Checkbox
+                        name="laboryn"
+                        value={
+                          information.laboryn == "Y"
+                            ? true
+                            : information.laboryn == "N"
+                            ? false
+                            : information.laboryn
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>신체장애</th>
+                    <td>
+                      <Checkbox
+                        name="dfmyn"
+                        value={
+                          information.dfmyn == "Y"
+                            ? true
+                            : information.dfmyn == "N"
+                            ? false
+                            : information.dfmyn
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>병역특례</th>
+                    <td>
+                      <Checkbox
+                        name="milyn"
+                        value={
+                          information.milyn == "Y"
+                            ? true
+                            : information.milyn == "N"
+                            ? false
+                            : information.milyn
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>경감보험대상</th>
+                    <td>
+                      <Checkbox
+                        name="dfmyn2"
+                        value={
+                          information.dfmyn2 == "Y"
+                            ? true
+                            : information.dfmyn2 == "N"
+                            ? false
+                            : information.dfmyn2
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>국외근로대상</th>
+                    <td>
+                      <Checkbox
+                        name="notaxe"
+                        value={
+                          information.notaxe == "Y"
+                            ? true
+                            : information.notaxe == "N"
+                            ? false
+                            : information.notaxe
+                        }
+                        onChange={InputChange}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>경로자65</th>
+                    <td>
+                      <Input
+                        name="agenum"
+                        type="number"
+                        style={{
+                          textAlign: "right",
+                        }}
+                        value={numberWithCommas3(information.agenum)}
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>경로자70</th>
+                    <td>
+                      <Input
+                        name="agenum70"
+                        type="number"
+                        style={{
+                          textAlign: "right",
+                        }}
+                        value={numberWithCommas3(information.agenum70)}
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>부양자(본인미포함)</th>
+                    <td>
+                      <Input
+                        name="sptnum"
+                        type="number"
+                        style={{
+                          textAlign: "right",
+                        }}
+                        value={numberWithCommas3(information.sptnum)}
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>자녀양육</th>
+                    <td>
+                      <Input
+                        name="brngchlnum"
+                        type="number"
+                        style={{
+                          textAlign: "right",
+                        }}
+                        value={numberWithCommas3(information.brngchlnum)}
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>장애자</th>
+                    <td>
+                      <Input
+                        name="dfmnum"
+                        type="number"
+                        style={{
+                          textAlign: "right",
+                        }}
+                        value={numberWithCommas3(information.dfmnum)}
+                        onChange={InputChange}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>다자녀</th>
+                    <td>
+                      <Input
+                        name="childnum"
+                        type="number"
+                        style={{
+                          textAlign: "right",
+                        }}
+                        value={numberWithCommas3(information.childnum)}
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>가족수당배우</th>
+                    <td>
+                      <Input
+                        name="fam1"
+                        type="number"
+                        style={{
+                          textAlign: "right",
+                        }}
+                        value={numberWithCommas3(information.fam1)}
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>가족수당자녀</th>
+                    <td>
+                      <Input
+                        name="fam2"
+                        type="number"
+                        style={{
+                          textAlign: "right",
+                        }}
+                        value={numberWithCommas3(information.fam2)}
+                        onChange={InputChange}
+                      />
+                    </td>
                   </tr>
                 </tbody>
               </FormBox>
@@ -1902,7 +2678,13 @@ const CopyWindow = ({
           <TabStripTab
             title="개인정보"
             disabled={workType == "N" ? true : false}
-          ></TabStripTab>
+          >
+            <FormBoxWrap border={true}>
+              <FormBox>
+                <tbody></tbody>
+              </FormBox>
+            </FormBoxWrap>
+          </TabStripTab>
           <TabStripTab
             title="병역사항"
             disabled={workType == "N" ? true : false}
@@ -1953,7 +2735,10 @@ const CopyWindow = ({
               닫기
             </Button>
           </ButtonContainer>
-          <div>※ 현재 탭만 저장되며, 저장 후 새로고침됩니다.</div>
+          <div>
+            ※ 현재 탭만 저장되며, 저장 후 새로고침됩니다.(첨부파일은 탭 변경 시
+            이전으로 복구됩니다.)
+          </div>
         </BottomContainer>
       </Window>
       {zipCodeWindowVisible && (
@@ -1975,6 +2760,28 @@ const CopyWindow = ({
           setVisible={setAttachmentsWindowVisible}
           setData={getAttachmentsData}
           para={information.attdatnum}
+        />
+      )}
+      {attachmentsWindowVisible2 && (
+        <PopUpAttachmentsWindow
+          setVisible={setAttachmentsWindowVisible2}
+          setData={getAttachmentsData2}
+          para={information.bankdatnum}
+        />
+      )}
+      {overtimeWindowVisible && (
+        <DetailWindow
+          setVisible={setOvertimeWindowVisible}
+          setData={getOvertime}
+          prsnnm={information.prsnnm}
+          prsnnum={information.prsnnum}
+          pathname={pathname}
+        />
+      )}
+      {bankcdWindowVisible && (
+        <BankCDWindow
+          setVisible={setBankcdWindowVisible}
+          setData={getbankcdData}
         />
       )}
     </>
