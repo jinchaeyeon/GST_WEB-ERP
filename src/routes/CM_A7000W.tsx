@@ -445,6 +445,7 @@ const CM_A7000W: React.FC = () => {
         financegb: "",
         grade4: 0,
         totgrade1: 0,
+        level1: "",
         amtgb: "",
         grade5: 0,
         addordgb: "",
@@ -452,6 +453,7 @@ const CM_A7000W: React.FC = () => {
         relationgb: "",
         grade7: 0,
         totgrade2: 0,
+        level2: "",
       };
     });
   };
@@ -482,6 +484,7 @@ const CM_A7000W: React.FC = () => {
         financegb: "",
         grade4: 0,
         totgrade1: 0,
+        level1: "",
         amtgb: "",
         grade5: 0,
         addordgb: "",
@@ -489,6 +492,7 @@ const CM_A7000W: React.FC = () => {
         relationgb: "",
         grade7: 0,
         totgrade2: 0,
+        level2: "",
       };
     });
   };
@@ -567,6 +571,7 @@ const CM_A7000W: React.FC = () => {
               )?.sub_code,
         grade4: data.grade4,
         totgrade1: data.totgrade1,
+        level1: data.level1,
         amtgb:
           amtgbListData.find((item: any) => item.code_name == data.amtgb)
             ?.sub_code == undefined
@@ -592,6 +597,7 @@ const CM_A7000W: React.FC = () => {
               )?.sub_code,
         grade7: data.grade7,
         totgrade2: data.totgrade2,
+        level2: data.level2,
       };
     });
   };
@@ -646,6 +652,7 @@ const CM_A7000W: React.FC = () => {
         financegb: data.financegb,
         grade4: data.grade4,
         totgrade1: data.totgrade1,
+        level1: data.level1,
         amtgb: data.amtgb,
         grade5: data.grade5,
         addordgb: data.addordgb,
@@ -653,6 +660,7 @@ const CM_A7000W: React.FC = () => {
         relationgb: data.relationgb,
         grade7: data.grade7,
         totgrade2: data.totgrade2,
+        level2: data.level2,
       });
 
       fetchDetail();
@@ -765,6 +773,7 @@ const CM_A7000W: React.FC = () => {
         financegb: "",
         grade4: 0,
         totgrade1: 0,
+        level1: "",
         amtgb: "",
         grade5: 0,
         addordgb: "",
@@ -772,6 +781,7 @@ const CM_A7000W: React.FC = () => {
         relationgb: "",
         grade7: 0,
         totgrade2: 0,
+        level2: "",
       }));
     } else if (name == "materialgb") {
       setInformation((prev) => ({
@@ -783,6 +793,26 @@ const CM_A7000W: React.FC = () => {
           information.grade2 +
           information.grade3 +
           information.grade4,
+        level1:
+          e.e.value.numref1 +
+            information.grade2 +
+            information.grade3 +
+            information.grade4 >=
+          12
+            ? "상"
+            : e.e.value.numref1 +
+                information.grade2 +
+                information.grade3 +
+                information.grade4 >=
+              7
+            ? "중"
+            : e.e.value.numref1 +
+                information.grade2 +
+                information.grade3 +
+                information.grade4 >=
+              1
+            ? "하"
+            : "",
       }));
     } else if (name == "assaygbe") {
       setInformation((prev) => ({
@@ -794,6 +824,26 @@ const CM_A7000W: React.FC = () => {
           e.e.value.numref1 +
           information.grade3 +
           information.grade4,
+        level1:
+          information.grade1 +
+            e.e.value.numref1 +
+            information.grade3 +
+            information.grade4 >=
+          12
+            ? "상"
+            : information.grade1 +
+                e.e.value.numref1 +
+                information.grade3 +
+                information.grade4 >=
+              7
+            ? "중"
+            : information.grade1 +
+                e.e.value.numref1 +
+                information.grade3 +
+                information.grade4 >=
+              1
+            ? "하"
+            : "",
       }));
     } else if (name == "startschgb") {
       setInformation((prev) => ({
@@ -805,6 +855,26 @@ const CM_A7000W: React.FC = () => {
           information.grade2 +
           e.e.value.numref1 +
           information.grade4,
+        level1:
+          information.grade1 +
+            information.grade2 +
+            e.e.value.numref1 +
+            information.grade4 >=
+          12
+            ? "상"
+            : information.grade1 +
+                information.grade2 +
+                e.e.value.numref1 +
+                information.grade4 >=
+              7
+            ? "중"
+            : information.grade1 +
+                information.grade2 +
+                e.e.value.numref1 +
+                information.grade4 >=
+              1
+            ? "하"
+            : "",
       }));
     } else if (name == "financegb") {
       setInformation((prev) => ({
@@ -816,6 +886,26 @@ const CM_A7000W: React.FC = () => {
           information.grade2 +
           information.grade3 +
           e.e.value.numref1,
+        level1:
+          information.grade1 +
+            information.grade2 +
+            information.grade3 +
+            e.e.value.numref1 >=
+          12
+            ? "상"
+            : information.grade1 +
+                information.grade2 +
+                information.grade3 +
+                e.e.value.numref1 >=
+              7
+            ? "중"
+            : information.grade1 +
+                information.grade2 +
+                information.grade3 +
+                e.e.value.numref1 >=
+              1
+            ? "하"
+            : "",
       }));
     } else if (name == "amtgb") {
       setInformation((prev) => ({
@@ -823,6 +913,14 @@ const CM_A7000W: React.FC = () => {
         [name]: value,
         grade5: e.e.value.numref1,
         totgrade2: e.e.value.numref1 + information.grade6 + information.grade7,
+        level2:
+          e.e.value.numref1 + information.grade6 + information.grade7 >= 7
+            ? "상"
+            : e.e.value.numref1 + information.grade6 + information.grade7 >= 4
+            ? "중"
+            : e.e.value.numref1 + information.grade6 + information.grade7 >= 1
+            ? "하"
+            : "",
       }));
     } else if (name == "addordgb") {
       setInformation((prev) => ({
@@ -830,6 +928,14 @@ const CM_A7000W: React.FC = () => {
         [name]: value,
         grade6: e.e.value.numref1,
         totgrade2: information.grade5 + e.e.value.numref1 + information.grade7,
+        level2:
+          information.grade5 + e.e.value.numref1 + information.grade7 >= 7
+            ? "상"
+            : information.grade5 + e.e.value.numref1 + information.grade7 >= 4
+            ? "중"
+            : information.grade5 + e.e.value.numref1 + information.grade7 >= 1
+            ? "하"
+            : "",
       }));
     } else if (name == "relationgb") {
       setInformation((prev) => ({
@@ -837,6 +943,14 @@ const CM_A7000W: React.FC = () => {
         [name]: value,
         grade7: e.e.value.numref1,
         totgrade2: information.grade5 + information.grade6 + e.e.value.numref1,
+        level2:
+          information.grade5 + information.grade6 + e.e.value.numref1 >= 7
+            ? "상"
+            : information.grade5 + information.grade6 + e.e.value.numref1 >= 4
+            ? "중"
+            : information.grade5 + information.grade6 + e.e.value.numref1 >= 1
+            ? "하"
+            : "",
       }));
     } else {
       setInformation((prev) => ({
@@ -908,6 +1022,7 @@ const CM_A7000W: React.FC = () => {
     financegb: "",
     grade4: 0,
     totgrade1: 0,
+    level1: "",
     amtgb: "",
     grade5: 0,
     addordgb: "",
@@ -915,6 +1030,7 @@ const CM_A7000W: React.FC = () => {
     relationgb: "",
     grade7: 0,
     totgrade2: 0,
+    level2: "",
   });
 
   //그리드 데이터 조회
@@ -1191,6 +1307,7 @@ const CM_A7000W: React.FC = () => {
       financegb: selectedRowData.financegb,
       grade4: selectedRowData.grade4,
       totgrade1: selectedRowData.totgrade1,
+      level1: selectedRowData.level1,
       amtgb: selectedRowData.amtgb,
       grade5: selectedRowData.grade5,
       addordgb: selectedRowData.addordgb,
@@ -1198,6 +1315,7 @@ const CM_A7000W: React.FC = () => {
       relationgb: selectedRowData.relationgb,
       grade7: selectedRowData.grade7,
       totgrade2: selectedRowData.totgrade2,
+      level2: selectedRowData.level2,
     });
     fetchDetail();
   };
@@ -1451,6 +1569,7 @@ const CM_A7000W: React.FC = () => {
       financegb: "",
       grade4: 0,
       totgrade1: 0,
+      level1: "",
       amtgb: "",
       grade5: 0,
       addordgb: "",
@@ -1458,6 +1577,7 @@ const CM_A7000W: React.FC = () => {
       relationgb: "",
       grade7: 0,
       totgrade2: 0,
+      level2: "",
     });
   };
 
@@ -2169,7 +2289,7 @@ const CM_A7000W: React.FC = () => {
                     </tr>
                     <tr>
                       <th>합계</th>
-                      <td colSpan={3}>
+                      <td>
                         <Input
                           name="totgrade1"
                           type="number"
@@ -2177,6 +2297,17 @@ const CM_A7000W: React.FC = () => {
                             textAlign: "right",
                           }}
                           value={numberWithCommas3(information.totgrade1)}
+                          className="readonly"
+                        />
+                      </td>
+                      <td colSpan={2}>
+                        <Input
+                          name="level1"
+                          type="text"
+                          style={{
+                            textAlign: "center",
+                          }}
+                          value={information.level1}
                           className="readonly"
                         />
                       </td>
@@ -2267,7 +2398,7 @@ const CM_A7000W: React.FC = () => {
                     </tr>
                     <tr>
                       <th>합계</th>
-                      <td colSpan={3}>
+                      <td>
                         <Input
                           name="totgrade2"
                           type="number"
@@ -2275,6 +2406,17 @@ const CM_A7000W: React.FC = () => {
                             textAlign: "right",
                           }}
                           value={numberWithCommas3(information.totgrade2)}
+                          className="readonly"
+                        />
+                      </td>
+                      <td colSpan={2}>
+                        <Input
+                          name="level2"
+                          type="text"
+                          style={{
+                            textAlign: "center",
+                          }}
+                          value={information.level2}
                           className="readonly"
                         />
                       </td>

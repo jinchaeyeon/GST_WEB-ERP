@@ -71,6 +71,7 @@
     "cldr-core": "^42.0.0",
     "cldr-dates-full": "^42.0.0",
     "cldr-numbers-full": "^42.0.0",
+    "crypto-js": "^4.2.0",
     "crypto-random-string": "^5.0.0",
     "custom-error": "^0.2.1",
     "date-fns": "^2.30.0",
@@ -158,6 +159,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@progress/kendo-theme-tasks": "^1.17.5",
+    "@types/crypto-js": "^4.2.1",
     "@types/file-saver": "^2.0.5",
     "@types/google.maps": "^3.54.10",
     "@types/pdf-viewer-reactjs": "^2.2.5",

@@ -15,6 +15,7 @@ import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import CryptoJS from "crypto-js";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -403,6 +404,12 @@ const HU_A1000W: React.FC = () => {
     setMainDataState(event.dataState);
   };
 
+  const decrypt = (encrypted: any, secretKey: any) => {
+    var decrypted = CryptoJS.AES.decrypt(encrypted, secretKey);
+    var text = decrypted.toString(CryptoJS.enc.Utf8);
+    return text;
+  };
+
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
@@ -466,36 +473,75 @@ const HU_A1000W: React.FC = () => {
     parameters: {
       "@p_work_type": paraDataDeleted.work_type,
       "@p_orgdiv": "01",
-      "@p_location": "",
       "@p_prsnnum": paraDataDeleted.prsnnum,
+      "@p_prsnnum2": "",
+      "@p_location": "",
+      "@p_position": "",
+      "@p_workplace": "",
       "@p_prsnnm": "",
+      "@p_prsnnmh": "",
+      "@p_prsnnme": "",
+      "@p_nationcd": "",
+      "@p_cardcd": "",
+      "@p_dptcd": "",
+      "@p_dptnm": "",
+      "@p_postcd": "",
+      "@p_ocptcd": "",
+      "@p_workgb": "",
+      "@p_workcls": "",
+      "@p_jobcd": "",
+      "@p_abilcd": "",
+      "@p_paygrad": "",
+      "@p_salaryclass": "",
+      "@p_regcd": "",
       "@p_perregnum": "",
+      "@p_salt": "",
       "@p_birdt": "",
       "@p_bircd": "",
       "@p_sexcd": "",
+      "@p_imdate": "",
       "@p_firredt": "",
       "@p_regorgdt": "",
       "@p_rtrdt": "",
+      "@p_rtrrsn": "",
+      "@p_emptype": "",
       "@p_zipcode": "",
       "@p_koraddr": "",
+      "@p_hmzipcode": "",
       "@p_hmaddr": "",
+      "@p_enaddr": "",
+      "@p_telephon": "",
       "@p_phonenum": "",
       "@p_extnum": "",
+      "@p_outnum": "",
+      "@p_schcd": "",
+      "@p_gradutype": "",
+      "@p_directyn": "",
+      "@p_laboryn": "",
+      "@p_dfmyn": "",
+      "@p_milyn": "",
       "@p_paycd": "",
       "@p_taxcd": "",
       "@p_hirinsuyn": "",
       "@p_payyn": "",
+      "@p_rtrgivdiv": "",
+      "@p_yrgivdiv": "",
+      "@p_mongivdiv": "",
       "@p_caltaxyn": "",
       "@p_yrdclyn": "",
       "@p_bankcd": "",
       "@p_bankacnt": "",
       "@p_bankacntuser": "",
+      "@p_bankdatnum": "",
+      "@p_insuzon": "",
       "@p_medgrad": "",
       "@p_medinsunum": "",
       "@p_pnsgrad": "",
       "@p_meddate": "",
       "@p_anudate": "",
       "@p_hirdate": "",
+      "@p_sps": "",
+      "@p_wmn": "",
       "@p_sptnum": 0,
       "@p_dfmnum": 0,
       "@p_agenum": 0,
@@ -503,25 +549,79 @@ const HU_A1000W: React.FC = () => {
       "@p_brngchlnum": 0,
       "@p_fam1": 0,
       "@p_fam2": 0,
+      "@p_notaxe": "",
+      "@p_otkind": "",
       "@p_bnskind": "",
+      "@p_payprovyn": "",
+      "@p_mailid": "",
+      "@p_workmail": "",
       "@p_childnum": 0,
+      "@p_dfmyn2": "",
       "@p_houseyn": "",
       "@p_remark": "",
+      "@p_costdiv1": "",
+      "@p_costdiv2": "",
+      "@p_path": "",
       "@p_attdatnum": "",
       "@p_incgb": "",
       "@p_exmtaxgb": "",
       "@p_exstartdt": "",
       "@p_exenddt": "",
-      "@p_workchk": "",
-      "@p_yrchk": "",
-      "@p_bankdatnum": "",
-      "@p_below2kyn": "",
-      "@p_occudate": "",
       "@p_dayoffdiv": "",
       "@p_rtrtype": "",
-      "@p_form_id": "HU_A1000W",
+
       "@p_userid": userId,
       "@p_pc": pc,
+
+      "@p_mngitemcd1": "",
+      "@p_mngitemcd2": "",
+      "@p_mngitemcd3": "",
+      "@p_mngitemcd4": "",
+      "@p_mngitemcd5": "",
+      "@p_mngitemcd6": "",
+      "@p_mngdata1": "",
+      "@p_mngdata2": "",
+      "@p_mngdata3": "",
+      "@p_mngdata4": "",
+      "@p_mngdata5": "",
+      "@p_mngdata6": "",
+      "@p_workchk": "",
+      "@p_yrchk": "",
+
+      //개인정보
+      "@p_height": 0,
+      "@p_weight": 0,
+      "@p_blood": "",
+      "@p_color": "",
+      "@p_leye": 0,
+      "@p_reye": 0,
+      "@p_hobby": "",
+      "@p_hobby2": "",
+      "@p_religion": "",
+      "@p_marriage": "",
+      "@p_marrydt": "",
+      "@p_orgaddr": "",
+      "@p_birthplace": "",
+      "@p_size1": "",
+      "@p_size2": "",
+      "@p_size3": "",
+      "@p_photodatnum": "",
+
+      "@p_armygb": "",
+      "@p_armystartdt": "",
+      "@p_armyenddt": "",
+      "@p_armyclass": "",
+      "@p_armyexrsn": "",
+      "@p_armydistinctiom": "",
+      "@p_armyrank": "",
+      "@p_militarynum": "",
+      "@p_armykind": "",
+      "@p_armyspeciality": "",
+
+      "@p_below2kyn": "",
+      "@p_occudate": "",
+
+      "@p_form_id": "HU_A1000W",
     },
   };
 
@@ -565,7 +665,8 @@ const HU_A1000W: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           find_row_value:
-            mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1].prsnnum,
+            mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
+              .prsnnum,
           pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
           isSearch: true,
         }));
@@ -696,6 +797,9 @@ const HU_A1000W: React.FC = () => {
                 postcd: postcdListData.find(
                   (item: any) => item.sub_code === row.postcd
                 )?.code_name,
+                // perregnum: decrypt(row.perregnum, row.salt),
+                // telephon: decrypt(row.telephon, row.salt),
+                // phonenum: decrypt(row.phonenum, row.salt),
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
