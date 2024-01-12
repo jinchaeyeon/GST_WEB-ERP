@@ -1,32 +1,57 @@
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
+  Grid,
+  GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
+import {
   Checkbox,
   Input,
+  InputChangeEvent,
   MaskedTextBox,
   TextArea,
 } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import { Buffer } from "buffer";
 import CryptoJS from "crypto-js";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
+  ButtonInGridInput,
   ButtonInInput,
   FormBox,
   FormBoxWrap,
+  GridContainer,
+  GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
+  unsavedAttadatnumsState,
+  deletedAttadatnumsState,
   deletedNameState,
   isLoading,
   loginResultState,
   unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
+import CheckBoxCell from "../Cells/CheckBoxCell";
+import ComboBoxCell from "../Cells/ComboBoxCell";
+import DateCell from "../Cells/DateCell";
+import RadioGroupCell from "../Cells/RadioGroupCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
@@ -34,17 +59,175 @@ import {
   UseCustomOption,
   UseParaPc,
   convertDateToStr,
+  getGridItemChangedData,
   numberWithCommas3,
   toDate,
 } from "../CommonFunction";
-import { PAGE_SIZE } from "../CommonString";
+import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 import BankCDWindow from "./CommonWindows/BankCDWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import ZipCodeWindow from "./CommonWindows/ZipCodeWindow";
 import DetailWindow from "./HU_A1000W_Sub_Window";
+import RequiredHeader from "../HeaderCells/RequiredHeader";
+
+const DATA_ITEM_KEY = "num";
+let deletedMainRows: object[] = [];
+let temp = 0;
+
+type TdataArr = {
+  rowstatus_s: string[];
+  hu251t_seq_s: string[];
+  hu251t_fmlynm_s: string[];
+  hu251t_relt_s: string[];
+  hu251t_perregnum_s: string[];
+  hu251t_schcd_s: string[];
+  hu251t_gradutype_s: string[];
+  hu251t_job_s: string[];
+  hu251t_compnm_s: string[];
+  hu251t_postnm_s: string[];
+  hu251t_birdt_s: string[];
+  hu251t_sexcd_s: string[];
+  hu251t_payyn_s: string[];
+  hu251t_yesyn_s: string[];
+  hu251t_dfmyn_s: string[];
+  hu251t_rmyn_s: string[];
+  hu251t_phoneno_s: string[];
+  hu251t_attdatnum_s: string[];
+  hu251t_remark_s: string[];
+};
+
+const CustomComboBoxCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("L_HU020, L_HU009, L_HU700", setBizComponentData);
+
+  const field = props.field ?? "";
+  const bizComponentIdVal =
+    field === "relt"
+      ? "L_HU020"
+      : field === "schcd"
+      ? "L_HU009"
+      : field === "dfmyn"
+      ? "L_HU700"
+      : "";
+
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <ComboBoxCell bizComponent={bizComponent} {...props} />
+  ) : (
+    <td />
+  );
+};
+
+const CustomRadioCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("R_SEXCD", setBizComponentData);
+
+  const field = props.field ?? "";
+  const bizComponentIdVal = field == "sexcd" ? "R_SEXCD" : "";
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <RadioGroupCell bizComponentData={bizComponent} {...props} />
+  ) : (
+    <td />
+  );
+};
+
+export const FormContext = createContext<{
+  attdatnum: string;
+  files: string;
+  setAttdatnum: (d: any) => void;
+  setFiles: (d: any) => void;
+  mainDataState: State;
+  setMainDataState: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
+
+const ColumnCommandCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setAttdatnum, setFiles } = useContext(FormContext);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+
+  const onAttWndClick2 = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setAttdatnum(data.attdatnum);
+    setFiles(
+      data.original_name +
+        (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : "")
+    );
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {value}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onAttWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {attachmentsWindowVisible && (
+        <PopUpAttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={dataItem.attdatnum}
+          permission={{ upload: true, download: true, delete: true }}
+        />
+      )}
+    </>
+  );
+};
 
 type IWindow = {
   workType: "N" | "U";
@@ -66,7 +249,7 @@ const CopyWindow = ({
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [tabSelected, setTabSelected] = useState(0);
-
+  const idGetter = getter(DATA_ITEM_KEY);
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -77,6 +260,30 @@ const CopyWindow = ({
   const userId = loginResult ? loginResult.userId : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  const [attdatnum, setAttdatnum] = useState<string>("");
+  const [files, setFiles] = useState<string>("");
+
+  useEffect(() => {
+    const newData = mainDataResult.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
+        ? {
+            ...item,
+            attdatnum: attdatnum,
+            files: files,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [attdatnum, files]);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
@@ -84,11 +291,42 @@ const CopyWindow = ({
 
   const setLoading = useSetRecoilState(isLoading);
 
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
   const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
+
+  const excelInput: any = useRef();
+  const [imgBase64, setImgBase64] = useState<string>(); // 파일 base64
+
   const processApi = useApi();
+
+  const initialPageState = { skip: 0, take: PAGE_SIZE };
+  const [page, setPage] = useState(initialPageState);
+  const pageChange = (event: GridPageChangeEvent) => {
+    const { page } = event;
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+      setUnsavedName([]);
+    }
+
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
 
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
@@ -124,9 +362,52 @@ const CopyWindow = ({
           bankdatnum: tempattach.bankdatnum,
           bankfiles: tempattach.bankfiles,
         }));
+      } else if (tabSelected == 4) {
+        if (tempattach.attdatnumList.length > 0) {
+          const newData = mainDataResult.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: tempattach.attdatnumList[item.num - 1],
+              files: tempattach.filesList[item.num - 1],
+            };
+          });
+
+          setMainDataResult((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
       }
     }
 
+    if (e.selected == 0) {
+      setPosition((prev) => ({
+        ...prev,
+        height: 750,
+      }));
+    } else if (e.selected == 1) {
+      setPosition((prev) => ({
+        ...prev,
+        height: 630,
+      }));
+    } else if (e.selected == 2) {
+      setPosition((prev) => ({
+        ...prev,
+        height: 450,
+      }));
+    } else if (e.selected == 3) {
+      setPosition((prev) => ({
+        ...prev,
+        height: 350,
+      }));
+    } else if (e.selected == 4) {
+      setPosition((prev) => ({
+        ...prev,
+        height: 750,
+      }));
+    }
     setTabSelected(e.selected);
   };
   const [zipCodeWindowVisible, setZipCodeWindowVisibile] =
@@ -160,6 +441,33 @@ const CopyWindow = ({
   const onBankcdWndClick = () => {
     setBankcdWindowVisible(true);
   };
+  const onAttWndClick2 = () => {
+    const uploadInput = document.getElementById("uploadAttachment");
+    uploadInput!.click();
+  };
+
+  const getAttachmentsDataphoto = async (files: FileList | null) => {
+    if (files != null) {
+      let uint8 = new Uint8Array(await files[0].arrayBuffer());
+      let arrHexString = Buffer.from(uint8).toString("hex");
+      const reader = new FileReader();
+      reader.readAsDataURL(files[0]);
+      return new Promise((resolve) => {
+        reader.onload = () => {
+          if (reader.result != null) {
+            setImgBase64(reader.result.toString());
+            setInformation((prev) => ({
+              ...prev,
+              photodatnum: "0x" + arrHexString,
+            }));
+          }
+        };
+      });
+    } else {
+      alert("새로고침 후 다시 업로드해주세요.");
+    }
+  };
+
   const getZipCodeData = (zipcode: string, address: string) => {
     setInformation((prev) => {
       return {
@@ -197,14 +505,6 @@ const CopyWindow = ({
           (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
       };
     });
-    if (tempattach.one == false) {
-      setTempAttach((prev) => ({
-        ...prev,
-        attdatnum: information.attdatnum,
-        files: information.files,
-        one: true,
-      }));
-    }
   };
 
   const getAttachmentsData2 = (data: IAttachmentData) => {
@@ -217,15 +517,6 @@ const CopyWindow = ({
           (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
       };
     });
-
-    if (tempattach.two == false) {
-      setTempAttach((prev) => ({
-        ...prev,
-        bankdatnum: information.bankdatnum,
-        bankfiles: information.bankfiles,
-        two: true,
-      }));
-    }
   };
 
   const [tempattach, setTempAttach] = useState({
@@ -233,8 +524,8 @@ const CopyWindow = ({
     files: "",
     bankdatnum: "",
     bankfiles: "",
-    one: false,
-    two: false,
+    attdatnumList: [],
+    filesList: [],
   });
 
   const getOvertime = (overtime: string) => {
@@ -244,6 +535,232 @@ const CopyWindow = ({
         overtime: overtime,
       };
     });
+  };
+
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSelectionChange = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState,
+      dataItemKey: DATA_ITEM_KEY,
+    });
+    setSelectedState(newSelectedState);
+  };
+
+  //그리드 푸터
+  const mainTotalFooterCell = (props: GridFooterCellProps) => {
+    var parts = mainDataResult.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
+    setMainDataState(event.dataState);
+  };
+
+  const onMainSortChange = (e: any) => {
+    setMainDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
+
+  const onMainItemChange = (event: GridItemChangeEvent) => {
+    setMainDataState((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult,
+      setMainDataResult,
+      DATA_ITEM_KEY
+    );
+  };
+
+  const customCellRender = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customRowRender = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const onAddClick = () => {
+    mainDataResult.data.map((item) => {
+      if (item.num > temp) {
+        temp = item.num;
+      }
+    });
+
+    const newDataItem = {
+      [DATA_ITEM_KEY]: ++temp,
+      attdatnum: "",
+      birdt: convertDateToStr(new Date()),
+      compnm: "",
+      dfmyn: "",
+      files: "",
+      fmlynm: "",
+      form_id: "HU_A1000W",
+      gradutype: "",
+      job: "",
+      orgdiv: "01",
+      payyn: false,
+      perregnum: "",
+      perregnum1: "",
+      phoneno: "",
+      postnm: "",
+      prsnnum: "",
+      relt: "",
+      remark: "",
+      rmyn: false,
+      schcd: "",
+      seq: 0,
+      sexcd: "M",
+      yesyn: false,
+      rowstatus: "N",
+    };
+
+    setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+    setPage((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
+    setMainDataResult((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onDeleteClick = () => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data: any;
+
+    mainDataResult.data.forEach((item: any, index: number) => {
+      if (!selectedState[item[DATA_ITEM_KEY]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    setSelectedState({
+      [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
+    });
+  };
+
+  const enterEdit = (dataItem: any, field: string) => {
+    if (field != "files" && field != "rowstatus") {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult((prev) => {
+        return {
+          data: mainDataResult.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit = () => {
+    if (tempResult.data != mainDataResult.data) {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   //customOptionData 조회 후 디폴트 값 세팅
@@ -288,18 +805,6 @@ const CopyWindow = ({
             .valueCode,
           workcls: defaultOption.find((item: any) => item.id === "workcls")
             .valueCode,
-          dayoffdiv: defaultOption.find((item: any) => item.id === "dayoffdiv")
-            .valueCode,
-          rtrtype: defaultOption.find((item: any) => item.id === "rtrtype")
-            .valueCode,
-          taxcd: defaultOption.find((item: any) => item.id === "taxcd")
-            .valueCode,
-          exmtaxgb: defaultOption.find((item: any) => item.id === "exmtaxgb")
-            .valueCode,
-          houseyn: defaultOption.find((item: any) => item.id === "houseyn")
-            .valueCode,
-          incgb: defaultOption.find((item: any) => item.id === "incgb")
-            .valueCode,
         }));
       }
     }
@@ -307,7 +812,7 @@ const CopyWindow = ({
 
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
-    "R_BIRCD,R_SEXCD,R_dayoffdiv,R_Rtrtype, R_HOUSEYN",
+    "R_BIRCD,R_SEXCD,R_dayoffdiv,R_Rtrtype, R_HOUSEYN, R_MARRIAGE",
     setBizComponentData
   );
 
@@ -491,10 +996,41 @@ const CopyWindow = ({
     }));
   };
 
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
+  const [mainDataResult, setMainDataResult] = useState<DataResult>(
+    process([], mainDataState)
+  );
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
+  );
+  const [selectedState, setSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     workType: "HU250T",
+    orgdiv: "01",
+    location: "01",
+    dptcd: "",
+    prsnnum: "",
+    prsnnm: "",
+    rtrchk: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+
+  //조회조건 초기값
+  const [filters2, setFilters2] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "HU251T",
     orgdiv: "01",
     location: "01",
     dptcd: "",
@@ -519,8 +1055,21 @@ const CopyWindow = ({
     }
   }, [filters]);
 
+  useEffect(() => {
+    if (filters2.isSearch && workType != "N") {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters2);
+      setFilters2((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid2(deepCopiedFilters);
+    }
+  }, [filters2]);
+
   function isResidentRegNoValid(residentRegNo: any) {
-    var re = /^[0-9]{6}-[0-9]{7}$/;
+    var re = /^[0-9]{6}[0-9]{7}$/;
     if (!re.test(String(residentRegNo).toLowerCase())) {
       return false;
     }
@@ -580,14 +1129,28 @@ const CopyWindow = ({
         const perregnum = decrypt(rows[0].perregnum, rows[0].salt);
         const telephon = decrypt(rows[0].telephon, rows[0].salt);
         const phonenum = decrypt(rows[0].phonenum, rows[0].salt);
-        setTempAttach({
+        setTempAttach((prev) => ({
+          ...prev,
           attdatnum: rows[0].attdatnum,
           files: rows[0].files,
           bankdatnum: rows[0].bankdatnum,
           bankfiles: rows[0].bankfiles,
-          one: false,
-          two: false,
-        });
+        }));
+
+        if (
+          rows[0].photodatnum != "" &&
+          rows[0].photodatnum != null &&
+          rows[0].photodatnum != undefined
+        ) {
+          if (
+            rows[0].photodatnum.slice(0, 1) == "0" &&
+            rows[0].photodatnum.slice(1, 2) == "x"
+          ) {
+            setImgBase64(rows[0].photodatnum);
+          } else {
+            setImgBase64("data:image/png;base64," + rows[0].photodatnum);
+          }
+        }
         setInformation({
           orgdiv: "01",
           prsnnum: rows[0].prsnnum,
@@ -706,34 +1269,42 @@ const CopyWindow = ({
           yrchk: rows[0].yrchk == "" ? "N" : rows[0].yrchk,
 
           //개인정보
-          height: 0,
-          weight: 0,
-          blood: "",
-          color: "",
-          leye: 0,
-          reye: 0,
-          hobby: "",
-          hobby2: "",
-          religion: "",
-          marriage: "",
-          marrydt: "",
-          orgaddr: "",
-          birthplace: "",
-          size1: "",
-          size2: "",
-          size3: "",
-          photodatnum: "",
-
-          armygb: "",
-          armystartdt: "",
-          armyenddt: "",
-          armyclass: "",
-          armyexrsn: "",
-          armydistinctiom: "",
-          armyrank: "",
-          militarynum: "",
-          armykind: "",
-          armyspeciality: "",
+          height: rows[0].height,
+          weight: rows[0].weight,
+          blood: rows[0].blood,
+          color: rows[0].color,
+          leye: rows[0].leye,
+          reye: rows[0].reye,
+          hobby: rows[0].hobby,
+          hobby2: rows[0].hobby2,
+          religion: rows[0].religion,
+          marriage: rows[0].marriage,
+          marrydt: rows[0].marrydt == "" ? null : toDate(rows[0].marrydt),
+          orgaddr: rows[0].orgaddr,
+          birthplace: rows[0].birthplace,
+          size1: rows[0].size1,
+          size2: rows[0].size2,
+          size3: rows[0].size3,
+          photodatnum:
+            rows[0].photodatnum != "" &&
+            rows[0].photodatnum != null &&
+            rows[0].photodatnum != undefined
+              ? rows[0].photodatnum.slice(0, 1) == "0" &&
+                rows[0].photodatnum.slice(1, 2) == "x"
+                ? rows[0].photodatnum
+                : "data:image/png;base64," + rows[0].photodatnum
+              : "",
+          armygb: rows[0].armygb,
+          armystartdt:
+            rows[0].armystartdt == "" ? null : toDate(rows[0].armystartdt),
+          armyenddt: rows[0].armyenddt == "" ? null : toDate(rows[0].armyenddt),
+          armyclass: rows[0].armyclass,
+          armyexrsn: rows[0].armyexrsn,
+          armydistinctiom: rows[0].armydistinctiom,
+          armyrank: rows[0].armyrank,
+          militarynum: rows[0].militarynum,
+          armykind: rows[0].armykind,
+          armyspeciality: rows[0].armyspeciality,
 
           below2kyn: rows[0].below2kyn == "" ? "N" : rows[0].below2kyn,
           occudate: rows[0].occudate == "" ? null : toDate(rows[0].occudate),
@@ -907,9 +1478,94 @@ const CopyWindow = ({
     setLoading(false);
   };
 
+  //그리드 데이터 조회
+  const fetchMainGrid2 = async (filters2: any) => {
+    // if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_HU_A1000W_Q",
+      pageNumber: filters2.pgNum,
+      pageSize: filters2.pgSize,
+      parameters: {
+        "@p_work_type": filters2.workType,
+        "@p_orgdiv": filters2.orgdiv,
+        "@p_location": filters2.location,
+        "@p_dptcd": filters2.dptcd,
+        "@p_prsnnum": filters2.prsnnum,
+        "@p_prsnnm": filters2.prsnnm,
+        "@p_rtrchk": filters2.rtrchk,
+        "@p_find_row_value": filters2.find_row_value,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        payyn: item.payyn == "Y" ? true : false,
+        yesyn: item.yesyn == "Y" ? true : false,
+        rmyn: item.rmyn == "Y" ? true : false,
+      }));
+
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        let attdatnumArray: any = [];
+        let filesArray: any = [];
+
+        rows.map((item: any) => {
+          attdatnumArray.push(item.attdatnum);
+          filesArray.push(item.files);
+        });
+        setTempAttach((prev) => ({
+          ...prev,
+          attdatnumList: attdatnumArray,
+          filesList: filesArray,
+        }));
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (workType === "U" && data != undefined) {
       setFilters((prev) => ({
+        ...prev,
+        orgdiv: "01",
+        location: "01",
+        dptcd: "",
+        prsnnum: data.prsnnum,
+        prsnnm: "",
+        rtrchk: "%",
+        isSearch: true,
+        pgNum: 1,
+      }));
+      setFilters2((prev) => ({
         ...prev,
         orgdiv: "01",
         location: "01",
@@ -1009,11 +1665,36 @@ const CopyWindow = ({
         work_type: "DETAIL_U",
         orgdiv: "01",
         prsnnum: information.prsnnum,
-        payyn: information.payyn == true ? "Y" : "N",
-        bnskind: information.bnskind == true ? "Y" : "N",
-        workchk: information.workchk == true ? "Y" : "N",
-        yrchk: information.yrchk == true ? "Y" : "N",
-        hirinsuyn: information.hirinsuyn == true ? "Y" : "N",
+        payyn:
+          information.payyn == true
+            ? "Y"
+            : information.payyn == false
+            ? "N"
+            : information.payyn,
+        bnskind:
+          information.bnskind == true
+            ? "Y"
+            : information.bnskind == false
+            ? "N"
+            : information.bnskind,
+        workchk:
+          information.workchk == true
+            ? "Y"
+            : information.workchk == false
+            ? "N"
+            : information.workchk,
+        yrchk:
+          information.yrchk == true
+            ? "Y"
+            : information.yrchk == false
+            ? "N"
+            : information.yrchk,
+        hirinsuyn:
+          information.hirinsuyn == true
+            ? "Y"
+            : information.hirinsuyn == false
+            ? "N"
+            : information.hirinsuyn,
         meddate:
           information.meddate == null || information.meddate == ""
             ? ""
@@ -1047,16 +1728,66 @@ const CopyWindow = ({
         exmtaxgb: information.exmtaxgb,
         houseyn: information.houseyn,
         incgb: information.incgb,
-        below2kyn: information.below2kyn == true ? "Y" : "N",
-        caltaxyn: information.caltaxyn == true ? "Y" : "N",
-        yrdclyn: information.yrdclyn == true ? "Y" : "N",
-        wmn: information.wmn == true ? "Y" : "N",
-        sps: information.sps == true ? "Y" : "N",
-        laboryn: information.laboryn == true ? "Y" : "N",
-        dfmyn: information.dfmyn == true ? "Y" : "N",
-        milyn: information.milyn == true ? "Y" : "N",
-        dfmyn2: information.dfmyn2 == true ? "Y" : "N",
-        notaxe: information.notaxe == true ? "Y" : "N",
+        below2kyn:
+          information.below2kyn == true
+            ? "Y"
+            : information.below2kyn == false
+            ? "N"
+            : information.below2kyn,
+        caltaxyn:
+          information.caltaxyn == true
+            ? "Y"
+            : information.caltaxyn == false
+            ? "N"
+            : information.caltaxyn,
+        yrdclyn:
+          information.yrdclyn == true
+            ? "Y"
+            : information.yrdclyn == false
+            ? "N"
+            : information.yrdclyn,
+        wmn:
+          information.wmn == true
+            ? "Y"
+            : information.wmn == false
+            ? "N"
+            : information.wmn,
+        sps:
+          information.sps == true
+            ? "Y"
+            : information.sps == false
+            ? "N"
+            : information.sps,
+        laboryn:
+          information.laboryn == true
+            ? "Y"
+            : information.laboryn == false
+            ? "N"
+            : information.laboryn,
+        dfmyn:
+          information.dfmyn == true
+            ? "Y"
+            : information.dfmyn == false
+            ? "N"
+            : information.dfmyn,
+        milyn:
+          information.milyn == true
+            ? "Y"
+            : information.milyn == false
+            ? "N"
+            : information.milyn,
+        dfmyn2:
+          information.dfmyn2 == true
+            ? "Y"
+            : information.dfmyn2 == false
+            ? "N"
+            : information.dfmyn2,
+        notaxe:
+          information.notaxe == true
+            ? "Y"
+            : information.notaxe == false
+            ? "N"
+            : information.notaxe,
         agenum: information.agenum,
         agenum70: information.agenum70,
         sptnum: information.sptnum,
@@ -1066,6 +1797,263 @@ const CopyWindow = ({
         fam1: information.fam1,
         fam2: information.fam2,
       }));
+    } else if (tabSelected == 2) {
+      setParaData((prev) => ({
+        ...prev,
+        work_type: "PERSON_U",
+        orgdiv: "01",
+        prsnnum: information.prsnnum,
+        height: information.height,
+        weight: information.weight,
+        blood: information.blood,
+        color: information.color,
+        leye: information.leye,
+        reye: information.reye,
+        hobby: information.hobby,
+        hobby2: information.hobby2,
+        religion: information.religion,
+        marriage: information.marriage,
+        marrydt:
+          information.marrydt == null || information.marrydt == ""
+            ? ""
+            : convertDateToStr(information.marrydt),
+        orgaddr: information.orgaddr,
+        birthplace: information.birthplace,
+        size1: information.size1,
+        size2: information.size2,
+        size3: information.size3,
+        photodatnum:
+          information.photodatnum != "" &&
+          information.photodatnum != null &&
+          information.photodatnum != undefined
+            ? information.photodatnum.slice(0, 1) == "0" &&
+              information.photodatnum.slice(1, 2) == "x"
+              ? information.photodatnum.replace("0x", "")
+              : information.photodatnum.replace("data:image/png;base64,", "")
+            : "",
+      }));
+    } else if (tabSelected == 3) {
+      setParaData((prev) => ({
+        ...prev,
+        work_type: "ARMY_U",
+        orgdiv: "01",
+        prsnnum: information.prsnnum,
+        armygb: information.armygb,
+        armystartdt:
+          information.armystartdt == null || information.armystartdt == ""
+            ? ""
+            : convertDateToStr(information.armystartdt),
+        armyenddt:
+          information.armyenddt == null || information.armyenddt == ""
+            ? ""
+            : convertDateToStr(information.armyenddt),
+        armyclass: information.armyclass,
+        armyexrsn: information.armyexrsn,
+        armydistinctiom: information.armydistinctiom,
+        armyrank: information.armyrank,
+        militarynum: information.militarynum,
+        armykind: information.armykind,
+        armyspeciality: information.armyspeciality,
+      }));
+    } else if (tabSelected == 4) {
+      const dataItem = mainDataResult.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+
+      if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
+
+      let valid = true;
+      let valid2 = true;
+
+      dataItem.map((item) => {
+        if (
+          item.fmlynm == "" ||
+          item.relt == "" ||
+          item.perregnum == "" ||
+          item.schcd == "" ||
+          item.sexcd == "" ||
+          item.birdt == ""
+        ) {
+          valid = false;
+        }
+
+        if (isResidentRegNoValid(item.perregnum) != true) {
+          valid2 = false;
+        }
+      });
+
+      if (valid != true) {
+        alert("필수값을 채워주세요.");
+        return false;
+      }
+      if (valid2 != true) {
+        alert("유효한 주민번호를 입력해주세요.");
+        return false;
+      }
+
+      let dataArr: TdataArr = {
+        rowstatus_s: [],
+        hu251t_seq_s: [],
+        hu251t_fmlynm_s: [],
+        hu251t_relt_s: [],
+        hu251t_perregnum_s: [],
+        hu251t_schcd_s: [],
+        hu251t_gradutype_s: [],
+        hu251t_job_s: [],
+        hu251t_compnm_s: [],
+        hu251t_postnm_s: [],
+        hu251t_birdt_s: [],
+        hu251t_sexcd_s: [],
+        hu251t_payyn_s: [],
+        hu251t_yesyn_s: [],
+        hu251t_dfmyn_s: [],
+        hu251t_rmyn_s: [],
+        hu251t_phoneno_s: [],
+        hu251t_attdatnum_s: [],
+        hu251t_remark_s: [],
+      };
+
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          fmlynm = "",
+          relt = "",
+          perregnum = "",
+          schcd = "",
+          gradutype = "",
+          job = "",
+          compnm = "",
+          postnm = "",
+          birdt = "",
+          sexcd = "",
+          payyn = "",
+          yesyn = "",
+          dfmyn = "",
+          rmyn = "",
+          phoneno = "",
+          attdatnum = "",
+          remark = "",
+        } = item;
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.hu251t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu251t_fmlynm_s.push(fmlynm == undefined ? "" : fmlynm);
+        dataArr.hu251t_relt_s.push(relt == undefined ? "" : relt);
+        dataArr.hu251t_perregnum_s.push(
+          perregnum == undefined ? "" : perregnum
+        );
+        dataArr.hu251t_schcd_s.push(schcd == undefined ? "" : schcd);
+        dataArr.hu251t_gradutype_s.push(
+          gradutype == undefined ? "" : gradutype
+        );
+        dataArr.hu251t_job_s.push(job == undefined ? "" : job);
+        dataArr.hu251t_compnm_s.push(compnm == undefined ? "" : compnm);
+        dataArr.hu251t_postnm_s.push(postnm == undefined ? "" : postnm);
+        dataArr.hu251t_birdt_s.push(birdt == undefined ? "" : birdt);
+        dataArr.hu251t_sexcd_s.push(sexcd == undefined ? "" : sexcd);
+        dataArr.hu251t_payyn_s.push(
+          payyn == true ? "Y" : payyn == false ? "N" : payyn
+        );
+
+        dataArr.hu251t_yesyn_s.push(
+          yesyn == true ? "Y" : yesyn == false ? "N" : yesyn
+        );
+        dataArr.hu251t_dfmyn_s.push(dfmyn == undefined ? "" : dfmyn);
+        dataArr.hu251t_rmyn_s.push(
+          rmyn == true ? "Y" : rmyn == false ? "N" : rmyn
+        );
+
+        dataArr.hu251t_phoneno_s.push(phoneno == undefined ? "" : phoneno);
+        dataArr.hu251t_attdatnum_s.push(
+          attdatnum == undefined ? "" : attdatnum
+        );
+        dataArr.hu251t_remark_s.push(remark == undefined ? "" : remark);
+      });
+
+      deletedMainRows.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          fmlynm = "",
+          relt = "",
+          perregnum = "",
+          schcd = "",
+          gradutype = "",
+          job = "",
+          compnm = "",
+          postnm = "",
+          birdt = "",
+          sexcd = "",
+          payyn = "",
+          yesyn = "",
+          dfmyn = "",
+          rmyn = "",
+          phoneno = "",
+          attdatnum = "",
+          remark = "",
+        } = item;
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.hu251t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu251t_fmlynm_s.push(fmlynm == undefined ? "" : fmlynm);
+        dataArr.hu251t_relt_s.push(relt == undefined ? "" : relt);
+        dataArr.hu251t_perregnum_s.push(
+          perregnum == undefined ? "" : perregnum
+        );
+        dataArr.hu251t_schcd_s.push(schcd == undefined ? "" : schcd);
+        dataArr.hu251t_gradutype_s.push(
+          gradutype == undefined ? "" : gradutype
+        );
+        dataArr.hu251t_job_s.push(job == undefined ? "" : job);
+        dataArr.hu251t_compnm_s.push(compnm == undefined ? "" : compnm);
+        dataArr.hu251t_postnm_s.push(postnm == undefined ? "" : postnm);
+        dataArr.hu251t_birdt_s.push(birdt == undefined ? "" : birdt);
+        dataArr.hu251t_sexcd_s.push(sexcd == undefined ? "" : sexcd);
+        dataArr.hu251t_payyn_s.push(
+          payyn == true ? "Y" : payyn == false ? "N" : payyn
+        );
+
+        dataArr.hu251t_yesyn_s.push(
+          yesyn == true ? "Y" : yesyn == false ? "N" : yesyn
+        );
+        dataArr.hu251t_dfmyn_s.push(dfmyn == undefined ? "" : dfmyn);
+        dataArr.hu251t_rmyn_s.push(
+          rmyn == true ? "Y" : rmyn == false ? "N" : rmyn
+        );
+
+        dataArr.hu251t_phoneno_s.push(phoneno == undefined ? "" : phoneno);
+        dataArr.hu251t_attdatnum_s.push(
+          attdatnum == undefined ? "" : attdatnum
+        );
+        dataArr.hu251t_remark_s.push(remark == undefined ? "" : remark);
+      });
+
+      setParaData2({
+        work_type: "HU251T",
+        orgdiv: "01",
+        prsnnum: information.prsnnum,
+        rowstatus_s: dataArr.rowstatus_s.join("|"),
+        hu251t_seq_s: dataArr.hu251t_seq_s.join("|"),
+        hu251t_fmlynm_s: dataArr.hu251t_fmlynm_s.join("|"),
+        hu251t_relt_s: dataArr.hu251t_relt_s.join("|"),
+        hu251t_perregnum_s: dataArr.hu251t_perregnum_s.join("|"),
+        hu251t_schcd_s: dataArr.hu251t_schcd_s.join("|"),
+        hu251t_gradutype_s: dataArr.hu251t_gradutype_s.join("|"),
+        hu251t_job_s: dataArr.hu251t_job_s.join("|"),
+        hu251t_compnm_s: dataArr.hu251t_compnm_s.join("|"),
+        hu251t_postnm_s: dataArr.hu251t_postnm_s.join("|"),
+        hu251t_birdt_s: dataArr.hu251t_birdt_s.join("|"),
+        hu251t_sexcd_s: dataArr.hu251t_sexcd_s.join("|"),
+        hu251t_payyn_s: dataArr.hu251t_payyn_s.join("|"),
+        hu251t_yesyn_s: dataArr.hu251t_yesyn_s.join("|"),
+        hu251t_dfmyn_s: dataArr.hu251t_dfmyn_s.join("|"),
+        hu251t_rmyn_s: dataArr.hu251t_rmyn_s.join("|"),
+        hu251t_phoneno_s: dataArr.hu251t_phoneno_s.join("|"),
+        hu251t_attdatnum_s: dataArr.hu251t_attdatnum_s.join("|"),
+        hu251t_remark_s: dataArr.hu251t_remark_s.join("|"),
+      });
     }
   };
 
@@ -1216,6 +2204,31 @@ const CopyWindow = ({
 
     below2kyn: "N",
     occudate: "",
+  });
+
+  const [ParaData2, setParaData2] = useState({
+    work_type: "",
+    orgdiv: "01",
+    prsnnum: "",
+    rowstatus_s: "",
+    hu251t_seq_s: "",
+    hu251t_fmlynm_s: "",
+    hu251t_relt_s: "",
+    hu251t_perregnum_s: "",
+    hu251t_schcd_s: "",
+    hu251t_gradutype_s: "",
+    hu251t_job_s: "",
+    hu251t_compnm_s: "",
+    hu251t_postnm_s: "",
+    hu251t_birdt_s: "",
+    hu251t_sexcd_s: "",
+    hu251t_payyn_s: "",
+    hu251t_yesyn_s: "",
+    hu251t_dfmyn_s: "",
+    hu251t_rmyn_s: "",
+    hu251t_phoneno_s: "",
+    hu251t_attdatnum_s: "",
+    hu251t_remark_s: "",
   });
 
   const para: Iparameters = {
@@ -1377,6 +2390,39 @@ const CopyWindow = ({
     },
   };
 
+  const para2: Iparameters = {
+    procedureName: "P_HU_A1000W_FAM_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData2.work_type,
+      "@p_orgdiv": ParaData2.orgdiv,
+      "@p_rowstatus_s": ParaData2.rowstatus_s,
+      "@p_prsnnum": ParaData2.prsnnum,
+      "@p_hu251t_seq_s": ParaData2.hu251t_seq_s,
+      "@p_hu251t_fmlynm_s": ParaData2.hu251t_fmlynm_s,
+      "@p_hu251t_relt_s": ParaData2.hu251t_relt_s,
+      "@p_hu251t_perregnum_s": ParaData2.hu251t_perregnum_s,
+      "@p_hu251t_schcd_s": ParaData2.hu251t_schcd_s,
+      "@p_hu251t_gradutype_s": ParaData2.hu251t_gradutype_s,
+      "@p_hu251t_job_s": ParaData2.hu251t_job_s,
+      "@p_hu251t_compnm_s": ParaData2.hu251t_compnm_s,
+      "@p_hu251t_postnm_s": ParaData2.hu251t_postnm_s,
+      "@p_hu251t_birdt_s": ParaData2.hu251t_birdt_s,
+      "@p_hu251t_sexcd_s": ParaData2.hu251t_sexcd_s,
+      "@p_hu251t_payyn_s": ParaData2.hu251t_payyn_s,
+      "@p_hu251t_yesyn_s": ParaData2.hu251t_yesyn_s,
+      "@p_hu251t_dfmyn_s": ParaData2.hu251t_dfmyn_s,
+      "@p_hu251t_rmyn_s": ParaData2.hu251t_rmyn_s,
+      "@p_hu251t_phoneno_s": ParaData2.hu251t_phoneno_s,
+      "@p_hu251t_attdatnum_s": ParaData2.hu251t_attdatnum_s,
+      "@p_hu251t_remark_s": ParaData2.hu251t_remark_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "HU_A1000W",
+    },
+  };
+
   const fetchTodoGridSaved = async () => {
     let data: any;
     setLoading(true);
@@ -1387,9 +2433,7 @@ const CopyWindow = ({
     }
 
     if (data.isSuccess === true) {
-      if (tabSelected == 0 || tabSelected == 1) {
-        setUnsavedName([]);
-      }
+      setUnsavedName([]);
 
       reload(data.returnString);
       if (workType == "N") {
@@ -1401,14 +2445,20 @@ const CopyWindow = ({
           pgNum: 1,
           find_row_value: data.returnString,
         }));
+        setFilters2((prev) => ({
+          ...prev,
+          isSearch: true,
+          pgNum: 1,
+          find_row_value: data.returnString,
+        }));
       }
       setTempAttach({
         attdatnum: "",
         files: "",
         bankdatnum: "",
         bankfiles: "",
-        one: false,
-        two: false,
+        attdatnumList: [],
+        filesList: [],
       });
       setParaData({
         work_type: "",
@@ -1565,11 +2615,93 @@ const CopyWindow = ({
     setLoading(false);
   };
 
+  const fetchTodoGridSaved2 = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para2);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      let array: any[] = [];
+
+      deletedMainRows.map((item: any) => {
+        array.push(item.attdatnum);
+      });
+
+      setDeletedAttadatnums(array);
+
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
+      deletedMainRows = [];
+      reload(data.returnString);
+
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+
+      setTempAttach({
+        attdatnum: "",
+        files: "",
+        bankdatnum: "",
+        bankfiles: "",
+        attdatnumList: [],
+        filesList: [],
+      });
+      setParaData2({
+        work_type: "",
+        orgdiv: "01",
+        prsnnum: "",
+        rowstatus_s: "",
+        hu251t_seq_s: "",
+        hu251t_fmlynm_s: "",
+        hu251t_relt_s: "",
+        hu251t_perregnum_s: "",
+        hu251t_schcd_s: "",
+        hu251t_gradutype_s: "",
+        hu251t_job_s: "",
+        hu251t_compnm_s: "",
+        hu251t_postnm_s: "",
+        hu251t_birdt_s: "",
+        hu251t_sexcd_s: "",
+        hu251t_payyn_s: "",
+        hu251t_yesyn_s: "",
+        hu251t_dfmyn_s: "",
+        hu251t_rmyn_s: "",
+        hu251t_phoneno_s: "",
+        hu251t_attdatnum_s: "",
+        hu251t_remark_s: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (ParaData.work_type != "") {
       fetchTodoGridSaved();
     }
   }, [ParaData]);
+
+  useEffect(() => {
+    if (ParaData2.work_type != "") {
+      fetchTodoGridSaved2();
+    }
+  }, [ParaData2]);
+
   return (
     <>
       <Window
@@ -1582,7 +2714,7 @@ const CopyWindow = ({
         modal={modal}
       >
         <TabStrip
-          style={{ width: "100%" }}
+          style={{ width: "100%", height: `calc(100% - 55px)` }}
           selected={tabSelected}
           onSelect={handleSelectTab}
         >
@@ -1778,7 +2910,7 @@ const CopyWindow = ({
                     <th>주민번호</th>
                     <td>
                       <MaskedTextBox
-                        mask="000000-0000000"
+                        mask="0000000000000"
                         name="perregnum"
                         value={information.perregnum}
                         onChange={InputChange}
@@ -2339,45 +3471,27 @@ const CopyWindow = ({
                   <tr>
                     <th>연차발생기준</th>
                     <td colSpan={3}>
-                      {workType == "N"
-                        ? customOptionData !== null && (
-                            <CustomOptionRadioGroup
-                              name="dayoffdiv"
-                              customOptionData={customOptionData}
-                              changeData={RadioChange}
-                              type="new"
-                            />
-                          )
-                        : bizComponentData !== null && (
-                            <BizComponentRadioGroup
-                              name="dayoffdiv"
-                              value={information.dayoffdiv}
-                              bizComponentId="R_dayoffdiv"
-                              bizComponentData={bizComponentData}
-                              changeData={RadioChange}
-                            />
-                          )}
+                      {bizComponentData !== null && (
+                        <BizComponentRadioGroup
+                          name="dayoffdiv"
+                          value={information.dayoffdiv}
+                          bizComponentId="R_dayoffdiv"
+                          bizComponentData={bizComponentData}
+                          changeData={RadioChange}
+                        />
+                      )}
                     </td>
                     <th>퇴직급여기준</th>
                     <td colSpan={3}>
-                      {workType == "N"
-                        ? customOptionData !== null && (
-                            <CustomOptionRadioGroup
-                              name="rtrtype"
-                              customOptionData={customOptionData}
-                              changeData={RadioChange}
-                              type="new"
-                            />
-                          )
-                        : bizComponentData !== null && (
-                            <BizComponentRadioGroup
-                              name="rtrtype"
-                              value={information.rtrtype}
-                              bizComponentId="R_Rtrtype"
-                              bizComponentData={bizComponentData}
-                              changeData={RadioChange}
-                            />
-                          )}
+                      {bizComponentData !== null && (
+                        <BizComponentRadioGroup
+                          name="rtrtype"
+                          value={information.rtrtype}
+                          bizComponentId="R_Rtrtype"
+                          bizComponentData={bizComponentData}
+                          changeData={RadioChange}
+                        />
+                      )}
                     </td>
                     <th>업청년세액감면</th>
                     <td>
@@ -2395,24 +3509,15 @@ const CopyWindow = ({
                   <tr>
                     <th>세대주여부</th>
                     <td colSpan={3}>
-                      {workType == "N"
-                        ? customOptionData !== null && (
-                            <CustomOptionRadioGroup
-                              name="houseyn"
-                              customOptionData={customOptionData}
-                              changeData={RadioChange}
-                              type="new"
-                            />
-                          )
-                        : bizComponentData !== null && (
-                            <BizComponentRadioGroup
-                              name="houseyn"
-                              value={information.houseyn}
-                              bizComponentId="R_HOUSEYN"
-                              bizComponentData={bizComponentData}
-                              changeData={RadioChange}
-                            />
-                          )}
+                      {bizComponentData !== null && (
+                        <BizComponentRadioGroup
+                          name="houseyn"
+                          value={information.houseyn}
+                          bizComponentId="R_HOUSEYN"
+                          bizComponentData={bizComponentData}
+                          changeData={RadioChange}
+                        />
+                      )}
                     </td>
                     <th>소득세조정률</th>
                     <td colSpan={2}>
@@ -2679,20 +3784,489 @@ const CopyWindow = ({
             title="개인정보"
             disabled={workType == "N" ? true : false}
           >
-            <FormBoxWrap border={true}>
-              <FormBox>
-                <tbody></tbody>
-              </FormBox>
-            </FormBoxWrap>
+            <GridContainerWrap>
+              <GridContainer width="20%">
+                <GridTitleContainer>
+                  <GridTitle>사진</GridTitle>
+                  <ButtonContainer>
+                    <Button onClick={onAttWndClick2} themeColor={"primary"}>
+                      사진업로드
+                    </Button>
+                    <input
+                      id="uploadAttachment"
+                      style={{ display: "none" }}
+                      type="file"
+                      accept="image/*"
+                      ref={excelInput}
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>
+                      ) => {
+                        getAttachmentsDataphoto(event.target.files);
+                      }}
+                    />
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <div style={{ textAlign: "center", marginTop: "15px" }}>
+                  {information.photodatnum != "" ? (
+                    <img
+                      style={{ display: "block", margin: "auto", width: "80%" }}
+                      ref={excelInput}
+                      src={imgBase64}
+                      alt="UserImage"
+                    />
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </GridContainer>
+              <GridContainer width={`calc(80% - ${GAP}px)`}>
+                <FormBoxWrap border={true}>
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th>신장</th>
+                        <td>
+                          <Input
+                            name="height"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(information.height)}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>체중</th>
+                        <td>
+                          <Input
+                            name="weight"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(information.weight)}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>혈액형</th>
+                        <td>
+                          <Input
+                            name="blood"
+                            type="text"
+                            value={information.blood}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>종교</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="religion"
+                              value={information.religion}
+                              customOptionData={customOptionData}
+                              changeData={ComboBoxChange}
+                              type="new"
+                            />
+                          )}
+                        </td>
+                        <th>신발</th>
+                        <td>
+                          <Input
+                            name="size3"
+                            type="text"
+                            value={information.size3}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>의류(상)</th>
+                        <td>
+                          <Input
+                            name="size1"
+                            type="text"
+                            value={information.size1}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>의류(하)</th>
+                        <td>
+                          <Input
+                            name="size2"
+                            type="text"
+                            value={information.size2}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>색맹</th>
+                        <td>
+                          <Input
+                            name="color"
+                            type="text"
+                            value={information.color}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>시력(좌)</th>
+                        <td>
+                          <Input
+                            name="leye"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(information.leye)}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>시력(우)</th>
+                        <td>
+                          <Input
+                            name="reye"
+                            type="number"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            value={numberWithCommas3(information.reye)}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>결혼여부</th>
+                        <td colSpan={3}>
+                          {bizComponentData !== null && (
+                            <BizComponentRadioGroup
+                              name="marriage"
+                              value={information.marriage}
+                              bizComponentId="R_MARRIAGE"
+                              bizComponentData={bizComponentData}
+                              changeData={RadioChange}
+                            />
+                          )}
+                        </td>
+                        <th>결혼기념일</th>
+                        <td>
+                          <DatePicker
+                            name="marrydt"
+                            value={information.marrydt}
+                            format="yyyy-MM-dd"
+                            onChange={InputChange}
+                            placeholder=""
+                          />
+                        </td>
+                        <th>본적</th>
+                        <td>
+                          <Input
+                            name="orgaddr"
+                            type="text"
+                            value={information.orgaddr}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>출생지</th>
+                        <td>
+                          <Input
+                            name="birthplace"
+                            type="text"
+                            value={information.birthplace}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>취미</th>
+                        <td>
+                          <Input
+                            name="hobby"
+                            type="text"
+                            value={information.hobby}
+                            onChange={InputChange}
+                          />
+                        </td>
+                        <th>특기</th>
+                        <td>
+                          <Input
+                            name="hobby2"
+                            type="text"
+                            value={information.hobby2}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+              </GridContainer>
+            </GridContainerWrap>
           </TabStripTab>
           <TabStripTab
             title="병역사항"
             disabled={workType == "N" ? true : false}
-          ></TabStripTab>
+          >
+            <FormBoxWrap border={true}>
+              <FormBox>
+                <tbody>
+                  <tr>
+                    <th>병역구분</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="armygb"
+                          value={information.armygb}
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                          type="new"
+                        />
+                      )}
+                    </td>
+                    <th>군번</th>
+                    <td>
+                      <Input
+                        name="militarynum"
+                        type="text"
+                        value={information.militarynum}
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>입대일</th>
+                    <td>
+                      <DatePicker
+                        name="armystartdt"
+                        value={information.armystartdt}
+                        format="yyyy-MM-dd"
+                        onChange={InputChange}
+                        placeholder=""
+                      />
+                    </td>
+                    <th>군별</th>
+                    <td>
+                      <Input
+                        name="armydistinctiom"
+                        type="text"
+                        value={information.armydistinctiom}
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>병과</th>
+                    <td>
+                      <Input
+                        name="armykind"
+                        type="text"
+                        value={information.armykind}
+                        onChange={InputChange}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>면제사유</th>
+                    <td>
+                      <Input
+                        name="armyexrsn"
+                        type="text"
+                        value={information.armyexrsn}
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>계급</th>
+                    <td>
+                      <Input
+                        name="armyrank"
+                        type="text"
+                        value={information.armyrank}
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>전역일</th>
+                    <td>
+                      <DatePicker
+                        name="armyenddt"
+                        value={information.armyenddt}
+                        format="yyyy-MM-dd"
+                        onChange={InputChange}
+                        placeholder=""
+                      />
+                    </td>
+                    <th>역종</th>
+                    <td>
+                      <Input
+                        name="armyclass"
+                        type="text"
+                        value={information.armyclass}
+                        onChange={InputChange}
+                      />
+                    </td>
+                    <th>주특기</th>
+                    <td>
+                      <Input
+                        name="armyspeciality"
+                        type="text"
+                        value={information.armyspeciality}
+                        onChange={InputChange}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </FormBox>
+            </FormBoxWrap>
+          </TabStripTab>
           <TabStripTab
             title="가족관계"
             disabled={workType == "N" ? true : false}
-          ></TabStripTab>
+          >
+            <FormContext.Provider
+              value={{
+                attdatnum,
+                files,
+                setAttdatnum,
+                setFiles,
+                mainDataState,
+                setMainDataState,
+                // fetchGrid,
+              }}
+            >
+              <GridContainer height={position.height - 220 + "px"}>
+                <GridTitleContainer>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: `calc(100% - 35px)` }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      birdt: row.birdt != "" ? toDate(row.birdt) : new Date(),
+                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                    })),
+                    mainDataState
+                  )}
+                  onDataStateChange={onMainDataStateChange}
+                  {...mainDataState}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="fmlynm"
+                    title="성명"
+                    width="120px"
+                    footerCell={mainTotalFooterCell}
+                    headerCell={RequiredHeader}
+                  />
+                  <GridColumn
+                    field="relt"
+                    title="관계"
+                    width="120px"
+                    cell={CustomComboBoxCell}
+                    headerCell={RequiredHeader}
+                  />
+                  <GridColumn
+                    field="perregnum"
+                    title="주민번호"
+                    width="120px"
+                    headerCell={RequiredHeader}
+                  />
+                  <GridColumn
+                    field="schcd"
+                    title="최종학력"
+                    width="120px"
+                    cell={CustomComboBoxCell}
+                    headerCell={RequiredHeader}
+                  />
+                  <GridColumn field="job" title="직업" width="120px" />
+                  <GridColumn field="compnm" title="회사명" width="120px" />
+                  <GridColumn field="postnm" title="직위명" width="120px" />
+                  <GridColumn
+                    field="birdt"
+                    title="생년월일"
+                    width="120px"
+                    cell={DateCell}
+                    headerCell={RequiredHeader}
+                  />
+                  <GridColumn
+                    field="sexcd"
+                    title="성별"
+                    width="150px"
+                    cell={CustomRadioCell}
+                    headerCell={RequiredHeader}
+                  />
+                  <GridColumn
+                    field="phoneno"
+                    title="휴대폰번호"
+                    width="120px"
+                  />
+                  <GridColumn
+                    field="payyn"
+                    title="급여"
+                    width="80px"
+                    cell={CheckBoxCell}
+                  />
+                  <GridColumn
+                    field="yesyn"
+                    title="정산"
+                    width="80px"
+                    cell={CheckBoxCell}
+                  />
+                  <GridColumn
+                    field="rmyn"
+                    title="동거"
+                    width="80px"
+                    cell={CheckBoxCell}
+                  />
+                  <GridColumn
+                    field="dfmyn"
+                    title="신체장애"
+                    width="120px"
+                    cell={CustomComboBoxCell}
+                  />
+                  <GridColumn field="remark" title="비고" width="200px" />
+                  <GridColumn
+                    field="files"
+                    title="첨부파일"
+                    width="150px"
+                    cell={ColumnCommandCell}
+                  />
+                </Grid>
+              </GridContainer>
+            </FormContext.Provider>
+          </TabStripTab>
           <TabStripTab
             title="학적사항"
             disabled={workType == "N" ? true : false}

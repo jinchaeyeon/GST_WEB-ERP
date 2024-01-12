@@ -796,9 +796,9 @@ const HU_A1000W: React.FC = () => {
                 postcd: postcdListData.find(
                   (item: any) => item.sub_code === row.postcd
                 )?.code_name,
-                perregnum: decrypt(row.perregnum, row.salt),
-                telephon: decrypt(row.telephon, row.salt),
-                phonenum: decrypt(row.phonenum, row.salt),
+                perregnum: row.perregnum == "" ? "" : decrypt(row.perregnum, row.salt),
+                telephon: row.telephon == "" ? "" : decrypt(row.telephon, row.salt),
+                phonenum: row.phonenum == "" ? "" : decrypt(row.phonenum, row.salt),
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState

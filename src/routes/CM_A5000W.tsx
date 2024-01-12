@@ -108,11 +108,10 @@ const StatusCell = (props: GridCellProps) => {
 
   return (
     <td
-      style={{ textAlign: "left" }}
       aria-colindex={ariaColumnIndex}
       data-grid-col-index={columnIndex}
+      style={{textAlign: "left" , display: "flex", alignItems: "center"}}
     >
-      <div style={{ display: "flex", alignItems: "center" }}>
         <StatusIcon status={dataItem[field]} />{" "}
         {dataItem[field] === "001"
           ? "컨설팅 요청"
@@ -127,7 +126,6 @@ const StatusCell = (props: GridCellProps) => {
           : dataItem[field] === "006"
           ? "답변 완료"
           : ""}
-      </div>
     </td>
   );
 };
