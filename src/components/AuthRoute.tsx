@@ -36,6 +36,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "MA_A2500W" ||
       link == "MA_A2700W" ||
       link == "MA_A3000W" ||
+      link == "MA_A3400_606W" ||
       link == "MA_A7000W" ||
       link == "MA_A3300W" ||
       link == "MA_A3400W" ||
