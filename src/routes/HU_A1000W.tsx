@@ -13,9 +13,9 @@ import {
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
+import CryptoJS from "crypto-js";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
-import CryptoJS from "crypto-js";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -49,11 +49,11 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
+import DetailWindow from "../components/Windows/HU_A1000W_Window";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import DetailWindow from "../components/Windows/HU_A1000W_Window";
 
 const dateField = ["regorgdt", "rtrdt"];
 interface IPrsnnum {
@@ -77,6 +77,9 @@ const HU_A1000W: React.FC = () => {
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
+
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -405,8 +408,14 @@ const HU_A1000W: React.FC = () => {
   };
 
   const decrypt = (encrypted: any, secretKey: any) => {
-    var decrypted = CryptoJS.AES.decrypt(encrypted, secretKey).toString(CryptoJS.enc.Utf8);
-    return decrypted;
+    try {
+      var decrypted = CryptoJS.AES.decrypt(encrypted, secretKey).toString(
+        CryptoJS.enc.Utf8
+      );
+      return decrypted;
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   //그리드 푸터
@@ -452,6 +461,8 @@ const HU_A1000W: React.FC = () => {
         ...prev,
         work_type: "D",
         prsnnum: datas.prsnnum,
+        attdatnum: datas.attdatnum,
+        bankdatnum: datas.bankdatnum,
       }));
     } else {
       alert("데이터가 없습니다.");
@@ -462,6 +473,8 @@ const HU_A1000W: React.FC = () => {
   const [paraDataDeleted, setParaDataDeleted] = useState({
     work_type: "",
     prsnnum: "",
+    attdatnum: "",
+    bankdatnum: "",
   });
 
   //삭제 프로시저 파라미터
@@ -641,6 +654,18 @@ const HU_A1000W: React.FC = () => {
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       );
 
+      let array: any[] = [];
+
+      if (paraDataDeleted.attdatnum) {
+        array.push(paraDataDeleted.attdatnum);
+      }
+
+      if (paraDataDeleted.bankdatnum) {
+        array.push(paraDataDeleted.bankdatnum);
+      }
+
+      setDeletedAttadatnums(array);
+
       if (isLastDataDeleted) {
         setPage({
           skip:
@@ -680,6 +705,8 @@ const HU_A1000W: React.FC = () => {
     setParaDataDeleted((prev) => ({
       work_type: "",
       prsnnum: "",
+      attdatnum: "",
+      bankdatnum: "",
     }));
   };
 
@@ -796,9 +823,24 @@ const HU_A1000W: React.FC = () => {
                 postcd: postcdListData.find(
                   (item: any) => item.sub_code === row.postcd
                 )?.code_name,
-                perregnum: row.perregnum == "" ? "" : decrypt(row.perregnum, row.salt),
-                telephon: row.telephon == "" ? "" : decrypt(row.telephon, row.salt),
-                phonenum: row.phonenum == "" ? "" : decrypt(row.phonenum, row.salt),
+                perregnum:
+                  row.perregnum == "" ||
+                  row.perregnum == null ||
+                  row.perregnum == undefined
+                    ? ""
+                    : decrypt(row.perregnum, row.salt),
+                telephon:
+                  row.telephon == "" ||
+                  row.telephon == null ||
+                  row.telephon == undefined
+                    ? ""
+                    : decrypt(row.telephon, row.salt),
+                phonenum:
+                  row.phonenum == "" ||
+                  row.phonenum == null ||
+                  row.phonenum == undefined
+                    ? ""
+                    : decrypt(row.phonenum, row.salt),
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState

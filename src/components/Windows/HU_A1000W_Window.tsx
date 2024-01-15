@@ -22,8 +22,16 @@ import {
 } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { Buffer } from "buffer";
+import { bytesToBase64 } from "byte-base64";
 import CryptoJS from "crypto-js";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -40,17 +48,18 @@ import {
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
-  unsavedAttadatnumsState,
   deletedAttadatnumsState,
   deletedNameState,
   isLoading,
   loginResultState,
+  unsavedAttadatnumsState,
   unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import DateCell from "../Cells/DateCell";
+import NumberCell from "../Cells/NumberCell";
 import RadioGroupCell from "../Cells/RadioGroupCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
@@ -60,11 +69,19 @@ import {
   UseParaPc,
   convertDateToStr,
   getGridItemChangedData,
+  getQueryFromBizComponent,
   numberWithCommas3,
   toDate,
 } from "../CommonFunction";
-import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
+import RequiredHeader from "../HeaderCells/RequiredHeader";
 import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -72,11 +89,31 @@ import BankCDWindow from "./CommonWindows/BankCDWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import ZipCodeWindow from "./CommonWindows/ZipCodeWindow";
 import DetailWindow from "./HU_A1000W_Sub_Window";
-import RequiredHeader from "../HeaderCells/RequiredHeader";
 
 const DATA_ITEM_KEY = "num";
+const DATA_ITEM_KEY2 = "num";
+const DATA_ITEM_KEY3 = "num";
+const DATA_ITEM_KEY4 = "num";
+const DATA_ITEM_KEY5 = "num";
+const DATA_ITEM_KEY6 = "num";
+const DATA_ITEM_KEY7 = "num";
+const DATA_ITEM_KEY8 = "num";
 let deletedMainRows: object[] = [];
+let deletedMainRows2: object[] = [];
+let deletedMainRows3: object[] = [];
+let deletedMainRows4: object[] = [];
+let deletedMainRows5: object[] = [];
+let deletedMainRows6: object[] = [];
+let deletedMainRows7: object[] = [];
+let deletedMainRows8: object[] = [];
 let temp = 0;
+let temp2 = 0;
+let temp3 = 0;
+let temp4 = 0;
+let temp5 = 0;
+let temp6 = 0;
+let temp7 = 0;
+let temp8 = 0;
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -100,9 +137,102 @@ type TdataArr = {
   hu251t_remark_s: string[];
 };
 
+type TdataArr2 = {
+  hu252t_rowstatus_s: string[];
+  hu252t_seq_s: string[];
+  hu252t_schdiv_s: string[];
+  hu252t_startdate_s: string[];
+  hu252t_enddate_s: string[];
+  hu252t_schnm_s: string[];
+  hu252t_major_s: string[];
+  hu252t_schgrade_s: string[];
+  attdatnum_s: string[];
+};
+
+type TdataArr3 = {
+  hu254t_rowstatus_s: string[];
+  hu254t_seq_s: string[];
+  hu254t_qualkind_s: string[];
+  hu254t_qualgrad_s: string[];
+  hu254t_qualmach_s: string[];
+  hu254t_acqdt_s: string[];
+  hu254t_validt_s: string[];
+  hu254t_renewdt_s: string[];
+  hu254t_qualnum_s: string[];
+  attdatnum_s: string[];
+};
+
+type TdataArr4 = {
+  hu253t_rowstatus_s: string[];
+  hu253t_seq_s: string[];
+  hu253t_compnm_s: string[];
+  hu253t_frdt_s: string[];
+  hu253t_todt_s: string[];
+  hu253t_dptnm_s: string[];
+  hu253t_postnm_s: string[];
+  hu253t_jobnm_s: string[];
+  hu253t_remark_s: string[];
+  attdatnum_s: string[];
+};
+
+type TdataArr5 = {
+  hu255t_rowstatus_s: string[];
+  hu255t_seq_s: string[];
+  hu255t_appointcd_s: string[];
+  hu255t_appointdt_s: string[];
+  hu255t_appointrsn_s: string[];
+  hu255t_startdt_s: string[];
+  hu255t_enddt_s: string[];
+  hu255t_remark_s: string[];
+  hu255t_dptcd_s: string[];
+  attdatnum_s: string[];
+};
+
+type TdataArr6 = {
+  hu256t_rowstatus_s: string[];
+  hu256t_seq_s: string[];
+  hu256t_rnpdiv_s: string[];
+  hu256t_reqdt_s: string[];
+  hu256t_reloffice_s: string[];
+  hu256t_contents_s: string[];
+  hu256t_remark_s: string[];
+  attdatnum_s: string[];
+};
+
+type TdataArr7 = {
+  hu257t_rowstatus_s: string[];
+  hu257t_seq_s: string[];
+  hu257t_startdt_s: string[];
+  hu257t_enddt_s: string[];
+  hu257t_eduterm_s: string[];
+  hu257t_edutime_s: string[];
+  hu257t_edunm_s: string[];
+  hu257t_contents_s: string[];
+  hu257t_edueval_s: string[];
+  hu257t_eduoffice_s: string[];
+  attdatnum_s: string[];
+};
+
+type TdataArr8 = {
+  hu258t_rowstatus_s: string[];
+  hu258t_seq_s: string[];
+  hu258t_educd_s: string[];
+  hu258t_testnm_s: string[];
+  hu258t_score_s: string[];
+  hu258t_testdt_s: string[];
+  hu258t_speaking_s: string[];
+  hu258t_country_s: string[];
+  hu258t_startdt_s: string[];
+  hu258t_enddt_s: string[];
+  attdatnum_s: string[];
+};
+
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_HU020, L_HU009, L_HU700", setBizComponentData);
+  UseBizComponent(
+    "L_HU020, L_HU009, L_HU700, L_HU062, L_dptcd_001, L_HU017, L_HU090",
+    setBizComponentData
+  );
 
   const field = props.field ?? "";
   const bizComponentIdVal =
@@ -112,14 +242,30 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_HU009"
       : field === "dfmyn"
       ? "L_HU700"
+      : field === "appointcd"
+      ? "L_HU062"
+      : field === "dptcd"
+      ? "L_dptcd_001"
+      : field === "rnpdiv"
+      ? "L_HU017"
+      : field === "educd"
+      ? "L_HU090"
       : "";
 
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
 
+  const textField = field === "dptcd" ? "dptnm" : "code_name";
+  const valueField = field === "dptcd" ? "dptcd" : "sub_code";
+
   return bizComponent ? (
-    <ComboBoxCell bizComponent={bizComponent} {...props} />
+    <ComboBoxCell
+      bizComponent={bizComponent}
+      textField={textField}
+      valueField={valueField}
+      {...props}
+    />
   ) : (
     <td />
   );
@@ -149,6 +295,76 @@ export const FormContext = createContext<{
   setFiles: (d: any) => void;
   mainDataState: State;
   setMainDataState: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
+
+export const FormContext2 = createContext<{
+  attdatnum2: string;
+  files2: string;
+  setAttdatnum2: (d: any) => void;
+  setFiles2: (d: any) => void;
+  mainDataState2: State;
+  setMainDataState2: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
+
+export const FormContext3 = createContext<{
+  attdatnum3: string;
+  files3: string;
+  setAttdatnum3: (d: any) => void;
+  setFiles3: (d: any) => void;
+  mainDataState3: State;
+  setMainDataState3: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
+
+export const FormContext4 = createContext<{
+  attdatnum4: string;
+  files4: string;
+  setAttdatnum4: (d: any) => void;
+  setFiles4: (d: any) => void;
+  mainDataState4: State;
+  setMainDataState4: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
+
+export const FormContext5 = createContext<{
+  attdatnum5: string;
+  files5: string;
+  setAttdatnum5: (d: any) => void;
+  setFiles5: (d: any) => void;
+  mainDataState5: State;
+  setMainDataState5: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
+
+export const FormContext6 = createContext<{
+  attdatnum6: string;
+  files6: string;
+  setAttdatnum6: (d: any) => void;
+  setFiles6: (d: any) => void;
+  mainDataState6: State;
+  setMainDataState6: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
+
+export const FormContext7 = createContext<{
+  attdatnum7: string;
+  files7: string;
+  setAttdatnum7: (d: any) => void;
+  setFiles7: (d: any) => void;
+  mainDataState7: State;
+  setMainDataState7: (d: any) => void;
+  // fetchGrid: (n: number) => any;
+}>({} as any);
+
+export const FormContext8 = createContext<{
+  attdatnum8: string;
+  files8: string;
+  setAttdatnum8: (d: any) => void;
+  setFiles8: (d: any) => void;
+  mainDataState8: State;
+  setMainDataState8: (d: any) => void;
   // fetchGrid: (n: number) => any;
 }>({} as any);
 
@@ -229,6 +445,545 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
+const ColumnCommandCell2 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setAttdatnum2, setFiles2 } = useContext(FormContext2);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+
+  const onAttWndClick2 = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setAttdatnum2(data.attdatnum);
+    setFiles2(
+      data.original_name +
+        (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : "")
+    );
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {value}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onAttWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {attachmentsWindowVisible && (
+        <PopUpAttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={dataItem.attdatnum}
+          permission={{ upload: true, download: true, delete: true }}
+        />
+      )}
+    </>
+  );
+};
+
+const ColumnCommandCell3 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setAttdatnum3, setFiles3 } = useContext(FormContext3);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+
+  const onAttWndClick2 = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setAttdatnum3(data.attdatnum);
+    setFiles3(
+      data.original_name +
+        (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : "")
+    );
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {value}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onAttWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {attachmentsWindowVisible && (
+        <PopUpAttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={dataItem.attdatnum}
+          permission={{ upload: true, download: true, delete: true }}
+        />
+      )}
+    </>
+  );
+};
+
+const ColumnCommandCell4 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setAttdatnum4, setFiles4 } = useContext(FormContext4);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+
+  const onAttWndClick2 = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setAttdatnum4(data.attdatnum);
+    setFiles4(
+      data.original_name +
+        (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : "")
+    );
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {value}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onAttWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {attachmentsWindowVisible && (
+        <PopUpAttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={dataItem.attdatnum}
+          permission={{ upload: true, download: true, delete: true }}
+        />
+      )}
+    </>
+  );
+};
+
+const ColumnCommandCell5 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setAttdatnum5, setFiles5 } = useContext(FormContext5);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+
+  const onAttWndClick2 = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setAttdatnum5(data.attdatnum);
+    setFiles5(
+      data.original_name +
+        (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : "")
+    );
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {value}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onAttWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {attachmentsWindowVisible && (
+        <PopUpAttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={dataItem.attdatnum}
+          permission={{ upload: true, download: true, delete: true }}
+        />
+      )}
+    </>
+  );
+};
+
+const ColumnCommandCell6 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setAttdatnum6, setFiles6 } = useContext(FormContext6);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+
+  const onAttWndClick2 = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setAttdatnum6(data.attdatnum);
+    setFiles6(
+      data.original_name +
+        (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : "")
+    );
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {value}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onAttWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {attachmentsWindowVisible && (
+        <PopUpAttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={dataItem.attdatnum}
+          permission={{ upload: true, download: true, delete: true }}
+        />
+      )}
+    </>
+  );
+};
+
+const ColumnCommandCell7 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setAttdatnum7, setFiles7 } = useContext(FormContext7);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+
+  const onAttWndClick2 = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setAttdatnum7(data.attdatnum);
+    setFiles7(
+      data.original_name +
+        (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : "")
+    );
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {value}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onAttWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {attachmentsWindowVisible && (
+        <PopUpAttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={dataItem.attdatnum}
+          permission={{ upload: true, download: true, delete: true }}
+        />
+      )}
+    </>
+  );
+};
+
+const ColumnCommandCell8 = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { setAttdatnum8, setFiles8 } = useContext(FormContext8);
+  let isInEdit = field === dataItem.inEdit;
+  const value = field && dataItem[field] ? dataItem[field] : "";
+
+  const handleChange = (e: InputChangeEvent) => {
+    if (onChange) {
+      onChange({
+        dataIndex: 0,
+        dataItem: dataItem,
+        field: field,
+        syntheticEvent: e.syntheticEvent,
+        value: e.target.value ?? "",
+      });
+    }
+  };
+
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+
+  const onAttWndClick2 = () => {
+    setAttachmentsWindowVisible(true);
+  };
+
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setAttdatnum8(data.attdatnum);
+    setFiles8(
+      data.original_name +
+        (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : "")
+    );
+  };
+
+  const defaultRendering = (
+    <td
+      className={className}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ position: "relative" }}
+    >
+      {value}
+      <ButtonInGridInput>
+        <Button
+          name="itemcd"
+          onClick={onAttWndClick2}
+          icon="more-horizontal"
+          fillMode="flat"
+        />
+      </ButtonInGridInput>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+      {attachmentsWindowVisible && (
+        <PopUpAttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={dataItem.attdatnum}
+          permission={{ upload: true, download: true, delete: true }}
+        />
+      )}
+    </>
+  );
+};
+
 type IWindow = {
   workType: "N" | "U";
   data?: any;
@@ -250,6 +1005,13 @@ const CopyWindow = ({
   let isMobile = deviceWidth <= 1200;
   const [tabSelected, setTabSelected] = useState(0);
   const idGetter = getter(DATA_ITEM_KEY);
+  const idGetter2 = getter(DATA_ITEM_KEY2);
+  const idGetter3 = getter(DATA_ITEM_KEY3);
+  const idGetter4 = getter(DATA_ITEM_KEY4);
+  const idGetter5 = getter(DATA_ITEM_KEY5);
+  const idGetter6 = getter(DATA_ITEM_KEY6);
+  const idGetter7 = getter(DATA_ITEM_KEY7);
+  const idGetter8 = getter(DATA_ITEM_KEY8);
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -262,6 +1024,20 @@ const CopyWindow = ({
   UseParaPc(setPc);
   const [attdatnum, setAttdatnum] = useState<string>("");
   const [files, setFiles] = useState<string>("");
+  const [attdatnum2, setAttdatnum2] = useState<string>("");
+  const [files2, setFiles2] = useState<string>("");
+  const [attdatnum3, setAttdatnum3] = useState<string>("");
+  const [files3, setFiles3] = useState<string>("");
+  const [attdatnum4, setAttdatnum4] = useState<string>("");
+  const [files4, setFiles4] = useState<string>("");
+  const [attdatnum5, setAttdatnum5] = useState<string>("");
+  const [files5, setFiles5] = useState<string>("");
+  const [attdatnum6, setAttdatnum6] = useState<string>("");
+  const [files6, setFiles6] = useState<string>("");
+  const [attdatnum7, setAttdatnum7] = useState<string>("");
+  const [files7, setFiles7] = useState<string>("");
+  const [attdatnum8, setAttdatnum8] = useState<string>("");
+  const [files8, setFiles8] = useState<string>("");
 
   useEffect(() => {
     const newData = mainDataResult.data.map((item) =>
@@ -284,6 +1060,160 @@ const CopyWindow = ({
       };
     });
   }, [attdatnum, files]);
+
+  useEffect(() => {
+    const newData = mainDataResult2.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState2)[0])
+        ? {
+            ...item,
+            attdatnum: attdatnum2,
+            files: files2,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+
+    setMainDataResult2((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [attdatnum2, files2]);
+
+  useEffect(() => {
+    const newData = mainDataResult3.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState3)[0])
+        ? {
+            ...item,
+            attdatnum: attdatnum3,
+            files: files3,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+
+    setMainDataResult3((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [attdatnum3, files3]);
+
+  useEffect(() => {
+    const newData = mainDataResult4.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState4)[0])
+        ? {
+            ...item,
+            attdatnum: attdatnum4,
+            files: files4,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+
+    setMainDataResult4((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [attdatnum4, files4]);
+
+  useEffect(() => {
+    const newData = mainDataResult5.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState5)[0])
+        ? {
+            ...item,
+            attdatnum: attdatnum5,
+            files: files5,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+
+    setMainDataResult5((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [attdatnum5, files5]);
+
+  useEffect(() => {
+    const newData = mainDataResult6.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState6)[0])
+        ? {
+            ...item,
+            attdatnum: attdatnum6,
+            files: files6,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+
+    setMainDataResult6((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [attdatnum6, files6]);
+
+  useEffect(() => {
+    const newData = mainDataResult7.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState7)[0])
+        ? {
+            ...item,
+            attdatnum: attdatnum7,
+            files: files7,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+
+    setMainDataResult7((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [attdatnum7, files7]);
+
+  useEffect(() => {
+    const newData = mainDataResult8.data.map((item) =>
+      item.num == parseInt(Object.getOwnPropertyNames(selectedState8)[0])
+        ? {
+            ...item,
+            attdatnum: attdatnum8,
+            files: files8,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+          }
+        : {
+            ...item,
+          }
+    );
+
+    setMainDataResult8((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  }, [attdatnum8, files8]);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
@@ -309,6 +1239,14 @@ const CopyWindow = ({
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
+  const [page2, setPage2] = useState(initialPageState);
+  const [page3, setPage3] = useState(initialPageState);
+  const [page4, setPage4] = useState(initialPageState);
+  const [page5, setPage5] = useState(initialPageState);
+  const [page6, setPage6] = useState(initialPageState);
+  const [page7, setPage7] = useState(initialPageState);
+  const [page8, setPage8] = useState(initialPageState);
+
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
     if (unsavedName.length > 0) {
@@ -323,6 +1261,139 @@ const CopyWindow = ({
     }));
 
     setPage({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange2 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+      setUnsavedName([]);
+    }
+
+    setFilters3((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage2({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange3 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+      setUnsavedName([]);
+    }
+
+    setFilters4((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage3({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange4 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+      setUnsavedName([]);
+    }
+
+    setFilters5((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage4({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange5 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+      setUnsavedName([]);
+    }
+
+    setFilters6((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage5({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange6 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+      setUnsavedName([]);
+    }
+
+    setFilters7((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage6({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange7 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+      setUnsavedName([]);
+    }
+
+    setFilters8((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage7({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange8 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+      setUnsavedName([]);
+    }
+
+    setFilters9((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage8({
       skip: page.skip,
       take: initialPageState.take,
     });
@@ -379,10 +1450,139 @@ const CopyWindow = ({
             };
           });
         }
+      } else if (tabSelected == 5) {
+        if (tempattach.attdatnumList2.length > 0) {
+          const newData = mainDataResult2.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: tempattach.attdatnumList2[item.num - 1],
+              files: tempattach.filesList2[item.num - 1],
+            };
+          });
+
+          setMainDataResult2((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      } else if (tabSelected == 6) {
+        if (tempattach.attdatnumList3.length > 0) {
+          const newData = mainDataResult3.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: tempattach.attdatnumList3[item.num - 1],
+              files: tempattach.filesList3[item.num - 1],
+            };
+          });
+
+          setMainDataResult3((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      } else if (tabSelected == 7) {
+        if (tempattach.attdatnumList4.length > 0) {
+          const newData = mainDataResult4.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: tempattach.attdatnumList4[item.num - 1],
+              files: tempattach.filesList4[item.num - 1],
+            };
+          });
+
+          setMainDataResult4((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      } else if (tabSelected == 8) {
+        if (tempattach.attdatnumList5.length > 0) {
+          const newData = mainDataResult5.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: tempattach.attdatnumList5[item.num - 1],
+              files: tempattach.filesList5[item.num - 1],
+            };
+          });
+
+          setMainDataResult5((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      } else if (tabSelected == 9) {
+        if (tempattach.attdatnumList6.length > 0) {
+          const newData = mainDataResult6.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: tempattach.attdatnumList6[item.num - 1],
+              files: tempattach.filesList6[item.num - 1],
+            };
+          });
+
+          setMainDataResult6((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      } else if (tabSelected == 10) {
+        if (tempattach.attdatnumList7.length > 0) {
+          const newData = mainDataResult7.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: tempattach.attdatnumList7[item.num - 1],
+              files: tempattach.filesList7[item.num - 1],
+            };
+          });
+
+          setMainDataResult7((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
+      } else if (tabSelected == 11) {
+        if (tempattach.attdatnumList8.length > 0) {
+          const newData = mainDataResult8.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: tempattach.attdatnumList8[item.num - 1],
+              files: tempattach.filesList8[item.num - 1],
+            };
+          });
+
+          setMainDataResult8((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        }
       }
     }
 
-    if (e.selected == 0) {
+    if (
+      e.selected == 0 ||
+      e.selected == 4 ||
+      e.selected == 5 ||
+      e.selected == 6 ||
+      e.selected == 7 ||
+      e.selected == 8 ||
+      e.selected == 9 ||
+      e.selected == 10 ||
+      e.selected == 11
+    ) {
       setPosition((prev) => ({
         ...prev,
         height: 750,
@@ -390,22 +1590,17 @@ const CopyWindow = ({
     } else if (e.selected == 1) {
       setPosition((prev) => ({
         ...prev,
-        height: 630,
+        height: isMobile == true ? 750 : 630,
       }));
     } else if (e.selected == 2) {
       setPosition((prev) => ({
         ...prev,
-        height: 450,
+        height: isMobile == true ? 750 : 450,
       }));
     } else if (e.selected == 3) {
       setPosition((prev) => ({
         ...prev,
-        height: 350,
-      }));
-    } else if (e.selected == 4) {
-      setPosition((prev) => ({
-        ...prev,
-        height: 750,
+        height: isMobile == true ? 750 : 350,
       }));
     }
     setTabSelected(e.selected);
@@ -526,6 +1721,20 @@ const CopyWindow = ({
     bankfiles: "",
     attdatnumList: [],
     filesList: [],
+    attdatnumList2: [],
+    filesList2: [],
+    attdatnumList3: [],
+    filesList3: [],
+    attdatnumList4: [],
+    filesList4: [],
+    attdatnumList5: [],
+    filesList5: [],
+    attdatnumList6: [],
+    filesList6: [],
+    attdatnumList7: [],
+    filesList7: [],
+    attdatnumList8: [],
+    filesList8: [],
   });
 
   const getOvertime = (overtime: string) => {
@@ -547,6 +1756,76 @@ const CopyWindow = ({
     setSelectedState(newSelectedState);
   };
 
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState2,
+      dataItemKey: DATA_ITEM_KEY2,
+    });
+    setSelectedState2(newSelectedState);
+  };
+
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSelectionChange3 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState3,
+      dataItemKey: DATA_ITEM_KEY3,
+    });
+    setSelectedState3(newSelectedState);
+  };
+
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSelectionChange4 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState4,
+      dataItemKey: DATA_ITEM_KEY4,
+    });
+    setSelectedState4(newSelectedState);
+  };
+
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSelectionChange5 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState5,
+      dataItemKey: DATA_ITEM_KEY5,
+    });
+    setSelectedState5(newSelectedState);
+  };
+
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSelectionChange6 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState6,
+      dataItemKey: DATA_ITEM_KEY6,
+    });
+    setSelectedState6(newSelectedState);
+  };
+
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSelectionChange7 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState7,
+      dataItemKey: DATA_ITEM_KEY7,
+    });
+    setSelectedState7(newSelectedState);
+  };
+
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSelectionChange8 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState8,
+      dataItemKey: DATA_ITEM_KEY8,
+    });
+    setSelectedState8(newSelectedState);
+  };
+
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
@@ -560,14 +1839,144 @@ const CopyWindow = ({
     );
   };
 
+  //그리드 푸터
+  const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult2.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  //그리드 푸터
+  const mainTotalFooterCell3 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult3.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+  //그리드 푸터
+  const mainTotalFooterCell4 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult4.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  //그리드 푸터
+  const mainTotalFooterCell5 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult5.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  //그리드 푸터
+  const mainTotalFooterCell6 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult6.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  //그리드 푸터
+  const mainTotalFooterCell7 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult7.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  //그리드 푸터
+  const mainTotalFooterCell8 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult8.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
-
+  const onMainDataStateChange2 = (event: GridDataStateChangeEvent) => {
+    setMainDataState2(event.dataState);
+  };
+  const onMainDataStateChange3 = (event: GridDataStateChangeEvent) => {
+    setMainDataState3(event.dataState);
+  };
+  const onMainDataStateChange4 = (event: GridDataStateChangeEvent) => {
+    setMainDataState4(event.dataState);
+  };
+  const onMainDataStateChange5 = (event: GridDataStateChangeEvent) => {
+    setMainDataState5(event.dataState);
+  };
+  const onMainDataStateChange6 = (event: GridDataStateChangeEvent) => {
+    setMainDataState6(event.dataState);
+  };
+  const onMainDataStateChange7 = (event: GridDataStateChangeEvent) => {
+    setMainDataState7(event.dataState);
+  };
+  const onMainDataStateChange8 = (event: GridDataStateChangeEvent) => {
+    setMainDataState8(event.dataState);
+  };
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-
+  const onMainSortChange2 = (e: any) => {
+    setMainDataState2((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onMainSortChange3 = (e: any) => {
+    setMainDataState3((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onMainSortChange4 = (e: any) => {
+    setMainDataState4((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onMainSortChange5 = (e: any) => {
+    setMainDataState5((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onMainSortChange6 = (e: any) => {
+    setMainDataState6((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onMainSortChange7 = (e: any) => {
+    setMainDataState7((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onMainSortChange8 = (e: any) => {
+    setMainDataState8((prev) => ({ ...prev, sort: e.sort }));
+  };
   const onMainItemChange = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
@@ -577,7 +1986,69 @@ const CopyWindow = ({
       DATA_ITEM_KEY
     );
   };
-
+  const onMainItemChange2 = (event: GridItemChangeEvent) => {
+    setMainDataState2((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult2,
+      setMainDataResult2,
+      DATA_ITEM_KEY2
+    );
+  };
+  const onMainItemChange3 = (event: GridItemChangeEvent) => {
+    setMainDataState3((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult3,
+      setMainDataResult3,
+      DATA_ITEM_KEY3
+    );
+  };
+  const onMainItemChange4 = (event: GridItemChangeEvent) => {
+    setMainDataState4((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult4,
+      setMainDataResult4,
+      DATA_ITEM_KEY4
+    );
+  };
+  const onMainItemChange5 = (event: GridItemChangeEvent) => {
+    setMainDataState5((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult5,
+      setMainDataResult5,
+      DATA_ITEM_KEY5
+    );
+  };
+  const onMainItemChange6 = (event: GridItemChangeEvent) => {
+    setMainDataState6((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult6,
+      setMainDataResult6,
+      DATA_ITEM_KEY6
+    );
+  };
+  const onMainItemChange7 = (event: GridItemChangeEvent) => {
+    setMainDataState7((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult7,
+      setMainDataResult7,
+      DATA_ITEM_KEY7
+    );
+  };
+  const onMainItemChange8 = (event: GridItemChangeEvent) => {
+    setMainDataState8((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult8,
+      setMainDataResult8,
+      DATA_ITEM_KEY8
+    );
+  };
   const customCellRender = (td: any, props: any) => (
     <CellRender
       originalProps={props}
@@ -586,7 +2057,62 @@ const CopyWindow = ({
       editField={EDIT_FIELD}
     />
   );
-
+  const customCellRender2 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customCellRender3 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit3}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customCellRender4 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit4}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customCellRender5 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit5}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customCellRender6 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit6}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customCellRender7 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit7}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customCellRender8 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit8}
+      editField={EDIT_FIELD}
+    />
+  );
   const customRowRender = (tr: any, props: any) => (
     <RowRender
       originalProps={props}
@@ -595,7 +2121,62 @@ const CopyWindow = ({
       editField={EDIT_FIELD}
     />
   );
-
+  const customRowRender2 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customRowRender3 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit3}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customRowRender4 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit4}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customRowRender5 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit5}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customRowRender6 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit6}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customRowRender7 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit7}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customRowRender8 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit8}
+      editField={EDIT_FIELD}
+    />
+  );
   const onAddClick = () => {
     mainDataResult.data.map((item) => {
       if (item.num > temp) {
@@ -645,6 +2226,285 @@ const CopyWindow = ({
     });
   };
 
+  const onAddClick2 = () => {
+    mainDataResult2.data.map((item) => {
+      if (item.num > temp2) {
+        temp2 = item.num;
+      }
+    });
+
+    const newDataItem = {
+      [DATA_ITEM_KEY2]: ++temp2,
+      area: "",
+      attdatnum: "",
+      enddate: "",
+      files: "",
+      form_id: "HU_A1000W",
+      major: "",
+      majorfield: "",
+      orgdiv: "01",
+      prsnnum: "",
+      remark: "",
+      schdiv: "",
+      schgrade: "",
+      schnm: "",
+      seq: 0,
+      startdate: "",
+      rowstatus: "N",
+    };
+
+    setSelectedState2({ [newDataItem[DATA_ITEM_KEY2]]: true });
+    setPage2((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
+    setMainDataResult2((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onAddClick3 = () => {
+    mainDataResult3.data.map((item) => {
+      if (item.num > temp3) {
+        temp3 = item.num;
+      }
+    });
+
+    const newDataItem = {
+      [DATA_ITEM_KEY3]: ++temp3,
+      acqdt: "",
+      attdatnum: "",
+      files: "",
+      finyn: "",
+      form_id: "HU_A1000W",
+      orgdiv: "01",
+      prsnnum: "",
+      qualgrad: "",
+      qualkind: "",
+      qualmach: "",
+      qualnum: "",
+      renewdt: "",
+      seq: 0,
+      validt: "",
+      rowstatus: "N",
+    };
+
+    setSelectedState3({ [newDataItem[DATA_ITEM_KEY3]]: true });
+    setPage3((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
+    setMainDataResult3((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onAddClick4 = () => {
+    mainDataResult4.data.map((item) => {
+      if (item.num > temp4) {
+        temp4 = item.num;
+      }
+    });
+
+    const newDataItem = {
+      [DATA_ITEM_KEY4]: ++temp4,
+      attdatnum: "",
+      compnm: "",
+      dptnm: "",
+      files: "",
+      form_id: "HU_A1000W",
+      frdt: "",
+      jobnm: "",
+      ocptnm: "",
+      orgdiv: "01",
+      postnm: "",
+      prsnnum: "",
+      remark: "",
+      seq: 0,
+      todt: "",
+      rowstatus: "N",
+    };
+
+    setSelectedState4({ [newDataItem[DATA_ITEM_KEY4]]: true });
+    setPage4((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
+    setMainDataResult4((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onAddClick5 = () => {
+    mainDataResult5.data.map((item) => {
+      if (item.num > temp5) {
+        temp5 = item.num;
+      }
+    });
+
+    const newDataItem = {
+      [DATA_ITEM_KEY5]: ++temp5,
+      appointcd: "",
+      appointdt: "",
+      appointrsn: "",
+      attdatnum: "",
+      dptcd: "",
+      enddt: "",
+      files: "",
+      form_id: "HU_A1000W",
+      orgdiv: "01",
+      prsnnum: "",
+      remark: "",
+      seq: 0,
+      startdt: "",
+      rowstatus: "N",
+    };
+
+    setSelectedState5({ [newDataItem[DATA_ITEM_KEY5]]: true });
+    setPage5((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
+    setMainDataResult5((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onAddClick6 = () => {
+    mainDataResult6.data.map((item) => {
+      if (item.num > temp6) {
+        temp6 = item.num;
+      }
+    });
+
+    const newDataItem = {
+      [DATA_ITEM_KEY6]: ++temp6,
+      attdatnum: "",
+      contents: "",
+      files: "",
+      form_id: "HU_A1000W",
+      orgdiv: "01",
+      prsnnum: "",
+      reloffice: "",
+      remark: "",
+      reqdt: "",
+      rnpdiv: "",
+      seq: 0,
+      rowstatus: "N",
+    };
+
+    setSelectedState6({ [newDataItem[DATA_ITEM_KEY6]]: true });
+    setPage6((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
+    setMainDataResult6((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onAddClick7 = () => {
+    mainDataResult7.data.map((item) => {
+      if (item.num > temp7) {
+        temp7 = item.num;
+      }
+    });
+
+    const newDataItem = {
+      [DATA_ITEM_KEY7]: ++temp7,
+      attdatnum: "",
+      contents: "",
+      edueval: "",
+      edunm: "",
+      eduoffice: "",
+      eduterm: 0,
+      edutime: 0,
+      enddt: "",
+      files: "",
+      form_id: "HU_A1000",
+      gubun: "",
+      orgdiv: "01",
+      prsnnum: "",
+      remark: "",
+      seq: 0,
+      startdt: "",
+      rowstatus: "N",
+    };
+
+    setSelectedState7({ [newDataItem[DATA_ITEM_KEY7]]: true });
+    setPage7((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
+    setMainDataResult7((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onAddClick8 = () => {
+    mainDataResult8.data.map((item) => {
+      if (item.num > temp8) {
+        temp8 = item.num;
+      }
+    });
+
+    const newDataItem = {
+      [DATA_ITEM_KEY8]: ++temp8,
+      attdatnum: "",
+      country: "",
+      educd: "",
+      enddt: "",
+      files: "",
+      form_id: "HU_A1000",
+      orgdiv: "01",
+      prsnnum: "",
+      score: "",
+      seq: 0,
+      speaking: "",
+      startdt: "",
+      testdt: "",
+      testnm: "",
+      rowstatus: "N",
+    };
+
+    setSelectedState8({ [newDataItem[DATA_ITEM_KEY8]]: true });
+    setPage8((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
+    setMainDataResult8((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
   const onDeleteClick = () => {
     let newData: any[] = [];
     let Object: any[] = [];
@@ -682,6 +2542,265 @@ const CopyWindow = ({
     });
   };
 
+  const onDeleteClick2 = () => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data: any;
+
+    mainDataResult2.data.forEach((item: any, index: number) => {
+      if (!selectedState2[item[DATA_ITEM_KEY2]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows2.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult2.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult2.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult2((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    setSelectedState2({
+      [data != undefined ? data[DATA_ITEM_KEY2] : newData[0]]: true,
+    });
+  };
+
+  const onDeleteClick3 = () => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data: any;
+
+    mainDataResult3.data.forEach((item: any, index: number) => {
+      if (!selectedState3[item[DATA_ITEM_KEY3]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows3.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult3.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult3.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult3((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    setSelectedState3({
+      [data != undefined ? data[DATA_ITEM_KEY3] : newData[0]]: true,
+    });
+  };
+
+  const onDeleteClick4 = () => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data: any;
+
+    mainDataResult4.data.forEach((item: any, index: number) => {
+      if (!selectedState4[item[DATA_ITEM_KEY4]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows4.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult4.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult4.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult4((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    setSelectedState4({
+      [data != undefined ? data[DATA_ITEM_KEY4] : newData[0]]: true,
+    });
+  };
+
+  const onDeleteClick5 = () => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data: any;
+
+    mainDataResult5.data.forEach((item: any, index: number) => {
+      if (!selectedState5[item[DATA_ITEM_KEY5]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows5.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult5.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult5.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult5((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    setSelectedState5({
+      [data != undefined ? data[DATA_ITEM_KEY5] : newData[0]]: true,
+    });
+  };
+
+  const onDeleteClick6 = () => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data: any;
+
+    mainDataResult6.data.forEach((item: any, index: number) => {
+      if (!selectedState6[item[DATA_ITEM_KEY6]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows6.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult6.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult6.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult6((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    setSelectedState6({
+      [data != undefined ? data[DATA_ITEM_KEY6] : newData[0]]: true,
+    });
+  };
+
+  const onDeleteClick7 = () => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data: any;
+
+    mainDataResult7.data.forEach((item: any, index: number) => {
+      if (!selectedState7[item[DATA_ITEM_KEY7]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows7.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult7.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult7.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult7((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    setSelectedState7({
+      [data != undefined ? data[DATA_ITEM_KEY7] : newData[0]]: true,
+    });
+  };
+
+  const onDeleteClick8 = () => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data: any;
+
+    mainDataResult8.data.forEach((item: any, index: number) => {
+      if (!selectedState8[item[DATA_ITEM_KEY8]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows8.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult8.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult8.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult8((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    setSelectedState8({
+      [data != undefined ? data[DATA_ITEM_KEY8] : newData[0]]: true,
+    });
+  };
+
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "files" && field != "rowstatus") {
       const newData = mainDataResult.data.map((item) =>
@@ -711,6 +2830,251 @@ const CopyWindow = ({
       setTempResult((prev) => {
         return {
           data: mainDataResult.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const enterEdit2 = (dataItem: any, field: string) => {
+    if (field != "files" && field != "rowstatus") {
+      const newData = mainDataResult2.data.map((item) =>
+        item[DATA_ITEM_KEY2] === dataItem[DATA_ITEM_KEY2]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult2((prev) => {
+        return {
+          data: mainDataResult2.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const enterEdit3 = (dataItem: any, field: string) => {
+    if (field != "files" && field != "rowstatus") {
+      const newData = mainDataResult3.data.map((item) =>
+        item[DATA_ITEM_KEY3] === dataItem[DATA_ITEM_KEY3]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult3((prev) => {
+        return {
+          data: mainDataResult3.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const enterEdit4 = (dataItem: any, field: string) => {
+    if (field != "files" && field != "rowstatus" && field != "orgdiv") {
+      const newData = mainDataResult4.data.map((item) =>
+        item[DATA_ITEM_KEY4] === dataItem[DATA_ITEM_KEY4]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult4((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult4((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult4((prev) => {
+        return {
+          data: mainDataResult4.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const enterEdit5 = (dataItem: any, field: string) => {
+    if (field != "files" && field != "rowstatus") {
+      const newData = mainDataResult5.data.map((item) =>
+        item[DATA_ITEM_KEY5] === dataItem[DATA_ITEM_KEY5]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult5((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult5((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult5((prev) => {
+        return {
+          data: mainDataResult5.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const enterEdit6 = (dataItem: any, field: string) => {
+    if (field != "files" && field != "rowstatus") {
+      const newData = mainDataResult6.data.map((item) =>
+        item[DATA_ITEM_KEY6] === dataItem[DATA_ITEM_KEY6]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult6((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult6((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult6((prev) => {
+        return {
+          data: mainDataResult6.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const enterEdit7 = (dataItem: any, field: string) => {
+    if (field != "files" && field != "rowstatus") {
+      const newData = mainDataResult7.data.map((item) =>
+        item[DATA_ITEM_KEY7] === dataItem[DATA_ITEM_KEY7]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult7((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult7((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult7((prev) => {
+        return {
+          data: mainDataResult7.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const enterEdit8 = (dataItem: any, field: string) => {
+    if (field != "files" && field != "rowstatus") {
+      const newData = mainDataResult8.data.map((item) =>
+        item[DATA_ITEM_KEY8] === dataItem[DATA_ITEM_KEY8]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult8((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult8((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult8((prev) => {
+        return {
+          data: mainDataResult8.data,
           total: prev.total,
         };
       });
@@ -755,6 +3119,328 @@ const CopyWindow = ({
         };
       });
       setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit2 = () => {
+    if (tempResult2.data != mainDataResult2.data) {
+      const newData = mainDataResult2.data.map((item) =>
+        item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult2.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit3 = () => {
+    if (tempResult3.data != mainDataResult3.data) {
+      const newData = mainDataResult3.data.map((item) =>
+        item[DATA_ITEM_KEY3] == Object.getOwnPropertyNames(selectedState3)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult3.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult3((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit4 = () => {
+    if (tempResult4.data != mainDataResult4.data) {
+      const newData = mainDataResult4.data.map((item) =>
+        item[DATA_ITEM_KEY4] == Object.getOwnPropertyNames(selectedState4)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult4((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult4((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult4.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult4((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult4((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit5 = () => {
+    if (tempResult5.data != mainDataResult5.data) {
+      const newData = mainDataResult5.data.map((item) =>
+        item[DATA_ITEM_KEY5] == Object.getOwnPropertyNames(selectedState5)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult5((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult5((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult5.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult5((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult5((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit6 = () => {
+    if (tempResult6.data != mainDataResult6.data) {
+      const newData = mainDataResult6.data.map((item) =>
+        item[DATA_ITEM_KEY6] == Object.getOwnPropertyNames(selectedState6)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult6((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult6((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult6.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult6((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult6((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit7 = () => {
+    if (tempResult7.data != mainDataResult7.data) {
+      const newData = mainDataResult7.data.map((item) =>
+        item[DATA_ITEM_KEY7] == Object.getOwnPropertyNames(selectedState7)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult7((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult7((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult7.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult7((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult7((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit8 = () => {
+    if (tempResult8.data != mainDataResult8.data) {
+      const newData = mainDataResult8.data.map((item) =>
+        item[DATA_ITEM_KEY8] == Object.getOwnPropertyNames(selectedState8)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult8((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult8((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult8.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult8((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult8((prev) => {
         return {
           data: newData,
           total: prev.total,
@@ -812,9 +3498,44 @@ const CopyWindow = ({
 
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
-    "R_BIRCD,R_SEXCD,R_dayoffdiv,R_Rtrtype, R_HOUSEYN, R_MARRIAGE",
+    "R_BIRCD,R_SEXCD,R_dayoffdiv,R_Rtrtype, R_HOUSEYN, R_MARRIAGE, L_BA001",
     setBizComponentData
   );
+
+  const [orgdivListData, setOrgdivListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const orgdivQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_BA001")
+      );
+      fetchQuery(orgdivQueryStr, setOrgdivListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
 
   const [information, setInformation] = useState<{ [name: string]: any }>({
     orgdiv: "01",
@@ -844,7 +3565,6 @@ const CopyWindow = ({
     birdt: "",
     bircd: "",
     sexcd: "",
-    imdate: "",
     firredt: "",
     regorgdt: "",
     rtrdt: "",
@@ -860,8 +3580,6 @@ const CopyWindow = ({
     extnum: "",
     outnum: "",
     schcd: "",
-    gradutype: "",
-    directyn: "",
     laboryn: "N",
     dfmyn: "N",
     milyn: "N",
@@ -869,9 +3587,6 @@ const CopyWindow = ({
     taxcd: "",
     hirinsuyn: "N",
     payyn: "N",
-    rtrgivdiv: "",
-    yrgivdiv: "",
-    mongivdiv: "",
     caltaxyn: "N",
     yrdclyn: "N",
     bankcd: "",
@@ -880,7 +3595,6 @@ const CopyWindow = ({
     bankacntuser: "",
     bankfiles: "",
     bankdatnum: "",
-    insuzon: "",
     medgrad: "",
     medinsunum: "",
     pnsgrad: "",
@@ -897,17 +3611,13 @@ const CopyWindow = ({
     fam1: 0,
     fam2: 0,
     notaxe: "N",
-    otkind: "",
     bnskind: "N",
-    payprovyn: "",
     mailid: "",
     workmail: "",
     childnum: 0,
     dfmyn2: "N",
     houseyn: "",
     remark: "",
-    costdiv1: "",
-    costdiv2: "",
     path: "",
     attdatnum: "",
     incgb: "",
@@ -917,18 +3627,6 @@ const CopyWindow = ({
     dayoffdiv: "",
     rtrtype: "",
 
-    mngitemcd1: "",
-    mngitemcd2: "",
-    mngitemcd3: "",
-    mngitemcd4: "",
-    mngitemcd5: "",
-    mngitemcd6: "",
-    mngdata1: "",
-    mngdata2: "",
-    mngdata3: "",
-    mngdata4: "",
-    mngdata5: "",
-    mngdata6: "",
     workchk: "N",
     yrchk: "N",
 
@@ -999,19 +3697,123 @@ const CopyWindow = ({
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
+  const [mainDataState2, setMainDataState2] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState3, setMainDataState3] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState4, setMainDataState4] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState5, setMainDataState5] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState6, setMainDataState6] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState7, setMainDataState7] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState8, setMainDataState8] = useState<State>({
+    sort: [],
+  });
   const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
+  const [tempState2, setTempState2] = useState<State>({
+    sort: [],
+  });
+  const [tempState3, setTempState3] = useState<State>({
+    sort: [],
+  });
+  const [tempState4, setTempState4] = useState<State>({
+    sort: [],
+  });
+  const [tempState5, setTempState5] = useState<State>({
+    sort: [],
+  });
+  const [tempState6, setTempState6] = useState<State>({
+    sort: [],
+  });
+  const [tempState7, setTempState7] = useState<State>({
+    sort: [],
+  });
+  const [tempState8, setTempState8] = useState<State>({
     sort: [],
   });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
+  const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
+    process([], mainDataState2)
+  );
+  const [mainDataResult3, setMainDataResult3] = useState<DataResult>(
+    process([], mainDataState3)
+  );
+  const [mainDataResult4, setMainDataResult4] = useState<DataResult>(
+    process([], mainDataState4)
+  );
+  const [mainDataResult5, setMainDataResult5] = useState<DataResult>(
+    process([], mainDataState5)
+  );
+  const [mainDataResult6, setMainDataResult6] = useState<DataResult>(
+    process([], mainDataState6)
+  );
+  const [mainDataResult7, setMainDataResult7] = useState<DataResult>(
+    process([], mainDataState7)
+  );
+  const [mainDataResult8, setMainDataResult8] = useState<DataResult>(
+    process([], mainDataState8)
+  );
   const [tempResult, setTempResult] = useState<DataResult>(
     process([], tempState)
+  );
+  const [tempResult2, setTempResult2] = useState<DataResult>(
+    process([], tempState2)
+  );
+  const [tempResult3, setTempResult3] = useState<DataResult>(
+    process([], tempState3)
+  );
+  const [tempResult4, setTempResult4] = useState<DataResult>(
+    process([], tempState4)
+  );
+  const [tempResult5, setTempResult5] = useState<DataResult>(
+    process([], tempState5)
+  );
+  const [tempResult6, setTempResult6] = useState<DataResult>(
+    process([], tempState6)
+  );
+  const [tempResult7, setTempResult7] = useState<DataResult>(
+    process([], tempState7)
+  );
+  const [tempResult8, setTempResult8] = useState<DataResult>(
+    process([], tempState8)
   );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
-
+  const [selectedState2, setSelectedState2] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState3, setSelectedState3] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState4, setSelectedState4] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState5, setSelectedState5] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState6, setSelectedState6] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState7, setSelectedState7] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState8, setSelectedState8] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -1031,6 +3833,111 @@ const CopyWindow = ({
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "HU251T",
+    orgdiv: "01",
+    location: "01",
+    dptcd: "",
+    prsnnum: "",
+    prsnnm: "",
+    rtrchk: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+
+  //조회조건 초기값
+  const [filters3, setFilters3] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "HU252T",
+    orgdiv: "01",
+    location: "01",
+    dptcd: "",
+    prsnnum: "",
+    prsnnm: "",
+    rtrchk: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+
+  //조회조건 초기값
+  const [filters4, setFilters4] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "HU254T",
+    orgdiv: "01",
+    location: "01",
+    dptcd: "",
+    prsnnum: "",
+    prsnnm: "",
+    rtrchk: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+
+  //조회조건 초기값
+  const [filters5, setFilters5] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "HU253T",
+    orgdiv: "01",
+    location: "01",
+    dptcd: "",
+    prsnnum: "",
+    prsnnm: "",
+    rtrchk: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+
+  //조회조건 초기값
+  const [filters6, setFilters6] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "HU255T",
+    orgdiv: "01",
+    location: "01",
+    dptcd: "",
+    prsnnum: "",
+    prsnnm: "",
+    rtrchk: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+
+  //조회조건 초기값
+  const [filters7, setFilters7] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "HU256T",
+    orgdiv: "01",
+    location: "01",
+    dptcd: "",
+    prsnnum: "",
+    prsnnm: "",
+    rtrchk: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+
+  //조회조건 초기값
+  const [filters8, setFilters8] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "HU257T",
+    orgdiv: "01",
+    location: "01",
+    dptcd: "",
+    prsnnum: "",
+    prsnnm: "",
+    rtrchk: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+
+  //조회조건 초기값
+  const [filters9, setFilters9] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "HU258T",
     orgdiv: "01",
     location: "01",
     dptcd: "",
@@ -1068,6 +3975,97 @@ const CopyWindow = ({
     }
   }, [filters2]);
 
+  useEffect(() => {
+    if (filters3.isSearch && workType != "N") {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters3);
+      setFilters3((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid3(deepCopiedFilters);
+    }
+  }, [filters3]);
+
+  useEffect(() => {
+    if (filters4.isSearch && workType != "N") {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters4);
+      setFilters4((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid4(deepCopiedFilters);
+    }
+  }, [filters4]);
+
+  useEffect(() => {
+    if (filters5.isSearch && workType != "N") {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters5);
+      setFilters5((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid5(deepCopiedFilters);
+    }
+  }, [filters5]);
+
+  useEffect(() => {
+    if (filters6.isSearch && workType != "N") {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters6);
+      setFilters6((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid6(deepCopiedFilters);
+    }
+  }, [filters6]);
+
+  useEffect(() => {
+    if (filters7.isSearch && workType != "N") {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters7);
+      setFilters7((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid7(deepCopiedFilters);
+    }
+  }, [filters7]);
+
+  useEffect(() => {
+    if (filters8.isSearch && workType != "N") {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters8);
+      setFilters8((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid8(deepCopiedFilters);
+    }
+  }, [filters8]);
+
+  useEffect(() => {
+    if (filters9.isSearch && workType != "N") {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters9);
+      setFilters9((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid9(deepCopiedFilters);
+    }
+  }, [filters9]);
+
   function isResidentRegNoValid(residentRegNo: any) {
     var re = /^[0-9]{6}[0-9]{7}$/;
     if (!re.test(String(residentRegNo).toLowerCase())) {
@@ -1084,10 +4082,14 @@ const CopyWindow = ({
   }
 
   const decrypt = (encrypted: any, secretKey: any) => {
-    var decrypted = CryptoJS.AES.decrypt(encrypted, secretKey).toString(
-      CryptoJS.enc.Utf8
-    );
-    return decrypted;
+    try {
+      var decrypted = CryptoJS.AES.decrypt(encrypted, secretKey).toString(
+        CryptoJS.enc.Utf8
+      );
+      return decrypted;
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const encrypt = (val: any, secretKey: any) => {
@@ -1179,7 +4181,6 @@ const CopyWindow = ({
           birdt: rows[0].birdt == "" ? null : toDate(rows[0].birdt),
           bircd: rows[0].bircd,
           sexcd: rows[0].sexcd,
-          imdate: "",
           firredt: rows[0].firredt == "" ? null : toDate(rows[0].firredt),
           regorgdt: rows[0].regorgdt == "" ? null : toDate(rows[0].regorgdt),
           rtrdt: rows[0].rtrdt == "" ? null : toDate(rows[0].rtrdt),
@@ -1195,8 +4196,6 @@ const CopyWindow = ({
           extnum: rows[0].extnum,
           outnum: rows[0].outnum,
           schcd: rows[0].schcd,
-          gradutype: "",
-          directyn: "",
           laboryn: rows[0].laboryn == "" ? "N" : rows[0].laboryn,
           dfmyn: rows[0].dfmyn == "" ? "N" : rows[0].dfmyn,
           milyn: rows[0].milyn == "" ? "N" : rows[0].milyn,
@@ -1204,9 +4203,6 @@ const CopyWindow = ({
           taxcd: rows[0].taxcd,
           hirinsuyn: rows[0].hirinsuyn == "" ? "N" : rows[0].hirinsuyn,
           payyn: rows[0].payyn == "" ? "N" : rows[0].payyn,
-          rtrgivdiv: "",
-          yrgivdiv: "",
-          mongivdiv: "",
           caltaxyn: rows[0].caltaxyn == "" ? "N" : rows[0].caltaxyn,
           yrdclyn: rows[0].yrdclyn == "" ? "N" : rows[0].yrdclyn,
           bankcd: rows[0].bankcd,
@@ -1215,7 +4211,6 @@ const CopyWindow = ({
           bankacntuser: rows[0].bankacntuser,
           bankfiles: rows[0].bankfiles,
           bankdatnum: rows[0].bankdatnum,
-          insuzon: "",
           medgrad: rows[0].medgrad,
           medinsunum: rows[0].medinsunum,
           pnsgrad: rows[0].pnsgrad,
@@ -1232,17 +4227,13 @@ const CopyWindow = ({
           fam1: rows[0].fam1,
           fam2: rows[0].fam2,
           notaxe: rows[0].notaxe == "" ? "N" : rows[0].notaxe,
-          otkind: "",
           bnskind: rows[0].bnskind == "" ? "N" : rows[0].bnskind,
-          payprovyn: "",
           mailid: rows[0].mailid,
           workmail: rows[0].workmail,
           childnum: rows[0].childnum,
           dfmyn2: rows[0].dfmyn2 == "" ? "N" : rows[0].dfmyn2,
           houseyn: rows[0].houseyn,
           remark: rows[0].remark,
-          costdiv1: "",
-          costdiv2: "",
           path: rows[0].path,
           files: rows[0].files,
           attdatnum: rows[0].attdatnum,
@@ -1253,18 +4244,6 @@ const CopyWindow = ({
           dayoffdiv: rows[0].dayoffdiv,
           rtrtype: rows[0].rtrtype,
 
-          mngitemcd1: "",
-          mngitemcd2: "",
-          mngitemcd3: "",
-          mngitemcd4: "",
-          mngitemcd5: "",
-          mngitemcd6: "",
-          mngdata1: "",
-          mngdata2: "",
-          mngdata3: "",
-          mngdata4: "",
-          mngdata5: "",
-          mngdata6: "",
           workchk: rows[0].workchk == "" ? "N" : rows[0].workchk,
           yrchk: rows[0].yrchk == "" ? "N" : rows[0].yrchk,
 
@@ -1339,7 +4318,6 @@ const CopyWindow = ({
           birdt: "",
           bircd: "",
           sexcd: "",
-          imdate: "",
           firredt: "",
           regorgdt: "",
           rtrdt: "",
@@ -1355,8 +4333,6 @@ const CopyWindow = ({
           extnum: "",
           outnum: "",
           schcd: "",
-          gradutype: "",
-          directyn: "",
           laboryn: "N",
           dfmyn: "N",
           milyn: "N",
@@ -1364,9 +4340,6 @@ const CopyWindow = ({
           taxcd: "",
           hirinsuyn: "N",
           payyn: "N",
-          rtrgivdiv: "",
-          yrgivdiv: "",
-          mongivdiv: "",
           caltaxyn: "N",
           yrdclyn: "N",
           bankcd: "",
@@ -1375,7 +4348,6 @@ const CopyWindow = ({
           bankacntuser: "",
           bankfiles: "",
           bankdatnum: "",
-          insuzon: "",
           medgrad: "",
           medinsunum: "",
           pnsgrad: "",
@@ -1392,17 +4364,13 @@ const CopyWindow = ({
           fam1: 0,
           fam2: 0,
           notaxe: "N",
-          otkind: "",
           bnskind: "N",
-          payprovyn: "",
           mailid: "",
           workmail: "",
           childnum: 0,
           dfmyn2: "N",
           houseyn: "",
           remark: "",
-          costdiv1: "",
-          costdiv2: "",
           path: "",
           attdatnum: "",
           incgb: "",
@@ -1412,18 +4380,6 @@ const CopyWindow = ({
           dayoffdiv: "",
           rtrtype: "",
 
-          mngitemcd1: "",
-          mngitemcd2: "",
-          mngitemcd3: "",
-          mngitemcd4: "",
-          mngitemcd5: "",
-          mngitemcd6: "",
-          mngdata1: "",
-          mngdata2: "",
-          mngdata3: "",
-          mngdata4: "",
-          mngdata5: "",
-          mngdata6: "",
           workchk: "N",
           yrchk: "N",
 
@@ -1552,6 +4508,503 @@ const CopyWindow = ({
     setLoading(false);
   };
 
+  //그리드 데이터 조회
+  const fetchMainGrid3 = async (filters3: any) => {
+    // if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_HU_A1000W_Q",
+      pageNumber: filters3.pgNum,
+      pageSize: filters3.pgSize,
+      parameters: {
+        "@p_work_type": filters3.workType,
+        "@p_orgdiv": filters3.orgdiv,
+        "@p_location": filters3.location,
+        "@p_dptcd": filters3.dptcd,
+        "@p_prsnnum": filters3.prsnnum,
+        "@p_prsnnm": filters3.prsnnm,
+        "@p_rtrchk": filters3.rtrchk,
+        "@p_find_row_value": filters3.find_row_value,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+      }));
+
+      setMainDataResult2((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        let attdatnumArray: any = [];
+        let filesArray: any = [];
+
+        rows.map((item: any) => {
+          attdatnumArray.push(item.attdatnum);
+          filesArray.push(item.files);
+        });
+        setTempAttach((prev) => ({
+          ...prev,
+          attdatnumList2: attdatnumArray,
+          filesList2: filesArray,
+        }));
+        setSelectedState2({ [rows[0][DATA_ITEM_KEY2]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters3((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid4 = async (filters4: any) => {
+    // if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_HU_A1000W_Q",
+      pageNumber: filters4.pgNum,
+      pageSize: filters4.pgSize,
+      parameters: {
+        "@p_work_type": filters4.workType,
+        "@p_orgdiv": filters4.orgdiv,
+        "@p_location": filters4.location,
+        "@p_dptcd": filters4.dptcd,
+        "@p_prsnnum": filters4.prsnnum,
+        "@p_prsnnm": filters4.prsnnm,
+        "@p_rtrchk": filters4.rtrchk,
+        "@p_find_row_value": filters4.find_row_value,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+      }));
+
+      setMainDataResult3((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        let attdatnumArray: any = [];
+        let filesArray: any = [];
+
+        rows.map((item: any) => {
+          attdatnumArray.push(item.attdatnum);
+          filesArray.push(item.files);
+        });
+        setTempAttach((prev) => ({
+          ...prev,
+          attdatnumList3: attdatnumArray,
+          filesList3: filesArray,
+        }));
+        setSelectedState3({ [rows[0][DATA_ITEM_KEY3]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters4((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid5 = async (filters5: any) => {
+    // if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_HU_A1000W_Q",
+      pageNumber: filters5.pgNum,
+      pageSize: filters5.pgSize,
+      parameters: {
+        "@p_work_type": filters5.workType,
+        "@p_orgdiv": filters5.orgdiv,
+        "@p_location": filters5.location,
+        "@p_dptcd": filters5.dptcd,
+        "@p_prsnnum": filters5.prsnnum,
+        "@p_prsnnm": filters5.prsnnm,
+        "@p_rtrchk": filters5.rtrchk,
+        "@p_find_row_value": filters5.find_row_value,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+      }));
+
+      setMainDataResult4((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        let attdatnumArray: any = [];
+        let filesArray: any = [];
+
+        rows.map((item: any) => {
+          attdatnumArray.push(item.attdatnum);
+          filesArray.push(item.files);
+        });
+        setTempAttach((prev) => ({
+          ...prev,
+          attdatnumList4: attdatnumArray,
+          filesList4: filesArray,
+        }));
+        setSelectedState4({ [rows[0][DATA_ITEM_KEY4]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters5((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid6 = async (filters6: any) => {
+    // if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_HU_A1000W_Q",
+      pageNumber: filters6.pgNum,
+      pageSize: filters6.pgSize,
+      parameters: {
+        "@p_work_type": filters6.workType,
+        "@p_orgdiv": filters6.orgdiv,
+        "@p_location": filters6.location,
+        "@p_dptcd": filters6.dptcd,
+        "@p_prsnnum": filters6.prsnnum,
+        "@p_prsnnm": filters6.prsnnm,
+        "@p_rtrchk": filters6.rtrchk,
+        "@p_find_row_value": filters6.find_row_value,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+      }));
+
+      setMainDataResult5((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        let attdatnumArray: any = [];
+        let filesArray: any = [];
+
+        rows.map((item: any) => {
+          attdatnumArray.push(item.attdatnum);
+          filesArray.push(item.files);
+        });
+        setTempAttach((prev) => ({
+          ...prev,
+          attdatnumList5: attdatnumArray,
+          filesList5: filesArray,
+        }));
+        setSelectedState5({ [rows[0][DATA_ITEM_KEY5]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters6((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid7 = async (filters7: any) => {
+    // if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_HU_A1000W_Q",
+      pageNumber: filters7.pgNum,
+      pageSize: filters7.pgSize,
+      parameters: {
+        "@p_work_type": filters7.workType,
+        "@p_orgdiv": filters7.orgdiv,
+        "@p_location": filters7.location,
+        "@p_dptcd": filters7.dptcd,
+        "@p_prsnnum": filters7.prsnnum,
+        "@p_prsnnm": filters7.prsnnm,
+        "@p_rtrchk": filters7.rtrchk,
+        "@p_find_row_value": filters7.find_row_value,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+      }));
+
+      setMainDataResult6((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        let attdatnumArray: any = [];
+        let filesArray: any = [];
+
+        rows.map((item: any) => {
+          attdatnumArray.push(item.attdatnum);
+          filesArray.push(item.files);
+        });
+        setTempAttach((prev) => ({
+          ...prev,
+          attdatnumList6: attdatnumArray,
+          filesList6: filesArray,
+        }));
+        setSelectedState6({ [rows[0][DATA_ITEM_KEY6]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters7((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid8 = async (filters8: any) => {
+    // if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_HU_A1000W_Q",
+      pageNumber: filters8.pgNum,
+      pageSize: filters8.pgSize,
+      parameters: {
+        "@p_work_type": filters8.workType,
+        "@p_orgdiv": filters8.orgdiv,
+        "@p_location": filters8.location,
+        "@p_dptcd": filters8.dptcd,
+        "@p_prsnnum": filters8.prsnnum,
+        "@p_prsnnm": filters8.prsnnm,
+        "@p_rtrchk": filters8.rtrchk,
+        "@p_find_row_value": filters8.find_row_value,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+      }));
+
+      setMainDataResult7((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        let attdatnumArray: any = [];
+        let filesArray: any = [];
+
+        rows.map((item: any) => {
+          attdatnumArray.push(item.attdatnum);
+          filesArray.push(item.files);
+        });
+        setTempAttach((prev) => ({
+          ...prev,
+          attdatnumList7: attdatnumArray,
+          filesList7: filesArray,
+        }));
+        setSelectedState7({ [rows[0][DATA_ITEM_KEY7]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters8((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid9 = async (filters9: any) => {
+    // if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_HU_A1000W_Q",
+      pageNumber: filters9.pgNum,
+      pageSize: filters9.pgSize,
+      parameters: {
+        "@p_work_type": filters9.workType,
+        "@p_orgdiv": filters9.orgdiv,
+        "@p_location": filters9.location,
+        "@p_dptcd": filters9.dptcd,
+        "@p_prsnnum": filters9.prsnnum,
+        "@p_prsnnm": filters9.prsnnm,
+        "@p_rtrchk": filters9.rtrchk,
+        "@p_find_row_value": filters9.find_row_value,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+      }));
+
+      setMainDataResult8((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+
+      if (totalRowCnt > 0) {
+        let attdatnumArray: any = [];
+        let filesArray: any = [];
+
+        rows.map((item: any) => {
+          attdatnumArray.push(item.attdatnum);
+          filesArray.push(item.files);
+        });
+        setTempAttach((prev) => ({
+          ...prev,
+          attdatnumList8: attdatnumArray,
+          filesList8: filesArray,
+        }));
+        setSelectedState8({ [rows[0][DATA_ITEM_KEY8]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters9((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (workType === "U" && data != undefined) {
       setFilters((prev) => ({
@@ -1566,6 +5019,83 @@ const CopyWindow = ({
         pgNum: 1,
       }));
       setFilters2((prev) => ({
+        ...prev,
+        orgdiv: "01",
+        location: "01",
+        dptcd: "",
+        prsnnum: data.prsnnum,
+        prsnnm: "",
+        rtrchk: "%",
+        isSearch: true,
+        pgNum: 1,
+      }));
+      setFilters3((prev) => ({
+        ...prev,
+        orgdiv: "01",
+        location: "01",
+        dptcd: "",
+        prsnnum: data.prsnnum,
+        prsnnm: "",
+        rtrchk: "%",
+        isSearch: true,
+        pgNum: 1,
+      }));
+      setFilters4((prev) => ({
+        ...prev,
+        orgdiv: "01",
+        location: "01",
+        dptcd: "",
+        prsnnum: data.prsnnum,
+        prsnnm: "",
+        rtrchk: "%",
+        isSearch: true,
+        pgNum: 1,
+      }));
+      setFilters5((prev) => ({
+        ...prev,
+        orgdiv: "01",
+        location: "01",
+        dptcd: "",
+        prsnnum: data.prsnnum,
+        prsnnm: "",
+        rtrchk: "%",
+        isSearch: true,
+        pgNum: 1,
+      }));
+      setFilters6((prev) => ({
+        ...prev,
+        orgdiv: "01",
+        location: "01",
+        dptcd: "",
+        prsnnum: data.prsnnum,
+        prsnnm: "",
+        rtrchk: "%",
+        isSearch: true,
+        pgNum: 1,
+      }));
+      setFilters7((prev) => ({
+        ...prev,
+        orgdiv: "01",
+        location: "01",
+        dptcd: "",
+        prsnnum: data.prsnnum,
+        prsnnm: "",
+        rtrchk: "%",
+        isSearch: true,
+        pgNum: 1,
+      }));
+      setFilters8((prev) => ({
+        ...prev,
+        orgdiv: "01",
+        location: "01",
+        dptcd: "",
+        prsnnum: data.prsnnum,
+        prsnnm: "",
+        rtrchk: "%",
+        isSearch: true,
+        pgNum: 1,
+      }));
+      setFilters9((prev) => ({
         ...prev,
         orgdiv: "01",
         location: "01",
@@ -1873,7 +5403,6 @@ const CopyWindow = ({
           item.fmlynm == "" ||
           item.relt == "" ||
           item.perregnum == "" ||
-          item.schcd == "" ||
           item.sexcd == "" ||
           item.birdt == ""
         ) {
@@ -2054,6 +5583,692 @@ const CopyWindow = ({
         hu251t_attdatnum_s: dataArr.hu251t_attdatnum_s.join("|"),
         hu251t_remark_s: dataArr.hu251t_remark_s.join("|"),
       });
+    } else if (tabSelected == 5) {
+      const dataItem = mainDataResult2.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+
+      if (dataItem.length === 0 && deletedMainRows2.length == 0) return false;
+
+      let valid = true;
+
+      dataItem.map((item) => {
+        if (item.schdiv == "") {
+          valid = false;
+        }
+      });
+
+      if (valid != true) {
+        alert("필수값을 채워주세요.");
+        return false;
+      }
+
+      let dataArr: TdataArr2 = {
+        hu252t_rowstatus_s: [],
+        hu252t_seq_s: [],
+        hu252t_schdiv_s: [],
+        hu252t_startdate_s: [],
+        hu252t_enddate_s: [],
+        hu252t_schnm_s: [],
+        hu252t_major_s: [],
+        hu252t_schgrade_s: [],
+        attdatnum_s: [],
+      };
+
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          schdiv = "",
+          startdate = "",
+          enddate = "",
+          schnm = "",
+          major = "",
+          schgrade = "",
+          attdatnum = "",
+        } = item;
+        dataArr.hu252t_rowstatus_s.push(rowstatus);
+        dataArr.hu252t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu252t_schdiv_s.push(schdiv == undefined ? "" : schdiv);
+        dataArr.hu252t_startdate_s.push(
+          startdate == undefined ? "" : startdate
+        );
+        dataArr.hu252t_enddate_s.push(enddate == undefined ? "" : enddate);
+        dataArr.hu252t_schnm_s.push(schnm == undefined ? "" : schnm);
+        dataArr.hu252t_major_s.push(major == undefined ? "" : major);
+        dataArr.hu252t_schgrade_s.push(schgrade == undefined ? "" : schgrade);
+        dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+      });
+
+      deletedMainRows2.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          schdiv = "",
+          startdate = "",
+          enddate = "",
+          schnm = "",
+          major = "",
+          schgrade = "",
+          attdatnum = "",
+        } = item;
+        dataArr.hu252t_rowstatus_s.push(rowstatus);
+        dataArr.hu252t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu252t_schdiv_s.push(schdiv == undefined ? "" : schdiv);
+        dataArr.hu252t_startdate_s.push(
+          startdate == undefined ? "" : startdate
+        );
+        dataArr.hu252t_enddate_s.push(enddate == undefined ? "" : enddate);
+        dataArr.hu252t_schnm_s.push(schnm == undefined ? "" : schnm);
+        dataArr.hu252t_major_s.push(major == undefined ? "" : major);
+        dataArr.hu252t_schgrade_s.push(schgrade == undefined ? "" : schgrade);
+        dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+      });
+
+      setParaData3({
+        work_type: "HU252T",
+        orgdiv: "01",
+        prsnnum: information.prsnnum,
+        hu252t_rowstatus_s: dataArr.hu252t_rowstatus_s.join("|"),
+        hu252t_seq_s: dataArr.hu252t_seq_s.join("|"),
+        hu252t_schdiv_s: dataArr.hu252t_schdiv_s.join("|"),
+        hu252t_startdate_s: dataArr.hu252t_startdate_s.join("|"),
+        hu252t_enddate_s: dataArr.hu252t_enddate_s.join("|"),
+        hu252t_schnm_s: dataArr.hu252t_schnm_s.join("|"),
+        hu252t_major_s: dataArr.hu252t_major_s.join("|"),
+        hu252t_schgrade_s: dataArr.hu252t_schgrade_s.join("|"),
+        attdatnum_s: dataArr.attdatnum_s.join("|"),
+      });
+    } else if (tabSelected == 6) {
+      const dataItem = mainDataResult3.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+
+      if (dataItem.length === 0 && deletedMainRows3.length == 0) return false;
+
+      let dataArr: TdataArr3 = {
+        hu254t_rowstatus_s: [],
+        hu254t_seq_s: [],
+        hu254t_qualkind_s: [],
+        hu254t_qualgrad_s: [],
+        hu254t_qualmach_s: [],
+        hu254t_acqdt_s: [],
+        hu254t_validt_s: [],
+        hu254t_renewdt_s: [],
+        hu254t_qualnum_s: [],
+        attdatnum_s: [],
+      };
+
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          qualkind = "",
+          qualgrad = "",
+          qualmach = "",
+          acqdt = "",
+          validt = "",
+          renewdt = "",
+          qualnum = "",
+          attdatnum = "",
+        } = item;
+        dataArr.hu254t_rowstatus_s.push(rowstatus);
+        dataArr.hu254t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu254t_qualkind_s.push(qualkind == undefined ? "" : qualkind);
+        dataArr.hu254t_qualgrad_s.push(qualgrad == undefined ? "" : qualgrad);
+        dataArr.hu254t_qualmach_s.push(qualmach == undefined ? "" : qualmach);
+        dataArr.hu254t_acqdt_s.push(acqdt == undefined ? "" : acqdt);
+        dataArr.hu254t_validt_s.push(validt == undefined ? "" : validt);
+        dataArr.hu254t_renewdt_s.push(renewdt == undefined ? "" : renewdt);
+        dataArr.hu254t_qualnum_s.push(qualnum == undefined ? "" : qualnum);
+        dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+      });
+
+      deletedMainRows3.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          qualkind = "",
+          qualgrad = "",
+          qualmach = "",
+          acqdt = "",
+          validt = "",
+          renewdt = "",
+          qualnum = "",
+          attdatnum = "",
+        } = item;
+        dataArr.hu254t_rowstatus_s.push(rowstatus);
+        dataArr.hu254t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu254t_qualkind_s.push(qualkind == undefined ? "" : qualkind);
+        dataArr.hu254t_qualgrad_s.push(qualgrad == undefined ? "" : qualgrad);
+        dataArr.hu254t_qualmach_s.push(qualmach == undefined ? "" : qualmach);
+        dataArr.hu254t_acqdt_s.push(acqdt == undefined ? "" : acqdt);
+        dataArr.hu254t_validt_s.push(validt == undefined ? "" : validt);
+        dataArr.hu254t_renewdt_s.push(renewdt == undefined ? "" : renewdt);
+        dataArr.hu254t_qualnum_s.push(qualnum == undefined ? "" : qualnum);
+        dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+      });
+
+      setParaData4({
+        work_type: "HU254T",
+        orgdiv: "01",
+        prsnnum: information.prsnnum,
+        hu254t_rowstatus_s: dataArr.hu254t_rowstatus_s.join("|"),
+        hu254t_seq_s: dataArr.hu254t_seq_s.join("|"),
+        hu254t_qualkind_s: dataArr.hu254t_qualkind_s.join("|"),
+        hu254t_qualgrad_s: dataArr.hu254t_qualgrad_s.join("|"),
+        hu254t_qualmach_s: dataArr.hu254t_qualmach_s.join("|"),
+        hu254t_acqdt_s: dataArr.hu254t_acqdt_s.join("|"),
+        hu254t_validt_s: dataArr.hu254t_validt_s.join("|"),
+        hu254t_renewdt_s: dataArr.hu254t_renewdt_s.join("|"),
+        hu254t_qualnum_s: dataArr.hu254t_qualnum_s.join("|"),
+        attdatnum_s: dataArr.attdatnum_s.join("|"),
+      });
+    } else if (tabSelected == 7) {
+      const dataItem = mainDataResult4.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+
+      if (dataItem.length === 0 && deletedMainRows4.length == 0) return false;
+
+      let valid = true;
+
+      dataItem.map((item) => {
+        if (item.compnm == "") {
+          valid = false;
+        }
+      });
+
+      if (valid != true) {
+        alert("필수값을 채워주세요.");
+        return false;
+      }
+
+      let dataArr: TdataArr4 = {
+        hu253t_rowstatus_s: [],
+        hu253t_seq_s: [],
+        hu253t_compnm_s: [],
+        hu253t_frdt_s: [],
+        hu253t_todt_s: [],
+        hu253t_dptnm_s: [],
+        hu253t_postnm_s: [],
+        hu253t_jobnm_s: [],
+        hu253t_remark_s: [],
+        attdatnum_s: [],
+      };
+
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          compnm = "",
+          frdt = "",
+          todt = "",
+          dptnm = "",
+          postnm = "",
+          jobnm = "",
+          remark = "",
+          attdatnum = "",
+        } = item;
+        dataArr.hu253t_rowstatus_s.push(rowstatus);
+        dataArr.hu253t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu253t_compnm_s.push(compnm == undefined ? "" : compnm);
+        dataArr.hu253t_frdt_s.push(frdt == undefined ? "" : frdt);
+        dataArr.hu253t_todt_s.push(todt == undefined ? "" : todt);
+        dataArr.hu253t_dptnm_s.push(dptnm == undefined ? "" : dptnm);
+        dataArr.hu253t_postnm_s.push(postnm == undefined ? "" : postnm);
+        dataArr.hu253t_jobnm_s.push(jobnm == undefined ? "" : jobnm);
+        dataArr.hu253t_remark_s.push(remark == undefined ? "" : remark);
+        dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+      });
+
+      deletedMainRows4.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          compnm = "",
+          frdt = "",
+          todt = "",
+          dptnm = "",
+          postnm = "",
+          jobnm = "",
+          remark = "",
+          attdatnum = "",
+        } = item;
+        dataArr.hu253t_rowstatus_s.push(rowstatus);
+        dataArr.hu253t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu253t_compnm_s.push(compnm == undefined ? "" : compnm);
+        dataArr.hu253t_frdt_s.push(frdt == undefined ? "" : frdt);
+        dataArr.hu253t_todt_s.push(todt == undefined ? "" : todt);
+        dataArr.hu253t_dptnm_s.push(dptnm == undefined ? "" : dptnm);
+        dataArr.hu253t_postnm_s.push(postnm == undefined ? "" : postnm);
+        dataArr.hu253t_jobnm_s.push(jobnm == undefined ? "" : jobnm);
+        dataArr.hu253t_remark_s.push(remark == undefined ? "" : remark);
+        dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+      });
+
+      setParaData5({
+        work_type: "HU253T",
+        orgdiv: "01",
+        prsnnum: information.prsnnum,
+        hu253t_rowstatus_s: dataArr.hu253t_rowstatus_s.join("|"),
+        hu253t_seq_s: dataArr.hu253t_seq_s.join("|"),
+        hu253t_compnm_s: dataArr.hu253t_compnm_s.join("|"),
+        hu253t_frdt_s: dataArr.hu253t_frdt_s.join("|"),
+        hu253t_todt_s: dataArr.hu253t_todt_s.join("|"),
+        hu253t_dptnm_s: dataArr.hu253t_dptnm_s.join("|"),
+        hu253t_postnm_s: dataArr.hu253t_postnm_s.join("|"),
+        hu253t_jobnm_s: dataArr.hu253t_jobnm_s.join("|"),
+        hu253t_remark_s: dataArr.hu253t_remark_s.join("|"),
+        attdatnum_s: dataArr.attdatnum_s.join("|"),
+      });
+    } else if (tabSelected == 8) {
+      const dataItem = mainDataResult5.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+
+      if (dataItem.length === 0 && deletedMainRows5.length == 0) return false;
+
+      let valid = true;
+
+      dataItem.map((item) => {
+        if (item.appointcd == "") {
+          valid = false;
+        }
+      });
+
+      if (valid != true) {
+        alert("필수값을 채워주세요.");
+        return false;
+      }
+
+      let dataArr: TdataArr5 = {
+        hu255t_rowstatus_s: [],
+        hu255t_seq_s: [],
+        hu255t_appointcd_s: [],
+        hu255t_appointdt_s: [],
+        hu255t_appointrsn_s: [],
+        hu255t_startdt_s: [],
+        hu255t_enddt_s: [],
+        hu255t_remark_s: [],
+        hu255t_dptcd_s: [],
+        attdatnum_s: [],
+      };
+
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          appointcd = "",
+          appointdt = "",
+          appointrsn = "",
+          startdt = "",
+          enddt = "",
+          remark = "",
+          dptcd = "",
+          attdatnum = "",
+        } = item;
+        dataArr.hu255t_rowstatus_s.push(rowstatus);
+        dataArr.hu255t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu255t_appointcd_s.push(
+          appointcd == undefined ? "" : appointcd
+        );
+        dataArr.hu255t_appointdt_s.push(
+          appointdt == undefined ? "" : appointdt
+        );
+        dataArr.hu255t_appointrsn_s.push(
+          appointrsn == undefined ? "" : appointrsn
+        );
+        dataArr.hu255t_startdt_s.push(startdt == undefined ? "" : startdt);
+        dataArr.hu255t_enddt_s.push(enddt == undefined ? "" : enddt);
+        dataArr.hu255t_remark_s.push(remark == undefined ? "" : remark);
+        dataArr.hu255t_dptcd_s.push(dptcd == undefined ? "" : dptcd);
+        dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+      });
+
+      deletedMainRows5.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          appointcd = "",
+          appointdt = "",
+          appointrsn = "",
+          startdt = "",
+          enddt = "",
+          remark = "",
+          dptcd = "",
+          attdatnum = "",
+        } = item;
+        dataArr.hu255t_rowstatus_s.push(rowstatus);
+        dataArr.hu255t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu255t_appointcd_s.push(
+          appointcd == undefined ? "" : appointcd
+        );
+        dataArr.hu255t_appointdt_s.push(
+          appointdt == undefined ? "" : appointdt
+        );
+        dataArr.hu255t_appointrsn_s.push(
+          appointrsn == undefined ? "" : appointrsn
+        );
+        dataArr.hu255t_startdt_s.push(startdt == undefined ? "" : startdt);
+        dataArr.hu255t_enddt_s.push(enddt == undefined ? "" : enddt);
+        dataArr.hu255t_remark_s.push(remark == undefined ? "" : remark);
+        dataArr.hu255t_dptcd_s.push(dptcd == undefined ? "" : dptcd);
+        dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+      });
+
+      setParaData6({
+        work_type: "HU255T",
+        orgdiv: "01",
+        prsnnum: information.prsnnum,
+        hu255t_rowstatus_s: dataArr.hu255t_rowstatus_s.join("|"),
+        hu255t_seq_s: dataArr.hu255t_seq_s.join("|"),
+        hu255t_appointcd_s: dataArr.hu255t_appointcd_s.join("|"),
+        hu255t_appointdt_s: dataArr.hu255t_appointdt_s.join("|"),
+        hu255t_appointrsn_s: dataArr.hu255t_appointrsn_s.join("|"),
+        hu255t_startdt_s: dataArr.hu255t_startdt_s.join("|"),
+        hu255t_enddt_s: dataArr.hu255t_enddt_s.join("|"),
+        hu255t_remark_s: dataArr.hu255t_remark_s.join("|"),
+        hu255t_dptcd_s: dataArr.hu255t_dptcd_s.join("|"),
+        attdatnum_s: dataArr.attdatnum_s.join("|"),
+      });
+    } else if (tabSelected == 9) {
+      const dataItem = mainDataResult6.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+
+      if (dataItem.length === 0 && deletedMainRows6.length == 0) return false;
+
+      let dataArr: TdataArr6 = {
+        hu256t_rowstatus_s: [],
+        hu256t_seq_s: [],
+        hu256t_rnpdiv_s: [],
+        hu256t_reqdt_s: [],
+        hu256t_reloffice_s: [],
+        hu256t_contents_s: [],
+        hu256t_remark_s: [],
+        attdatnum_s: [],
+      };
+
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          rnpdiv = "",
+          reqdt = "",
+          reloffice = "",
+          contents = "",
+          remark = "",
+          attdatnum = "",
+        } = item;
+        dataArr.hu256t_rowstatus_s.push(rowstatus);
+        dataArr.hu256t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu256t_rnpdiv_s.push(rnpdiv == undefined ? "" : rnpdiv);
+        dataArr.hu256t_reqdt_s.push(reqdt == undefined ? "" : reqdt);
+        dataArr.hu256t_reloffice_s.push(
+          reloffice == undefined ? "" : reloffice
+        );
+        dataArr.hu256t_contents_s.push(contents == undefined ? "" : contents);
+        dataArr.hu256t_remark_s.push(remark == undefined ? "" : remark);
+        dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+      });
+
+      deletedMainRows6.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          rnpdiv = "",
+          reqdt = "",
+          reloffice = "",
+          contents = "",
+          remark = "",
+          attdatnum = "",
+        } = item;
+        dataArr.hu256t_rowstatus_s.push(rowstatus);
+        dataArr.hu256t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu256t_rnpdiv_s.push(rnpdiv == undefined ? "" : rnpdiv);
+        dataArr.hu256t_reqdt_s.push(reqdt == undefined ? "" : reqdt);
+        dataArr.hu256t_reloffice_s.push(
+          reloffice == undefined ? "" : reloffice
+        );
+        dataArr.hu256t_contents_s.push(contents == undefined ? "" : contents);
+        dataArr.hu256t_remark_s.push(remark == undefined ? "" : remark);
+        dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+      });
+
+      setParaData7({
+        work_type: "HU256T",
+        orgdiv: "01",
+        prsnnum: information.prsnnum,
+        hu256t_rowstatus_s: dataArr.hu256t_rowstatus_s.join("|"),
+        hu256t_seq_s: dataArr.hu256t_seq_s.join("|"),
+        hu256t_rnpdiv_s: dataArr.hu256t_rnpdiv_s.join("|"),
+        hu256t_reqdt_s: dataArr.hu256t_reqdt_s.join("|"),
+        hu256t_reloffice_s: dataArr.hu256t_reloffice_s.join("|"),
+        hu256t_contents_s: dataArr.hu256t_contents_s.join("|"),
+        hu256t_remark_s: dataArr.hu256t_remark_s.join("|"),
+        attdatnum_s: dataArr.attdatnum_s.join("|"),
+      });
+    } else if (tabSelected == 10) {
+      const dataItem = mainDataResult7.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+
+      if (dataItem.length === 0 && deletedMainRows7.length == 0) return false;
+
+      let dataArr: TdataArr7 = {
+        hu257t_rowstatus_s: [],
+        hu257t_seq_s: [],
+        hu257t_startdt_s: [],
+        hu257t_enddt_s: [],
+        hu257t_eduterm_s: [],
+        hu257t_edutime_s: [],
+        hu257t_edunm_s: [],
+        hu257t_contents_s: [],
+        hu257t_edueval_s: [],
+        hu257t_eduoffice_s: [],
+        attdatnum_s: [],
+      };
+
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          startdt = "",
+          enddt = "",
+          eduterm = "",
+          edutime = "",
+          edunm = "",
+          contents = "",
+          edueval = "",
+          eduoffice = "",
+          attdatnum = "",
+        } = item;
+        dataArr.hu257t_rowstatus_s.push(rowstatus);
+        dataArr.hu257t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu257t_startdt_s.push(startdt == undefined ? "" : startdt);
+        dataArr.hu257t_enddt_s.push(enddt == undefined ? "" : enddt);
+        dataArr.hu257t_eduterm_s.push(eduterm == undefined ? "" : eduterm);
+        dataArr.hu257t_edutime_s.push(edutime == undefined ? "" : edutime);
+        dataArr.hu257t_edunm_s.push(edunm == undefined ? "" : edunm);
+        dataArr.hu257t_contents_s.push(contents == undefined ? "" : contents);
+        dataArr.hu257t_edueval_s.push(edueval == undefined ? "" : edueval);
+        dataArr.hu257t_eduoffice_s.push(
+          eduoffice == undefined ? "" : eduoffice
+        );
+        dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+      });
+
+      deletedMainRows7.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          startdt = "",
+          enddt = "",
+          eduterm = "",
+          edutime = "",
+          edunm = "",
+          contents = "",
+          edueval = "",
+          eduoffice = "",
+          attdatnum = "",
+        } = item;
+        dataArr.hu257t_rowstatus_s.push(rowstatus);
+        dataArr.hu257t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu257t_startdt_s.push(startdt == undefined ? "" : startdt);
+        dataArr.hu257t_enddt_s.push(enddt == undefined ? "" : enddt);
+        dataArr.hu257t_eduterm_s.push(eduterm == undefined ? "" : eduterm);
+        dataArr.hu257t_edutime_s.push(edutime == undefined ? "" : edutime);
+        dataArr.hu257t_edunm_s.push(edunm == undefined ? "" : edunm);
+        dataArr.hu257t_contents_s.push(contents == undefined ? "" : contents);
+        dataArr.hu257t_edueval_s.push(edueval == undefined ? "" : edueval);
+        dataArr.hu257t_eduoffice_s.push(
+          eduoffice == undefined ? "" : eduoffice
+        );
+        dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+      });
+
+      setParaData8({
+        work_type: "HU257T",
+        orgdiv: "01",
+        prsnnum: information.prsnnum,
+        hu257t_rowstatus_s: dataArr.hu257t_rowstatus_s.join("|"),
+        hu257t_seq_s: dataArr.hu257t_seq_s.join("|"),
+        hu257t_startdt_s: dataArr.hu257t_startdt_s.join("|"),
+        hu257t_enddt_s: dataArr.hu257t_enddt_s.join("|"),
+        hu257t_eduterm_s: dataArr.hu257t_eduterm_s.join("|"),
+        hu257t_edutime_s: dataArr.hu257t_edutime_s.join("|"),
+        hu257t_edunm_s: dataArr.hu257t_edunm_s.join("|"),
+        hu257t_contents_s: dataArr.hu257t_contents_s.join("|"),
+        hu257t_edueval_s: dataArr.hu257t_edueval_s.join("|"),
+        hu257t_eduoffice_s: dataArr.hu257t_eduoffice_s.join("|"),
+        attdatnum_s: dataArr.attdatnum_s.join("|"),
+      });
+    } else if (tabSelected == 11) {
+      const dataItem = mainDataResult8.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+
+      if (dataItem.length === 0 && deletedMainRows8.length == 0) return false;
+
+      let valid = true;
+
+      dataItem.map((item) => {
+        if (item.educd == "") {
+          valid = false;
+        }
+      });
+
+      if (valid != true) {
+        alert("필수값을 채워주세요.");
+        return false;
+      }
+
+      let dataArr: TdataArr8 = {
+        hu258t_rowstatus_s: [],
+        hu258t_seq_s: [],
+        hu258t_educd_s: [],
+        hu258t_testnm_s: [],
+        hu258t_score_s: [],
+        hu258t_testdt_s: [],
+        hu258t_speaking_s: [],
+        hu258t_country_s: [],
+        hu258t_startdt_s: [],
+        hu258t_enddt_s: [],
+        attdatnum_s: [],
+      };
+
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          educd = "",
+          testnm = "",
+          score = "",
+          testdt = "",
+          speaking = "",
+          country = "",
+          startdt = "",
+          enddt = "",
+          attdatnum = "",
+        } = item;
+        dataArr.hu258t_rowstatus_s.push(rowstatus);
+        dataArr.hu258t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu258t_educd_s.push(educd == undefined ? "" : educd);
+        dataArr.hu258t_testnm_s.push(testnm == undefined ? "" : testnm);
+        dataArr.hu258t_score_s.push(score == undefined ? "" : score);
+        dataArr.hu258t_testdt_s.push(testdt == undefined ? "" : testdt);
+        dataArr.hu258t_speaking_s.push(speaking == undefined ? "" : speaking);
+        dataArr.hu258t_country_s.push(country == undefined ? "" : country);
+        dataArr.hu258t_startdt_s.push(startdt == undefined ? "" : startdt);
+        dataArr.hu258t_enddt_s.push(enddt == undefined ? "" : enddt);
+        dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+      });
+
+      deletedMainRows8.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          seq = "",
+          educd = "",
+          testnm = "",
+          score = "",
+          testdt = "",
+          speaking = "",
+          country = "",
+          startdt = "",
+          enddt = "",
+          attdatnum = "",
+        } = item;
+        dataArr.hu258t_rowstatus_s.push(rowstatus);
+        dataArr.hu258t_seq_s.push(seq == undefined ? 0 : seq);
+        dataArr.hu258t_educd_s.push(educd == undefined ? "" : educd);
+        dataArr.hu258t_testnm_s.push(testnm == undefined ? "" : testnm);
+        dataArr.hu258t_score_s.push(score == undefined ? "" : score);
+        dataArr.hu258t_testdt_s.push(testdt == undefined ? "" : testdt);
+        dataArr.hu258t_speaking_s.push(speaking == undefined ? "" : speaking);
+        dataArr.hu258t_country_s.push(country == undefined ? "" : country);
+        dataArr.hu258t_startdt_s.push(startdt == undefined ? "" : startdt);
+        dataArr.hu258t_enddt_s.push(enddt == undefined ? "" : enddt);
+        dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+      });
+
+      setParaData9({
+        work_type: "HU258T",
+        orgdiv: "01",
+        prsnnum: information.prsnnum,
+        hu258t_rowstatus_s: dataArr.hu258t_rowstatus_s.join("|"),
+        hu258t_seq_s: dataArr.hu258t_seq_s.join("|"),
+        hu258t_educd_s: dataArr.hu258t_educd_s.join("|"),
+        hu258t_testnm_s: dataArr.hu258t_testnm_s.join("|"),
+        hu258t_score_s: dataArr.hu258t_score_s.join("|"),
+        hu258t_testdt_s: dataArr.hu258t_testdt_s.join("|"),
+        hu258t_speaking_s: dataArr.hu258t_speaking_s.join("|"),
+        hu258t_country_s: dataArr.hu258t_country_s.join("|"),
+        hu258t_startdt_s: dataArr.hu258t_startdt_s.join("|"),
+        hu258t_enddt_s: dataArr.hu258t_enddt_s.join("|"),
+        attdatnum_s: dataArr.attdatnum_s.join("|"),
+      });
     }
   };
 
@@ -2086,7 +6301,6 @@ const CopyWindow = ({
     birdt: "",
     bircd: "",
     sexcd: "",
-    imdate: "",
     firredt: "",
     regorgdt: "",
     rtrdt: "",
@@ -2102,8 +6316,6 @@ const CopyWindow = ({
     extnum: "",
     outnum: "",
     schcd: "",
-    gradutype: "",
-    directyn: "",
     laboryn: "N",
     dfmyn: "N",
     milyn: "N",
@@ -2111,16 +6323,12 @@ const CopyWindow = ({
     taxcd: "",
     hirinsuyn: "N",
     payyn: "N",
-    rtrgivdiv: "",
-    yrgivdiv: "",
-    mongivdiv: "",
     caltaxyn: "N",
     yrdclyn: "N",
     bankcd: "",
     bankacnt: "",
     bankacntuser: "",
     bankdatnum: "",
-    insuzon: "",
     medgrad: "",
     medinsunum: "",
     pnsgrad: "",
@@ -2137,17 +6345,13 @@ const CopyWindow = ({
     fam1: 0,
     fam2: 0,
     notaxe: "N",
-    otkind: "",
     bnskind: "N",
-    payprovyn: "",
     mailid: "",
     workmail: "",
     childnum: 0,
     dfmyn2: "N",
     houseyn: "",
     remark: "",
-    costdiv1: "",
-    costdiv2: "",
     path: "",
     attdatnum: "",
     incgb: "",
@@ -2157,18 +6361,6 @@ const CopyWindow = ({
     dayoffdiv: "",
     rtrtype: "",
 
-    mngitemcd1: "",
-    mngitemcd2: "",
-    mngitemcd3: "",
-    mngitemcd4: "",
-    mngitemcd5: "",
-    mngitemcd6: "",
-    mngdata1: "",
-    mngdata2: "",
-    mngdata3: "",
-    mngdata4: "",
-    mngdata5: "",
-    mngdata6: "",
     workchk: "N",
     yrchk: "N",
 
@@ -2231,6 +6423,117 @@ const CopyWindow = ({
     hu251t_remark_s: "",
   });
 
+  const [ParaData3, setParaData3] = useState({
+    work_type: "",
+    orgdiv: "01",
+    prsnnum: "",
+    hu252t_rowstatus_s: "",
+    hu252t_seq_s: "",
+    hu252t_schdiv_s: "",
+    hu252t_startdate_s: "",
+    hu252t_enddate_s: "",
+    hu252t_schnm_s: "",
+    hu252t_major_s: "",
+    hu252t_schgrade_s: "",
+    attdatnum_s: "",
+  });
+
+  const [ParaData4, setParaData4] = useState({
+    work_type: "",
+    orgdiv: "01",
+    prsnnum: "",
+    hu254t_rowstatus_s: "",
+    hu254t_seq_s: "",
+    hu254t_qualkind_s: "",
+    hu254t_qualgrad_s: "",
+    hu254t_qualmach_s: "",
+    hu254t_acqdt_s: "",
+    hu254t_validt_s: "",
+    hu254t_renewdt_s: "",
+    hu254t_qualnum_s: "",
+    attdatnum_s: "",
+  });
+
+  const [ParaData5, setParaData5] = useState({
+    work_type: "",
+    orgdiv: "01",
+    prsnnum: "",
+    hu253t_rowstatus_s: "",
+    hu253t_seq_s: "",
+    hu253t_compnm_s: "",
+    hu253t_frdt_s: "",
+    hu253t_todt_s: "",
+    hu253t_dptnm_s: "",
+    hu253t_postnm_s: "",
+    hu253t_jobnm_s: "",
+    hu253t_remark_s: "",
+    attdatnum_s: "",
+  });
+
+  const [ParaData6, setParaData6] = useState({
+    work_type: "",
+    orgdiv: "01",
+    prsnnum: "",
+    hu255t_rowstatus_s: "",
+    hu255t_seq_s: "",
+    hu255t_appointcd_s: "",
+    hu255t_appointdt_s: "",
+    hu255t_appointrsn_s: "",
+    hu255t_startdt_s: "",
+    hu255t_enddt_s: "",
+    hu255t_remark_s: "",
+    hu255t_dptcd_s: "",
+    attdatnum_s: "",
+  });
+
+  const [ParaData7, setParaData7] = useState({
+    work_type: "",
+    orgdiv: "01",
+    prsnnum: "",
+    hu256t_rowstatus_s: "",
+    hu256t_seq_s: "",
+    hu256t_rnpdiv_s: "",
+    hu256t_reqdt_s: "",
+    hu256t_reloffice_s: "",
+    hu256t_contents_s: "",
+    hu256t_remark_s: "",
+    attdatnum_s: "",
+  });
+
+  const [ParaData8, setParaData8] = useState({
+    work_type: "",
+    orgdiv: "01",
+    prsnnum: "",
+    hu257t_rowstatus_s: "",
+    hu257t_seq_s: "",
+    hu257t_startdt_s: "",
+    hu257t_enddt_s: "",
+    hu257t_eduterm_s: "",
+    hu257t_edutime_s: "",
+    hu257t_edunm_s: "",
+    hu257t_contents_s: "",
+    hu257t_edueval_s: "",
+    hu257t_eduoffice_s: "",
+    attdatnum_s: "",
+  });
+
+  const [ParaData9, setParaData9] = useState({
+    work_type: "",
+    orgdiv: "01",
+    prsnnum: "",
+    hu258t_rowstatus_s: "",
+    hu258t_seq_s: "",
+    hu258t_educd_s: "",
+    hu258t_testnm_s: "",
+    hu258t_score_s: "",
+    hu258t_testdt_s: "",
+    hu258t_speaking_s: "",
+    hu258t_country_s: "",
+    hu258t_startdt_s: "",
+    hu258t_enddt_s: "",
+    attdatnum_s: "",
+  });
+
   const para: Iparameters = {
     procedureName: "P_HU_A1000W_S",
     pageNumber: 0,
@@ -2264,7 +6567,6 @@ const CopyWindow = ({
       "@p_birdt": ParaData.birdt,
       "@p_bircd": ParaData.bircd,
       "@p_sexcd": ParaData.sexcd,
-      "@p_imdate": ParaData.imdate,
       "@p_firredt": ParaData.firredt,
       "@p_regorgdt": ParaData.regorgdt,
       "@p_rtrdt": ParaData.rtrdt,
@@ -2280,8 +6582,6 @@ const CopyWindow = ({
       "@p_extnum": ParaData.extnum,
       "@p_outnum": ParaData.outnum,
       "@p_schcd": ParaData.schcd,
-      "@p_gradutype": ParaData.gradutype,
-      "@p_directyn": ParaData.directyn,
       "@p_laboryn": ParaData.laboryn,
       "@p_dfmyn": ParaData.dfmyn,
       "@p_milyn": ParaData.milyn,
@@ -2289,16 +6589,12 @@ const CopyWindow = ({
       "@p_taxcd": ParaData.taxcd,
       "@p_hirinsuyn": ParaData.hirinsuyn,
       "@p_payyn": ParaData.payyn,
-      "@p_rtrgivdiv": ParaData.rtrgivdiv,
-      "@p_yrgivdiv": ParaData.yrgivdiv,
-      "@p_mongivdiv": ParaData.mongivdiv,
       "@p_caltaxyn": ParaData.caltaxyn,
       "@p_yrdclyn": ParaData.yrdclyn,
       "@p_bankcd": ParaData.bankcd,
       "@p_bankacnt": ParaData.bankacnt,
       "@p_bankacntuser": ParaData.bankacntuser,
       "@p_bankdatnum": ParaData.bankdatnum,
-      "@p_insuzon": ParaData.insuzon,
       "@p_medgrad": ParaData.medgrad,
       "@p_medinsunum": ParaData.medinsunum,
       "@p_pnsgrad": ParaData.pnsgrad,
@@ -2315,17 +6611,13 @@ const CopyWindow = ({
       "@p_fam1": ParaData.fam1,
       "@p_fam2": ParaData.fam2,
       "@p_notaxe": ParaData.notaxe,
-      "@p_otkind": ParaData.otkind,
       "@p_bnskind": ParaData.bnskind,
-      "@p_payprovyn": ParaData.payprovyn,
       "@p_mailid": ParaData.mailid,
       "@p_workmail": ParaData.workmail,
       "@p_childnum": ParaData.childnum,
       "@p_dfmyn2": ParaData.dfmyn2,
       "@p_houseyn": ParaData.houseyn,
       "@p_remark": ParaData.remark,
-      "@p_costdiv1": ParaData.costdiv1,
-      "@p_costdiv2": ParaData.costdiv2,
       "@p_path": ParaData.path,
       "@p_attdatnum": ParaData.attdatnum,
       "@p_incgb": ParaData.incgb,
@@ -2338,18 +6630,6 @@ const CopyWindow = ({
       "@p_userid": userId,
       "@p_pc": pc,
 
-      "@p_mngitemcd1": ParaData.mngitemcd1,
-      "@p_mngitemcd2": ParaData.mngitemcd2,
-      "@p_mngitemcd3": ParaData.mngitemcd3,
-      "@p_mngitemcd4": ParaData.mngitemcd4,
-      "@p_mngitemcd5": ParaData.mngitemcd5,
-      "@p_mngitemcd6": ParaData.mngitemcd6,
-      "@p_mngdata1": ParaData.mngdata1,
-      "@p_mngdata2": ParaData.mngdata2,
-      "@p_mngdata3": ParaData.mngdata3,
-      "@p_mngdata4": ParaData.mngdata4,
-      "@p_mngdata5": ParaData.mngdata5,
-      "@p_mngdata6": ParaData.mngdata6,
       "@p_workchk": ParaData.workchk,
       "@p_yrchk": ParaData.yrchk,
 
@@ -2423,6 +6703,173 @@ const CopyWindow = ({
     },
   };
 
+  const para3: Iparameters = {
+    procedureName: "P_HU_A1000W_EDU_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData3.work_type,
+      "@p_orgdiv": ParaData3.orgdiv,
+      "@p_hu252t_rowstatus_s": ParaData3.hu252t_rowstatus_s,
+      "@p_prsnnum": ParaData3.prsnnum,
+      "@p_hu252t_seq_s": ParaData3.hu252t_seq_s,
+      "@p_hu252t_schdiv_s": ParaData3.hu252t_schdiv_s,
+      "@p_hu252t_startdate_s": ParaData3.hu252t_startdate_s,
+      "@p_hu252t_enddate_s": ParaData3.hu252t_enddate_s,
+      "@p_hu252t_schnm_s": ParaData3.hu252t_schnm_s,
+      "@p_hu252t_major_s": ParaData3.hu252t_major_s,
+      "@p_hu252t_schgrade_s": ParaData3.hu252t_schgrade_s,
+      "@p_attdatnum_s": ParaData3.attdatnum_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "HU_A1000W",
+    },
+  };
+
+  const para4: Iparameters = {
+    procedureName: "P_HU_A1000W_QUA_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData4.work_type,
+      "@p_orgdiv": ParaData4.orgdiv,
+      "@p_hu254t_rowstatus_s": ParaData4.hu254t_rowstatus_s,
+      "@p_prsnnum": ParaData4.prsnnum,
+      "@p_hu254t_seq_s": ParaData4.hu254t_seq_s,
+      "@p_hu254t_qualkind_s": ParaData4.hu254t_qualkind_s,
+      "@p_hu254t_qualgrad_s": ParaData4.hu254t_qualgrad_s,
+      "@p_hu254t_qualmach_s": ParaData4.hu254t_qualmach_s,
+      "@p_hu254t_acqdt_s": ParaData4.hu254t_acqdt_s,
+      "@p_hu254t_validt_s": ParaData4.hu254t_validt_s,
+      "@p_hu254t_renewdt_s": ParaData4.hu254t_renewdt_s,
+      "@p_hu254t_qualnum_s": ParaData4.hu254t_qualnum_s,
+      "@p_attdatnum_s": ParaData4.attdatnum_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "HU_A1000W",
+    },
+  };
+
+  const para5: Iparameters = {
+    procedureName: "P_HU_A1000W_CAR_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData5.work_type,
+      "@p_orgdiv": ParaData5.orgdiv,
+      "@p_hu253t_rowstatus_s": ParaData5.hu253t_rowstatus_s,
+      "@p_prsnnum": ParaData5.prsnnum,
+      "@p_hu253t_seq_s": ParaData5.hu253t_seq_s,
+      "@p_hu253t_compnm_s": ParaData5.hu253t_compnm_s,
+      "@p_hu253t_frdt_s": ParaData5.hu253t_frdt_s,
+      "@p_hu253t_todt_s": ParaData5.hu253t_todt_s,
+      "@p_hu253t_dptnm_s": ParaData5.hu253t_dptnm_s,
+      "@p_hu253t_postnm_s": ParaData5.hu253t_postnm_s,
+      "@p_hu253t_jobnm_s": ParaData5.hu253t_jobnm_s,
+      "@p_hu253t_remark_s": ParaData5.hu253t_remark_s,
+      "@p_attdatnum_s": ParaData5.attdatnum_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "HU_A1000W",
+    },
+  };
+
+  const para6: Iparameters = {
+    procedureName: "P_HU_A1000W_APP_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData6.work_type,
+      "@p_orgdiv": ParaData6.orgdiv,
+      "@p_hu255t_rowstatus_s": ParaData6.hu255t_rowstatus_s,
+      "@p_prsnnum": ParaData6.prsnnum,
+      "@p_hu255t_seq_s": ParaData6.hu255t_seq_s,
+      "@p_hu255t_appointcd_s": ParaData6.hu255t_appointcd_s,
+      "@p_hu255t_appointdt_s": ParaData6.hu255t_appointdt_s,
+      "@p_hu255t_appointrsn_s": ParaData6.hu255t_appointrsn_s,
+      "@p_hu255t_startdt_s": ParaData6.hu255t_startdt_s,
+      "@p_hu255t_enddt_s": ParaData6.hu255t_enddt_s,
+      "@p_hu255t_remark_s": ParaData6.hu255t_remark_s,
+      "@p_hu255t_dptcd_s": ParaData6.hu255t_dptcd_s,
+      "@p_attdatnum_s": ParaData6.attdatnum_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "HU_A1000W",
+    },
+  };
+
+  const para7: Iparameters = {
+    procedureName: "P_HU_A1000W_RNP_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData7.work_type,
+      "@p_orgdiv": ParaData7.orgdiv,
+      "@p_hu256t_rowstatus_s": ParaData7.hu256t_rowstatus_s,
+      "@p_prsnnum": ParaData7.prsnnum,
+      "@p_hu256t_seq_s": ParaData7.hu256t_seq_s,
+      "@p_hu256t_rnpdiv_s": ParaData7.hu256t_rnpdiv_s,
+      "@p_hu256t_reqdt_s": ParaData7.hu256t_reqdt_s,
+      "@p_hu256t_reloffice_s": ParaData7.hu256t_reloffice_s,
+      "@p_hu256t_contents_s": ParaData7.hu256t_contents_s,
+      "@p_hu256t_remark_s": ParaData7.hu256t_remark_s,
+      "@p_attdatnum_s": ParaData7.attdatnum_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "HU_A1000W",
+    },
+  };
+
+  const para8: Iparameters = {
+    procedureName: "P_HU_A1000W_TRA_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData8.work_type,
+      "@p_orgdiv": ParaData8.orgdiv,
+      "@p_hu257t_rowstatus_s": ParaData8.hu257t_rowstatus_s,
+      "@p_prsnnum": ParaData8.prsnnum,
+      "@p_hu257t_seq_s": ParaData8.hu257t_seq_s,
+      "@p_hu257t_startdt_s": ParaData8.hu257t_startdt_s,
+      "@p_hu257t_enddt_s": ParaData8.hu257t_enddt_s,
+      "@p_hu257t_eduterm_s": ParaData8.hu257t_eduterm_s,
+      "@p_hu257t_edutime_s": ParaData8.hu257t_edutime_s,
+      "@p_hu257t_edunm_s": ParaData8.hu257t_edunm_s,
+      "@p_hu257t_contents_s": ParaData8.hu257t_contents_s,
+      "@p_hu257t_edueval_s": ParaData8.hu257t_edueval_s,
+      "@p_hu257t_eduoffice_s": ParaData8.hu257t_eduoffice_s,
+      "@p_attdatnum_s": ParaData8.attdatnum_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "HU_A1000W",
+    },
+  };
+
+  const para9: Iparameters = {
+    procedureName: "P_HU_A1000W_LAN_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData9.work_type,
+      "@p_orgdiv": ParaData9.orgdiv,
+      "@p_hu258t_rowstatus_s": ParaData9.hu258t_rowstatus_s,
+      "@p_prsnnum": ParaData9.prsnnum,
+      "@p_hu258t_seq_s": ParaData9.hu258t_seq_s,
+      "@p_hu258t_educd_s": ParaData9.hu258t_educd_s,
+      "@p_hu258t_testnm_s": ParaData9.hu258t_testnm_s,
+      "@p_hu258t_score_s": ParaData9.hu258t_score_s,
+      "@p_hu258t_testdt_s": ParaData9.hu258t_testdt_s,
+      "@p_hu258t_speaking_s": ParaData9.hu258t_speaking_s,
+      "@p_hu258t_country_s": ParaData9.hu258t_country_s,
+      "@p_hu258t_startdt_s": ParaData9.hu258t_startdt_s,
+      "@p_hu258t_enddt_s": ParaData9.hu258t_enddt_s,
+      "@p_attdatnum_s": ParaData9.attdatnum_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "HU_A1000W",
+    },
+  };
+
   const fetchTodoGridSaved = async () => {
     let data: any;
     setLoading(true);
@@ -2435,6 +6882,14 @@ const CopyWindow = ({
     if (data.isSuccess === true) {
       setUnsavedName([]);
 
+      deletedMainRows = [];
+      deletedMainRows2 = [];
+      deletedMainRows3 = [];
+      deletedMainRows4 = [];
+      deletedMainRows5 = [];
+      deletedMainRows6 = [];
+      deletedMainRows7 = [];
+      deletedMainRows8 = [];
       reload(data.returnString);
       if (workType == "N") {
         setVisible(false);
@@ -2451,6 +6906,48 @@ const CopyWindow = ({
           pgNum: 1,
           find_row_value: data.returnString,
         }));
+        setFilters3((prev) => ({
+          ...prev,
+          isSearch: true,
+          pgNum: 1,
+          find_row_value: data.returnString,
+        }));
+        setFilters4((prev) => ({
+          ...prev,
+          isSearch: true,
+          pgNum: 1,
+          find_row_value: data.returnString,
+        }));
+        setFilters5((prev) => ({
+          ...prev,
+          isSearch: true,
+          pgNum: 1,
+          find_row_value: data.returnString,
+        }));
+        setFilters6((prev) => ({
+          ...prev,
+          isSearch: true,
+          pgNum: 1,
+          find_row_value: data.returnString,
+        }));
+        setFilters7((prev) => ({
+          ...prev,
+          isSearch: true,
+          pgNum: 1,
+          find_row_value: data.returnString,
+        }));
+        setFilters8((prev) => ({
+          ...prev,
+          isSearch: true,
+          pgNum: 1,
+          find_row_value: data.returnString,
+        }));
+        setFilters9((prev) => ({
+          ...prev,
+          isSearch: true,
+          pgNum: 1,
+          find_row_value: data.returnString,
+        }));
       }
       setTempAttach({
         attdatnum: "",
@@ -2459,6 +6956,20 @@ const CopyWindow = ({
         bankfiles: "",
         attdatnumList: [],
         filesList: [],
+        attdatnumList2: [],
+        filesList2: [],
+        attdatnumList3: [],
+        filesList3: [],
+        attdatnumList4: [],
+        filesList4: [],
+        attdatnumList5: [],
+        filesList5: [],
+        attdatnumList6: [],
+        filesList6: [],
+        attdatnumList7: [],
+        filesList7: [],
+        attdatnumList8: [],
+        filesList8: [],
       });
       setParaData({
         work_type: "",
@@ -2489,7 +7000,6 @@ const CopyWindow = ({
         birdt: "",
         bircd: "",
         sexcd: "",
-        imdate: "",
         firredt: "",
         regorgdt: "",
         rtrdt: "",
@@ -2505,8 +7015,6 @@ const CopyWindow = ({
         extnum: "",
         outnum: "",
         schcd: "",
-        gradutype: "",
-        directyn: "",
         laboryn: "N",
         dfmyn: "N",
         milyn: "N",
@@ -2514,16 +7022,12 @@ const CopyWindow = ({
         taxcd: "",
         hirinsuyn: "N",
         payyn: "N",
-        rtrgivdiv: "",
-        yrgivdiv: "",
-        mongivdiv: "",
         caltaxyn: "N",
         yrdclyn: "N",
         bankcd: "",
         bankacnt: "",
         bankacntuser: "",
         bankdatnum: "",
-        insuzon: "",
         medgrad: "",
         medinsunum: "",
         pnsgrad: "",
@@ -2540,17 +7044,13 @@ const CopyWindow = ({
         fam1: 0,
         fam2: 0,
         notaxe: "N",
-        otkind: "",
         bnskind: "N",
-        payprovyn: "",
         mailid: "",
         workmail: "",
         childnum: 0,
         dfmyn2: "N",
         houseyn: "",
         remark: "",
-        costdiv1: "",
-        costdiv2: "",
         path: "",
         attdatnum: "",
         incgb: "",
@@ -2560,18 +7060,6 @@ const CopyWindow = ({
         dayoffdiv: "",
         rtrtype: "",
 
-        mngitemcd1: "",
-        mngitemcd2: "",
-        mngitemcd3: "",
-        mngitemcd4: "",
-        mngitemcd5: "",
-        mngitemcd6: "",
-        mngdata1: "",
-        mngdata2: "",
-        mngdata3: "",
-        mngdata4: "",
-        mngdata5: "",
-        mngdata6: "",
         workchk: "N",
         yrchk: "N",
 
@@ -2636,6 +7124,13 @@ const CopyWindow = ({
       setUnsavedName([]);
       setUnsavedAttadatnums([]);
       deletedMainRows = [];
+      deletedMainRows2 = [];
+      deletedMainRows3 = [];
+      deletedMainRows4 = [];
+      deletedMainRows5 = [];
+      deletedMainRows6 = [];
+      deletedMainRows7 = [];
+      deletedMainRows8 = [];
       reload(data.returnString);
 
       setFilters((prev) => ({
@@ -2650,7 +7145,48 @@ const CopyWindow = ({
         pgNum: 1,
         find_row_value: data.returnString,
       }));
-
+      setFilters3((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters4((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters5((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters6((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters7((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters8((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters9((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
       setTempAttach({
         attdatnum: "",
         files: "",
@@ -2658,6 +7194,20 @@ const CopyWindow = ({
         bankfiles: "",
         attdatnumList: [],
         filesList: [],
+        attdatnumList2: [],
+        filesList2: [],
+        attdatnumList3: [],
+        filesList3: [],
+        attdatnumList4: [],
+        filesList4: [],
+        attdatnumList5: [],
+        filesList5: [],
+        attdatnumList6: [],
+        filesList6: [],
+        attdatnumList7: [],
+        filesList7: [],
+        attdatnumList8: [],
+        filesList8: [],
       });
       setParaData2({
         work_type: "",
@@ -2690,6 +7240,901 @@ const CopyWindow = ({
     setLoading(false);
   };
 
+  const fetchTodoGridSaved3 = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para3);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      let array: any[] = [];
+
+      deletedMainRows2.map((item: any) => {
+        array.push(item.attdatnum);
+      });
+
+      setDeletedAttadatnums(array);
+
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
+      deletedMainRows = [];
+      deletedMainRows2 = [];
+      deletedMainRows3 = [];
+      deletedMainRows4 = [];
+      deletedMainRows5 = [];
+      deletedMainRows6 = [];
+      deletedMainRows7 = [];
+      deletedMainRows8 = [];
+      reload(data.returnString);
+
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters3((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters4((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters5((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters6((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters7((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters8((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters9((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setTempAttach({
+        attdatnum: "",
+        files: "",
+        bankdatnum: "",
+        bankfiles: "",
+        attdatnumList: [],
+        filesList: [],
+        attdatnumList2: [],
+        filesList2: [],
+        attdatnumList3: [],
+        filesList3: [],
+        attdatnumList4: [],
+        filesList4: [],
+        attdatnumList5: [],
+        filesList5: [],
+        attdatnumList6: [],
+        filesList6: [],
+        attdatnumList7: [],
+        filesList7: [],
+        attdatnumList8: [],
+        filesList8: [],
+      });
+      setParaData3({
+        work_type: "",
+        orgdiv: "01",
+        prsnnum: "",
+        hu252t_rowstatus_s: "",
+        hu252t_seq_s: "",
+        hu252t_schdiv_s: "",
+        hu252t_startdate_s: "",
+        hu252t_enddate_s: "",
+        hu252t_schnm_s: "",
+        hu252t_major_s: "",
+        hu252t_schgrade_s: "",
+        attdatnum_s: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  const fetchTodoGridSaved4 = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para4);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      let array: any[] = [];
+
+      deletedMainRows3.map((item: any) => {
+        array.push(item.attdatnum);
+      });
+
+      setDeletedAttadatnums(array);
+
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
+      deletedMainRows = [];
+      deletedMainRows2 = [];
+      deletedMainRows3 = [];
+      deletedMainRows4 = [];
+      deletedMainRows5 = [];
+      deletedMainRows6 = [];
+      deletedMainRows7 = [];
+      deletedMainRows8 = [];
+      reload(data.returnString);
+
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters3((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters4((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters5((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters6((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters7((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters8((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters9((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setTempAttach({
+        attdatnum: "",
+        files: "",
+        bankdatnum: "",
+        bankfiles: "",
+        attdatnumList: [],
+        filesList: [],
+        attdatnumList2: [],
+        filesList2: [],
+        attdatnumList3: [],
+        filesList3: [],
+        attdatnumList4: [],
+        filesList4: [],
+        attdatnumList5: [],
+        filesList5: [],
+        attdatnumList6: [],
+        filesList6: [],
+        attdatnumList7: [],
+        filesList7: [],
+        attdatnumList8: [],
+        filesList8: [],
+      });
+      setParaData4({
+        work_type: "",
+        orgdiv: "01",
+        prsnnum: "",
+        hu254t_rowstatus_s: "",
+        hu254t_seq_s: "",
+        hu254t_qualkind_s: "",
+        hu254t_qualgrad_s: "",
+        hu254t_qualmach_s: "",
+        hu254t_acqdt_s: "",
+        hu254t_validt_s: "",
+        hu254t_renewdt_s: "",
+        hu254t_qualnum_s: "",
+        attdatnum_s: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  const fetchTodoGridSaved5 = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para5);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      let array: any[] = [];
+
+      deletedMainRows4.map((item: any) => {
+        array.push(item.attdatnum);
+      });
+
+      setDeletedAttadatnums(array);
+
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
+      deletedMainRows = [];
+      deletedMainRows2 = [];
+      deletedMainRows3 = [];
+      deletedMainRows4 = [];
+      deletedMainRows5 = [];
+      deletedMainRows6 = [];
+      deletedMainRows7 = [];
+      deletedMainRows8 = [];
+      reload(data.returnString);
+
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters3((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters4((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters5((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters6((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters7((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters8((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters9((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setTempAttach({
+        attdatnum: "",
+        files: "",
+        bankdatnum: "",
+        bankfiles: "",
+        attdatnumList: [],
+        filesList: [],
+        attdatnumList2: [],
+        filesList2: [],
+        attdatnumList3: [],
+        filesList3: [],
+        attdatnumList4: [],
+        filesList4: [],
+        attdatnumList5: [],
+        filesList5: [],
+        attdatnumList6: [],
+        filesList6: [],
+        attdatnumList7: [],
+        filesList7: [],
+        attdatnumList8: [],
+        filesList8: [],
+      });
+      setParaData5({
+        work_type: "",
+        orgdiv: "01",
+        prsnnum: "",
+        hu253t_rowstatus_s: "",
+        hu253t_seq_s: "",
+        hu253t_compnm_s: "",
+        hu253t_frdt_s: "",
+        hu253t_todt_s: "",
+        hu253t_dptnm_s: "",
+        hu253t_postnm_s: "",
+        hu253t_jobnm_s: "",
+        hu253t_remark_s: "",
+        attdatnum_s: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  const fetchTodoGridSaved6 = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para6);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      let array: any[] = [];
+
+      deletedMainRows5.map((item: any) => {
+        array.push(item.attdatnum);
+      });
+
+      setDeletedAttadatnums(array);
+
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
+      deletedMainRows = [];
+      deletedMainRows2 = [];
+      deletedMainRows3 = [];
+      deletedMainRows4 = [];
+      deletedMainRows5 = [];
+      deletedMainRows6 = [];
+      deletedMainRows7 = [];
+      deletedMainRows8 = [];
+      reload(data.returnString);
+
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters3((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters4((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters5((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters6((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters7((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters8((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters9((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setTempAttach({
+        attdatnum: "",
+        files: "",
+        bankdatnum: "",
+        bankfiles: "",
+        attdatnumList: [],
+        filesList: [],
+        attdatnumList2: [],
+        filesList2: [],
+        attdatnumList3: [],
+        filesList3: [],
+        attdatnumList4: [],
+        filesList4: [],
+        attdatnumList5: [],
+        filesList5: [],
+        attdatnumList6: [],
+        filesList6: [],
+        attdatnumList7: [],
+        filesList7: [],
+        attdatnumList8: [],
+        filesList8: [],
+      });
+      setParaData6({
+        work_type: "",
+        orgdiv: "01",
+        prsnnum: "",
+        hu255t_rowstatus_s: "",
+        hu255t_seq_s: "",
+        hu255t_appointcd_s: "",
+        hu255t_appointdt_s: "",
+        hu255t_appointrsn_s: "",
+        hu255t_startdt_s: "",
+        hu255t_enddt_s: "",
+        hu255t_remark_s: "",
+        hu255t_dptcd_s: "",
+        attdatnum_s: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  const fetchTodoGridSaved7 = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para7);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      let array: any[] = [];
+
+      deletedMainRows6.map((item: any) => {
+        array.push(item.attdatnum);
+      });
+
+      setDeletedAttadatnums(array);
+
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
+      deletedMainRows = [];
+      deletedMainRows2 = [];
+      deletedMainRows3 = [];
+      deletedMainRows4 = [];
+      deletedMainRows5 = [];
+      deletedMainRows6 = [];
+      deletedMainRows7 = [];
+      deletedMainRows8 = [];
+      reload(data.returnString);
+
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters3((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters4((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters5((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters6((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters7((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters8((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters9((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setTempAttach({
+        attdatnum: "",
+        files: "",
+        bankdatnum: "",
+        bankfiles: "",
+        attdatnumList: [],
+        filesList: [],
+        attdatnumList2: [],
+        filesList2: [],
+        attdatnumList3: [],
+        filesList3: [],
+        attdatnumList4: [],
+        filesList4: [],
+        attdatnumList5: [],
+        filesList5: [],
+        attdatnumList6: [],
+        filesList6: [],
+        attdatnumList7: [],
+        filesList7: [],
+        attdatnumList8: [],
+        filesList8: [],
+      });
+      setParaData7({
+        work_type: "",
+        orgdiv: "01",
+        prsnnum: "",
+        hu256t_rowstatus_s: "",
+        hu256t_seq_s: "",
+        hu256t_rnpdiv_s: "",
+        hu256t_reqdt_s: "",
+        hu256t_reloffice_s: "",
+        hu256t_contents_s: "",
+        hu256t_remark_s: "",
+        attdatnum_s: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  const fetchTodoGridSaved8 = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para8);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      let array: any[] = [];
+
+      deletedMainRows7.map((item: any) => {
+        array.push(item.attdatnum);
+      });
+
+      setDeletedAttadatnums(array);
+
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
+      deletedMainRows = [];
+      deletedMainRows2 = [];
+      deletedMainRows3 = [];
+      deletedMainRows4 = [];
+      deletedMainRows5 = [];
+      deletedMainRows6 = [];
+      deletedMainRows7 = [];
+      deletedMainRows8 = [];
+      reload(data.returnString);
+
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters3((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters4((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters5((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters6((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters7((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters8((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters9((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setTempAttach({
+        attdatnum: "",
+        files: "",
+        bankdatnum: "",
+        bankfiles: "",
+        attdatnumList: [],
+        filesList: [],
+        attdatnumList2: [],
+        filesList2: [],
+        attdatnumList3: [],
+        filesList3: [],
+        attdatnumList4: [],
+        filesList4: [],
+        attdatnumList5: [],
+        filesList5: [],
+        attdatnumList6: [],
+        filesList6: [],
+        attdatnumList7: [],
+        filesList7: [],
+        attdatnumList8: [],
+        filesList8: [],
+      });
+      setParaData8({
+        work_type: "",
+        orgdiv: "01",
+        prsnnum: "",
+        hu257t_rowstatus_s: "",
+        hu257t_seq_s: "",
+        hu257t_startdt_s: "",
+        hu257t_enddt_s: "",
+        hu257t_eduterm_s: "",
+        hu257t_edutime_s: "",
+        hu257t_edunm_s: "",
+        hu257t_contents_s: "",
+        hu257t_edueval_s: "",
+        hu257t_eduoffice_s: "",
+        attdatnum_s: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  const fetchTodoGridSaved9 = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para9);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      let array: any[] = [];
+
+      deletedMainRows8.map((item: any) => {
+        array.push(item.attdatnum);
+      });
+
+      setDeletedAttadatnums(array);
+
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
+      deletedMainRows = [];
+      deletedMainRows2 = [];
+      deletedMainRows3 = [];
+      deletedMainRows4 = [];
+      deletedMainRows5 = [];
+      deletedMainRows6 = [];
+      deletedMainRows7 = [];
+      deletedMainRows8 = [];
+      reload(data.returnString);
+
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters3((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters4((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters5((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters6((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters7((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters8((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setFilters9((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setTempAttach({
+        attdatnum: "",
+        files: "",
+        bankdatnum: "",
+        bankfiles: "",
+        attdatnumList: [],
+        filesList: [],
+        attdatnumList2: [],
+        filesList2: [],
+        attdatnumList3: [],
+        filesList3: [],
+        attdatnumList4: [],
+        filesList4: [],
+        attdatnumList5: [],
+        filesList5: [],
+        attdatnumList6: [],
+        filesList6: [],
+        attdatnumList7: [],
+        filesList7: [],
+        attdatnumList8: [],
+        filesList8: [],
+      });
+      setParaData9({
+        work_type: "",
+        orgdiv: "01",
+        prsnnum: "",
+        hu258t_rowstatus_s: "",
+        hu258t_seq_s: "",
+        hu258t_educd_s: "",
+        hu258t_testnm_s: "",
+        hu258t_score_s: "",
+        hu258t_testdt_s: "",
+        hu258t_speaking_s: "",
+        hu258t_country_s: "",
+        hu258t_startdt_s: "",
+        hu258t_enddt_s: "",
+        attdatnum_s: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (ParaData.work_type != "") {
       fetchTodoGridSaved();
@@ -2701,6 +8146,48 @@ const CopyWindow = ({
       fetchTodoGridSaved2();
     }
   }, [ParaData2]);
+
+  useEffect(() => {
+    if (ParaData3.work_type != "") {
+      fetchTodoGridSaved3();
+    }
+  }, [ParaData3]);
+
+  useEffect(() => {
+    if (ParaData4.work_type != "") {
+      fetchTodoGridSaved4();
+    }
+  }, [ParaData4]);
+
+  useEffect(() => {
+    if (ParaData5.work_type != "") {
+      fetchTodoGridSaved5();
+    }
+  }, [ParaData5]);
+
+  useEffect(() => {
+    if (ParaData6.work_type != "") {
+      fetchTodoGridSaved6();
+    }
+  }, [ParaData6]);
+
+  useEffect(() => {
+    if (ParaData7.work_type != "") {
+      fetchTodoGridSaved7();
+    }
+  }, [ParaData7]);
+
+  useEffect(() => {
+    if (ParaData8.work_type != "") {
+      fetchTodoGridSaved8();
+    }
+  }, [ParaData8]);
+
+  useEffect(() => {
+    if (ParaData9.work_type != "") {
+      fetchTodoGridSaved9();
+    }
+  }, [ParaData9]);
 
   return (
     <>
@@ -4208,7 +9695,6 @@ const CopyWindow = ({
                     title="최종학력"
                     width="120px"
                     cell={CustomComboBoxCell}
-                    headerCell={RequiredHeader}
                   />
                   <GridColumn field="job" title="직업" width="120px" />
                   <GridColumn field="compnm" title="회사명" width="120px" />
@@ -4270,31 +9756,808 @@ const CopyWindow = ({
           <TabStripTab
             title="학적사항"
             disabled={workType == "N" ? true : false}
-          ></TabStripTab>
+          >
+            <FormContext2.Provider
+              value={{
+                attdatnum2,
+                files2,
+                setAttdatnum2,
+                setFiles2,
+                mainDataState2,
+                setMainDataState2,
+                // fetchGrid,
+              }}
+            >
+              <GridContainer height={position.height - 220 + "px"}>
+                <GridTitleContainer>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick2}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick2}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: `calc(100% - 35px)` }}
+                  data={process(
+                    mainDataResult2.data.map((row) => ({
+                      ...row,
+                      startdate:
+                        row.startdate != ""
+                          ? toDate(row.startdate)
+                          : new Date(),
+                      enddate:
+                        row.enddate != "" ? toDate(row.enddate) : new Date(),
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                    })),
+                    mainDataState2
+                  )}
+                  onDataStateChange={onMainDataStateChange2}
+                  {...mainDataState2}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange2}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult2.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange2}
+                  cellRender={customCellRender2}
+                  rowRender={customRowRender2}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="schdiv"
+                    title="학력"
+                    width="120px"
+                    footerCell={mainTotalFooterCell2}
+                    headerCell={RequiredHeader}
+                  />
+                  <GridColumn
+                    field="startdate"
+                    title="입학일자"
+                    width="120px"
+                    cell={DateCell}
+                  />
+                  <GridColumn
+                    field="enddate"
+                    title="졸업일자"
+                    width="120px"
+                    cell={DateCell}
+                  />
+                  <GridColumn field="schnm" title="학교명" width="150px" />
+                  <GridColumn field="major" title="전공명" width="120px" />
+                  <GridColumn field="schgrade" title="학점" width="120px" />
+                  <GridColumn
+                    field="files"
+                    title="첨부파일"
+                    width="150px"
+                    cell={ColumnCommandCell2}
+                  />
+                </Grid>
+              </GridContainer>
+            </FormContext2.Provider>
+          </TabStripTab>
           <TabStripTab
             title="면허/자격사항"
             disabled={workType == "N" ? true : false}
-          ></TabStripTab>
+          >
+            <FormContext3.Provider
+              value={{
+                attdatnum3,
+                files3,
+                setAttdatnum3,
+                setFiles3,
+                mainDataState3,
+                setMainDataState3,
+                // fetchGrid,
+              }}
+            >
+              <GridContainer height={position.height - 220 + "px"}>
+                <GridTitleContainer>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick3}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick3}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: `calc(100% - 35px)` }}
+                  data={process(
+                    mainDataResult3.data.map((row) => ({
+                      ...row,
+                      acqdt: row.acqdt != "" ? toDate(row.acqdt) : new Date(),
+                      validt:
+                        row.validt != "" ? toDate(row.validt) : new Date(),
+                      renewdt:
+                        row.renewdt != "" ? toDate(row.renewdt) : new Date(),
+                      [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
+                    })),
+                    mainDataState3
+                  )}
+                  onDataStateChange={onMainDataStateChange3}
+                  {...mainDataState3}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY3}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange3}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult3.total}
+                  skip={page3.skip}
+                  take={page3.take}
+                  pageable={true}
+                  onPageChange={pageChange3}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange3}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange3}
+                  cellRender={customCellRender3}
+                  rowRender={customRowRender3}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="qualkind"
+                    title="자격종류"
+                    width="120px"
+                    footerCell={mainTotalFooterCell3}
+                  />
+                  <GridColumn field="qualgrad" title="자격등급" width="120px" />
+                  <GridColumn field="qualmach" title="발행기관" width="120px" />
+                  <GridColumn
+                    field="acqdt"
+                    title="취득일"
+                    width="120px"
+                    cell={DateCell}
+                  />
+                  <GridColumn
+                    field="validt"
+                    title="유효일"
+                    width="120px"
+                    cell={DateCell}
+                  />
+                  <GridColumn
+                    field="renewdt"
+                    title="차기갱신일"
+                    width="120px"
+                    cell={DateCell}
+                  />
+                  <GridColumn field="qualnum" title="자격번호" width="150px" />
+                  <GridColumn
+                    field="files"
+                    title="첨부파일"
+                    width="150px"
+                    cell={ColumnCommandCell3}
+                  />
+                </Grid>
+              </GridContainer>
+            </FormContext3.Provider>
+          </TabStripTab>
           <TabStripTab
             title="경력사항"
             disabled={workType == "N" ? true : false}
-          ></TabStripTab>
+          >
+            <FormContext4.Provider
+              value={{
+                attdatnum4,
+                files4,
+                setAttdatnum4,
+                setFiles4,
+                mainDataState4,
+                setMainDataState4,
+                // fetchGrid,
+              }}
+            >
+              <GridContainer height={position.height - 220 + "px"}>
+                <GridTitleContainer>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick4}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick4}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: `calc(100% - 35px)` }}
+                  data={process(
+                    mainDataResult4.data.map((row) => ({
+                      ...row,
+                      frdt: row.frdt != "" ? toDate(row.frdt) : new Date(),
+                      todt: row.todt != "" ? toDate(row.todt) : new Date(),
+                      orgdiv: orgdivListData.find(
+                        (item: any) => item.sub_code == row.orgdiv
+                      )?.code_name,
+                      [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
+                    })),
+                    mainDataState4
+                  )}
+                  onDataStateChange={onMainDataStateChange4}
+                  {...mainDataState4}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY4}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange4}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult4.total}
+                  skip={page4.skip}
+                  take={page4.take}
+                  pageable={true}
+                  onPageChange={pageChange4}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange4}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange4}
+                  cellRender={customCellRender4}
+                  rowRender={customRowRender4}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="orgdiv"
+                    title="회사구분"
+                    width="120px"
+                    footerCell={mainTotalFooterCell4}
+                  />
+                  <GridColumn
+                    field="compnm"
+                    title="회사명"
+                    width="120px"
+                    headerCell={RequiredHeader}
+                  />
+                  <GridColumn
+                    field="frdt"
+                    title="시작일"
+                    width="120px"
+                    cell={DateCell}
+                  />
+                  <GridColumn
+                    field="todt"
+                    title="종료일"
+                    width="120px"
+                    cell={DateCell}
+                  />
+                  <GridColumn field="dptnm" title="부서명" width="120px" />
+                  <GridColumn field="postnm" title="직급" width="120px" />
+                  <GridColumn field="jobnm" title="담당업무" width="150px" />
+                  <GridColumn field="remark" title="퇴직사유" width="200px" />
+                  <GridColumn
+                    field="files"
+                    title="첨부파일"
+                    width="150px"
+                    cell={ColumnCommandCell4}
+                  />
+                </Grid>
+              </GridContainer>
+            </FormContext4.Provider>
+          </TabStripTab>
           <TabStripTab
             title="인사발령사항"
             disabled={workType == "N" ? true : false}
-          ></TabStripTab>
+          >
+            <FormContext5.Provider
+              value={{
+                attdatnum5,
+                files5,
+                setAttdatnum5,
+                setFiles5,
+                mainDataState5,
+                setMainDataState5,
+                // fetchGrid,
+              }}
+            >
+              <GridContainer height={position.height - 220 + "px"}>
+                <GridTitleContainer>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick5}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick5}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: `calc(100% - 35px)` }}
+                  data={process(
+                    mainDataResult5.data.map((row) => ({
+                      ...row,
+                      startdt:
+                        row.startdt != "" ? toDate(row.startdt) : new Date(),
+                      enddt: row.enddt != "" ? toDate(row.enddt) : new Date(),
+                      appointdt:
+                        row.appointdt != ""
+                          ? toDate(row.appointdt)
+                          : new Date(),
+                      [SELECTED_FIELD]: selectedState5[idGetter5(row)], //선택된 데이터
+                    })),
+                    mainDataState5
+                  )}
+                  onDataStateChange={onMainDataStateChange5}
+                  {...mainDataState5}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY5}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange5}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult5.total}
+                  skip={page5.skip}
+                  take={page5.take}
+                  pageable={true}
+                  onPageChange={pageChange5}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange5}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange5}
+                  cellRender={customCellRender5}
+                  rowRender={customRowRender5}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="appointcd"
+                    title="발령구분"
+                    width="120px"
+                    cell={CustomComboBoxCell}
+                    footerCell={mainTotalFooterCell5}
+                    headerCell={RequiredHeader}
+                  />
+                  <GridColumn
+                    field="appointdt"
+                    title="발령일자"
+                    width="120px"
+                    cell={DateCell}
+                  />
+                  <GridColumn
+                    field="appointrsn"
+                    title="발령내용"
+                    width="200px"
+                  />
+                  <GridColumn
+                    field="startdt"
+                    title="시작일자"
+                    width="120px"
+                    cell={DateCell}
+                  />
+                  <GridColumn
+                    field="enddt"
+                    title="종료일자"
+                    width="120px"
+                    cell={DateCell}
+                  />
+                  <GridColumn field="remark" title="비고" width="200px" />
+                  <GridColumn
+                    field="dptcd"
+                    title="부서"
+                    width="120px"
+                    cell={CustomComboBoxCell}
+                  />
+                  <GridColumn
+                    field="files"
+                    title="첨부파일"
+                    width="150px"
+                    cell={ColumnCommandCell5}
+                  />
+                </Grid>
+              </GridContainer>
+            </FormContext5.Provider>
+          </TabStripTab>
           <TabStripTab
             title="상벌사항"
             disabled={workType == "N" ? true : false}
-          ></TabStripTab>
+          >
+            <FormContext6.Provider
+              value={{
+                attdatnum6,
+                files6,
+                setAttdatnum6,
+                setFiles6,
+                mainDataState6,
+                setMainDataState6,
+                // fetchGrid,
+              }}
+            >
+              <GridContainer height={position.height - 220 + "px"}>
+                <GridTitleContainer>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick6}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick6}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: `calc(100% - 35px)` }}
+                  data={process(
+                    mainDataResult6.data.map((row) => ({
+                      ...row,
+                      reqdt: row.reqdt != "" ? toDate(row.reqdt) : new Date(),
+                      [SELECTED_FIELD]: selectedState6[idGetter6(row)], //선택된 데이터
+                    })),
+                    mainDataState6
+                  )}
+                  onDataStateChange={onMainDataStateChange6}
+                  {...mainDataState6}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY6}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange6}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult6.total}
+                  skip={page6.skip}
+                  take={page6.take}
+                  pageable={true}
+                  onPageChange={pageChange6}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange6}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange6}
+                  cellRender={customCellRender6}
+                  rowRender={customRowRender6}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="rnpdiv"
+                    title="상벌구분"
+                    width="120px"
+                    cell={CustomComboBoxCell}
+                    footerCell={mainTotalFooterCell6}
+                  />
+                  <GridColumn
+                    field="reqdt"
+                    title="일자"
+                    width="120px"
+                    cell={DateCell}
+                  />
+                  <GridColumn field="reloffice" title="기관" width="120px" />
+                  <GridColumn field="contents" title="상벌내용" width="150px" />
+                  <GridColumn field="remark" title="비고" width="200px" />
+                  <GridColumn
+                    field="files"
+                    title="첨부파일"
+                    width="150px"
+                    cell={ColumnCommandCell6}
+                  />
+                </Grid>
+              </GridContainer>
+            </FormContext6.Provider>
+          </TabStripTab>
           <TabStripTab
             title="교육사항"
             disabled={workType == "N" ? true : false}
-          ></TabStripTab>
+          >
+            <FormContext7.Provider
+              value={{
+                attdatnum7,
+                files7,
+                setAttdatnum7,
+                setFiles7,
+                mainDataState7,
+                setMainDataState7,
+                // fetchGrid,
+              }}
+            >
+              <GridContainer height={position.height - 220 + "px"}>
+                <GridTitleContainer>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick7}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick7}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: `calc(100% - 35px)` }}
+                  data={process(
+                    mainDataResult7.data.map((row) => ({
+                      ...row,
+                      startdt:
+                        row.startdt != "" ? toDate(row.startdt) : new Date(),
+                      enddt: row.enddt != "" ? toDate(row.enddt) : new Date(),
+                      [SELECTED_FIELD]: selectedState7[idGetter7(row)], //선택된 데이터
+                    })),
+                    mainDataState7
+                  )}
+                  onDataStateChange={onMainDataStateChange7}
+                  {...mainDataState7}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY7}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange7}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult7.total}
+                  skip={page7.skip}
+                  take={page7.take}
+                  pageable={true}
+                  onPageChange={pageChange7}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange7}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange7}
+                  cellRender={customCellRender7}
+                  rowRender={customRowRender7}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="startdt"
+                    title="근무기간(시작)"
+                    width="120px"
+                    cell={DateCell}
+                    footerCell={mainTotalFooterCell7}
+                  />
+                  <GridColumn
+                    field="enddt"
+                    title="근무기간(종료)"
+                    width="120px"
+                    cell={DateCell}
+                  />
+                  <GridColumn
+                    field="eduterm"
+                    title="일수"
+                    width="100px"
+                    cell={NumberCell}
+                  />
+                  <GridColumn
+                    field="edutime"
+                    title="시간"
+                    width="100px"
+                    cell={NumberCell}
+                  />
+                  <GridColumn field="edunm" title="교육명" width="200px" />
+                  <GridColumn field="contents" title="교육내용" width="200px" />
+                  <GridColumn field="edueval" title="평가" width="120px" />
+                  <GridColumn
+                    field="eduoffice"
+                    title="교육수료기관"
+                    width="150px"
+                  />
+                  <GridColumn
+                    field="files"
+                    title="첨부파일"
+                    width="150px"
+                    cell={ColumnCommandCell7}
+                  />
+                </Grid>
+              </GridContainer>
+            </FormContext7.Provider>
+          </TabStripTab>
           <TabStripTab
             title="어학사항"
             disabled={workType == "N" ? true : false}
-          ></TabStripTab>
+          >
+            <FormContext8.Provider
+              value={{
+                attdatnum8,
+                files8,
+                setAttdatnum8,
+                setFiles8,
+                mainDataState8,
+                setMainDataState8,
+                // fetchGrid,
+              }}
+            >
+              <GridContainer height={position.height - 220 + "px"}>
+                <GridTitleContainer>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick8}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick8}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: `calc(100% - 35px)` }}
+                  data={process(
+                    mainDataResult8.data.map((row) => ({
+                      ...row,
+                      startdt:
+                        row.startdt != "" ? toDate(row.startdt) : new Date(),
+                      enddt: row.enddt != "" ? toDate(row.enddt) : new Date(),
+                      testdt:
+                        row.testdt != "" ? toDate(row.testdt) : new Date(),
+                      [SELECTED_FIELD]: selectedState8[idGetter8(row)], //선택된 데이터
+                    })),
+                    mainDataState8
+                  )}
+                  onDataStateChange={onMainDataStateChange8}
+                  {...mainDataState8}
+                  //선택 subDataState
+                  dataItemKey={DATA_ITEM_KEY8}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange8}
+                  //스크롤 조회기능
+                  fixedScroll={true}
+                  total={mainDataResult8.total}
+                  skip={page8.skip}
+                  take={page8.take}
+                  pageable={true}
+                  onPageChange={pageChange8}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange8}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange8}
+                  cellRender={customCellRender8}
+                  rowRender={customRowRender8}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="educd"
+                    title="외국어"
+                    width="120px"
+                    cell={CustomComboBoxCell}
+                    footerCell={mainTotalFooterCell8}
+                    headerCell={RequiredHeader}
+                  />
+                  <GridColumn field="testnm" title="시험명" width="150px" />
+                  <GridColumn
+                    field="score"
+                    title="점수"
+                    width="100px"
+                    cell={NumberCell}
+                  />
+                  <GridColumn
+                    field="testdt"
+                    title="일자"
+                    width="120px"
+                    cell={DateCell}
+                  />
+                  <GridColumn field="speaking" title="회화" width="150px" />
+                  <GridColumn field="country" title="체류국가" width="120px" />
+                  <GridColumn
+                    field="startdt"
+                    title="체류시작"
+                    width="120px"
+                    cell={DateCell}
+                  />
+                  <GridColumn
+                    field="enddt"
+                    title="체류종료"
+                    width="120px"
+                    cell={DateCell}
+                  />
+                  <GridColumn
+                    field="files"
+                    title="첨부파일"
+                    width="150px"
+                    cell={ColumnCommandCell8}
+                  />
+                </Grid>
+              </GridContainer>
+            </FormContext8.Provider>
+          </TabStripTab>
         </TabStrip>
         <BottomContainer>
           <ButtonContainer>
@@ -4309,9 +10572,9 @@ const CopyWindow = ({
               닫기
             </Button>
           </ButtonContainer>
-          <div>
-            ※ 현재 탭만 저장되며, 저장 후 새로고침됩니다.(첨부파일은 탭 변경 시
-            이전으로 복구됩니다.)
+          <div style={{ fontWeight: 600, fontSize: "0.95rem" }}>
+            ※ 저장 시 현재 탭만 저장되며, 저장 후 전체 탭이
+            새로고침됩니다.&nbsp;(첨부파일은 탭 변경 시 이전으로 복구됩니다.)
           </div>
         </BottomContainer>
       </Window>
