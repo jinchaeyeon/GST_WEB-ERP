@@ -1,6 +1,25 @@
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  Grid,
+  GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridHeaderCellProps,
+  GridItemChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
+import {
+  Checkbox,
+  Input,
+  InputChangeEvent,
+} from "@progress/kendo-react-inputs";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -11,40 +30,43 @@ import {
   GridTitle,
   GridTitleContainer,
 } from "../../CommonStyled";
-import { ICustData, IWindowPosition } from "../../hooks/interfaces";
-import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
+import { useApi } from "../../hooks/api";
 import {
-  GetPropertyValueByName,
+  IAttachmentData,
+  ICustData,
+  IWindowPosition,
+} from "../../hooks/interfaces";
+import {
+  deletedAttadatnumsState,
+  deletedNameState,
+  isLoading,
+  loginResultState,
+  unsavedNameState,
+} from "../../store/atoms";
+import { Iparameters } from "../../store/types";
+import CheckBoxCell from "../Cells/CheckBoxCell";
+import ComboBoxCell from "../Cells/ComboBoxCell";
+import DateCell from "../Cells/DateCell";
+import NumberCell from "../Cells/NumberCell";
+import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
+import {
+  ThreeNumberceil,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseParaPc,
   convertDateToStr,
   getGridItemChangedData,
   toDate,
 } from "../CommonFunction";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import UserWindow from "../Windows/CommonWindows/PrsnnumWindow";
-import { DataResult, State, getter, process } from "@progress/kendo-data-query";
-import {
-  Grid,
-  GridCellProps,
-  GridColumn,
-  GridDataStateChangeEvent,
-  GridFooterCellProps,
-  GridItemChangeEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
-} from "@progress/kendo-react-grid";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import DateCell from "../Cells/DateCell";
-import NumberCell from "../Cells/NumberCell";
-import ComboBoxCell from "../Cells/ComboBoxCell";
+import UserWindow from "../Windows/CommonWindows/PrsnnumWindow";
+import CodeWindow from "./CommonWindows/CodeWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoading, loginResultState } from "../../store/atoms";
-import { useApi } from "../../hooks/api";
-import { Iparameters } from "../../store/types";
+import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 
 type IKendoWindow = {
   setVisible(t: boolean): void;
@@ -58,6 +80,30 @@ const DATA_ITEM_KEY = "num";
 let deletedMainRows: object[] = [];
 let temp = 0;
 
+type TdataArr = {
+  rowstatus_s: string[];
+  expenseseq2_s: string[];
+  indt_s: string[];
+  usekind_s: string[];
+  cardcd_s: string[];
+  taxdiv_s: string[];
+  etax_s: string[];
+  dptcd_s: string[];
+  custcd_s: string[];
+  custnm_s: string[];
+  rcvcustcd_s: string[];
+  rcvcustnm_s: string[];
+  itemcd_s: string[];
+  itemnm_s: string[];
+  amt_s: string[];
+  taxamt_s: string[];
+  acntcd_s: string[];
+  acntnm_s: string[];
+  attdatnum_s: string[];
+  remark_s: string[];
+  carddt_s: string[];
+  taxtype_s: string[];
+};
 const FormContext = createContext<{
   custcd: string;
   setCustcd: (d: any) => void;
@@ -195,10 +241,26 @@ const KendoWindow = ({
   const processApi = useApi();
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+  const userId = UseGetValueFromSessionItem("user_id");
   const [worktype, setWorkType] = useState<string>(workType);
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
+  const [bizComponentData, setBizComponentData] = useState<any>(null);
+  UseBizComponent(
+    "R_AC038, L_AC024, L_AC013, R_TAXDIV_, L_AC401, L_AC030T",
+    //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
+    setBizComponentData
+  );
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
 
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
@@ -216,10 +278,9 @@ const KendoWindow = ({
   const [custnm, setCustnm] = useState<string>("");
 
   const onClose = () => {
+    if (unsavedName.length > 0) setDeletedName(unsavedName);
     setVisible(false);
   };
-
-  const search = () => {};
 
   const [filters, setFilters] = useState({
     expenseseq1: 0,
@@ -227,7 +288,6 @@ const KendoWindow = ({
     location: "01",
     expensedt: new Date(),
     position: "",
-    auto_transfer: "",
     prsnnum: "",
     prsnnm: "",
     dptcd: "",
@@ -264,6 +324,104 @@ const KendoWindow = ({
             ...item,
             rowstatus: item.rowstatus === "N" ? "N" : "U",
             [name]: value,
+            [EDIT_FIELD]: name,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+    setTempResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
+  const ComboBoxChange = (e: any) => {
+    const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [e.name]: e.name == "itemcd" ? e.values.stdrmkcd : e.value,
+            itemnm: e.name == "itemcd" ? e.values.stdrmknm1 : item.itemnm,
+            acntcd: e.name == "itemcd" ? e.values.acntcd : item.acntcd,
+            acntnm: e.name == "itemcd" ? e.values.acntnm : item.acntnm,
+            [EDIT_FIELD]: e.name,
+          }
+        : {
+            ...item,
+            [EDIT_FIELD]: undefined,
+          }
+    );
+    setTempResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
+  const RadioChange = (e: any) => {
+    const { name, value } = e;
+
+    const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            [name]: value,
+            taxdiv:
+              name == "usekind"
+                ? value == "A" || value == "D" || value == "F"
+                  ? "2"
+                  : "1"
+                : item.taxdiv,
+            taxtype:
+              name == "usekind"
+                ? value == "A" || value == "D" || value == "F"
+                  ? ""
+                  : value == "B"
+                  ? "115"
+                  : value == "C"
+                  ? "110"
+                  : value == "E"
+                  ? "900"
+                  : item.taxtype
+                : item.taxtype,
+            taxamt:
+              name == "usekind"
+                ? value == "A" || value == "D" || value == "F"
+                  ? 0
+                  : value == "B" || value == "C" || value == "E"
+                  ? ThreeNumberceil(item.amt * 0.1)
+                  : item.taxamt
+                : item.taxamt,
+            totamt:
+              name == "usekind"
+                ? item.amt +
+                  (name == "usekind"
+                    ? value == "A" || value == "D" || value == "F"
+                      ? 0
+                      : value == "B" || value == "C" || value == "E"
+                      ? ThreeNumberceil(item.amt * 0.1)
+                      : item.taxamt
+                    : item.taxamt)
+                : item.totamt,
             [EDIT_FIELD]: name,
           }
         : {
@@ -331,16 +489,87 @@ const KendoWindow = ({
     });
   };
 
+  const getAttachmentsData = (data: IAttachmentData) => {
+    const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            attdatnum: data.attdatnum,
+            files:
+              data.original_name +
+              (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
+          }
+        : {
+            ...item,
+          }
+    );
+    setTempResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+  interface ICodeData {
+    stdrmkcd: string;
+    stdrmknm1: string;
+    acntcd: string;
+    acntnm: string;
+  }
+
+  const setCodeData = (data: ICodeData) => {
+    const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            itemcd: data.stdrmkcd,
+            itemnm: data.stdrmknm1,
+            acntcd: data.acntcd,
+            acntnm: data.acntnm,
+          }
+        : {
+            ...item,
+          }
+    );
+    setTempResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
   const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-
+  const [codeWindowVisible, setCodeWindowVisible] = useState<boolean>(false);
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
   const onUserWndClick = () => {
     setUserWindowVisible(true);
   };
-
+  const onCodeWndClick = () => {
+    setCodeWindowVisible(true);
+  };
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -457,6 +686,10 @@ const KendoWindow = ({
           ? {
               ...item,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
+              taxamt: item.taxdiv == "1" ? ThreeNumberceil(item.amt * 0.1) : 0,
+              totamt:
+                item.amt +
+                (item.taxdiv == "1" ? ThreeNumberceil(item.amt * 0.1) : 0),
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -535,7 +768,6 @@ const KendoWindow = ({
         location: para.location,
         expensedt: para.expensedt == "" ? new Date() : toDate(para.expensedt),
         position: para.position,
-        auto_transfer: para.auto_transfer,
         prsnnum: para.prsnnum,
         prsnnm: para.prsnnm,
         dptcd: para.dptcd,
@@ -588,17 +820,17 @@ const KendoWindow = ({
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
-      if (workType == "C") {
+      if (worktype == "C") {
         const newData = rows.map((item: any) => ({
           ...item,
           rowstatus: "N",
           attdatnum: "",
         }));
-        setWorkType("N");
+
         setMainDataResult((prev) => {
           return {
             data: newData,
-            total: prev.total,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
       } else {
@@ -619,9 +851,9 @@ const KendoWindow = ({
     // 필터 isSearch false처리, pgNum 세팅
     setFilters((prev) => ({
       ...prev,
-      expenseno: workType == "C" ? "" : prev.expenseno,
-      expensedt: workType == "C" ? new Date() : prev.expensedt,
-      expenseseq1: workType == "C" ? 0 : prev.expenseseq1,
+      expenseno: worktype == "C" ? "" : prev.expenseno,
+      expensedt: worktype == "C" ? new Date() : prev.expensedt,
+      expenseseq1: worktype == "C" ? 0 : prev.expenseseq1,
       pgNum:
         data && data.hasOwnProperty("pageNumber")
           ? data.pageNumber
@@ -682,48 +914,29 @@ const KendoWindow = ({
       acntnm: "",
       actkey: "",
       amt: 0,
-      amtunit: "",
       attdatnum: "",
-      auto_transfer: "",
       cardcd: "",
       carddt: convertDateToStr(new Date()),
       chk: "N",
-      creditcd: "",
-      creditnm: "",
       custcd: "",
       custnm: "",
-      dptcd: workType == "N" ? filters.dptcd : para.dptcd,
+      dptcd: worktype == "N" || worktype == "C" ? filters.dptcd : para.dptcd,
       etax: "",
-      expensedt: "",
+      expensedt: convertDateToStr(new Date()),
       expenseno: "",
       expenseseq1: 0,
       expenseseq2: 0,
       files: "",
-      fxassetcd: "",
-      incidentalamt: 0,
-      indt: "",
-      insiz: "",
-      itemacnt: "",
+      indt: convertDateToStr(new Date()),
       itemcd: "",
       itemnm: "",
-      ma210t_recdt: "",
-      ma210t_seq1: 0,
-      ma210t_seq2: 0,
-      ordnum: "",
       orgdiv: "01",
-      printdiv: "",
-      qty: 0,
-      rcvcustcd: "",
-      rcvcustnm: "",
       remark: "",
       taxamt: 0,
-      taxdiv: "",
-      taxnum: "",
+      taxdiv: "2",
       taxtype: "",
       totamt: 0,
-      unp: 0,
       usekind: "A",
-      wonamt: 0,
       rowstatus: "N",
     };
 
@@ -734,6 +947,366 @@ const KendoWindow = ({
         total: prev.total + 1,
       };
     });
+  };
+
+  const [values2, setValues2] = React.useState<boolean>(false);
+  const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
+    const changeCheck = () => {
+      const newData = mainDataResult.data.map((item) => ({
+        ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        chk: !values2,
+        [EDIT_FIELD]: props.field,
+      }));
+      setValues2(!values2);
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
+
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Checkbox value={values2} onClick={changeCheck}></Checkbox>
+      </div>
+    );
+  };
+
+  const selectData = (selectedData: any) => {
+    if (mainDataResult.total == 0) {
+      alert("저장할 데이터가 존재하지 않습니다.");
+    } else {
+      let valid = true;
+
+      mainDataResult.data.map((item) => {
+        if (
+          item.location == "" ||
+          item.prsnnum == "" ||
+          item.usekind == "" ||
+          item.itemcd == ""
+        ) {
+          valid = false;
+        }
+      });
+
+      if (valid != true) {
+        alert("필수값을 채워주세요.");
+      } else {
+        const dataItem = mainDataResult.data.filter((item: any) => {
+          return (
+            (item.rowstatus === "N" || item.rowstatus === "U") &&
+            item.rowstatus !== undefined
+          );
+        });
+
+        let dataArr: TdataArr = {
+          rowstatus_s: [],
+          expenseseq2_s: [],
+          indt_s: [],
+          usekind_s: [],
+          cardcd_s: [],
+          taxdiv_s: [],
+          etax_s: [],
+          dptcd_s: [],
+          custcd_s: [],
+          custnm_s: [],
+          rcvcustcd_s: [],
+          rcvcustnm_s: [],
+          itemcd_s: [],
+          itemnm_s: [],
+          amt_s: [],
+          taxamt_s: [],
+          acntcd_s: [],
+          acntnm_s: [],
+          attdatnum_s: [],
+          remark_s: [],
+          carddt_s: [],
+          taxtype_s: [],
+        };
+
+        dataItem.forEach((item: any, idx: number) => {
+          const {
+            rowstatus = "",
+            expenseseq2 = "",
+            indt = "",
+            usekind = "",
+            cardcd = "",
+            taxdiv = "",
+            etax = "",
+            dptcd = "",
+            custcd = "",
+            custnm = "",
+            rcvcustcd = "",
+            rcvcustnm = "",
+            itemcd = "",
+            itemnm = "",
+            amt = "",
+            taxamt = "",
+            acntcd = "",
+            acntnm = "",
+            attdatnum = "",
+            remark = "",
+            carddt = "",
+            taxtype = "",
+          } = item;
+          dataArr.rowstatus_s.push(rowstatus);
+          dataArr.expenseseq2_s.push(
+            expenseseq2 == undefined || expenseseq2 == "" ? 0 : expenseseq2
+          );
+          dataArr.indt_s.push(indt == undefined ? "" : indt);
+          dataArr.usekind_s.push(usekind == undefined ? "" : usekind);
+          dataArr.cardcd_s.push(cardcd == undefined ? "" : cardcd);
+          dataArr.taxdiv_s.push(taxdiv == undefined ? "" : taxdiv);
+          dataArr.etax_s.push(etax == undefined ? "" : etax);
+          dataArr.dptcd_s.push(dptcd == undefined ? "" : dptcd);
+          dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
+          dataArr.custnm_s.push(custnm == undefined ? "" : custnm);
+          dataArr.rcvcustcd_s.push(rcvcustcd == undefined ? "" : rcvcustcd);
+          dataArr.rcvcustnm_s.push(rcvcustnm == undefined ? "" : rcvcustnm);
+          dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
+          dataArr.itemnm_s.push(itemnm == undefined ? "" : itemnm);
+          dataArr.amt_s.push(amt == undefined ? 0 : amt);
+          dataArr.taxamt_s.push(taxamt == undefined ? 0 : taxamt);
+          dataArr.acntcd_s.push(acntcd == undefined ? "" : acntcd);
+          dataArr.acntnm_s.push(acntnm == undefined ? "" : acntnm);
+          dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+          dataArr.remark_s.push(remark == undefined ? "" : remark);
+          dataArr.carddt_s.push(carddt == undefined ? "" : carddt);
+          dataArr.taxtype_s.push(taxtype == undefined ? "" : taxtype);
+        });
+
+        deletedMainRows.forEach((item: any, idx: number) => {
+          const {
+            rowstatus = "",
+            expenseseq2 = "",
+            indt = "",
+            usekind = "",
+            cardcd = "",
+            taxdiv = "",
+            etax = "",
+            dptcd = "",
+            custcd = "",
+            custnm = "",
+            rcvcustcd = "",
+            rcvcustnm = "",
+            itemcd = "",
+            itemnm = "",
+            amt = "",
+            taxamt = "",
+            acntcd = "",
+            acntnm = "",
+            attdatnum = "",
+            remark = "",
+            carddt = "",
+            taxtype = "",
+          } = item;
+          dataArr.rowstatus_s.push(rowstatus);
+          dataArr.expenseseq2_s.push(
+            expenseseq2 == undefined || expenseseq2 == "" ? 0 : expenseseq2
+          );
+          dataArr.indt_s.push(indt == undefined ? "" : indt);
+          dataArr.usekind_s.push(usekind == undefined ? "" : usekind);
+          dataArr.cardcd_s.push(cardcd == undefined ? "" : cardcd);
+          dataArr.taxdiv_s.push(taxdiv == undefined ? "" : taxdiv);
+          dataArr.etax_s.push(etax == undefined ? "" : etax);
+          dataArr.dptcd_s.push(dptcd == undefined ? "" : dptcd);
+          dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
+          dataArr.custnm_s.push(custnm == undefined ? "" : custnm);
+          dataArr.rcvcustcd_s.push(rcvcustcd == undefined ? "" : rcvcustcd);
+          dataArr.rcvcustnm_s.push(rcvcustnm == undefined ? "" : rcvcustnm);
+          dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
+          dataArr.itemnm_s.push(itemnm == undefined ? "" : itemnm);
+          dataArr.amt_s.push(amt == undefined ? 0 : amt);
+          dataArr.taxamt_s.push(taxamt == undefined ? 0 : taxamt);
+          dataArr.acntcd_s.push(acntcd == undefined ? "" : acntcd);
+          dataArr.acntnm_s.push(acntnm == undefined ? "" : acntnm);
+          dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+          dataArr.remark_s.push(remark == undefined ? "" : remark);
+          dataArr.carddt_s.push(carddt == undefined ? "" : carddt);
+          dataArr.taxtype_s.push(taxtype == undefined ? "" : taxtype);
+        });
+
+        setParaData((prev) => ({
+          ...prev,
+          workType: worktype == "C" ? "N" : worktype,
+          expensedt: convertDateToStr(filters.expensedt),
+          expenseseq1: filters.expenseseq1,
+          location: filters.location,
+          prsnnum: filters.prsnnum,
+          dptcd: filters.dptcd,
+          position: filters.position,
+          rowstatus_s: dataArr.rowstatus_s.join("|"),
+          expenseseq2_s: dataArr.expenseseq2_s.join("|"),
+          indt_s: dataArr.indt_s.join("|"),
+          usekind_s: dataArr.usekind_s.join("|"),
+          cardcd_s: dataArr.cardcd_s.join("|"),
+          taxdiv_s: dataArr.taxdiv_s.join("|"),
+          etax_s: dataArr.etax_s.join("|"),
+          dptcd_s: dataArr.dptcd_s.join("|"),
+          custcd_s: dataArr.custcd_s.join("|"),
+          custnm_s: dataArr.custnm_s.join("|"),
+          rcvcustcd_s: dataArr.rcvcustcd_s.join("|"),
+          rcvcustnm_s: dataArr.rcvcustnm_s.join("|"),
+          itemcd_s: dataArr.itemcd_s.join("|"),
+          itemnm_s: dataArr.itemnm_s.join("|"),
+          amt_s: dataArr.amt_s.join("|"),
+          taxamt_s: dataArr.taxamt_s.join("|"),
+          acntcd_s: dataArr.acntcd_s.join("|"),
+          acntnm_s: dataArr.acntnm_s.join("|"),
+          attdatnum_s: dataArr.attdatnum_s.join("|"),
+          remark_s: dataArr.remark_s.join("|"),
+          carddt_s: dataArr.carddt_s.join("|"),
+          taxtype_s: dataArr.taxtype_s.join("|"),
+        }));
+      }
+    }
+  };
+
+  const [ParaData, setParaData] = useState({
+    workType: "",
+    expensedt: "",
+    expenseseq1: 0,
+    location: "",
+    prsnnum: "",
+    dptcd: "",
+    position: "",
+    rowstatus_s: "",
+    expenseseq2_s: "",
+    indt_s: "",
+    usekind_s: "",
+    cardcd_s: "",
+    taxdiv_s: "",
+    etax_s: "",
+    dptcd_s: "",
+    custcd_s: "",
+    custnm_s: "",
+    rcvcustcd_s: "",
+    rcvcustnm_s: "",
+    itemcd_s: "",
+    itemnm_s: "",
+    amt_s: "",
+    taxamt_s: "",
+    acntcd_s: "",
+    acntnm_s: "",
+    attdatnum_s: "",
+    remark_s: "",
+    carddt_s: "",
+    taxtype_s: "",
+  });
+
+  const paraSaved: Iparameters = {
+    procedureName: "P_AC_A1020W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": "01",
+      "@p_expensedt": ParaData.expensedt,
+      "@p_expenseseq1": ParaData.expenseseq1,
+      "@p_location": ParaData.location,
+      "@p_prsnnum": ParaData.prsnnum,
+      "@p_dptcd": ParaData.dptcd,
+      "@p_position": ParaData.position,
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_expenseseq2_s": ParaData.expenseseq2_s,
+      "@p_indt_s": ParaData.indt_s,
+      "@p_usekind_s": ParaData.usekind_s,
+      "@p_cardcd_s": ParaData.cardcd_s,
+      "@p_taxdiv_s": ParaData.taxdiv_s,
+      "@p_etax_s": ParaData.etax_s,
+      "@p_dptcd_s": ParaData.dptcd_s,
+      "@p_custcd_s": ParaData.custcd_s,
+      "@p_custnm_s": ParaData.custnm_s,
+      "@p_rcvcustcd_s": ParaData.rcvcustcd_s,
+      "@p_rcvcustnm_s": ParaData.rcvcustnm_s,
+      "@p_itemcd_s": ParaData.itemcd_s,
+      "@p_itemnm_s": ParaData.itemnm_s,
+      "@p_amt_s": ParaData.amt_s,
+      "@p_taxamt_s": ParaData.taxamt_s,
+      "@p_acntcd_s": ParaData.acntcd_s,
+      "@p_acntnm_s": ParaData.acntnm_s,
+      "@p_attdatnum_s": ParaData.attdatnum_s,
+      "@p_remark_s": ParaData.remark_s,
+      "@p_carddt_s": ParaData.carddt_s,
+      "@p_taxtype_s": ParaData.taxtype_s,
+      "@p_expenseno_s": "",
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "AC_A1020W",
+    },
+  };
+
+  useEffect(() => {
+    if (ParaData.workType != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", paraSaved);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      setData(data.returnString);
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: data.returnString,
+        isSearch: true,
+      }));
+      let array: any[] = [];
+      deletedMainRows.map((item: any) => {
+        array.push(item.attdatnum);
+      });
+      setDeletedAttadatnums(array);
+      setUnsavedName([]);
+      deletedMainRows = [];
+      if (ParaData.workType == "N") {
+        setVisible(false);
+      }
+      setParaData({
+        workType: "",
+        expensedt: "",
+        expenseseq1: 0,
+        location: "",
+        prsnnum: "",
+        dptcd: "",
+        position: "",
+        rowstatus_s: "",
+        expenseseq2_s: "",
+        indt_s: "",
+        usekind_s: "",
+        cardcd_s: "",
+        taxdiv_s: "",
+        etax_s: "",
+        dptcd_s: "",
+        custcd_s: "",
+        custnm_s: "",
+        rcvcustcd_s: "",
+        rcvcustnm_s: "",
+        itemcd_s: "",
+        itemnm_s: "",
+        amt_s: "",
+        taxamt_s: "",
+        acntcd_s: "",
+        acntnm_s: "",
+        attdatnum_s: "",
+        remark_s: "",
+        carddt_s: "",
+        taxtype_s: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
   };
 
   return (
@@ -837,17 +1410,6 @@ const KendoWindow = ({
                   className="readonly"
                 />
               </td>
-              <th>이체구분</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="auto_transfer"
-                    value={filters.auto_transfer}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
             </tr>
           </tbody>
         </FormBox>
@@ -863,12 +1425,12 @@ const KendoWindow = ({
           // fetchGrid,
         }}
       >
-        <GridContainer height={position.height - 600 + "px"}>
+        <GridContainer height={position.height - 500 + "px"}>
           <GridTitleContainer>
             <GridTitle>기본정보</GridTitle>
             <ButtonContainer>
               <Button
-                //onClick={onAddClick}
+                onClick={onAddClick}
                 themeColor={"primary"}
                 icon="plus"
                 title="행 추가"
@@ -919,6 +1481,13 @@ const KendoWindow = ({
           >
             <GridColumn field="rowstatus" title=" " width="50px" />
             <GridColumn
+              field="chk"
+              title=" "
+              width="45px"
+              headerCell={CustomCheckBoxCell2}
+              cell={CheckBoxCell}
+            />
+            <GridColumn
               field="carddt"
               title="사용일"
               width="120px"
@@ -963,6 +1532,32 @@ const KendoWindow = ({
       <FormBoxWrap>
         <FormBox>
           <tbody>
+            <tr>
+              <th>사용유형</th>
+              <td colSpan={7}>
+                {bizComponentData !== null && (
+                  <BizComponentRadioGroup
+                    name="usekind"
+                    value={
+                      mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined
+                        ? ""
+                        : mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0].usekind
+                    }
+                    bizComponentId="R_AC038"
+                    bizComponentData={bizComponentData}
+                    changeData={RadioChange}
+                  />
+                )}
+              </td>
+            </tr>
             <tr>
               <th>고객사코드</th>
               <td>
@@ -1011,16 +1606,281 @@ const KendoWindow = ({
                   className="readonly"
                 />
               </td>
+              <th>예산항목코드</th>
+              <td>
+                <Input
+                  name="itemcd"
+                  type="text"
+                  value={
+                    mainDataResult.data.filter(
+                      (item: any) =>
+                        item.num == Object.getOwnPropertyNames(selectedState)[0]
+                    )[0] == undefined
+                      ? ""
+                      : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].itemcd
+                  }
+                  onChange={InputChange}
+                  className="required"
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onCodeWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+              <th>예산항목명</th>
+              <td>
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="itemcd"
+                    value={
+                      mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined
+                        ? ""
+                        : mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0].itemcd
+                    }
+                    bizComponentId="L_AC024"
+                    bizComponentData={bizComponentData}
+                    changeData={ComboBoxChange}
+                    valueField="stdrmkcd"
+                    textField="stdrmknm1"
+                    para="AC_A1020W"
+                  />
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th>계산서유형</th>
+              <td>
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="taxtype"
+                    value={
+                      mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined
+                        ? ""
+                        : mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0].taxtype
+                    }
+                    bizComponentId="L_AC013"
+                    bizComponentData={bizComponentData}
+                    changeData={ComboBoxChange}
+                    disabled={
+                      mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined
+                        ? true
+                        : mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0].usekind == "A" ||
+                          mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0].usekind == "D" ||
+                          mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0].usekind == "F"
+                        ? true
+                        : false
+                    }
+                  />
+                )}
+              </td>
+              <th>계산서유형 세액</th>
+              <td>
+                {bizComponentData !== null && (
+                  <BizComponentRadioGroup
+                    name="taxdiv"
+                    value={
+                      mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined
+                        ? ""
+                        : mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0].taxdiv
+                    }
+                    bizComponentId="R_TAXDIV_"
+                    bizComponentData={bizComponentData}
+                    changeData={RadioChange}
+                    disabled={true}
+                  />
+                )}
+              </td>
+              <th>계정과목코드</th>
+              <td>
+                <Input
+                  name="acntcd"
+                  type="text"
+                  value={
+                    mainDataResult.data.filter(
+                      (item: any) =>
+                        item.num == Object.getOwnPropertyNames(selectedState)[0]
+                    )[0] == undefined
+                      ? ""
+                      : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].acntcd
+                  }
+                  className="readonly"
+                />
+              </td>
+              <th>계정과목명</th>
+              <td>
+                <Input
+                  name="acntnm"
+                  type="text"
+                  value={
+                    mainDataResult.data.filter(
+                      (item: any) =>
+                        item.num == Object.getOwnPropertyNames(selectedState)[0]
+                    )[0] == undefined
+                      ? ""
+                      : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].acntnm
+                  }
+                  className="readonly"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>계산서구분</th>
+              <td>
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="etax"
+                    value={
+                      mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined
+                        ? ""
+                        : mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0].etax
+                    }
+                    bizComponentId="L_AC401"
+                    bizComponentData={bizComponentData}
+                    changeData={ComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>카드관련</th>
+              <td>
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="cardcd"
+                    value={
+                      mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined
+                        ? ""
+                        : mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0].cardcd
+                    }
+                    bizComponentId="L_AC030T"
+                    bizComponentData={bizComponentData}
+                    changeData={ComboBoxChange}
+                    valueField="creditcd"
+                    textField="creditnm"
+                    disabled={
+                      mainDataResult.data.filter(
+                        (item: any) =>
+                          item.num ==
+                          Object.getOwnPropertyNames(selectedState)[0]
+                      )[0] == undefined
+                        ? true
+                        : mainDataResult.data.filter(
+                            (item: any) =>
+                              item.num ==
+                              Object.getOwnPropertyNames(selectedState)[0]
+                          )[0].usekind == "B"
+                        ? false
+                        : true
+                    }
+                  />
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th>첨부파일</th>
+              <td colSpan={7}>
+                <Input
+                  name="files"
+                  type="text"
+                  value={
+                    mainDataResult.data.filter(
+                      (item: any) =>
+                        item.num == Object.getOwnPropertyNames(selectedState)[0]
+                    )[0] == undefined
+                      ? ""
+                      : mainDataResult.data.filter(
+                          (item: any) =>
+                            item.num ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )[0].files
+                  }
+                  className="readonly"
+                />
+                <ButtonInInput>
+                  <Button
+                    type={"button"}
+                    onClick={onAttachmentsWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
             </tr>
           </tbody>
         </FormBox>
       </FormBoxWrap>
       <BottomContainer>
         <ButtonContainer>
-          <Button
-            themeColor={"primary"}
-            //onClick={onConfirmClick}
-          >
+          <Button themeColor={"primary"} onClick={selectData}>
             확인
           </Button>
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
@@ -1033,6 +1893,26 @@ const KendoWindow = ({
           setVisible={setUserWindowVisible}
           workType={"N"}
           setData={setUserData}
+        />
+      )}
+      {codeWindowVisible && (
+        <CodeWindow setVisible={setCodeWindowVisible} setData={setCodeData} />
+      )}
+      {attachmentsWindowVisible && (
+        <PopUpAttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={
+            mainDataResult.data.filter(
+              (item: any) =>
+                item.num == Object.getOwnPropertyNames(selectedState)[0]
+            )[0] == undefined
+              ? ""
+              : mainDataResult.data.filter(
+                  (item: any) =>
+                    item.num == Object.getOwnPropertyNames(selectedState)[0]
+                )[0].attdatnum
+          }
         />
       )}
       {custWindowVisible && (

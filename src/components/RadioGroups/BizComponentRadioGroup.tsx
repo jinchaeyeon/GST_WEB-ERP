@@ -14,6 +14,7 @@ type TBizComponentRadioGroup = {
   changeData?(e: any): void;
   className?: string;
   excludedCodes?: any[]; // 제외할 코드값
+  disabled? : boolean;
 };
 
 const BizComponentRadioGroup = ({
@@ -25,6 +26,7 @@ const BizComponentRadioGroup = ({
   changeData,
   className = "",
   excludedCodes = [],
+  disabled = false,
 }: TBizComponentRadioGroup) => {
   if (bizComponentData) {
     bizComponentData = bizComponentData.find(
@@ -89,6 +91,7 @@ const BizComponentRadioGroup = ({
       value={value}
       onChange={onChangeHandle}
       className={className}
+      disabled={disabled}
     />
   );
 };

@@ -63,6 +63,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import ApprovalWindow from "../components/Windows/CommonWindows/ApprovalWindow";
 import DetailWindow from "../components/Windows/AC_A1020W_Window";
+import AC_A1020W_Print_Window from "../components/Windows/AC_A1020W_Print_Window";
 
 interface IPrsnnum {
   user_id: string;
@@ -531,49 +532,35 @@ const AC_A1020W: React.FC = () => {
       "@p_prsnnum": "",
       "@p_dptcd": "",
       "@p_position": "",
-      "@p_auto_transfer": "",
 
       "@p_rowstatus_s": "",
       "@p_expenseseq2_s": "",
-      "@p_INDT_s": "",
-      "@p_USEKIND_s": "",
-      "@p_CARDCD_s": "",
-      "@p_TAXDIV_s": "",
-      "@p_ETAX_s": "",
-      "@p_DPTCD_s": "",
-      "@p_CUSTCD_s": "",
-      "@p_CUSTNM_s": "",
-      "@p_RCVCUSTCD_s": "",
-      "@p_RCVCUSTNM_s": "",
-      "@p_ITEMCD_s": "",
-      "@p_ITEMNM_s": "",
-      "@p_QTY_s": "",
-      "@p_AMT_s": "",
-      "@p_TAXAMT_s": "",
-      "@p_incidentalamt_s": "",
-      "@p_AMTUNIT_s": "",
-      "@p_UNP_s": "",
-      "@p_WONAMT_s": "",
-      "@p_ACNTCD_s": "",
-      "@p_ACNTNM_s": "",
-      "@p_ATTDATNUM_s": "",
-      "@p_fxassetcd_s": "",
-      "@p_ORDNUM_s": "",
-      "@p_REMARK_s": "",
+      "@p_indt_s": "",
+      "@p_usekind_s": "",
+      "@p_cardcd_s": "",
+      "@p_taxdiv_s": "",
+      "@p_etax_s": "",
+      "@p_dptcd_s": "",
+      "@p_custcd_s": "",
+      "@p_custnm_s": "",
+      "@p_rcvcustcd_s": "",
+      "@p_rcvcustnm_s": "",
+      "@p_itemcd_s": "",
+      "@p_itemnm_s": "",
+      "@p_amt_s": "",
+      "@p_taxamt_s": "",
+      "@p_acntcd_s": "",
+      "@p_acntnm_s": "",
+      "@p_attdatnum_s": "",
+      "@p_remark_s": "",
       "@p_carddt_s": "",
       "@p_taxtype_s": "",
-      "@p_creditcd_s": "",
-      "@p_creditnm_s": "",
-      "@p_auto_transfer_s": "",
-      "@p_printdiv_s": "",
-      "@p_ma210t_recdt_s": "",
-      "@p_ma210t_seq1_s": "",
-      "@p_ma210t_seq2_s": "",
 
       "@p_expenseno_s": "",
+
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "AC_1020W",
+      "@p_form_id": "AC_A1020W",
     },
   };
 
@@ -654,7 +641,15 @@ const AC_A1020W: React.FC = () => {
 
   const [detailWindowVisible2, setDetailWindowVisible2] =
     useState<boolean>(false);
+  const [printWindowVisible, setPrintWindowVisible] = useState<boolean>(false);
 
+  const onPrintClick = () => {
+    if (mainDataResult.total > 0) {
+      setPrintWindowVisible(true);
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
   const onCheckClick = () => {
     if (mainDataResult.total > 0) {
       const selectRow = mainDataResult.data.filter(
@@ -826,7 +821,18 @@ const AC_A1020W: React.FC = () => {
           }}
         >
           <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
+            <GridTitle>
+              요약정보
+              <Button
+                onClick={onPrintClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="file"
+                style={{ marginLeft: 15 }}
+              >
+                미리보기
+              </Button>
+            </GridTitle>
             <ButtonContainer>
               <Button
                 onClick={onCheckClick}
@@ -992,6 +998,25 @@ const AC_A1020W: React.FC = () => {
               find_row_value: str,
               isSearch: true,
             }))
+          }
+          modal={true}
+        />
+      )}
+      {printWindowVisible && (
+        <AC_A1020W_Print_Window
+          setVisible={setPrintWindowVisible}
+          para={
+            mainDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0] != undefined
+              ? mainDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0]
+              : ""
           }
           modal={true}
         />

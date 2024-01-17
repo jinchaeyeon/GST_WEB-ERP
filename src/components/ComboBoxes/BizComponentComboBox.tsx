@@ -17,6 +17,8 @@ type TCommonComboBox = {
   textField?: string;
   valueField?: string;
   className?: string;
+  disabled? : boolean;
+  para? : string;
 };
 const CommonComboBox = ({
   name,
@@ -26,7 +28,9 @@ const CommonComboBox = ({
   changeData,
   textField = "code_name",
   valueField = "sub_code",
-  className = ""
+  className = "",
+  disabled = false,
+  para =""
 }: TCommonComboBox) => {
   const processApi = useApi();
   const [listData, setListData] = useState([]);
@@ -86,7 +90,12 @@ const CommonComboBox = ({
   }
   const onChangeHandle = (e: ComboBoxChangeEvent) => {
     let value = e.target.value === null ? "" : e.target.value[valueField];
-    changeData({ name, value });
+    let values = e.value;
+    if(para == "AC_A1020W") {
+      changeData({ name, values });
+    } else {
+      changeData({ name, value });
+    }
   };
 
   return (
@@ -101,6 +110,7 @@ const CommonComboBox = ({
       onChange={onChangeHandle}
       required={required}
       className={className}
+      disabled={disabled}
     />
   );
 };
