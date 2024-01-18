@@ -1,0 +1,206 @@
+import { TGrid } from "../types";
+
+export const gridList: Array<TGrid> = [
+  {
+    gridName: "grdList",
+    columns: [
+      {
+        id: "col_appsts",
+        field: "appsts",
+        caption: "결재상태",
+        width: 120,
+      },
+      {
+        id: "col_carddt",
+        field: "carddt",
+        caption: "사용일",
+        width: 120,
+      },
+      {
+        id: "col_dptcd",
+        field: "dptcd",
+        caption: "비용부서",
+        width: 120,
+      },
+      {
+        id: "col_prsnnum",
+        field: "prsnnum",
+        caption: "요청자 사번",
+        width: 120,
+      },
+      {
+        id: "col_prsnnm",
+        field: "prsnnm",
+        caption: "요청자",
+        width: 120,
+      },
+      {
+        id: "col_postcd",
+        field: "postcd",
+        caption: "직위",
+        width: 120,
+      },
+      {
+        id: "col_rcvcustcd",
+        field: "rcvcustcd",
+        caption: "사용처코드",
+        width: 120,
+      },
+      {
+        id: "col_rcvcustnm",
+        field: "rcvcustnm",
+        caption: "사용처명",
+        width: 120,
+      },
+      {
+        id: "col_itemnm",
+        field: "itemnm",
+        caption: "예산항목명",
+        width: 120,
+      },
+      {
+        id: "col_acntnm",
+        field: "acntnm",
+        caption: "계정과목명",
+        width: 120,
+      },
+      {
+        id: "col_amt1",
+        field: "amt1",
+        caption: "지출금액",
+        width: 100,
+      },
+      {
+        id: "col_amt",
+        field: "amt",
+        caption: "공급가액",
+        width: 100,
+      },
+      {
+        id: "col_taxamt",
+        field: "taxamt",
+        caption: "세액",
+        width: 100,
+      },
+      {
+        id: "col_remark",
+        field: "remark",
+        caption: "품의내역",
+        width: 120,
+      },
+      {
+        id: "col_cardcd",
+        field: "cardcd",
+        caption: "카드관련",
+        width: 120,
+      },
+      {
+        id: "col_creditcd",
+        field: "creditcd",
+        caption: "카드관련",
+        width: 120,
+      },
+      {
+        id: "col_creditnm",
+        field: "creditnm",
+        caption: "카드회사명",
+        width: 120,
+      },
+      {
+        id: "col_usekind",
+        field: "usekind",
+        caption: "사용유형",
+        width: 120,
+      },
+      {
+        id: "col_etax",
+        field: "etax",
+        caption: "계산서구분",
+        width: 120,
+      },
+      {
+        id: "col_taxdiv",
+        field: "taxdiv",
+        caption: "과세구분",
+        width: 120,
+      },
+      {
+        id: "col_expensekey",
+        field: "expensekey",
+        caption: "결의서NO",
+        width: 150,
+      },
+      {
+        id: "col_acntdiv",
+        field: "acntdiv",
+        caption: "전표",
+        width: 120,
+      },
+      {
+        id: "col_taxtype",
+        field: "taxtype",
+        caption: "계산서유형",
+        width: 120,
+      },
+      {
+        id: "col_location",
+        field: "location",
+        caption: "사업장",
+        width: 120,
+      },
+      {
+        id: "col_position",
+        field: "position",
+        caption: "사업부",
+        width: 120,
+      },
+    ],
+  },
+  {
+    gridName: "grdList2",
+    columns: [
+      {
+        id: "col_acntnm2",
+        field: "acntnm",
+        caption: "계정과목",
+        width: 120,
+      },
+      {
+        id: "col_slipamt",
+        field: "slipamt",
+        caption: "금액",
+        width: 100,
+      },
+      {
+        id: "col_mngdata1",
+        field: "mngdata1",
+        caption: "예적금코드",
+        width: 120,
+      },
+      {
+        id: "col_mngdatanm1",
+        field: "mngdatanm1",
+        caption: "예적금명",
+        width: 120,
+      },
+      {
+        id: "col_acntcd",
+        field: "acntcd",
+        caption: "계정과목코드",
+        width: 120,
+      },
+      {
+        id: "col_acntnm1",
+        field: "acntnm1",
+        caption: "계정명",
+        width: 120,
+      },
+      {
+        id: "col_remark2",
+        field: "remark",
+        caption: "적요",
+        width: 200,
+      },
+    ],
+  },
+];
