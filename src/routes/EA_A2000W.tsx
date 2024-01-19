@@ -957,6 +957,21 @@ const EA_A2000W: React.FC = () => {
         isSearch: true,
         pgNum: 1,
       }));
+      setDetailParaDataSaved({
+        work_type: "",
+        orgdiv: "01",
+        appnum: "",
+        attdatnum: "",
+        rtcomment: "",
+        userid: userId,
+        pc: pc,
+        pagediv: "",
+        comment: "",
+        form_id: "EA_A2000W",
+        rowstatus_s: "",
+        commseq_s: "",
+        time_s: "",
+      });
     } else {
       alert("[" + data.statusCode + "] " + data.resultMessage);
     }
@@ -968,6 +983,23 @@ const EA_A2000W: React.FC = () => {
   useEffect(() => {
     if (detailParaDataSaved.work_type !== "") fetchDetailGridSaved();
   }, [detailParaDataSaved]);
+
+  const onDeleteClick = () => {
+    if (mainDataResult.total > 0) {
+      const datas = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+
+      setDetailParaDataSaved((prev) => ({
+        ...prev,
+        work_type: "D",
+        appnum: datas.appnum,
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
 
   return (
     <>
@@ -1153,6 +1185,16 @@ const EA_A2000W: React.FC = () => {
             ) : filters.appgb == "A" ? (
               <GridTitleContainer>
                 <GridTitle>개인결재현황</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={() => onDeleteClick()}
+                    icon="delete"
+                    fillMode="outline"
+                    themeColor={"primary"}
+                  >
+                    삭제
+                  </Button>
+                </ButtonContainer>
               </GridTitleContainer>
             ) : filters.appgb == "F" ? (
               <GridTitleContainer>

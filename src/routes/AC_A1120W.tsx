@@ -1,6 +1,8 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
+  Grid,
+  GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
   GridPageChangeEvent,
@@ -11,11 +13,16 @@ import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
+  ButtonInInput,
   FilterBox,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
   Title,
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import { gridList } from "../store/columns/AC_A1120W_C";
 import {
   GetPropertyValueByName,
   UseCustomOption,
@@ -26,11 +33,19 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
-import { PAGE_SIZE } from "../components/CommonString";
+import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
-import { Iparameters, TPermissions } from "../store/types";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import FilterContainer from "../components/Containers/FilterContainer";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import { Input } from "@progress/kendo-react-inputs";
+import { Button } from "@progress/kendo-react-buttons";
+import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
+import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import NumberCell from "../components/Cells/NumberCell";
 
 const DATA_ITEM_KEY = "num";
 const numberField = ["slipamt_1", "slipamt_2"];
@@ -244,6 +259,12 @@ const AC_A1120W: React.FC = () => {
   };
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const [accountWindowVisible, setAccountWindowVisible] =
+    useState<boolean>(false);
+
+  const onAccountWndClick = () => {
+    setAccountWindowVisible(true);
+  };
 
   const onCustWndClick = () => {
     setCustWindowVisible(true);
@@ -261,12 +282,22 @@ const AC_A1120W: React.FC = () => {
     compclass: string;
     ceonm: string;
   }
-
+  interface IAccountData {
+    acntcd: string;
+    acntnm: string;
+  }
   const setCustData = (data: ICustData) => {
     setFilters((prev) => ({
       ...prev,
       custcd: data.custcd,
       custnm: data.custnm,
+    }));
+  };
+  const setAccountData = (data: IAccountData) => {
+    setFilters((prev) => ({
+      ...prev,
+      acntcd: data.acntcd,
+      acntnm: data.acntnm,
     }));
   };
 
@@ -367,8 +398,20 @@ const AC_A1120W: React.FC = () => {
       <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
-            {/*  <tr>
-              <th>입고일자</th>
+            <tr>
+              <th>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="datediv"
+                    value={filters.datediv}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    className="required"
+                    textField="name"
+                    valueField="code"
+                  />
+                )}
+              </th>
               <td>
                 <CommonDateRangePicker
                   value={{
@@ -393,7 +436,6 @@ const AC_A1120W: React.FC = () => {
                     value={filters.location}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
-                    className="required"
                   />
                 )}
               </td>
@@ -408,8 +450,46 @@ const AC_A1120W: React.FC = () => {
                   />
                 )}
               </td>
+              <th>부서코드</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="dptcd"
+                    value={filters.dptcd}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    textField="dptnm"
+                    valueField="dptcd"
+                  />
+                )}
+              </td>
             </tr>
             <tr>
+              <th>계정코드</th>
+              <td>
+                <Input
+                  name="acntcd"
+                  type="text"
+                  value={filters.acntcd}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onAccountWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
+              </td>
+              <th>계정코드 명</th>
+              <td>
+                <Input
+                  name="acntnm"
+                  type="text"
+                  value={filters.acntnm}
+                  onChange={filterInputChange}
+                />
+              </td>
               <th>업체코드</th>
               <td>
                 <Input
@@ -435,21 +515,36 @@ const AC_A1120W: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>결재상태</th>
+            </tr>
+            <tr>
+              <th>등록자</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="person"
+                    value={filters.person}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    textField="user_name"
+                    valueField="user_id"
+                  />
+                )}
+              </td>
+              <th>승인여부</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
-                    name="finyn"
+                    name="closeyn"
                     customOptionData={customOptionData}
                     changeData={filterRadioChange}
                   />
                 )}
               </td>
-            </tr> */}
+            </tr>
           </tbody>
         </FilterBox>
       </FilterContainer>
-      {/* <GridContainer>
+      <GridContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
@@ -458,35 +553,12 @@ const AC_A1120W: React.FC = () => {
         >
           <GridTitleContainer>
             <GridTitle>기본정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="file-add"
-              >
-                매출전표생성
-              </Button>
-              <Button
-                onClick={onDeleteClick}
-                icon="delete"
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                매출전표해제
-              </Button>
-            </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "40vh" }}
+            style={{ height: "72vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                location: locationListData.find(
-                  (item: any) => (item.sub_code = row.location)
-                )?.code_name,
-                position: positionListData.find(
-                  (item: any) => (item.sub_code = row.position)
-                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -508,9 +580,6 @@ const AC_A1120W: React.FC = () => {
             take={page.take}
             pageable={true}
             onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
             //정렬기능
             sortable={true}
             onSortChange={onMainSortChange}
@@ -518,18 +587,7 @@ const AC_A1120W: React.FC = () => {
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            onItemChange={onMainItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
           >
-            <GridColumn
-              field="chk"
-              title=" "
-              width="45px"
-              headerCell={CustomCheckBoxCell}
-              cell={CheckBoxCell}
-            />
             {customOptionData !== null &&
               customOptionData.menuCustomColumnOptions["grdList"].map(
                 (item: any, idx: number) =>
@@ -541,9 +599,7 @@ const AC_A1120W: React.FC = () => {
                       title={item.caption}
                       width={item.width}
                       cell={
-                        dateField.includes(item.fieldName)
-                          ? DateCell
-                          : numberField.includes(item.fieldName)
+                        numberField.includes(item.fieldName)
                           ? NumberCell
                           : undefined
                       }
@@ -560,152 +616,18 @@ const AC_A1120W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
-      <TabStrip
-        style={{ width: "100%" }}
-        selected={tabSelected}
-        onSelect={handleSelectTab}
-      >
-        <TabStripTab title="입고자료">
-          <Grid
-            style={{ height: "30vh" }}
-            data={process(
-              mainDataResult2.data.map((row) => ({
-                ...row,
-                itemacnt: itemacntListData.find(
-                  (items: any) => items.sub_code === row.itemacnt
-                )?.code_name,
-                [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-              })),
-              mainDataState2
-            )}
-            {...mainDataState2}
-            onDataStateChange={onMainDataStateChange2}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY2}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onSelectionChange2}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult2.total}
-            skip={page2.skip}
-            take={page2.take}
-            pageable={true}
-            onPageChange={pageChange2}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange2}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-          >
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList2"].map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0
-                          ? mainTotalFooterCell2
-                          : numberField.includes(item.fieldName)
-                          ? gridSumQtyFooterCell2
-                          : undefined
-                      }
-                    ></GridColumn>
-                  )
-              )}
-          </Grid>
-        </TabStripTab>
-        <TabStripTab title="매입전표">
-          <Grid
-            style={{ height: "30vh" }}
-            data={process(
-              mainDataResult3.data.map((row) => ({
-                ...row,
-                [SELECTED_FIELD]: selectedState3[idGetter3(row)],
-              })),
-              mainDataState3
-            )}
-            {...mainDataState3}
-            onDataStateChange={onMainDataStateChange3}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY3}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onSelectionChange3}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult3.total}
-            skip={page3.skip}
-            take={page3.take}
-            pageable={true}
-            onPageChange={pageChange3}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange3}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onMainItemChange3}
-            cellRender={customCellRender3}
-            rowRender={customRowRender3}
-            editField={EDIT_FIELD}
-          >
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList3"].map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : dateField.includes(item.fieldName)
-                          ? DateCell
-                          : radioField.includes(item.fieldName)
-                          ? CustomRadioCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder == 0
-                          ? mainTotalFooterCell3
-                          : numberField.includes(item.fieldName)
-                          ? gridSumQtyFooterCell3
-                          : undefined
-                      }
-                    ></GridColumn>
-                  )
-              )}
-          </Grid>
-        </TabStripTab>
-      </TabStrip>
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}
           workType={"N"}
           setData={setCustData}
+          modal={true}
+        />
+      )}
+      {accountWindowVisible && (
+        <AccountWindow
+          setVisible={setAccountWindowVisible}
+          setData={setAccountData}
           modal={true}
         />
       )}
@@ -721,7 +643,7 @@ const AC_A1120W: React.FC = () => {
             hidden
           />
         ))
-      )} */}
+      )}
     </>
   );
 };

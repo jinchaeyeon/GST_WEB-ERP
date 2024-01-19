@@ -13,7 +13,11 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Checkbox, Input, InputChangeEvent } from "@progress/kendo-react-inputs";
+import {
+  Checkbox,
+  Input,
+  InputChangeEvent,
+} from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
@@ -48,7 +52,7 @@ import {
   findMessage,
   getGridItemChangedData,
   handleKeyPressSearch,
-  toDate
+  toDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -67,6 +71,7 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A0070W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 
 const format = (formatted: string, ...argument: string[]): string => {
   let index = 0;
@@ -265,7 +270,7 @@ const AC_A0070W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_AC001, L_AC061, L_BA002, L_BA020, L_BA028",
+    "R_DRCR, L_AC061, L_BA002, L_BA020, L_BA028",
     setBizComponentData
   );
 
@@ -385,6 +390,15 @@ const AC_A0070W: React.FC = () => {
 
   //Form정보 Change함수
   const ComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    setParaData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const RadioChange = (e: any) => {
     const { name, value } = e;
 
     setParaData((prev) => ({
@@ -1516,15 +1530,12 @@ const AC_A0070W: React.FC = () => {
                   <th>계정잔액구분</th>
                   <td>
                     {bizComponentData !== null && (
-                      <BizComponentComboBox
+                      <BizComponentRadioGroup
                         name="acntbaldiv"
                         value={paraData.acntbaldiv}
-                        bizComponentId="L_AC001"
+                        bizComponentId="R_DRCR"
                         bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                        textField="code_name"
-                        valueField="sub_code"
+                        changeData={RadioChange}
                       />
                     )}
                   </td>
@@ -1545,7 +1556,7 @@ const AC_A0070W: React.FC = () => {
               <GridTitle>관리항목</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "30vh" }} // 65
+              style={{ height: `calc(76vh - 305px)` }} // 65
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,
