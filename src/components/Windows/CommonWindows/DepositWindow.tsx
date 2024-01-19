@@ -155,10 +155,10 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
       const totalRowCnt = data.data.TotalRowCount;
       const rows = data.data.Rows;
 
-      if (totalRowCnt) {
+      if (totalRowCnt > 0) {
         setMainDataResult((prev) => {
           return {
-            data: [...prev.data, ...rows],
+            data: rows,
             total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });

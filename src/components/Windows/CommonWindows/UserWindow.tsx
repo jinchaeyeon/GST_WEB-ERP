@@ -226,7 +226,7 @@ const UserWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
-      if (totalRowCnt) {
+      if (totalRowCnt > 0) {
         setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
     } else {

@@ -9,7 +9,7 @@ import {
   GridFooterCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -38,7 +38,9 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
+  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat2,
@@ -46,13 +48,13 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
   GAP,
   PAGE_SIZE,
-  SELECTED_FIELD
+  SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
@@ -102,7 +104,9 @@ const SA_A1001_603W: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
-
+  const [pc, setPc] = useState("");
+  const userId = UseGetValueFromSessionItem("user_id");
+  UseParaPc(setPc);
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_A1001_603W", setMessagesData);
@@ -401,6 +405,27 @@ const SA_A1001_603W: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
+      if (filters.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row.quokey == filters.find_row_value
+          );
+          targetRowIndex = findRowIndex;
+        }
+
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
+        });
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef.current) {
+          targetRowIndex = 0;
+        }
+      }
+
       setMainDataResult((prev) => {
         return {
           data: rows,
@@ -409,20 +434,41 @@ const SA_A1001_603W: React.FC = () => {
       });
 
       if (totalRowCnt > 0) {
-        setInformation((prev) => ({
-          ...prev,
-          quonum: rows[0].quonum,
-          custnm: rows[0].custnm,
-          custprsnnm: rows[0].custprsnnm,
-          materialtype: rows[0].materialtype,
-          requestreason: rows[0].requestreason,
-          quofinyn: rows[0].quofinyn,
-          quorev: rows[0].quorev,
-          quodt: rows[0].quodt,
-          quoamt: rows[0].quoamt,
-        }));
+        const selectedRow =
+          filters.find_row_value === ""
+            ? rows[0]
+            : rows.find((row: any) => row.quokey == filters.find_row_value);
+        if (selectedRow != undefined) {
+          setInformation((prev) => ({
+            ...prev,
+            quonum: selectedRow.quonum,
+            custnm: selectedRow.custnm,
+            custprsnnm: selectedRow.custprsnnm,
+            materialtype: selectedRow.materialtype,
+            requestreason: selectedRow.requestreason,
+            quofinyn: selectedRow.quofinyn,
+            quorev: selectedRow.quorev,
+            quodt: selectedRow.quodt,
+            quoamt: selectedRow.quoamt,
+          }));
 
-        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        } else {
+          setInformation((prev) => ({
+            ...prev,
+            quonum: rows[0].quonum,
+            custnm: rows[0].custnm,
+            custprsnnm: rows[0].custprsnnm,
+            materialtype: rows[0].materialtype,
+            requestreason: rows[0].requestreason,
+            quofinyn: rows[0].quofinyn,
+            quorev: rows[0].quorev,
+            quodt: rows[0].quodt,
+            quoamt: rows[0].quoamt,
+          }));
+
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
       }
     } else {
       console.log("[오류 발생]");
@@ -725,6 +771,87 @@ const SA_A1001_603W: React.FC = () => {
     });
   };
 
+  const onCal = () => {
+    setParaData({
+      workType: "CAL",
+      orgdiv: "01",
+      quonum: information.quonum,
+      quorev: information.quorev,
+    });
+  };
+
+  const onSALTRN = () => {
+    setParaData({
+      workType: "SALTRN",
+      orgdiv: "01",
+      quonum: information.quonum,
+      quorev: information.quorev,
+    });
+  };
+
+  const [ParaData, setParaData] = useState({
+    workType: "",
+    orgdiv: "01",
+    quonum: "",
+    quorev: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_SA_A1001_603W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_quonum": ParaData.quonum,
+      "@p_quorev": ParaData.quorev,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "SA_A1001_603W",
+    },
+  };
+
+  useEffect(() => {
+    if (ParaData.workType != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      setTabSelected(0);
+      setPage(initialPageState);
+      setPage2(initialPageState);
+
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: data.returnString,
+        isSearch: true,
+        pgNum: 1,
+      }));
+
+      setParaData({
+        workType: "",
+        orgdiv: "01",
+        quonum: "",
+        quorev: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
+
   return (
     <>
       <TitleContainer>
@@ -960,14 +1087,32 @@ const SA_A1001_603W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
             <ButtonContainer>
-              <Button themeColor={"primary"} onClick={onPrint}>
+              <Button
+                themeColor={"primary"}
+                onClick={onPrint}
+                fillMode="outline"
+                icon="print"
+              >
                 견적서 출력
               </Button>
-              <Button themeColor={"primary"} onClick={onSendEmail}>
+              <Button
+                themeColor={"primary"}
+                onClick={onSendEmail}
+                fillMode="outline"
+                icon="email"
+              >
                 이메일 전송
               </Button>
-              <Button themeColor={"primary"}>견적 산출</Button>
-              <Button themeColor={"primary"}>계약 전환</Button>
+              <Button themeColor={"primary"} onClick={onCal} icon="calculator">
+                견적 산출
+              </Button>
+              <Button
+                themeColor={"primary"}
+                onClick={onSALTRN}
+                icon="dictionary-add"
+              >
+                계약 전환
+              </Button>
             </ButtonContainer>
           </GridTitleContainer>
           <FormBoxWrap border={true}>
