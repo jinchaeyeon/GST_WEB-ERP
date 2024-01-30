@@ -73,6 +73,7 @@ import CodeWindow from "./CommonWindows/CodeWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import StandardWindow from "./CommonWindows/StandardWindow";
+import RadioGroupCell from "../Cells/RadioGroupCell";
 
 type IWindow = {
   workType: "N" | "A" | "C";
@@ -81,6 +82,23 @@ type IWindow = {
   setData(str: string): void;
   modal?: boolean;
   pathname: string;
+};
+
+const CustomRadioCell = (props: GridCellProps) => {
+  const [bizComponentData, setBizComponentData] = useState([]);
+  UseBizComponent("R_DRCR", setBizComponentData);
+  //합부판정
+  const field = props.field ?? "";
+  const bizComponentIdVal = field == "drcrdiv" ? "R_DRCR" : "";
+  const bizComponent = bizComponentData.find(
+    (item: any) => item.bizComponentId === bizComponentIdVal
+  );
+
+  return bizComponent ? (
+    <RadioGroupCell bizComponentData={bizComponent} {...props} />
+  ) : (
+    <td />
+  );
 };
 
 type TdataArr = {
@@ -595,23 +613,6 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
   );
 };
 
-const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_AC001", setBizComponentData);
-
-  const field = props.field ?? "";
-  const bizComponentIdVal = field === "drcrdiv" ? "L_AC001" : "";
-
-  const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
-  );
-
-  return bizComponent ? (
-    <ComboBoxCell bizComponent={bizComponent} {...props} />
-  ) : (
-    <td />
-  );
-};
 
 const CopyWindow = ({
   workType,
@@ -3546,8 +3547,8 @@ const CopyWindow = ({
                     <GridColumn
                       field="drcrdiv"
                       title="차대구분"
-                      width="100px"
-                      cell={CustomComboBoxCell}
+                      width="150px"
+                      cell={CustomRadioCell}
                     />
                     <GridColumn
                       field="acntcd"

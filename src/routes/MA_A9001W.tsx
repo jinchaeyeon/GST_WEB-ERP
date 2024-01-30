@@ -242,7 +242,7 @@ const MA_A9001W: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("MA_A9000W", setCustomOptionData);
+  UseCustomOption("MA_A9001W", setCustomOptionData);
 
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);

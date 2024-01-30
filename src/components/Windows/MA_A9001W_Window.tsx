@@ -10,12 +10,9 @@ import {
   GridFooterCellProps,
   GridItemChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import {
-  Input,
-  InputChangeEvent
-} from "@progress/kendo-react-inputs";
+import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import {
@@ -34,15 +31,15 @@ import {
   FormBoxWrap,
   GridContainer,
   GridTitle,
-  GridTitleContainer
+  GridTitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading, loginResultState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import ComboBoxCell from "../Cells/ComboBoxCell";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
+import RadioGroupCell from "../Cells/RadioGroupCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
@@ -54,9 +51,14 @@ import {
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
-  toDate
+  toDate,
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import AccountWindow from "./CommonWindows/AccountWindow";
 import DepositWindow from "./CommonWindows/DepositWindow";
@@ -277,19 +279,18 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
   );
 };
 
-const CustomComboBoxCell = (props: GridCellProps) => {
+const CustomRadioCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_AC001", setBizComponentData);
-
+  UseBizComponent("R_DRCR", setBizComponentData);
+  //합부판정
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "drcrdiv" ? "L_AC001" : "";
-
+  const bizComponentIdVal = field == "drcrdiv" ? "R_DRCR" : "";
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
 
   return bizComponent ? (
-    <ComboBoxCell bizComponent={bizComponent} {...props} />
+    <RadioGroupCell bizComponentData={bizComponent} {...props} />
   ) : (
     <td />
   );
@@ -301,7 +302,7 @@ const CopyWindow = ({
   setVisible,
   setData,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -891,7 +892,7 @@ const CopyWindow = ({
                 <GridTitle>상세정보</GridTitle>
               </GridTitleContainer>
               <Grid
-                style={{ height: "450px" }}
+                style={{ height: "420px" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -946,8 +947,8 @@ const CopyWindow = ({
                 <GridColumn
                   field="drcrdiv"
                   title="차대구분"
-                  width="120px"
-                  cell={CustomComboBoxCell}
+                  width="150px"
+                  cell={CustomRadioCell}
                   footerCell={mainTotalFooterCell}
                 />
                 <GridColumn

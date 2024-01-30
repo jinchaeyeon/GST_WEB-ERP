@@ -65,6 +65,7 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import AC_A1060W_Window from "../components/Windows/AC_A1060W_Window";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -768,6 +769,8 @@ const AC_A1060W: React.FC = () => {
   };
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const [DetailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
 
   const onCustWndClick = () => {
     setCustWindowVisible(true);
@@ -1291,20 +1294,68 @@ const AC_A1060W: React.FC = () => {
     }
   };
 
-  const onAddClick = () => {
+  const onDeleteClick2 = () => {
     if (mainDataResult.total > 0) {
       const datas = mainDataResult.data.filter((item) => item.chk == true);
       if (datas.length > 0) {
         let valid = true;
 
         datas.map((item) => {
-          if (item.slipyn == true) {
+          if (item.collectnum == "") {
             valid = false;
           }
         });
 
         if (valid != true) {
+          alert("수금처리가 안된 건이 있습니다.");
+        } else {
+          let dataArr: any = {
+            ref_key_s: [],
+          };
+
+          datas.forEach((item: any, idx: number) => {
+            const { ref_key = "" } = item;
+            dataArr.ref_key_s.push(ref_key);
+          });
+
+          setParaData((prev) => ({
+            ...prev,
+            workType: "COLDROP",
+            orgdiv: "01",
+            location: filters.location,
+            ref_key_s: dataArr.ref_key_s.join("|"),
+          }));
+        }
+      } else {
+        alert("선택된 행이 없습니다.");
+      }
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
+  const onAddClick = () => {
+    if (mainDataResult.total > 0) {
+      const datas = mainDataResult.data.filter((item) => item.chk == true);
+      if (datas.length > 0) {
+        let valid = true;
+        let valid2 = true;
+
+        datas.map((item) => {
+          if (item.slipyn == true) {
+            valid = false;
+          }
+          datas.map((items) => {
+            if (item.custcd != items.custcd) {
+              valid2 = false;
+            }
+          });
+        });
+
+        if (valid != true) {
           alert("전표처리가 된 건이 있습니다");
+        } else if (valid2 != true) {
+          alert("동일업체만 생성 가능합니다");
         } else {
           let dataArr: any = {
             ref_key_s: [],
@@ -1322,6 +1373,39 @@ const AC_A1060W: React.FC = () => {
             location: filters.location,
             ref_key_s: dataArr.ref_key_s.join("|"),
           }));
+        }
+      } else {
+        alert("선택된 행이 없습니다.");
+      }
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
+  const onAddClick2 = () => {
+    if (mainDataResult.total > 0) {
+      const datas = mainDataResult.data.filter((item) => item.chk == true);
+      if (datas.length > 0) {
+        let valid = true;
+        let valid2 = true;
+
+        datas.map((item) => {
+          if (item.collectnum != "") {
+            valid = false;
+          }
+          datas.map((items) => {
+            if (item.custcd != items.custcd) {
+              valid2 = false;
+            }
+          });
+        });
+
+        if (valid != true) {
+          alert("수금처리가 된 건이 있습니다");
+        } else if (valid2 != true) {
+          alert("동일업체만 생성 가능합니다");
+        } else {
+          setDetailWindowVisible(true);
         }
       } else {
         alert("선택된 행이 없습니다.");
@@ -1558,14 +1642,14 @@ const AC_A1060W: React.FC = () => {
                 매출전표해제
               </Button>
               <Button
-                //onClick={onAddClick}
+                onClick={onAddClick2}
                 themeColor={"primary"}
                 icon="file-add"
               >
                 수금전표생성
               </Button>
               <Button
-                //onClick={onDeleteClick}
+                onClick={onDeleteClick2}
                 icon="delete"
                 fillMode="outline"
                 themeColor={"primary"}
@@ -1878,6 +1962,22 @@ const AC_A1060W: React.FC = () => {
           workType={"N"}
           setData={setCustData}
           modal={true}
+        />
+      )}
+      {DetailWindowVisible && (
+        <AC_A1060W_Window
+          data={mainDataResult.data.filter((item) => item.chk == true)}
+          setVisible={setDetailWindowVisible}
+          setData={(str: string) => {
+            setFilters((prev) => ({
+              ...prev,
+              pgNum: 1,
+              isSearch: true,
+              find_row_value: str,
+            }));
+          }}
+          modal={true}
+          pathname="AC_A1060W"
         />
       )}
       {gridList.map((grid: TGrid) =>
