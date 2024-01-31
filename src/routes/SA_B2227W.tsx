@@ -26,8 +26,8 @@ import BarChart from "../components/KPIcomponents/Chart/BarChart";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import Table from "../components/KPIcomponents/Table/Table";
 import { colors, colorsName } from "../store/atoms";
-import CardBox from "../components/CardBox";
-import ClusterMap from "../components/ClusterMap";
+import CardBox from "../components/BIOComponents/CardBox";
+import ClusterMap from "../components/Map/ClusterMap";
 
 const SA_B2227W: React.FC = () => {
   let deviceWidth = window.innerWidth;

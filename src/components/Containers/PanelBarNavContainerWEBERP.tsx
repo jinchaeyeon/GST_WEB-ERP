@@ -68,9 +68,9 @@ import { Iparameters, TLogParaVal, TPath } from "../../store/types";
 import { UseGetIp, getBrowser, resetLocalStorage } from "../CommonFunction";
 import Loading from "../Loading";
 import ChangePasswordWindow from "../Windows/CommonWindows/ChangePasswordWindow";
+import HelpWindow from "../Windows/CommonWindows/HelpWindow";
 import SystemOptionWindow from "../Windows/CommonWindows/SystemOptionWindow";
 import UserOptionsWindow from "../Windows/CommonWindows/UserOptionsWindow";
-import HelpWindow from "../Windows/CommonWindows/HelpWindow";
 
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
@@ -234,9 +234,7 @@ const PanelBarNavContainer = (props: any) => {
     }
   };
 
-  const [menulist, setMenuList] = useRecoilState(
-    menuList
-  );
+  const [menulist, setMenuList] = useRecoilState(menuList);
   const fetchMenus = useCallback(async () => {
     try {
       let menuPara = {
@@ -245,16 +243,16 @@ const PanelBarNavContainer = (props: any) => {
       const menuResponse = await processApi<any>("menus", menuPara);
 
       const menu = menuResponse.usableMenu.map((item: any) => {
-        if(item.parentMenuId != "") {
-          if(item.menuCategory == "GROUP") {
+        if (item.parentMenuId != "") {
+          if (item.menuCategory == "GROUP") {
             var valid = true;
             menuResponse.usableMenu.map((item2: any) => {
-              if(item.menuId == item2.parentMenuId && valid != false) {
+              if (item.menuId == item2.parentMenuId && valid != false) {
                 valid = false;
               }
-            })
+            });
 
-            if(valid != true) {
+            if (valid != true) {
               return item;
             }
           } else {
@@ -263,8 +261,8 @@ const PanelBarNavContainer = (props: any) => {
         } else {
           return item;
         }
-      })
-      
+      });
+
       setMenus(menu.filter((item: any) => item != undefined));
       setMenuList(menu.filter((item: any) => item != undefined));
     } catch (e: any) {
@@ -660,7 +658,7 @@ const PanelBarNavContainer = (props: any) => {
               <Logo size="32px" name={"GST WEB"} />
               {loginResult.webTitle}
             </AppName>
-            <GridContainerWrap height={"100px"} style={{ gap: "0px" }}>
+            <GridContainerWrap height={"100px"} style={{ gap: "0px", marginBottom: "10px" }}>
               <GridContainer
                 width="80%"
                 style={{
@@ -669,7 +667,7 @@ const PanelBarNavContainer = (props: any) => {
                   alignItems: "center",
                 }}
               >
-                {contact[0].avatar == "" ||  contact[0].avatar == undefined? (
+                {contact[0].avatar == "" || contact[0].avatar == undefined ? (
                   <Avatar className="k-avatar-lg" rounded="full" type="icon">
                     <SvgIcon icon={userIcon} size="large" />
                   </Avatar>
@@ -714,24 +712,21 @@ const PanelBarNavContainer = (props: any) => {
                   themeColor={"primary"}
                   fillMode="flat"
                   title="일정"
-                >
-                </Button>
+                ></Button>
                 <Button
                   icon="bell"
                   themeColor={"primary"}
                   onClick={() => setShow(!show)}
                   fillMode="flat"
                   title="알림"
-                >
-                </Button>
+                ></Button>
                 <Button
                   icon="info"
                   themeColor={"primary"}
                   onClick={onHelpWndClick}
                   fillMode="flat"
                   title="도움말"
-                >
-                </Button>
+                ></Button>
                 <Popup
                   offset={offset}
                   show={show}
@@ -999,25 +994,6 @@ const PanelBarNavContainer = (props: any) => {
                 })}
               </PanelBar>
             )}
-
-            {/* GST */}
-            {/* {companyCode === "2207C612" && (
-        <PanelBar
-          selected={selected}
-          expandMode={"single"}
-          onSelect={onSelect}
-        >
-          <PanelBarItem title={"Home"} route="/Home"></PanelBarItem>
-
-          <PanelBarItem title={"전사관리"}>
-            <PanelBarItem title={"Scheduler"} route="/CM_A1600W" />
-          </PanelBarItem>
-          <PanelBarItem title={"전자결재"}>
-            <PanelBarItem title={"결재관리"} route="/EA_A2000W" />
-          </PanelBarItem>
-        </PanelBar>
-      )} */}
-
             <ButtonContainer
               flexDirection={"column"}
               style={{ marginTop: "10px", gap: "5px", marginBottom: "30px" }}
@@ -1104,10 +1080,7 @@ const PanelBarNavContainer = (props: any) => {
         <div>{ip}</div>
       </Footer>
       {helpWindowVisible && (
-        <HelpWindow
-          setVisible={setHelpWindowVisible}
-          modal={true}
-        />
+        <HelpWindow setVisible={setHelpWindowVisible} modal={true} />
       )}
     </>
   );

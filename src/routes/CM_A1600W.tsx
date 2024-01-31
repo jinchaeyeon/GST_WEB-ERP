@@ -74,9 +74,9 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
-import { FormWithCustomEditor } from "../components/custom-form";
-import { CustomEditItem } from "../custom-item";
-import { CustomItem } from "../customItem";
+import { FormWithCustomEditor } from "../components/Scheduler/custom-form";
+import { CustomEditItem } from "../components/Scheduler/custom-item";
+import { CustomItem } from "../components/Scheduler/customItem";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A1600W_C";

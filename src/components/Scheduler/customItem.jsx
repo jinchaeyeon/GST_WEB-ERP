@@ -3,8 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import {
   UseBizComponent,
   getQueryFromBizComponent,
-} from "./components/CommonFunction";
-import { useApi } from "./hooks/api";
+} from "../CommonFunction";
+import { useApi } from "../../hooks/api";
 import {
   SchedulerItem
 } from "@progress/kendo-react-scheduler";

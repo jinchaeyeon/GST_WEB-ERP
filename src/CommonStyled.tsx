@@ -844,6 +844,7 @@ export const Gnv = styled.div<TGnv>`
   width: ${GNV_WIDTH}px;
   text-align: center;
 
+  border-right: 1px solid rgb(235, 235, 235);
   min-height: 100vh;
   background-color: #fff;
 

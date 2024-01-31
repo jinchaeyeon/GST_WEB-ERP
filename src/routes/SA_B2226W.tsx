@@ -10,7 +10,7 @@ import { Toolbar } from "primereact/toolbar";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
-import Card from "../components/CardBox";
+import Card from "../components/BIOComponents/CardBox";
 import {
   GetPropertyValueByName,
   ThreeNumberceil,

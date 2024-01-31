@@ -10,8 +10,8 @@ import { useCallback, useEffect, useState } from "react";
 import {
     UseBizComponent,
     getQueryFromBizComponent
-} from "./components/CommonFunction";
-import { useApi } from "./hooks/api";
+} from "../CommonFunction";
+import { useApi } from "../../hooks/api";
 import { Keys } from "@progress/kendo-react-common";
 
 export const CustomEditItem = (props) => {
