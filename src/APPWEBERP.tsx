@@ -218,6 +218,7 @@ import SY_A0011W from "./routes/SY_A0011W";
 import SY_A0012W from "./routes/SY_A0012W";
 import SY_A0013W from "./routes/SY_A0013W";
 import SY_A0025W from "./routes/SY_A0025W";
+import SY_A0060W from "./routes/SY_A0060W";
 import SY_A0100W from "./routes/SY_A0100W";
 import SY_A0110W from "./routes/SY_A0110W";
 import SY_A0120W from "./routes/SY_A0120W";
@@ -548,6 +549,8 @@ const AppInner: React.FC = () => {
       return BA_B0080W;
     } else if (str == "CM_B8100W") {
       return CM_B8100W;
+    } else if (str == "SY_A0060W") {
+      return SY_A0060W;
     } else if (str == "SY_A0125W") {
       return SY_A0125W;
     } else if (str == "SY_A0500W") {
@@ -962,7 +965,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/BA_B0080W" component={BA_B0080W} exact />
                   <AuthRoute path="/CM_B8100W" component={CM_B8100W} exact />
                   <AuthRoute path="/SY_A0125W" component={SY_A0125W} exact />
-                  <AuthRoute path="/SY_A0500W" component={SY_A0500W} exact />
+  
                   {/* 물류관리 */}
                   <AuthRoute path="/MA_A0010W" component={MA_A0010W} exact />
                   <AuthRoute path="/MA_A1000W" component={MA_A1000W} exact />
@@ -1064,8 +1067,10 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/SY_A0012W" component={SY_A0012W} exact />
                   <AuthRoute path="/SY_A0013W" component={SY_A0013W} exact />
                   <AuthRoute path="/SY_A0011W" component={SY_A0011W} exact />
+                  <AuthRoute path="/SY_A0060W" component={SY_A0060W} exact />
                   <AuthRoute path="/SY_A0100W" component={SY_A0100W} exact />
                   <AuthRoute path="/SY_A0025W" component={SY_A0025W} exact />
+                  <AuthRoute path="/SY_A0500W" component={SY_A0500W} exact />
                   {/* 전사관리 */}
                   <AuthRoute path="/CM_A0000W" component={CM_A0000W} exact />
                   <AuthRoute path="/CM_A1000W" component={CM_A1000W} exact />

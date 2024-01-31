@@ -12,6 +12,51 @@ code {
     monospace;
 }
 
+.simple-floatingedges {
+  flex-direction: column;
+  display: flex;
+  flex-grow: 1;
+  height: 100%;
+}
+
+.simple-floatingedges .react-flow__handle {
+  width: 8px;
+  height: 8px;
+  opacity: 0;
+}
+
+.simple-floatingedges .react-flow__handle-top {
+  top: -5px;
+}
+
+.simple-floatingedges .react-flow__handle-bottom {
+  bottom: -5px;
+}
+
+.simple-floatingedges .react-flow__handle-left {
+  left: -5px;
+}
+
+.simple-floatingedges .react-flow__handle-right {
+  right: -5px;
+}
+
+.simple-floatingedges .react-flow__node-customNode {
+  border-radius: 3px;
+  font-size: 12px;
+  padding: 10px;
+  text-align: center;
+  width: 150px;
+}
+
+.simple-floatingedges .react-flow__node-groupNode {
+  border-radius: 3px;
+  font-size: 12px;
+  padding: 10px;
+  text-align: center;
+  width: 150px;
+}
+
 .css-zqhngk-MuiFormControl-root-MuiTextField-root {
   width: 100% !important;
 }

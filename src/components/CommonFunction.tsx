@@ -221,6 +221,11 @@ export const dateformat6 = (str: string) => {
   return date_str;
 };
 
+export const dateformat7 = (str: string) => {
+  if (!str) return "";
+  return str.replace("T", " ").substring(0, 10);
+};
+
 // 밀리세컨트 인수를 hh:mm:ss string로 변환하여 반환 (ex. => 08:05:25)
 export const convertMilliSecondsToTimeStr = (secs: number) => {
   let seconds = Math.floor((secs / 1000) % 60);
