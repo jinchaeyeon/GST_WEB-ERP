@@ -6,6 +6,7 @@ import ReactFlow, {
   addEdge,
   useEdgesState,
   useNodesState,
+  useOnSelectionChange,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import {
@@ -24,6 +25,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Input } from "@progress/kendo-react-inputs";
 
 const nodeTypes = {
   customNode: CustomNode,
@@ -36,7 +38,20 @@ const getId = () => `${++id}`;
 const FlowChart = (props) => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [target, setTarget] = useState(null);
+  const [clickNode, setClickNode] = useState({
+    id: "",
+    data: { label: "" },
+    position: {
+      x: 0,
+      y: 0,
+    },
+    type: "customNode",
+    style: {
+      border: "1px solid rgba(0, 0, 0, .125)",
+      padding: "20px 40px",
+      backgroundColor: "white",
+    },
+  });
 
   useEffect(() => {
     id = props.props.total;
@@ -52,7 +67,7 @@ const FlowChart = (props) => {
         style: {
           border: "1px solid rgba(0, 0, 0, .125)",
           padding: "20px 40px",
-          background: "white",
+          backgroundColor: "white",
         },
       },
       {
@@ -66,7 +81,7 @@ const FlowChart = (props) => {
         style: {
           border: "1px solid rgba(0, 0, 0, .125)",
           padding: "20px 40px",
-          background: "red",
+          backgroundColor: "red",
         },
       },
       {
@@ -80,7 +95,7 @@ const FlowChart = (props) => {
         style: {
           border: "1px solid rgba(0, 0, 0, .125)",
           padding: "20px 40px",
-          background: "white",
+          backgroundColor: "white",
         },
       },
       {
@@ -94,7 +109,7 @@ const FlowChart = (props) => {
         style: {
           border: "1px solid rgba(0, 0, 0, .125)",
           padding: "20px 40px",
-          background: "white",
+          backgroundColor: "white",
         },
       },
       {
@@ -108,7 +123,7 @@ const FlowChart = (props) => {
         style: {
           border: "1px solid rgba(0, 0, 0, .125)",
           padding: "20px 40px",
-          background: "white",
+          backgroundColor: "white",
         },
       },
     ]);
@@ -182,24 +197,27 @@ const FlowChart = (props) => {
     []
   );
 
-  const onNodeDrag = (evt, node) => {
-    console.log(evt);
-    console.log(node)
-    // calculate the center point of the node from position and dimensions
-    const centerX = node.position.x + node.width / 2;
-    const centerY = node.position.y + node.height / 2;
+  const onNodeClick = (event, node) => {
+    setClickNode(node);
+  };
 
-    // find a node where the center point is inside
-    const targetNode = nodes.find(
-      (n) =>
-        centerX > n.position.x &&
-        centerX < n.position.x + n.width &&
-        centerY > n.position.y &&
-        centerY < n.position.y + n.height &&
-        n.id !== node.id // this is needed, otherwise we would always find the dragged node
+  const InputChange = (e) => {
+    const { value, name } = e.target;
+
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id == clickNode.id) {
+          // it's important that you create a new object here
+          // in order to notify react flow about the change
+          node[value] = {
+            ...node[value],
+            label: name,
+          };
+        }
+
+        return node;
+      })
     );
-
-    setTarget(targetNode);
   };
 
   return (
@@ -215,8 +233,8 @@ const FlowChart = (props) => {
               onConnect={onConnect}
               fitView
               nodeTypes={nodeTypes}
-              onNodeDrag={onNodeDrag}
               connectionMode={ConnectionMode.Loose}
+              onNodeClick={onNodeClick}
             >
               <Background variant="lines" />
             </ReactFlow>
@@ -232,23 +250,30 @@ const FlowChart = (props) => {
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1-content"
                 id="panel1-header"
-                style={{backgroundColor: "#edf4fb"}}
+                style={{ backgroundColor: "#edf4fb" }}
               >
                 <Typography>속성</Typography>
               </AccordionSummary>
-              <AccordionDetails style={{ borderTop: '1px solid rgba(0, 0, 0, .125)' }}>
+              <AccordionDetails
+                style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
+              >
                 <FormBoxWrap>
                   <FormBox>
                     <tbody>
                       <tr>
                         <th style={{ width: "10%" }}>테마</th>
-                        <td>
-
-                        </td>
+                        <td></td>
                       </tr>
                       <tr>
                         <th>텍스트</th>
-                        <td></td>
+                        <td>
+                          <Input
+                            name="data"
+                            type="text"
+                            value={clickNode.data}
+                            onChange={InputChange}
+                          />
+                        </td>
                       </tr>
                     </tbody>
                   </FormBox>

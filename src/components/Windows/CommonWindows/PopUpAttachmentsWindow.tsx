@@ -203,7 +203,7 @@ const KendoWindow = ({
     parameters.forEach(async (parameter) => {
       try {
         response = await processApi<any>("file-download", {
-          attached: parameter,
+          attached: parameter.saved_name,
         });
       } catch (error) {
         response = null;
