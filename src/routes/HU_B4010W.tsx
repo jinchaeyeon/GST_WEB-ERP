@@ -531,12 +531,12 @@ const HU_B4010W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[3].TotalRowCount;
-      const rows = data.tables[3].Rows;
-      const totalRowCnt2 = data.tables[2].TotalRowCount;
-      const rows2 = data.tables[2].Rows;
-      const totalRowCnt3 = data.tables[2].TotalRowCount;
-      const rows3 = data.tables[2].Rows;
+      const totalRowCnt = data.tables[2].TotalRowCount;
+      const rows = data.tables[2].Rows;
+      const totalRowCnt2 = data.tables[0].TotalRowCount;
+      const rows2 = data.tables[0].Rows;
+      const totalRowCnt3 = data.tables[1].TotalRowCount;
+      const rows3 = data.tables[1].Rows;
 
       let argument: any[] = [];
       let arguments2: any[] = [];

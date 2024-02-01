@@ -26,6 +26,8 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Input } from "@progress/kendo-react-inputs";
+import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
+import { UseBizComponent } from "../CommonFunction";
 
 const nodeTypes = {
   customNode: CustomNode,
@@ -36,6 +38,13 @@ let id = 0;
 const getId = () => `${++id}`;
 
 const FlowChart = (props) => {
+  const [bizComponentData, setBizComponentData] = useState(null);
+  UseBizComponent(
+    "L_SY060_COLOR",
+    //품목계정, 수량단위
+    setBizComponentData
+  );
+
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [clickNode, setClickNode] = useState({
@@ -123,7 +132,7 @@ const FlowChart = (props) => {
         style: {
           border: "1px solid rgba(0, 0, 0, .125)",
           padding: "20px 40px",
-          backgroundColor: "white",
+          backgroundColor: "#fce2dd",
         },
       },
     ]);
@@ -209,15 +218,47 @@ const FlowChart = (props) => {
         if (node.id == clickNode.id) {
           // it's important that you create a new object here
           // in order to notify react flow about the change
-          node[value] = {
-            ...node[value],
-            label: name,
+          node.data = {
+            ...node.data,
+            label: value,
           };
         }
 
         return node;
       })
     );
+
+    setClickNode((prev) => ({
+      ...prev,
+      data: {
+        ...prev.data,
+        label: value,
+      },
+    }));
+  };
+
+  const ComboBoxChange = (e) => {
+    const { name, value } = e;
+
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id == clickNode.id) {
+          // it's important that you create a new object here
+          // in order to notify react flow about the change
+          node.style = { ...node.style, backgroundColor: value };
+        }
+
+        return node;
+      })
+    );
+
+    setClickNode((prev) => ({
+      ...prev,
+      style: {
+        ...prev.style,
+        backgroundColor: value,
+      },
+    }));
   };
 
   return (
@@ -262,15 +303,27 @@ const FlowChart = (props) => {
                     <tbody>
                       <tr>
                         <th style={{ width: "10%" }}>테마</th>
-                        <td></td>
+                        <td>
+                          {bizComponentData !== null && (
+                            <BizComponentComboBox
+                              name="backgroundColor"
+                              value={clickNode.style.backgroundColor}
+                              bizComponentId="L_SY060_COLOR"
+                              bizComponentData={bizComponentData}
+                              changeData={ComboBoxChange}
+                              para="SY_A0060W"
+                              className="required"
+                            />
+                          )}
+                        </td>
                       </tr>
                       <tr>
                         <th>텍스트</th>
                         <td>
                           <Input
-                            name="data"
+                            name="label"
                             type="text"
-                            value={clickNode.data}
+                            value={clickNode.data.label}
                             onChange={InputChange}
                           />
                         </td>
