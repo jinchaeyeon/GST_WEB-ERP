@@ -25,12 +25,14 @@ import {
 import TopButtons from "../components/Buttons/TopButtons";
 import NumberCell from "../components/Cells/NumberCell";
 import {
+  GetPropertyValueByName,
   UseCustomOption,
   UseMessages,
   UsePermissions,
   convertDateToStr,
   findMessage,
   handleKeyPressSearch,
+  setDefaultDate,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -39,10 +41,11 @@ import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/QC_B9020_615W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import CenterCell from "../components/Cells/CenterCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 
 const DATA_ITEM_KEY = "num";
 const numberField = ["temperature", "humidity"];
-const centerField = ["insert_date", "insert_time","defrost"];
+const centerField = ["insert_date", "insert_time", "defrost"];
 
 const QC_B9020_615W: React.FC = () => {
   let gridRef: any = useRef(null);
@@ -57,6 +60,23 @@ const QC_B9020_615W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("QC_B9020_615W", setCustomOptionData);
+
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
+      setFilters((prev) => ({
+        ...prev,
+        yyyymmdd: setDefaultDate(customOptionData, "yyyymmdd"),
+        prodmac: defaultOption.find((item: any) => item.id === "prodmac")
+          .valueCode,
+      }));
+    }
+  }, [customOptionData]);
+
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -107,6 +127,15 @@ const QC_B9020_615W: React.FC = () => {
 
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const filterComboBoxChange = (e: any) => {
+    const { name, value } = e;
 
     setFilters((prev) => ({
       ...prev,
@@ -270,7 +299,7 @@ const QC_B9020_615W: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th>사업장</th>
+              <th>일자</th>
               <td>
                 <DatePicker
                   name="yyyymmdd"
@@ -283,12 +312,16 @@ const QC_B9020_615W: React.FC = () => {
               </td>
               <th>설비</th>
               <td>
-                <Input
-                  name="prodmac"
-                  type="text"
-                  value={filters.prodmac}
-                  onChange={filterInputChange}
-                />
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="prodmac"
+                    value={filters.prodmac}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    textField="fxnm"
+                    valueField="fxcode"
+                  />
+                )}
               </td>
             </tr>
           </tbody>

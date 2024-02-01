@@ -91,7 +91,7 @@ const CommonComboBox = ({
   const onChangeHandle = (e: ComboBoxChangeEvent) => {
     let value = e.target.value === null ? "" : e.target.value[valueField];
     let values = e.value;
-    if(para == "AC_A1020W") {
+    if(para == "AC_A1020W" || para == "SY_A0060W") {
       changeData({ name, values });
     } else {
       changeData({ name, value });
