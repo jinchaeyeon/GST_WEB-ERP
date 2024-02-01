@@ -184,6 +184,7 @@ import QC_B0040W from "./routes/QC_B0040W";
 import QC_B0100W from "./routes/QC_B0100W";
 import QC_B0200W from "./routes/QC_B0200W";
 import QC_B0300W from "./routes/QC_B0300W";
+import QC_B9020_615W from "./routes/QC_B9020_615W";
 import SA_A1000_603W from "./routes/SA_A1000_603W";
 import SA_A1001_603W from "./routes/SA_A1001_603W";
 import SA_A1100_603W from "./routes/SA_A1100_603W";
@@ -703,6 +704,8 @@ const AppInner: React.FC = () => {
       return QC_B0040W;
     } else if (str == "QC_B0030W") {
       return QC_B0030W;
+    } else if (str == "QC_B9020_615W") {
+      return QC_B9020_615W;
     } else if (str == "SY_A0120W") {
       return SY_A0120W;
     } else if (str == "SY_A0110W") {
@@ -1060,6 +1063,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/QC_B0300W" component={QC_B0300W} exact />
                   <AuthRoute path="/QC_B0040W" component={QC_B0040W} exact />
                   <AuthRoute path="/QC_B0030W" component={QC_B0030W} exact />
+                  <AuthRoute path="/QC_B9020_615W" component={QC_B9020_615W} exact />
                   {/* 시스템 */}
                   <AuthRoute path="/SY_A0120W" component={SY_A0120W} exact />
                   <AuthRoute path="/SY_A0110W" component={SY_A0110W} exact />
