@@ -1,4 +1,12 @@
-import { Box, Grid } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  Grid,
+  Typography,
+} from "@mui/material";
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -7,7 +15,6 @@ import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
-  GridContainer,
   GridTitle,
   GridTitleContainer,
   Title,
@@ -19,12 +26,12 @@ import {
   GetPropertyValueByName,
   UseCustomOption,
   UsePermissions,
+  dateformat7,
   handleKeyPressSearch,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import FlowChart from "../components/Layout/FlowChart";
-import LayoutCard from "../components/Layout/LayoutCard";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
@@ -53,6 +60,9 @@ const SY_A0060W: React.FC = () => {
   }, [customOptionData]);
 
   const search = () => {
+    setTabSelected(0);
+    setClicks(true);
+    setWorkType("U");
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
   const [tabSelected, setTabSelected] = useState(0);
@@ -79,7 +89,12 @@ const SY_A0060W: React.FC = () => {
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
     workType: "DETAIL",
+    orgdiv: "01",
+    location: "",
     layout_key: "",
+    layout_id: "",
+    layout_name: "",
+    config_json: "",
     pgNum: 1,
     isSearch: true,
   });
@@ -238,7 +253,12 @@ const SY_A0060W: React.FC = () => {
   const DetailView = (item: any) => {
     setFilters2((prev) => ({
       ...prev,
+      orgdiv: item.orgdiv,
+      location: item.location,
       layout_key: item.layout_key,
+      layout_id: item.layout_id,
+      layout_name: item.layout_name,
+      config_json: item.config_json,
       isSearch: true,
     }));
     setClicks(false);
@@ -250,6 +270,9 @@ const SY_A0060W: React.FC = () => {
     setFilters2((prev) => ({
       ...prev,
       layout_key: "",
+      layout_id: "",
+      layout_name: "",
+      config_json: "",
       isSearch: true,
     }));
     setClicks(false);
@@ -317,14 +340,67 @@ const SY_A0060W: React.FC = () => {
             <Grid container spacing={2}>
               {mainDataResult.data.map((item) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
-                  <LayoutCard props={item} Click={() => DetailView(item)} />
+                  <Card onClick={(e) => DetailView(item)}>
+                    <CardActionArea>
+                      {item.preview_image == "" ||
+                      item.preview_image == undefined ||
+                      item.preview_image == null ? (
+                        <div style={{ height: "200px" }}></div>
+                      ) : (
+                        <CardMedia
+                          component="img"
+                          height="200"
+                          image={item.preview_image}
+                          alt="layout"
+                        />
+                      )}
+                      <CardContent style={{ backgroundColor: "#f0f5fa" }}>
+                        <Typography
+                          gutterBottom
+                          variant="subtitle1"
+                          component="div"
+                          style={{ fontWeight: 600 }}
+                        >
+                          {item.layout_name}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          style={{ fontWeight: 400, color: "#b0adac" }}
+                        >
+                          {item.last_update_time == null
+                            ? "--"
+                            : dateformat7(item.last_update_time)}
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
                 </Grid>
               ))}
             </Grid>
           </Box>
         </TabStripTab>
         <TabStripTab title="레이아웃 설정" disabled={clicks}>
-            <FlowChart props={mainDataResult2} />
+          <FlowChart
+            props={mainDataResult2}
+            filters={filters2}
+            workType={workType}
+            setData={(bool: any) => {
+              if (bool == true) {
+                setFilters((prev) => ({
+                  ...prev,
+                  isSearch: true,
+                }));
+              } else {
+                setTabSelected(0);
+                setClicks(true);
+                setWorkType("U");
+                setFilters((prev) => ({
+                  ...prev,
+                  isSearch: true,
+                }));
+              }
+            }}
+          />
         </TabStripTab>
       </TabStrip>
     </>
