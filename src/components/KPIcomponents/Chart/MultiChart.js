@@ -89,7 +89,7 @@ export default function MultiChart(props) {
       setChartData(data);
       setChartOptions(options);
     }
-  }, [props.props]);
+  }, [props]);
 
   return (
     <div className="card">

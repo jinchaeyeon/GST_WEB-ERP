@@ -1,6 +1,5 @@
 import Crop32Icon from "@mui/icons-material/Crop32";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import FlipToBackIcon from "@mui/icons-material/FlipToBack";
 import MovingIcon from "@mui/icons-material/Moving";
 import RedoIcon from "@mui/icons-material/Redo";
 import StraightIcon from "@mui/icons-material/Straight";
@@ -469,29 +468,17 @@ const FlowChart = (props) => {
   };
 
   const onChangeSeq = (event, node) => {
-    setNodes((prev) =>
-    {
-       const List = prev.filter((item) => item.id != node.id);
-       const nodesList = [...List, node];
-       return nodesList;
-    }
-   );
+    setNodes((prev) => {
+      const List = prev.filter((item) => item.id != node.id);
+      const nodesList = [...List, node];
+      return nodesList;
+    });
     setClickNode(node);
     if (node.type == "customNode") {
       setType("C");
     } else {
       setType("G");
     }
-  };
-
-  const onChangeSeq2 = () => {
-    setNodes((prev) =>
-     {
-        const List = prev.filter((item) => item.id != clickNode.id);
-        const nodesList = [clickNode, ...List];
-        return nodesList;
-     }
-    );
   };
 
   const onPaneClick = useCallback(() => {
@@ -689,7 +676,6 @@ const FlowChart = (props) => {
               onNodeDragStop={onChangeSeq}
               onEdgeUpdate={onEdgeUpdate}
               onPaneClick={onPaneClick}
-
             >
               <Background variant="lines" />
             </ReactFlow>
@@ -931,27 +917,6 @@ const FlowChart = (props) => {
                           <WebAssetIcon />
                           <Typography variant="caption">
                             그룹 노드 생성
-                          </Typography>
-                        </div>
-                      </Button>
-                    </Grid>
-                    <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
-                      <Button
-                        style={{ color: "rgba(0, 0, 0, .725)" }}
-                        variant="text"
-                        onClick={() => onChangeSeq2()}
-                        fullWidth
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                          }}
-                        >
-                          <FlipToBackIcon />
-                          <Typography variant="caption">
-                            맨 뒤로 정렬
                           </Typography>
                         </div>
                       </Button>

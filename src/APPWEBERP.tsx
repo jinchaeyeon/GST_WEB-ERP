@@ -202,6 +202,7 @@ import SA_B1000W_603 from "./routes/SA_B1000W_603";
 import SA_B2200W from "./routes/SA_B2200W";
 import SA_B2211W from "./routes/SA_B2211W";
 import SA_B2216W from "./routes/SA_B2216W";
+import SA_B2220W from "./routes/SA_B2220W";
 import SA_B2221W from "./routes/SA_B2221W";
 import SA_B2226W from "./routes/SA_B2226W";
 import SA_B2227W from "./routes/SA_B2227W";
@@ -906,6 +907,8 @@ const AppInner: React.FC = () => {
       return SA_B1000W_603;
     } else if (str == "SA_B2216W") {
       return SA_B2216W;
+    } else if (str == "SA_B2220W") {
+      return SA_B2220W;
     } else if (str == "SA_B2226W") {
       return SA_B2226W;
     } else if (str == "CR_A0000W") {
@@ -1184,6 +1187,8 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/SA_B2228W" component={SA_B2228W} exact />
                   <AuthRoute path="/SA_B2229W" component={SA_B2229W} exact />
 
+
+                  <AuthRoute path="/SA_B2220W" component={SA_B2220W} exact />
                   {/* DDGD 관리자페이지 */}
                   <AuthRoute path="/CR_A0010W" component={CR_A0010W} exact />
                   <AuthRoute path="/CR_A0020W" component={CR_A0020W} exact />

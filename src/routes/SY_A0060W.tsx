@@ -283,7 +283,7 @@ const SY_A0060W: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>레이아웃 설정</Title>
+        <Title>레이아웃 설정(NEW)</Title>
 
         <ButtonContainer>
           {permissions && (
