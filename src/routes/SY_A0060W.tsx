@@ -18,7 +18,7 @@ import {
   GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -87,16 +87,12 @@ const SY_A0060W: React.FC = () => {
   });
 
   const [filters2, setFilters2] = useState({
-    pgSize: PAGE_SIZE,
-    workType: "DETAIL",
     orgdiv: "01",
     location: "",
     layout_key: "",
     layout_id: "",
     layout_name: "",
-    config_json: "",
-    pgNum: 1,
-    isSearch: true,
+    attdatnum: "",
   });
 
   //그리드 데이터 조회
@@ -149,56 +145,6 @@ const SY_A0060W: React.FC = () => {
     setLoading(false);
   };
 
-  //그리드 데이터 조회
-  const fetchMainGrid2 = async (filters2: any) => {
-    //if (!permissions?.view) return;
-    let data: any;
-    setLoading(true);
-    //조회조건 파라미터
-    const parameters: Iparameters = {
-      procedureName: "P_SY_A0060W_Q ",
-      pageNumber: filters2.pgNum,
-      pageSize: filters2.pgSize,
-      parameters: {
-        "@p_work_type": filters2.workType,
-        "@p_orgdiv": filters.orgdiv,
-        "@p_location": filters.location,
-        "@p_layout_key": filters2.layout_key,
-      },
-    };
-
-    try {
-      data = await processApi<any>("procedure", parameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
-
-      setMainDataResult2((prev) => {
-        return {
-          data: rows,
-          total: totalRowCnt == -1 ? 0 : totalRowCnt,
-        };
-      });
-    } else {
-      console.log("[에러발생]");
-      console.log(data);
-    }
-    // 필터 isSearch false처리, pgNum 세팅
-    setFilters2((prev) => ({
-      ...prev,
-      pgNum:
-        data && data.hasOwnProperty("pageNumber")
-          ? data.pageNumber
-          : prev.pgNum,
-      isSearch: false,
-    }));
-    setLoading(false);
-  };
-
   useEffect(() => {
     if (filters.isSearch && permissions !== null && customOptionData !== null) {
       const _ = require("lodash");
@@ -208,19 +154,6 @@ const SY_A0060W: React.FC = () => {
     }
   }, [filters, permissions]);
 
-  useEffect(() => {
-    if (
-      filters2.isSearch &&
-      permissions !== null &&
-      customOptionData !== null
-    ) {
-      const _ = require("lodash");
-      const deepCopiedFilters = _.cloneDeep(filters2);
-      setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
-      fetchMainGrid2(deepCopiedFilters);
-    }
-  }, [filters2, permissions]);
-
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
 
@@ -229,11 +162,9 @@ const SY_A0060W: React.FC = () => {
       [name]: value,
     }));
   };
-
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-
   const [mainDataState2, setMainDataState2] = useState<State>({
     sort: [],
   });
@@ -242,38 +173,66 @@ const SY_A0060W: React.FC = () => {
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-
   //그리드 데이터 결과값
   const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
     process([], mainDataState2)
   );
-
   const [workType, setWorkType] = useState("U");
 
-  const DetailView = (item: any) => {
-    setFilters2((prev) => ({
-      ...prev,
-      orgdiv: item.orgdiv,
-      location: item.location,
-      layout_key: item.layout_key,
-      layout_id: item.layout_id,
-      layout_name: item.layout_name,
-      config_json: item.config_json,
-      isSearch: true,
-    }));
-    setClicks(false);
-    setTabSelected(1);
-    setWorkType("U");
+  const DetailView = async (item: any) => {
+    let response: any;
+    let data: any;
+    const parameters = {
+      attached: "list?attachmentNumber=" + item.attdatnum,
+    };
+    try {
+      data = await processApi<any>("file-list", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null && data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+
+      try {
+        response = await processApi<any>("file-download", {
+          attached: rows[0].saved_name,
+        });
+      } catch (error) {
+        response = null;
+      }
+
+      if (response !== null) {
+        const blob = new Blob([response.data]);
+        const filess = JSON.parse(await blob.text());
+        setMainDataResult2({
+          data: filess,
+          total: filess.length,
+        });
+        setFilters2((prev) => ({
+          ...prev,
+          orgdiv: item.orgdiv,
+          location: item.location,
+          layout_key: item.layout_key,
+          layout_id: item.layout_id,
+          layout_name: item.layout_name,
+          attdatnum: item.attdatnum,
+        }));
+        setClicks(false);
+        setTabSelected(1);
+        setWorkType("U");
+      }
+    }
   };
 
   const onNewClick = () => {
     setFilters2((prev) => ({
       ...prev,
+      orgdiv: "01",
       layout_key: "",
       layout_id: "",
       layout_name: "",
-      config_json: "",
-      isSearch: true,
+      attdatnum: "",
     }));
     setClicks(false);
     setTabSelected(1);
@@ -323,7 +282,7 @@ const SY_A0060W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
-          <Box style={{ height: "78vh" }}>
+          <Box style={{ minHeight: "78vh"}}>
             <GridTitleContainer>
               <GridTitle></GridTitle>
               <ButtonContainer>
@@ -337,19 +296,19 @@ const SY_A0060W: React.FC = () => {
                 </Button>
               </ButtonContainer>
             </GridTitleContainer>
-            <Grid container spacing={2}>
+            <Grid style={{marginBottom: "30px"}} container spacing={2}>
               {mainDataResult.data.map((item) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
+                <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
                   <Card onClick={(e) => DetailView(item)}>
                     <CardActionArea>
                       {item.preview_image == "" ||
                       item.preview_image == undefined ||
                       item.preview_image == null ? (
-                        <div style={{ height: "200px" }}></div>
+                        <div style={{ height: "250px" }}></div>
                       ) : (
                         <CardMedia
                           component="img"
-                          height="200"
+                          height="250"
                           image={item.preview_image}
                           alt="layout"
                         />
@@ -381,7 +340,7 @@ const SY_A0060W: React.FC = () => {
         </TabStripTab>
         <TabStripTab title="레이아웃 설정" disabled={clicks}>
           <FlowChart
-            props={mainDataResult2}
+            data={mainDataResult2.data}
             filters={filters2}
             workType={workType}
             setData={(bool: any) => {

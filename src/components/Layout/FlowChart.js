@@ -1,5 +1,6 @@
 import Crop32Icon from "@mui/icons-material/Crop32";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ImageIcon from "@mui/icons-material/Image";
 import MovingIcon from "@mui/icons-material/Moving";
 import RedoIcon from "@mui/icons-material/Redo";
 import StraightIcon from "@mui/icons-material/Straight";
@@ -12,16 +13,13 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Typography from "@mui/material/Typography";
 import { Button as ButtonKendo } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
-import { toPng } from "html-to-image";
-import { useCallback, useEffect, useState } from "react";
+import * as htmlToImage from "html-to-image";
+import { createRef, useCallback, useEffect, useRef, useState } from "react";
 import ReactFlow, {
-    Background,
     ConnectionMode,
     MarkerType,
     ReactFlowProvider,
     addEdge,
-    getRectOfNodes,
-    getTransformForBounds,
     useEdgesState,
     useNodesState,
     useReactFlow,
@@ -39,7 +37,7 @@ import {
     GridTitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
-import { isLoading } from "../../store/atoms";
+import { deletedAttadatnumsState, isLoading } from "../../store/atoms";
 import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
@@ -52,17 +50,19 @@ import {
 import { GAP } from "../CommonString";
 import CustomNode from "./CustomNode";
 import GroupNode from "./GroupNode";
+import ImageNode from "./ImageNode";
 
 const nodeTypes = {
   customNode: CustomNode,
   groupNode: GroupNode,
+  imageNode: ImageNode,
 };
 
 let id = 0;
 const getId = () => `${++id}`;
 
 const initNode = {
-  id: "0",
+  id: "-1",
   data: {
     label: "",
     link: "",
@@ -87,7 +87,7 @@ const initEdge = {
   type: "straight",
   source: "1",
   target: "2",
-  id: "0",
+  id: "-1",
   label: "straight",
   markerEnd: {
     type: MarkerType.Arrow,
@@ -99,6 +99,7 @@ const initEdge = {
 const FlowChart = (props) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
   const [bizComponentData, setBizComponentData] = useState(null);
   UseBizComponent(
     "L_SY060_COLOR",
@@ -111,15 +112,15 @@ const FlowChart = (props) => {
   UseParaPc(setPc);
   const processApi = useApi();
   const [customOptionData, setCustomOptionData] = useState(null);
-  UseCustomOption("SY_A0500W", setCustomOptionData);
+  UseCustomOption("SY_A0060W", setCustomOptionData);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [clickNode, setClickNode] = useState(initNode);
   const [clickEdge, setClickEdge] = useState(initEdge);
   const [EdgeType, setEdgeType] = useState("straight");
   const { x, y, zoom } = useViewport();
-  const { setViewport } = useReactFlow();
-  const [Type, setType] = useState("C"); //c : 커스텀노드, G: 그룹노드, E: edge
+  const { setViewport, zoomTo } = useReactFlow();
+  const [Type, setType] = useState("B"); //c : 커스텀노드, G: 그룹노드, I: 이미지노드, E: edge
   const [workType, setWorkType] = useState(props.workType);
   const [Information, setInformation] = useState({
     orgdiv: "01",
@@ -127,7 +128,9 @@ const FlowChart = (props) => {
     layout_key: "",
     layout_id: "",
     layout_name: "",
-    config_json: {
+    attdatnum: "",
+    background_image: "",
+    view: {
       x: 0,
       y: 0,
       zoom: 1,
@@ -136,32 +139,28 @@ const FlowChart = (props) => {
 
   useEffect(() => {
     if (workType == "U") {
-      if (props.props.data.length > 0) {
-        const data = props.props.data;
-
-        const idList = data.map((item) => parseInt(item.id));
-
-        id = Math.max.apply(null, idList);
-        const nodeList = data.filter((item) => item.type == "node");
-        const edgeList = data.filter((item) => item.type == "edge");
-
-        if (nodeList.length > 0) {
-          const nodeData = nodeList.map((item) => {
-            return JSON.parse(item.config_json);
-          });
-          setNodes(nodeData);
-          setClickNode(
-            nodeData.filter((item) => item.selected == true)[0] == undefined
-              ? nodeData[0]
-              : nodeData.filter((item) => item.selected == true)[0]
-          );
-        }
-        if (edgeList.length > 0) {
-          const edgeData = edgeList.map((item) => {
-            return JSON.parse(item.config_json);
-          });
-          setEdges(edgeData);
-        }
+      const data = props.data;
+      const idList = data.map((item) => parseInt(item.id));
+      id = Math.max.apply(null, idList);
+      const info = data.filter((item) => item.type == "data")[0];
+      const nodeList = data.filter((item) => item.type == "node");
+      const edgeList = data.filter((item) => item.type == "edge");
+      if (nodeList.length > 0) {
+        const nodeData = nodeList.map((item) => {
+          return item.config_json_s;
+        });
+        setNodes(nodeData);
+        setClickNode(
+          nodeData.filter((item) => item.selected == true)[0] == undefined
+            ? nodeData[0]
+            : nodeData.filter((item) => item.selected == true)[0]
+        );
+      }
+      if (edgeList.length > 0) {
+        const edgeData = edgeList.map((item) => {
+          return item.config_json_s;
+        });
+        setEdges(edgeData);
       }
       setInformation({
         orgdiv: props.filters.orgdiv,
@@ -169,9 +168,15 @@ const FlowChart = (props) => {
         layout_key: props.filters.layout_key,
         layout_id: props.filters.layout_id,
         layout_name: props.filters.layout_name,
-        config_json: JSON.parse(props.filters.config_json),
+        attdatnum: props.filters.attdatnum,
+        background_image: info.background_image,
+        view: info.view,
       });
-      setViewport(JSON.parse(props.filters.config_json), { duration: 500 });
+      setViewport({
+        x: info.view.x,
+        y: info.view.y,
+        zoom: info.view.zoom,
+      });
     } else {
       setInformation({
         orgdiv: props.filters.orgdiv,
@@ -179,14 +184,16 @@ const FlowChart = (props) => {
         layout_key: "",
         layout_id: "",
         layout_name: "",
-        config_json: {
+        attdatnum: "",
+        background_image: "",
+        view: {
           x: 0,
           y: 0,
           zoom: 1,
         },
       });
     }
-  }, [props.props]);
+  }, [props.props, setViewport]);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(onEdgeAdd(params, "straight"), eds)),
@@ -257,8 +264,10 @@ const FlowChart = (props) => {
     setClickNode(node);
     if (node.type == "customNode") {
       setType("C");
-    } else {
+    } else if (node.type == "groupNode") {
       setType("G");
+    } else if (node.type == "imageNode") {
+      setType("I");
     }
   };
 
@@ -273,23 +282,27 @@ const FlowChart = (props) => {
       if (nodes.length > 0) {
         setNodes((nds) =>
           nds.map((node) => {
-            if (node.id != clickNode.id) {
-              // it's important that you create a new object here
-              // in order to notify react flow about the change
-              node.style = {
-                ...node.style,
-                backgroundColor: node.data.color,
-                color: node.data.fontcolor,
-              };
-            } else {
-              node.style = {
-                ...node.style,
-                backgroundColor: node.data.clickcolor,
-                color: node.data.fontcolor,
-              };
-            }
+            if (node.type == "customNode" || node.type == "groupNode") {
+              if (node.selected != true) {
+                // it's important that you create a new object here
+                // in order to notify react flow about the change
+                node.style = {
+                  ...node.style,
+                  backgroundColor: node.data.color,
+                  color: node.data.fontcolor,
+                };
+              } else {
+                node.style = {
+                  ...node.style,
+                  backgroundColor: node.data.clickcolor,
+                  color: node.data.fontcolor,
+                };
+              }
 
-            return node;
+              return node;
+            } else {
+              return node;
+            }
           })
         );
       }
@@ -328,8 +341,10 @@ const FlowChart = (props) => {
     }));
     if (clickNode.type == "customNode") {
       setType("C");
-    } else {
+    } else if (clickNode.type == "groupNode") {
       setType("G");
+    } else if (clickNode.type == "imageNode") {
+      setType("I");
     }
   };
 
@@ -451,6 +466,27 @@ const FlowChart = (props) => {
     setType("G");
   };
 
+  const onImageNodeAdd = () => {
+    const newNode = {
+      id: getId(),
+      type: "imageNode",
+      position: {
+        x: 0,
+        y: 0,
+      },
+      data: {
+        url: "",
+      },
+      style: {
+        width: 100,
+        height: 100,
+      },
+    };
+    setNodes((nds) => nds.concat(newNode));
+    setClickNode(newNode);
+    setType("I");
+  };
+
   const onChangeEdgeType = (str) => {
     setEdgeType(str);
 
@@ -468,23 +504,52 @@ const FlowChart = (props) => {
   };
 
   const onChangeSeq = (event, node) => {
-    setNodes((prev) => {
-      const List = prev.filter((item) => item.id != node.id);
-      const nodesList = [...List, node];
-      return nodesList;
-    });
-    setClickNode(node);
-    if (node.type == "customNode") {
-      setType("C");
+    if (nodes.filter((item) => item.selected == true).length < 2) {
+      setNodes((prev) => {
+        const List = prev.filter((item) => item.id != node.id);
+        const nodesList = [...List, node];
+        return nodesList;
+      });
+      setClickNode(node);
+      if (node.type == "customNode") {
+        setType("C");
+      } else if (node.type == "groupNode") {
+        setType("G");
+      } else if (node.type == "imageNode") {
+        setType("I");
+      }
     } else {
-      setType("G");
+      setNodes((prev) => {
+        const List = prev.map((item) => {
+          if (item.selected == true || node.id == item.id) {
+            return {
+              ...item,
+              selected: true,
+            };
+          } else {
+            return {
+              ...item,
+              selected: false,
+            };
+          }
+        });
+        return List;
+      });
+      setClickNode(node);
+      if (node.type == "customNode") {
+        setType("C");
+      } else if (node.type == "groupNode") {
+        setType("G");
+      } else if (node.type == "imageNode") {
+        setType("I");
+      }
     }
   };
 
   const onPaneClick = useCallback(() => {
     setClickNode(initNode);
     setClickEdge(initEdge);
-    setType("C");
+    setType("B");
     setEdgeType("straight");
   }, [clickNode, clickEdge]);
 
@@ -494,42 +559,77 @@ const FlowChart = (props) => {
       return false;
     }
 
-    const nodesBounds = getRectOfNodes(nodes);
-    const transform = getTransformForBounds(
-      nodesBounds,
-      imageWidth,
-      imageHeight,
-      0.5,
-      2
-    );
+    takeScreenShot(ref.current).then(download);
+  };
 
-    toPng(document.querySelector(".react-flow__viewport"), {
-      backgroundColor: "white",
-      width: imageWidth,
-      height: imageHeight,
-      style: {
-        width: imageWidth,
-        height: imageHeight,
-        transform: `translate(${transform[0]}px, ${transform[1]}px) scale(${transform[2]})`,
+  const download = async (image, { name = "img", extension = "jpg" } = {}) => {
+    const data = [
+      {
+        view: {
+          x: x,
+          y: y,
+          zoom: zoom,
+        },
+        background_image: Information.background_image,
+        type: "data",
+        config_json_s: "",
+        id: 0,
       },
-    }).then(function downloadImage(dataUrl) {
-      let dataArr = {
-        id_s: [],
-        type_s: [],
-        config_json_s: [],
-      };
+    ];
 
-      nodes.forEach((item) => {
-        dataArr.id_s.push(item.id);
-        dataArr.type_s.push("node");
-        dataArr.config_json_s.push(JSON.stringify(item));
+    nodes.map((item) => {
+      data.push({
+        view: "",
+        background_image: "",
+        type: "node",
+        config_json_s: item,
+        id: item.id,
       });
-      edges.forEach((item) => {
-        dataArr.id_s.push(item.id);
-        dataArr.type_s.push("edge");
-        dataArr.config_json_s.push(JSON.stringify(item));
+    });
+    edges.map((item) => {
+      data.push({
+        view: "",
+        background_image: "",
+        type: "edge",
+        config_json_s: item,
+        id: item.id,
       });
+    });
 
+    let output = JSON.stringify(data);
+
+    const main = new Blob([output], {
+      type: "application/json",
+    });
+
+    var mainfile = new File([main], "main.json");
+
+    const files = [mainfile];
+
+    //기존것 삭제
+    if (Information.attdatnum != "")
+      setDeletedAttadatnums([Information.attdatnum]);
+
+    let newAttachmentNumber = "";
+    const promises = [];
+    for (const file of files) {
+      if (!newAttachmentNumber) {
+        newAttachmentNumber = await uploadFile(file);
+        const promise = newAttachmentNumber;
+        promises.push(promise);
+        continue;
+      }
+
+      const promise = newAttachmentNumber
+        ? await uploadFile(file, newAttachmentNumber)
+        : await uploadFile(file);
+      promises.push(promise);
+    }
+    const results = await Promise.all(promises);
+
+    if (results.includes(null)) {
+      alert("저장에 실패했습니다.");
+    } else {
       setParaData({
         workType: workType,
         orgdiv: Information.orgdiv,
@@ -537,17 +637,33 @@ const FlowChart = (props) => {
         layout_key: Information.layout_key,
         layout_id: Information.layout_id,
         layout_name: Information.layout_name,
-        config_json: JSON.stringify({
-          x: x,
-          y: y,
-          zoom: zoom,
-        }),
-        preview_image: dataUrl,
-        id_s: dataArr.id_s.join("|"),
-        type_s: dataArr.type_s.join("|"),
-        config_json_s: dataArr.config_json_s.join("|"),
+        preview_image: image,
+        attdatnum: newAttachmentNumber,
       });
-    });
+    }
+  };
+
+  const uploadFile = async (files, newAttachmentNumber) => {
+    let data;
+
+    const filePara = {
+      attached: newAttachmentNumber
+        ? "attached?attachmentNumber=" + newAttachmentNumber
+        : "attached",
+      files: files, //.FileList,
+    };
+
+    try {
+      data = await processApi("file-upload", filePara);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      return data.attachmentNumber;
+    } else {
+      return data;
+    }
   };
 
   const imageWidth = 1024;
@@ -560,11 +676,8 @@ const FlowChart = (props) => {
     layout_key: "",
     layout_id: "",
     layout_name: "",
-    config_json: "",
     preview_image: "",
-    id_s: "",
-    type_s: "",
-    config_json_s: "",
+    attdatnum: "",
   });
 
   const para = {
@@ -578,11 +691,8 @@ const FlowChart = (props) => {
       "@p_layout_key": ParaData.layout_key,
       "@p_layout_id": ParaData.layout_id,
       "@p_layout_name": ParaData.layout_name,
-      "@p_config_json_m_s": ParaData.config_json,
       "@p_preview_image": ParaData.preview_image,
-      "@p_id_s": ParaData.id_s,
-      "@p_type_s": ParaData.type_s,
-      "@p_config_json_s": ParaData.config_json_s,
+      "@p_attdatnum": ParaData.attdatnum,
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "SY_A0060W",
@@ -613,11 +723,8 @@ const FlowChart = (props) => {
         layout_key: "",
         layout_id: "",
         layout_name: "",
-        config_json: "",
         preview_image: "",
-        id_s: "",
-        type_s: "",
-        config_json_s: "",
+        attdatnum: "",
       });
     } else {
       console.log("[오류 발생]");
@@ -639,21 +746,108 @@ const FlowChart = (props) => {
       layout_id: "",
       layout_name: "",
       preview_image: "",
-      id_s: "",
-      type_s: "",
-      config_json_s: "",
+      attdatnum: "",
     }));
+  };
+
+  const upload = () => {
+    const uploadInput = document.getElementById("uploadAttachment");
+    uploadInput.click();
+  };
+  const upload2 = () => {
+    const uploadInput2 = document.getElementById("uploadAttachment2");
+    uploadInput2.click();
+  };
+  const excelInput = useRef();
+  const excelInput2 = useRef();
+
+  async function getBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        resolve(reader.result);
+      };
+      reader.onerror = reject;
+    });
+  }
+
+  const handleFileUpload = async (files) => {
+    if (files === null) return false;
+
+    for (const file of files) {
+      if (file.size > 1048576) {
+        alert("용량 제한: 1MB 입니다.");
+        return false;
+      } else {
+        await getBase64(file) // `file` your img file
+          .then((res) => {
+            setNodes((nds) =>
+              nds.map((node) => {
+                if (node.id == clickNode.id) {
+                  // it's important that you create a new object here
+                  // in order to notify react flow about the change
+                  node.data = {
+                    ...node.data,
+                    url: res,
+                  };
+                }
+
+                return node;
+              })
+            );
+            setClickNode((prev) => ({
+              ...prev,
+              data: {
+                ...prev.data,
+                url: res,
+              },
+            }));
+            setType("I");
+          }) // `res` base64 of img file
+          .catch((err) => console.log(err));
+      }
+    }
+  };
+
+  const handleFileUpload2 = async (files) => {
+    if (files === null) return false;
+
+    for (const file of files) {
+      if (file.size > 1048576) {
+        alert("용량 제한: 1MB 입니다.");
+        return false;
+      } else {
+        await getBase64(file) // `file` your img file
+          .then((res) => {
+            setInformation((prev) => ({
+              ...prev,
+              background_image: res,
+            }));
+          }) // `res` base64 of img file
+          .catch((err) => console.log(err));
+      }
+    }
+  };
+  const ref = createRef(null);
+  const takeScreenShot = async (node) => {
+    const dataURI = await htmlToImage.toJpeg(node);
+    return dataURI;
   };
 
   return (
     <>
-      <GridContainerWrap height="83vh">
+      <GridContainerWrap height={isMobile ? "200vh" : "83vh"}>
         <GridContainer
           width="75%"
-          height={isMobile ? "200vh" : ""}
+          height={isMobile ? "100%" : ""}
           style={{ border: "1px solid #d3d3d3" }}
         >
-          <div className="simple-floatingedges">
+          <div
+            ref={ref}
+            className="simple-floatingedges"
+            style={{ backgroundColor: "white" }}
+          >
             <ReactFlow
               nodes={nodes}
               edges={edges}
@@ -668,7 +862,6 @@ const FlowChart = (props) => {
                   ? onConnect3
                   : onConnect4
               }
-              fitView
               nodeTypes={nodeTypes}
               connectionMode={ConnectionMode.Loose}
               onNodeClick={onNodeClick}
@@ -677,13 +870,27 @@ const FlowChart = (props) => {
               onEdgeUpdate={onEdgeUpdate}
               onPaneClick={onPaneClick}
             >
-              <Background variant="lines" />
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {Information.background_image != "" ? (
+                  <img src={`${Information.background_image}`} />
+                ) : (
+                  ""
+                )}
+              </div>
             </ReactFlow>
           </div>
         </GridContainer>
         <GridContainer
           width={`calc(25% - ${GAP}px)`}
-          height={isMobile ? "100vh" : ""}
+          height={isMobile ? "100%" : ""}
           style={{ overflowY: "scroll" }}
         >
           <GridTitleContainer style={{ marginRight: isMobile ? "0px" : "5px" }}>
@@ -735,7 +942,6 @@ const FlowChart = (props) => {
                               customOptionData={customOptionData}
                               changeData={ComboBoxChange2}
                               className="required"
-                              type="new"
                             />
                           )}
                         </td>
@@ -776,97 +982,159 @@ const FlowChart = (props) => {
                           />
                         </td>
                       </tr>
+                      <tr>
+                        <th style={{ minWidth: "40px", width: "30%" }}>
+                          배경화면
+                        </th>
+                        <td>
+                          <ButtonKendo
+                            onClick={upload2}
+                            themeColor={"primary"}
+                            icon={"upload"}
+                            style={{ width: "100%" }}
+                          >
+                            이미지 등록
+                            <input
+                              id="uploadAttachment2"
+                              style={{ display: "none" }}
+                              type="file"
+                              accept=".png, .jpg, .jpeg"
+                              ref={excelInput2}
+                              onChange={(event) => {
+                                handleFileUpload2(event.target.files);
+                              }}
+                            />
+                          </ButtonKendo>
+                        </td>
+                      </tr>
                     </tbody>
                   </FormBox>
                 </FormBoxWrap>
               </AccordionDetails>
             </Accordion>
-            <Accordion defaultExpanded>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1-content"
-                id="panel1-header"
-                style={{ backgroundColor: "#edf4fb" }}
-              >
-                <Typography>속성</Typography>
-              </AccordionSummary>
-              <AccordionDetails
-                style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
-              >
-                <FormBoxWrap>
-                  <FormBox>
-                    {Type == "C" || Type == "G" ? (
-                      <tbody>
-                        <tr>
-                          <th style={{ minWidth: "40px", width: "30%" }}>
-                            테마
-                          </th>
-                          <td>
-                            {bizComponentData !== null && (
-                              <BizComponentComboBox
-                                name="backgroundColor"
-                                value={clickNode.data.color}
-                                bizComponentId="L_SY060_COLOR"
-                                bizComponentData={bizComponentData}
-                                changeData={ComboBoxChange}
-                                para="SY_A0060W"
-                                className="required"
-                              />
-                            )}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th style={{ minWidth: "40px", width: "30%" }}>
-                            텍스트
-                          </th>
-                          <td>
-                            <Input
-                              name="label"
-                              type="text"
-                              value={clickNode.data.label}
-                              onChange={InputChange}
-                            />
-                          </td>
-                        </tr>
-                        {Type == "C" ? (
+            {Type == "B" ||
+            nodes.filter((item) => item.selected == true).length +
+              edges.filter((item) => item.selected == true).length >
+              1 ? (
+              ""
+            ) : (
+              <Accordion defaultExpanded>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                  style={{ backgroundColor: "#edf4fb" }}
+                >
+                  <Typography>속성</Typography>
+                </AccordionSummary>
+                <AccordionDetails
+                  style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
+                >
+                  <FormBoxWrap>
+                    <FormBox>
+                      {Type == "C" || Type == "G" ? (
+                        <tbody>
                           <tr>
                             <th style={{ minWidth: "40px", width: "30%" }}>
-                              링크
+                              테마
+                            </th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="backgroundColor"
+                                  value={clickNode.data.color}
+                                  bizComponentId="L_SY060_COLOR"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
+                                  para="SY_A0060W"
+                                  className="required"
+                                />
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th style={{ minWidth: "40px", width: "30%" }}>
+                              텍스트
                             </th>
                             <td>
                               <Input
-                                name="link"
+                                name="label"
                                 type="text"
-                                value={clickNode.data.link}
+                                value={clickNode.data.label}
                                 onChange={InputChange}
                               />
                             </td>
                           </tr>
-                        ) : (
-                          ""
-                        )}
-                      </tbody>
-                    ) : (
-                      <tbody>
-                        <tr>
-                          <th style={{ minWidth: "40px", width: "30%" }}>
-                            텍스트
-                          </th>
-                          <td>
-                            <Input
-                              name="label"
-                              type="text"
-                              value={clickEdge.label}
-                              onChange={InputChange2}
-                            />
-                          </td>
-                        </tr>
-                      </tbody>
-                    )}
-                  </FormBox>
-                </FormBoxWrap>
-              </AccordionDetails>
-            </Accordion>
+                          {Type == "C" ? (
+                            <tr>
+                              <th style={{ minWidth: "40px", width: "30%" }}>
+                                링크
+                              </th>
+                              <td>
+                                <Input
+                                  name="link"
+                                  type="text"
+                                  value={clickNode.data.link}
+                                  onChange={InputChange}
+                                />
+                              </td>
+                            </tr>
+                          ) : (
+                            ""
+                          )}
+                        </tbody>
+                      ) : Type == "I" ? (
+                        <tbody>
+                          <tr>
+                            <th style={{ minWidth: "40px", width: "30%" }}>
+                              첨부파일
+                            </th>
+                            <td>
+                              <ButtonKendo
+                                onClick={upload}
+                                themeColor={"primary"}
+                                icon={"upload"}
+                                style={{ width: "100%" }}
+                              >
+                                이미지 등록
+                                <input
+                                  id="uploadAttachment"
+                                  style={{ display: "none" }}
+                                  type="file"
+                                  accept=".png, .jpg, .jpeg"
+                                  ref={excelInput}
+                                  onChange={(event) => {
+                                    handleFileUpload(event.target.files);
+                                  }}
+                                />
+                              </ButtonKendo>
+                            </td>
+                          </tr>
+                        </tbody>
+                      ) : Type == "E" ? (
+                        <tbody>
+                          <tr>
+                            <th style={{ minWidth: "40px", width: "30%" }}>
+                              텍스트
+                            </th>
+                            <td>
+                              <Input
+                                name="label"
+                                type="text"
+                                value={clickEdge.label}
+                                onChange={InputChange2}
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      ) : (
+                        ""
+                      )}
+                    </FormBox>
+                  </FormBoxWrap>
+                </AccordionDetails>
+              </Accordion>
+            )}
             <Accordion defaultExpanded>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
@@ -921,34 +1189,11 @@ const FlowChart = (props) => {
                         </div>
                       </Button>
                     </Grid>
-                  </Grid>
-                </FormBoxWrap>
-              </AccordionDetails>
-            </Accordion>
-            <Accordion defaultExpanded>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1-content"
-                id="panel1-header"
-                style={{ backgroundColor: "#edf4fb" }}
-              >
-                <Typography>선</Typography>
-              </AccordionSummary>
-              <AccordionDetails
-                style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
-              >
-                <FormBoxWrap>
-                  <Grid container spacing={2}>
                     <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
                       <Button
-                        style={{
-                          color:
-                            EdgeType == "straight"
-                              ? "rgba(0, 0, 0, .725)"
-                              : "rgba(0, 0, 0, .325)",
-                        }}
+                        style={{ color: "rgba(0, 0, 0, .725)" }}
                         variant="text"
-                        onClick={() => onChangeEdgeType("straight")}
+                        onClick={() => onImageNodeAdd()}
                         fullWidth
                       >
                         <div
@@ -958,89 +1203,137 @@ const FlowChart = (props) => {
                             alignItems: "center",
                           }}
                         >
-                          <StraightIcon />
-                          <Typography variant="caption">직선</Typography>
-                        </div>
-                      </Button>
-                    </Grid>
-                    <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
-                      <Button
-                        style={{
-                          color:
-                            EdgeType == "step"
-                              ? "rgba(0, 0, 0, .725)"
-                              : "rgba(0, 0, 0, .325)",
-                        }}
-                        variant="text"
-                        onClick={() => onChangeEdgeType("step")}
-                        fullWidth
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                          }}
-                        >
-                          <TrendingUpIcon />
-                          <Typography variant="caption">꺽은선</Typography>
-                        </div>
-                      </Button>
-                    </Grid>
-                    <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
-                      <Button
-                        style={{
-                          color:
-                            EdgeType == "smoothstep"
-                              ? "rgba(0, 0, 0, .725)"
-                              : "rgba(0, 0, 0, .325)",
-                        }}
-                        variant="text"
-                        onClick={() => onChangeEdgeType("smoothstep")}
-                        fullWidth
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                          }}
-                        >
-                          <MovingIcon />
+                          <ImageIcon />
                           <Typography variant="caption">
-                            부드러운 꺽은선
+                            이미지 노드 생성
                           </Typography>
                         </div>
                       </Button>
                     </Grid>
-                    <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
-                      <Button
-                        style={{
-                          color:
-                            EdgeType == "bezier"
-                              ? "rgba(0, 0, 0, .725)"
-                              : "rgba(0, 0, 0, .325)",
-                        }}
-                        variant="text"
-                        onClick={() => onChangeEdgeType("bezier")}
-                        fullWidth
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                          }}
-                        >
-                          <RedoIcon />
-                          <Typography variant="caption">곡선</Typography>
-                        </div>
-                      </Button>
-                    </Grid>
                   </Grid>
                 </FormBoxWrap>
               </AccordionDetails>
             </Accordion>
+            {edges.filter((item) => item.selected == true).length > 1 ? (
+              ""
+            ) : (
+              <Accordion defaultExpanded>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                  style={{ backgroundColor: "#edf4fb" }}
+                >
+                  <Typography>선</Typography>
+                </AccordionSummary>
+                <AccordionDetails
+                  style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
+                >
+                  <FormBoxWrap>
+                    <Grid container spacing={2}>
+                      <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
+                        <Button
+                          style={{
+                            color:
+                              EdgeType == "straight"
+                                ? "rgba(0, 0, 0, .725)"
+                                : "rgba(0, 0, 0, .325)",
+                          }}
+                          variant="text"
+                          onClick={() => onChangeEdgeType("straight")}
+                          fullWidth
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                            }}
+                          >
+                            <StraightIcon />
+                            <Typography variant="caption">직선</Typography>
+                          </div>
+                        </Button>
+                      </Grid>
+                      <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
+                        <Button
+                          style={{
+                            color:
+                              EdgeType == "step"
+                                ? "rgba(0, 0, 0, .725)"
+                                : "rgba(0, 0, 0, .325)",
+                          }}
+                          variant="text"
+                          onClick={() => onChangeEdgeType("step")}
+                          fullWidth
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                            }}
+                          >
+                            <TrendingUpIcon />
+                            <Typography variant="caption">꺽은선</Typography>
+                          </div>
+                        </Button>
+                      </Grid>
+                      <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
+                        <Button
+                          style={{
+                            color:
+                              EdgeType == "smoothstep"
+                                ? "rgba(0, 0, 0, .725)"
+                                : "rgba(0, 0, 0, .325)",
+                          }}
+                          variant="text"
+                          onClick={() => onChangeEdgeType("smoothstep")}
+                          fullWidth
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                            }}
+                          >
+                            <MovingIcon />
+                            <Typography variant="caption">
+                              부드러운 꺽은선
+                            </Typography>
+                          </div>
+                        </Button>
+                      </Grid>
+                      <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
+                        <Button
+                          style={{
+                            color:
+                              EdgeType == "bezier"
+                                ? "rgba(0, 0, 0, .725)"
+                                : "rgba(0, 0, 0, .325)",
+                          }}
+                          variant="text"
+                          onClick={() => onChangeEdgeType("bezier")}
+                          fullWidth
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                            }}
+                          >
+                            <RedoIcon />
+                            <Typography variant="caption">곡선</Typography>
+                          </div>
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </FormBoxWrap>
+                </AccordionDetails>
+              </Accordion>
+            )}
           </GridContainer>
         </GridContainer>
       </GridContainerWrap>
