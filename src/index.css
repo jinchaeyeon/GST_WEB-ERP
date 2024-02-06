@@ -27,25 +27,25 @@ code {
 }
 
 .simple-floatingedges .react-flow__handle {
-  width: 15px;
-  height: 15px;
+  width: 20px;
+  height: 20px;
   opacity: 0;
 }
 
 .simple-floatingedges .react-flow__handle-top {
-  top: -5px;
+  top: -8px;
 }
 
 .simple-floatingedges .react-flow__handle-bottom {
-  bottom: -5px;
+  bottom: -8px;
 }
 
 .simple-floatingedges .react-flow__handle-left {
-  left: -5px;
+  left: -8px;
 }
 
 .simple-floatingedges .react-flow__handle-right {
-  right: -5px;
+  right: -8px;
 }
 
 .simple-floatingedges .react-flow__node-customNode {
@@ -71,7 +71,7 @@ code {
 }
 
 .simple-floatingedges .react-flow__node {
-  z-index: 0 !important;
+  z-index: -1 !important;
 }
 
 .css-zqhngk-MuiFormControl-root-MuiTextField-root {
