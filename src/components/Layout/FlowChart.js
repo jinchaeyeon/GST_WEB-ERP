@@ -1,6 +1,6 @@
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ContentPasteIcon from "@mui/icons-material/ContentPaste";
-import CopyAllIcon from "@mui/icons-material/CopyAll";
+import CropPortraitIcon from '@mui/icons-material/CropPortrait';
 import Crop32Icon from "@mui/icons-material/Crop32";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ImageIcon from "@mui/icons-material/Image";
@@ -55,6 +55,8 @@ import { GAP } from "../CommonString";
 import CustomNode from "./CustomNode";
 import GroupNode from "./GroupNode";
 import ImageNode from "./ImageNode";
+import FlipToFrontIcon from '@mui/icons-material/FlipToFront';
+import FlipToBackIcon from '@mui/icons-material/FlipToBack';
 
 const nodeTypes = {
   customNode: CustomNode,
@@ -87,7 +89,7 @@ const FlowChart = (props) => {
   const [copyNode, setCopyNode] = useState([]);
   const [EdgeType, setEdgeType] = useState("straight");
   const { x, y, zoom } = useViewport();
-  const { setViewport } = useReactFlow();
+  const { setViewport, getNodes } = useReactFlow();
   const [Type, setType] = useState("B"); //c : 커스텀노드, G: 그룹노드, I: 이미지노드, E: edge
   const [workType, setWorkType] = useState(props.workType);
   const [Information, setInformation] = useState({
@@ -184,6 +186,7 @@ const FlowChart = (props) => {
       ...params,
       id: getId(),
       type: str,
+      selected: true,
       label: "",
       markerEnd: {
         type: MarkerType.Arrow,
@@ -361,6 +364,12 @@ const FlowChart = (props) => {
   };
 
   const onNodeAdd = () => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        node.selected = false;
+        return node;
+      })
+    );
     const newNode = {
       id: getId(),
       type: "customNode",
@@ -368,6 +377,7 @@ const FlowChart = (props) => {
         x: 0,
         y: 0,
       },
+      selected: true,
       data: {
         label: "",
         link: "",
@@ -387,6 +397,12 @@ const FlowChart = (props) => {
   };
 
   const onGroupNodeAdd = () => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        node.selected = false;
+        return node;
+      })
+    );
     const newNode = {
       id: getId(),
       type: "groupNode",
@@ -394,6 +410,7 @@ const FlowChart = (props) => {
         x: 0,
         y: 0,
       },
+      selected: true,
       data: {
         label: "",
         link: "",
@@ -413,6 +430,12 @@ const FlowChart = (props) => {
   };
 
   const onImageNodeAdd = () => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        node.selected = false;
+        return node;
+      })
+    );
     const newNode = {
       id: getId(),
       type: "imageNode",
@@ -420,6 +443,7 @@ const FlowChart = (props) => {
         x: 0,
         y: 0,
       },
+      selected: true,
       data: {
         url: "",
       },
@@ -450,11 +474,6 @@ const FlowChart = (props) => {
 
   const onChangeSeq = (event, node) => {
     if (nodes.filter((item) => item.selected == true).length < 2) {
-      setNodes((prev) => {
-        const List = prev.filter((item) => item.id != node.id);
-        const nodesList = [...List, node];
-        return nodesList;
-      });
       if (node.type == "customNode") {
         setType("C");
       } else if (node.type == "groupNode") {
@@ -462,31 +481,7 @@ const FlowChart = (props) => {
       } else if (node.type == "imageNode") {
         setType("I");
       }
-    } else {
-      setNodes((prev) => {
-        const List = prev.map((item) => {
-          if (item.selected == true || node.id == item.id) {
-            return {
-              ...item,
-              selected: true,
-            };
-          } else {
-            return {
-              ...item,
-              selected: false,
-            };
-          }
-        });
-        return List;
-      });
-      if (node.type == "customNode") {
-        setType("C");
-      } else if (node.type == "groupNode") {
-        setType("G");
-      } else if (node.type == "imageNode") {
-        setType("I");
-      }
-    }
+    } 
   };
 
   const onPaneClick = useCallback(() => {
@@ -654,7 +649,7 @@ const FlowChart = (props) => {
 
     if (data.isSuccess === true) {
       if (Information.attdatnum != "")
-      setDeletedAttadatnums([Information.attdatnum]);
+        setDeletedAttadatnums([Information.attdatnum]);
 
       props.setData(false);
       setParaData({
@@ -806,6 +801,22 @@ const FlowChart = (props) => {
     setCopyNode([]);
   };
 
+  const onBack = () => {
+    setNodes((nds) =>
+      getNodes()
+        .filter((x) => x.selected == true)
+        .concat(getNodes().filter((x) => x.selected == false))
+    );
+  };
+
+  const onFront = () => {
+    setNodes((nds) =>
+      getNodes()
+        .filter((x) => x.selected == false)
+        .concat(getNodes().filter((x) => x.selected == true))
+    );
+  };
+
   return (
     <>
       <GridContainerWrap height={isMobile ? "200vh" : "83vh"}>
@@ -837,7 +848,7 @@ const FlowChart = (props) => {
               connectionMode={ConnectionMode.Loose}
               onNodeClick={onNodeClick}
               onEdgeClick={onEdgeClick}
-              onNodeDragStop={onChangeSeq}
+              onNodeDragStart={onChangeSeq}
               onEdgeUpdate={onEdgeUpdate}
               onPaneClick={onPaneClick}
             >
@@ -983,161 +994,7 @@ const FlowChart = (props) => {
                 </FormBoxWrap>
               </AccordionDetails>
             </Accordion>
-            {Type == "B" ||
-            nodes.filter((item) => item.selected == true).length +
-              edges.filter((item) => item.selected == true).length >
-              1 ? (
-              ""
-            ) : (
-              <Accordion defaultExpanded>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1-content"
-                  id="panel1-header"
-                  style={{ backgroundColor: "#edf4fb" }}
-                >
-                  <Typography>속성</Typography>
-                </AccordionSummary>
-                <AccordionDetails
-                  style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
-                >
-                  <FormBoxWrap>
-                    <FormBox>
-                      {Type == "C" || Type == "G" ? (
-                        <tbody>
-                          <tr>
-                            <th style={{ minWidth: "40px", width: "30%" }}>
-                              테마
-                            </th>
-                            <td>
-                              {bizComponentData !== null && (
-                                <BizComponentComboBox
-                                  name="backgroundColor"
-                                  value={
-                                    nodes.filter(
-                                      (item) => item.selected == true
-                                    )[0] == undefined
-                                      ? ""
-                                      : nodes.filter(
-                                          (item) => item.selected == true
-                                        )[0].data.color
-                                  }
-                                  bizComponentId="L_SY060_COLOR"
-                                  bizComponentData={bizComponentData}
-                                  changeData={ComboBoxChange}
-                                  para="SY_A0060W"
-                                  className="required"
-                                />
-                              )}
-                            </td>
-                          </tr>
-                          <tr>
-                            <th style={{ minWidth: "40px", width: "30%" }}>
-                              텍스트
-                            </th>
-                            <td>
-                              <Input
-                                name="label"
-                                type="text"
-                                value={
-                                  nodes.filter(
-                                    (item) => item.selected == true
-                                  )[0] == undefined
-                                    ? ""
-                                    : nodes.filter(
-                                        (item) => item.selected == true
-                                      )[0].data.label
-                                }
-                                onChange={InputChange}
-                              />
-                            </td>
-                          </tr>
-                          {Type == "C" ? (
-                            <tr>
-                              <th style={{ minWidth: "40px", width: "30%" }}>
-                                링크
-                              </th>
-                              <td>
-                                <Input
-                                  name="link"
-                                  type="text"
-                                  value={
-                                    nodes.filter(
-                                      (item) => item.selected == true
-                                    )[0] == undefined
-                                      ? ""
-                                      : nodes.filter(
-                                          (item) => item.selected == true
-                                        )[0].data.link
-                                  }
-                                  onChange={InputChange}
-                                />
-                              </td>
-                            </tr>
-                          ) : (
-                            ""
-                          )}
-                        </tbody>
-                      ) : Type == "I" ? (
-                        <tbody>
-                          <tr>
-                            <th style={{ minWidth: "40px", width: "30%" }}>
-                              첨부파일
-                            </th>
-                            <td>
-                              <ButtonKendo
-                                onClick={upload}
-                                themeColor={"primary"}
-                                icon={"upload"}
-                                style={{ width: "100%" }}
-                              >
-                                이미지 등록
-                                <input
-                                  id="uploadAttachment"
-                                  style={{ display: "none" }}
-                                  type="file"
-                                  accept=".png, .jpg, .jpeg"
-                                  ref={excelInput}
-                                  onChange={(event) => {
-                                    handleFileUpload(event.target.files);
-                                  }}
-                                />
-                              </ButtonKendo>
-                            </td>
-                          </tr>
-                        </tbody>
-                      ) : Type == "E" ? (
-                        <tbody>
-                          <tr>
-                            <th style={{ minWidth: "40px", width: "30%" }}>
-                              텍스트
-                            </th>
-                            <td>
-                              <Input
-                                name="label"
-                                type="text"
-                                value={
-                                  edges.filter(
-                                    (item) => item.selected == true
-                                  )[0] == undefined
-                                    ? ""
-                                    : edges.filter(
-                                        (item) => item.selected == true
-                                      )[0].label
-                                }
-                                onChange={InputChange2}
-                              />
-                            </td>
-                          </tr>
-                        </tbody>
-                      ) : (
-                        ""
-                      )}
-                    </FormBox>
-                  </FormBoxWrap>
-                </AccordionDetails>
-              </Accordion>
-            )}
+
             <Accordion defaultExpanded>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
@@ -1166,7 +1023,7 @@ const FlowChart = (props) => {
                             alignItems: "center",
                           }}
                         >
-                          <ContentCopyIcon />
+                          <CropPortraitIcon />
                           <Typography variant="caption">노드 복사</Typography>
                         </div>
                       </Button>
@@ -1185,7 +1042,7 @@ const FlowChart = (props) => {
                             alignItems: "center",
                           }}
                         >
-                          <CopyAllIcon />
+                          <ContentCopyIcon />
                           <Typography variant="caption">
                             전체 노드 복사
                           </Typography>
@@ -1214,6 +1071,50 @@ const FlowChart = (props) => {
                         >
                           <ContentPasteIcon />
                           <Typography variant="caption">붙여넣기</Typography>
+                        </div>
+                      </Button>
+                    </Grid>
+                    <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                      <Button
+                        style={{
+                          color: "rgba(0, 0, 0, .725)",
+                        }}
+                        variant="text"
+                        onClick={() => onBack()}
+                        fullWidth
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                          }}
+                        >
+                          <FlipToBackIcon />
+                          <Typography variant="caption">맨뒤로 정렬</Typography>
+                        </div>
+                      </Button>
+                    </Grid>
+                    <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                      <Button
+                        style={{
+                          color: "rgba(0, 0, 0, .725)",
+                        }}
+                        variant="text"
+                        onClick={() => onFront()}
+                        fullWidth
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                          }}
+                        >
+                          <FlipToFrontIcon />
+                          <Typography variant="caption">
+                            맨앞으로 정렬
+                          </Typography>
                         </div>
                       </Button>
                     </Grid>
@@ -1416,6 +1317,161 @@ const FlowChart = (props) => {
                         </Button>
                       </Grid>
                     </Grid>
+                  </FormBoxWrap>
+                </AccordionDetails>
+              </Accordion>
+            )}
+            {Type == "B" ||
+            nodes.filter((item) => item.selected == true).length +
+              edges.filter((item) => item.selected == true).length >
+              1 ? (
+              ""
+            ) : (
+              <Accordion defaultExpanded>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                  style={{ backgroundColor: "#edf4fb" }}
+                >
+                  <Typography>속성</Typography>
+                </AccordionSummary>
+                <AccordionDetails
+                  style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
+                >
+                  <FormBoxWrap>
+                    <FormBox>
+                      {Type == "C" || Type == "G" ? (
+                        <tbody>
+                          <tr>
+                            <th style={{ minWidth: "40px", width: "30%" }}>
+                              테마
+                            </th>
+                            <td>
+                              {bizComponentData !== null && (
+                                <BizComponentComboBox
+                                  name="backgroundColor"
+                                  value={
+                                    nodes.filter(
+                                      (item) => item.selected == true
+                                    )[0] == undefined
+                                      ? ""
+                                      : nodes.filter(
+                                          (item) => item.selected == true
+                                        )[0].data.color
+                                  }
+                                  bizComponentId="L_SY060_COLOR"
+                                  bizComponentData={bizComponentData}
+                                  changeData={ComboBoxChange}
+                                  para="SY_A0060W"
+                                  className="required"
+                                />
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th style={{ minWidth: "40px", width: "30%" }}>
+                              텍스트
+                            </th>
+                            <td>
+                              <Input
+                                name="label"
+                                type="text"
+                                value={
+                                  nodes.filter(
+                                    (item) => item.selected == true
+                                  )[0] == undefined
+                                    ? ""
+                                    : nodes.filter(
+                                        (item) => item.selected == true
+                                      )[0].data.label
+                                }
+                                onChange={InputChange}
+                              />
+                            </td>
+                          </tr>
+                          {Type == "C" ? (
+                            <tr>
+                              <th style={{ minWidth: "40px", width: "30%" }}>
+                                링크
+                              </th>
+                              <td>
+                                <Input
+                                  name="link"
+                                  type="text"
+                                  value={
+                                    nodes.filter(
+                                      (item) => item.selected == true
+                                    )[0] == undefined
+                                      ? ""
+                                      : nodes.filter(
+                                          (item) => item.selected == true
+                                        )[0].data.link
+                                  }
+                                  onChange={InputChange}
+                                />
+                              </td>
+                            </tr>
+                          ) : (
+                            ""
+                          )}
+                        </tbody>
+                      ) : Type == "I" ? (
+                        <tbody>
+                          <tr>
+                            <th style={{ minWidth: "40px", width: "30%" }}>
+                              첨부파일
+                            </th>
+                            <td>
+                              <ButtonKendo
+                                onClick={upload}
+                                themeColor={"primary"}
+                                icon={"upload"}
+                                style={{ width: "100%" }}
+                              >
+                                이미지 등록
+                                <input
+                                  id="uploadAttachment"
+                                  style={{ display: "none" }}
+                                  type="file"
+                                  accept=".png, .jpg, .jpeg"
+                                  ref={excelInput}
+                                  onChange={(event) => {
+                                    handleFileUpload(event.target.files);
+                                  }}
+                                />
+                              </ButtonKendo>
+                            </td>
+                          </tr>
+                        </tbody>
+                      ) : Type == "E" ? (
+                        <tbody>
+                          <tr>
+                            <th style={{ minWidth: "40px", width: "30%" }}>
+                              텍스트
+                            </th>
+                            <td>
+                              <Input
+                                name="label"
+                                type="text"
+                                value={
+                                  edges.filter(
+                                    (item) => item.selected == true
+                                  )[0] == undefined
+                                    ? ""
+                                    : edges.filter(
+                                        (item) => item.selected == true
+                                      )[0].label
+                                }
+                                onChange={InputChange2}
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      ) : (
+                        ""
+                      )}
+                    </FormBox>
                   </FormBoxWrap>
                 </AccordionDetails>
               </Accordion>
