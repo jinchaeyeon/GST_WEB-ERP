@@ -653,6 +653,9 @@ const FlowChart = (props) => {
     }
 
     if (data.isSuccess === true) {
+      if (Information.attdatnum != "")
+      setDeletedAttadatnums([Information.attdatnum]);
+
       props.setData(false);
       setParaData({
         workType: "",
@@ -667,6 +670,7 @@ const FlowChart = (props) => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
