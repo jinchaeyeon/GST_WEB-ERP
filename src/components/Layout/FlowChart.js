@@ -1,3 +1,6 @@
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import ContentPasteIcon from "@mui/icons-material/ContentPaste";
+import CopyAllIcon from "@mui/icons-material/CopyAll";
 import Crop32Icon from "@mui/icons-material/Crop32";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ImageIcon from "@mui/icons-material/Image";
@@ -14,38 +17,39 @@ import Typography from "@mui/material/Typography";
 import { Button as ButtonKendo } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import * as htmlToImage from "html-to-image";
-import { createRef, useCallback, useEffect, useRef, useState } from "react";
+import * as React from "react";
+import { createRef, useCallback, useEffect, useState } from "react";
 import ReactFlow, {
-    ConnectionMode,
-    MarkerType,
-    ReactFlowProvider,
-    addEdge,
-    useEdgesState,
-    useNodesState,
-    useReactFlow,
-    useViewport,
+  ConnectionMode,
+  MarkerType,
+  ReactFlowProvider,
+  addEdge,
+  useEdgesState,
+  useNodesState,
+  useReactFlow,
+  useViewport,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import { useSetRecoilState } from "recoil";
 import {
-    ButtonContainer,
-    FormBox,
-    FormBoxWrap,
-    GridContainer,
-    GridContainerWrap,
-    GridTitle,
-    GridTitleContainer,
+  ButtonContainer,
+  FormBox,
+  FormBoxWrap,
+  GridContainer,
+  GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { deletedAttadatnumsState, isLoading } from "../../store/atoms";
 import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
-    UseBizComponent,
-    UseCustomOption,
-    UseGetValueFromSessionItem,
-    UseParaPc,
-    useSysMessage,
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseParaPc,
+  useSysMessage,
 } from "../CommonFunction";
 import { GAP } from "../CommonString";
 import CustomNode from "./CustomNode";
@@ -60,41 +64,6 @@ const nodeTypes = {
 
 let id = 0;
 const getId = () => `${++id}`;
-
-const initNode = {
-  id: "-1",
-  data: {
-    label: "",
-    link: "",
-    color: "#def2fb",
-    fontcolor: "#39a2d0",
-    clickcolor: "#c9e8f8",
-  },
-  position: {
-    x: 0,
-    y: 0,
-  },
-  type: "customNode",
-  style: {
-    border: "1px solid rgba(0, 0, 0, .125)",
-    backgroundColor: "#c9e8f8",
-    width: 150,
-    height: 30,
-  },
-};
-
-const initEdge = {
-  type: "straight",
-  source: "1",
-  target: "2",
-  id: "-1",
-  label: "straight",
-  markerEnd: {
-    type: MarkerType.Arrow,
-  },
-  sourceHandle: "bottom",
-  targetHandle: "top",
-};
 
 const FlowChart = (props) => {
   let deviceWidth = window.innerWidth;
@@ -115,11 +84,10 @@ const FlowChart = (props) => {
   UseCustomOption("SY_A0060W", setCustomOptionData);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [clickNode, setClickNode] = useState(initNode);
-  const [clickEdge, setClickEdge] = useState(initEdge);
+  const [copyNode, setCopyNode] = useState([]);
   const [EdgeType, setEdgeType] = useState("straight");
   const { x, y, zoom } = useViewport();
-  const { setViewport, zoomTo } = useReactFlow();
+  const { setViewport } = useReactFlow();
   const [Type, setType] = useState("B"); //c : 커스텀노드, G: 그룹노드, I: 이미지노드, E: edge
   const [workType, setWorkType] = useState(props.workType);
   const [Information, setInformation] = useState({
@@ -150,11 +118,6 @@ const FlowChart = (props) => {
           return item.config_json_s;
         });
         setNodes(nodeData);
-        setClickNode(
-          nodeData.filter((item) => item.selected == true)[0] == undefined
-            ? nodeData[0]
-            : nodeData.filter((item) => item.selected == true)[0]
-        );
       }
       if (edgeList.length > 0) {
         const edgeData = edgeList.map((item) => {
@@ -193,7 +156,7 @@ const FlowChart = (props) => {
         },
       });
     }
-  }, [props.props, setViewport]);
+  }, [props.data, setViewport]);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(onEdgeAdd(params, "straight"), eds)),
@@ -212,7 +175,7 @@ const FlowChart = (props) => {
   );
 
   const onConnect4 = useCallback(
-    (params) => setEdges((eds) => addEdge(onEdgeAdd(params, "bezier"), eds)),
+    (params) => setEdges((eds) => addEdge(onEdgeAdd(params, "default"), eds)),
     []
   );
 
@@ -227,7 +190,6 @@ const FlowChart = (props) => {
       },
     };
     setType("E");
-    setClickEdge(newEgde);
     setEdgeType(str);
     return newEgde;
   };
@@ -256,12 +218,10 @@ const FlowChart = (props) => {
       targetHandle: newConnection.targetHandle,
     };
     setType("E");
-    setClickEdge(newEgde);
     setEdgeType(newEgde.type);
   };
 
   const onNodeClick = (event, node) => {
-    setClickNode(node);
     if (node.type == "customNode") {
       setType("C");
     } else if (node.type == "groupNode") {
@@ -272,7 +232,6 @@ const FlowChart = (props) => {
   };
 
   const onEdgeClick = (event, edge) => {
-    setClickEdge(edge);
     setEdgeType(edge.type);
     setType("E");
   };
@@ -307,7 +266,7 @@ const FlowChart = (props) => {
         );
       }
     }
-  }, [clickNode]);
+  }, [nodes]);
 
   const onEdgeUpdate = useCallback(
     (oldEdge, newConnection) => onEdgeUpdating(oldEdge, newConnection),
@@ -319,7 +278,7 @@ const FlowChart = (props) => {
 
     setNodes((nds) =>
       nds.map((node) => {
-        if (node.id == clickNode.id) {
+        if (node.selected == true) {
           // it's important that you create a new object here
           // in order to notify react flow about the change
           node.data = {
@@ -332,18 +291,12 @@ const FlowChart = (props) => {
       })
     );
 
-    setClickNode((prev) => ({
-      ...prev,
-      data: {
-        ...prev.data,
-        [name]: value,
-      },
-    }));
-    if (clickNode.type == "customNode") {
+    const node = nodes.filter((item) => item.selected == true)[0];
+    if (node.type == "customNode") {
       setType("C");
-    } else if (clickNode.type == "groupNode") {
+    } else if (node.type == "groupNode") {
       setType("G");
-    } else if (clickNode.type == "imageNode") {
+    } else if (node.type == "imageNode") {
       setType("I");
     }
   };
@@ -353,7 +306,7 @@ const FlowChart = (props) => {
 
     setEdges((nds) =>
       nds.map((edge) => {
-        if (edge.id == clickEdge.id) {
+        if (edge.selected == true) {
           // it's important that you create a new object here
           // in order to notify react flow about the change
           edge.label = value;
@@ -362,11 +315,6 @@ const FlowChart = (props) => {
         return edge;
       })
     );
-
-    setClickEdge((prev) => ({
-      ...prev,
-      label: value,
-    }));
   };
 
   const ComboBoxChange2 = (e) => {
@@ -391,7 +339,7 @@ const FlowChart = (props) => {
 
     setNodes((nds) =>
       nds.map((node) => {
-        if (node.id == clickNode.id) {
+        if (node.selected == true) {
           // it's important that you create a new object here
           // in order to notify react flow about the change
           node.style = {
@@ -435,7 +383,6 @@ const FlowChart = (props) => {
       },
     };
     setNodes((nds) => nds.concat(newNode));
-    setClickNode(newNode);
     setType("C");
   };
 
@@ -462,7 +409,6 @@ const FlowChart = (props) => {
       },
     };
     setNodes((nds) => nds.concat(newNode));
-    setClickNode(newNode);
     setType("G");
   };
 
@@ -483,7 +429,6 @@ const FlowChart = (props) => {
       },
     };
     setNodes((nds) => nds.concat(newNode));
-    setClickNode(newNode);
     setType("I");
   };
 
@@ -492,7 +437,7 @@ const FlowChart = (props) => {
 
     setEdges((nds) =>
       nds.map((edge) => {
-        if (edge.id == clickEdge.id) {
+        if (edge.selected == true) {
           // it's important that you create a new object here
           // in order to notify react flow about the change
           edge.type = str;
@@ -510,7 +455,6 @@ const FlowChart = (props) => {
         const nodesList = [...List, node];
         return nodesList;
       });
-      setClickNode(node);
       if (node.type == "customNode") {
         setType("C");
       } else if (node.type == "groupNode") {
@@ -535,7 +479,6 @@ const FlowChart = (props) => {
         });
         return List;
       });
-      setClickNode(node);
       if (node.type == "customNode") {
         setType("C");
       } else if (node.type == "groupNode") {
@@ -547,11 +490,9 @@ const FlowChart = (props) => {
   };
 
   const onPaneClick = useCallback(() => {
-    setClickNode(initNode);
-    setClickEdge(initEdge);
     setType("B");
     setEdgeType("straight");
-  }, [clickNode, clickEdge]);
+  }, []);
 
   const onSaveClick = () => {
     if (Information.location == "" || Information.layout_id == "") {
@@ -666,9 +607,6 @@ const FlowChart = (props) => {
     }
   };
 
-  const imageWidth = 1024;
-  const imageHeight = 768;
-
   const [ParaData, setParaData] = useState({
     workType: "",
     orgdiv: "01",
@@ -758,8 +696,8 @@ const FlowChart = (props) => {
     const uploadInput2 = document.getElementById("uploadAttachment2");
     uploadInput2.click();
   };
-  const excelInput = useRef();
-  const excelInput2 = useRef();
+  const excelInput = React.useRef();
+  const excelInput2 = React.useRef();
 
   async function getBase64(file) {
     return new Promise((resolve, reject) => {
@@ -784,7 +722,7 @@ const FlowChart = (props) => {
           .then((res) => {
             setNodes((nds) =>
               nds.map((node) => {
-                if (node.id == clickNode.id) {
+                if (node.selected == true) {
                   // it's important that you create a new object here
                   // in order to notify react flow about the change
                   node.data = {
@@ -796,13 +734,6 @@ const FlowChart = (props) => {
                 return node;
               })
             );
-            setClickNode((prev) => ({
-              ...prev,
-              data: {
-                ...prev.data,
-                url: res,
-              },
-            }));
             setType("I");
           }) // `res` base64 of img file
           .catch((err) => console.log(err));
@@ -835,11 +766,47 @@ const FlowChart = (props) => {
     return dataURI;
   };
 
+  const onCopy = () => {
+    setCopyNode(nodes.filter((item) => item.selected == true));
+    setType("B");
+  };
+  const onCopyAll = () => {
+    setCopyNode(nodes);
+    setType("B");
+  };
+  const onPaste = () => {
+    setNodes((nds) =>
+      nds.map((node) => {
+        if (node.selected == true) {
+          node.selected = false;
+        }
+
+        return node;
+      })
+    );
+    copyNode.map((item) => {
+      const newNode = {
+        ...item,
+        id: getId(),
+        position: {
+          x: item.position.x + 50,
+          y: item.position.y + 50,
+        },
+        selected: true,
+      };
+
+      setNodes((nds) => nds.concat(newNode));
+      setType("B");
+    });
+
+    setCopyNode([]);
+  };
+
   return (
     <>
       <GridContainerWrap height={isMobile ? "200vh" : "83vh"}>
         <GridContainer
-          width="75%"
+          width="65%"
           height={isMobile ? "100%" : ""}
           style={{ border: "1px solid #d3d3d3" }}
         >
@@ -889,7 +856,7 @@ const FlowChart = (props) => {
           </div>
         </GridContainer>
         <GridContainer
-          width={`calc(25% - ${GAP}px)`}
+          width={`calc(35% - ${GAP}px)`}
           height={isMobile ? "100%" : ""}
           style={{ overflowY: "scroll" }}
         >
@@ -1042,7 +1009,15 @@ const FlowChart = (props) => {
                               {bizComponentData !== null && (
                                 <BizComponentComboBox
                                   name="backgroundColor"
-                                  value={clickNode.data.color}
+                                  value={
+                                    nodes.filter(
+                                      (item) => item.selected == true
+                                    )[0] == undefined
+                                      ? ""
+                                      : nodes.filter(
+                                          (item) => item.selected == true
+                                        )[0].data.color
+                                  }
                                   bizComponentId="L_SY060_COLOR"
                                   bizComponentData={bizComponentData}
                                   changeData={ComboBoxChange}
@@ -1060,7 +1035,15 @@ const FlowChart = (props) => {
                               <Input
                                 name="label"
                                 type="text"
-                                value={clickNode.data.label}
+                                value={
+                                  nodes.filter(
+                                    (item) => item.selected == true
+                                  )[0] == undefined
+                                    ? ""
+                                    : nodes.filter(
+                                        (item) => item.selected == true
+                                      )[0].data.label
+                                }
                                 onChange={InputChange}
                               />
                             </td>
@@ -1074,7 +1057,15 @@ const FlowChart = (props) => {
                                 <Input
                                   name="link"
                                   type="text"
-                                  value={clickNode.data.link}
+                                  value={
+                                    nodes.filter(
+                                      (item) => item.selected == true
+                                    )[0] == undefined
+                                      ? ""
+                                      : nodes.filter(
+                                          (item) => item.selected == true
+                                        )[0].data.link
+                                  }
                                   onChange={InputChange}
                                 />
                               </td>
@@ -1121,7 +1112,15 @@ const FlowChart = (props) => {
                               <Input
                                 name="label"
                                 type="text"
-                                value={clickEdge.label}
+                                value={
+                                  edges.filter(
+                                    (item) => item.selected == true
+                                  )[0] == undefined
+                                    ? ""
+                                    : edges.filter(
+                                        (item) => item.selected == true
+                                      )[0].label
+                                }
                                 onChange={InputChange2}
                               />
                             </td>
@@ -1142,6 +1141,89 @@ const FlowChart = (props) => {
                 id="panel1-header"
                 style={{ backgroundColor: "#edf4fb" }}
               >
+                <Typography>기능</Typography>
+              </AccordionSummary>
+              <AccordionDetails
+                style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
+              >
+                <FormBoxWrap>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                      <Button
+                        style={{ color: "rgba(0, 0, 0, .725)" }}
+                        variant="text"
+                        onClick={() => onCopy()}
+                        fullWidth
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                          }}
+                        >
+                          <ContentCopyIcon />
+                          <Typography variant="caption">노드 복사</Typography>
+                        </div>
+                      </Button>
+                    </Grid>
+                    <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                      <Button
+                        style={{ color: "rgba(0, 0, 0, .725)" }}
+                        variant="text"
+                        onClick={() => onCopyAll()}
+                        fullWidth
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                          }}
+                        >
+                          <CopyAllIcon />
+                          <Typography variant="caption">
+                            전체 노드 복사
+                          </Typography>
+                        </div>
+                      </Button>
+                    </Grid>
+                    <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                      <Button
+                        style={{
+                          color:
+                            copyNode.length == 0
+                              ? "rgba(0, 0, 0, .325)"
+                              : "rgba(0, 0, 0, .725)",
+                        }}
+                        variant="text"
+                        onClick={() => onPaste()}
+                        fullWidth
+                        disabled={copyNode.length == 0 ? true : false}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                          }}
+                        >
+                          <ContentPasteIcon />
+                          <Typography variant="caption">붙여넣기</Typography>
+                        </div>
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </FormBoxWrap>
+              </AccordionDetails>
+            </Accordion>
+            <Accordion defaultExpanded>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1-content"
+                id="panel1-header"
+                style={{ backgroundColor: "#edf4fb" }}
+              >
                 <Typography>노드</Typography>
               </AccordionSummary>
               <AccordionDetails
@@ -1149,7 +1231,7 @@ const FlowChart = (props) => {
               >
                 <FormBoxWrap>
                   <Grid container spacing={2}>
-                    <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
+                    <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
                       <Button
                         style={{ color: "rgba(0, 0, 0, .725)" }}
                         variant="text"
@@ -1168,7 +1250,7 @@ const FlowChart = (props) => {
                         </div>
                       </Button>
                     </Grid>
-                    <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
+                    <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
                       <Button
                         style={{ color: "rgba(0, 0, 0, .725)" }}
                         variant="text"
@@ -1189,7 +1271,7 @@ const FlowChart = (props) => {
                         </div>
                       </Button>
                     </Grid>
-                    <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
+                    <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
                       <Button
                         style={{ color: "rgba(0, 0, 0, .725)" }}
                         variant="text"
@@ -1231,7 +1313,7 @@ const FlowChart = (props) => {
                 >
                   <FormBoxWrap>
                     <Grid container spacing={2}>
-                      <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
+                      <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
                         <Button
                           style={{
                             color:
@@ -1255,7 +1337,7 @@ const FlowChart = (props) => {
                           </div>
                         </Button>
                       </Grid>
-                      <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
+                      <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
                         <Button
                           style={{
                             color:
@@ -1279,7 +1361,7 @@ const FlowChart = (props) => {
                           </div>
                         </Button>
                       </Grid>
-                      <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
+                      <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
                         <Button
                           style={{
                             color:
@@ -1305,16 +1387,16 @@ const FlowChart = (props) => {
                           </div>
                         </Button>
                       </Grid>
-                      <Grid item xs={6} sm={6} md={6} lg={12} xl={6}>
+                      <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
                         <Button
                           style={{
                             color:
-                              EdgeType == "bezier"
+                              EdgeType == "default"
                                 ? "rgba(0, 0, 0, .725)"
                                 : "rgba(0, 0, 0, .325)",
                           }}
                           variant="text"
-                          onClick={() => onChangeEdgeType("bezier")}
+                          onClick={() => onChangeEdgeType("default")}
                           fullWidth
                         >
                           <div

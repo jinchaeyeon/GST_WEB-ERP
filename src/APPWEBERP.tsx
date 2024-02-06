@@ -226,6 +226,7 @@ import SY_A0110W from "./routes/SY_A0110W";
 import SY_A0120W from "./routes/SY_A0120W";
 import SY_A0125W from "./routes/SY_A0125W";
 import SY_A0500W from "./routes/SY_A0500W";
+import SY_B0060W from "./routes/SY_B0060W";
 import TO_B0011W from "./routes/TO_B0011W";
 import {
   colors,
@@ -557,6 +558,8 @@ const AppInner: React.FC = () => {
       return SY_A0125W;
     } else if (str == "SY_A0500W") {
       return SY_A0500W;
+    } else if (str == "SY_B0060W") {
+      return SY_B0060W;
     } else if (str == "PS_A0060_301W") {
       return PS_A0060_301W;
     } else if (str == "MA_A0010W") {
@@ -1078,6 +1081,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/SY_A0100W" component={SY_A0100W} exact />
                   <AuthRoute path="/SY_A0025W" component={SY_A0025W} exact />
                   <AuthRoute path="/SY_A0500W" component={SY_A0500W} exact />
+                  <AuthRoute path="/SY_B0060W" component={SY_B0060W} exact />
                   {/* 전사관리 */}
                   <AuthRoute path="/CM_A0000W" component={CM_A0000W} exact />
                   <AuthRoute path="/CM_A1000W" component={CM_A1000W} exact />
