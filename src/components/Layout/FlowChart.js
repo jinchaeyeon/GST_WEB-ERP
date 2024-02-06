@@ -1,8 +1,10 @@
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ContentPasteIcon from "@mui/icons-material/ContentPaste";
-import CropPortraitIcon from '@mui/icons-material/CropPortrait';
 import Crop32Icon from "@mui/icons-material/Crop32";
+import CropPortraitIcon from "@mui/icons-material/CropPortrait";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import FlipToBackIcon from "@mui/icons-material/FlipToBack";
+import FlipToFrontIcon from "@mui/icons-material/FlipToFront";
 import ImageIcon from "@mui/icons-material/Image";
 import MovingIcon from "@mui/icons-material/Moving";
 import RedoIcon from "@mui/icons-material/Redo";
@@ -55,8 +57,6 @@ import { GAP } from "../CommonString";
 import CustomNode from "./CustomNode";
 import GroupNode from "./GroupNode";
 import ImageNode from "./ImageNode";
-import FlipToFrontIcon from '@mui/icons-material/FlipToFront';
-import FlipToBackIcon from '@mui/icons-material/FlipToBack';
 
 const nodeTypes = {
   customNode: CustomNode,
@@ -161,27 +161,54 @@ const FlowChart = (props) => {
   }, [props.data, setViewport]);
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(onEdgeAdd(params, "straight"), eds)),
+    (params) =>
+      setEdges((eds) => addEdge(onEdgeAdd(params, "straight", false), eds)),
     []
   );
 
   const onConnect2 = useCallback(
-    (params) => setEdges((eds) => addEdge(onEdgeAdd(params, "step"), eds)),
+    (params) =>
+      setEdges((eds) => addEdge(onEdgeAdd(params, "step", false), eds)),
     []
   );
 
   const onConnect3 = useCallback(
     (params) =>
-      setEdges((eds) => addEdge(onEdgeAdd(params, "smoothstep"), eds)),
+      setEdges((eds) => addEdge(onEdgeAdd(params, "smoothstep", false), eds)),
     []
   );
 
   const onConnect4 = useCallback(
-    (params) => setEdges((eds) => addEdge(onEdgeAdd(params, "default"), eds)),
+    (params) =>
+      setEdges((eds) => addEdge(onEdgeAdd(params, "default", false), eds)),
     []
   );
 
-  const onEdgeAdd = (params, str) => {
+  const onConnect5 = useCallback(
+    (params) =>
+      setEdges((eds) => addEdge(onEdgeAdd(params, "straight", true), eds)),
+    []
+  );
+
+  const onConnect6 = useCallback(
+    (params) =>
+      setEdges((eds) => addEdge(onEdgeAdd(params, "step", true), eds)),
+    []
+  );
+
+  const onConnect7 = useCallback(
+    (params) =>
+      setEdges((eds) => addEdge(onEdgeAdd(params, "smoothstep", true), eds)),
+    []
+  );
+
+  const onConnect8 = useCallback(
+    (params) =>
+      setEdges((eds) => addEdge(onEdgeAdd(params, "default", true), eds)),
+    []
+  );
+
+  const onEdgeAdd = (params, str, bool) => {
     const newEgde = {
       ...params,
       id: getId(),
@@ -191,9 +218,10 @@ const FlowChart = (props) => {
       markerEnd: {
         type: MarkerType.Arrow,
       },
+      animated: bool,
     };
     setType("E");
-    setEdgeType(str);
+    setEdgeType(bool == true ? str + "_a" : str);
     return newEgde;
   };
 
@@ -221,7 +249,7 @@ const FlowChart = (props) => {
       targetHandle: newConnection.targetHandle,
     };
     setType("E");
-    setEdgeType(newEgde.type);
+    setEdgeType(newEgde.animated == true ? newEgde.type + "_a" : newEgde.type);
   };
 
   const onNodeClick = (event, node) => {
@@ -235,7 +263,7 @@ const FlowChart = (props) => {
   };
 
   const onEdgeClick = (event, edge) => {
-    setEdgeType(edge.type);
+    setEdgeType(edge.animated == true ? edge.type + "_a" : edge.type);
     setType("E");
   };
 
@@ -464,7 +492,8 @@ const FlowChart = (props) => {
         if (edge.selected == true) {
           // it's important that you create a new object here
           // in order to notify react flow about the change
-          edge.type = str;
+          edge.animated = str[str.length - 2] == "_" ? true : false;
+          edge.type = str[str.length - 2] == "_" ? str.slice(0,str.length-2) : str;
         }
 
         return edge;
@@ -481,7 +510,7 @@ const FlowChart = (props) => {
       } else if (node.type == "imageNode") {
         setType("I");
       }
-    } 
+    }
   };
 
   const onPaneClick = useCallback(() => {
@@ -842,7 +871,15 @@ const FlowChart = (props) => {
                   ? onConnect2
                   : EdgeType == "smoothstep"
                   ? onConnect3
-                  : onConnect4
+                  : EdgeType == "default"
+                  ? onConnect4
+                  : EdgeType == "straight_a"
+                  ? onConnect5
+                  : EdgeType == "step_a"
+                  ? onConnect6
+                  : EdgeType == "smoothstep_a"
+                  ? onConnect7
+                  : onConnect8
               }
               nodeTypes={nodeTypes}
               connectionMode={ConnectionMode.Loose}
@@ -1313,6 +1350,108 @@ const FlowChart = (props) => {
                           >
                             <RedoIcon />
                             <Typography variant="caption">곡선</Typography>
+                          </div>
+                        </Button>
+                      </Grid>
+                      <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                        <Button
+                          style={{
+                            color:
+                              EdgeType == "straight_a"
+                                ? "rgba(0, 0, 0, .725)"
+                                : "rgba(0, 0, 0, .325)",
+                          }}
+                          variant="text"
+                          onClick={() => onChangeEdgeType("straight_a")}
+                          fullWidth
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                            }}
+                          >
+                            <StraightIcon />
+                            <Typography variant="caption">실선</Typography>
+                          </div>
+                        </Button>
+                      </Grid>
+                      <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                        <Button
+                          style={{
+                            color:
+                              EdgeType == "step_a"
+                                ? "rgba(0, 0, 0, .725)"
+                                : "rgba(0, 0, 0, .325)",
+                          }}
+                          variant="text"
+                          onClick={() => onChangeEdgeType("step_a")}
+                          fullWidth
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                            }}
+                          >
+                            <TrendingUpIcon />
+                            <Typography variant="caption">
+                              꺽은선(실선)
+                            </Typography>
+                          </div>
+                        </Button>
+                      </Grid>
+                      <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                        <Button
+                          style={{
+                            color:
+                              EdgeType == "smoothstep_a"
+                                ? "rgba(0, 0, 0, .725)"
+                                : "rgba(0, 0, 0, .325)",
+                          }}
+                          variant="text"
+                          onClick={() => onChangeEdgeType("smoothstep_a")}
+                          fullWidth
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                            }}
+                          >
+                            <MovingIcon />
+                            <Typography variant="caption">
+                              부드러운 꺽은선(실선)
+                            </Typography>
+                          </div>
+                        </Button>
+                      </Grid>
+                      <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                        <Button
+                          style={{
+                            color:
+                              EdgeType == "default_a"
+                                ? "rgba(0, 0, 0, .725)"
+                                : "rgba(0, 0, 0, .325)",
+                          }}
+                          variant="text"
+                          onClick={() => onChangeEdgeType("default_a")}
+                          fullWidth
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                            }}
+                          >
+                            <RedoIcon />
+                            <Typography variant="caption">
+                              곡선(실선)
+                            </Typography>
                           </div>
                         </Button>
                       </Grid>
