@@ -346,7 +346,6 @@ const KendoWindow = ({
   };
 
   const ComboBoxChange = (e: any) => {
-    console.log(e)
     const newData = mainDataResult.data.map((item) =>
       item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
         ? {
