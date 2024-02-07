@@ -523,7 +523,19 @@ const FlowChart = (props) => {
       alert("필수값을 채워주세요");
       return false;
     }
+    let valid = true;
+    if(nodes.filter((item) => {
+      if(item.type == "groupNode" || item.type == "customNode") {
+        if(item.data.color == "") {
+          valid = false;
+        }
+      }
+    }))
 
+    if(valid != true) {
+      alert("필수값을 채워주세요");
+      return false;
+    }
     takeScreenShot(ref.current).then(download);
   };
 
