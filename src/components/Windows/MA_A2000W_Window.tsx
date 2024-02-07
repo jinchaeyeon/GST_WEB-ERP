@@ -1514,7 +1514,7 @@ const CopyWindow = ({
       "@p_inexpdt_s": ParaData.inexpdt_s,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "P_MA_A2000W",
+      "@p_form_id": "MA_A2000W",
     },
   };
 

@@ -1,15 +1,18 @@
 import EditIcon from "@mui/icons-material/Edit";
 import EventNoteIcon from "@mui/icons-material/EventNote";
+import MessageIcon from "@mui/icons-material/Message";
 import {
   Chip,
   Divider,
   ListSubheader,
   Avatar as MuiAvatar,
+  Typography,
 } from "@mui/material";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
+import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { SvgIcon } from "@progress/kendo-react-common";
 import {
@@ -66,6 +69,7 @@ import {
 } from "../../store/atoms";
 import { Iparameters, TLogParaVal, TPath } from "../../store/types";
 import { UseGetIp, getBrowser, resetLocalStorage } from "../CommonFunction";
+import { PAGE_SIZE } from "../CommonString";
 import Loading from "../Loading";
 import ChangePasswordWindow from "../Windows/CommonWindows/ChangePasswordWindow";
 import HelpWindow from "../Windows/CommonWindows/HelpWindow";
@@ -648,6 +652,75 @@ const PanelBarNavContainer = (props: any) => {
   };
   const [chip, setChip] = useState(0);
 
+  const [filters, setFilters] = useState({
+    pgNum: 1,
+    isSearch: true,
+    pgSize: PAGE_SIZE,
+  });
+
+  const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
+
+  const [mainDataResult, setMainDataResult] = useState<DataResult>(
+    process([], mainDataState)
+  );
+
+  //그리드 조회
+  const fetchMainGrid = async (filters: any) => {
+    let data: any;
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "sys_sel_messenger",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "receive",
+        "@p_user_id": userId,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+      }));
+
+      setMainDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+  };
+
+  useEffect(() => {
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+    }
+  }, [filters]);
+
   return (
     <>
       <Wrapper isMobileMenuOpend={isMobileMenuOpend}>
@@ -658,7 +731,10 @@ const PanelBarNavContainer = (props: any) => {
               <Logo size="32px" name={"GST WEB"} />
               {loginResult.webTitle}
             </AppName>
-            <GridContainerWrap height={"100px"} style={{ gap: "0px", marginBottom: "10px" }}>
+            <GridContainerWrap
+              height={"100px"}
+              style={{ gap: "0px", marginBottom: "10px" }}
+            >
               <GridContainer
                 width="80%"
                 style={{
@@ -915,7 +991,67 @@ const PanelBarNavContainer = (props: any) => {
                         </ListItem>
                       </List>
                     </TabStripTab>
-                    <TabStripTab title="쪽지"></TabStripTab>
+                    <TabStripTab title="쪽지">
+                      <List
+                        sx={{
+                          width: "100%",
+                          maxWidth: 360,
+                          bgcolor: "background.paper",
+                        }}
+                        subheader={
+                          <ListSubheader
+                            component="div"
+                            style={{
+                              fontWeight: 600,
+                            }}
+                          >
+                            쪽지 리스트
+                          </ListSubheader>
+                        }
+                      >
+                        {mainDataResult.data.map((item, index) => (
+                          <>
+                            <ListItem>
+                              <ListItemAvatar>
+                                {item.read_time == null ? (
+                                  <MuiAvatar sx={{ bgcolor: "#2289C3" }}>
+                                    <MessageIcon />
+                                  </MuiAvatar>
+                                ) : (
+                                  <MuiAvatar>
+                                    <MessageIcon />
+                                  </MuiAvatar>
+                                )}
+                              </ListItemAvatar>
+                              <ListItemText
+                                primary={
+                                  <Typography
+                                    variant="subtitle1"
+                                    style={{
+                                      whiteSpace: "nowrap",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                    }}
+                                  >
+                                    {item.slip_content}
+                                  </Typography>
+                                }
+                                secondary={
+                                  <Typography variant="caption">
+                                    보낸사람 : {item.sender_name}
+                                  </Typography>
+                                }
+                              />
+                            </ListItem>
+                            {index != mainDataResult.total - 1 ? (
+                              <Divider />
+                            ) : (
+                              ""
+                            )}
+                          </>
+                        ))}
+                      </List>
+                    </TabStripTab>
                   </TabStrip>
                 </Popup>
               </GridContainer>

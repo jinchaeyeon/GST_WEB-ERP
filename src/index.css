@@ -12,10 +12,28 @@ code {
     monospace;
 }
 
-.css-o4b71y-MuiAccordionSummary-content.Mui-expanded {
-   margin: 12px 0 !important;
+.k-panelbar .k-panelbar-group>.k-panelbar-item>.k-link {
+  flex-direction: row-reverse !important;
+  -webkit-box-pack: justify !important;
+  justify-content: flex-end !important;
 }
-.css-sh22l5-MuiButtonBase-root-MuiAccordionSummary-root.Mui-expanded{
+
+.k-panelbar-item-text {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+}
+
+.k-panelbar-item-text>div {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.css-o4b71y-MuiAccordionSummary-content.Mui-expanded {
+  margin: 12px 0 !important;
+}
+
+.css-sh22l5-MuiButtonBase-root-MuiAccordionSummary-root.Mui-expanded {
   min-height: 48px !important;
 }
 
@@ -81,6 +99,7 @@ code {
 .pg-viewer-wrapper {
   overflow: hidden !important;
 }
+
 .swiper-button-next {
   color: gray !important;
   right: 0px !important;
@@ -393,6 +412,7 @@ div.k-animation-container {
     margin-top: 1rem;
   }
 }
+
 .customized-timeline .p-timeline-event-opposite {
   display: none;
 }

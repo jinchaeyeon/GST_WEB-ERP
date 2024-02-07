@@ -1,49 +1,140 @@
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { Checkbox, Input } from "@progress/kendo-react-inputs";
-import React, { useEffect, useRef, useState } from "react";
 import {
-  ButtonContainer,
-  ButtonInInput,
-  FilterBox,
-  Title,
-  TitleContainer,
-} from "../CommonStyled";
-import TopButtons from "../components/Buttons/TopButtons";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import {
-  GetPropertyValueByName,
-  UseCustomOption,
-  UsePermissions,
-  convertDateToStr,
-  getGridItemChangedData,
-  handleKeyPressSearch,
-  setDefaultDate,
-} from "../components/CommonFunction";
-import { EDIT_FIELD, PAGE_SIZE } from "../components/CommonString";
-import FilterContainer from "../components/Containers/FilterContainer";
-import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import { Iparameters, TPermissions } from "../store/types";
-import { DataResult, State, getter, process } from "@progress/kendo-data-query";
-import {
+  Grid,
+  GridCellProps,
+  GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
-  GridHeaderCellProps,
-  GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
+import {
+  Checkbox,
+  CheckboxChangeEvent,
+  Input,
+} from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  ButtonContainer,
+  ButtonInInput,
+  FilterBox,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
+} from "../CommonStyled";
+import TopButtons from "../components/Buttons/TopButtons";
+import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  UsePermissions,
+  convertDateToStr,
+  convertDateToStrWithTime2,
+  findMessage,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+  setDefaultDate,
+} from "../components/CommonFunction";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import { CellRender } from "../components/Renderers/Renderers";
+import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
+import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
-import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import { gridList } from "../store/columns/AC_A1080W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
+
+const dateField = ["approvaldt"];
+const checkField = ["closeyn"];
+const numberField = ["slipamt_1", "slipamt_2"];
+
+type TdataArr = {
+  rowstatus_s: string[];
+  actdt_s: string[];
+  acseq1_s: string[];
+  closeyn_s: string[];
+};
+
+const FormContext = createContext<{
+  findstr: any;
+  setFindstr: (d: any) => void;
+  mainDataState: State;
+  setMainDataState: (d: any) => void;
+}>({} as any);
+
+const ColumnCommandCell = (props: GridCellProps) => {
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field = "",
+    render,
+    onChange,
+    className = "",
+  } = props;
+  const { findstr, setFindstr, mainDataState, setMainDataState } =
+    useContext(FormContext);
+  const value = field && dataItem[field] ? dataItem[field] : false;
+
+  const handleChange = (e: CheckboxChangeEvent) => {
+    if (onChange) {
+      setFindstr({
+        str: dataItem.findstr,
+        check: e.target.value ?? false,
+      });
+    }
+  };
+
+  const defaultRendering = (
+    <td
+      style={{ textAlign: "center" }}
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      className={className}
+    >
+      <Checkbox value={value} onChange={handleChange}></Checkbox>
+    </td>
+  );
+
+  return (
+    <>
+      {render === undefined
+        ? null
+        : render?.call(undefined, defaultRendering, props)}
+    </>
+  );
+};
 
 const AC_A1080W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -53,8 +144,14 @@ const AC_A1080W: React.FC = () => {
   UsePermissions(setPermissions);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("AC_A1080W", setCustomOptionData);
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages("AC_A1080W", setMessagesData);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
+  const userId = UseGetValueFromSessionItem("user_id");
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -79,6 +176,54 @@ const AC_A1080W: React.FC = () => {
     }
   }, [customOptionData]);
 
+  const [bizComponentData, setBizComponentData] = useState<any>([]);
+  UseBizComponent("L_sysUserMaster_001, L_AC006", setBizComponentData);
+
+  const [inputpathListData, setInputPathListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [userListData, setUserListData] = useState([
+    { user_id: "", user_name: "" },
+  ]);
+  useEffect(() => {
+    if (bizComponentData.length > 0) {
+      const userQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+        )
+      );
+      const inputpathQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_AC006")
+      );
+      fetchQueryData(userQueryStr, setUserListData);
+      fetchQueryData(inputpathQueryStr, setInputPathListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQueryData = useCallback(
+    async (queryStr: string, setListData: any) => {
+      let data: any;
+
+      const bytes = require("utf8-bytes");
+      const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+      let query = {
+        query: convertedQueryStr,
+      };
+
+      try {
+        data = await processApi<any>("query", query);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess === true) {
+        const rows = data.tables[0].Rows;
+        setListData(rows);
+      }
+    },
+    []
+  );
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -87,7 +232,35 @@ const AC_A1080W: React.FC = () => {
     }
   };
 
-  const search = () => {};
+  const resetAllGrid = () => {
+    setMainDataResult(process([], mainDataState));
+  };
+
+  const search = () => {
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "AC_A1080W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "AC_A1080W_001");
+      } else {
+        setPage(initialPageState); // 페이지 초기화
+        resetAllGrid(); // 데이터 초기화
+        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+      }
+    } catch (e) {
+      alert(e);
+    }
+  };
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -126,18 +299,20 @@ const AC_A1080W: React.FC = () => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-  const [tempState, setTempState] = useState<State>({
-    sort: [],
-  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
-  );
-  const [tempResult, setTempResult] = useState<DataResult>(
-    process([], tempState)
   );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
+
+  useEffect(() => {
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [mainDataResult]);
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
@@ -176,7 +351,10 @@ const AC_A1080W: React.FC = () => {
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        closeyn: item.closeyn == "Y" ? true : false,
+      }));
 
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
@@ -270,41 +448,21 @@ const AC_A1080W: React.FC = () => {
     setSelectedState(newSelectedState);
   };
 
-  const [values, setValues] = React.useState<boolean>(false);
-  const CustomCheckBoxCell = (props: GridHeaderCellProps) => {
-    const changeCheck = () => {
-      const newData = mainDataResult.data.map((item) => ({
-        ...item,
-        chk: !values,
-        [EDIT_FIELD]: props.field,
-      }));
-      setValues(!values);
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    };
-
-    return (
-      <div style={{ textAlign: "center" }}>
-        <Checkbox value={values} onClick={changeCheck}></Checkbox>
-      </div>
-    );
+  const onCheckAll = () => {
+    const newData = mainDataResult.data.map((item) => ({
+      ...item,
+      rowstatus: item.rowstatus == "N" ? "N" : "U",
+      closeyn: true,
+    }));
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
   };
 
   let gridRef: any = useRef(null);
-
-  const onMainItemChange = (event: GridItemChangeEvent) => {
-    setMainDataState((prev) => ({ ...prev, sort: [] }));
-    getGridItemChangedData(
-      event,
-      mainDataResult,
-      setMainDataResult,
-      DATA_ITEM_KEY
-    );
-  };
 
   const customCellRender = (td: any, props: any) => (
     <CellRender
@@ -315,101 +473,7 @@ const AC_A1080W: React.FC = () => {
     />
   );
 
-  const customRowRender = (tr: any, props: any) => (
-    <RowRender
-      originalProps={props}
-      tr={tr}
-      exitEdit={exitEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const enterEdit = (dataItem: any, field: string) => {
-    if (field == "chk") {
-      const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-          ? {
-              ...item,
-              [EDIT_FIELD]: field,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
-      setTempResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    } else {
-      setTempResult((prev: { total: any }) => {
-        return {
-          data: mainDataResult.data,
-          total: prev.total,
-        };
-      });
-    }
-  };
-
-  const exitEdit = () => {
-    if (tempResult.data != mainDataResult.data) {
-      const newData = mainDataResult.data.map(
-        (item: { [x: string]: string; rowstatus: string }) =>
-          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-            ? {
-                ...item,
-                chk:
-                  typeof item.chk == "boolean"
-                    ? item.chk
-                    : item.chk == "Y"
-                    ? true
-                    : false,
-                [EDIT_FIELD]: undefined,
-              }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-      );
-      setTempResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    } else {
-      const newData = mainDataResult.data.map((item: any) => ({
-        ...item,
-        [EDIT_FIELD]: undefined,
-      }));
-      setTempResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    }
-  };
+  const enterEdit = () => {};
 
   const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
@@ -498,6 +562,139 @@ const AC_A1080W: React.FC = () => {
       custnm: data.custnm,
     }));
   };
+
+  const [findstr, setFindstr] = useState<any>({
+    str: "",
+    check: false,
+  });
+
+  useEffect(() => {
+    if (findstr != "") {
+      const newData = mainDataResult.data.map((item) =>
+        item.findstr == findstr.str
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              closeyn: findstr.check,
+              [EDIT_FIELD]: "closeyn",
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  }, [findstr]);
+
+  const onSaveClick = async (e: any) => {
+    const dataItem = mainDataResult.data.filter((item: any, index: number) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+    if (dataItem.length === 0) return false;
+    let dataArr: TdataArr = {
+      rowstatus_s: [],
+      actdt_s: [],
+      acseq1_s: [],
+      closeyn_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const { rowstatus = "", actdt = "", acseq1 = "", closeyn = "" } = item;
+
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.actdt_s.push(actdt);
+      dataArr.acseq1_s.push(acseq1);
+      dataArr.closeyn_s.push(closeyn == true ? "Y" : "N");
+    });
+
+    setParaData((prev) => ({
+      ...prev,
+      worktype: "U",
+      rowstatus_s: dataArr.rowstatus_s.join("|"),
+      actdt_s: dataArr.actdt_s.join("|"),
+      acseq1_s: dataArr.acseq1_s.join("|"),
+      closeyn_s: dataArr.closeyn_s.join("|"),
+    }));
+  };
+
+  const [paraData, setParaData] = useState({
+    worktype: "",
+    orgdiv: "01",
+    rowstatus_s: "",
+    actdt_s: "",
+    acseq1_s: "",
+    closeyn_s: "",
+    userid: userId,
+    pc: pc,
+    form_id: "AC_A1080W",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_AC_A1080W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraData.worktype,
+      "@p_orgdiv": "01",
+      "@p_rowstatus_s": paraData.rowstatus_s,
+      "@p_actdt_s": paraData.actdt_s,
+      "@p_acseq1_s": paraData.acseq1_s,
+      "@p_closeyn_s": paraData.closeyn_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "AC_A1080W",
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+        find_row_value: data.returnString,
+      }));
+      setParaData({
+        worktype: "",
+        orgdiv: "01",
+        rowstatus_s: "",
+        actdt_s: "",
+        acseq1_s: "",
+        closeyn_s: "",
+        userid: userId,
+        pc: pc,
+        form_id: "AC_A1080W",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (paraData.worktype != "") {
+      fetchTodoGridSaved();
+    }
+  }, [paraData]);
+
   return (
     <>
       <TitleContainer>
@@ -650,6 +847,130 @@ const AC_A1080W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
+      <FormContext.Provider
+        value={{
+          findstr,
+          setFindstr,
+          mainDataState,
+          setMainDataState,
+          // fetchGrid,
+        }}
+      >
+        <GridContainer>
+          <ExcelExport
+            data={mainDataResult.data}
+            ref={(exporter) => {
+              _export = exporter;
+            }}
+          >
+            <GridTitleContainer>
+              <GridTitle>전표리스트</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onCheckAll}
+                  fillMode={"outline"}
+                  themeColor={"primary"}
+                  icon="check-circle"
+                >
+                  행 전체 선택
+                </Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                >
+                  저장
+                </Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: "78vh" }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  apperson: userListData.find(
+                    (items: any) => items.user_id == row.apperson
+                  )?.user_name,
+                  inputpath: inputpathListData.find(
+                    (item: any) => item.sub_code == row.inputpath
+                  )?.code_name,
+                  insert_userid: userListData.find(
+                    (items: any) => items.user_id == row.insert_userid
+                  )?.user_name,
+                  insert_time: convertDateToStrWithTime2(
+                    new Date(row.insert_time)
+                  ),
+                  update_time: convertDateToStrWithTime2(
+                    new Date(row.update_time)
+                  ),
+                  [SELECTED_FIELD]: selectedState[idGetter(row)],
+                })),
+                mainDataState
+              )}
+              {...mainDataState}
+              onDataStateChange={onMainDataStateChange}
+              //선택 기능
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              skip={page.skip}
+              take={page.take}
+              pageable={true}
+              onPageChange={pageChange}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              cellRender={customCellRender}
+            >
+              <GridColumn field="rowstatus" title=" " width="50px" />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          dateField.includes(item.fieldName)
+                            ? DateCell
+                            : numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : checkField.includes(item.fieldName)
+                            ? ColumnCommandCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 2
+                            ? mainTotalFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell
+                            : undefined
+                        }
+                      ></GridColumn>
+                    )
+                )}
+            </Grid>
+          </ExcelExport>
+        </GridContainer>
+      </FormContext.Provider>
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}
@@ -663,6 +984,19 @@ const AC_A1080W: React.FC = () => {
           setData={setAccountData}
           modal={true}
         />
+      )}
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </>
   );
