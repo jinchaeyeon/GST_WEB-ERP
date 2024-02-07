@@ -17,8 +17,8 @@ type TCommonComboBox = {
   textField?: string;
   valueField?: string;
   className?: string;
-  disabled? : boolean;
-  para? : string;
+  disabled?: boolean;
+  para?: string;
 };
 const CommonComboBox = ({
   name,
@@ -30,7 +30,7 @@ const CommonComboBox = ({
   valueField = "sub_code",
   className = "",
   disabled = false,
-  para =""
+  para = "",
 }: TCommonComboBox) => {
   const processApi = useApi();
   const [listData, setListData] = useState([]);
@@ -41,7 +41,7 @@ const CommonComboBox = ({
   let required = false;
   if (className.includes("required")) {
     required = true;
-  } 
+  }
 
   useEffect(() => {
     fetchData();
@@ -91,8 +91,29 @@ const CommonComboBox = ({
   const onChangeHandle = (e: ComboBoxChangeEvent) => {
     let value = e.target.value === null ? "" : e.target.value[valueField];
     let values = e.value;
-    if(para == "AC_A1020W" || para == "SY_A0060W") {
-      changeData({ name, values });
+    if (para == "AC_A1020W") {
+      if (value == "") {
+        const values = {
+          acntcd: "",
+          acntnm: "",
+          stdrmkcd: "",
+          stdrmknm1: "",
+        };
+        changeData({ name, values });
+      } else {
+        changeData({ name, values });
+      }
+    } else if (para == "SY_A0060W") {
+      if (value == "") {
+        const values = {
+          click: "",
+          font: "",
+          sub_code: "",
+        };
+        changeData({ name, values });
+      } else {
+        changeData({ name, values });
+      }
     } else {
       changeData({ name, value });
     }

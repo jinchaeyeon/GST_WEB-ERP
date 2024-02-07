@@ -692,6 +692,7 @@ const FlowChart = (props) => {
         attdatnum: "",
       });
     } else {
+      setDeletedAttadatnums([ParaData.attdatnum]);
       console.log("[오류 발생]");
       console.log(data);
       alert(data.resultMessage);
