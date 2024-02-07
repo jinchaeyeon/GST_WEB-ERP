@@ -310,7 +310,7 @@ const QC_B9020_615W: React.FC = () => {
                   className="required"
                 />
               </td>
-              <th>설비</th>
+              <th>수집위치</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox

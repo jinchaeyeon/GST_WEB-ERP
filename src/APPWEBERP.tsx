@@ -23,14 +23,16 @@ import numbersEn from "cldr-numbers-full/main/en/numbers.json";
 import numbersJa from "cldr-numbers-full/main/ja/numbers.json";
 import numbersKo from "cldr-numbers-full/main/ko/numbers.json";
 import numbersZh from "cldr-numbers-full/main/zh/numbers.json";
-import React, { Suspense, lazy, useCallback, useEffect, useState } from "react";
+import React, { Suspense, lazy, useEffect, useState } from "react";
 import { useThemeSwitcher } from "react-css-theme-switcher";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
 import styled, { createGlobalStyle } from "styled-components";
 import AuthRoute from "./components/AuthRoute";
+import { UseGetValueFromSessionItem } from "./components/CommonFunction";
 import { DEFAULT_LANG_CODE } from "./components/CommonString";
 import { default as PanelBarNavContainerWEBERP } from "./components/Containers/PanelBarNavContainerWEBERP";
+import { useApi } from "./hooks/api";
 import AC_A0000W from "./routes/AC_A0000W";
 import AC_A0020W from "./routes/AC_A0020W";
 import AC_A0030W from "./routes/AC_A0030W";
@@ -41,6 +43,7 @@ import AC_A1020W from "./routes/AC_A1020W";
 import AC_A1040W from "./routes/AC_A1040W";
 import AC_A1060W from "./routes/AC_A1060W";
 import AC_A1070W from "./routes/AC_A1070W";
+import AC_A1080W from "./routes/AC_A1080W";
 import AC_A1120W from "./routes/AC_A1120W";
 import AC_A3001W from "./routes/AC_A3001W";
 import AC_B1100W from "./routes/AC_B1100W";
@@ -234,9 +237,7 @@ import {
   loginResultState,
   sessionItemState,
 } from "./store/atoms";
-import { UseGetValueFromSessionItem } from "./components/CommonFunction";
 import { Iparameters } from "./store/types";
-import { useApi } from "./hooks/api";
 const Login = lazy(() => import("./routes/Login"));
 const Main = lazy(() => import("./routes/Main"));
 
@@ -357,8 +358,13 @@ const AppInner: React.FC = () => {
   const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   useEffect(() => {
-    if (token && userId != "" && (sessionUserId === "" || sessionUserId == null)) fetchSessionItem();
-  },[userId, sessionUserId]);
+    if (
+      token &&
+      userId != "" &&
+      (sessionUserId === "" || sessionUserId == null)
+    )
+      fetchSessionItem();
+  }, [userId, sessionUserId]);
 
   let sessionOrgdiv = sessionItem.find(
     (sessionItem) => sessionItem.code == "orgdiv"
@@ -366,7 +372,7 @@ const AppInner: React.FC = () => {
   let sessionLocation = sessionItem.find(
     (sessionItem) => sessionItem.code == "location"
   )!.value;
- 
+
   if (sessionOrgdiv === "") sessionOrgdiv = "01";
   if (sessionLocation === "") sessionLocation = "01";
   const processApi = useApi();
@@ -399,7 +405,7 @@ const AppInner: React.FC = () => {
       console.log("menus error", e);
     }
   };
-  
+
   const theme = createTheme({
     palette: {
       primary: {
@@ -820,6 +826,8 @@ const AppInner: React.FC = () => {
       return AC_A1060W;
     } else if (str == "AC_A1070W") {
       return AC_A1070W;
+    } else if (str == "AC_A1080W") {
+      return AC_A1080W;
     } else if (str == "AC_A1120W") {
       return AC_A1120W;
     } else if (str == "AC_A3001W") {
@@ -974,7 +982,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/BA_B0080W" component={BA_B0080W} exact />
                   <AuthRoute path="/CM_B8100W" component={CM_B8100W} exact />
                   <AuthRoute path="/SY_A0125W" component={SY_A0125W} exact />
-  
+
                   {/* 물류관리 */}
                   <AuthRoute path="/MA_A0010W" component={MA_A0010W} exact />
                   <AuthRoute path="/MA_A1000W" component={MA_A1000W} exact />
@@ -1069,7 +1077,11 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/QC_B0300W" component={QC_B0300W} exact />
                   <AuthRoute path="/QC_B0040W" component={QC_B0040W} exact />
                   <AuthRoute path="/QC_B0030W" component={QC_B0030W} exact />
-                  <AuthRoute path="/QC_B9020_615W" component={QC_B9020_615W} exact />
+                  <AuthRoute
+                    path="/QC_B9020_615W"
+                    component={QC_B9020_615W}
+                    exact
+                  />
                   {/* 시스템 */}
                   <AuthRoute path="/SY_A0120W" component={SY_A0120W} exact />
                   <AuthRoute path="/SY_A0110W" component={SY_A0110W} exact />
@@ -1131,11 +1143,12 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/AC_A1040W" component={AC_A1040W} exact />
                   <AuthRoute path="/AC_A1060W" component={AC_A1060W} exact />
                   <AuthRoute path="/AC_A1070W" component={AC_A1070W} exact />
+                  <AuthRoute path="/AC_A1080W" component={AC_A1080W} exact />
                   <AuthRoute path="/AC_A1120W" component={AC_A1120W} exact />
                   <AuthRoute path="/AC_A3001W" component={AC_A3001W} exact />
                   <AuthRoute path="/AC_B1100W" component={AC_B1100W} exact />
                   <AuthRoute path="/AC_B1240W" component={AC_B1240W} exact />
-                  <AuthRoute path="/AC_B1260W" component={AC_B1260W} exact />             
+                  <AuthRoute path="/AC_B1260W" component={AC_B1260W} exact />
                   <AuthRoute path="/AC_B1280W" component={AC_B1280W} exact />
                   <AuthRoute path="/AC_B1300W" component={AC_B1300W} exact />
                   <AuthRoute path="/AC_B1340W" component={AC_B1340W} exact />
@@ -1190,7 +1203,6 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/SA_B2227W" component={SA_B2227W} exact />
                   <AuthRoute path="/SA_B2228W" component={SA_B2228W} exact />
                   <AuthRoute path="/SA_B2229W" component={SA_B2229W} exact />
-
 
                   <AuthRoute path="/SA_B2220W" component={SA_B2220W} exact />
                   {/* DDGD 관리자페이지 */}
