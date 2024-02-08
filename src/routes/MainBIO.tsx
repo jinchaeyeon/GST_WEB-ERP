@@ -3,6 +3,7 @@ import React, { CSSProperties, useCallback, useEffect, useState } from "react";
 // ES2015 module syntax
 import { Grid as GridMui } from "@mui/material";
 import { Button } from "@progress/kendo-react-buttons";
+import { Badge, BadgeContainer } from "@progress/kendo-react-indicators";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import {
   DayView,
@@ -15,7 +16,6 @@ import {
 import { bytesToBase64 } from "byte-base64";
 import { Card as CardPrime } from "primereact/card";
 import { useRecoilState } from "recoil";
-import { Badge, BadgeContainer } from "@progress/kendo-react-indicators";
 import {
   AnswerIcon,
   GridContainer,
@@ -76,7 +76,6 @@ const answerynBodyTemplate = (rowData: any) => {
 };
 
 const Main: React.FC = () => {
-
   const processApi = useApi();
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";

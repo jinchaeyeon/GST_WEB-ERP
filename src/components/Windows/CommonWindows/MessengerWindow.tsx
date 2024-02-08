@@ -3,14 +3,14 @@ import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
-    Grid,
-    GridColumn,
-    GridDataStateChangeEvent,
-    GridFooterCellProps,
-    GridHeaderCellProps,
-    GridItemChangeEvent,
-    GridPageChangeEvent,
-    GridSelectionChangeEvent,
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridHeaderCellProps,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -18,14 +18,14 @@ import { getSelectedState } from "@progress/kendo-react-treelist";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-    BottomContainer,
-    ButtonContainer,
-    FilterBox,
-    FilterBoxWrap,
-    FormBox,
-    FormBoxWrap,
-    GridContainer,
-    GridContainerWrap,
+  BottomContainer,
+  ButtonContainer,
+  FilterBox,
+  FilterBoxWrap,
+  FormBox,
+  FormBoxWrap,
+  GridContainer,
+  GridContainerWrap,
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
@@ -33,9 +33,9 @@ import { isLoading, loginResultState } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import CheckBoxCell from "../../Cells/CheckBoxCell";
 import {
-    UseParaPc,
-    getGridItemChangedData,
-    useSysMessage
+  UseParaPc,
+  getGridItemChangedData,
+  useSysMessage,
 } from "../../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
@@ -47,13 +47,19 @@ const leftOverHeight = (topHeight + bottomHeight) / 2;
 type TKendoWindow = {
   setVisible(t: boolean): void;
   reload(): void;
+  id?: string;
   modal?: boolean;
 };
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY3 = "num";
 
-const KendoWindow = ({ setVisible, reload, modal = false }: TKendoWindow) => {
+const KendoWindow = ({
+  setVisible,
+  reload,
+  id,
+  modal = false,
+}: TKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
@@ -512,10 +518,17 @@ const KendoWindow = ({ setVisible, reload, modal = false }: TKendoWindow) => {
         };
       });
       if (totalRowCnt > 0) {
-        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-
-        if (tabSelected == 0) {
-          onRead(rows[0]);
+        if (id != undefined) {
+          const selectRow = rows.filter((item: any) => item.slip_id == id)[0];
+          setSelectedState({ [selectRow[DATA_ITEM_KEY]]: true });
+          if (tabSelected == 0) {
+            onRead(selectRow);
+          }
+        } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          if (tabSelected == 0) {
+            onRead(rows[0]);
+          }
         }
       }
     } else {

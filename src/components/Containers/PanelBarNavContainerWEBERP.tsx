@@ -73,6 +73,7 @@ import { PAGE_SIZE } from "../CommonString";
 import Loading from "../Loading";
 import ChangePasswordWindow from "../Windows/CommonWindows/ChangePasswordWindow";
 import HelpWindow from "../Windows/CommonWindows/HelpWindow";
+import MessengerWindow from "../Windows/CommonWindows/MessengerWindow";
 import SystemOptionWindow from "../Windows/CommonWindows/SystemOptionWindow";
 import UserOptionsWindow from "../Windows/CommonWindows/UserOptionsWindow";
 
@@ -721,6 +722,15 @@ const PanelBarNavContainer = (props: any) => {
     }
   }, [filters]);
 
+  const [Id, setId] = useState("");
+  const [windowVisible, setWindowVisible] = useState<boolean>(false);
+
+  const onMessage = (id: any) => {
+    setId(id);
+    setWindowVisible(true);
+    setShow(false);
+  };
+
   return (
     <>
       <Wrapper isMobileMenuOpend={isMobileMenuOpend}>
@@ -792,7 +802,10 @@ const PanelBarNavContainer = (props: any) => {
                 <Button
                   icon="bell"
                   themeColor={"primary"}
-                  onClick={() => setShow(!show)}
+                  onClick={() => {
+                    setShow(!show);
+                    fetchMainGrid(filters);
+                  }}
                   fillMode="flat"
                   title="알림"
                 ></Button>
@@ -1005,51 +1018,52 @@ const PanelBarNavContainer = (props: any) => {
                               fontWeight: 600,
                             }}
                           >
-                            쪽지 리스트
+                            안읽은 쪽지 리스트
                           </ListSubheader>
                         }
                       >
-                        {mainDataResult.data.map((item, index) => (
-                          <>
-                            <ListItem>
-                              <ListItemAvatar>
-                                {item.read_time == null ? (
-                                  <MuiAvatar sx={{ bgcolor: "#2289C3" }}>
-                                    <MessageIcon />
-                                  </MuiAvatar>
+                        {mainDataResult.data.map((item, index) => {
+                          if (item.read_time == null) {
+                            return (
+                              <>
+                                <ListItem
+                                  onClick={() => onMessage(item.slip_id)}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  <ListItemAvatar>
+                                    <MuiAvatar sx={{ bgcolor: "#2289C3" }}>
+                                      <MessageIcon />
+                                    </MuiAvatar>
+                                  </ListItemAvatar>
+                                  <ListItemText
+                                    primary={
+                                      <Typography
+                                        variant="subtitle1"
+                                        style={{
+                                          whiteSpace: "nowrap",
+                                          overflow: "hidden",
+                                          textOverflow: "ellipsis",
+                                        }}
+                                      >
+                                        {item.slip_content}
+                                      </Typography>
+                                    }
+                                    secondary={
+                                      <Typography variant="caption">
+                                        보낸사람 : {item.sender_name}
+                                      </Typography>
+                                    }
+                                  />
+                                </ListItem>
+                                {index != mainDataResult.total - 1 ? (
+                                  <Divider />
                                 ) : (
-                                  <MuiAvatar>
-                                    <MessageIcon />
-                                  </MuiAvatar>
+                                  ""
                                 )}
-                              </ListItemAvatar>
-                              <ListItemText
-                                primary={
-                                  <Typography
-                                    variant="subtitle1"
-                                    style={{
-                                      whiteSpace: "nowrap",
-                                      overflow: "hidden",
-                                      textOverflow: "ellipsis",
-                                    }}
-                                  >
-                                    {item.slip_content}
-                                  </Typography>
-                                }
-                                secondary={
-                                  <Typography variant="caption">
-                                    보낸사람 : {item.sender_name}
-                                  </Typography>
-                                }
-                              />
-                            </ListItem>
-                            {index != mainDataResult.total - 1 ? (
-                              <Divider />
-                            ) : (
-                              ""
-                            )}
-                          </>
-                        ))}
+                              </>
+                            );
+                          }
+                        })}
                       </List>
                     </TabStripTab>
                   </TabStrip>
@@ -1217,6 +1231,14 @@ const PanelBarNavContainer = (props: any) => {
       </Footer>
       {helpWindowVisible && (
         <HelpWindow setVisible={setHelpWindowVisible} modal={true} />
+      )}
+      {windowVisible && (
+        <MessengerWindow
+          setVisible={setWindowVisible}
+          id={Id}
+          reload={() => fetchMainGrid(filters)}
+          modal={true}
+        />
       )}
     </>
   );
