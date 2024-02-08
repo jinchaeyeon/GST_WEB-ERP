@@ -55,7 +55,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_taxamt",
         field: "taxamt",
-        caption: "과세",
+        caption: "부과세",
         width: 100,
       },
       {

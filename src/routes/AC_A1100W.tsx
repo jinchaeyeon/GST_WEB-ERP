@@ -11,7 +11,6 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import DetailWindow from "../components/Windows/AC_A1100W_Window";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
@@ -44,6 +43,7 @@ import {
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import DetailWindow from "../components/Windows/AC_A1100W_Window";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1100W_C";
@@ -69,7 +69,7 @@ const AC_A1100W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-  const [workType, setWorkType] = useState<"N" | "U" | "C">("N");
+  const [workType, setWorkType] = useState<"N" | "U">("N");
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("AC_A1100W", setCustomOptionData);
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -343,7 +343,26 @@ const AC_A1100W: React.FC = () => {
       </td>
     );
   };
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
 
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
+  };
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -442,7 +461,6 @@ const AC_A1100W: React.FC = () => {
       "@p_acseq1_s ": "",
       "@p_purnum_s": "",
       "@p_purseq_s": "",
-      "@p_poregnum_s": "",
       "@p_costamt1_s": "",
       "@p_costamt2_s": "",
       "@p_costamt3_s": "",
@@ -524,11 +542,6 @@ const AC_A1100W: React.FC = () => {
     setDetailWindowVisible(true);
   };
 
-  const onCopyClick = () => {
-    setWorkType("C");
-    setDetailWindowVisible(true);
-  };
-  
   return (
     <>
       <TitleContainer>
@@ -629,14 +642,6 @@ const AC_A1100W: React.FC = () => {
                 수입신고생성
               </Button>
               <Button
-                onClick={onCopyClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="copy"
-              >
-                수입신고복사
-              </Button>
-              <Button
                 onClick={onDeleteClick}
                 fillMode="outline"
                 themeColor={"primary"}
@@ -702,7 +707,11 @@ const AC_A1100W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder === 0
+                          ? mainTotalFooterCell
+                          : numberField.includes(item.fieldName)
+                          ? gridSumQtyFooterCell
+                          : undefined
                       }
                     />
                   )
