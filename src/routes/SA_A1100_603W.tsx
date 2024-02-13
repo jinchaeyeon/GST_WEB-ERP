@@ -1758,6 +1758,7 @@ const SA_A1100_603W: React.FC = () => {
       "@p_recdt": subFilters.recdt,
       "@p_seq1": subFilters.seq1,
       "@p_location": "01",
+      "@p_project": Information.project,
       "@p_paymeth": Information.paymeth,
       "@p_wonchgrat": Information.wonchgrat,
       "@p_amtunit": Information.amtunit,
@@ -2308,7 +2309,7 @@ const SA_A1100_603W: React.FC = () => {
                           name="project"
                           type="text"
                           value={Information.project}
-                          className="readonly"
+                          onChange={InfoInputChange}
                         />
                       </td>
                     </tr>

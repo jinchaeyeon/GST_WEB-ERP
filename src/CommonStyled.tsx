@@ -356,10 +356,10 @@ export const FormBox = styled.table`
     position: relative;
     vertical-align: middle;
   }
-  /* .filter-item-wrap {
+  .filter-item-wrap {
     display: flex;
     align-items: center;
-  } */
+  }
   .k-radio-list.k-list-horizontal {
     justify-content: center;
     border: solid 1px rgba(0, 0, 0, 0.08);

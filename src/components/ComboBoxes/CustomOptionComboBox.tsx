@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
 import {
-  MultiColumnComboBox,
   ComboBoxChangeEvent,
+  MultiColumnComboBox,
 } from "@progress/kendo-react-dropdowns";
 import { GetPropertyValueByName } from "../CommonFunction";
 
@@ -25,9 +24,12 @@ const CustomOptionComboBox = ({
   textField = "code_name",
   valueField = "sub_code",
   className = "",
-  disabled = false
+  disabled = false,
 }: TCustomOptionComboBox) => {
-  const dataList = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, type);
+  const dataList = GetPropertyValueByName(
+    customOptionData.menuCustomDefaultOptions,
+    type
+  );
   const dataItem = dataList.find((item: any) => item.id === name);
   const listData = dataItem.Rows;
 
@@ -61,7 +63,7 @@ const CustomOptionComboBox = ({
       data={listData}
       textField={textField}
       value={
-        value ? listData.find((item: any) => item[valueField] === value) : ""
+        value ? listData.find((item: any) => item[valueField] == value) : ""
       }
       columns={newColumns}
       onChange={onChangeHandle}

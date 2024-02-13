@@ -1,7 +1,10 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
+  Grid,
+  GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
   GridPageChangeEvent,
@@ -14,11 +17,16 @@ import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   FilterBox,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
   Title,
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
+import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
@@ -30,19 +38,40 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
-import { PAGE_SIZE } from "../components/CommonString";
+import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import DetailWindow from "../components/Windows/AC_A3000W_Popup_Window";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
-import { Iparameters, TPermissions } from "../store/types";
+import { gridList } from "../store/columns/AC_A3000W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
+const DATA_ITEM_KEY2 = "num";
 let targetRowIndex: null | number = null;
+const numberField = [
+  "baseamt",
+  "growamt",
+  "dropamt",
+  "predamt",
+  "fxdepacyndpyr",
+  "depjanamt",
+  "curalldamt",
+  "chamt",
+  "pcurdamt",
+  "janamt",
+  "fxdepyrmm",
+  "rate",
+  "allcurdamt",
+];
+
+const dateField = ["indt"];
 
 const AC_A3000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
+  const idGetter2 = getter(DATA_ITEM_KEY2);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   //엑셀 내보내기
@@ -116,12 +145,24 @@ const AC_A3000W: React.FC = () => {
     find_row_value: "",
     isSearch: true,
   });
+  const [filters2, setFilters2] = useState({
+    pgSize: PAGE_SIZE,
+    pgNum: 1,
+    fxdiv: "",
+    isSearch: true,
+  });
 
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
+  const [page2, setPage2] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum: 1,
+    }));
 
+    setPage2(initialPageState);
     setFilters((prev) => ({
       ...prev,
       pgNum: page.skip / page.take + 1,
@@ -132,19 +173,41 @@ const AC_A3000W: React.FC = () => {
       ...event.page,
     });
   };
+  const pageChange2 = (event: GridPageChangeEvent) => {
+    const { page } = event;
 
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum: page.skip / page.take + 1,
+      isSearch: true,
+    }));
+
+    setPage2({
+      ...event.page,
+    });
+  };
   const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState2, setMainDataState2] = useState<State>({
     sort: [],
   });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
+  const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
+    process([], mainDataState2)
+  );
   const [selectedState, setSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState2, setSelectedState2] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
+    setMainDataResult2(process([], mainDataState2));
   };
 
   const search = () => {
@@ -158,6 +221,7 @@ const AC_A3000W: React.FC = () => {
         throw findMessage(messagesData, "AC_A3000W_001");
       } else {
         setPage(initialPageState); // 페이지 초기화
+        setPage2(initialPageState); // 페이지 초기화
         resetAllGrid(); // 데이터 초기화
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
@@ -230,12 +294,76 @@ const AC_A3000W: React.FC = () => {
             : rows.find((row: any) => row.fxdiv == filters.find_row_value);
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+          setFilters2((prev) => ({
+            ...prev,
+            fxdiv: selectedRow.fxdiv,
+            isSearch: true,
+            pgNum: 1,
+          }));
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+          setFilters2((prev) => ({
+            ...prev,
+            fxdiv: rows[0].fxdiv,
+            isSearch: true,
+            pgNum: 1,
+          }));
         }
+      } else {
+        setMainDataResult2(process([], mainDataState2));
       }
     }
     setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  const fetchMainGrid2 = async (filters2: any) => {
+    let data: any;
+    setLoading(true);
+
+    const parameters: Iparameters = {
+      procedureName: "P_AC_A3000W_Q",
+      pageNumber: filters2.pgNum,
+      pageSize: filters2.pgSize,
+      parameters: {
+        "@p_work_type": "DETAIL",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_fxyrmm": convertDateToStr(filters.fxyrmm).substring(0, 6),
+        "@p_costgb1": filters.costgb1,
+        "@p_fxdiv": filters2.fxdiv,
+        "@p_chk": filters.chk == true ? "Y" : "N",
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows;
+
+      setMainDataResult2((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        setSelectedState2({ [rows[0][DATA_ITEM_KEY2]]: true });
+      }
+    }
+    setFilters2((prev) => ({
       ...prev,
       pgNum:
         data && data.hasOwnProperty("pageNumber")
@@ -260,16 +388,53 @@ const AC_A3000W: React.FC = () => {
     }
   }, [filters]);
 
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (filters2.isSearch && customOptionData !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters2);
+      setFilters2((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid2(deepCopiedFilters);
+    }
+  }, [filters2]);
+
+  useEffect(() => {
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [mainDataResult]);
+
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
-
+  const onMainDataStateChange2 = (event: GridDataStateChangeEvent) => {
+    setMainDataState2(event.dataState);
+  };
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-
+  const onMainSortChange2 = (e: any) => {
+    setMainDataState2((prev) => ({ ...prev, sort: e.sort }));
+  };
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+  const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult2.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
         총{" "}
@@ -299,7 +464,26 @@ const AC_A3000W: React.FC = () => {
       return <td></td>;
     }
   };
+  const gridSumQtyFooterCell2 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult2.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
 
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
+  };
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -307,9 +491,33 @@ const AC_A3000W: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
-  };
 
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+
+    setFilters2((prev) => ({
+      ...prev,
+      fxdiv: selectedRowData.fxdiv,
+      find_row_value: "",
+      isSearch: true,
+    }));
+  };
+  const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState2,
+      dataItemKey: DATA_ITEM_KEY2,
+    });
+    setSelectedState2(newSelectedState);
+  };
   let gridRef: any = useRef(null);
+
+  const [detailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
+
+  const onCal = () => {
+    setDetailWindowVisible(true);
+  };
 
   return (
     <>
@@ -375,6 +583,181 @@ const AC_A3000W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
+      <GridContainer>
+        <ExcelExport
+          data={mainDataResult.data}
+          ref={(exporter) => {
+            _export = exporter;
+          }}
+        >
+          <GridTitleContainer>
+            <GridTitle>요약정보</GridTitle>
+            <ButtonContainer>
+              <Button onClick={onCal} themeColor={"primary"} icon="calculator">
+                감가상각계산
+              </Button>
+            </ButtonContainer>
+          </GridTitleContainer>
+          <Grid
+            style={{ height: "37vh" }}
+            data={process(
+              mainDataResult.data.map((row) => ({
+                ...row,
+                [SELECTED_FIELD]: selectedState[idGetter(row)],
+              })),
+              mainDataState
+            )}
+            {...mainDataState}
+            onDataStateChange={onMainDataStateChange}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onSelectionChange}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={mainDataResult.total}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+          >
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        numberField.includes(item.fieldName)
+                          ? NumberCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0
+                          ? mainTotalFooterCell
+                          : numberField.includes(item.fieldName)
+                          ? gridSumQtyFooterCell
+                          : undefined
+                      }
+                    />
+                  )
+              )}
+          </Grid>
+        </ExcelExport>
+      </GridContainer>
+      <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>세부정보</GridTitle>
+        </GridTitleContainer>
+        <Grid
+          style={{ height: "37vh" }}
+          data={process(
+            mainDataResult2.data.map((row) => ({
+              ...row,
+              [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+            })),
+            mainDataState2
+          )}
+          {...mainDataState2}
+          onDataStateChange={onMainDataStateChange2}
+          //선택 기능
+          dataItemKey={DATA_ITEM_KEY2}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          onSelectionChange={onSelectionChange2}
+          //스크롤 조회 기능
+          fixedScroll={true}
+          total={mainDataResult2.total}
+          skip={page2.skip}
+          take={page2.take}
+          pageable={true}
+          onPageChange={pageChange2}
+          //정렬기능
+          sortable={true}
+          onSortChange={onMainSortChange2}
+          //컬럼순서조정
+          reorderable={true}
+          //컬럼너비조정
+          resizable={true}
+        >
+          {customOptionData !== null &&
+            customOptionData.menuCustomColumnOptions["grdList2"].map(
+              (item: any, idx: number) =>
+                item.sortOrder !== -1 && (
+                  <GridColumn
+                    key={idx}
+                    id={item.id}
+                    field={item.fieldName}
+                    title={item.caption}
+                    width={item.width}
+                    cell={
+                      numberField.includes(item.fieldName)
+                        ? NumberCell
+                        : dateField.includes(item.fieldName)
+                        ? DateCell
+                        : undefined
+                    }
+                    footerCell={
+                      item.sortOrder === 0
+                        ? mainTotalFooterCell2
+                        : numberField.includes(item.fieldName)
+                        ? gridSumQtyFooterCell2
+                        : undefined
+                    }
+                  />
+                )
+            )}
+        </Grid>
+      </GridContainer>
+      {detailWindowVisible && (
+        <DetailWindow
+          setVisible={setDetailWindowVisible}
+          reload={(arr: any) =>
+            setFilters((prev) => ({
+              ...prev,
+              find_row_value: arr,
+              isSearch: true,
+              pgNum: 1,
+            }))
+          }
+          modal={true}
+          pathname="AC_A3000W"
+        />
+      )}
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
+      )}
     </>
   );
 };
