@@ -193,6 +193,7 @@ const EA_A2000W: React.FC = () => {
           isSearch: true,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
+          appgb: "B",
           workType: "UNDECIDE",
           appnm: queryParams.get("go") as string,
         }));

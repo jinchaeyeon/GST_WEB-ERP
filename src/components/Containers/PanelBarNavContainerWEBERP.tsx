@@ -689,14 +689,8 @@ const PanelBarNavContainer = (props: any) => {
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-  const [mainDataState2, setMainDataState2] = useState<State>({
-    sort: [],
-  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
-  );
-  const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
-    process([], mainDataState2)
   );
   const [group, setGroup] = useState(initialGroup);
   const [total, setTotal] = useState(0);
@@ -781,12 +775,6 @@ const PanelBarNavContainer = (props: any) => {
       });
 
       const newDataState = processWithGroups(rows, group);
-      setMainDataResult2((prev) => {
-        return {
-          data: rows,
-          total: totalRowCnt == -1 ? 0 : totalRowCnt,
-        };
-      });
       setTotal(totalRowCnt);
       setResultState(newDataState);
     } else {
@@ -822,13 +810,13 @@ const PanelBarNavContainer = (props: any) => {
     }
   }, [filters2]);
 
-  const [Id, setId] = useState("");
+  const [Id, setId] = useState<string | undefined>("");
   const [windowVisible, setWindowVisible] = useState<boolean>(false);
 
   const onMessage = (id: any) => {
+    setShow(false);
     setId(id);
     setWindowVisible(true);
-    setShow(false);
   };
 
   const handleChangeChip = (id: any) => {
@@ -854,13 +842,15 @@ const PanelBarNavContainer = (props: any) => {
 
   const onList = (data: any) => {
     if (data.worktype == "approval") {
-      window.open(
-        origin +
-        `/EA_A2000W?go=` +
-        data.appnm
-      );
       setShow(false);
+      window.open(origin + `/EA_A2000W?go=` + data.appnm);
     }
+  };
+
+  const onMessengerClick = () => {
+    setShow(false);
+    setId(undefined);
+    setWindowVisible(true);
   };
 
   return (
@@ -1084,9 +1074,19 @@ const PanelBarNavContainer = (props: any) => {
                             component="div"
                             style={{
                               fontWeight: 600,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
                             }}
                           >
                             안읽은 쪽지 리스트
+                            <Button
+                              onClick={onMessengerClick}
+                              icon="email"
+                              themeColor={"primary"}
+                            >
+                              전체 쪽지함
+                            </Button>
                           </ListSubheader>
                         }
                       >
