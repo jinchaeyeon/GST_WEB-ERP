@@ -5,6 +5,7 @@ body {
     sans-serif, "TheJamsil5Bold";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --swiper-navigation-size : 20px;
 }
 
 code {

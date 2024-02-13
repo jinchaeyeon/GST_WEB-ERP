@@ -65,6 +65,7 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/EA_A2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import { useHistory, useLocation } from "react-router-dom";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -175,27 +176,41 @@ const EA_A2000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const userId = UseGetValueFromSessionItem("user_id");
   const processApi = useApi();
-
+  const history = useHistory();
+  const location = useLocation();
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
+      const queryParams = new URLSearchParams(location.search);
       const defaultOption = GetPropertyValueByName(
         customOptionData.menuCustomDefaultOptions,
         "query"
       );
-      setFilters((prev) => ({
-        ...prev,
-        frdt: setDefaultDate(customOptionData, "frdt"),
-        todt: setDefaultDate(customOptionData, "todt"),
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
-        stddiv: defaultOption.find((item: any) => item.id === "stddiv")
-          .valueCode,
-        pgmgb: defaultOption.find((item: any) => item.id === "pgmgb").valueCode,
-        appyn: defaultOption.find((item: any) => item.id === "appyn").valueCode,
-        appgb: defaultOption.find((item: any) => item.id === "appgb").valueCode,
-      }));
+      if (queryParams.has("go")) {
+        history.replace({}, "");
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: true,
+          frdt: setDefaultDate(customOptionData, "frdt"),
+          todt: setDefaultDate(customOptionData, "todt"),
+          workType: "UNDECIDE",
+          appnm: queryParams.get("go") as string,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          frdt: setDefaultDate(customOptionData, "frdt"),
+          todt: setDefaultDate(customOptionData, "todt"),
+          dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
+          person: defaultOption.find((item: any) => item.id === "person")
+            .valueCode,
+          stddiv: defaultOption.find((item: any) => item.id === "stddiv")
+            .valueCode,
+          pgmgb: defaultOption.find((item: any) => item.id === "pgmgb").valueCode,
+          appyn: defaultOption.find((item: any) => item.id === "appyn").valueCode,
+          appgb: defaultOption.find((item: any) => item.id === "appgb").valueCode,
+        }));
+      }
     }
   }, [customOptionData]);
 

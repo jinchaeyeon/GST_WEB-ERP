@@ -1,5 +1,4 @@
-import EditIcon from "@mui/icons-material/Edit";
-import EventNoteIcon from "@mui/icons-material/EventNote";
+import DescriptionIcon from "@mui/icons-material/Description";
 import MessageIcon from "@mui/icons-material/Message";
 import {
   Chip,
@@ -12,9 +11,17 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
-import { DataResult, State, process } from "@progress/kendo-data-query";
+import {
+  DataResult,
+  GroupDescriptor,
+  GroupResult,
+  State,
+  groupBy,
+  process,
+} from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { SvgIcon } from "@progress/kendo-react-common";
+import { setGroupIds } from "@progress/kendo-react-data-tools";
 import {
   AutoComplete,
   AutoCompleteCloseEvent,
@@ -68,7 +75,12 @@ import {
   unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters, TLogParaVal, TPath } from "../../store/types";
-import { UseGetIp, getBrowser, resetLocalStorage } from "../CommonFunction";
+import {
+  UseGetIp,
+  dateformat2,
+  getBrowser,
+  resetLocalStorage,
+} from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 import Loading from "../Loading";
 import ChangePasswordWindow from "../Windows/CommonWindows/ChangePasswordWindow";
@@ -76,6 +88,16 @@ import HelpWindow from "../Windows/CommonWindows/HelpWindow";
 import MessengerWindow from "../Windows/CommonWindows/MessengerWindow";
 import SystemOptionWindow from "../Windows/CommonWindows/SystemOptionWindow";
 import UserOptionsWindow from "../Windows/CommonWindows/UserOptionsWindow";
+
+const initialGroup: GroupDescriptor[] = [{ field: "group_category_name" }];
+
+const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
+  const newDataState = groupBy(data, group);
+
+  setGroupIds({ data: newDataState, group: group });
+
+  return newDataState;
+};
 
 const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
@@ -658,13 +680,28 @@ const PanelBarNavContainer = (props: any) => {
     isSearch: true,
     pgSize: PAGE_SIZE,
   });
-
+  const [filters2, setFilters2] = useState({
+    pgNum: 1,
+    isSearch: true,
+    workType: "list",
+    pgSize: PAGE_SIZE,
+  });
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
-
+  const [mainDataState2, setMainDataState2] = useState<State>({
+    sort: [],
+  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
+  );
+  const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
+    process([], mainDataState2)
+  );
+  const [group, setGroup] = useState(initialGroup);
+  const [total, setTotal] = useState(0);
+  const [resultState, setResultState] = useState<GroupResult[]>(
+    processWithGroups([], initialGroup)
   );
 
   //그리드 조회
@@ -713,6 +750,60 @@ const PanelBarNavContainer = (props: any) => {
     }));
   };
 
+  //그리드 조회
+  const fetchMainGrid2 = async (filters2: any) => {
+    let data: any;
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "sys_notifications_web",
+      pageNumber: filters2.pgNum,
+      pageSize: filters2.pgSize,
+      parameters: {
+        "@p_work_type": filters2.workType,
+        "@p_orgdiv": "01",
+        "@p_user_id": userId,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((row: any) => {
+        return {
+          ...row,
+          groupId: row.recdt + "recdt",
+          group_category_name: dateformat2(row.recdt),
+        };
+      });
+
+      const newDataState = processWithGroups(rows, group);
+      setMainDataResult2((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      setTotal(totalRowCnt);
+      setResultState(newDataState);
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+  };
+
   useEffect(() => {
     if (filters.isSearch) {
       const _ = require("lodash");
@@ -722,6 +813,15 @@ const PanelBarNavContainer = (props: any) => {
     }
   }, [filters]);
 
+  useEffect(() => {
+    if (filters2.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters2);
+      setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid2(deepCopiedFilters);
+    }
+  }, [filters2]);
+
   const [Id, setId] = useState("");
   const [windowVisible, setWindowVisible] = useState<boolean>(false);
 
@@ -729,6 +829,38 @@ const PanelBarNavContainer = (props: any) => {
     setId(id);
     setWindowVisible(true);
     setShow(false);
+  };
+
+  const handleChangeChip = (id: any) => {
+    setChip(id);
+    if (id == 0) {
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        workType: "list",
+      }));
+    } else if (id == 2) {
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        workType: "approval",
+      }));
+    } else {
+      setTotal(0);
+      const newDataState = processWithGroups([], group);
+      setResultState(newDataState);
+    }
+  };
+
+  const onList = (data: any) => {
+    if (data.worktype == "approval") {
+      window.open(
+        origin +
+        `/EA_A2000W?go=` +
+        data.appnm
+      );
+      setShow(false);
+    }
   };
 
   return (
@@ -805,6 +937,8 @@ const PanelBarNavContainer = (props: any) => {
                   onClick={() => {
                     setShow(!show);
                     fetchMainGrid(filters);
+                    setChip(0);
+                    fetchMainGrid2(filters2);
                   }}
                   fillMode="flat"
                   title="알림"
@@ -845,7 +979,7 @@ const PanelBarNavContainer = (props: any) => {
                             label="전체"
                             color="primary"
                             variant={chip == 0 ? "outlined" : "filled"}
-                            onClick={() => setChip(0)}
+                            onClick={() => handleChangeChip(0)}
                           />
                         </SwiperSlide>
                         <SwiperSlide>
@@ -853,7 +987,7 @@ const PanelBarNavContainer = (props: any) => {
                             label="업무보고"
                             color="primary"
                             variant={chip == 1 ? "outlined" : "filled"}
-                            onClick={() => setChip(1)}
+                            onClick={() => handleChangeChip(1)}
                           />
                         </SwiperSlide>
                         <SwiperSlide>
@@ -861,7 +995,7 @@ const PanelBarNavContainer = (props: any) => {
                             label="전자결재"
                             color="primary"
                             variant={chip == 2 ? "outlined" : "filled"}
-                            onClick={() => setChip(2)}
+                            onClick={() => handleChangeChip(2)}
                           />
                         </SwiperSlide>
                         <SwiperSlide>
@@ -869,7 +1003,7 @@ const PanelBarNavContainer = (props: any) => {
                             label="게시판"
                             color="primary"
                             variant={chip == 3 ? "outlined" : "filled"}
-                            onClick={() => setChip(3)}
+                            onClick={() => handleChangeChip(3)}
                           />
                         </SwiperSlide>
                         <SwiperSlide>
@@ -877,132 +1011,66 @@ const PanelBarNavContainer = (props: any) => {
                             label="미팅룸"
                             color="primary"
                             variant={chip == 4 ? "outlined" : "filled"}
-                            onClick={() => setChip(4)}
+                            onClick={() => handleChangeChip(4)}
                           />
                         </SwiperSlide>
                       </Swiper>
                       <Divider />
-
-                      <List
-                        sx={{
-                          width: "100%",
-                          maxWidth: 360,
-                          bgcolor: "background.paper",
-                        }}
-                        subheader={
-                          <ListSubheader
-                            component="div"
-                            style={{
-                              fontWeight: 600,
-                            }}
-                          >
-                            12.05 목요일
-                          </ListSubheader>
-                        }
-                      >
-                        <ListItem>
-                          <ListItemAvatar>
-                            <MuiAvatar>
-                              <EditIcon />
-                            </MuiAvatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary="[결재진행] 결재자: 송준헌"
-                            secondary="결재필요"
-                          />
-                        </ListItem>
-                      </List>
-                      <List
-                        sx={{
-                          width: "100%",
-                          maxWidth: 360,
-                          bgcolor: "background.paper",
-                        }}
-                        subheader={
-                          <ListSubheader
-                            component="div"
-                            style={{
-                              fontWeight: 600,
-                            }}
-                          >
-                            11.29 수요일
-                          </ListSubheader>
-                        }
-                      >
-                        <ListItem>
-                          <ListItemAvatar>
-                            <MuiAvatar>
-                              <EditIcon />
-                            </MuiAvatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary="[결재종결] 기안자: 송준헌"
-                            secondary="관리부 송준헌 20231129"
-                          />
-                        </ListItem>
-                        <ListItem>
-                          <ListItemAvatar>
-                            <MuiAvatar>
-                              <EditIcon />
-                            </MuiAvatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary="[결재종결] 최종결재: 송준헌"
-                            secondary="관리부 송준헌 20231129"
-                          />
-                        </ListItem>
-                        <ListItem>
-                          <ListItemAvatar>
-                            <MuiAvatar>
-                              <EditIcon />
-                            </MuiAvatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary="[결재도착] 기안자: 송준헌"
-                            secondary="관리부 송준헌 20231129"
-                          />
-                        </ListItem>
-                        <ListItem>
-                          <ListItemAvatar>
-                            <MuiAvatar>
-                              <EventNoteIcon />
-                            </MuiAvatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary="[게시판새글] 서다영"
-                            secondary="통합솔루션 사용 시점 공지"
-                          />
-                        </ListItem>
-                      </List>
-                      <List
-                        sx={{
-                          width: "100%",
-                          maxWidth: 360,
-                          bgcolor: "background.paper",
-                        }}
-                        subheader={
-                          <ListSubheader
-                            component="div"
-                            style={{
-                              fontWeight: 600,
-                            }}
-                          >
-                            11.23 목요일
-                          </ListSubheader>
-                        }
-                      >
-                        <ListItem>
-                          <ListItemAvatar>
-                            <MuiAvatar>
-                              <EditIcon />
-                            </MuiAvatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary="[결재도착] 기안자: 송준헌"
-                            secondary="제목"
-                          />
-                        </ListItem>
-                      </List>
+                      {resultState.map((item) => (
+                        <List
+                          sx={{
+                            width: "100%",
+                            maxWidth: 360,
+                            bgcolor: "background.paper",
+                          }}
+                          subheader={
+                            <ListSubheader
+                              component="div"
+                              style={{
+                                fontWeight: 600,
+                              }}
+                            >
+                              {item.value}
+                            </ListSubheader>
+                          }
+                        >
+                          {item.items.map((data: any) => (
+                            <ListItem
+                              onClick={() => onList(data)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <ListItemAvatar>
+                                <MuiAvatar sx={{ bgcolor: "#2289C3" }}>
+                                  {data.worktype == "approval" ? (
+                                    <DescriptionIcon />
+                                  ) : (
+                                    ""
+                                  )}
+                                </MuiAvatar>
+                              </ListItemAvatar>
+                              <ListItemText
+                                primary={
+                                  <Typography
+                                    variant="subtitle1"
+                                    style={{
+                                      whiteSpace: "nowrap",
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                    }}
+                                  >
+                                    [결재요청] {data.appnm}
+                                  </Typography>
+                                }
+                                secondary={
+                                  <Typography variant="caption">
+                                    요청자 : {data.prsnnm}
+                                  </Typography>
+                                }
+                              />
+                            </ListItem>
+                          ))}
+                        </List>
+                      ))}
                     </TabStripTab>
                     <TabStripTab title="쪽지">
                       <List
