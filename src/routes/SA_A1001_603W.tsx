@@ -7,11 +7,13 @@ import {
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
+  GridHeaderCellProps,
+  GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input } from "@progress/kendo-react-inputs";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -31,11 +33,13 @@ import {
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CenterCell from "../components/Cells/CenterCell";
+import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
+  ThreeNumberceil,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -45,6 +49,7 @@ import {
   convertDateToStr,
   dateformat2,
   findMessage,
+  getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
@@ -52,6 +57,7 @@ import {
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
   GAP,
   PAGE_SIZE,
   SELECTED_FIELD,
@@ -59,6 +65,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import EmailWindow from "../components/Windows/CommonWindows/EmailWindow";
 import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
@@ -76,18 +83,27 @@ const dateField = ["quodt"];
 const numberField = [
   "quoamt",
   "quorev",
-  "quowonamt",
-  "marginamt",
-  "discountamt",
+  "quounp",
+  "margin",
+  "discount",
   "finalquowonamt",
 ];
 
 const centerField = ["designyn"];
 
-const numberField2 = ["quowonamt", "finalquowonamt"];
+const numberField2 = ["quounp", "finalquowonamt"];
 
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
+
+type TdataArr = {
+  quoseq_s: string[];
+  itemcd_s: string[];
+  quowonamt_s: string[];
+  margin_s: string[];
+  discount_s: string[];
+  amt_s: string[];
+};
 
 const SA_A1001_603W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -110,6 +126,8 @@ const SA_A1001_603W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_A1001_603W", setMessagesData);
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -212,7 +230,14 @@ const SA_A1001_603W: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
-    if (e.selected == 1) {
+    if (e.selected == 0) {
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: true,
+        pgNum: 1,
+      }));
+    } else if (e.selected == 1) {
       const data = mainDataResult.data.filter(
         (item) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -352,11 +377,17 @@ const SA_A1001_603W: React.FC = () => {
   const [mainDataState2, setMainDataState2] = useState<State>({
     sort: [],
   });
+  const [tempState, setTempState] = useState<State>({
+    sort: [],
+  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
   const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
     process([], mainDataState2)
+  );
+  const [tempResult, setTempResult] = useState<DataResult>(
+    process([], tempState)
   );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -673,7 +704,7 @@ const SA_A1001_603W: React.FC = () => {
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
 
-    var parts = parseInt(sum).toString().split(".");
+    var parts = parseFloat(sum).toString().split(".");
     return parts[0] != "NaN" ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
@@ -772,20 +803,151 @@ const SA_A1001_603W: React.FC = () => {
   };
 
   const onCal = () => {
+    const dataItem = mainDataResult2.data.filter((item) => item.chk == true);
+
+    if (dataItem.length === 0) {
+      alert("선택된 데이터가 없습니다.");
+      return false;
+    }
+
+    let dataArr: TdataArr = {
+      quoseq_s: [],
+      itemcd_s: [],
+      quowonamt_s: [],
+      margin_s: [],
+      discount_s: [],
+      amt_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        quoseq = "",
+        itemcd = "",
+        quounp = "",
+        margin = "",
+        discount = "",
+        finalquowonamt = "",
+      } = item;
+
+      dataArr.quoseq_s.push(quoseq);
+      dataArr.itemcd_s.push(itemcd);
+      dataArr.quowonamt_s.push(quounp);
+      dataArr.margin_s.push(margin);
+      dataArr.discount_s.push(discount);
+      dataArr.amt_s.push(finalquowonamt);
+    });
+
     setParaData({
       workType: "CAL",
       orgdiv: "01",
       quonum: information.quonum,
       quorev: information.quorev,
+      quoseq_s: dataArr.quoseq_s.join("|"),
+      itemcd_s: dataArr.itemcd_s.join("|"),
+      quowonamt_s: dataArr.quowonamt_s.join("|"),
+      margin_s: dataArr.margin_s.join("|"),
+      discount_s: dataArr.discount_s.join("|"),
+      amt_s: dataArr.amt_s.join("|"),
     });
   };
 
   const onSALTRN = () => {
+    const dataItem = mainDataResult2.data.filter((item) => item.chk == true);
+
+    if (dataItem.length === 0) {
+      alert("선택된 데이터가 없습니다.");
+      return false;
+    }
+
+    let dataArr: TdataArr = {
+      quoseq_s: [],
+      itemcd_s: [],
+      quowonamt_s: [],
+      margin_s: [],
+      discount_s: [],
+      amt_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        quoseq = "",
+        itemcd = "",
+        quounp = "",
+        margin = "",
+        discount = "",
+        finalquowonamt = "",
+      } = item;
+
+      dataArr.quoseq_s.push(quoseq);
+      dataArr.itemcd_s.push(itemcd);
+      dataArr.quowonamt_s.push(quounp);
+      dataArr.margin_s.push(margin);
+      dataArr.discount_s.push(discount);
+      dataArr.amt_s.push(finalquowonamt);
+    });
+
     setParaData({
       workType: "SALTRN",
       orgdiv: "01",
       quonum: information.quonum,
       quorev: information.quorev,
+      quoseq_s: dataArr.quoseq_s.join("|"),
+      itemcd_s: dataArr.itemcd_s.join("|"),
+      quowonamt_s: dataArr.quowonamt_s.join("|"),
+      margin_s: dataArr.margin_s.join("|"),
+      discount_s: dataArr.discount_s.join("|"),
+      amt_s: dataArr.amt_s.join("|"),
+    });
+  };
+
+  const onSave = () => {
+    const dataItem = mainDataResult2.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    if (dataItem.length === 0) return false;
+
+    let dataArr: TdataArr = {
+      quoseq_s: [],
+      itemcd_s: [],
+      quowonamt_s: [],
+      margin_s: [],
+      discount_s: [],
+      amt_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        quoseq = "",
+        itemcd = "",
+        quounp = "",
+        margin = "",
+        discount = "",
+        finalquowonamt = "",
+      } = item;
+
+      dataArr.quoseq_s.push(quoseq);
+      dataArr.itemcd_s.push(itemcd);
+      dataArr.quowonamt_s.push(quounp);
+      dataArr.margin_s.push(margin);
+      dataArr.discount_s.push(discount);
+      dataArr.amt_s.push(finalquowonamt);
+    });
+
+    setParaData({
+      workType: "U",
+      orgdiv: "01",
+      quonum: information.quonum,
+      quorev: information.quorev,
+      quoseq_s: dataArr.quoseq_s.join("|"),
+      itemcd_s: dataArr.itemcd_s.join("|"),
+      quowonamt_s: dataArr.quowonamt_s.join("|"),
+      margin_s: dataArr.margin_s.join("|"),
+      discount_s: dataArr.discount_s.join("|"),
+      amt_s: dataArr.amt_s.join("|"),
     });
   };
 
@@ -794,6 +956,12 @@ const SA_A1001_603W: React.FC = () => {
     orgdiv: "01",
     quonum: "",
     quorev: "",
+    quoseq_s: "",
+    itemcd_s: "",
+    quowonamt_s: "",
+    margin_s: "",
+    discount_s: "",
+    amt_s: "",
   });
 
   const para: Iparameters = {
@@ -805,6 +973,12 @@ const SA_A1001_603W: React.FC = () => {
       "@p_orgdiv": ParaData.orgdiv,
       "@p_quonum": ParaData.quonum,
       "@p_quorev": ParaData.quorev,
+      "@p_quoseq_s": ParaData.quoseq_s,
+      "@p_itemcd_s": ParaData.itemcd_s,
+      "@p_quowonamt_s": ParaData.quowonamt_s,
+      "@p_margin_s": ParaData.margin_s,
+      "@p_discount_s": ParaData.discount_s,
+      "@p_amt_s": ParaData.amt_s,
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "SA_A1001_603W",
@@ -827,22 +1001,31 @@ const SA_A1001_603W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
-      setTabSelected(0);
       setPage(initialPageState);
       setPage2(initialPageState);
-
+      setValues2(false);
       setFilters((prev) => ({
         ...prev,
         find_row_value: data.returnString,
         isSearch: true,
         pgNum: 1,
       }));
-
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+      }));
       setParaData({
         workType: "",
         orgdiv: "01",
         quonum: "",
         quorev: "",
+        quoseq_s: "",
+        itemcd_s: "",
+        quowonamt_s: "",
+        margin_s: "",
+        discount_s: "",
+        amt_s: "",
       });
     } else {
       console.log("[오류 발생]");
@@ -850,6 +1033,155 @@ const SA_A1001_603W: React.FC = () => {
       alert(data.resultMessage);
     }
     setLoading(false);
+  };
+
+  const [values2, setValues2] = React.useState<boolean>(false);
+  const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
+    const changeCheck = () => {
+      const newData = mainDataResult2.data.map((item) => ({
+        ...item,
+        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        chk: !values2,
+        [EDIT_FIELD]: props.field,
+      }));
+      setValues2(!values2);
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    };
+
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Checkbox value={values2} onClick={changeCheck}></Checkbox>
+      </div>
+    );
+  };
+
+  const onMainItemChange = (event: GridItemChangeEvent) => {
+    setMainDataState2((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult2,
+      setMainDataResult2,
+      DATA_ITEM_KEY2
+    );
+  };
+
+  const customCellRender = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customRowRender = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const enterEdit = (dataItem: any, field: string) => {
+    if (field != "rowstatus" && field != "itemcd" && field != "testitem") {
+      const newData = mainDataResult2.data.map((item) =>
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
+      setEditIndex(dataItem[DATA_ITEM_KEY2]);
+      if (field) {
+        setEditedField(field);
+      }
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult((prev) => {
+        return {
+          data: mainDataResult2.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit = () => {
+    if (tempResult.data != mainDataResult2.data) {
+      const newData = mainDataResult2.data.map((item) =>
+        item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              finalquowonamt:
+                editedField != "finalquowonamt"
+                  ? ThreeNumberceil(
+                      item.quounp +
+                        ThreeNumberceil(item.quounp * (item.margin / 100)) -
+                        ThreeNumberceil(
+                          (item.quounp +
+                            ThreeNumberceil(
+                              item.quounp * (item.margin / 100)
+                            )) *
+                            (item.discount / 100)
+                        )
+                    )
+                  : item.finalquowonamt,
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult2.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   return (
@@ -1087,28 +1419,32 @@ const SA_A1001_603W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
             <ButtonContainer>
-              <Button
-                themeColor={"primary"}
-                onClick={onPrint}
-                fillMode="outline"
-                icon="print"
-              >
+              <Button themeColor={"primary"} onClick={onPrint} icon="print">
                 견적서 출력
               </Button>
-              <Button
-                themeColor={"primary"}
-                onClick={onSendEmail}
-                fillMode="outline"
-                icon="email"
-              >
+              <Button themeColor={"primary"} onClick={onSendEmail} icon="email">
                 이메일 전송
               </Button>
-              <Button themeColor={"primary"} onClick={onCal} icon="calculator">
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onCal}
+                icon="calculator"
+              >
                 견적 산출
+              </Button>
+              <Button
+                onClick={onSave}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+              >
+                저장
               </Button>
               <Button
                 themeColor={"primary"}
                 onClick={onSALTRN}
+                fillMode="outline"
                 icon="dictionary-add"
               >
                 계약 전환
@@ -1194,7 +1530,7 @@ const SA_A1001_603W: React.FC = () => {
                     <Input
                       name="quoamt"
                       type="text"
-                      value={numberWithCommas(parseInt(information.quoamt))}
+                      value={numberWithCommas(parseFloat(information.quoamt))}
                       className="readonly"
                       style={{ textAlign: "end" }}
                     />
@@ -1253,7 +1589,19 @@ const SA_A1001_603W: React.FC = () => {
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
+                onItemChange={onMainItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                editField={EDIT_FIELD}
               >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                <GridColumn
+                  field="chk"
+                  title=" "
+                  width="45px"
+                  headerCell={CustomCheckBoxCell2}
+                  cell={CheckBoxCell}
+                />
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdList2"].map(
                     (item: any, idx: number) =>

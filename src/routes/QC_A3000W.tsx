@@ -1174,7 +1174,7 @@ const QC_A3000: React.FC = () => {
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
 
-    var parts = parseInt(sum).toString().split(".");
+    var parts = parseFloat(sum).toString().split(".");
     return parts[0] != "NaN" ? (
       <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
