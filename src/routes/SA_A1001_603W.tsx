@@ -179,11 +179,17 @@ const SA_A1001_603W: React.FC = () => {
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>([]);
-  UseBizComponent("L_sysUserMaster_001, L_SA001_603", setBizComponentData);
+  UseBizComponent(
+    "L_sysUserMaster_001, L_SA001_603, L_Requestgb",
+    setBizComponentData
+  );
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
   const [materialtypeListData, setMaterialtypeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [requestgbListData, setRequestgbListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   useEffect(() => {
@@ -198,8 +204,14 @@ const SA_A1001_603W: React.FC = () => {
           (item: any) => item.bizComponentId === "L_SA001_603"
         )
       );
+      const requestgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_Requestgb"
+        )
+      );
       fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
       fetchQueryData(userQueryStr, setUserListData);
+      fetchQueryData(requestgbQueryStr, setRequestgbListData);
     }
   }, [bizComponentData]);
 
@@ -257,7 +269,7 @@ const SA_A1001_603W: React.FC = () => {
         custnm: data.custnm,
         custprsnnm: data.custprsnnm,
         materialtype: data.materialtype,
-        requestreason: data.requestreason,
+        requestgb: data.requestgb,
         quofinyn: data.quofinyn,
         quorev: data.quorev,
         quodt: data.quodt,
@@ -355,7 +367,7 @@ const SA_A1001_603W: React.FC = () => {
     custnm: "",
     custprsnnm: "",
     materialtype: "",
-    requestreason: "",
+    requestgb: "",
     quofinyn: "",
     quorev: 0,
     quodt: "",
@@ -476,7 +488,7 @@ const SA_A1001_603W: React.FC = () => {
             custnm: selectedRow.custnm,
             custprsnnm: selectedRow.custprsnnm,
             materialtype: selectedRow.materialtype,
-            requestreason: selectedRow.requestreason,
+            requestgb: selectedRow.requestgb,
             quofinyn: selectedRow.quofinyn,
             quorev: selectedRow.quorev,
             quodt: selectedRow.quodt,
@@ -491,7 +503,7 @@ const SA_A1001_603W: React.FC = () => {
             custnm: rows[0].custnm,
             custprsnnm: rows[0].custprsnnm,
             materialtype: rows[0].materialtype,
-            requestreason: rows[0].requestreason,
+            requestgb: rows[0].requestgb,
             quofinyn: rows[0].quofinyn,
             quorev: rows[0].quorev,
             quodt: rows[0].quodt,
@@ -761,7 +773,7 @@ const SA_A1001_603W: React.FC = () => {
       custnm: datas.custnm,
       custprsnnm: datas.custprsnnm,
       materialtype: datas.materialtype,
-      requestreason: datas.requestreason,
+      requestgb: datas.requestgb,
       quofinyn: datas.quofinyn,
       quorev: datas.quorev,
       quodt: datas.quodt,
@@ -1485,9 +1497,14 @@ const SA_A1001_603W: React.FC = () => {
                   <th>의뢰목적</th>
                   <td>
                     <Input
-                      name="requestreason"
+                      name="requestgb"
                       type="text"
-                      value={information.requestreason}
+                      value={
+                        requestgbListData.find(
+                          (items: any) =>
+                            items.sub_code == information.requestgb
+                        )?.code_name
+                      }
                       className="readonly"
                     />
                   </td>

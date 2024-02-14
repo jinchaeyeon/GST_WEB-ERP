@@ -3,7 +3,7 @@ import {
   NumericTextBox,
   NumericTextBoxChangeEvent,
 } from "@progress/kendo-react-inputs";
-import { numberWithCommas } from "../CommonFunction";
+import { numberWithCommas, numberWithCommas3 } from "../CommonFunction";
 
 interface CustomCellProps extends GridCellProps {
   myProp?: item[];
@@ -51,7 +51,7 @@ const NumberCell = (props: CustomCellProps) => {
         {isInEdit ? (
           <NumericTextBox value={value} format={"0"} onChange={handleChange} />
         ) : (
-          numberWithCommas(value)
+          numberWithCommas3(value)
         )}
       </td>
     ) : (
@@ -71,7 +71,7 @@ const NumberCell = (props: CustomCellProps) => {
         {isInEdit ? (
           <NumericTextBox value={value} format={"0"} onChange={handleChange} />
         ) : (
-          numberWithCommas(value)
+          numberWithCommas3(value)
         )}
       </td>
     );

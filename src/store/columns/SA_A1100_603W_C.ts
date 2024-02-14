@@ -78,15 +78,21 @@ export const gridList: Array<TGrid> = [
         width: 150,
       },
       {
-        id: "col_ordnum",
-        field: "ordnum",
-        caption: "수주번호",
+        id: "col_quonum",
+        field: "quonum",
+        caption: "견적번호",
         width: 150,
       },
       {
-        id: "col_ordseq",
-        field: "ordseq",
-        caption: "수주순번",
+        id: "col_quorev",
+        field: "quorev",
+        caption: "리비전번호",
+        width: 100,
+      },
+      {
+        id: "col_quoseq",
+        field: "quoseq",
+        caption: "No",
         width: 100,
       },
       {

@@ -12,7 +12,11 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
+import {
+  Input,
+  InputChangeEvent,
+  NumericTextBox,
+} from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
@@ -40,7 +44,6 @@ import {
   convertDateToStr,
   getGridItemChangedData,
   numberWithCommas,
-  numberWithCommas3,
   toDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
@@ -1244,15 +1247,12 @@ const CopyWindow = ({
                 </td>
                 <th>원화환율</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="wonchgrat"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(information.wonchgrat)}
+                    value={information.wonchgrat}
                     onChange={InputChange}
                     className="required"
+                    format="n0"
                   />
                 </td>
               </tr>

@@ -11,7 +11,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input } from "@progress/kendo-react-inputs";
+import { Input, NumericTextBox } from "@progress/kendo-react-inputs";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
@@ -1265,88 +1265,67 @@ const CopyWindow = ({
               <tr>
                 <th>총과세액</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="tottaxamt"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.tottaxamt)}
+                    value={Information.tottaxamt}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
                 <th>환율</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="rate"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.rate)}
+                    value={Information.rate}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
                 <th>환산금액</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="wonamt"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.wonamt)}
+                    value={Information.wonamt}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
                 <th>부가가치세과표</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="annexation"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.annexation)}
+                    value={Information.annexation}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
               </tr>
               <tr>
                 <th>총중량</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="totwgt"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.totwgt)}
+                    value={Information.totwgt}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
                 <th>관세</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="customs"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.customs)}
+                    value={Information.customs}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
                 <th>부가세</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="taxamt"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.taxamt)}
+                    value={Information.taxamt}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
                 <th>환급일자</th>
@@ -1388,14 +1367,11 @@ const CopyWindow = ({
                 </td>
                 <th>관세환급금</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="refundamt"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.refundamt)}
+                    value={Information.refundamt}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
                 <th>FTA체결확인</th>
@@ -1415,126 +1391,96 @@ const CopyWindow = ({
               <tr>
                 <th>통관수수료</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="costamt1"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.costamt1)}
+                    value={Information.costamt1}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
                 <th>내륙운반비</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="costamt2"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.costamt2)}
+                    value={Information.costamt2}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
                 <th>선임비</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="costamt3"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.costamt3)}
+                    value={Information.costamt3}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
                 <th>보험,보관료</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="costamt4"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.costamt4)}
+                    value={Information.costamt4}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
               </tr>
               <tr>
                 <th>L/C Open 수수료</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="costamt5"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.costamt5)}
+                    value={Information.costamt5}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
                 <th>유산스이자</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="costamt6"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.costamt6)}
+                    value={Information.costamt6}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
                 <th>TNT</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="costamt7"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.costamt7)}
+                    value={Information.costamt7}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
                 <th>보험료</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="costamt8"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.costamt8)}
+                    value={Information.costamt8}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
               </tr>
               <tr>
                 <th>기타수입부대비1</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="costamt9"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.costamt9)}
+                    value={Information.costamt9}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
                 <th>기타수입부대비2</th>
                 <td>
-                  <Input
+                  <NumericTextBox
                     name="costamt10"
-                    type="number"
-                    style={{
-                      textAlign: "right",
-                    }}
-                    value={numberWithCommas3(Information.costamt10)}
+                    value={Information.costamt10}
                     onChange={InputChange}
+                    format="n0"
                   />
                 </td>
               </tr>

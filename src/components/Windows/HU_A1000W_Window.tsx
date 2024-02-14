@@ -19,6 +19,7 @@ import {
   InputChangeEvent,
   MaskedTextBox,
   TextArea,
+  NumericTextBox
 } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { Buffer } from "buffer";
@@ -70,7 +71,6 @@ import {
   convertDateToStr,
   getGridItemChangedData,
   getQueryFromBizComponent,
-  numberWithCommas3,
   toDate,
 } from "../CommonFunction";
 import {
@@ -9166,100 +9166,76 @@ const CopyWindow = ({
                   <tr>
                     <th>경로자65</th>
                     <td>
-                      <Input
+                      <NumericTextBox
                         name="agenum"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(information.agenum)}
+                        value={information.agenum}
                         onChange={InputChange}
+                        format="n0"
                       />
                     </td>
                     <th>경로자70</th>
                     <td>
-                      <Input
+                      <NumericTextBox
                         name="agenum70"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(information.agenum70)}
+                        value={information.agenum70}
                         onChange={InputChange}
+                        format="n0"
                       />
                     </td>
                     <th>부양자(본인미포함)</th>
                     <td>
-                      <Input
+                      <NumericTextBox
                         name="sptnum"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(information.sptnum)}
+                        value={information.sptnum}
                         onChange={InputChange}
+                        format="n0"
                       />
                     </td>
                     <th>자녀양육</th>
                     <td>
-                      <Input
+                      <NumericTextBox
                         name="brngchlnum"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(information.brngchlnum)}
+                        value={information.brngchlnum}
                         onChange={InputChange}
+                        format="n0"
                       />
                     </td>
                     <th>장애자</th>
                     <td>
-                      <Input
+                      <NumericTextBox
                         name="dfmnum"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(information.dfmnum)}
+                        value={information.dfmnum}
                         onChange={InputChange}
+                        format="n0"
                       />
                     </td>
                   </tr>
                   <tr>
                     <th>다자녀</th>
                     <td>
-                      <Input
+                      <NumericTextBox
                         name="childnum"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(information.childnum)}
+                        value={information.childnum}
                         onChange={InputChange}
+                        format="n0"
                       />
                     </td>
                     <th>가족수당배우</th>
                     <td>
-                      <Input
+                      <NumericTextBox
                         name="fam1"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(information.fam1)}
+                        value={information.fam1}
                         onChange={InputChange}
+                        format="n0"
                       />
                     </td>
                     <th>가족수당자녀</th>
                     <td>
-                      <Input
+                      <NumericTextBox
                         name="fam2"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(information.fam2)}
+                        value={information.fam2}
                         onChange={InputChange}
+                        format="n0"
                       />
                     </td>
                   </tr>
@@ -9313,26 +9289,20 @@ const CopyWindow = ({
                       <tr>
                         <th>신장</th>
                         <td>
-                          <Input
+                          <NumericTextBox
                             name="height"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(information.height)}
+                            value={information.height}
                             onChange={InputChange}
+                            format="n0"
                           />
                         </td>
                         <th>체중</th>
                         <td>
-                          <Input
+                          <NumericTextBox
                             name="weight"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(information.weight)}
+                            value={information.weight}
                             onChange={InputChange}
+                            format="n0"
                           />
                         </td>
                         <th>혈액형</th>
@@ -9396,26 +9366,20 @@ const CopyWindow = ({
                         </td>
                         <th>시력(좌)</th>
                         <td>
-                          <Input
+                          <NumericTextBox
                             name="leye"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(information.leye)}
+                            value={information.leye}
                             onChange={InputChange}
+                            format="n0"
                           />
                         </td>
                         <th>시력(우)</th>
                         <td>
-                          <Input
+                          <NumericTextBox
                             name="reye"
-                            type="number"
-                            style={{
-                              textAlign: "right",
-                            }}
-                            value={numberWithCommas3(information.reye)}
+                            value={information.reye}
                             onChange={InputChange}
+                            format="n0"
                           />
                         </td>
                       </tr>

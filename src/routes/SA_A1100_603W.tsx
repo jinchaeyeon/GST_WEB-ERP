@@ -76,8 +76,9 @@ type TdataArr = {
   taxamt_s: string[];
   amt_s: string[];
   outtype_s: string[];
-  ordnum_s: string[];
-  ordseq_s: string[];
+  quonum_s: string[];
+  quorev_s: string[];
+  quoseq_s: string[];
 };
 
 const DATA_ITEM_KEY = "num";
@@ -1744,8 +1745,9 @@ const SA_A1100_603W: React.FC = () => {
     taxamt_s: "",
     amt_s: "",
     outtype_s: "",
-    ordnum_s: "",
-    ordseq_s: "",
+    quonum_s: "",
+    quorev_s: "",
+    quoseq_s: "",
   });
 
   const infopara: Iparameters = {
@@ -1768,8 +1770,9 @@ const SA_A1100_603W: React.FC = () => {
       "@p_wonamt_s": ParaData.wonamt_s,
       "@p_taxamt_s": ParaData.taxamt_s,
       "@p_outtype_s": ParaData.outtype_s,
-      "@p_ordnum_s": ParaData.ordnum_s,
-      "@p_ordseq_s": ParaData.ordseq_s,
+      "@p_quonum_s": ParaData.quonum_s,
+      "@p_quorev_s": ParaData.quorev_s,
+      "@p_quoseq_s": ParaData.quoseq_s,
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "SA_A1100_603W",
@@ -1796,8 +1799,9 @@ const SA_A1100_603W: React.FC = () => {
         taxamt_s: [],
         amt_s: [],
         outtype_s: [],
-        ordnum_s: [],
-        ordseq_s: [],
+        quonum_s: [],
+        quorev_s: [],
+        quoseq_s: [],
       };
 
       dataItem.forEach((item: any, idx: number) => {
@@ -1808,8 +1812,9 @@ const SA_A1100_603W: React.FC = () => {
           wonamt = "",
           taxamt = "",
           outtype = "",
-          ordnum = "",
-          ordseq = "",
+          quonum = "",
+          quorev = "",
+          quoseq = "",
         } = item;
 
         dataArr.rowstatus_s.push(rowstatus);
@@ -1818,8 +1823,9 @@ const SA_A1100_603W: React.FC = () => {
         dataArr.taxamt_s.push(taxamt);
         dataArr.amt_s.push(amt);
         dataArr.outtype_s.push(outtype);
-        dataArr.ordnum_s.push(ordnum);
-        dataArr.ordseq_s.push(ordseq);
+        dataArr.quonum_s.push(quonum);
+        dataArr.quorev_s.push(quorev);
+        dataArr.quoseq_s.push(quoseq);
       });
 
       deletedMainRows2.forEach((item: any, idx: number) => {
@@ -1830,8 +1836,9 @@ const SA_A1100_603W: React.FC = () => {
           wonamt = "",
           taxamt = "",
           outtype = "",
-          ordnum = "",
-          ordseq = "",
+          quonum = "",
+          quorev = "",
+          quoseq = "",
         } = item;
 
         dataArr.rowstatus_s.push("D");
@@ -1840,8 +1847,9 @@ const SA_A1100_603W: React.FC = () => {
         dataArr.taxamt_s.push(taxamt);
         dataArr.amt_s.push(amt);
         dataArr.outtype_s.push(outtype);
-        dataArr.ordnum_s.push(ordnum);
-        dataArr.ordseq_s.push(ordseq);
+        dataArr.quonum_s.push(quonum);
+        dataArr.quorev_s.push(quorev);
+        dataArr.quoseq_s.push(quoseq);
       });
 
       setParaData((prev) => ({
@@ -1853,8 +1861,9 @@ const SA_A1100_603W: React.FC = () => {
         taxamt_s: dataArr.taxamt_s.join("|"),
         amt_s: dataArr.amt_s.join("|"),
         outtype_s: dataArr.outtype_s.join("|"),
-        ordnum_s: dataArr.ordnum_s.join("|"),
-        ordseq_s: dataArr.ordseq_s.join("|"),
+        quonum_s: dataArr.quonum_s.join("|"),
+        quorev_s: dataArr.quorev_s.join("|"),
+        quoseq_s: dataArr.quoseq_s.join("|"),
       }));
     }
   };
@@ -1908,8 +1917,9 @@ const SA_A1100_603W: React.FC = () => {
         taxamt_s: "",
         amt_s: "",
         outtype_s: "",
-        ordnum_s: "",
-        ordseq_s: "",
+        quonum_s: "",
+        quorev_s: "",
+        quoseq_s: "",
       });
     } else {
       console.log("[오류 발생]");
@@ -2083,8 +2093,9 @@ const SA_A1100_603W: React.FC = () => {
         amt: selectRow.amt,
         itemnm: selectRow.itemnm,
         outtype: "B",
-        ordnum: selectRow.ordnum,
-        ordseq: selectRow.ordseq,
+        quonum: selectRow.quonum,
+        quorev: selectRow.quorev,
+        quoseq: selectRow.quoseq,
         recdt: selectRow.recdt,
         remark: selectRow.remark,
         seq1: 0,

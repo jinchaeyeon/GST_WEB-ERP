@@ -13,6 +13,10 @@ code {
     monospace;
 }
 
+.k-numerictextbox > .k-input-inner{
+  text-align: right;
+}
+
 .k-panelbar .k-panelbar-group>.k-panelbar-item>.k-link {
   flex-direction: row-reverse !important;
   -webkit-box-pack: justify !important;
