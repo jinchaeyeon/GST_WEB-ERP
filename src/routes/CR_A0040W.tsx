@@ -10,13 +10,9 @@ import {
   GridFooterCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import React, {
-  useEffect,
-  useRef,
-  useState
-} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -25,7 +21,7 @@ import {
   GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import ExcelUploadButton from "../components/Buttons/ExcelUploadButton";
 import TopButtons from "../components/Buttons/TopButtons";
@@ -44,7 +40,7 @@ import {
   UsePermissions,
   convertDateToStr,
   findMessage,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -344,7 +340,7 @@ const CR_A0040W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-   //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
 
     let data: any;
     setLoading(true);
@@ -668,10 +664,13 @@ const CR_A0040W: React.FC = () => {
 
     setLoading(true);
 
+    let valid = true;
+
     jsonArr.map((items: any) => {
       Object.keys(items).map((item: any) => {
-        if (!columns.includes(item)) {
+        if (!columns.includes(item) && valid == true) {
           alert("양식이 맞지 않습니다.");
+          valid = false;
           return;
         }
       });

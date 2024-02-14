@@ -10,7 +10,7 @@ import {
   GridFooterCellProps,
   GridItemChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -25,7 +25,7 @@ import {
   FormBoxWrap,
   GridContainer,
   GridTitle,
-  GridTitleContainer
+  GridTitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
@@ -52,9 +52,14 @@ import {
   getQueryFromBizComponent,
   isValidDate,
   numberWithCommas,
-  toDate
+  toDate,
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
@@ -144,7 +149,7 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -524,7 +529,7 @@ const CopyWindow = ({
     });
     for (var i = 0; i < data.length; i++) {
       data[i].num = ++temp;
-      data[i].rowstatus = "N"
+      data[i].rowstatus = "N";
     }
 
     try {
@@ -559,7 +564,11 @@ const CopyWindow = ({
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -578,7 +587,7 @@ const CopyWindow = ({
   const selectData = (selectedData: any) => {
     let valid = true;
     mainDataResult.data.map((item) => {
-      if (item.qty == 0) {
+      if (item.qty == 0 && valid == true) {
         alert("수량을 채워주세요.");
         valid = false;
         return false;
@@ -664,7 +673,6 @@ const CopyWindow = ({
               serviceid: companyCode,
             }));
           } else {
-
             let dataArr: TdataArr = {
               rowstatus_s: [],
               purseq_s: [],
@@ -686,7 +694,7 @@ const CopyWindow = ({
               taxamt_s: [],
               remark_s: [],
             };
-  
+
             dataItem.forEach((item: any, idx: number) => {
               const {
                 amt = "",
@@ -1539,7 +1547,11 @@ const CopyWindow = ({
         />
       )}
       {CopyWindowVisible && (
-        <CopyWindow2 setVisible={setCopyWindowVisible} setData={setCopyData} pathname={pathname}/>
+        <CopyWindow2
+          setVisible={setCopyWindowVisible}
+          setData={setCopyData}
+          pathname={pathname}
+        />
       )}
       {attachmentsWindowVisible && (
         <PopUpAttachmentsWindow

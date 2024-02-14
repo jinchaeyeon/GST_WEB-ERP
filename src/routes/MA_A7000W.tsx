@@ -799,7 +799,7 @@ const MA_A7000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -818,7 +818,7 @@ const MA_A7000W: React.FC = () => {
         "@p_insiz": filters.insiz,
         "@p_lotnum": filters.lotnum,
         "@p_position": filters.position,
-        "@p_find_row_value": filters.find_row_value
+        "@p_find_row_value": filters.find_row_value,
       },
     };
     try {
@@ -834,7 +834,9 @@ const MA_A7000W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.itemcd + "-" + row.lotnum + "-" + row.itemacnt == filters.find_row_value
+            (row: any) =>
+              row.itemcd + "-" + row.lotnum + "-" + row.itemacnt ==
+              filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -863,7 +865,8 @@ const MA_A7000W: React.FC = () => {
             ? rows[0]
             : rows.find(
                 (row: any) =>
-                row.itemcd + "-" + row.lotnum + "-" + row.itemacnt == filters.find_row_value
+                  row.itemcd + "-" + row.lotnum + "-" + row.itemacnt ==
+                  filters.find_row_value
               );
 
         if (selectedRow != undefined) {
@@ -965,7 +968,11 @@ const MA_A7000W: React.FC = () => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -1046,7 +1053,7 @@ const MA_A7000W: React.FC = () => {
       data: newData,
       total: prev.total - Object.length,
     }));
-    if(Object.length > 0) {
+    if (Object.length > 0) {
       setSelectedState({
         [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
       });
@@ -1581,9 +1588,12 @@ const MA_A7000W: React.FC = () => {
     });
     if (dataItem.length === 0) return false;
 
+    let valid = true;
+
     for (var i = 1; i < data.length; i++) {
-      if (data[0].itemcd == data[i].itemcd) {
+      if (data[0].itemcd == data[i].itemcd && valid == true) {
         alert("중복되는 품목이있습니다.");
+        valid = false;
         return false;
       }
     }
@@ -1828,7 +1838,7 @@ const MA_A7000W: React.FC = () => {
                   fillMode="outline"
                   onClick={onPrint}
                   icon="print"
-                  style={{marginLeft: "15px"}}
+                  style={{ marginLeft: "15px" }}
                 >
                   바코드출력
                 </Button>

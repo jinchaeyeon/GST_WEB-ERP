@@ -415,7 +415,7 @@ const EA_A1000: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-   //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true); //조회조건 파라미터
     const parameters: Iparameters = {
@@ -466,7 +466,7 @@ const EA_A1000: React.FC = () => {
   };
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-   //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true); //조회조건 파라미터
     const parameters: Iparameters = {
@@ -547,7 +547,7 @@ const EA_A1000: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid3 = async (filters3: any) => {
-   //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true); //조회조건 파라미터
     const parameters: Iparameters = {
@@ -628,7 +628,7 @@ const EA_A1000: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid4 = async (filters4: any) => {
-   //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true); //조회조건 파라미터
     const parameters: Iparameters = {
@@ -728,7 +728,7 @@ const EA_A1000: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
@@ -742,7 +742,7 @@ const EA_A1000: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
@@ -756,7 +756,7 @@ const EA_A1000: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters4);
       setFilters4((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchMainGrid4(deepCopiedFilters);
@@ -1554,12 +1554,16 @@ const EA_A1000: React.FC = () => {
 
     if (mainDataResult2.total != 0) {
       for (var i = mainDataResult2.total; i > 0; i--) {
-        if (mainDataResult2.data[mainDataResult2.total - i].appseq == 0) {
+        if (
+          mainDataResult2.data[mainDataResult2.total - i].appseq == 0 &&
+          isValid == true
+        ) {
           alert("결재순서를 입력해주세요.");
           isValid = false;
           return false;
         } else if (
-          mainDataResult2.data[mainDataResult2.total - i].appline == ""
+          mainDataResult2.data[mainDataResult2.total - i].appline == "" &&
+          isValid == true
         ) {
           alert("결재라인을 선택해주세요.");
           isValid = false;

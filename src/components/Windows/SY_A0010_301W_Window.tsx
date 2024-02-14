@@ -34,7 +34,7 @@ import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
   deletedNameState,
   isLoading,
-  unsavedNameState
+  unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import ExcelUploadButton from "../Buttons/ExcelUploadButton";
@@ -80,7 +80,7 @@ const KendoWindow = ({
   group_code = "",
   isCopy,
   modal = false,
-  pathname
+  pathname,
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
@@ -146,8 +146,6 @@ const KendoWindow = ({
       take: initialPageState.take,
     });
   };
-
-
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
@@ -1219,10 +1217,13 @@ const KendoWindow = ({
 
     setLoading(true);
 
+    let valid = true;
+
     jsonArr.map((items: any) => {
       Object.keys(items).map((item: any) => {
-        if (!columns.includes(item)) {
+        if (!columns.includes(item) && valid == true) {
           alert("양식이 맞지 않습니다.");
+          valid = false;
           return;
         }
       });
@@ -1424,7 +1425,7 @@ const KendoWindow = ({
             enabled: true,
             drag: false,
             cell: false,
-            mode: "single"
+            mode: "single",
           }}
           onSelectionChange={onSelectionChange}
           onHeaderSelectionChange={onHeaderSelectionChange}

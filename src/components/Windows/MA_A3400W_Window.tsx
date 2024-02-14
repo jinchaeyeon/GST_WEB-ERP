@@ -145,7 +145,7 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -586,16 +586,19 @@ const CopyWindow = ({
       }
     });
 
+    let valid = true;
+
     for (var i = 1; i < data.length; i++) {
-      if (data[0].itemcd == data[i].itemcd) {
+      if (data[0].itemcd == data[i].itemcd && valid == true) {
         alert("중복되는 품목이있습니다.");
+        valid = false;
         return false;
       }
     }
 
     for (var i = 0; i < data.length; i++) {
       data[i].num = ++temp;
-      data[i].rowstatus = "N"
+      data[i].rowstatus = "N";
     }
 
     try {
@@ -629,23 +632,28 @@ const CopyWindow = ({
     });
 
     if (data[0].now_qty != undefined) {
+      let valid = true;
       for (var i = 1; i < data.length; i++) {
         if (
           data[0].itemcd == data[i].itemcd &&
-          data[0].lotnum == data[i].lotnum
+          data[0].lotnum == data[i].lotnum &&
+          valid == true
         ) {
           alert("중복되는 품목이있습니다.");
           data[i].num = ++temp;
           data[i].type = "재고";
+          valid = false;
           return false;
         }
       }
     } else {
+      let valid = true;
       for (var i = 1; i < data.length; i++) {
-        if (data[0].itemcd == data[i].itemcd) {
+        if (data[0].itemcd == data[i].itemcd && valid == true) {
           alert("중복되는 품목이있습니다.");
           data[i].num = ++temp;
           data[i].type = "품목";
+          valid = false;
           return false;
         }
       }
@@ -653,7 +661,7 @@ const CopyWindow = ({
 
     for (var i = 0; i < data.length; i++) {
       data[i].num = ++temp;
-      data[i].rowstatus = "N"
+      data[i].rowstatus = "N";
     }
 
     try {
@@ -690,7 +698,11 @@ const CopyWindow = ({
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -700,7 +712,7 @@ const CopyWindow = ({
       </td>
     );
   };
-  
+
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -720,8 +732,9 @@ const CopyWindow = ({
         throw findMessage(messagesData, "MA_A3400W_003");
       }
       for (var i = 0; i < mainDataResult.data.length; i++) {
-        if (mainDataResult.data[i].qty == 0) {
+        if (mainDataResult.data[i].qty == 0 && valid == true) {
           alert("수량은 필수입니다.");
+          valid = false;
           return false;
         }
       }

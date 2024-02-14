@@ -8,13 +8,13 @@ import {
   GridFooterCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import {
   MonthView,
   Scheduler,
   SchedulerItem,
-  SchedulerItemProps
+  SchedulerItemProps,
 } from "@progress/kendo-react-scheduler";
 import { SchedulerItemMouseEvent } from "@progress/kendo-react-scheduler/dist/npm/models";
 import React, { useEffect, useRef, useState } from "react";
@@ -23,23 +23,17 @@ import {
   ButtonContainer,
   GridContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import NumberCell from "../components/Cells/NumberCell";
 import {
   UseGetValueFromSessionItem,
   UseMessages,
-  UseParaPc
+  UseParaPc,
 } from "../components/CommonFunction";
-import {
-  PAGE_SIZE,
-  SELECTED_FIELD
-} from "../components/CommonString";
+import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { useApi } from "../hooks/api";
-import {
-  isLoading,
-  loginResultState
-} from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 const CUSTOMER_ITEM_KEY = "custcd";
@@ -126,7 +120,7 @@ const SA_A2300_PDA: React.FC = () => {
   >([]);
 
   const fetchScheduler = async () => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -271,7 +265,7 @@ const SA_A2300_PDA: React.FC = () => {
   }, [customerFilters]);
 
   const fetchCustomerGrid = async () => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -615,7 +609,7 @@ const SA_A2300_PDA: React.FC = () => {
   }, [orderFilters]);
 
   const fetchOrderGrid = async () => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -839,7 +833,7 @@ const SA_A2300_PDA: React.FC = () => {
   const lotIdGetter = getter(LOT_ITEM_KEY);
 
   const saveLotGrid = async () => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -1008,7 +1002,7 @@ const SA_A2300_PDA: React.FC = () => {
   };
 
   const fetchLotGrid = async () => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -1036,7 +1030,7 @@ const SA_A2300_PDA: React.FC = () => {
 
       let valid = true;
       const rows = data.tables[0].Rows.map((row: any, index: number) => {
-        if (!chkQty(row)) {
+        if (!chkQty(row) && valid == true) {
           alert("수주량을 초과하여 출하할 수 없습니다.");
           valid = false;
         }

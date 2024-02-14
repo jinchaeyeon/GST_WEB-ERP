@@ -33,7 +33,7 @@ import {
   deletedNameState,
   isLoading,
   loginResultState,
-  unsavedNameState
+  unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import ComboBoxCell from "../Cells/ComboBoxCell";
@@ -175,7 +175,7 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -731,7 +731,11 @@ const CopyWindow = ({
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -750,7 +754,7 @@ const CopyWindow = ({
   const selectData = (selectedData: any) => {
     let valid = true;
     mainDataResult.data.map((item) => {
-      if (item.qty == 0) {
+      if (item.qty == 0 && valid == true) {
         alert("수량을 채워주세요.");
         valid = false;
         return false;
@@ -1707,7 +1711,11 @@ const CopyWindow = ({
         />
       )}
       {CopyWindowVisible && (
-        <CopyWindow2 setVisible={setCopyWindowVisible} setData={setCopyData} pathname={pathname}/>
+        <CopyWindow2
+          setVisible={setCopyWindowVisible}
+          setData={setCopyData}
+          pathname={pathname}
+        />
       )}
       {attachmentsWindowVisible && (
         <PopUpAttachmentsWindow

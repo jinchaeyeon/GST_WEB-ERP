@@ -33,10 +33,7 @@ import {
   ButtonContainer,
   ButtonInInput,
   FilterBox,
-  FormBox,
-  FormBoxWrap,
   GridContainer,
-  GridTitle,
   GridTitleContainer,
   TitleContainer,
 } from "../../CommonStyled";
@@ -94,7 +91,7 @@ const CopyWindow = ({
   setVisible,
   setData,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -553,7 +550,8 @@ const CopyWindow = ({
         for (var i = 0; i < subDataResult.data.length; i++) {
           if (
             rows[0].itemcd == subDataResult.data[i].itemcd &&
-            rows[0].lotnum == subDataResult.data[i].lotnum
+            rows[0].lotnum == subDataResult.data[i].lotnum &&
+            valid == true
           ) {
             alert("중복되는 품목이있습니다.");
             valid = false;
@@ -700,7 +698,8 @@ const CopyWindow = ({
     for (var i = 0; i < subDataResult.data.length; i++) {
       if (
         datas[0].itemcd == subDataResult.data[i].itemcd &&
-        datas[0].lotnum == subDataResult.data[i].lotnum
+        datas[0].lotnum == subDataResult.data[i].lotnum &&
+        valid == true
       ) {
         alert("중복되는 품목이있습니다.");
         valid = false;
@@ -772,19 +771,23 @@ const CopyWindow = ({
   useEffect(() => {
     document.addEventListener("keydown", function (evt) {
       if (evt.code == "Enter") {
-        if(barcode != "") {
+        if (barcode != "") {
           setInformation((prev) => ({
             ...prev,
             lotnum: barcode,
             isSearch: true,
           }));
         }
-      } else if (evt.code != "ShiftLeft" && evt.code != "Shift" && evt.code != "Enter") {
+      } else if (
+        evt.code != "ShiftLeft" &&
+        evt.code != "Shift" &&
+        evt.code != "Enter"
+      ) {
         barcode += evt.key;
       }
     });
     document.addEventListener("click", function (evt) {
-      barcode = ""
+      barcode = "";
     });
   }, []);
 

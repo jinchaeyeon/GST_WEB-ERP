@@ -65,7 +65,12 @@ const leftOverHeight = (topHeight + bottomHeight) / 2;
 let targetRowIndex: null | number = null;
 let temp = 0;
 
-const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) => {
+const CopyWindow = ({
+  setVisible,
+  setData,
+  modal = false,
+  pathname,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -584,7 +589,7 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) =
     );
     let valid = true;
     for (var i = 0; i < subDataResult.data.length; i++) {
-      if (datas[0].itemcd == subDataResult.data[i].itemcd) {
+      if (datas[0].itemcd == subDataResult.data[i].itemcd && valid == true) {
         alert("중복되는 품목이있습니다.");
         valid = false;
         return false;

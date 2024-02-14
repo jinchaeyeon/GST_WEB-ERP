@@ -38,7 +38,7 @@ import {
   UsePermissions,
   convertDateToStr,
   dateformat,
-  handleKeyPressSearch
+  handleKeyPressSearch,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -218,7 +218,7 @@ const CR_A0020W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-   //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -526,10 +526,13 @@ const CR_A0020W: React.FC = () => {
 
     setLoading(true);
 
+    let valid = true;
+
     jsonArr.map((items: any) => {
       Object.keys(items).map((item: any) => {
-        if (!columns.includes(item)) {
+        if (!columns.includes(item) && valid == true) {
           alert("양식이 맞지 않습니다.");
+          valid = false;
           return;
         }
       });

@@ -34,6 +34,7 @@ import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -44,9 +45,8 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   isValidDate,
-  toDate,
-  GetPropertyValueByName,
   numberWithCommas,
+  toDate,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -175,7 +175,7 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -205,7 +205,10 @@ const CopyWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         person: defaultOption.find((item: any) => item.id === "person")
@@ -638,7 +641,11 @@ const CopyWindow = ({
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -648,7 +655,7 @@ const CopyWindow = ({
       </td>
     );
   };
-  
+
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -657,7 +664,7 @@ const CopyWindow = ({
   const selectData = (selectedData: any) => {
     let valid = true;
     mainDataResult.data.map((item) => {
-      if (item.qty == 0) {
+      if (item.qty == 0 && valid == true) {
         alert("수량을 채워주세요.");
         valid = false;
         return false;
@@ -1139,7 +1146,7 @@ const CopyWindow = ({
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",

@@ -715,10 +715,14 @@ const AC_B5040W: React.FC = () => {
       "합계금액",
     ];
     setLoading(true);
+
+    let valid = true;
+
     jsonArr.map((items: any) => {
       Object.keys(items).map((item: any) => {
-        if (!columns.includes(item)) {
+        if (!columns.includes(item) && valid == true) {
           alert("양식이 맞지 않습니다.");
+          valid = false;
           return;
         }
       });

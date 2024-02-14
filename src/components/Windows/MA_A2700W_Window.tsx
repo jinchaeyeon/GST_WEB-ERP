@@ -475,7 +475,7 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -1288,9 +1288,12 @@ const CopyWindow = ({
       }
     });
 
+    let valid = true;
+
     for (var i = 1; i < data.length; i++) {
-      if (data[0].num == data[i].num) {
+      if (data[0].num == data[i].num && valid == true) {
         alert("중복되는 품목이있습니다.");
+        valid = false;
         return false;
       }
     }
@@ -1465,9 +1468,12 @@ const CopyWindow = ({
       }
     });
 
+    let valid = true;
+
     for (var i = 1; i < data.length; i++) {
-      if (data[0].itemcd == data[i].itemcd) {
+      if (data[0].itemcd == data[i].itemcd && valid == true) {
         alert("중복되는 품목이있습니다.");
+        valid = false;
         return false;
       }
     }
@@ -1541,7 +1547,11 @@ const CopyWindow = ({
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -1551,7 +1561,7 @@ const CopyWindow = ({
       </td>
     );
   };
-  
+
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };

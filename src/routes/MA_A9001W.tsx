@@ -12,7 +12,7 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -57,7 +57,7 @@ import {
   isValidDate,
   setDefaultDate,
   toDate,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -618,7 +618,7 @@ const MA_A9001W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -867,7 +867,7 @@ const MA_A9001W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid1 = async (subfilters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -931,7 +931,7 @@ const MA_A9001W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid2 = async (subfilters2: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -995,7 +995,7 @@ const MA_A9001W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchSubGrid3 = async (subfilters3: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1088,7 +1088,7 @@ const MA_A9001W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(subfilters);
       setSubFilters((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchSubGrid1(deepCopiedFilters);
@@ -1106,7 +1106,7 @@ const MA_A9001W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(subfilters2);
       setSubFilters2((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchSubGrid2(deepCopiedFilters);
@@ -1124,7 +1124,7 @@ const MA_A9001W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(subfilters3);
       setSubFilters3((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchSubGrid3(deepCopiedFilters);
@@ -1181,9 +1181,11 @@ const MA_A9001W: React.FC = () => {
     if (selectRows.length == 0) {
       alert("데이터가 없습니다");
     } else {
+      let valid = true;
       selectRows.map((item: any) => {
-        if (item.exceptyn == "Y") {
+        if (item.exceptyn == "Y" && valid == true) {
           alert("직접 입력인 경우 매입 전표 해제가 불가능합니다.");
+          valid = false;
           return false;
         }
       });
@@ -1215,9 +1217,11 @@ const MA_A9001W: React.FC = () => {
     if (selectRows.length == 0) {
       alert("데이터가 없습니다");
     } else {
+      let valid = true;
       selectRows.map((item: any) => {
-        if (item.exceptyn == "Y") {
+        if (item.exceptyn == "Y" && valid == true) {
           alert("직접 입력인 경우 지급 전표 해제가 불가능합니다.");
+          valid = false;
           return false;
         }
       });
@@ -1246,8 +1250,9 @@ const MA_A9001W: React.FC = () => {
     if (selectRows.length == 0) {
       alert("데이터가 없습니다");
     } else {
+      let valid = true;
       selectRows.map((item: any) => {
-        if (item.exceptyn == "Y") {
+        if (item.exceptyn == "Y" && valid == true) {
           alert("직접 입력인 경우 매입 전표 생성이 불가능합니다.");
           valid = false;
           return false;
@@ -1751,8 +1756,9 @@ const MA_A9001W: React.FC = () => {
     if (selectRows.length == 0) {
       alert("데이터가 없습니다");
     } else {
+      let valid = true;
       selectRows.map((item: any) => {
-        if (item.exceptyn == "Y") {
+        if (item.exceptyn == "Y" && valid == true) {
           alert("직접 입력인 경우 매입 전표 생성이 불가능합니다.");
           valid = false;
           return false;

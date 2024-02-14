@@ -8,7 +8,7 @@ import {
   GridFooterCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -39,9 +39,13 @@ import {
   findMessage,
   getQueryFromBizComponent,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
@@ -62,7 +66,12 @@ const leftOverHeight = (topHeight + bottomHeight) / 2;
 let targetRowIndex: null | number = null;
 let temp = 0;
 
-const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) => {
+const CopyWindow = ({
+  setVisible,
+  setData,
+  modal = false,
+  pathname,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -563,7 +572,7 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) =
     );
     let valid = true;
     for (var i = 0; i < subDataResult.data.length; i++) {
-      if (datas[0].num == subDataResult.data[i].num) {
+      if (datas[0].num == subDataResult.data[i].num && valid == true) {
         alert("중복되는 품목이있습니다.");
         valid = false;
         return false;

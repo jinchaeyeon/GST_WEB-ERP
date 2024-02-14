@@ -482,7 +482,7 @@ const Page: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
 
     setLoading(true);
@@ -1783,7 +1783,7 @@ const Page: React.FC = () => {
     }
     let valid = true;
     tar.map((item: { user_id: any }) => {
-      if (org[0].user_id == item.user_id) {
+      if (org[0].user_id == item.user_id && valid == true) {
         alert("같은 사용자 복사는 불가능합니다. 체크를 해제해주세요.");
         valid = false;
       }
