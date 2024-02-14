@@ -1597,12 +1597,6 @@ const CopyWindow = ({
         ) {
           throw findMessage(messagesData, "MA_A2700W_005");
         }
-        for (var i = 0; i < mainDataResult.data.length; i++) {
-          if (mainDataResult.data[i].qty == 0) {
-            alert("수량은 필수입니다.");
-            return false;
-          }
-        }
       });
     } catch (e) {
       alert(e);
