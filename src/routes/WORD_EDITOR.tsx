@@ -1,5 +1,3 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
 import {
   Editor,
   EditorChangeEvent,
@@ -8,11 +6,12 @@ import {
   EditorUtils,
   ProseMirror,
 } from "@progress/kendo-react-editor";
-import { InsertImage } from "../components/UploadImgFunction/insertImageTool";
+import * as React from "react";
+import { Title, TitleContainer } from "../CommonStyled";
 import { insertImagePlugin } from "../components/UploadImgFunction/insertImagePlugin";
+import { InsertImage } from "../components/UploadImgFunction/insertImageTool";
 import { insertImageFiles } from "../components/UploadImgFunction/utils";
 import { TInsertImageFiles } from "../store/types";
-import { Title, TitleContainer } from "../CommonStyled";
 
 const {
   Bold,

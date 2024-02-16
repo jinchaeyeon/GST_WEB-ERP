@@ -9,7 +9,7 @@ import {
   GridFooterCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -40,7 +40,7 @@ import {
   findMessage,
   getQueryFromBizComponent,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,

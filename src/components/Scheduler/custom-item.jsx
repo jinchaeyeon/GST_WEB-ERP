@@ -1,18 +1,14 @@
+import { Keys } from "@progress/kendo-react-common";
 import {
-    DRAG_ITEM_ACTION,
-    ITEMS_SELECT_ACTION,
-    RESIZE_ITEM_ACTION,
-    ITEMS_FOCUS_ACTION,
-    SchedulerEditItem,
+  DRAG_ITEM_ACTION,
+  ITEMS_SELECT_ACTION,
+  RESIZE_ITEM_ACTION,
+  SchedulerEditItem
 } from "@progress/kendo-react-scheduler";
 import { bytesToBase64 } from "byte-base64";
 import { useCallback, useEffect, useState } from "react";
-import {
-    UseBizComponent,
-    getQueryFromBizComponent
-} from "../CommonFunction";
 import { useApi } from "../../hooks/api";
-import { Keys } from "@progress/kendo-react-common";
+import { UseBizComponent, getQueryFromBizComponent } from "../CommonFunction";
 
 export const CustomEditItem = (props) => {
   const [colorData, setColorData] = useState([]);
@@ -112,7 +108,6 @@ export const CustomEditItem = (props) => {
     const [event] = args;
     switch (event.syntheticEvent.keyCode) {
       case Keys.shift:
-
         return SchedulerEditItem.defaultProps.onKeyDownAction(...args);
       default:
         return SchedulerEditItem.defaultProps.onKeyDownAction(...args);

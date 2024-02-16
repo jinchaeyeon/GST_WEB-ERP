@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from "react";
+import "devexpress-gantt/dist/dx-gantt.min.css";
 import Gantt, {
-  Tasks,
-  Dependencies,
-  Resources,
-  ResourceAssignments,
   Column,
+  Dependencies,
   Editing,
-  Toolbar,
   Item,
+  ResourceAssignments,
+  Resources,
+  Tasks,
+  Toolbar,
   Validation,
 } from "devextreme-react/gantt";
 import "devextreme/dist/css/dx.light.css";
-import "devexpress-gantt/dist/dx-gantt.min.css";
 import {
   DependencyDeletedEvent,
   DependencyInsertedEvent,
@@ -21,14 +20,15 @@ import {
   TaskInsertedEvent,
   TaskUpdatedEvent,
 } from "devextreme/ui/gantt";
-import { useApi } from "../hooks/api";
-import { Iparameters } from "../store/types";
+import { useEffect, useState } from "react";
+import { Title, TitleContainer } from "../CommonStyled";
 import {
-  convertDateToStrWithTime2,
   UseGetValueFromSessionItem,
   UseParaPc,
+  convertDateToStrWithTime2,
 } from "../components/CommonFunction";
-import { Title, TitleContainer } from "../CommonStyled";
+import { useApi } from "../hooks/api";
+import { Iparameters } from "../store/types";
 
 type TSavedPara = {
   work_type: "N" | "U" | "D";

@@ -60,12 +60,12 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import AC_A1060W_Window from "../components/Windows/AC_A1060W_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1060W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import AC_A1060W_Window from "../components/Windows/AC_A1060W_Window";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -1664,10 +1664,10 @@ const AC_A1060W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 location: locationListData.find(
-                  (item: any) => (item.sub_code = row.location)
+                  (item: any) => item.sub_code == row.location
                 )?.code_name,
                 amtunit: amtunitListData.find(
-                  (item: any) => (item.sub_code = row.amtunit)
+                  (item: any) => item.sub_code == row.amtunit
                 )?.code_name,
                 person: personListData.find(
                   (item: any) => item.user_id == row.person

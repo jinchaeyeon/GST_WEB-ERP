@@ -664,7 +664,6 @@ export const gridList: Array<TGrid> = [
         caption: "감면종료",
         width: 120,
       },
-
     ],
   },
 ];

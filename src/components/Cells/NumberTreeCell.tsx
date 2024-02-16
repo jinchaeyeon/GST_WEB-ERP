@@ -1,12 +1,9 @@
-import { GridCellProps } from "@progress/kendo-react-grid";
 import {
   NumericTextBox,
   NumericTextBoxChangeEvent,
 } from "@progress/kendo-react-inputs";
+import { TreeListCellProps } from "@progress/kendo-react-treelist";
 import { numberWithCommas } from "../CommonFunction";
-import {
-  TreeListCellProps,
-} from "@progress/kendo-react-treelist";
 
 const NumberTreeCell = (props: TreeListCellProps) => {
   const {
@@ -36,10 +33,7 @@ const NumberTreeCell = (props: TreeListCellProps) => {
   };
 
   const defaultRendering = (
-    <td
-      style={{ textAlign: "right" }}
-      aria-colindex={ariaColumnIndex}
-    >
+    <td style={{ textAlign: "right" }} aria-colindex={ariaColumnIndex}>
       {isInEdit ? (
         <NumericTextBox value={value} onChange={handleChange} />
       ) : (

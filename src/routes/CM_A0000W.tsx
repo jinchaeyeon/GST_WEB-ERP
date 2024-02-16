@@ -92,7 +92,6 @@ const CM_A0000W: React.FC = () => {
     });
   };
 
-
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   // 삭제할 첨부파일 리스트를 담는 함수
@@ -559,7 +558,7 @@ const CM_A0000W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
     //초기화
     setParaDataDeleted((prev) => ({

@@ -6,7 +6,7 @@ import {
   TMenu,
   TPasswordExpirationInfo,
   TpointsItem,
-  TSessionItem
+  TSessionItem,
 } from "./types";
 
 const localStorageEffect: <T>(key: string) => AtomEffect<T> =
@@ -53,21 +53,19 @@ export const clickedState = atom<string>({
 
 export const infoState = atom<TInfoItem>({
   key: "infoState",
-  default: 
-    {
-      caption: "",
-      form_id: "",
-      key: ""
-    }
+  default: {
+    caption: "",
+    form_id: "",
+    key: "",
+  },
 });
 
 export const pointsState = atom<TpointsItem>({
   key: "pointsState",
-  default: 
-    {
-      x: 0,
-      y: 0,
-    }
+  default: {
+    x: 0,
+    y: 0,
+  },
 });
 
 export const sessionItemState = atom<Array<TSessionItem>>({

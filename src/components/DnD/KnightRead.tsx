@@ -1,9 +1,9 @@
 import {
-    useEffect,
-    useRef,
-    useState,
-    type CSSProperties,
-    type FC,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type FC,
 } from "react";
 
 const knightStyle: CSSProperties = {

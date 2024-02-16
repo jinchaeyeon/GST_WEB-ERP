@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
 import {
   DropDownList,
   DropDownListChangeEvent,
 } from "@progress/kendo-react-dropdowns";
+import { useCallback, useEffect, useState } from "react";
 
-import { useApi } from "../../hooks/api";
-import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
-import { TCommonCode } from "../../store/types";
 import { bytesToBase64 } from "byte-base64";
+import { useApi } from "../../hooks/api";
+import { TCommonCode } from "../../store/types";
+import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
 
 type TCommonDropDownList = {
   name: string;

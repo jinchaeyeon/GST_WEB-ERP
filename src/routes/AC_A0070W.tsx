@@ -62,6 +62,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
+import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AccountWindow from "../components/Windows/CommonWindows/AccountWindow";
@@ -71,7 +72,6 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A0070W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 
 const format = (formatted: string, ...argument: string[]): string => {
   let index = 0;
@@ -1116,7 +1116,7 @@ const AC_A0070W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
     setLoading(false);
 

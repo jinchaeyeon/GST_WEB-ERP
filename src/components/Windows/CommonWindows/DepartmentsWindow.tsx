@@ -1,17 +1,18 @@
-import { useEffect, useRef, useState } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
+  GridDataStateChangeEvent,
   GridFooterCellProps,
+  GridPageChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridDataStateChangeEvent,
-  GridPageChangeEvent,
 } from "@progress/kendo-react-grid";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../../hooks/api";
+import { Input } from "@progress/kendo-react-inputs";
+import { useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -20,27 +21,30 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import { Input } from "@progress/kendo-react-inputs";
-import { Iparameters } from "../../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
-import { UseBizComponent } from "../../CommonFunction";
+import FilterContainer from "../../../components/Containers/FilterContainer";
+import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
+import { isLoading } from "../../../store/atoms";
+import { Iparameters } from "../../../store/types";
+import CheckBoxReadOnlyCell from "../../Cells/CheckBoxReadOnlyCell";
+import { UseBizComponent } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
-import FilterContainer from "../../../components/Containers/FilterContainer";
-import { isLoading } from "../../../store/atoms";
-import { useSetRecoilState } from "recoil";
-import CheckBoxReadOnlyCell from "../../Cells/CheckBoxReadOnlyCell";
 
 type IWindow = {
   workType: "FILTER" | "ROW_ADD" | "ROWS_ADD";
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
-  modal? : boolean
+  modal?: boolean;
 };
 let targetRowIndex: null | number = null;
 
-const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWindow) => {
+const DepartmentsWindow = ({
+  workType,
+  setVisible,
+  setData,
+  modal = false,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
 
@@ -135,7 +139,7 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
     });
   };
 
-  let gridRef : any = useRef(null); 
+  let gridRef: any = useRef(null);
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (targetRowIndex !== null && gridRef.current) {
@@ -154,23 +158,23 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
   }, [filters]);
 
   //그리드 조회
-  const fetchMainGrid = async (filters :any) => {
+  const fetchMainGrid = async (filters: any) => {
     let data: any;
     setLoading(true);
 
-  //조회조건 파라미터
-  const parameters: Iparameters = {
-    procedureName: "P_BA_P0125_Q",
-    pageNumber: filters.pgNum,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "Q",
-      "@p_orgdiv": "01",
-      "@p_dptcd": filters.dptcd,
-      "@p_dptnm": filters.dptnm,
-      "@p_useyn": filters.useyn,
-    },
-  };
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_BA_P0125_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": "Q",
+        "@p_orgdiv": "01",
+        "@p_dptcd": filters.dptcd,
+        "@p_dptnm": filters.dptnm,
+        "@p_useyn": filters.useyn,
+      },
+    };
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -180,7 +184,7 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      
+
       if (gridRef.current) {
         targetRowIndex = 0;
       }
@@ -193,7 +197,7 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
       });
 
       if (totalRowCnt > 0) {
-        const selectedRow = rows[0]
+        const selectedRow = rows[0];
         setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
       }
     } else {
@@ -233,9 +237,12 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
   };
 
   const onConfirmBtnClick = () => {
-    const selectedData = mainDataResult.data.filter((item) => item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0])[0];
+    const selectedData = mainDataResult.data.filter(
+      (item) =>
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+    )[0];
     selectData(selectedData);
-  }
+  };
 
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
@@ -278,7 +285,7 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
       isSearch: true,
     }));
   };
-  
+
   return (
     <Window
       title={"부서참조"}
@@ -292,11 +299,7 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
       <TitleContainer>
         <Title></Title>
         <ButtonContainer>
-          <Button
-            onClick={() => search()}
-            icon="search"
-            themeColor={"primary"}
-          >
+          <Button onClick={() => search()} icon="search" themeColor={"primary"}>
             조회
           </Button>
         </ButtonContainer>
@@ -341,7 +344,7 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
       </FilterContainer>
       <GridContainer height="calc(100% - 170px)">
         <Grid
-             style={{ height: "100%" }}
+          style={{ height: "100%" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -387,7 +390,12 @@ const DepartmentsWindow = ({ workType, setVisible, setData, modal = false}: IWin
           />
 
           <GridColumn field="dptnm" title="부서명" width="450px" />
-          <GridColumn field="useyn" title="사용여부" width="140px" cell={CheckBoxReadOnlyCell}/>
+          <GridColumn
+            field="useyn"
+            title="사용여부"
+            width="140px"
+            cell={CheckBoxReadOnlyCell}
+          />
         </Grid>
       </GridContainer>
       <BottomContainer>

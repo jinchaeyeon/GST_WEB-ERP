@@ -19,7 +19,7 @@ interface CustomCellProps extends GridCellProps {
   valueField?: string;
   myProp?: item[];
   colorprops?: boolean;
-  page? : string;
+  page?: string;
 }
 
 const ComboBoxCell = (props: CustomCellProps) => {
@@ -36,7 +36,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
     textField = "code_name",
     myProp,
     colorprops = false,
-    page=""
+    page = "",
   } = props;
   const processApi = useApi();
   const [listData, setListData]: any = useState([]);
@@ -102,13 +102,13 @@ const ComboBoxCell = (props: CustomCellProps) => {
         value: e.target.value ? e.target.value[valueField] : "",
       });
 
-      if(page == "Approval") {
+      if (page == "Approval") {
         onChange({
           dataIndex: 0,
           dataItem: dataItem,
           field: "postcd",
           syntheticEvent: e.syntheticEvent,
-          value: e.value.postcd
+          value: e.value.postcd,
         });
       }
     }

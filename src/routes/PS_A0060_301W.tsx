@@ -2,9 +2,7 @@ import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import {
-  ExcelExport
-} from "@progress/kendo-react-excel-export";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridCellProps,
@@ -199,7 +197,7 @@ const PS_A0060_301W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 

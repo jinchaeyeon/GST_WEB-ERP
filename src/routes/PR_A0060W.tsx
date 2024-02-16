@@ -2192,7 +2192,7 @@ const PR_A0060: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraDataDeleted.work_type = ""; //초기화
@@ -2248,6 +2248,7 @@ const PR_A0060: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -2281,6 +2282,7 @@ const PR_A0060: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

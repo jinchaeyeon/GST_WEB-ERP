@@ -1,4 +1,7 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridColumn,
@@ -7,44 +10,41 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import FilterContainer from "../components/Containers/FilterContainer";
+import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-  Title,
+  ButtonContainer,
+  ButtonInInput,
   FilterBox,
   GridContainer,
   GridTitle,
-  TitleContainer,
-  ButtonContainer,
   GridTitleContainer,
-  ButtonInInput,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
-import { Input } from "@progress/kendo-react-inputs";
-import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import TopButtons from "../components/Buttons/TopButtons";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
-  chkScrollHandler,
-  getQueryFromBizComponent,
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UsePermissions,
+  chkScrollHandler,
+  getQueryFromBizComponent,
   handleKeyPressSearch,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import {
   COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import TopButtons from "../components/Buttons/TopButtons";
-import { bytesToBase64 } from "byte-base64";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import FilterContainer from "../components/Containers/FilterContainer";
+import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
+import { Iparameters, TPermissions } from "../store/types";
 
 let list: any[] = [];
 const DATA_ITEM_KEY = "num";
@@ -66,7 +66,10 @@ const BA_B0080W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
@@ -248,7 +251,7 @@ const BA_B0080W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -295,59 +298,64 @@ const BA_B0080W: React.FC = () => {
           );
         });
 
-        const arr = 
-          result.map((item:any) => {
-            let Object :any = {};
-            Object.amtunit = item.amtunit;
-            Object.invunit = item.invunit;
-            Object.num = item.num;
-            Object.orgdiv = item.orgdiv;
-            Object.remark = item.remark;
-            Object.규격 = item.규격;
-            Object.대분류 = item.대분류;
-            Object.소분류 = item.소분류;
-            Object.중분류 = item.중분류;
-            Object.품목계정 = item.품목계정;
-            Object.품목명 = item.품목명;
-            Object.품목코드 = item.품목코드;
-            Object.품번 = item.품번;
-            var arrs: string[] = [];
-            arrUnique.map((item2: any) => {
-              listname.map((item3: any) => {
-                if(item2.품목코드 == item3.품목코드 && item.품목코드 == item3.품목코드){
-                  if(item2.unpitem == item3.unpitem) {
-                    Object[`${item3.unpitem}_unp`] = item2.unp;
-                    Object[`${item3.unpitem}_unpitem`] = item3.unpitem;
-                    arrs.push(`${item3.unpitem}_unpitem`);
-                  } else if(!arrs.includes(`${item3.unpitem}_unpitem`)) {
-                    Object[`${item3.unpitem}_unp`] = "";
-                    Object[`${item3.unpitem}_unpitem`] = item3.unpitem;
-                    arrs.push(`${item3.unpitem}_unpitem`);
-                  }
+        const arr = result.map((item: any) => {
+          let Object: any = {};
+          Object.amtunit = item.amtunit;
+          Object.invunit = item.invunit;
+          Object.num = item.num;
+          Object.orgdiv = item.orgdiv;
+          Object.remark = item.remark;
+          Object.규격 = item.규격;
+          Object.대분류 = item.대분류;
+          Object.소분류 = item.소분류;
+          Object.중분류 = item.중분류;
+          Object.품목계정 = item.품목계정;
+          Object.품목명 = item.품목명;
+          Object.품목코드 = item.품목코드;
+          Object.품번 = item.품번;
+          var arrs: string[] = [];
+          arrUnique.map((item2: any) => {
+            listname.map((item3: any) => {
+              if (
+                item2.품목코드 == item3.품목코드 &&
+                item.품목코드 == item3.품목코드
+              ) {
+                if (item2.unpitem == item3.unpitem) {
+                  Object[`${item3.unpitem}_unp`] = item2.unp;
+                  Object[`${item3.unpitem}_unpitem`] = item3.unpitem;
+                  arrs.push(`${item3.unpitem}_unpitem`);
+                } else if (!arrs.includes(`${item3.unpitem}_unpitem`)) {
+                  Object[`${item3.unpitem}_unp`] = "";
+                  Object[`${item3.unpitem}_unpitem`] = item3.unpitem;
+                  arrs.push(`${item3.unpitem}_unpitem`);
                 }
-              })
-            }); 
-            return Object;
-          })
- 
+              }
+            });
+          });
+          return Object;
+        });
+
         setMainDataResult((prev) => {
           return {
             data: arr,
             total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
-        let listnames = listname.sort(function (a: { unpitem: string; },b: { unpitem: string; }) {
+        let listnames = listname.sort(function (
+          a: { unpitem: string },
+          b: { unpitem: string }
+        ) {
           let x = a.unpitem.toLowerCase();
           let y = b.unpitem.toLowerCase();
 
-          if(x <y) {
+          if (x < y) {
             return -1;
           }
-          if(x>y) {
+          if (x > y) {
             return 1;
           }
           return 0;
-        })
+        });
         setListDataResult((prev) => {
           return {
             data: listnames,
@@ -373,16 +381,19 @@ const BA_B0080W: React.FC = () => {
 
     if (listDataResult.data.length > 0) {
       listDataResult.data.map((item: any) => {
-        if(item.unpitem == "") {
+        if (item.unpitem == "") {
           array.push(
             <GridColumn field={""} title={`${item.unpitem}`} width="120px" />
           );
         } else {
           array.push(
-            <GridColumn field={`${item.unpitem}_unp`} title={`${item.unpitem}`} width="120px" />
+            <GridColumn
+              field={`${item.unpitem}_unp`}
+              title={`${item.unpitem}`}
+              width="120px"
+            />
           );
         }
-
       });
     }
     return array;
@@ -401,7 +412,7 @@ const BA_B0080W: React.FC = () => {
     }
   }, [filters, permissions]);
 
-  let gridRef : any = useRef(null); 
+  let gridRef: any = useRef(null);
 
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {

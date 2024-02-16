@@ -123,8 +123,6 @@ const Page: React.FC = () => {
     sort: [],
   });
 
-
-
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SY_A0010W", setCustomOptionData);
@@ -376,7 +374,7 @@ const Page: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -1126,7 +1124,7 @@ const Page: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     //초기화

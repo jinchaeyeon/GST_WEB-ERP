@@ -1,4 +1,3 @@
-import { Container } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -574,145 +573,149 @@ const PR_B1103W: React.FC = () => {
     <>
       <div style={{ fontFamily: "TheJamsil5Bold" }}>
         <ThemeProvider theme={theme}>
-            <TitleContainer
-              style={{ paddingTop: "25px", paddingBottom: "25px" }}
-            >
-              <Toast ref={toast} position="top-center" />
-              <Title>시간당 생산량</Title>
-              <ButtonContainer>
-                <Button
-                  icon="pi pi-search"
-                  onClick={() => {
-                    var diffTime =
-                      (filters.todt.getTime() - filters.frdt.getTime()) /
-                      (1000 * 60 * 60 * 24);
+          <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
+            <Toast ref={toast} position="top-center" />
+            <Title>시간당 생산량</Title>
+            <ButtonContainer>
+              <Button
+                icon="pi pi-search"
+                onClick={() => {
+                  var diffTime =
+                    (filters.todt.getTime() - filters.frdt.getTime()) /
+                    (1000 * 60 * 60 * 24);
 
-                    if (diffTime > 31) {
-                      toast.current?.show({
-                        severity: "error",
-                        summary: "Error",
-                        detail: "기간을 31일 이내로 설정해주세요.",
-                        life: 3000,
-                      });
-                    } else {
-                      setFilters((prev) => ({
-                        ...prev,
-                        isSearch: true,
-                      }));
-                    }
-                  }}
-                  className="mr-2"
-                />
-              </ButtonContainer>
-            </TitleContainer>
-            <Toolbar start={startContent} />
-            <Divider />
-            <Box sx={{ flexGrow: 1 }}>
-              <Grid container spacing={2}>
-                {cardOption.map((item) => (
-                  <Grid item xs={12} sm={12} md={12} lg={4} xl={4}>
-                    <Card
-                      title={item.title}
-                      data={item.data}
-                      backgroundColor={item.backgroundColor}
-                      fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
-                      form={"PR_B1103W"}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
-            <Divider />
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <GridTitle title="일자별 시간당 생산량" />
-                <LineChart
-                  props={MonthData}
-                  value="uph_worktime"
-                  alllabel={stackChartAllLabel}
-                  label={stackChartLabel}
-                  color={[theme.palette.primary.dark]}
-                  borderColor={[theme.palette.primary.main]}
-                  name="series"
-                />
-              </Grid>
-            </Grid>
-            <Divider />
-            <Grid container spacing={2} style={{ marginBottom: "50px" }}>
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={6}>
-                <PaginatorTable
-                  value={AllList}
-                  column={{
-                    proddt: "일자",
-                    qty: "생산량",
-                    worktime: "작업시간",
-                    hr: "표준시간",
-                    prodempcnt: "작업자수",
-                    uph_worktime: "시간당 생산량",
-                  }}
-                  title={"전체 목록"}
-                  numberCell={["qty", "worktime", "hr", "prodempcnt", "uph_worktime"]}
-                  width={[110, 100, 120, 120, 120, 150]}
-                  key="num"
-                  selection={selected}
-                  onSelectionChange={(e: any) => {
-                    setSelected(e.value);
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={6}>
-                <PaginatorTable
-                  value={
-                    DetailList != undefined
-                      ? DetailList.map((items: any) => ({
-                          ...items,
-                          prodemp:
-                            userListData == undefined
-                              ? items.prodemp
-                              : userListData.find(
-                                  (item: any) => item.user_id == items.prodemp
-                                )?.user_name == undefined
-                              ? items.prodemp
-                              : userListData.find(
-                                  (item: any) => item.user_id == items.prodemp
-                                )?.user_name,
-                        }))
-                      : []
+                  if (diffTime > 31) {
+                    toast.current?.show({
+                      severity: "error",
+                      summary: "Error",
+                      detail: "기간을 31일 이내로 설정해주세요.",
+                      life: 3000,
+                    });
+                  } else {
+                    setFilters((prev) => ({
+                      ...prev,
+                      isSearch: true,
+                    }));
                   }
-                  column={{
-                    itemcd:
-                      filters.option == "I"
-                        ? "품목코드"
-                        : filters.option == "L"
-                        ? "대분류코드"
-                        : filters.option == "M"
-                        ? "중분류코드"
-                        : "소분류코드",
-                    itemnm:
-                      filters.option == "I"
-                        ? "품목명"
-                        : filters.option == "L"
-                        ? "대분류명"
-                        : filters.option == "M"
-                        ? "중분류명"
-                        : "소분류명",
-                    qty: "생산량",
-                    worktime: "작업시간",
-                    hr: "표준시간",
-                    prodemp: "작업자",
-                  }}
-                  numberCell={["qty", "worktime", "hr"]}
-                  width={[130, 140, 110, 120, 120, 110]}
-                  numberField={["qty"]}
-                  title={"상세 목록"}
-                  key="num"
-                  selection={detailSelected}
-                  onSelectionChange={(e: any) => {
-                    setDetailSelected(e.value);
-                  }}
-                />
-              </Grid>
+                }}
+                className="mr-2"
+              />
+            </ButtonContainer>
+          </TitleContainer>
+          <Toolbar start={startContent} />
+          <Divider />
+          <Box sx={{ flexGrow: 1 }}>
+            <Grid container spacing={2}>
+              {cardOption.map((item) => (
+                <Grid item xs={12} sm={12} md={12} lg={4} xl={4}>
+                  <Card
+                    title={item.title}
+                    data={item.data}
+                    backgroundColor={item.backgroundColor}
+                    fontsize={size.width < 600 ? "1.8rem" : "3.3rem"}
+                    form={"PR_B1103W"}
+                  />
+                </Grid>
+              ))}
             </Grid>
+          </Box>
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+              <GridTitle title="일자별 시간당 생산량" />
+              <LineChart
+                props={MonthData}
+                value="uph_worktime"
+                alllabel={stackChartAllLabel}
+                label={stackChartLabel}
+                color={[theme.palette.primary.dark]}
+                borderColor={[theme.palette.primary.main]}
+                name="series"
+              />
+            </Grid>
+          </Grid>
+          <Divider />
+          <Grid container spacing={2} style={{ marginBottom: "50px" }}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={6}>
+              <PaginatorTable
+                value={AllList}
+                column={{
+                  proddt: "일자",
+                  qty: "생산량",
+                  worktime: "작업시간",
+                  hr: "표준시간",
+                  prodempcnt: "작업자수",
+                  uph_worktime: "시간당 생산량",
+                }}
+                title={"전체 목록"}
+                numberCell={[
+                  "qty",
+                  "worktime",
+                  "hr",
+                  "prodempcnt",
+                  "uph_worktime",
+                ]}
+                width={[110, 100, 120, 120, 120, 150]}
+                key="num"
+                selection={selected}
+                onSelectionChange={(e: any) => {
+                  setSelected(e.value);
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={6}>
+              <PaginatorTable
+                value={
+                  DetailList != undefined
+                    ? DetailList.map((items: any) => ({
+                        ...items,
+                        prodemp:
+                          userListData == undefined
+                            ? items.prodemp
+                            : userListData.find(
+                                (item: any) => item.user_id == items.prodemp
+                              )?.user_name == undefined
+                            ? items.prodemp
+                            : userListData.find(
+                                (item: any) => item.user_id == items.prodemp
+                              )?.user_name,
+                      }))
+                    : []
+                }
+                column={{
+                  itemcd:
+                    filters.option == "I"
+                      ? "품목코드"
+                      : filters.option == "L"
+                      ? "대분류코드"
+                      : filters.option == "M"
+                      ? "중분류코드"
+                      : "소분류코드",
+                  itemnm:
+                    filters.option == "I"
+                      ? "품목명"
+                      : filters.option == "L"
+                      ? "대분류명"
+                      : filters.option == "M"
+                      ? "중분류명"
+                      : "소분류명",
+                  qty: "생산량",
+                  worktime: "작업시간",
+                  hr: "표준시간",
+                  prodemp: "작업자",
+                }}
+                numberCell={["qty", "worktime", "hr"]}
+                width={[130, 140, 110, 120, 120, 110]}
+                numberField={["qty"]}
+                title={"상세 목록"}
+                key="num"
+                selection={detailSelected}
+                onSelectionChange={(e: any) => {
+                  setDetailSelected(e.value);
+                }}
+              />
+            </Grid>
+          </Grid>
           <SpecialDial />
         </ThemeProvider>
       </div>

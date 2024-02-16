@@ -21,7 +21,7 @@ import {
   GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import NumberCell from "../components/Cells/NumberCell";
@@ -32,12 +32,9 @@ import {
   UsePermissions,
   convertDateToStr,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
-import {
-  PAGE_SIZE,
-  SELECTED_FIELD
-} from "../components/CommonString";
+import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import FileViewers from "../components/Viewer/FileViewers";

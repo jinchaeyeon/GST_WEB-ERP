@@ -55,7 +55,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_itemlvl2",
         field: "itemlvl2",
-        caption:"중분류",
+        caption: "중분류",
         width: 120,
       },
       {

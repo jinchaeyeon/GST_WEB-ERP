@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
@@ -11,32 +11,32 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
-import { DataResult, process, State, getter } from "@progress/kendo-data-query";
-import { useApi } from "../../../hooks/api";
-import NumberCell from "../../Cells/NumberCell";
+import * as React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
   GridContainer,
-  GridTitleContainer,
-  GridTitle,
   GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
 } from "../../../CommonStyled";
-import {
-  COM_CODE_DEFAULT_VALUE,
-  GAP,
-  SELECTED_FIELD,
-} from "../../CommonString";
+import { useApi } from "../../../hooks/api";
+import { IWindowPosition } from "../../../hooks/interfaces";
+import { isLoading } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
+import NumberCell from "../../Cells/NumberCell";
 import {
   UseBizComponent,
   getQueryFromBizComponent,
 } from "../../CommonFunction";
-import { Button } from "@progress/kendo-react-buttons";
-import { IWindowPosition } from "../../../hooks/interfaces";
-import { PAGE_SIZE } from "../../CommonString";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../../store/atoms";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../../CommonString";
 const DATA_ITEM_KEY = "pattern_id";
 const DATA_ITEM_KEY2 = "num";
 
@@ -189,8 +189,8 @@ const KendoWindow = ({
     isSearch: false,
   });
 
-  let gridRef : any = useRef(null); 
-  let gridRef2 : any = useRef(null); 
+  let gridRef: any = useRef(null);
+  let gridRef2: any = useRef(null);
 
   //상세그리드 조회
   const fetchGrid = async (filters: any) => {
@@ -258,7 +258,7 @@ const KendoWindow = ({
 
         if (selectedRow != undefined) {
           setSelectedDetailState({ [selectedRow[DATA_ITEM_KEY]]: true });
-        
+
           setFilters2((prev) => ({
             ...prev,
             pattern_id: selectedRow.pattern_id,
@@ -266,13 +266,12 @@ const KendoWindow = ({
           }));
         } else {
           setSelectedDetailState({ [rows[0][DATA_ITEM_KEY]]: true });
-        
+
           setFilters2((prev) => ({
             ...prev,
             pattern_id: rows[0].pattern_id,
             isSearch: true,
           }));
-
         }
       }
     } else {
@@ -507,7 +506,7 @@ const KendoWindow = ({
       ...prev,
       pattern_id: selectedRowData.pattern_id,
       isSearch: true,
-      pgNum: 1
+      pgNum: 1,
     }));
     setPage2(initialPageState);
   };
@@ -635,7 +634,7 @@ const KendoWindow = ({
             selectedField={SELECTED_FIELD}
             selectable={{
               enabled: true,
-              mode: "single"
+              mode: "single",
             }}
             //스크롤 조회기능
             fixedScroll={true}

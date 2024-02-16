@@ -1,24 +1,16 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Field, Form, FormElement } from "@progress/kendo-react-form";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
-import {
-  LoginAppName,
-  LoginBox,
-  LoginImg
-} from "../CommonStyled";
+import { LoginAppName, LoginBox, LoginImg } from "../CommonStyled";
 import { FormInput } from "../components/Editors";
 import { useApi } from "../hooks/api";
-import {
-  loginResultState,
-  passwordExpirationInfoState
-} from "../store/atoms";
+import { loginResultState, passwordExpirationInfoState } from "../store/atoms";
 
 import { DEFAULT_LANG_CODE } from "../components/CommonString";
 import Loading from "../components/Loading";
 import { isLoading } from "../store/atoms";
-import { Iparameters } from "../store/types";
 
 interface IFormData {
   langCode: string;
@@ -51,16 +43,16 @@ const Login: React.FC = () => {
         var company = "";
 
         //개발용
-        if(path.includes("localhost")) {
-          company = "2309C598"
+        if (path.includes("localhost")) {
+          company = "2309C598";
         } else {
-          if(path.split("/")[2].split(".")[0] == "check-in-dog"){
-            company = "2309C598"
+          if (path.split("/")[2].split(".")[0] == "check-in-dog") {
+            company = "2309C598";
           } else {
-            company = "2309C598"
+            company = "2309C598";
           }
         }
-       
+
         setLoading(true);
 
         let para: IFormData = Object.assign(
@@ -102,7 +94,7 @@ const Login: React.FC = () => {
           profileImage,
           userConfig,
           serviceCategory,
-          defaultCulture
+          defaultCulture,
         } = response;
 
         localStorage.setItem("accessToken", token);
@@ -132,17 +124,17 @@ const Login: React.FC = () => {
           webTitle,
           homeMenuWeb,
           profileImage,
-          dptnm : userConfig.Rows[6].value,
+          dptnm: userConfig.Rows[6].value,
           serviceCategory,
           defaultCulture,
-          dptcd : userConfig == undefined ? "" : userConfig.Rows[5].value,
+          dptcd: userConfig == undefined ? "" : userConfig.Rows[5].value,
           position: userConfig == undefined ? "" : userConfig.Rows[4].value,
         });
 
         setPwExpInfo(passwordExpirationInfo);
 
         history.replace("/Home");
-        
+
         setLoading(false);
       } catch (e: any) {
         console.log("login error", e);
@@ -152,7 +144,7 @@ const Login: React.FC = () => {
     },
     []
   );
-  
+
   const handleSubmit = (data: { [name: string]: any }) => {
     processLogin(data);
   };

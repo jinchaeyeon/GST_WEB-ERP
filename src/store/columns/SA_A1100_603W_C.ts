@@ -4,7 +4,7 @@ export const gridList: Array<TGrid> = [
   {
     // 요약정보
     gridName: "grdList",
-    columns: [ 
+    columns: [
       {
         id: "col_reckey_list",
         field: "reckey",
@@ -112,7 +112,7 @@ export const gridList: Array<TGrid> = [
         field: "amt",
         caption: "금액",
         width: 100,
-      },      
+      },
       {
         id: "col_wonamt_detail",
         field: "wonamt",
@@ -124,7 +124,7 @@ export const gridList: Array<TGrid> = [
         field: "taxamt",
         caption: "세액",
         width: 100,
-      },  
+      },
       {
         id: "col_remark_adj",
         field: "remark",
@@ -155,7 +155,7 @@ export const gridList: Array<TGrid> = [
         field: "comment",
         caption: "코멘트",
         width: 200,
-      },     
+      },
     ],
   },
   {
@@ -215,13 +215,13 @@ export const gridList: Array<TGrid> = [
         field: "person",
         caption: "작성자",
         width: 120,
-      },   
+      },
       {
         id: "col_title_meet",
         field: "title",
         caption: "제목",
         width: 150,
-      },        
+      },
     ],
   },
 ];

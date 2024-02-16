@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
-  GridFooterCellProps,
-  GridEvent,
   GridDataStateChangeEvent,
-  getSelectedState,
+  GridEvent,
+  GridFooterCellProps,
   GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import { DataResult, process, State, getter } from "@progress/kendo-data-query";
-import { useApi } from "../../../hooks/api";
+import { Input } from "@progress/kendo-react-inputs";
+import { useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -20,17 +21,11 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import { Input } from "@progress/kendo-react-inputs";
-import { Iparameters } from "../../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
-import { IWindowPosition, TCommonCodeData } from "../../../hooks/interfaces";
-import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
-import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
-import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
-import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
-import { useSetRecoilState } from "recoil";
+import { useApi } from "../../../hooks/api";
+import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
-import { handleKeyPressSearch } from "../../CommonFunction";
+import { chkScrollHandler, handleKeyPressSearch } from "../../CommonFunction";
+import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import FilterContainer from "../../Containers/FilterContainer";
 
 type IKendoWindow = {

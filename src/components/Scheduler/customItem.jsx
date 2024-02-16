@@ -1,13 +1,8 @@
+import { SchedulerItem } from "@progress/kendo-react-scheduler";
 import { bytesToBase64 } from "byte-base64";
 import { useCallback, useEffect, useState } from "react";
-import {
-  UseBizComponent,
-  getQueryFromBizComponent,
-} from "../CommonFunction";
 import { useApi } from "../../hooks/api";
-import {
-  SchedulerItem
-} from "@progress/kendo-react-scheduler";
+import { UseBizComponent, getQueryFromBizComponent } from "../CommonFunction";
 
 export const CustomItem = (props) => {
   const [colorData, setColorData] = useState([]);

@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { numberWithCommas } from "../../components/CommonFunction";
 import { useApi } from "../../hooks/api";
 import { Iparameters } from "../../store/types";
-import { numberWithCommas } from "../../components/CommonFunction";
 
 const CashDisbursementVoucher = (data: any) => {
   const processApi = useApi();
@@ -25,8 +25,8 @@ const CashDisbursementVoucher = (data: any) => {
       parameters: {
         "@p_work_type": "Z",
         "@p_orgdiv": "01",
-        "@p_key1": para.ref_key == undefined? "" :  para.ref_key.split("-")[0],
-        "@p_key2": para.ref_key == undefined? "" : para.ref_key.split("-")[1],
+        "@p_key1": para.ref_key == undefined ? "" : para.ref_key.split("-")[0],
+        "@p_key2": para.ref_key == undefined ? "" : para.ref_key.split("-")[1],
       },
     };
 

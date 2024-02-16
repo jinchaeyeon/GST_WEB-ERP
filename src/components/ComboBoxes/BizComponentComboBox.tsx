@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
 import {
-  MultiColumnComboBox,
   ComboBoxChangeEvent,
+  MultiColumnComboBox,
 } from "@progress/kendo-react-dropdowns";
+import { useCallback, useEffect, useState } from "react";
 
+import { bytesToBase64 } from "byte-base64";
 import { useApi } from "../../hooks/api";
 import { getQueryFromBizComponent } from "../CommonFunction";
-import { bytesToBase64 } from "byte-base64";
 
 type TCommonComboBox = {
   name: string;

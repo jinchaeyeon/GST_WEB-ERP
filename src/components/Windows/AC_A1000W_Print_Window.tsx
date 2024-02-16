@@ -1,25 +1,22 @@
-import {
-  useEffect,
-  useState,
-} from "react";
-import * as React from "react";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import ReplaceTaxReport from "../Prints/ReplaceTaxReport";
+import * as React from "react";
+import { useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  FormBoxWrap,
   FormBox,
+  FormBoxWrap,
 } from "../../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
+import { IWindowPosition } from "../../hooks/interfaces";
+import { isLoading } from "../../store/atoms";
 import {
+  GetPropertyValueByName,
   UseCustomOption,
   UseMessages,
-  GetPropertyValueByName,
 } from "../CommonFunction";
-import { IWindowPosition, IAttachmentData } from "../../hooks/interfaces";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
+import ReplaceTaxReport from "../Prints/ReplaceTaxReport";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 
 type IWindow = {
@@ -30,7 +27,7 @@ type IWindow = {
 };
 
 const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
-    let deviceWidth = window.innerWidth;
+  let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
@@ -67,7 +64,10 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         print: defaultOption.find((item: any) => item.id === "print").valueCode,
@@ -150,7 +150,7 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
           initialHeight={794}
           initialWidth={1123}
         >
-          <ReplaceTaxReport Type={filters.print} data={data}/>
+          <ReplaceTaxReport Type={filters.print} data={data} />
         </Window>
       )}
     </>

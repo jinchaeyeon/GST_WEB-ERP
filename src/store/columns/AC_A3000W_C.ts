@@ -63,7 +63,7 @@ export const gridList: Array<TGrid> = [
         field: "chamt",
         caption: "미상각잔액",
         width: 100,
-      }
+      },
     ],
   },
   {
@@ -164,7 +164,7 @@ export const gridList: Array<TGrid> = [
         field: "chamt",
         caption: "미상각잔액",
         width: 100,
-      }
+      },
     ],
   },
 ];

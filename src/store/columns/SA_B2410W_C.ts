@@ -99,19 +99,19 @@ export const gridList: Array<TGrid> = [
         field: "remark",
         caption: "비고",
         width: 200,
-      },  
+      },
       {
         id: "col_ordnum",
         field: "ordnum",
         caption: "수주번호",
         width: 100,
-      },  
+      },
       {
         id: "col_reckey",
         field: "reckey",
         caption: "출고번호",
         width: 100,
-      },  
+      },
     ],
   },
 ];

@@ -11,7 +11,7 @@ import {
   GridSelectionChangeEvent,
   GridSortChangeEvent,
 } from "@progress/kendo-react-grid";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -57,7 +57,7 @@ const CommentsGrid = (props: {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const idGetter = getter(DATA_ITEM_KEY);
-  let gridRef : any = useRef(null); 
+  let gridRef: any = useRef(null);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const onDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -200,7 +200,7 @@ const CommentsGrid = (props: {
       </td>
     );
   };
-  
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -238,7 +238,7 @@ const CommentsGrid = (props: {
         "@p_table_id": table_id,
         "@p_orgdiv": orgdiv,
         "@p_ref_key": ref_key,
-        "@p_find_row_value": filters.find_row_value
+        "@p_find_row_value": filters.find_row_value,
       },
     };
 
@@ -252,43 +252,42 @@ const CommentsGrid = (props: {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-
-        if (filters.find_row_value !== "") {
-          // find_row_value 행으로 스크롤 이동
-          if (gridRef.current) {
-            const findRowIndex = rows.findIndex(
-              (row: any) => row.seq == filters.find_row_value
-            );
-            targetRowIndex = findRowIndex;
-          }
-
-          // find_row_value 데이터가 존재하는 페이지로 설정
-          setPage({
-            skip: PAGE_SIZE * (data.pageNumber - 1),
-            take: PAGE_SIZE,
-          });
-        } else {
-          // 첫번째 행으로 스크롤 이동
-          if (gridRef.current) {
-            targetRowIndex = 0;
-          }
+      if (filters.find_row_value !== "") {
+        // find_row_value 행으로 스크롤 이동
+        if (gridRef.current) {
+          const findRowIndex = rows.findIndex(
+            (row: any) => row.seq == filters.find_row_value
+          );
+          targetRowIndex = findRowIndex;
         }
-        setDataResult({
-          data: rows,
-          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+
+        // find_row_value 데이터가 존재하는 페이지로 설정
+        setPage({
+          skip: PAGE_SIZE * (data.pageNumber - 1),
+          take: PAGE_SIZE,
         });
-      if (totalRowCnt > 0) {
-          const selectedRow =
-            filters.find_row_value == ""
-              ? rows[0]
-              : rows.find((row: any) => row.seq == filters.find_row_value);
-
-          if (selectedRow != undefined) {
-            setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
-          } else {
-            setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-          }
+      } else {
+        // 첫번째 행으로 스크롤 이동
+        if (gridRef.current) {
+          targetRowIndex = 0;
         }
+      }
+      setDataResult({
+        data: rows,
+        total: totalRowCnt == -1 ? 0 : totalRowCnt,
+      });
+      if (totalRowCnt > 0) {
+        const selectedRow =
+          filters.find_row_value == ""
+            ? rows[0]
+            : rows.find((row: any) => row.seq == filters.find_row_value);
+
+        if (selectedRow != undefined) {
+          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
+        } else {
+          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        }
+      }
     } else {
       console.log("[에러발생]");
       console.log(data);
@@ -329,7 +328,6 @@ const CommentsGrid = (props: {
       fetchGrid(deepCopiedFilters);
     }
   }, [ref_key]);
-
 
   //계획 저장 파라미터 초기값
   const [paraDataSaved, setParaDataSaved] = useState({
@@ -530,7 +528,7 @@ const CommentsGrid = (props: {
           isSearch: true,
         }));
       } else {
-        if(dataResult.total < 1) {
+        if (dataResult.total < 1) {
           setFilters((prev) => ({
             ...prev,
             find_row_value: "",
@@ -551,7 +549,7 @@ const CommentsGrid = (props: {
 
       deletedRows = [];
     } else {
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     //초기화

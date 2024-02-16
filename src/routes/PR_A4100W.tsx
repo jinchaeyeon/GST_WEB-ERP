@@ -525,7 +525,11 @@ const PR_A4100W: React.FC = () => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 

@@ -1,29 +1,29 @@
-import { useEffect, useState } from "react";
-import * as React from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../hooks/api";
+import {
+  Field,
+  Form,
+  FormElement,
+  FormRenderProps,
+} from "@progress/kendo-react-form";
+import * as React from "react";
+import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
   FieldWrap,
 } from "../../CommonStyled";
-import {
-  Form,
-  Field,
-  FormElement,
-  FormRenderProps,
-} from "@progress/kendo-react-form";
-import { FormReadOnly, FormComboBox } from "../Editors";
+import { useApi } from "../../hooks/api";
+import { sessionItemState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import {
   UseBizComponent,
-  UseParaPc,
   UseGetValueFromSessionItem,
+  UseParaPc,
 } from "../CommonFunction";
-import { Button } from "@progress/kendo-react-buttons";
-import { sessionItemState } from "../../store/atoms";
-import { useRecoilState } from "recoil";
+import { FormComboBox, FormReadOnly } from "../Editors";
 
 type TData = {
   prodmac: string;
@@ -118,8 +118,6 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
     resetForm();
   }, [detailDataResult]);
 
-
-
   //프로시저 파라미터 초기값
   const [paraData, setParaData] = useState({
     work_type: "",
@@ -174,7 +172,7 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
       console.log("[오류 발생]");
       console.log(data);
 
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraData.work_type = ""; //초기화

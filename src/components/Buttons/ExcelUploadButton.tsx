@@ -1,11 +1,11 @@
 import { Button } from "@progress/kendo-react-buttons";
 import React, { useRef } from "react";
-import { TPermissions } from "../../store/types";
 import * as xlsx from "xlsx";
+import { TPermissions } from "../../store/types";
 
 interface IStyle {
   marginLeft?: string;
-  marginTop? :string;
+  marginTop?: string;
 }
 interface IExcelUploadButton {
   saveExcel: (para: any[]) => void;

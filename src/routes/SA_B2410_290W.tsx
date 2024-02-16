@@ -350,7 +350,7 @@ const SA_B2410: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -771,7 +771,7 @@ const SA_B2410: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailFilters1);
       setDetailFilters1((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid1(deepCopiedFilters);
@@ -785,7 +785,7 @@ const SA_B2410: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailFilters2);
       setDetailFilters2((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid2(deepCopiedFilters);

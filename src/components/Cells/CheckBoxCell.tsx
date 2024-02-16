@@ -1,6 +1,5 @@
 import { GridCellProps } from "@progress/kendo-react-grid";
 import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
-import CheckBoxReadOnlyCell from "./CheckBoxReadOnlyCell";
 
 const CheckBoxCell = (props: GridCellProps) => {
   const {

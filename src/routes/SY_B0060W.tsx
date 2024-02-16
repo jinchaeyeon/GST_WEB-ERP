@@ -33,10 +33,10 @@ import {
   useGeoLocation,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
+import FlowChartReadOnly from "../components/Layout/FlowChartReadOnly";
 import { useApi } from "../hooks/api";
 import { loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
-import FlowChartReadOnly from "../components/Layout/FlowChartReadOnly";
 
 const DATA_ITEM_KEY = "datnum";
 
@@ -121,7 +121,7 @@ const SY_B0060W: React.FC = () => {
     work_type: "Layout",
     orgdiv: sessionOrgdiv,
     pgNum: 1,
-  })
+  });
   const [filters2, setFilters2] = useState({
     orgdiv: "01",
     location: "",
@@ -262,7 +262,7 @@ const SY_B0060W: React.FC = () => {
       console.log("[에러발생]");
       console.log(data);
     }
-  }
+  };
 
   const DetailView = async (item: any) => {
     let response: any;
@@ -604,13 +604,10 @@ const SY_B0060W: React.FC = () => {
       </MainTopContainer>
       <GridContainerWrap>
         <GridContainer width="65%">
-        <GridTitleContainer>
-              <GridTitle>레이아웃</GridTitle>
-            </GridTitleContainer>
-        <FlowChartReadOnly
-            data={mainDataResult2.data}
-            filters={filters2}
-          />
+          <GridTitleContainer>
+            <GridTitle>레이아웃</GridTitle>
+          </GridTitleContainer>
+          <FlowChartReadOnly data={mainDataResult2.data} filters={filters2} />
         </GridContainer>
         <GridContainer width={`calc(35% - ${GAP}px)`}>
           <GridContainer>

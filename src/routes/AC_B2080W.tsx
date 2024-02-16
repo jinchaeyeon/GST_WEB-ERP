@@ -20,7 +20,7 @@ import {
   GridFooterCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useRef, useState } from "react";
@@ -32,7 +32,7 @@ import {
   GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import DateCell from "../components/Cells/DateCell";
@@ -46,7 +46,7 @@ import {
   findMessage,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";

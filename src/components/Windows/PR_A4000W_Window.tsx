@@ -1,52 +1,52 @@
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import {
+  Grid,
+  GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridHeaderCellProps,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  GridToolbar,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
+import { Checkbox } from "@progress/kendo-react-inputs";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
-import { 
-  BottomContainer, 
-  ButtonContainer, 
-  GridContainer, 
-  GridContainerWrap, 
-  GridTitle, 
-  GridTitleContainer 
+import {
+  BottomContainer,
+  ButtonContainer,
+  GridContainer,
+  GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { 
-  Grid, 
-  GridCellProps, 
-  GridColumn, 
-  GridDataStateChangeEvent, 
-  GridFooterCellProps, 
-  GridHeaderCellProps, 
-  GridItemChangeEvent, 
-  GridPageChangeEvent, 
-  GridSelectionChangeEvent, 
-  GridToolbar, 
-  getSelectedState, 
-} from "@progress/kendo-react-grid";
 import { IItemData, IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
+import CheckBoxCell from "../Cells/CheckBoxCell";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
-import { 
-  UseBizComponent, 
-  UseCustomOption, 
-  UseGetValueFromSessionItem, 
-  UseMessages, 
-  UseParaPc, 
-  convertDateToStr, 
-  getGridItemChangedData, 
-  numberWithCommas
+import {
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  convertDateToStr,
+  getGridItemChangedData,
+  numberWithCommas,
 } from "../CommonFunction";
 import { EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import { DataResult, State, getter, process } from "@progress/kendo-data-query";
-import { Button } from "@progress/kendo-react-buttons";
 import StockWindow from "../Windows/PR_A4000W_ProdStock_Window";
-import CheckBoxCell from "../Cells/CheckBoxCell";
-import { Checkbox } from "@progress/kendo-react-inputs";
 
 let temp = 0;
 const DATA_ITEM_KEY = "num";
@@ -66,21 +66,17 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 
   const field = props.field ?? "";
-  const bizComponentIdVal = 
+  const bizComponentIdVal =
     field === "div"
       ? "L_PR300200"
       : field === "qtyunit"
       ? "L_BA015"
-      : field === "badcd" 
+      : field === "badcd"
       ? "L_QC002"
       : "";
 
-    const fieldName = field === "div"
-                        ? "code_name"
-                        : undefined;
-    const fieldValue = field === "div"
-                        ? "code"
-                        : undefined;
+  const fieldName = field === "div" ? "code_name" : undefined;
+  const fieldValue = field === "div" ? "code" : undefined;
 
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
@@ -88,10 +84,11 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   return bizComponent ? (
     <ComboBoxCell
-      bizComponent={bizComponent} 
+      bizComponent={bizComponent}
       textField={fieldName}
       valueField={fieldValue}
-      {...props} />
+      {...props}
+    />
   ) : (
     <td />
   );
@@ -100,32 +97,32 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 type TKendoWindow = {
   getVisible(t: boolean): void;
   rekey?: string;
-  reloadData(saveyn: string): void;   // 저장 유무
+  reloadData(saveyn: string): void; // 저장 유무
   modal?: boolean;
   pathname: string;
 };
 
 type TInData = {
-  rowstatus: string[],
-  div: string[],
-  itemcd: string[],
-  itemnm: string[],
-  insiz: string[],
-  qty: string[],
-  qtyunit: string[],
-  lotnum: string[],
-  remark: string[],
-  keyfield: string[],
-  proccd: string[],
+  rowstatus: string[];
+  div: string[];
+  itemcd: string[];
+  itemnm: string[];
+  insiz: string[];
+  qty: string[];
+  qtyunit: string[];
+  lotnum: string[];
+  remark: string[];
+  keyfield: string[];
+  proccd: string[];
 };
 
 type TBadData = {
-  rowstatus: string[],
-  keyfield: string[],
-  baddt: string[],
-  badcd: string[],
-  qty: string[],
-  remark: string[],
+  rowstatus: string[];
+  keyfield: string[];
+  baddt: string[];
+  badcd: string[];
+  qty: string[];
+  remark: string[];
 };
 
 const DetailWindow = ({
@@ -133,7 +130,7 @@ const DetailWindow = ({
   rekey,
   reloadData,
   modal = false,
-  pathname
+  pathname,
 }: TKendoWindow) => {
   const setLoading = useSetRecoilState(isLoading);
 
@@ -281,7 +278,7 @@ const DetailWindow = ({
   const fetchInGrid = async (filters: any) => {
     let data: any;
     setLoading(true);
-    
+
     const inparameters: Iparameters = {
       procedureName: "P_PR_A4000W_Q",
       pageNumber: filters.pgNum,
@@ -363,16 +360,16 @@ const DetailWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     // 필터 isSearch false처리, pgNum 세팅
     setFilters((prev) => ({
       ...prev,
       pgNum:
-      data && data.hasOwnProperty("pageNumber")
-        ? data.pageNumber
-        : prev.pgNum,
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
       isSearch: false,
     }));
     setLoading(false);
@@ -450,9 +447,11 @@ const DetailWindow = ({
 
       if (totalRowCnt > 0) {
         const selectedRow =
-        badfilters.find_row_value == ""
+          badfilters.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.keyfield == badfilters.find_row_value);
+            : rows.find(
+                (row: any) => row.keyfield == badfilters.find_row_value
+              );
 
         if (selectedRow != undefined) {
           setBadSelectedState({ [selectedRow[BAD_DATA_ITEM_KEY]]: true });
@@ -460,29 +459,27 @@ const DetailWindow = ({
           setBadSelectedState({ [rows[0][BAD_DATA_ITEM_KEY]]: true });
         }
       }
-    }  else {
+    } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
-    
+
     // 필터 isSearch false처리, pgNum 세팅
     setBadFilters((prev) => ({
       ...prev,
       pgNum:
-      data && data.hasOwnProperty("pageNumber")
-        ? data.pageNumber
-        : prev.pgNum,
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
       isSearch: false,
     }));
     setLoading(false);
-  }; 
+  };
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      filters.isSearch
-    ) {
+    if (filters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
@@ -492,12 +489,14 @@ const DetailWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (
-      badfilters.isSearch
-    ) {
+    if (badfilters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(badfilters);
-      setBadFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
+      setBadFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      }));
       fetchBadGrid(deepCopiedFilters);
     }
   }, [badfilters]);
@@ -547,7 +546,7 @@ const DetailWindow = ({
 
   //그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (inDataResult.total > 0 && isInitSearch === false ) {
+    if (inDataResult.total > 0 && isInitSearch === false) {
       const firstRowData = inDataResult.data[0];
       setInSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
 
@@ -603,7 +602,11 @@ const DetailWindow = ({
     let sum = 0;
     inDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -618,7 +621,11 @@ const DetailWindow = ({
     let sum = 0;
     badDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -630,19 +637,14 @@ const DetailWindow = ({
   };
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field == "qty" || 
-        field == "remark" || 
-        field == "chk"
-    ) {
+    if (field == "qty" || field == "remark" || field == "chk") {
       const newData = inDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
             }
-          : { ...item, 
-            [EDIT_FIELD]: undefined,
-            }
+          : { ...item, [EDIT_FIELD]: undefined }
       );
       setTempResult((prev) => {
         return {
@@ -669,17 +671,16 @@ const DetailWindow = ({
   const exitEdit = (item: any) => {
     if (tempResult.data != inDataResult.data) {
       const newData = inDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] == 
-        Object.getOwnPropertyNames(inselectedState)[0]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: undefined,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(inselectedState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
       );
       setTempResult((prev) => {
         return {
@@ -717,20 +718,18 @@ const DetailWindow = ({
 
   const enterEdit1 = (dataItem: any, field: string | undefined) => {
     if (
-      field == "badcd"  ||
+      field == "badcd" ||
       field == "qty" ||
       field == "remark" ||
       field == "chk"
     ) {
       const newData = badDataResult.data.map((item) =>
-      item[BAD_DATA_ITEM_KEY] === dataItem[BAD_DATA_ITEM_KEY]
-        ? {
-            ...item,
-            [EDIT_FIELD]: field,
-          }
-        : { ...item, 
-          [EDIT_FIELD]: undefined 
-         }
+        item[BAD_DATA_ITEM_KEY] === dataItem[BAD_DATA_ITEM_KEY]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
       );
       setTempResult1((prev) => {
         return {
@@ -757,17 +756,16 @@ const DetailWindow = ({
   const exitEdit1 = (item: any) => {
     if (tempResult1.data != badDataResult.data) {
       const newData = badDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] == 
-        Object.getOwnPropertyNames(badselectedState)[0]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: undefined,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(badselectedState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
       );
       setTempResult1((prev) => {
         return {
@@ -838,12 +836,7 @@ const DetailWindow = ({
   );
 
   const onInItemChange = (event: GridItemChangeEvent) => {
-    getGridItemChangedData(
-      event,
-      inDataResult,
-      setInDataResult,
-      DATA_ITEM_KEY
-    );
+    getGridItemChangedData(event, inDataResult, setInDataResult, DATA_ITEM_KEY);
   };
 
   const onBadItemChange = (event: GridItemChangeEvent) => {
@@ -913,11 +906,11 @@ const DetailWindow = ({
 
     //삭제 안 할 데이터 newData에 push
     inDataResult.data.forEach((item: any, index: number) => {
-      if(item.chk != true) {
+      if (item.chk != true) {
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -948,10 +941,10 @@ const DetailWindow = ({
   const onBadAddClick = () => {
     // 불량내역 행 추가
     badDataResult.data.map((item) => {
-      if(item.num > temp) {
-        temp = item.num
+      if (item.num > temp) {
+        temp = item.num;
       }
-    })
+    });
 
     const newDataItem = {
       [BAD_DATA_ITEM_KEY]: ++temp,
@@ -959,7 +952,7 @@ const DetailWindow = ({
       badcd: "",
       qty: 0,
       remark: "",
-      rowstatus: "N"
+      rowstatus: "N",
     };
 
     setBadDataResult((prev) => {
@@ -978,11 +971,11 @@ const DetailWindow = ({
 
     //삭제 안 할 데이터 newData에 push
     badDataResult.data.forEach((item: any, index: number) => {
-      if(item.chk != true) {
+      if (item.chk != true) {
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1009,9 +1002,8 @@ const DetailWindow = ({
       [data != undefined ? data[BAD_DATA_ITEM_KEY] : newData[0]]: true,
     });
   };
-  
+
   const onSaveClick = async () => {
-    
     const dataItem = inDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
@@ -1026,9 +1018,13 @@ const DetailWindow = ({
       );
     });
 
-    if ((dataItem.length === 0 && deletedMainRows.length === 0) && 
-        dataItem1.length === 0 && deletedMainRows1.length === 0) 
-        return false;
+    if (
+      dataItem.length === 0 &&
+      deletedMainRows.length === 0 &&
+      dataItem1.length === 0 &&
+      deletedMainRows1.length === 0
+    )
+      return false;
 
     let inArr: TInData = {
       rowstatus: [],
@@ -1061,19 +1057,19 @@ const DetailWindow = ({
     if (dataItem.length > 0 || deletedMainRows.length > 0) {
       dataItem.forEach((item: any) => {
         const {
-          rowstatus, 
-          div, 
-          itemcd, 
-          itemnm, 
-          insiz, 
-          qty, 
+          rowstatus,
+          div,
+          itemcd,
+          itemnm,
+          insiz,
+          qty,
           qtyunit,
-          lotnum, 
-          remark, 
-          keyfield, 
-          proccd
+          lotnum,
+          remark,
+          keyfield,
+          proccd,
         } = item;
-  
+
         inArr.rowstatus.push(rowstatus);
         inArr.div.push(div);
         inArr.itemcd.push(itemcd);
@@ -1089,19 +1085,19 @@ const DetailWindow = ({
 
       deletedMainRows.forEach((item: any) => {
         const {
-          rowstatus, 
-          div, 
-          itemcd, 
-          itemnm, 
-          insiz, 
-          qty, 
+          rowstatus,
+          div,
+          itemcd,
+          itemnm,
+          insiz,
+          qty,
           qtyunit,
-          lotnum, 
-          remark, 
-          keyfield, 
-          proccd
+          lotnum,
+          remark,
+          keyfield,
+          proccd,
         } = item;
-  
+
         inArr.rowstatus.push(rowstatus);
         inArr.div.push(div);
         inArr.itemcd.push(itemcd);
@@ -1149,7 +1145,7 @@ const DetailWindow = ({
           "@p_form_id": "PR_A4000W",
         },
       };
-  
+
       try {
         data = await processApi<any>("procedure", inparaSaved);
       } catch (error) {
@@ -1173,10 +1169,10 @@ const DetailWindow = ({
             find_row_value: "",
             pgNum: isLastDataDeleted
               ? prev.pgNum != 1
-                  ? prev.pgNum - 1
-                  : prev.pgNum
-                : prev.pgNum,
-              isSearch: true,
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
+            isSearch: true,
           }));
         } else {
           setFilters((prev: any) => ({
@@ -1192,11 +1188,11 @@ const DetailWindow = ({
         console.log(data);
         alert(data.resultMessage);
       }
-    };
+    }
 
     if (dataItem1.length > 0 || deletedMainRows1.length > 0) {
       dataItem1.forEach((item: any) => {
-        const { rowstatus, keyfield, baddt, badcd, qty, remark} = item;
+        const { rowstatus, keyfield, baddt, badcd, qty, remark } = item;
         badArr.rowstatus.push(rowstatus);
         badArr.keyfield.push(keyfield);
         badArr.baddt.push(baddt);
@@ -1206,7 +1202,7 @@ const DetailWindow = ({
       });
 
       deletedMainRows1.forEach((item: any) => {
-        const { rowstatus, keyfield, baddt, badcd, qty, remark} = item;
+        const { rowstatus, keyfield, baddt, badcd, qty, remark } = item;
         badArr.rowstatus.push(rowstatus);
         badArr.keyfield.push(keyfield);
         badArr.baddt.push(baddt);
@@ -1249,13 +1245,13 @@ const DetailWindow = ({
           "@p_form_id": "PR_A4000W",
         },
       };
-  
+
       try {
         data1 = await processApi<any>("procedure", badparaSaved);
       } catch (error) {
         data1 = null;
       }
-  
+
       if (data1.isSuccess == true) {
         const isLastDataDeleted =
           badDataResult.data.length == 0 && badfilters.pgNum > 0;
@@ -1273,10 +1269,10 @@ const DetailWindow = ({
             find_row_value: "",
             pgNum: isLastDataDeleted
               ? prev.pgNum != 1
-                  ? prev.pgNum - 1
-                  : prev.pgNum
-                : prev.pgNum,
-              isSearch: true,
+                ? prev.pgNum - 1
+                : prev.pgNum
+              : prev.pgNum,
+            isSearch: true,
           }));
         } else {
           setBadFilters((prev: any) => ({
@@ -1292,7 +1288,7 @@ const DetailWindow = ({
         console.log(data1);
         alert(data1.resultMessage);
       }
-    };
+    }
     setLoading(false);
   };
 
@@ -1302,8 +1298,8 @@ const DetailWindow = ({
 
   const setCopyData = (data: IItemData[]) => {
     inDataResult.data.map((item) => {
-      if(item.num > temp){
-        temp = item.num
+      if (item.num > temp) {
+        temp = item.num;
       }
     });
 
@@ -1322,7 +1318,7 @@ const DetailWindow = ({
       };
     });
   };
-  
+
   return (
     <Window
       title={"상세정보등록"}
@@ -1334,7 +1330,7 @@ const DetailWindow = ({
       modal={modal}
     >
       <GridContainerWrap>
-        <GridContainer width = {`50%`} >
+        <GridContainer width={`50%`}>
           <GridTitleContainer>
             <GridTitle>투입이력</GridTitle>
           </GridTitleContainer>
@@ -1354,7 +1350,7 @@ const DetailWindow = ({
             selectedField={SELECTED_FIELD}
             selectable={{
               enabled: true,
-              mode: "single"
+              mode: "single",
             }}
             onSelectionChange={onInSelectionChange}
             // 스크롤 조회 기능
@@ -1404,9 +1400,9 @@ const DetailWindow = ({
               headerCell={CustomCheckBoxCell}
               cell={CheckBoxCell}
             />
-            <GridColumn 
-              field="div" 
-              title="구분" 
+            <GridColumn
+              field="div"
+              title="구분"
               width="100px"
               cell={CustomComboBoxCell}
               footerCell={inTotalFooterCell}
@@ -1414,29 +1410,29 @@ const DetailWindow = ({
             <GridColumn field="itemcd" title="품목코드" width="150px" />
             <GridColumn field="itemnm" title="품목명" width="180px" />
             <GridColumn field="insiz" title="규격" width="150px" />
-            <GridColumn 
+            <GridColumn
               field="qty"
               title="사용량"
               width="100px"
               cell={NumberCell}
               footerCell={editNumberFooterCell}
             />
-            <GridColumn 
-              field="qtyunit" 
-              title="단위" 
-              width="80px" 
+            <GridColumn
+              field="qtyunit"
+              title="단위"
+              width="80px"
               cell={CustomComboBoxCell}
             />
             <GridColumn field="lotnum" title="LOT NO" width="120px" />
             <GridColumn field="remark" title="비고" width="200px" />
           </Grid>
         </GridContainer>
-        <GridContainer width = {`calc(50% - ${GAP}px)`}>
+        <GridContainer width={`calc(50% - ${GAP}px)`}>
           <GridTitleContainer>
             <GridTitle>불량내역</GridTitle>
           </GridTitleContainer>
           <Grid
-            style = {{ height: "53vh"}}
+            style={{ height: "53vh" }}
             data={process(
               badDataResult.data.map((row) => ({
                 ...row,
@@ -1476,7 +1472,7 @@ const DetailWindow = ({
             cellRender={customCellRender1}
             rowRender={customRowRender1}
             editField={EDIT_FIELD}
-          > 
+          >
             <GridToolbar>
               <Button
                 themeColor={"primary"}
@@ -1501,20 +1497,20 @@ const DetailWindow = ({
               headerCell={CustomCheckBoxCell1}
               cell={CheckBoxCell}
             />
-            <GridColumn 
-              field="baddt" 
-              title="불량일자" 
+            <GridColumn
+              field="baddt"
+              title="불량일자"
               width="120px"
               cell={DateCell}
               footerCell={badTotalFooterCell}
             />
-            <GridColumn 
-              field="badcd" 
-              title="불량유형" 
-              width="120px" 
+            <GridColumn
+              field="badcd"
+              title="불량유형"
+              width="120px"
               cell={CustomComboBoxCell}
             />
-            <GridColumn 
+            <GridColumn
               field="qty"
               title="불량수량"
               width="100px"
@@ -1527,30 +1523,22 @@ const DetailWindow = ({
       </GridContainerWrap>
       <BottomContainer>
         <ButtonContainer>
-          <Button 
-            onClick={onSaveClick} 
-            themeColor={"primary"} 
-            icon = "save"
-          >
+          <Button onClick={onSaveClick} themeColor={"primary"} icon="save">
             저장
           </Button>
-          <Button
-            onClick={onClose}
-            themeColor={"primary"}
-            fillMode="outline"
-          >
+          <Button onClick={onClose} themeColor={"primary"} fillMode="outline">
             닫기
           </Button>
         </ButtonContainer>
       </BottomContainer>
-      
-    {stockWindowVisible && (
-      <StockWindow
-        setVisible={setStockWindowVisible}
-        setData={setCopyData}
-        pathname={pathname}
-      />
-    )}
+
+      {stockWindowVisible && (
+        <StockWindow
+          setVisible={setStockWindowVisible}
+          setData={setCopyData}
+          pathname={pathname}
+        />
+      )}
     </Window>
   );
 };

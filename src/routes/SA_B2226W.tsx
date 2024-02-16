@@ -17,7 +17,7 @@ import {
   UseCustomOption,
   convertDateToStr,
   numberWithCommas3,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import DoubleChart from "../components/KPIcomponents/Chart/DoubleChart";

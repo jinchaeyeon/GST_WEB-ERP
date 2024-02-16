@@ -7,7 +7,7 @@ import {
   GridColumn,
   GridDataStateChangeEvent,
   GridEvent,
-  GridFooterCellProps
+  GridFooterCellProps,
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useState } from "react";
@@ -19,7 +19,7 @@ import {
   GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import Calendar from "../components/Calendars/Calendar";
@@ -32,7 +32,7 @@ import {
   UsePermissions,
   chkScrollHandler,
   convertDateToStr,
-  getQueryFromBizComponent
+  getQueryFromBizComponent,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -51,7 +51,6 @@ const dateField = ["birdt", "regorgdt", "rtrdt"];
 const HU_B1020W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
-
 
   const processApi = useApi();
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -267,7 +266,7 @@ const HU_B1020W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
-   //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
 
     let data: any;
     setLoading(true);

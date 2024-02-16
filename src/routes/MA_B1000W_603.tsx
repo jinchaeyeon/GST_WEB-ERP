@@ -10,6 +10,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
+import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
@@ -22,17 +23,17 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
 import {
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
-  UsePermissions,
   convertDateToStr,
-  convertDateToStrWithTime2,
   findMessage,
   handleKeyPressSearch,
   isValidDate,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -41,23 +42,14 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/MA_B1000W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { Input } from "@progress/kendo-react-inputs";
-import DateCell from "../components/Cells/DateCell";
-import NumberCell from "../components/Cells/NumberCell";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 
-const numberField: string[] = [
-  "qty",
-  "inqty"
-]
+const numberField: string[] = ["qty", "inqty"];
 
-const dateField: string[] = [
-  "reqdt",
-  "inexpdt"
-]
+const dateField: string[] = ["reqdt", "inexpdt"];
 
 const MA_B1000W_603: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -66,7 +58,12 @@ const MA_B1000W_603: React.FC = () => {
 
   // const [permissions, setPermissions] = useState<TPermissions | null>(null);
   // UsePermissions(setPermissions); 2134
-  const permissions:TPermissions = {view:true, save: true, delete:true, print:true};
+  const permissions: TPermissions = {
+    view: true,
+    save: true,
+    delete: true,
+    print: true,
+  };
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("MA_B1000W_603", setMessagesData);
   //커스텀 옵션 조회
@@ -134,7 +131,7 @@ const MA_B1000W_603: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -293,12 +290,12 @@ const MA_B1000W_603: React.FC = () => {
 
   const search = () => {
     try {
-      if (!isValidDate(convertDateToStr(filters.frdt))
-        || !isValidDate(convertDateToStr(filters.todt)))
-      {
+      if (
+        !isValidDate(convertDateToStr(filters.frdt)) ||
+        !isValidDate(convertDateToStr(filters.todt))
+      ) {
         throw findMessage(messagesData, "MA_B1000W_603_001");
-      } 
-      else {
+      } else {
         resetAllGrid();
         setFilters((prev) => ({
           ...prev,

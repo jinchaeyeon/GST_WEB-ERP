@@ -2,14 +2,12 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Container,
-  Typography,
+  Typography
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Knob } from "primereact/knob";
-import React, { useEffect, useRef, useState } from "react";
-import { Map } from "react-kakao-maps-sdk";
+import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import {
   GridContainer,
@@ -20,14 +18,14 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
+import CardBox from "../components/BIOComponents/CardBox";
 import { convertDateToStr, dateformat2 } from "../components/CommonFunction";
 import { GAP } from "../components/CommonString";
 import BarChart from "../components/KPIcomponents/Chart/BarChart";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import Table from "../components/KPIcomponents/Table/Table";
-import { colors, colorsName } from "../store/atoms";
-import CardBox from "../components/BIOComponents/CardBox";
 import ClusterMap from "../components/Map/ClusterMap";
+import { colors, colorsName } from "../store/atoms";
 
 const SA_B2227W: React.FC = () => {
   let deviceWidth = window.innerWidth;

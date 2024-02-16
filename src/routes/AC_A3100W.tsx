@@ -387,7 +387,8 @@ const AC_A3100W: React.FC = () => {
     }
     if (mainDataResult.data.length != 0) {
       const selectRows = mainDataResult.data.filter(
-        (item: any) => item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        (item: any) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       )[0];
 
       setParaDataDeleted((prev) => ({
@@ -522,7 +523,7 @@ const AC_A3100W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraDataDeleted.work_type = ""; //초기화

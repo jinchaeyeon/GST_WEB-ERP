@@ -15,6 +15,7 @@ import { Checkbox } from "@progress/kendo-react-inputs";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import Draggable from "react-draggable";
+import { useRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -22,17 +23,16 @@ import {
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../../hooks/interfaces";
+import { unsavedNameState } from "../../../store/atoms";
 import CenterCell from "../../Cells/CenterCell";
 import CheckBoxCell from "../../Cells/CheckBoxCell";
 import NumberCell from "../../Cells/NumberCell";
 import {
   convertDateToStrWithTime2,
-  getGridItemChangedData
+  getGridItemChangedData,
 } from "../../CommonFunction";
 import { EDIT_FIELD, SELECTED_FIELD } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
-import { useRecoilState } from "recoil";
-import { unsavedNameState } from "../../../store/atoms";
 
 type permission = {
   upload: boolean;
@@ -70,9 +70,7 @@ const KendoWindow = ({
 }: IKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
-  const [unsavedName, setUnsavedName] = useRecoilState(
-    unsavedNameState
-  );
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
   const [position, setPosition] = useState<IWindowPosition>({
     left: isMobile == true ? 0 : 350,
     top: isMobile == true ? 0 : 50,
@@ -122,7 +120,7 @@ const KendoWindow = ({
       return data;
     }
   };
- 
+
   //그리드 조회
   const fetchGrid = async () => {
     let data: any;
@@ -563,7 +561,7 @@ const KendoWindow = ({
             enabled: true,
             drag: false,
             cell: false,
-            mode: "single"
+            mode: "single",
           }}
           onSelectionChange={onSelectionChange}
           onItemChange={onMainItemChange}

@@ -1,61 +1,68 @@
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { IAttachmentData, ICustData, IWindowPosition } from "../../hooks/interfaces";
-import { useCallback, useEffect, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
-import { deletedNameState, isLoading, unsavedNameState } from "../../store/atoms";
-import { 
-  GetPropertyValueByName, 
-  UseBizComponent, 
-  UseCustomOption, 
-  UseGetValueFromSessionItem, 
-  UseMessages, 
-  UseParaPc, 
-  convertDateToStr, 
-  dateformat, 
-  findMessage, 
-  getGridItemChangedData, 
-  getQueryFromBizComponent, 
-  isValidDate, 
-  numberWithCommas, 
-  toDate 
-} from "../CommonFunction";
-import { 
-  BottomContainer, 
-  ButtonContainer, 
-  ButtonInInput, 
-  FormBox, 
-  FormBoxWrap, 
-  GridContainer, 
-  GridTitle, 
-  GridTitleContainer 
-} from "../../CommonStyled";
-import { Input, TextArea } from "@progress/kendo-react-inputs";
-import { 
-  COM_CODE_DEFAULT_VALUE, 
-  EDIT_FIELD, 
-  PAGE_SIZE,
-  SELECTED_FIELD 
-} from "../CommonString";
-import { Iparameters } from "../../store/types";
-import { useApi } from "../../hooks/api";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import React from "react";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import { Button } from "@progress/kendo-react-buttons";
-import { bytesToBase64 } from "byte-base64";
-import { 
-  Grid, 
-  GridCellProps, 
-  GridColumn, 
-  GridDataStateChangeEvent, 
-  GridFooterCellProps, 
-  GridItemChangeEvent, 
-  GridSelectionChangeEvent, 
-  getSelectedState 
+import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import {
+  Grid,
+  GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridItemChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
+import { Input, TextArea } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  BottomContainer,
+  ButtonContainer,
+  ButtonInInput,
+  FormBox,
+  FormBoxWrap,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
+} from "../../CommonStyled";
+import { useApi } from "../../hooks/api";
+import {
+  IAttachmentData,
+  ICustData,
+  IWindowPosition,
+} from "../../hooks/interfaces";
+import {
+  deletedNameState,
+  isLoading,
+  unsavedNameState,
+} from "../../store/atoms";
+import { Iparameters } from "../../store/types";
 import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberCell from "../Cells/NumberCell";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  convertDateToStr,
+  dateformat,
+  findMessage,
+  getGridItemChangedData,
+  getQueryFromBizComponent,
+  isValidDate,
+  numberWithCommas,
+  toDate,
+} from "../CommonFunction";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
@@ -120,10 +127,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
   return bizComponent ? (
-    <ComboBoxCell 
-      bizComponent={bizComponent} 
-      {...props} 
-    />
+    <ComboBoxCell bizComponent={bizComponent} {...props} />
   ) : (
     <td />
   );
@@ -135,7 +139,7 @@ const DetailWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname
+  pathname,
 }: TKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -150,11 +154,10 @@ const DetailWindow = ({
   const userId = UseGetValueFromSessionItem("user_id");
   const processApi = useApi();
 
-
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages(pathname, setMessagesData);
-  
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -194,7 +197,7 @@ const DetailWindow = ({
   ]);
 
   useEffect(() => {
-    if(bizComponentData !== null) {
+    if (bizComponentData !== null) {
       const doexdivQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
       );
@@ -232,7 +235,7 @@ const DetailWindow = ({
       setListData(rows);
     }
   }, []);
-  
+
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
@@ -243,7 +246,7 @@ const DetailWindow = ({
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
   };
-  
+
   const handleResize = (event: WindowMoveEvent) => {
     setPosition({
       left: event.left,
@@ -279,7 +282,7 @@ const DetailWindow = ({
   const [stockWindowVisible, setStockWindowVisible] = useState<boolean>(false);
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
-    
+
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -350,7 +353,7 @@ const DetailWindow = ({
         temp = item.num;
       }
     });
-    
+
     data.map((item: any) => {
       const newDataItem = {
         [DATA_ITEM_KEY]: ++temp,
@@ -426,7 +429,7 @@ const DetailWindow = ({
         temp = item.num;
       }
     });
-    
+
     data.map((item: any) => {
       const newDataItem = {
         [DATA_ITEM_KEY]: ++temp,
@@ -459,7 +462,6 @@ const DetailWindow = ({
           total: prev.total + 1,
         };
       });
-
     });
   };
 
@@ -519,8 +521,8 @@ const DetailWindow = ({
         "@p_person": "",
         "@p_ordnum": "",
         "@p_planno": "",
-        "@p_finyn": "",	
-        "@p_purnum": filters.purnum, 
+        "@p_finyn": "",
+        "@p_purnum": filters.purnum,
         "@p_find_row_value": "",
       },
     };
@@ -538,7 +540,7 @@ const DetailWindow = ({
           ...row,
         };
       });
-      
+
       setMainDataResult((prev) => {
         return {
           data: rows,
@@ -584,8 +586,8 @@ const DetailWindow = ({
         purnum: data.purnum,
         purdt: toDate(data.purdt),
         inexpdt: isValidDate(data.inexpdt)
-        ? new Date(dateformat(data.inexpdt))
-        : null,
+          ? new Date(dateformat(data.inexpdt))
+          : null,
         person: data.person,
         doexdiv: data.doexdiv,
         location: data.location,
@@ -614,8 +616,8 @@ const DetailWindow = ({
     setSelectedState(newSelectedState);
   };
 
-   //그리드 푸터
-   const mainTotalFooterCell = (props: GridFooterCellProps) => {
+  //그리드 푸터
+  const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
     return (
       <td colSpan={props.colSpan} style={props.style}>
@@ -631,7 +633,11 @@ const DetailWindow = ({
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -641,7 +647,7 @@ const DetailWindow = ({
       </td>
     );
   };
-  
+
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
@@ -768,7 +774,7 @@ const DetailWindow = ({
     div_s: "",
     userId: userId,
     pc: pc,
-    form_id: "MA_A2410W"  
+    form_id: "MA_A2410W",
   });
 
   const onSaveClick = () => {
@@ -798,7 +804,7 @@ const DetailWindow = ({
               item.rowstatus !== undefined
             );
           });
-      
+
           setParaSaved((prev) => ({
             ...prev,
             workType: workType,
@@ -819,10 +825,11 @@ const DetailWindow = ({
             attdatnum: filters.attdatnum,
             files: filters.files,
             remark: filters.remark,
-          })); 
-      
-          if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
-      
+          }));
+
+          if (dataItem.length === 0 && deletedMainRows.length === 0)
+            return false;
+
           let rowsArr: TRowsArr = {
             rowstatus: [],
             purseq: [],
@@ -847,14 +854,33 @@ const DetailWindow = ({
             lotnum: [],
             div: [],
           };
-      
+
           dataItem.forEach((item: any) => {
             const {
-              rowstatus, purseq, proccd, planno, planseq, ordnum, ordseq,
-              itemcd, itemnm, qty, qtyunit, unitwgt, wgt, wgtunit, unp,
-              amt, wonamt, taxamt, dlramt, remark, lotnum, div
+              rowstatus,
+              purseq,
+              proccd,
+              planno,
+              planseq,
+              ordnum,
+              ordseq,
+              itemcd,
+              itemnm,
+              qty,
+              qtyunit,
+              unitwgt,
+              wgt,
+              wgtunit,
+              unp,
+              amt,
+              wonamt,
+              taxamt,
+              dlramt,
+              remark,
+              lotnum,
+              div,
             } = item;
-            
+
             rowsArr.rowstatus.push(rowstatus);
             rowsArr.purseq.push(purseq);
             rowsArr.proccd.push(proccd);
@@ -878,14 +904,33 @@ const DetailWindow = ({
             rowsArr.lotnum.push(lotnum);
             rowsArr.div.push(div);
           });
-      
+
           deletedMainRows.forEach((item: any) => {
             const {
-              rowstatus, purseq, proccd, planno, planseq, ordnum, ordseq,
-              itemcd, itemnm, qty, qtyunit, unitwgt, wgt, wgtunit, unp,
-              amt, wonamt, taxamt, dlramt, remark, lotnum, div
+              rowstatus,
+              purseq,
+              proccd,
+              planno,
+              planseq,
+              ordnum,
+              ordseq,
+              itemcd,
+              itemnm,
+              qty,
+              qtyunit,
+              unitwgt,
+              wgt,
+              wgtunit,
+              unp,
+              amt,
+              wonamt,
+              taxamt,
+              dlramt,
+              remark,
+              lotnum,
+              div,
             } = item;
-            
+
             rowsArr.rowstatus.push(rowstatus);
             rowsArr.purseq.push(purseq);
             rowsArr.proccd.push(proccd);
@@ -909,7 +954,7 @@ const DetailWindow = ({
             rowsArr.lotnum.push(lotnum);
             rowsArr.div.push(div);
           });
-      
+
           setParaSaved((prev) => ({
             ...prev,
             workType: workType,
@@ -938,7 +983,7 @@ const DetailWindow = ({
           }));
         }
       }
-    } catch(e) {
+    } catch (e) {
       alert(e);
     }
   };
@@ -1024,7 +1069,7 @@ const DetailWindow = ({
       console.log(data);
       alert(data.resultMessage);
     }
-    
+
     setLoading(false);
   };
 
@@ -1033,7 +1078,6 @@ const DetailWindow = ({
       fetchTodoGridSaved();
     }
   }, [paraSaved]);
-
 
   const customCellRender = (td: any, props: any) => (
     <CellRender
@@ -1101,44 +1145,46 @@ const DetailWindow = ({
     }
   };
 
-  const exitEdit =() => {
+  const exitEdit = () => {
     if (tempResult.data != mainDataResult.data) {
       const newData = mainDataResult.data.map((item) =>
         item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus == "N" ? "N" : "U",
-            amt: filters.amtunit == "KRW"
-              ? item.qty * item.unp
-              : item.qty * item.unp * filters.wonchgrat,
-            wonamt: filters.amtunit == "KRW"
-              ? item.qty * item.unp
-              : item.qty * item.unp * filters.wonchgrat,
-            taxamt: Math.round(
-              filters.taxdiv == "A"
-                ? filters.amtunit == "KRW"
-                  ? item.qty * item.unp * 0.1
-                  : item.qty * item.unp * filters.wonchgrat * 0.1
-              : 0
-            ),
-            totamt: Math.round(
-              (filters.amtunit == "KRW"
-              ? item.qty * item.unp
-              : item.qty * item.unp * filters.wonchgrat) +
-              Math.round(
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              amt:
+                filters.amtunit == "KRW"
+                  ? item.qty * item.unp
+                  : item.qty * item.unp * filters.wonchgrat,
+              wonamt:
+                filters.amtunit == "KRW"
+                  ? item.qty * item.unp
+                  : item.qty * item.unp * filters.wonchgrat,
+              taxamt: Math.round(
                 filters.taxdiv == "A"
                   ? filters.amtunit == "KRW"
-                    ? (item.qty * item.unp) / 10
-                    : (item.qty * item.unp * filters.wonchgrat) / 10
+                    ? item.qty * item.unp * 0.1
+                    : item.qty * item.unp * filters.wonchgrat * 0.1
                   : 0
-              )
-            ),
-            [EDIT_FIELD]: undefined,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
+              ),
+              totamt: Math.round(
+                (filters.amtunit == "KRW"
+                  ? item.qty * item.unp
+                  : item.qty * item.unp * filters.wonchgrat) +
+                  Math.round(
+                    filters.taxdiv == "A"
+                      ? filters.amtunit == "KRW"
+                        ? (item.qty * item.unp) / 10
+                        : (item.qty * item.unp * filters.wonchgrat) / 10
+                      : 0
+                  )
+              ),
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
       );
       setTempResult((prev) => {
         return {
@@ -1155,23 +1201,25 @@ const DetailWindow = ({
     } else {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        amt: filters.amtunit == "KRW"
-          ? item.qty * item.unp
-          : item.qty * item.unp * filters.wonchgrat,
-        wonamt: filters.amtunit == "KRW"
-          ? item.qty * item.unp
-          : item.qty * item.unp * filters.wonchgrat,
+        amt:
+          filters.amtunit == "KRW"
+            ? item.qty * item.unp
+            : item.qty * item.unp * filters.wonchgrat,
+        wonamt:
+          filters.amtunit == "KRW"
+            ? item.qty * item.unp
+            : item.qty * item.unp * filters.wonchgrat,
         taxamt: Math.round(
           filters.taxdiv == "A"
             ? filters.amtunit == "KRW"
               ? item.qty * item.unp * 0.1
               : item.qty * item.unp * filters.wonchgrat * 0.1
-          : 0
+            : 0
         ),
         totamt: Math.round(
           filters.amtunit == "KRW"
-          ? item.qty * item.unp
-          : item.qty * item.unp * filters.wonchgrat
+            ? item.qty * item.unp
+            : item.qty * item.unp * filters.wonchgrat
         ),
         [EDIT_FIELD]: undefined,
       }));
@@ -1409,61 +1457,61 @@ const DetailWindow = ({
             editField={EDIT_FIELD}
           >
             <GridColumn field="rowstatus" title=" " width="50px" />
-            <GridColumn 
-              field="proccd" 
-              title="공정" 
-              width="120px" 
+            <GridColumn
+              field="proccd"
+              title="공정"
+              width="120px"
               footerCell={mainTotalFooterCell}
-              cell={CustomComboBoxCell}  
+              cell={CustomComboBoxCell}
             />
             <GridColumn field="planno" title="생산계획번호" width="120px" />
             <GridColumn field="itemcd" title="품목코드" width="120px" />
             <GridColumn field="itemnm" title="품목명" width="150px" />
             <GridColumn field="insiz" title="규격" width="150px" />
-            <GridColumn 
-              field="qty" 
+            <GridColumn
+              field="qty"
               title="수량"
               width="100px"
               cell={NumberCell}
               footerCell={editNumberFooterCell}
             />
-            <GridColumn 
+            <GridColumn
               field="qtyunit"
               title="수량단위"
               width="120px"
-              cell={CustomComboBoxCell}  
+              cell={CustomComboBoxCell}
             />
-            <GridColumn 
-              field="unp" 
-              title="단가" 
-              width="100px" 
+            <GridColumn
+              field="unp"
+              title="단가"
+              width="100px"
               cell={NumberCell}
             />
-            <GridColumn 
-              field="amt" 
-              title="금액" 
-              width="100px" 
-              cell={NumberCell}
-              footerCell={editNumberFooterCell}
-            />
-            <GridColumn 
-              field="wonamt" 
-              title="원화금액" 
-              width="100px" 
+            <GridColumn
+              field="amt"
+              title="금액"
+              width="100px"
               cell={NumberCell}
               footerCell={editNumberFooterCell}
             />
-            <GridColumn 
-              field="taxamt" 
+            <GridColumn
+              field="wonamt"
+              title="원화금액"
+              width="100px"
+              cell={NumberCell}
+              footerCell={editNumberFooterCell}
+            />
+            <GridColumn
+              field="taxamt"
               title="세액"
-              width="100px" 
+              width="100px"
               cell={NumberCell}
               footerCell={editNumberFooterCell}
             />
-            <GridColumn 
-              field="totamt" 
-              title="합계금액" 
-              width="100px" 
+            <GridColumn
+              field="totamt"
+              title="합계금액"
+              width="100px"
               cell={NumberCell}
               footerCell={editNumberFooterCell}
             />

@@ -573,7 +573,7 @@ const CM_A8210W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(subfilters);
       setSubFilters((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchSubGrid(deepCopiedFilters);
@@ -690,7 +690,11 @@ const CM_A8210W: React.FC = () => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -1300,6 +1304,7 @@ const CM_A8210W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

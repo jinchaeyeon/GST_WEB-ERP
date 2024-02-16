@@ -1,54 +1,53 @@
-import React from "react";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { IItemData, IWindowPosition } from "../../hooks/interfaces";
-import { useCallback, useEffect, useState } from "react";
-import { 
-  BottomContainer, 
-  ButtonContainer, 
-  ButtonInInput, 
-  FilterBox, 
-  GridContainer, 
-  GridTitle, 
-  GridTitleContainer, 
-  TitleContainer 
-} from "../../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
-import FilterContainer from "../Containers/FilterContainer";
-import { 
-  GetPropertyValueByName, 
-  UseBizComponent, 
-  UseCustomOption, 
-  UseGetValueFromSessionItem, 
-  UseMessages, 
-  getQueryFromBizComponent, 
-  handleKeyPressSearch 
-} from "../CommonFunction";
-import { 
-  COM_CODE_DEFAULT_VALUE, 
-  PAGE_SIZE, 
-  SELECTED_FIELD 
-} from "../CommonString";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import { Input } from "@progress/kendo-react-inputs";
-import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
-import { 
-  Grid, 
-  GridColumn, 
-  GridDataStateChangeEvent, 
-  GridFooterCellProps, 
-  GridPageChangeEvent, 
-  GridRowDoubleClickEvent, 
-  GridSelectionChangeEvent, 
-  getSelectedState 
-} from "@progress/kendo-react-grid";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import {
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridRowDoubleClickEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
+import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
+import {
+  BottomContainer,
+  ButtonContainer,
+  ButtonInInput,
+  FilterBox,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
+  TitleContainer,
+} from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
+import { IItemData, IWindowPosition } from "../../hooks/interfaces";
+import { isLoading } from "../../store/atoms";
+import { Iparameters } from "../../store/types";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
-import { Iparameters } from "../../store/types";
-import { bytesToBase64 } from "byte-base64";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+} from "../CommonFunction";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
+import FilterContainer from "../Containers/FilterContainer";
+import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 
 type TKendoWindow = {
@@ -64,7 +63,7 @@ const KendoWindow = ({
   setVisible,
   setData,
   modal = false,
-  pathname
+  pathname,
 }: TKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -96,11 +95,13 @@ const KendoWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
-        finyn: defaultOption.find((item: any) => item.id === "finyn")
-          .valueCode,
+        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -110,7 +111,7 @@ const KendoWindow = ({
     "L_PR010, L_fxcode, L_sysUserMaster_001,",
     setBizComponentData
   );
-  
+
   const [proccdListData, setProccdListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -120,14 +121,16 @@ const KendoWindow = ({
   const [prodmacListData, setProdmacListData] = useState([
     { fxcode: "", fxfull: "" },
   ]);
-  
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
       );
       const prodempQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_sysUserMaster_001")
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+        )
       );
       const prodmacQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
@@ -207,7 +210,7 @@ const KendoWindow = ({
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
-    const { value, name} = e.target;
+    const { value, name } = e.target;
 
     setFilters((prev) => ({
       ...prev,
@@ -332,9 +335,7 @@ const KendoWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (customOptionData != null &&
-      filters.isSearch
-    ) {
+    if (customOptionData != null && filters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -349,7 +350,7 @@ const KendoWindow = ({
   // 그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }))
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   const search = () => {
@@ -400,7 +401,6 @@ const KendoWindow = ({
         item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
-
     setData(selectedRowData);
     onClose();
   };
@@ -425,13 +425,9 @@ const KendoWindow = ({
         onClose={onClose}
         modal={modal}
       >
-        <TitleContainer style={{ float: "right"}}>
+        <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
-            <Button
-              onClick={search}
-              icon="search"
-              themeColor={"primary"}
-            >
+            <Button onClick={search} icon="search" themeColor={"primary"}>
               조회
             </Button>
           </ButtonContainer>
@@ -453,8 +449,8 @@ const KendoWindow = ({
                 </td>
                 <th>작업자</th>
                 <td>
-                  {customOptionData !== null &&(
-                    <CustomOptionComboBox 
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
                       name="prodemp"
                       value={filters.prodemp}
                       customOptionData={customOptionData}
@@ -532,7 +528,7 @@ const KendoWindow = ({
             <GridTitle>생산계획리스트</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "calc(100% - 40px)"}}
+            style={{ height: "calc(100% - 40px)" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -575,14 +571,14 @@ const KendoWindow = ({
             resizable={true}
             onRowDoubleClick={onRowDoubleClick}
           >
-            <GridColumn 
-              field="godt" 
+            <GridColumn
+              field="godt"
               title="지시일자"
               width="120px"
               cell={DateCell}
               footerCell={mainTotalFooterCell}
             />
-            <GridColumn 
+            <GridColumn
               field="finexpdt"
               title="완료예정일"
               width="120px"
@@ -591,34 +587,34 @@ const KendoWindow = ({
             <GridColumn field="proccd" title="공정" width="120px" />
             <GridColumn field="procseq" title="공정순서" width="100px" />
             <GridColumn field="prodemp" title="작업자" width="120px" />
-            <GridColumn field="prodmac" title="설비" width = "120px" />
+            <GridColumn field="prodmac" title="설비" width="120px" />
             <GridColumn field="itemcd" title="품목코드" width="120px" />
             <GridColumn field="itemnm" title="품목명" width="150px" />
-            <GridColumn 
+            <GridColumn
               field="qty"
               title="지시량"
               width="100px"
               cell={NumberCell}
             />
-            <GridColumn 
+            <GridColumn
               field="badqty"
               title="불량수량"
               width="100px"
               cell={NumberCell}
             />
-            <GridColumn 
+            <GridColumn
               field="janqty"
               title="잔량"
               width="100px"
               cell={NumberCell}
             />
-            <GridColumn 
+            <GridColumn
               field="qty"
               title="지시량"
               width="100px"
               cell={NumberCell}
             />
-            <GridColumn 
+            <GridColumn
               field="prodqty"
               title="양품수량"
               width="100px"
@@ -633,7 +629,11 @@ const KendoWindow = ({
             <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
               확인
             </Button>
-            <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
+            <Button
+              themeColor={"primary"}
+              fillMode={"outline"}
+              onClick={onClose}
+            >
               취소
             </Button>
           </ButtonContainer>

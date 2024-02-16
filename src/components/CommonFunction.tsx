@@ -12,21 +12,22 @@ import captionKoKr from "../store/cultures/Captions.ko-KR.json";
 import messageEnUs from "../store/cultures/Messages.en-US.json";
 import messageKoKr from "../store/cultures/Messages.ko-KR.json";
 import {
-  TSessionItemCode,
   TSysCaptionKey,
-  TSysMessageKey,
+  TSysMessageKey
 } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
 
 //소수점3자리에서 반올림
-export const ThreeNumberceil = (number: number)  => {
+export const ThreeNumberceil = (number: number) => {
   return parseFloat((Math.ceil(number * 1000) / 1000).toFixed(2));
-}
+};
 
 // 숫자 3자리마다 컴마를 추가하여 반환, 3자리에서 반올림
 export const numberWithCommas4 = (num: string) => {
   if (typeof num === "string") {
-    return ThreeNumberceil(parseInt(num)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return ThreeNumberceil(parseInt(num))
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   } else {
     return parseFloat(num);
   }
@@ -35,17 +36,19 @@ export const numberWithCommas4 = (num: string) => {
 // 숫자 3자리마다 컴마를 추가하여 반환, 3자리에서 반올림
 export const numberWithCommas3 = (num: number) => {
   if (typeof num === "number") {
-    return ThreeNumberceil(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return ThreeNumberceil(num)
+      .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   } else {
     return num;
   }
 };
 
 //enum 한글로 변경
-export const getDayOfWeeks = (value:number) => {
-  const dayofweeks = {일:1, 월:2, 화: 4, 수:8, 목:16, 금:32, 토:64}
+export const getDayOfWeeks = (value: number) => {
+  const dayofweeks = { 일: 1, 월: 2, 화: 4, 수: 8, 목: 16, 금: 32, 토: 64 };
 
-  let dayofweek:string[] = [];
+  let dayofweek: string[] = [];
 
   if ((dayofweeks.일 & value) == dayofweeks.일) {
     dayofweek.push("일");
@@ -71,7 +74,7 @@ export const getDayOfWeeks = (value:number) => {
 
   return dayofweek.join("/");
   //console.log(dayofweek.join("/"));
-}
+};
 //오늘 날짜 8자리 string 반환 (ex. 20220101)
 export const getToday = () => {
   const date = new Date();
@@ -97,7 +100,7 @@ export const toDate2 = (date_str: string) => {
     Number(sDate),
     Number(hh),
     Number(mm),
-    Number(dd),
+    Number(dd)
   );
 };
 
@@ -319,14 +322,16 @@ export const UseMessages = (pathname: string, setListData: any) => {
   }, []);
 };
 
-export const GetPropertyValueByName = (target: any, name:string) => {
+export const GetPropertyValueByName = (target: any, name: string) => {
   const findName = name.toLowerCase();
 
-  const propertyName = Object.keys(target).find((x) => x.toLowerCase() == findName)
+  const propertyName = Object.keys(target).find(
+    (x) => x.toLowerCase() == findName
+  );
   const propertyValue = propertyName ? target[propertyName] : undefined;
 
   return propertyValue;
-}
+};
 
 //현재 경로를 받아서 커스텀 옵션 조회 후 결과값을 반환
 export const UseCustomOption = (pathname: string, setListData: any) => {
@@ -345,7 +350,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
 
     let userId = "";
     const userIdObj = sessionItem.find(
-      (sessionItem) => sessionItem.code === "user_id",
+      (sessionItem) => sessionItem.code === "user_id"
     );
     if (userIdObj) {
       userId = userIdObj.value;
@@ -361,9 +366,15 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
 
     // const queryOptionsData = data.menuCustomDefaultOptions.query;
 
-    const queryOptionsData = GetPropertyValueByName(data.menuCustomDefaultOptions, "QUERY");
+    const queryOptionsData = GetPropertyValueByName(
+      data.menuCustomDefaultOptions,
+      "QUERY"
+    );
 
-    const newOptionsData = GetPropertyValueByName(data.menuCustomDefaultOptions, "new");
+    const newOptionsData = GetPropertyValueByName(
+      data.menuCustomDefaultOptions,
+      "new"
+    );
 
     if (data !== null) {
       // sessionItem 데이터 있고 지정된 value 값이 없는 경우, 세션 값 참조하여 value 업데이트
@@ -371,7 +382,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
         newOptionsData.forEach((optionsItem: any) => {
           if (optionsItem.sessionItem !== "" && optionsItem.valueCode === "") {
             optionsItem.valueCode = sessionItem.find(
-              (sessionItem) => sessionItem.code === optionsItem.sessionItem,
+              (sessionItem) => sessionItem.code === optionsItem.sessionItem
             )?.value;
           }
         });
@@ -380,7 +391,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
         queryOptionsData.forEach((optionsItem: any) => {
           if (optionsItem.sessionItem !== "" && optionsItem.valueCode === "") {
             optionsItem.valueCode = sessionItem.find(
-              (sessionItem) => sessionItem.code === optionsItem.sessionItem,
+              (sessionItem) => sessionItem.code === optionsItem.sessionItem
             )?.value;
           }
         });
@@ -403,16 +414,22 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
     }
 
     let bizComponentIdArr = [];
-    const queryOptionsData = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
-    const newOptionsData = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "new");
+    const queryOptionsData = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "query"
+    );
+    const newOptionsData = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "new"
+    );
 
     if (queryOptionsData) {
       bizComponentIdArr.push(
         ...[
           Object.values(
-            queryOptionsData.map((item: any) => item.bizComponentId),
+            queryOptionsData.map((item: any) => item.bizComponentId)
           ),
-        ],
+        ]
       );
     }
 
@@ -420,7 +437,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
       bizComponentIdArr.push(
         ...[
           Object.values(newOptionsData.map((item: any) => item.bizComponentId)),
-        ],
+        ]
       );
     }
 
@@ -428,7 +445,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
 
     if (bizComponentId === "") {
       console.log(
-        "비즈니스 컴포넌트 ID 등록이 안 된 사용자 옵션 기본값이 존재함",
+        "비즈니스 컴포넌트 ID 등록이 안 된 사용자 옵션 기본값이 존재함"
       );
       setListData(customOptionData);
       return false;
@@ -598,7 +615,7 @@ export const chkScrollHandler = (
   event: GridEvent,
   PgNum: number,
   PgSize: number,
-  dirrection: "up" | "down" = "down",
+  dirrection: "up" | "down" = "down"
 ) => {
   const totalNumber = event.target.props.total;
   const e = event.nativeEvent;
@@ -658,7 +675,6 @@ export const getAcntQuery = (para: any) => {
   );
 };
 
-
 //선택된 드롭다운리스트 값 (ex. {sub_code: "test", code_name:"test"} )을 인자로 받아서 빈 값(ex. {sub_code: "", code_name: ""} )인지 체크
 //=> 빈 값인 경우 false 반환
 export const checkIsDDLValid = (value: object) => {
@@ -686,7 +702,7 @@ export const getGridItemChangedData = (
   event: GridItemChangeEvent,
   dataResult: any,
   setDataResult: any,
-  DATA_ITEM_KEY: string,
+  DATA_ITEM_KEY: string
 ) => {
   let field = event.field || "";
   event.dataItem[field] = event.value;
@@ -726,9 +742,11 @@ export const getGridItemChangedData = (
 
 //Date 디폴트 값 반환
 export const setDefaultDate = (customOptionData: any, id: string) => {
-  const date = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query")?.find(
-    (item: any) => item.id === id,
-  ) ?? undefined;
+  const date =
+    GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "query"
+    )?.find((item: any) => item.id === id) ?? undefined;
 
   const addYear = date ? date.addYear : 0;
   const addMonth = date ? date.addMonth : 0;
@@ -744,9 +762,10 @@ export const setDefaultDate = (customOptionData: any, id: string) => {
 
 //Date 디폴트 값 반환
 export const setDefaultDate2 = (customOptionData: any, id: string) => {
-  const date = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "new").find(
-    (item: any) => item.id === id,
-  );
+  const date = GetPropertyValueByName(
+    customOptionData.menuCustomDefaultOptions,
+    "new"
+  ).find((item: any) => item.id === id);
 
   const addYear = date ? date.addYear : 0;
   const addMonth = date ? date.addMonth : 0;
@@ -801,13 +820,13 @@ export const getSelectedFirstData = (
     [id: string]: boolean | number[];
   },
   data: any[],
-  DATA_ITEM_KEY: string,
+  DATA_ITEM_KEY: string
 ) => {
   const selectedRowKeyVal: number =
     Number(Object.getOwnPropertyNames(selectedState)[0]) ?? null;
   if (selectedRowKeyVal === null) return false;
   const selectedRowData = data.find(
-    (item) => item[DATA_ITEM_KEY] === selectedRowKeyVal,
+    (item) => item[DATA_ITEM_KEY] === selectedRowKeyVal
   );
   return selectedRowData;
 };
@@ -863,7 +882,8 @@ export const getUnpQuery = (custcd: string) => {
 // code값을 인수로 받아 sessionItem value 반환
 export const UseGetValueFromSessionItem = (code: string) => {
   const [sessionItem] = useRecoilState(sessionItemState);
-  const codes = code == "UserID" ? "user_id" : code == "UserName" ? "user_name" : code;
+  const codes =
+    code == "UserID" ? "user_id" : code == "UserName" ? "user_name" : code;
 
   if (sessionItem) {
     return sessionItem.find((sessionItem) => sessionItem.code === codes)!.value;
@@ -984,7 +1004,7 @@ export const isValidDate = (value: any) => {
 // gridData와 field명을 받아와서 계산된 컬럼 width 값을 반환 // 수정필요
 export const calculateGridColumnWidth = (
   field: string,
-  gridData: { [name: string]: any }[],
+  gridData: { [name: string]: any }[]
 ) => {
   let maxWidth = 0;
   gridData.forEach((item) => {
@@ -1046,7 +1066,7 @@ export const rowsWithSelectedDataResult = (
   selectedState: {
     [id: string]: boolean | number[];
   },
-  DATA_ITEM_KEY: string,
+  DATA_ITEM_KEY: string
 ) => {
   const idGetter = getter(DATA_ITEM_KEY);
   const newData: any = [];

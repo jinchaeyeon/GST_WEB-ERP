@@ -178,7 +178,8 @@ export const gridList: Array<TGrid> = [
         width: 200,
       },
     ],
-  },{
+  },
+  {
     gridName: "grdList3",
     columns: [
       {

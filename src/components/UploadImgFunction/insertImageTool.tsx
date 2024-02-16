@@ -1,6 +1,6 @@
-import * as React from "react";
 import { Button } from "@progress/kendo-react-buttons";
-import { EditorUtils, EditorToolsSettings } from "@progress/kendo-react-editor";
+import { EditorToolsSettings, EditorUtils } from "@progress/kendo-react-editor";
+import * as React from "react";
 import { InsertImageDialog } from "./insertImageDialog";
 const imageSettings = EditorToolsSettings.image;
 

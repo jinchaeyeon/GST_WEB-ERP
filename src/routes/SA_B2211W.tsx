@@ -290,7 +290,7 @@ const SA_B2211W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchGrid = async (workType: string, custcd?: string) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터

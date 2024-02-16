@@ -1641,6 +1641,7 @@ const CM_A4100W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -1852,7 +1853,7 @@ const CM_A4100W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     //초기화
@@ -1912,6 +1913,7 @@ const CM_A4100W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

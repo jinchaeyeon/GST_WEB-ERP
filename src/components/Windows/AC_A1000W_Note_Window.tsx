@@ -28,11 +28,11 @@ import { Iparameters } from "../../store/types";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   convertDateToStr,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
@@ -53,7 +53,7 @@ const AC_A1000W_Note_Window = ({
   setVisible,
   setData,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -91,7 +91,10 @@ const AC_A1000W_Note_Window = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
@@ -224,7 +227,7 @@ const AC_A1000W_Note_Window = ({
       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-  
+
   //그리드 리셋
   const resetAllGrid = () => {
     setPage(initialPageState);

@@ -1,5 +1,4 @@
 import { Button } from "@progress/kendo-react-buttons";
-import React from "react";
 
 interface IFilterHideToggleButtonBox {
   isFilterHide: boolean;

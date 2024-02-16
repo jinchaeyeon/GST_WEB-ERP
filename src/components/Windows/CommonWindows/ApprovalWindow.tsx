@@ -142,7 +142,7 @@ const KendoWindow = ({
   const userId = loginResult ? loginResult.userId : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  
+
   const setLoading = useSetRecoilState(isLoading);
 
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
@@ -581,6 +581,7 @@ const KendoWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

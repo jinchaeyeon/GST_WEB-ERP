@@ -1,20 +1,29 @@
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { GridCellProps } from "@progress/kendo-react-grid";
-import { convertDateToStr, dateformat2, dateformat5, dateformat6 } from "../CommonFunction";
 import MonthCalendar from "../Calendars/MonthCalendar";
+import {
+  convertDateToStr,
+  dateformat6
+} from "../CommonFunction";
 const MonthDateCell = (props: GridCellProps) => {
-  const { ariaColumnIndex, columnIndex, dataItem, field, render, onChange,
-    className = "", } =
-    props;
+  const {
+    ariaColumnIndex,
+    columnIndex,
+    dataItem,
+    field,
+    render,
+    onChange,
+    className = "",
+  } = props;
   let isInEdit = field === dataItem.inEdit;
 
-    if (className.includes("read-only")) {
+  if (className.includes("read-only")) {
+    isInEdit = false;
+  } else if (className.includes("editable-new-only")) {
+    if (dataItem["rowstatus"] !== "N") {
       isInEdit = false;
-    } else if (className.includes("editable-new-only")) {
-      if (dataItem["rowstatus"] !== "N") {
-        isInEdit = false;
-      }
     }
+  }
 
   const value = field && dataItem[field] ? dataItem[field] : "";
 
@@ -47,13 +56,13 @@ const MonthDateCell = (props: GridCellProps) => {
           calendar={MonthCalendar}
           placeholder=""
         />
-        ) : typeof value === "object" ? (
-          dateformat6(convertDateToStr(value))
-        ) : typeof value === "string" && value !== "" ? (
-          dateformat6(value)
-        ) : (
-          ""
-        )}
+      ) : typeof value === "object" ? (
+        dateformat6(convertDateToStr(value))
+      ) : typeof value === "string" && value !== "" ? (
+        dateformat6(value)
+      ) : (
+        ""
+      )}
     </td>
   );
 

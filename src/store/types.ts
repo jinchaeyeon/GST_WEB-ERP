@@ -42,8 +42,8 @@ export type TLoginResult = {
   serviceName: string;
   customerName: string;
   loginKey: string;
-  webTitle : string;
-  homeMenuWeb : string;
+  webTitle: string;
+  homeMenuWeb: string;
   profileImage: string;
   dptnm: string;
   serviceCategory: string;

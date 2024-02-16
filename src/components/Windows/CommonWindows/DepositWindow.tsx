@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
-  GridFooterCellProps,
-  GridEvent,
   GridDataStateChangeEvent,
-  getSelectedState,
+  GridEvent,
+  GridFooterCellProps,
   GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import { DataResult, process, State, getter } from "@progress/kendo-data-query";
-import { useApi } from "../../../hooks/api";
+import { Input } from "@progress/kendo-react-inputs";
+import { useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -20,17 +21,12 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import { Input } from "@progress/kendo-react-inputs";
-import { Iparameters } from "../../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
+import { useApi } from "../../../hooks/api";
 import { IWindowPosition, TCommonCodeData } from "../../../hooks/interfaces";
-import { chkScrollHandler, UseBizComponent } from "../../CommonFunction";
-import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
-import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
-import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
-import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../../store/atoms";
-import {handleKeyPressSearch} from "../../CommonFunction";
+import { Iparameters } from "../../../store/types";
+import { UseBizComponent, chkScrollHandler, handleKeyPressSearch } from "../../CommonFunction";
+import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import FilterContainer from "../../Containers/FilterContainer";
 
 type IKendoWindow = {
@@ -132,8 +128,8 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
       mainPgNum +
       "&pageSize=" +
       PAGE_SIZE,
-      acntsrtnum: filters.acntsrtnum,
-      acntsrtnm: filters.acntsrtnm,
+    acntsrtnum: filters.acntsrtnum,
+    acntsrtnm: filters.acntsrtnm,
   };
 
   useEffect(() => {
@@ -230,8 +226,8 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
   const search = () => {
     resetAllGrid();
     fetchMainGrid();
-  }
-  
+  };
+
   return (
     <Window
       title={"예적금 관리 팝업"}
@@ -260,7 +256,7 @@ const KendoWindow = ({ setVisible, setData, para }: IKendoWindow) => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-            <th>예적금코드</th>
+              <th>예적금코드</th>
               <td>
                 <Input
                   name="acntcd"

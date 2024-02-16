@@ -54,8 +54,7 @@ import {
   findMessage,
   getQueryFromBizComponent,
   handleKeyPressSearch,
-  rowsOfDataResult,
-  setDefaultDate,
+  setDefaultDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -99,7 +98,7 @@ const CopyWindow = ({
   setVisible,
   setData,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -661,9 +660,9 @@ const CopyWindow = ({
         item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
-      if (filters.custcd != "" && filters.custcd != selectRow.custcd) {
-        valid = false;
-      }
+    if (filters.custcd != "" && filters.custcd != selectRow.custcd) {
+      valid = false;
+    }
 
     subDataResult.data.map((items: any) => {
       if (selectRow.custcd != items.custcd) {
@@ -672,61 +671,60 @@ const CopyWindow = ({
     });
 
     if (valid == true) {
+      subDataResult.data.map((item) => {
+        if (item.num > temp) {
+          temp = item.num;
+        }
+      });
 
-        subDataResult.data.map((item) => {
-          if (item.num > temp) {
-            temp = item.num;
-          }
-        });
-
-        const newDataItem = {
-          [DATA_ITEM_KEY]: ++temp,
-          amt: selectRow.amt,
-          amtunit: selectRow.amtunit,
-          chk: selectRow.chk,
-          custcd: selectRow.custcd,
-          custnm: selectRow.custnm,
-          doexdiv: selectRow.doexdiv,
-          doqty: selectRow.doqty,
-          finyn: selectRow.finyn,
-          inexpdt: selectRow.inexpdt,
-          insiz: selectRow.insiz,
-          itemacnt: selectRow.itemacnt,
-          itemcd: selectRow.itemcd,
-          itemnm: selectRow.itemnm,
-          itemthick: selectRow.itemthick,
-          janqty: selectRow.janqty,
-          len: selectRow.len,
-          lotnum: selectRow.lotnum,
-          orgdiv: selectRow.orgdiv,
-          pac: selectRow.pac,
-          person: selectRow.person,
-          purdt: selectRow.purdt,
-          purkey: selectRow.purkey,
-          purnum: selectRow.purnum,
-          purqty: selectRow.purqty,
-          purseq: selectRow.purseq,
-          qty: selectRow.qty,
-          remark: selectRow.remark,
-          rowstatus: "N",
-          taxamt: selectRow.taxamt,
-          taxdiv: selectRow.taxdiv,
-          totwgt: selectRow.totwgt,
-          unp: selectRow.unp,
-          width: selectRow.width,
-          wonamt: selectRow.wonamt,
-          unitwgt: 0,
-          unpcalmeth: "Q",
-          dlramt: 0,
-          qtyunit: "001",
+      const newDataItem = {
+        [DATA_ITEM_KEY]: ++temp,
+        amt: selectRow.amt,
+        amtunit: selectRow.amtunit,
+        chk: selectRow.chk,
+        custcd: selectRow.custcd,
+        custnm: selectRow.custnm,
+        doexdiv: selectRow.doexdiv,
+        doqty: selectRow.doqty,
+        finyn: selectRow.finyn,
+        inexpdt: selectRow.inexpdt,
+        insiz: selectRow.insiz,
+        itemacnt: selectRow.itemacnt,
+        itemcd: selectRow.itemcd,
+        itemnm: selectRow.itemnm,
+        itemthick: selectRow.itemthick,
+        janqty: selectRow.janqty,
+        len: selectRow.len,
+        lotnum: selectRow.lotnum,
+        orgdiv: selectRow.orgdiv,
+        pac: selectRow.pac,
+        person: selectRow.person,
+        purdt: selectRow.purdt,
+        purkey: selectRow.purkey,
+        purnum: selectRow.purnum,
+        purqty: selectRow.purqty,
+        purseq: selectRow.purseq,
+        qty: selectRow.qty,
+        remark: selectRow.remark,
+        rowstatus: "N",
+        taxamt: selectRow.taxamt,
+        taxdiv: selectRow.taxdiv,
+        totwgt: selectRow.totwgt,
+        unp: selectRow.unp,
+        width: selectRow.width,
+        wonamt: selectRow.wonamt,
+        unitwgt: 0,
+        unpcalmeth: "Q",
+        dlramt: 0,
+        qtyunit: "001",
+      };
+      setSubSelectedState({ [newDataItem[DATA_ITEM_KEY2]]: true });
+      setSubDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
         };
-        setSubSelectedState({ [newDataItem[DATA_ITEM_KEY2]]: true });
-        setSubDataResult((prev) => {
-          return {
-            data: [newDataItem, ...prev.data],
-            total: prev.total + 1,
-          };
-        });
+      });
     } else {
       alert("동일 업체를 선택해주세요.");
     }

@@ -1,6 +1,6 @@
-import React, { ReactNode, useState } from "react";
-import FilterHideToggleButton from "../Buttons/FilterHideToggleButton";
+import { ReactNode, useState } from "react";
 import { FilterBoxWrap } from "../../CommonStyled";
+import FilterHideToggleButton from "../Buttons/FilterHideToggleButton";
 type TChildren = {
   children: ReactNode;
 };

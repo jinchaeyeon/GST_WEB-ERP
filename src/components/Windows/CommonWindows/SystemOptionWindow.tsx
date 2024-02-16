@@ -1,22 +1,22 @@
-import { useEffect, useState } from "react";
-import * as React from "react";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { useApi } from "../../../hooks/api";
+import {
+  Field,
+  Form,
+  FormElement,
+  FormRenderProps,
+} from "@progress/kendo-react-form";
+import * as React from "react";
+import { useEffect, useState } from "react";
 import {
   BottomContainer,
   ButtonContainer,
   FieldWrap,
 } from "../../../CommonStyled";
-import {
-  Form,
-  Field,
-  FormElement,
-  FormRenderProps,
-} from "@progress/kendo-react-form";
-import { FormCheckBox, FormNumericTextBox } from "../../Editors";
-import { validator, getYn, getBooleanFromYn } from "../../CommonFunction";
-import { Button } from "@progress/kendo-react-buttons";
+import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
+import { getBooleanFromYn, getYn, validator } from "../../CommonFunction";
+import { FormCheckBox, FormNumericTextBox } from "../../Editors";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
@@ -145,8 +145,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraData.work_type = ""; //초기화

@@ -1,67 +1,57 @@
-import { useEffect, useState, useCallback, createContext, useRef } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
-  getSelectedState,
+  FieldArray,
+  FieldArrayRenderProps,
+  Form,
+  FormElement,
+  FormRenderProps
+} from "@progress/kendo-react-form";
+import {
   Grid,
   GridCellProps,
   GridColumn,
   GridHeaderSelectionChangeEvent,
   GridSelectionChangeEvent,
-  GridToolbar,
+  getSelectedState
 } from "@progress/kendo-react-grid";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../hooks/api";
+import { Error } from "@progress/kendo-react-labels";
+import * as React from "react";
+import { createContext, useCallback, useEffect, useRef, useState } from "react";
+import { useThemeSwitcher } from "react-css-theme-switcher";
+import { useRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  FieldWrap,
   GridContainer,
   NumberKeypad,
   NumberKeypadCell,
-  NumberKeypadRow,
+  NumberKeypadRow
 } from "../../CommonStyled";
-import {
-  Form,
-  Field,
-  FormElement,
-  FieldArray,
-  FieldArrayRenderProps,
-  FormRenderProps,
-} from "@progress/kendo-react-form";
-import { Error } from "@progress/kendo-react-labels";
-import { clone } from "@progress/kendo-react-common";
-import {
-  FormReadOnly,
-  FormComboBoxCell,
-  FormCheckBoxCell,
-  FormNumberCell,
-} from "../Editors";
+import { useApi } from "../../hooks/api";
+import { IWindowPosition } from "../../hooks/interfaces";
+import { sessionItemState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import {
-  validator,
-  arrayLengthValidator,
   UseBizComponent,
-  UseMessages,
-  findMessage,
-  getYn,
-  getCodeFromValue,
-  UseParaPc,
   UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  arrayLengthValidator,
+  getCodeFromValue
 } from "../CommonFunction";
-import { Button } from "@progress/kendo-react-buttons";
-import { IWindowPosition } from "../../hooks/interfaces";
 import {
   COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
   FORM_DATA_INDEX,
-  PAGE_SIZE,
-  SELECTED_FIELD,
+  SELECTED_FIELD
 } from "../CommonString";
+import {
+  FormComboBoxCell,
+  FormNumberCell
+} from "../Editors";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import { sessionItemState } from "../../store/atoms";
-import { useRecoilState } from "recoil";
-import { useThemeSwitcher } from "react-css-theme-switcher";
 
 // Create React.Context to pass props to the Form Field components from the main component
 export const FormGridEditContext = createContext<{
@@ -332,7 +322,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             enabled: true,
             drag: false,
             cell: false,
-            mode: "single"
+            mode: "single",
           }}
           onSelectionChange={onSelectionChange}
           //onHeaderSelectionChange={onHeaderSelectionChange}
@@ -385,23 +375,45 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
 
         <NumberKeypad>
           <NumberKeypadRow>
-            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>1</NumberKeypadCell>
-            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>2</NumberKeypadCell>
-            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>3</NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>
+              1
+            </NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>
+              2
+            </NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>
+              3
+            </NumberKeypadCell>
           </NumberKeypadRow>
           <NumberKeypadRow>
-            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>4</NumberKeypadCell>
-            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>5</NumberKeypadCell>
-            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>6</NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>
+              4
+            </NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>
+              5
+            </NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>
+              6
+            </NumberKeypadCell>
           </NumberKeypadRow>
           <NumberKeypadRow>
-            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>7</NumberKeypadCell>
-            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>8</NumberKeypadCell>
-            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>9</NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>
+              7
+            </NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>
+              8
+            </NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>
+              9
+            </NumberKeypadCell>
           </NumberKeypadRow>
           <NumberKeypadRow>
-            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>.</NumberKeypadCell>
-            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>0</NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>
+              .
+            </NumberKeypadCell>
+            <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>
+              0
+            </NumberKeypadCell>
             <NumberKeypadCell theme={currentTheme} onClick={enterNumber}>
               <span className={"k-icon k-i-x"}></span>
             </NumberKeypadCell>
@@ -411,7 +423,12 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     </GridContainer>
   );
 };
-const KendoWindow = ({ setVisible, rekey, setData, pathname }: TKendoWindow) => {
+const KendoWindow = ({
+  setVisible,
+  rekey,
+  setData,
+  pathname,
+}: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -514,8 +531,6 @@ const KendoWindow = ({ setVisible, rekey, setData, pathname }: TKendoWindow) => 
     }
   };
 
-
-
   //메시지 조회
   const [messagesData, setMessagesData] = useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -586,8 +601,7 @@ const KendoWindow = ({ setVisible, rekey, setData, pathname }: TKendoWindow) => 
     } else {
       console.log("[오류 발생]");
       console.log(data);
-
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     setParaData((prev) => ({ ...prev, work_type: "" })); //초기화

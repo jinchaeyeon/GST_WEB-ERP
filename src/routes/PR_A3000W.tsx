@@ -1,38 +1,37 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { getter } from "@progress/kendo-react-common";
-import FilterContainer from "../components/Containers/FilterContainer";
-import {
-  Title,
-  FilterBox,
-  TitleContainer,
-  ButtonContainer,
-} from "../CommonStyled";
-import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
-import {
-  convertDateToStrWithTime2,
-  convertMilliSecondsToTimeStr,
-  getQueryFromBizComponent,
-  UseBizComponent,
-  UsePermissions,
-  handleKeyPressSearch,
-  UseParaPc,
-  UseGetValueFromSessionItem,
-  //UseMenuDefaults,
-} from "../components/CommonFunction";
-import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
 import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
 import {
   Input,
   NumericTextBox,
   NumericTextBoxChangeEvent,
 } from "@progress/kendo-react-inputs";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoading, sessionItemState } from "../store/atoms";
-import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
-import StopWindow from "../components/Windows/PR_A3000W_Stop_Window";
-import DefectWindow from "../components/Windows/PR_A3000W_Defect_Window";
 import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  ButtonContainer,
+  FilterBox,
+  Title,
+  TitleContainer,
+} from "../CommonStyled";
+import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
+import {
+  UseBizComponent,
+  UseGetValueFromSessionItem,
+  UseParaPc,
+  UsePermissions,
+  convertDateToStrWithTime2,
+  convertMilliSecondsToTimeStr,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+} from "../components/CommonFunction";
+import { COM_CODE_DEFAULT_VALUE } from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
+import DefectWindow from "../components/Windows/PR_A3000W_Defect_Window";
+import StopWindow from "../components/Windows/PR_A3000W_Stop_Window";
+import { useApi } from "../hooks/api";
+import { isLoading, sessionItemState } from "../store/atoms";
+import { Iparameters, TPermissions } from "../store/types";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -312,7 +311,7 @@ const PR_A3000W: React.FC = () => {
 
   // 데이터 조회
   const fetchMain = async () => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     if (filters.plankey === "") return;
     let data: any;
     setLoading(true);
@@ -342,7 +341,7 @@ const PR_A3000W: React.FC = () => {
 
   // 시작정보 조회
   const fetchMaster = async () => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 

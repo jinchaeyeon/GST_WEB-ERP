@@ -12,7 +12,6 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import PDFViewer from "pdf-viewer-reactjs";
 import { InputChangeEvent } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import {
@@ -57,8 +56,8 @@ import {
 } from "../../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
-import PopUpAttachmentsWindow from "./PopUpAttachmentsWindow";
 import FileViewers from "../../Viewer/FileViewers";
+import PopUpAttachmentsWindow from "./PopUpAttachmentsWindow";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -592,7 +591,7 @@ const UserWindow = ({ setVisible, modal = false }: IWindow) => {
       setUnsavedName([]);
       deletedMainRows = [];
     } else {
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     //초기화
@@ -831,9 +830,9 @@ const UserWindow = ({ setVisible, modal = false }: IWindow) => {
 
     fetchmanualGrid();
   };
-  
+
   const questionToDelete = useSysMessage("QuestionToDelete");
-  const handleDelete = async() => {
+  const handleDelete = async () => {
     if (!window.confirm(questionToDelete)) {
       return false;
     }
@@ -847,7 +846,7 @@ const UserWindow = ({ setVisible, modal = false }: IWindow) => {
         (menu_id != undefined ? menu_id.menuId : "") +
         "_" +
         defaultCulture +
-        ".pdf"
+        ".pdf",
     };
 
     try {
@@ -857,7 +856,7 @@ const UserWindow = ({ setVisible, modal = false }: IWindow) => {
     }
 
     fetchmanualGrid();
-  }
+  };
 
   return (
     <Window
@@ -877,10 +876,10 @@ const UserWindow = ({ setVisible, modal = false }: IWindow) => {
           height: "340px",
           border: "1px solid gray",
           marginBottom: "10px",
-          overflow: "scroll"
+          overflow: "scroll",
         }}
       >
-        {url != "" ? ( <FileViewers file={url} type="pdf" />) : ("")}
+        {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
       </div>
 
       <FormContext.Provider

@@ -84,7 +84,7 @@ const KendoWindow = ({
   categories,
   para,
   modal = false,
-  pathname
+  pathname,
 }: TKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -474,7 +474,7 @@ const KendoWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraData.work_type = ""; //초기화

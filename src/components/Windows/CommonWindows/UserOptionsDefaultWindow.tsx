@@ -1,53 +1,45 @@
-import { useEffect, useState, useCallback } from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
+  Field,
+  FieldArray,
+  FieldArrayRenderProps,
+  Form,
+  FormElement,
+  FormRenderProps,
+} from "@progress/kendo-react-form";
+import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridEvent,
-  GridToolbar,
-  GridSelectionChangeEvent,
-  getSelectedState,
   GridHeaderSelectionChangeEvent,
-  GridHeaderCellProps,
-  GridCellProps,
+  GridSelectionChangeEvent,
+  GridToolbar,
+  getSelectedState
 } from "@progress/kendo-react-grid";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../../hooks/api";
+import { Error } from "@progress/kendo-react-labels";
+import { useCallback, useEffect, useState } from "react";
 import {
   BottomContainer,
   ButtonContainer,
   FieldWrap,
   GridContainer,
 } from "../../../CommonStyled";
-import {
-  Form,
-  Field,
-  FormElement,
-  FieldArray,
-  FieldArrayRenderProps,
-  FormRenderProps,
-} from "@progress/kendo-react-form";
-import { Error } from "@progress/kendo-react-labels";
-import {
-  FormNumberCell,
-  FormNameCell,
-  FormComboBox,
-  FormComboBoxCell,
-  FormCheckBoxCell,
-} from "../../Editors";
+import { useApi } from "../../../hooks/api";
+import { IWindowPosition } from "../../../hooks/interfaces";
 import { Iparameters } from "../../../store/types";
 import {
+  UseGetValueFromSessionItem,
+  UseParaPc,
   arrayLengthValidator,
   chkScrollHandler,
   getCodeFromValue,
   getYn,
-  UseGetValueFromSessionItem,
-  UseParaPc,
   validator,
 } from "../../CommonFunction";
-import { Button } from "@progress/kendo-react-buttons";
-import { IWindowPosition } from "../../../hooks/interfaces";
 import {
   COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
@@ -55,9 +47,15 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../../CommonString";
-import { CellRender, RowRender } from "../../Renderers/Renderers";
-import { useRecoilState } from "recoil";
+import {
+  FormCheckBoxCell,
+  FormComboBox,
+  FormComboBoxCell,
+  FormNameCell,
+  FormNumberCell,
+} from "../../Editors";
 import RequiredHeader from "../../HeaderCells/RequiredHeader";
+import { CellRender, RowRender } from "../../Renderers/Renderers";
 
 let deletedRows: object[] = [];
 
@@ -365,7 +363,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           enabled: true,
           drag: false,
           cell: false,
-          mode: "single"
+          mode: "single",
         }}
         onSelectionChange={onSelectionChange}
         onHeaderSelectionChange={onHeaderSelectionChange}
@@ -716,7 +714,7 @@ const KendoWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
   };
 

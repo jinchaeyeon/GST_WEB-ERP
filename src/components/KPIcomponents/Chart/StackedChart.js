@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Chart } from "primereact/chart";
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { useEffect, useState } from "react";
 import { numberWithCommas3 } from "../../CommonFunction";
 
 export default function StackedChart(props) {
   const [chartData, setChartData] = useState({});
   const [chartOptions, setChartOptions] = useState({});
 
-  function getRandomColor(){
-    return '#'+Math.floor(Math.random()*16777215).toString(16);
+  function getRandomColor() {
+    return "#" + Math.floor(Math.random() * 16777215).toString(16);
   }
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export default function StackedChart(props) {
       const textColorSecondary = documentStyle.getPropertyValue(
         "--text-color-secondary"
       );
-    
+
       const surfaceBorder = documentStyle.getPropertyValue("--surface-border");
       const data = {
         labels: props.alllabel,
@@ -28,15 +28,18 @@ export default function StackedChart(props) {
           return {
             type: "bar",
             label: props.label[idx],
-            backgroundColor: props.random == true? getRandomColor() : props.color[idx],
-            data: propsData.filter(item => item[props.name] == props.label[idx]).map((items)=>{
-              return items[props.value]
-            }),
+            backgroundColor:
+              props.random == true ? getRandomColor() : props.color[idx],
+            data: propsData
+              .filter((item) => item[props.name] == props.label[idx])
+              .map((items) => {
+                return items[props.value];
+              }),
             datalabels: {
               align: "end",
-              anchor: "end"
-            }
-          }
+              anchor: "end",
+            },
+          };
         }),
       };
 
@@ -56,15 +59,17 @@ export default function StackedChart(props) {
             align: "end",
           },
           datalabels: {
-            color: 'black',
-            display: function(context) {
+            color: "black",
+            display: function (context) {
               return context.dataset.data[context.dataIndex] > 0;
             },
             font: {
-              weight: 'bold'
+              weight: "bold",
             },
-            formatter: function(value, context) { return numberWithCommas3(value); },
-          }
+            formatter: function (value, context) {
+              return numberWithCommas3(value);
+            },
+          },
         },
         scales: {
           x: {
@@ -95,7 +100,12 @@ export default function StackedChart(props) {
 
   return (
     <div className="card">
-      <Chart type="bar" data={chartData}  plugins={[ChartDataLabels]} options={chartOptions} />
+      <Chart
+        type="bar"
+        data={chartData}
+        plugins={[ChartDataLabels]}
+        options={chartOptions}
+      />
     </div>
   );
 }

@@ -116,7 +116,7 @@ const CopyWindow = ({
   setVisible,
   reloadData,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -744,6 +744,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

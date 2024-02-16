@@ -203,7 +203,7 @@ export const gridList: Array<TGrid> = [
         caption: "31일",
         width: 100,
       },
-    ]
+    ],
   },
   {
     gridName: "grdList2",
@@ -407,6 +407,6 @@ export const gridList: Array<TGrid> = [
         caption: "31일",
         width: 100,
       },
-    ]
+    ],
   },
 ];

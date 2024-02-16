@@ -1,27 +1,26 @@
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { useApi } from "../../hooks/api";
-import { 
-  GetPropertyValueByName, 
-  UseCustomOption, 
-  UseGetValueFromSessionItem, 
-  UseMessages, 
-  UseParaPc, 
-  findMessage 
-} from "../CommonFunction";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { useEffect, useState } from "react";
-import { 
-  BottomContainer, 
-  ButtonContainer, 
-  FormBox, 
-  FormBoxWrap 
-} from "../../CommonStyled";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import { Iparameters } from "../../store/types";
-import React from "react";
 import { Button } from "@progress/kendo-react-buttons";
+import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import {
+  BottomContainer,
+  ButtonContainer,
+  FormBox,
+  FormBoxWrap,
+} from "../../CommonStyled";
+import { useApi } from "../../hooks/api";
+import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
+import { Iparameters } from "../../store/types";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseMessages,
+  UseParaPc,
+  findMessage,
+} from "../CommonFunction";
 
 type TData = {
   prodmac: string;
@@ -31,17 +30,17 @@ type TData = {
 type TKendoWindow = {
   setVisible(visible: boolean): void;
   data: TData;
-  setData(workType: string): void;  // 비가동 입력시 workType 전달
-  modal? : boolean;
+  setData(workType: string): void; // 비가동 입력시 workType 전달
+  modal?: boolean;
   pathname: string;
 };
 
-const KendoWindow = ({ 
-  setVisible, 
-  data, 
+const KendoWindow = ({
+  setVisible,
+  data,
   setData,
   modal = false,
-  pathname
+  pathname,
 }: TKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -63,9 +62,11 @@ const KendoWindow = ({
   UseCustomOption(pathname, setCustomOptionData);
 
   useEffect(() => {
-    if (customOptionData !== null)  {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, 
-        "query");
+    if (customOptionData !== null) {
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setParaSaved((prev) => ({
         ...prev,
         prodemp: userId,
@@ -120,13 +121,14 @@ const KendoWindow = ({
     let valid = true;
 
     try {
-      if (paraSaved.stopcd === "" ||
-          paraSaved.stopcd === undefined ||
-          paraSaved.stopcd === null
+      if (
+        paraSaved.stopcd === "" ||
+        paraSaved.stopcd === undefined ||
+        paraSaved.stopcd === null
       ) {
         throw findMessage(messagesData, "PR_A2000W_001");
       }
-    } catch(e) {
+    } catch (e) {
       alert(e);
       valid = false;
     }
@@ -218,7 +220,7 @@ const KendoWindow = ({
               <th>작업자</th>
               <td>
                 {customOptionData !== null && (
-                  <CustomOptionComboBox 
+                  <CustomOptionComboBox
                     name="prodemp"
                     value={paraSaved.prodemp}
                     customOptionData={customOptionData}
@@ -265,18 +267,14 @@ const KendoWindow = ({
       </FormBoxWrap>
       <BottomContainer style={{ marginTop: "40px" }}>
         <ButtonContainer>
-          <Button 
+          <Button
             themeColor={"primary"}
             fillMode={"outline"}
             onClick={onCheckClick}
           >
             확인
           </Button>
-          <Button
-            themeColor={"primary"}
-            fillMode={"outline"}
-            onClick={onClose}
-          >
+          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             취소
           </Button>
         </ButtonContainer>

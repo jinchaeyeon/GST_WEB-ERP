@@ -1,55 +1,58 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import * as React from "react";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { IItemData, IWindowPosition } from "../../hooks/interfaces";
-import { 
-  BottomContainer, 
-  ButtonContainer, 
-  ButtonInInput, 
-  FilterBox, 
-  GridContainer, 
-  GridTitle, 
-  GridTitleContainer, 
-  PrimaryP, 
-  TitleContainer 
-} from "../../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
-import FilterContainer from "../Containers/FilterContainer";
-import { 
-  UseBizComponent, 
-  UseCustomOption, 
-  UseMessages, 
-  convertDateToStr, 
-  findMessage, 
-  getQueryFromBizComponent, 
-  handleKeyPressSearch, 
-  setDefaultDate,
-  GetPropertyValueByName,
-  numberWithCommas,
-} from "../CommonFunction";
-import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
-import { Input } from "@progress/kendo-react-inputs";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { Iparameters } from "../../store/types";
-import { useApi } from "../../hooks/api";
-import { 
-  Grid, 
-  GridColumn, 
-  GridDataStateChangeEvent, 
-  GridEvent, 
-  GridFooterCellProps, 
-  GridPageChangeEvent, 
-  GridSelectionChangeEvent, 
-  getSelectedState 
+import { Button } from "@progress/kendo-react-buttons";
+import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import {
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState
 } from "@progress/kendo-react-grid";
-import NumberCell from "../Cells/NumberCell";
+import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
+import * as React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import {
+  BottomContainer,
+  ButtonContainer,
+  ButtonInInput,
+  FilterBox,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
+  PrimaryP,
+  TitleContainer,
+} from "../../CommonStyled";
+import { useApi } from "../../hooks/api";
+import { IItemData, IWindowPosition } from "../../hooks/interfaces";
+import { isLoading } from "../../store/atoms";
+import { Iparameters } from "../../store/types";
 import DateCell from "../Cells/DateCell";
+import NumberCell from "../Cells/NumberCell";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UseMessages,
+  convertDateToStr,
+  findMessage,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+  numberWithCommas,
+  setDefaultDate,
+} from "../CommonFunction";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
+import FilterContainer from "../Containers/FilterContainer";
+import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
+import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 
 type IWindow = {
@@ -66,12 +69,12 @@ let temp = 0;
 
 let targetRowIndex: null | number = null;
 
-const PlanWindow = ({ 
-  setVisible, 
-  setData, 
-  modal = false, 
+const PlanWindow = ({
+  setVisible,
+  setData,
+  modal = false,
   custdiv,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -102,22 +105,24 @@ const PlanWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt2"),
         todt: setDefaultDate(customOptionData, "todt2"),
-        finyn: defaultOption.find((item: any) => item.id === "finyn")
-          .valueCode,
+        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
       }));
     }
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-    UseBizComponent(
-      "L_BA171, L_BA172, L_BA173, L_BA015, L_PR010, R_YN",
-      // 대분류, 중분류, 소분류, 수량단위, 공정, 완료구분
-      setBizComponentData
+  UseBizComponent(
+    "L_BA171, L_BA172, L_BA173, L_BA015, L_PR010, R_YN",
+    // 대분류, 중분류, 소분류, 수량단위, 공정, 완료구분
+    setBizComponentData
   );
 
   const pageChange = (event: GridPageChangeEvent) => {
@@ -182,7 +187,6 @@ const PlanWindow = ({
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
       fetchQuery(proccdQueryStr, setProccdListData);
-
     }
   }, [bizComponentData]);
 
@@ -235,7 +239,7 @@ const PlanWindow = ({
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
-    const { value, name} = e.target;
+    const { value, name } = e.target;
 
     setFilters((prev) => ({
       ...prev,
@@ -262,9 +266,9 @@ const PlanWindow = ({
       [name]: value,
     }));
   };
-  
+
   const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top});
+    setPosition({ ...position, left: event.left, top: event.top });
   };
 
   const handleResize = (event: WindowMoveEvent) => {
@@ -346,7 +350,7 @@ const PlanWindow = ({
     } catch (error) {
       data = null;
     }
-    
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -378,10 +382,10 @@ const PlanWindow = ({
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
-  
+
       if (totalRowCnt > 0) {
         const selectedRow =
-            filters.find_row_value == ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.num == filters.find_row_value);
         if (selectedRow != undefined) {
@@ -419,7 +423,7 @@ const PlanWindow = ({
   // 그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }))
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
@@ -434,7 +438,7 @@ const PlanWindow = ({
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-  
+
   const onKeepingSortChange = (e: any) => {
     setKeepingDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -447,8 +451,7 @@ const PlanWindow = ({
     });
 
     const selectRows = mainDataResult.data.filter(
-      (item: any) => 
-        item.num == Object.getOwnPropertyNames(selectedState)[0]
+      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
     const newDataItem = {
@@ -467,7 +470,7 @@ const PlanWindow = ({
       plankey: selectRows.plankey,
     };
 
-    setKeepingSelectedState({[newDataItem[KEEPING_DATA_ITEM_KEY]]: true});
+    setKeepingSelectedState({ [newDataItem[KEEPING_DATA_ITEM_KEY]]: true });
     setKeepingDataResult((prev) => {
       return {
         data: [newDataItem, ...prev.data],
@@ -517,7 +520,7 @@ const PlanWindow = ({
     });
     setKeepingSelectedState(newSelectedState);
   };
-  
+
   // 그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
@@ -541,13 +544,17 @@ const PlanWindow = ({
         건
       </td>
     );
-  }
+  };
 
   const editNumberFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -587,7 +594,7 @@ const PlanWindow = ({
       alert(e);
     }
   };
-  
+
   return (
     <Window
       title={"생산계획참조"}
@@ -598,13 +605,9 @@ const PlanWindow = ({
       onClose={onClose}
       modal={modal}
     >
-      <TitleContainer style={{ float: "right"}}>
+      <TitleContainer style={{ float: "right" }}>
         <ButtonContainer>
-          <Button
-            onClick={search}
-            icon="search"
-            themeColor={"primary"}
-          >
+          <Button onClick={search} icon="search" themeColor={"primary"}>
             조회
           </Button>
         </ButtonContainer>
@@ -620,7 +623,7 @@ const PlanWindow = ({
                     start: filters.frdt,
                     end: filters.todt,
                   }}
-                  onChange={(e: { value: {start: any; end: any} }) =>
+                  onChange={(e: { value: { start: any; end: any } }) =>
                     setFilters((prev) => ({
                       ...prev,
                       frdt: e.value.start,
@@ -628,7 +631,7 @@ const PlanWindow = ({
                     }))
                   }
                   className="required"
-                />  
+                />
               </td>
               <th>공정</th>
               <td>
@@ -654,11 +657,11 @@ const PlanWindow = ({
               <td>
                 {customOptionData !== null && (
                   <BizComponentRadioGroup
-                    name = "finyn"
+                    name="finyn"
                     value={filters.finyn}
                     bizComponentId="R_YN"
                     bizComponentData={bizComponentData}
-                  changeData={filterRadioChange}
+                    changeData={filterRadioChange}
                   />
                 )}
               </td>
@@ -708,7 +711,7 @@ const PlanWindow = ({
           <PrimaryP>※ 더블 클릭하여 생산계획 Keeping</PrimaryP>
         </GridTitleContainer>
         <Grid
-          style={{ height: "calc(100% - 40px)"}}
+          style={{ height: "calc(100% - 40px)" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -760,18 +763,18 @@ const PlanWindow = ({
           resizable={true}
           onRowDoubleClick={onRowDoubleClick}
         >
-          <GridColumn 
-            field="plandt" 
-            title="계획일자" 
-            width="100px" 
+          <GridColumn
+            field="plandt"
+            title="계획일자"
+            width="100px"
             cell={DateCell}
             footerCell={mainTotalFooterCell}
           />
           <GridColumn field="proccd" title="공정" width="100px" />
-          <GridColumn 
-            field="procseq" 
-            title="공정순서" 
-            width="100px" 
+          <GridColumn
+            field="procseq"
+            title="공정순서"
+            width="100px"
             cell={NumberCell}
           />
           <GridColumn field="itemcd" title="품목코드" width="120px" />
@@ -780,17 +783,17 @@ const PlanWindow = ({
           <GridColumn field="itemlvl2" title="중분류" width="100px" />
           <GridColumn field="itemlvl3" title="소분류" width="100px" />
           <GridColumn field="insiz" title="규격" width="150px" />
-          <GridColumn 
-            field="qty" 
-            title="계획량" 
-            width="100px" 
+          <GridColumn
+            field="qty"
+            title="계획량"
+            width="100px"
             cell={NumberCell}
             footerCell={editNumberFooterCell}
           />
-          <GridColumn 
-            field="prodqty" 
-            title="생산량" 
-            width="100px" 
+          <GridColumn
+            field="prodqty"
+            title="생산량"
+            width="100px"
             cell={NumberCell}
             footerCell={editNumberFooterCell}
           />
@@ -826,7 +829,7 @@ const PlanWindow = ({
               itemacnt: itemacntListData.find(
                 (item: any) => item.sub_code === row.itemacnt
               )?.code_name,
-              [SELECTED_FIELD]: keepingSelectedState[keepingIdGetter(row)],   // 선택된 데이터
+              [SELECTED_FIELD]: keepingSelectedState[keepingIdGetter(row)], // 선택된 데이터
             })),
             keepingDataState
           )}
@@ -853,18 +856,18 @@ const PlanWindow = ({
           // 더블클릭
           onRowDoubleClick={onRemoveKeepRow}
         >
-          <GridColumn 
-            field="plandt" 
-            title="계획일자" 
-            width="100px" 
+          <GridColumn
+            field="plandt"
+            title="계획일자"
+            width="100px"
             cell={DateCell}
             footerCell={keepTotalFooterCell}
           />
           <GridColumn field="proccd" title="공정" width="100px" />
-          <GridColumn 
-            field="procseq" 
-            title="공정순서" 
-            width="100px" 
+          <GridColumn
+            field="procseq"
+            title="공정순서"
+            width="100px"
             cell={NumberCell}
           />
           <GridColumn field="itemcd" title="품목코드" width="120px" />
@@ -873,10 +876,10 @@ const PlanWindow = ({
           <GridColumn field="itemlvl2" title="중분류" width="100px" />
           <GridColumn field="itemlvl3" title="소분류" width="100px" />
           <GridColumn field="insiz" title="규격" width="150px" />
-          <GridColumn 
-            field="prodqty" 
-            title="생산량" 
-            width="100px" 
+          <GridColumn
+            field="prodqty"
+            title="생산량"
+            width="100px"
             cell={NumberCell}
           />
           <GridColumn field="qtyunit" title="단위" width="80px" />
@@ -888,11 +891,7 @@ const PlanWindow = ({
           <Button themeColor={"primary"} onClick={onConfirmBtnClick}>
             확인
           </Button>
-          <Button 
-            themeColor={"primary"} 
-            fillMode={"outline"} 
-            onClick={onClose}
-          >
+          <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
             취소
           </Button>
         </ButtonContainer>

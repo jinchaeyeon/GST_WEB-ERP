@@ -21,7 +21,7 @@ export const gridList: Array<TGrid> = [
         field: "quosts",
         caption: "견적상태",
         width: 120,
-      },   
+      },
       {
         id: "col_status",
         field: "status",
@@ -134,7 +134,7 @@ export const gridList: Array<TGrid> = [
         field: "remark",
         caption: "비고",
         width: 200,
-      }
+      },
     ],
   },
   {
@@ -163,13 +163,13 @@ export const gridList: Array<TGrid> = [
         field: "remark",
         caption: "비고",
         width: 200,
-      }
+      },
     ],
   },
   {
     // 요약정보
     gridName: "grdList4",
-    columns: [ 
+    columns: [
       {
         id: "col_meetingnum",
         field: "meetingnum",
@@ -199,7 +199,7 @@ export const gridList: Array<TGrid> = [
   {
     // 요약정보
     gridName: "grdList5",
-    columns: [ 
+    columns: [
       {
         id: "col_user_id",
         field: "user_id",
@@ -241,7 +241,7 @@ export const gridList: Array<TGrid> = [
   {
     // 요약정보
     gridName: "grdList6",
-    columns: [ 
+    columns: [
       {
         id: "col_quokey2",
         field: "quokey",

@@ -458,7 +458,7 @@ const HU_B2140W: React.FC = () => {
             total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
-  
+
         setSelectedState4({ [rows[0][DATA_ITEM_KEY4]]: true });
       } else {
         setMainDataResult4((prev) => {
@@ -467,7 +467,6 @@ const HU_B2140W: React.FC = () => {
             total: 0,
           };
         });
-  
       }
     } else {
       console.log("[오류 발생]");

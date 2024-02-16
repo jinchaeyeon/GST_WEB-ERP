@@ -18,8 +18,8 @@ import {
   Input,
   InputChangeEvent,
   MaskedTextBox,
+  NumericTextBox,
   TextArea,
-  NumericTextBox
 } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { Buffer } from "buffer";
@@ -7099,6 +7099,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -7236,6 +7237,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -7363,6 +7365,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -7491,6 +7494,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -7619,6 +7623,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -7747,6 +7752,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -7873,6 +7879,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -8002,6 +8009,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -8131,6 +8139,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

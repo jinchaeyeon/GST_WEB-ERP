@@ -10,7 +10,7 @@ import {
   GridFooterCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -38,7 +38,7 @@ import {
   convertDateToStr,
   findMessage,
   handleKeyPressSearch,
-  setDefaultDate
+  setDefaultDate,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -253,7 +253,7 @@ const CM_B1101W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-     //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -312,7 +312,7 @@ const CM_B1101W: React.FC = () => {
   };
 
   const fetchMainGrid2 = async (filters: any) => {
-      //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터

@@ -6,10 +6,10 @@ import { useApi } from "../../hooks/api";
 import { IComboBoxColumns } from "../../hooks/interfaces";
 import { UseBizComponent, getQueryFromBizComponent } from "../CommonFunction";
 import {
-    FormComboBox,
-    FormDatePicker,
-    FormInput,
-    FormTextArea
+  FormComboBox,
+  FormDatePicker,
+  FormInput,
+  FormTextArea,
 } from "../Editors";
 
 const ColorColumn: IComboBoxColumns[] = [
@@ -56,7 +56,7 @@ export const CustomFormEditor = (props: SchedulerFormEditorProps) => {
     } catch (error) {
       data = null;
     }
- 
+
     if (data.isSuccess === true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
@@ -77,7 +77,12 @@ export const CustomFormEditor = (props: SchedulerFormEditorProps) => {
       />
       <Field label={"시작일자"} name={"start"} component={FormDatePicker} />
       <Field label={"종료일자"} name={"end"} component={FormDatePicker} />
-      <Field label={"내용"} name={"description"} component={FormTextArea} rows={3}/>
+      <Field
+        label={"내용"}
+        name={"description"}
+        component={FormTextArea}
+        rows={3}
+      />
     </FormElement>
   );
 };

@@ -1,27 +1,27 @@
-import type { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from "react";
 
 export interface SquareProps {
-  children?: ReactNode
+  children?: ReactNode;
 }
 
 const squareStyle = {
-  width: '100%',
-  height: '100%',
-}
+  width: "100%",
+  height: "100%",
+};
 
 export const Square: FC<SquareProps> = ({ children }) => {
-  const backgroundColor = 'white';
-  const color = 'black'
+  const backgroundColor = "white";
+  const color = "black";
   return (
     <div
       style={{
         ...squareStyle,
         color,
         backgroundColor,
-        border: "1px solid grey"
+        border: "1px solid grey",
       }}
     >
       {children}
     </div>
-  )
-}
+  );
+};

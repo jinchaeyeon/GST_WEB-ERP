@@ -1,6 +1,7 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { useEffect, useRef, useState } from "react";
+import ReactToPrint from "react-to-print";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -11,9 +12,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading, loginResultState, menuList } from "../../store/atoms";
-import { UseGetValueFromSessionItem } from "../CommonFunction";
 import FileViewers from "../Viewer/FileViewers";
-import ReactToPrint from "react-to-print";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -132,7 +131,11 @@ const UserWindow = ({ setVisible, quonum, quorev, modal = false }: IWindow) => {
           overflow: "scroll",
         }}
       >
-        {url != "" ? <FileViewers file={url} ref={componentRef} type="pdf" /> : ""}
+        {url != "" ? (
+          <FileViewers file={url} ref={componentRef} type="pdf" />
+        ) : (
+          ""
+        )}
       </div>
       <BottomContainer>
         <ButtonContainer>

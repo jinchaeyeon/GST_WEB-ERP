@@ -10,35 +10,29 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  FilterBox,
   GridContainer,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../../../CommonStyled";
-import FilterContainer from "../../Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading, loginResultState } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
-import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
 import {
   UseBizComponent,
-  getQueryFromBizComponent,
-  handleKeyPressSearch,
+  getQueryFromBizComponent
 } from "../../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../../CommonString";
-import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
-import { bytesToBase64 } from "byte-base64";
 
 type IKendoWindow = {
   setVisible(t: boolean): void;

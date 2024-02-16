@@ -457,7 +457,7 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -1071,7 +1071,6 @@ const CopyWindow = ({
     if (dataItem.length === 0) return false;
 
     if (mainDataResult.total > 0) {
-
       mainDataResult.data.map((item) => {
         if (item.num > temp) {
           temp = item.num;
@@ -1120,7 +1119,11 @@ const CopyWindow = ({
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -1130,7 +1133,7 @@ const CopyWindow = ({
       </td>
     );
   };
-  
+
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -1595,6 +1598,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -2305,10 +2309,18 @@ const CopyWindow = ({
         />
       )}
       {CopyWindowVisible && (
-        <CopyWindow1 setVisible={setCopyWindowVisible} setData={setCopyData} pathname={pathname}/>
+        <CopyWindow1
+          setVisible={setCopyWindowVisible}
+          setData={setCopyData}
+          pathname={pathname}
+        />
       )}
       {CopyWindowVisible2 && (
-        <CopyWindow2 setVisible={setCopyWindowVisible2} setData={setCopyData} pathname={pathname}/>
+        <CopyWindow2
+          setVisible={setCopyWindowVisible2}
+          setData={setCopyData}
+          pathname={pathname}
+        />
       )}
       {CopyWindowVisible3 && (
         <CopyWindow3
@@ -2319,7 +2331,11 @@ const CopyWindow = ({
         />
       )}
       {CopyWindowVisible4 && (
-        <CopyWindow4 setVisible={setCopyWindowVisible4} setData={setCopyData} pathname={pathname}/>
+        <CopyWindow4
+          setVisible={setCopyWindowVisible4}
+          setData={setCopyData}
+          pathname={pathname}
+        />
       )}
       {attachmentsWindowVisible && (
         <PopUpAttachmentsWindow

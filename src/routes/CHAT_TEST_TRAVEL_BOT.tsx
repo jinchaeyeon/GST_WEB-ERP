@@ -1,7 +1,7 @@
-import React, { useState, useCallback, useEffect } from "react";
 import { Chat, HeroCard } from "@progress/kendo-react-conversational-ui";
-import { DirectLine } from "botframework-directlinejs";
 import AdaptiveCards from "adaptivecards";
+import { DirectLine } from "botframework-directlinejs";
+import React, { useCallback, useEffect, useState } from "react";
 const client = new DirectLine({
   secret: "Y_ly-If6haE.cwA.PQE.ZwOOsq4MlHcD3_YLFI-t9oW6L6DXMMBoi67LBz9WaWA",
 });

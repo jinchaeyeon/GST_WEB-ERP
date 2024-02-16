@@ -65,7 +65,8 @@ export const gridList: Array<TGrid> = [
         width: 200,
       },
     ],
-  },  {
+  },
+  {
     gridName: "grdList2",
     columns: [
       {

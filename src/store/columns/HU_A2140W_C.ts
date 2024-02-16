@@ -94,6 +94,6 @@ export const gridList: Array<TGrid> = [
         caption: "첨부파일",
         width: 150,
       },
-    ]
+    ],
   },
 ];

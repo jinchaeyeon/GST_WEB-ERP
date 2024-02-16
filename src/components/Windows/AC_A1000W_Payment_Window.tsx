@@ -11,12 +11,9 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import {
-  Checkbox,
-  Input
-} from "@progress/kendo-react-inputs";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -30,7 +27,7 @@ import {
   GridContainer,
   GridTitle,
   GridTitleContainer,
-  TitleContainer
+  TitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
@@ -41,6 +38,7 @@ import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -49,11 +47,15 @@ import {
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
-  setDefaultDate,
-  GetPropertyValueByName,
   numberWithCommas,
+  setDefaultDate,
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
@@ -108,7 +110,13 @@ type Idata = {
   reason_intax_deduction: string;
 };
 
-const CopyWindow = ({ data, setData, setVisible, modal = false, pathname }: IWindow) => {
+const CopyWindow = ({
+  data,
+  setData,
+  setVisible,
+  modal = false,
+  pathname,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -154,7 +162,10 @@ const CopyWindow = ({ data, setData, setVisible, modal = false, pathname }: IWin
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
@@ -404,7 +415,11 @@ const CopyWindow = ({ data, setData, setVisible, modal = false, pathname }: IWin
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -415,7 +430,6 @@ const CopyWindow = ({ data, setData, setVisible, modal = false, pathname }: IWin
     );
   };
 
-  
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -582,6 +596,7 @@ const CopyWindow = ({ data, setData, setVisible, modal = false, pathname }: IWin
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

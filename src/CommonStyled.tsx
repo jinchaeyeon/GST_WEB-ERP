@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { CLOSED_GNV_WIDTH, GNV_WIDTH } from "./components/CommonString";
-import logoSrc from "./img/logo.png";
 import loginBgSrc from "./img/login_bg.png";
-import logoWEBERP from "./img/login_web_erp.png";
 import logoDDGD from "./img/login_ddgd.png";
+import logoWEBERP from "./img/login_web_erp.png";
+import logoSrc from "./img/logo.png";
 import processStsSrc from "./img/process_16.png";
 import successStsSrc from "./img/success_16.png";
 
@@ -386,7 +386,7 @@ type TGridContainerWrap = {
   flexDirection?: "column" | "row" | "row-reverse" | "column-reverse";
   maxWidth?: string | number;
   height?: string | number;
-  mobilemaxWidth? : number;
+  mobilemaxWidth?: number;
 };
 
 export const GridContainerWrap = styled.div<TGridContainerWrap>`
@@ -401,7 +401,8 @@ export const GridContainerWrap = styled.div<TGridContainerWrap>`
   height: ${(props) =>
     typeof props.height === "number" ? props.height + "px" : props.height};
 
-  @media (max-width: ${(props) => props.mobilemaxWidth != undefined ? props.mobilemaxWidth :  1200}px) {
+  @media (max-width: ${(props) =>
+      props.mobilemaxWidth != undefined ? props.mobilemaxWidth : 1200}px) {
     flex-direction: column;
   }
 `;
@@ -416,7 +417,7 @@ type TGridContainer = {
   inTab?: boolean;
   margin?: TMargin;
   overflowY?: string;
-  mobilemaxWidth?:number;
+  mobilemaxWidth?: number;
 };
 
 type TMargin = {
@@ -477,7 +478,7 @@ export const GridContainer = styled.div<TGridContainer>`
     width: 50%;
   }
   .k-chart.QC_A0120_TAB3 {
-    width: 50%
+    width: 50%;
   }
   .k-radio-list.k-list-horizontal {
     justify-content: center;
@@ -486,7 +487,8 @@ export const GridContainer = styled.div<TGridContainer>`
     background-color: #fff0ef;
   } */
 
-  @media (max-width: ${(props) => props.mobilemaxWidth != undefined ? props.mobilemaxWidth : 1200}px) {
+  @media (max-width: ${(props) =>
+      props.mobilemaxWidth != undefined ? props.mobilemaxWidth : 1200}px) {
     width: auto;
 
     .k-chart.QC_A0120_TAB1 {
@@ -496,7 +498,7 @@ export const GridContainer = styled.div<TGridContainer>`
       width: 100%;
     }
     .k-chart.QC_A0120_TAB3 {
-      width: 100%
+      width: 100%;
     }
   }
 `;
@@ -1150,10 +1152,7 @@ export const ScrollableContainer = styled.div<TScrollableContainer>`
 type TStatusIcon = { status: string };
 
 export const StatusIcon = styled.span<TStatusIcon>`
-  background: url(${(props) =>
-    props.status === "001"
-      ? processStsSrc
-      : ""});
+  background: url(${(props) => (props.status === "001" ? processStsSrc : "")});
   background-size: contain;
   background-repeat: no-repeat;
   width: 15px;

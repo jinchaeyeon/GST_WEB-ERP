@@ -16,7 +16,7 @@ export const gridList: Array<TGrid> = [
         caption: "구분",
         width: 120,
       },
-    ]
+    ],
   },
   {
     gridName: "grdList2",
@@ -45,7 +45,7 @@ export const gridList: Array<TGrid> = [
         caption: "사유",
         width: 120,
       },
-    ]
+    ],
   },
   {
     gridName: "grdList3",
@@ -62,7 +62,7 @@ export const gridList: Array<TGrid> = [
         caption: "사유",
         width: 120,
       },
-    ]
+    ],
   },
   {
     gridName: "grdList4",
@@ -73,6 +73,6 @@ export const gridList: Array<TGrid> = [
         caption: "이름",
         width: 120,
       },
-    ]
+    ],
   },
 ];

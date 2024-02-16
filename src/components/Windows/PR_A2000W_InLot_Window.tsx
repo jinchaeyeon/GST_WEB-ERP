@@ -1,52 +1,51 @@
-import React from "react";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { useCallback, useEffect, useState } from "react";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
-import { useApi } from "../../hooks/api";
-import { 
-  GetPropertyValueByName, 
-  UseBizComponent, 
-  UseCustomOption, 
-  UseGetValueFromSessionItem,
-  UseParaPc, 
-  getGridItemChangedData, 
-  getQueryFromBizComponent 
-} from "../CommonFunction";
-import { 
-  COM_CODE_DEFAULT_VALUE,
-  EDIT_FIELD, 
-  PAGE_SIZE, 
-  SELECTED_FIELD 
-} from "../CommonString";
-import { 
-  BottomContainer, 
-  ButtonContainer, 
-  GridContainer, 
-  GridTitle, 
-  GridTitleContainer, 
-} from "../../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import { 
-  Grid, 
-  GridColumn, 
-  GridDataStateChangeEvent, 
-  GridFooterCellProps, 
-  GridHeaderCellProps, 
-  GridItemChangeEvent, 
-  GridPageChangeEvent, 
-  GridRowDoubleClickEvent, 
-  GridSelectionChangeEvent, 
-  getSelectedState 
+import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import {
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridHeaderCellProps,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
+  GridRowDoubleClickEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Iparameters } from "../../store/types";
-import { bytesToBase64 } from "byte-base64";
-import CheckBoxCell from "../Cells/CheckBoxCell";
 import { Checkbox } from "@progress/kendo-react-inputs";
-import { CellRender, RowRender } from "../Renderers/Renderers";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import {
+  BottomContainer,
+  ButtonContainer,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
+} from "../../CommonStyled";
+import { useApi } from "../../hooks/api";
+import { IWindowPosition } from "../../hooks/interfaces";
+import { isLoading } from "../../store/atoms";
+import { Iparameters } from "../../store/types";
+import CheckBoxCell from "../Cells/CheckBoxCell";
 import NumberCell from "../Cells/NumberCell";
+import {
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseParaPc,
+  getGridItemChangedData,
+  getQueryFromBizComponent,
+} from "../CommonFunction";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
+import { CellRender, RowRender } from "../Renderers/Renderers";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
@@ -56,14 +55,14 @@ type TKendoWindow = {
   pathname: string;
 };
 
-const DATA_ITEM_KEY =  "num";
+const DATA_ITEM_KEY = "num";
 
 const KendoWindow = ({
   setVisible,
   plankey,
   setData,
   modal = false,
-  pathname
+  pathname,
 }: TKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -117,7 +116,7 @@ const KendoWindow = ({
       take: initialPageState.take,
     });
   };
-  
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -125,7 +124,10 @@ const KendoWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
@@ -134,10 +136,7 @@ const KendoWindow = ({
   }, [customOptionData]);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent(
-    "L_BA015",
-    setBizComponentData
-  );
+  UseBizComponent("L_BA015", setBizComponentData);
 
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -182,7 +181,7 @@ const KendoWindow = ({
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
-  
+
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -198,7 +197,7 @@ const KendoWindow = ({
     gonum: "",
     goseq: 0,
     planno: plankey.substring(0, plankey.indexOf("-")),
-    planseq: plankey.substring(plankey.indexOf("-") + 1 ),
+    planseq: plankey.substring(plankey.indexOf("-") + 1),
     itemcd: "",
     itemnm: "",
     finyn: "",
@@ -272,9 +271,7 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (customOptionData != null &&
-      filters.isSearch
-    ) {
+    if (customOptionData != null && filters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({
@@ -419,7 +416,7 @@ const KendoWindow = ({
       alert("선택한 투입소재가  없습니다.");
       return;
     }
-    
+
     setData(selectedRowData);
     onClose();
   };
@@ -457,7 +454,7 @@ const KendoWindow = ({
 
   const onSaveClick = () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
-      return ( item.chk == true );
+      return item.chk == true;
     });
 
     if (dataItem.length === 0) return false;
@@ -472,14 +469,7 @@ const KendoWindow = ({
     };
 
     dataItem.forEach((item: any) => {
-      const { 
-        initemcd, 
-        inlotnum, 
-        now_qty, 
-        qtyunit, 
-        gubun,
-        proccd 
-      } = item;
+      const { initemcd, inlotnum, now_qty, qtyunit, gubun, proccd } = item;
 
       rowsArr.initemcd.push(initemcd);
       rowsArr.inlotnum.push(inlotnum);
@@ -571,10 +561,10 @@ const KendoWindow = ({
           find_row_value: "",
           pgNum: isLastDataDeleted
             ? prev.pgNum != 1
-                ? prev.pgNum - 1
-                : prev.pgNum
-              : prev.pgNum,
-            isSearch: true,
+              ? prev.pgNum - 1
+              : prev.pgNum
+            : prev.pgNum,
+          isSearch: true,
         }));
       } else {
         setFilters((prev: any) => ({
@@ -621,7 +611,7 @@ const KendoWindow = ({
             </Button>
           </GridTitleContainer>
           <Grid
-            style={{ height: "calc(100% - 40px)"}}
+            style={{ height: "calc(100% - 40px)" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -663,10 +653,10 @@ const KendoWindow = ({
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
-            <GridColumn 
-              field="chk" 
-              title=" " 
-              width="45px" 
+            <GridColumn
+              field="chk"
+              title=" "
+              width="45px"
               headerCell={CustomCheckBoxCell}
               cell={CheckBoxCell}
             />
@@ -678,37 +668,41 @@ const KendoWindow = ({
             />
             <GridColumn field="initemnm" title="품목명" width="150px" />
             <GridColumn field="inlotnum" title="LOT NO" width="120px" />
-            <GridColumn 
-              field="now_qty" 
-              title="재공량" 
-              width="100px" 
+            <GridColumn
+              field="now_qty"
+              title="재공량"
+              width="100px"
               cell={NumberCell}
             />
-            <GridColumn 
-              field="unitqty" 
-              title="단위소요량" 
-              width="100px" 
+            <GridColumn
+              field="unitqty"
+              title="단위소요량"
+              width="100px"
               cell={NumberCell}
             />
-            <GridColumn 
-              field="procqty" 
-              title="재공생산량" 
-              width="100px" 
-              cell={NumberCell}  
+            <GridColumn
+              field="procqty"
+              title="재공생산량"
+              width="100px"
+              cell={NumberCell}
             />
             <GridColumn field="qtyunit" title="단위" width="80px" />
           </Grid>
         </GridContainer>
         <BottomContainer>
           <ButtonContainer>
-            <Button 
-              themeColor={"primary"} 
+            <Button
+              themeColor={"primary"}
               onClick={onConfirmBtnClick}
               fillMode={"outline"}
             >
               확인
             </Button>
-            <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>
+            <Button
+              themeColor={"primary"}
+              fillMode={"outline"}
+              onClick={onClose}
+            >
               취소
             </Button>
           </ButtonContainer>

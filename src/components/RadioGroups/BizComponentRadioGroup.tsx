@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useCallback } from "react";
 import {
   RadioGroup,
   RadioGroupChangeEvent,
 } from "@progress/kendo-react-inputs";
+import { useEffect } from "react";
 import { RADIO_GROUP_DEFAULT_DATA } from "../CommonString";
 
 type TBizComponentRadioGroup = {
@@ -14,7 +14,7 @@ type TBizComponentRadioGroup = {
   changeData?(e: any): void;
   className?: string;
   excludedCodes?: any[]; // 제외할 코드값
-  disabled? : boolean;
+  disabled?: boolean;
 };
 
 const BizComponentRadioGroup = ({
@@ -69,7 +69,7 @@ const BizComponentRadioGroup = ({
   }
 
   useEffect(() => {
-    if(changeData != undefined) {
+    if (changeData != undefined) {
       changeData({ name, value });
     }
   }, []);
@@ -78,7 +78,7 @@ const BizComponentRadioGroup = ({
     const { value } = e;
     const { name } = e.syntheticEvent.currentTarget;
 
-    if(changeData != undefined) {
+    if (changeData != undefined) {
       changeData({ name, value });
     }
   };

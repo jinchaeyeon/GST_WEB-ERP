@@ -1,11 +1,11 @@
-import React, { useRef, useCallback, useEffect, useState } from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { useEffect, useRef, useState } from "react";
+import ReactToPrint from "react-to-print";
 import { ButtonContainer, LandscapePrint } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { Iparameters } from "../../store/types";
 import { convertDateToStr, numberWithCommas } from "../CommonFunction";
-import ReactToPrint from "react-to-print";
-import { Button } from "@progress/kendo-react-buttons";
-import { DataResult, process, State } from "@progress/kendo-data-query";
 
 const TaxReport = (filters: any) => {
   const [mainDataState, setMainDataState] = useState<State>({
@@ -18,27 +18,26 @@ const TaxReport = (filters: any) => {
 
   const processApi = useApi();
 
-    //조회조건 파라미터
-    const parameters: Iparameters = {
-      procedureName: "P_AC_B5000W_Q",
-      pageNumber: filters.data.pgNum,
-      pageSize: filters.data.pgSize,
-      parameters: {
-        "@p_work_type": "LIST",
-        "@p_orgdiv": filters.data.orgdiv,
-        "@p_location": filters.data.location,
-        "@p_frdt": convertDateToStr(filters.data.frdt),
-        "@p_todt": convertDateToStr(filters.data.todt),
-        "@p_custcd": filters.data.custcd,
-        "@p_custnm": filters.data.custnm,
-        "@p_prtyn": filters.data.prtyn,
-        "@p_prdiv": filters.data.prdiv,
-        "@p_inoutdiv": filters.data.inoutdiv,
-        "@p_taxtype": filters.data.taxtype,
-      },
-    };
+  //조회조건 파라미터
+  const parameters: Iparameters = {
+    procedureName: "P_AC_B5000W_Q",
+    pageNumber: filters.data.pgNum,
+    pageSize: filters.data.pgSize,
+    parameters: {
+      "@p_work_type": "LIST",
+      "@p_orgdiv": filters.data.orgdiv,
+      "@p_location": filters.data.location,
+      "@p_frdt": convertDateToStr(filters.data.frdt),
+      "@p_todt": convertDateToStr(filters.data.todt),
+      "@p_custcd": filters.data.custcd,
+      "@p_custnm": filters.data.custnm,
+      "@p_prtyn": filters.data.prtyn,
+      "@p_prdiv": filters.data.prdiv,
+      "@p_inoutdiv": filters.data.inoutdiv,
+      "@p_taxtype": filters.data.taxtype,
+    },
+  };
 
-    
   const fetchMainGrid = async () => {
     // if (!permissions?.view) return;
     let data: any;
@@ -63,13 +62,11 @@ const TaxReport = (filters: any) => {
     }
   };
 
-
   useEffect(() => {
-    if(mainDataResult.total == 0){
+    if (mainDataResult.total == 0) {
       fetchMainGrid();
     }
   });
-
 
   const componentRef = useRef(null);
 
@@ -114,7 +111,7 @@ const TaxReport = (filters: any) => {
           mainDataResult.data.map((item1: any, idx1: number) =>
             idx1 === 0 || idx1 % 10 === 0 ? (
               <>
-                <table className="main_tb" style={{width: "100%"}}>
+                <table className="main_tb" style={{ width: "100%" }}>
                   <colgroup>
                     <col width="8%" />
                     <col width="8%" />
@@ -139,8 +136,12 @@ const TaxReport = (filters: any) => {
                         <tr key={item2.num}>
                           <td className="center">{item2.reqdt}</td>
                           <td>{item2.custnm}</td>
-                          <td className="number">{numberWithCommas(item2.splyamt)}</td>
-                          <td className="number">{numberWithCommas(item2.taxamt)}</td>
+                          <td className="number">
+                            {numberWithCommas(item2.splyamt)}
+                          </td>
+                          <td className="number">
+                            {numberWithCommas(item2.taxamt)}
+                          </td>
                           <td>{item2.items}</td>
                           <td>{item2.taxtype}</td>
                           <td>{item2.prtyn}</td>

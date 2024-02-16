@@ -21,12 +21,12 @@ import {
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import FilterContainer from "../../Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
 import { UseBizComponent, handleKeyPressSearch } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
+import FilterContainer from "../../Containers/FilterContainer";
 
 type IKendoWindow = {
   setVisible(t: boolean): void;
@@ -37,7 +37,7 @@ type IKendoWindow = {
 
 let targetRowIndex: null | number = null;
 
-let DATA_ITEM_KEY:string;
+let DATA_ITEM_KEY: string;
 
 const KendoWindow = ({
   setVisible,
@@ -64,7 +64,7 @@ const KendoWindow = ({
   );
 
   const [title, setTitle] = useState<string>("");
-  
+
   const idGetter = DATA_ITEM_KEY ? getter(DATA_ITEM_KEY) : undefined;
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -82,10 +82,10 @@ const KendoWindow = ({
   };
 
   const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ 
-      ...position, 
-      left: event.left, 
-      top: event.top 
+    setPosition({
+      ...position,
+      left: event.left,
+      top: event.top,
     });
   };
 
@@ -99,10 +99,7 @@ const KendoWindow = ({
 
     // let a = grid.current.clientWidth - 40;
 
-    if (
-      grid.current.clientWidth < minGridWidth.current 
-      && !applyMinWidth
-    ) {
+    if (grid.current.clientWidth < minGridWidth.current && !applyMinWidth) {
       setApplyMinWidth(true);
     } else if (grid.current.clientWidth > minGridWidth.current) {
       setGridCurrent(grid.current.clientWidth);
@@ -127,9 +124,13 @@ const KendoWindow = ({
     [id: string]: string;
   }>();
 
-  const [columnData, setColumnData] = useState<[{
-    [id: string]: string;
-  }]>();
+  const [columnData, setColumnData] = useState<
+    [
+      {
+        [id: string]: string;
+      }
+    ]
+  >();
 
   useEffect(() => {
     fetchPopupData();
@@ -142,10 +143,7 @@ const KendoWindow = ({
 
     //비즈니스컴포넌트 정보 조회 파라미터
     const parameters = {
-      id:
-        "biz-components?id=" +
-        bizComponentID +
-        "&data=false"
+      id: "biz-components?id=" + bizComponentID + "&data=false",
     };
 
     try {
@@ -160,24 +158,25 @@ const KendoWindow = ({
       const bizComponentItems = data[0].bizComponentItems;
       const bizComponentName = data[0].bizComponentName;
 
-      let startIndex:number = 0;
-      let endIndex:number = 0;
+      let startIndex: number = 0;
+      let endIndex: number = 0;
 
       // {필드명: 캡션}
-      let filters:{
+      let filters: {
         [id: string]: string;
       } = {};
 
       // WHERE 쿼리에서 필드명 추출
       while (queryWhere.indexOf("{", endIndex) > 0) {
-        
         startIndex = queryWhere.indexOf("{", endIndex);
         endIndex = queryWhere.indexOf("}", startIndex);
 
-        let fieldName = queryWhere.substring(startIndex+1, endIndex);
-        let caption = bizComponentItems.find((x:any) => { return x.fieldName == fieldName; }).caption;
+        let fieldName = queryWhere.substring(startIndex + 1, endIndex);
+        let caption = bizComponentItems.find((x: any) => {
+          return x.fieldName == fieldName;
+        }).caption;
 
-        filters = {...filters, [fieldName]:caption};
+        filters = { ...filters, [fieldName]: caption };
       }
 
       DATA_ITEM_KEY = bizComponentItems[0].fieldName; // 첫번째 필드를 키값으로 사용
@@ -186,12 +185,11 @@ const KendoWindow = ({
 
       setFilterData(filters);
 
-      setColumnData(bizComponentItems.filter((x:any) => x.columnWidth > 0));
-
+      setColumnData(bizComponentItems.filter((x: any) => x.columnWidth > 0));
     } else {
       console.log(data);
     }
-    
+
     setLoading(false);
   };
 
@@ -200,7 +198,7 @@ const KendoWindow = ({
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filterData);
 
-      const keys = Object.getOwnPropertyNames(deepCopiedFilters)
+      const keys = Object.getOwnPropertyNames(deepCopiedFilters);
 
       for (let i = 0; i < keys.length; i++) {
         deepCopiedFilters[keys[i]] = "";
@@ -212,10 +210,9 @@ const KendoWindow = ({
         pgNum: 1,
         isSearch: true,
         pgSize: PAGE_SIZE,
-      }))
+      }));
     }
-  }, [filterData])
-
+  }, [filterData]);
 
   //조회조건 초기값
   const [filters, setFilters] = useState<{
@@ -247,8 +244,7 @@ const KendoWindow = ({
   }, [mainDataResult]);
 
   useEffect(() => {
-    if (filters 
-      && filters.isSearch) {
+    if (filters && filters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
@@ -303,7 +299,9 @@ const KendoWindow = ({
       pgNum:
         data && data.hasOwnProperty("pageNumber")
           ? data.pageNumber
-          : (!prev ? 1 : prev.pgNum),
+          : !prev
+          ? 1
+          : prev.pgNum,
       isSearch: false,
     }));
     setLoading(false);
@@ -332,7 +330,8 @@ const KendoWindow = ({
 
   const onConfirmClick = (props: any) => {
     const rowData = mainDataResult.data.find(
-      (row: any) => !!idGetter && idGetter(row) === Object.keys(selectedState)[0]
+      (row: any) =>
+        !!idGetter && idGetter(row) === Object.keys(selectedState)[0]
     );
 
     // 부모로 데이터 전달, 창 닫기
@@ -376,44 +375,47 @@ const KendoWindow = ({
     }));
   };
 
-  const drawFilters = (colCount:number) => {
+  const drawFilters = (colCount: number) => {
     let rowElements: JSX.Element[] = [];
 
     if (filterData) {
-      let filterElements = 
-        Object.getOwnPropertyNames(filterData).map((field: string) => {
-        return (
-          <>
-            <th>{filterData[field]}</th>
-            <td>
-              <Input
-                name={field}
-                type="text"
-                value={!filters ? "" : filters[field]}
-                onChange={filterInputChange}
-              />
-            </td>
-          </>
-        )});
+      let filterElements = Object.getOwnPropertyNames(filterData).map(
+        (field: string) => {
+          return (
+            <>
+              <th>{filterData[field]}</th>
+              <td>
+                <Input
+                  name={field}
+                  type="text"
+                  value={!filters ? "" : filters[field]}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </>
+          );
+        }
+      );
 
       let rowCount = filterElements.length / colCount; // 2:colCount
 
       for (let i = 0; i < rowCount; i++) {
         rowElements.push(
           <tr>
-            {
-              filterElements.filter((value, index) => {return index >= (colCount*i) && index < (colCount*(i+1));})
-                            .map((value) => {
-                return value;
+            {filterElements
+              .filter((value, index) => {
+                return index >= colCount * i && index < colCount * (i + 1);
               })
-            }
+              .map((value) => {
+                return value;
+              })}
           </tr>
         );
       }
     }
 
     return rowElements;
-  }
+  };
 
   const minGridWidth = useRef<number>(0);
   const grid = useRef<any>(null);
@@ -447,9 +449,8 @@ const KendoWindow = ({
 
     let width = minWidth;
 
-    if (!applyMinWidth
-      && !!columnData) {
-        width += (gridCurrent - minGridWidth.current) / columnData.length;
+    if (!applyMinWidth && !!columnData) {
+      width += (gridCurrent - minGridWidth.current) / columnData.length;
     }
 
     return width;
@@ -474,10 +475,15 @@ const KendoWindow = ({
         </ButtonContainer>
       </TitleContainer>
       <FilterContainer>
-        <FilterBox style={{border: "0px"}} onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-          <tbody> 
+        <FilterBox
+          style={{ border: "0px" }}
+          onKeyPress={(e) => handleKeyPressSearch(e, search)}
+        >
+          <tbody>
             <>
-              {drawFilters(4).map((value) => {return value;})}
+              {drawFilters(4).map((value) => {
+                return value;
+              })}
             </>
           </tbody>
         </FilterBox>
@@ -523,19 +529,20 @@ const KendoWindow = ({
           onRowDoubleClick={onRowDoubleClick}
           id="popup_grdList"
         >
-          {columnData 
-          && columnData.length > 0 
-          && columnData.filter((x:any) => x.columnWidth > 0)
-                       .map((column: any, index) => {
-            return (
-              <GridColumn 
-                field={column.fieldName} 
-                title={column.caption} 
-                width={setWidth("popup_grdList", column.columnWidth)}
-                footerCell={index == 0 ? mainTotalFooterCell : undefined}
-              />
-            )})
-          }
+          {columnData &&
+            columnData.length > 0 &&
+            columnData
+              .filter((x: any) => x.columnWidth > 0)
+              .map((column: any, index) => {
+                return (
+                  <GridColumn
+                    field={column.fieldName}
+                    title={column.caption}
+                    width={setWidth("popup_grdList", column.columnWidth)}
+                    footerCell={index == 0 ? mainTotalFooterCell : undefined}
+                  />
+                );
+              })}
         </Grid>
       </GridContainer>
       <BottomContainer>

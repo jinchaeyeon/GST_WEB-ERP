@@ -11,10 +11,10 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-      id: "col_location",
-      field: "location",
-      caption: "사업장",
-      width: 120,
+        id: "col_location",
+        field: "location",
+        caption: "사업장",
+        width: 120,
       },
       {
         id: "col_custcd",
@@ -94,11 +94,11 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList2",
     columns: [
       {
-      id: "col_PAC",
-      field: "PAC",
-      caption: "도/사급",
-      width: 120,
-    },
+        id: "col_PAC",
+        field: "PAC",
+        caption: "도/사급",
+        width: 120,
+      },
       {
         id: "col_itemcd",
         field: "itemcd",

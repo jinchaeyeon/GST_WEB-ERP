@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-import { useRecoilState } from "recoil";
 // import { titles } from "../store/atoms";
 
 const NotFound: React.FC = () => {
@@ -9,7 +7,7 @@ const NotFound: React.FC = () => {
   // },[])
   return (
     <>
-      <div style={{display: "flex", height: "100%"}}>
+      <div style={{ display: "flex", height: "100%" }}>
         <link
           href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
           rel="stylesheet"
@@ -26,8 +24,11 @@ const NotFound: React.FC = () => {
                 <span className="inner-detail">
                   We can not find the page you're looking for.
                 </span>
-                <div onClick = {() => window.location.href = "/"} className="btn btn-info mtl">
-                    <i className="fa fa-home"></i>&nbsp; Return home
+                <div
+                  onClick={() => (window.location.href = "/")}
+                  className="btn btn-info mtl"
+                >
+                  <i className="fa fa-home"></i>&nbsp; Return home
                 </div>
               </div>
             </div>

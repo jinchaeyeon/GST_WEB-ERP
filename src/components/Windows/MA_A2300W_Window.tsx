@@ -10,16 +10,12 @@ import {
   GridFooterCellProps,
   GridItemChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
-import {
-  useCallback,
-  useEffect,
-  useState
-} from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -29,7 +25,7 @@ import {
   FormBoxWrap,
   GridContainer,
   GridTitle,
-  GridTitleContainer
+  GridTitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
@@ -55,9 +51,14 @@ import {
   getQueryFromBizComponent,
   numberWithCommas,
   setDefaultDate,
-  toDate
+  toDate,
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
@@ -207,7 +208,7 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -565,7 +566,6 @@ const CopyWindow = ({
     });
     if (dataItem.length === 0) return false;
 
-
     if (mainDataResult.total > 0) {
       mainDataResult.data.map((item) => {
         if (item.num > temp) {
@@ -626,7 +626,11 @@ const CopyWindow = ({
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -1105,6 +1109,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

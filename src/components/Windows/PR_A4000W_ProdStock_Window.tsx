@@ -1,50 +1,54 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import * as React from "react";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { IItemData, IWindowPosition } from "../../hooks/interfaces";
-import { useSetRecoilState } from "recoil";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
-import { isLoading } from "../../store/atoms";
-import { useApi } from "../../hooks/api";
-import { 
-  UseBizComponent, 
-  UseCustomOption, 
-  UseMessages,
-  getQueryFromBizComponent, 
-  handleKeyPressSearch,
-  GetPropertyValueByName,
-  numberWithCommas,
-} from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { bytesToBase64 } from "byte-base64";
-import { Iparameters } from "../../store/types";
-import { 
-  Grid, 
-  GridColumn, 
-  GridDataStateChangeEvent, 
-  GridFooterCellProps, 
-  GridPageChangeEvent, 
-  GridSelectionChangeEvent, 
-  getSelectedState 
-} from "@progress/kendo-react-grid";
-import { 
-  BottomContainer,
-  ButtonContainer, 
-  ButtonInInput, 
-  FilterBox, 
-  GridContainer, 
-  GridTitle, 
-  GridTitleContainer, 
-  PrimaryP, 
-  TitleContainer 
-} from "../../CommonStyled";
 import { Button } from "@progress/kendo-react-buttons";
-import FilterContainer from "../Containers/FilterContainer";
+import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import {
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import ItemsWindow from "./CommonWindows/ItemsWindow";
+import { bytesToBase64 } from "byte-base64";
+import * as React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import {
+  BottomContainer,
+  ButtonContainer,
+  ButtonInInput,
+  FilterBox,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
+  PrimaryP,
+  TitleContainer,
+} from "../../CommonStyled";
+import { useApi } from "../../hooks/api";
+import { IItemData, IWindowPosition } from "../../hooks/interfaces";
+import { isLoading } from "../../store/atoms";
+import { Iparameters } from "../../store/types";
 import NumberCell from "../Cells/NumberCell";
 import BizComponentComboBox from "../ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UseMessages,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+  numberWithCommas,
+} from "../CommonFunction";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
+import FilterContainer from "../Containers/FilterContainer";
+import ItemsWindow from "./CommonWindows/ItemsWindow";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -100,10 +104,13 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
-   //customOptionData 조회 후 디폴트 값 세팅
-   useEffect(() => {
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         div: defaultOption.find((item: any) => item.id === "div").valueCode,
@@ -120,9 +127,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
   );
 
   // 공통코드 리스트 조회
-  const [divListData, setDivListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
+  const [divListData, setDivListData] = useState([COM_CODE_DEFAULT_VALUE]);
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -142,7 +147,9 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const divQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR300200")
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_PR300200"
+        )
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
@@ -226,7 +233,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
-    const { value, name} = e.target;
+    const { value, name } = e.target;
 
     setFilters((prev) => ({
       ...prev,
@@ -235,7 +242,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
   };
 
   const handleMove = (event: WindowMoveEvent) => {
-    setPosition({ ...position, left: event.left, top: event.top});
+    setPosition({ ...position, left: event.left, top: event.top });
   };
 
   const handleResize = (event: WindowMoveEvent) => {
@@ -287,7 +294,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
   const fetchMainGrid = async (filters: any) => {
     let data: any;
     setLoading(true);
-    
+
     // 조회조건 파라미터
     const parameters: Iparameters = {
       procedureName: "P_PR_A4000W_Sub1_Q",
@@ -303,15 +310,15 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
         "@p_itemnm": filters.itemnm,
         "@p_insiz": filters.insiz,
         "@p_proccd": filters.proccd,
-      }
+      },
     };
 
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
       data = null;
-    };
-    
+    }
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
@@ -336,7 +343,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
           targetRowIndex = 0;
         }
       }
-      
+
       setMainDataResult((prev) => {
         return {
           data: rows,
@@ -346,7 +353,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-            filters.find_row_value == ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.num == filters.find_row_value);
         if (selectedRow != undefined) {
@@ -384,11 +391,10 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
     }
   }, [filters]);
 
-
   // 그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }))
+    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
@@ -403,7 +409,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-  
+
   const onKeepingSortChange = (e: any) => {
     setKeepingDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -411,13 +417,12 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
   const onRowDoubleClick = (props: any) => {
     keepingDataResult.data.map((item) => {
       if (item.num > temp) {
-        temp = item.num
+        temp = item.num;
       }
     });
 
     const selectRows = mainDataResult.data.filter(
-      (item: any) => 
-        item.num == Object.getOwnPropertyNames(selectedState)[0]
+      (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
     const newDataItem = {
@@ -435,7 +440,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
       qtyunit: selectRows.qtyunit,
     };
 
-    setKeepingSelectedState({[newDataItem[KEEPING_DATA_ITEM_KEY]]: true});
+    setKeepingSelectedState({ [newDataItem[KEEPING_DATA_ITEM_KEY]]: true });
     setKeepingDataResult((prev) => {
       return {
         data: [newDataItem, ...prev.data],
@@ -515,7 +520,11 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -535,7 +544,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
       isSearch: true,
     }));
   };
-  
+
   return (
     <Window
       title={"재고참조"}
@@ -545,19 +554,15 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
       onResize={handleResize}
       onClose={onClose}
     >
-      <TitleContainer style={{ float: "right"}}>
+      <TitleContainer style={{ float: "right" }}>
         <ButtonContainer>
-          <Button
-            onClick={search}
-            icon="search"
-            themeColor={"primary"}
-          >
+          <Button onClick={search} icon="search" themeColor={"primary"}>
             조회
           </Button>
         </ButtonContainer>
       </TitleContainer>
       <FilterContainer>
-        <FilterBox onKeyPress={(e)=> handleKeyPressSearch(e, search)}>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>품목코드</th>
@@ -578,7 +583,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
               </td>
               <th>품목명</th>
               <td>
-              <Input
+                <Input
                   name="itemnm"
                   type="text"
                   value={filters.itemnm}
@@ -611,14 +616,14 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
             <tr>
               <th>공정</th>
               <td>
-              {bizComponentData !== null && (
-                <BizComponentComboBox
-                  name="proccd"
-                  value={filters.proccd}
-                  bizComponentId="L_PR010"
-                  bizComponentData={bizComponentData}
-                  changeData={filterComboBoxChange}
-                />
+                {bizComponentData !== null && (
+                  <BizComponentComboBox
+                    name="proccd"
+                    value={filters.proccd}
+                    bizComponentId="L_PR010"
+                    bizComponentData={bizComponentData}
+                    changeData={filterComboBoxChange}
+                  />
                 )}
               </td>
               <th>LOT NO</th>
@@ -634,32 +639,31 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer height = "33vh">
+      <GridContainer height="33vh">
         <GridTitleContainer>
           <GridTitle>재고리스트</GridTitle>
           <PrimaryP>※ 더블 클릭하여 품목 Keeping</PrimaryP>
         </GridTitleContainer>
         <Grid
-          style={{ height: "calc(100% - 40px)"}}
+          style={{ height: "calc(100% - 40px)" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
-              div: divListData.find(
-                (item: any) => item.code === row.div
-              )?.code_name,
+              div: divListData.find((item: any) => item.code === row.div)
+                ?.code_name,
               proccd: proccdListData.find(
                 (item: any) => item.sub_code === row.proccd
               )?.code_name,
               qtyunit: qtyunitListData.find(
                 (item: any) => item.sub_code === row.qtyunit
               )?.code_name,
-              itemlvl1 : itemlvl1ListData.find(
+              itemlvl1: itemlvl1ListData.find(
                 (item: any) => item.sub_code === row.itemlvl1
               )?.code_name,
-              itemlvl2 : itemlvl2ListData.find(
+              itemlvl2: itemlvl2ListData.find(
                 (item: any) => item.sub_code === row.itemlvl2
               )?.code_name,
-              itemlvl3 : itemlvl3ListData.find(
+              itemlvl3: itemlvl3ListData.find(
                 (item: any) => item.sub_code === row.itemlvl3
               )?.code_name,
               [SELECTED_FIELD]: selectedState[idGetter(row)], // 선택된 데이터
@@ -692,9 +696,9 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
           resizable={true}
           onRowDoubleClick={onRowDoubleClick}
         >
-          <GridColumn 
-            field="div" 
-            title="구분" 
+          <GridColumn
+            field="div"
+            title="구분"
             width="100px"
             footerCell={mainTotalFooterCell}
           />
@@ -706,45 +710,44 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
           <GridColumn field="insiz" title="규격" width="150px" />
           <GridColumn field="lotnum" title="LOT NO" width="150px" />
           <GridColumn field="proccd" title="공정" width="100px" />
-          <GridColumn 
-            field="now_qty" 
-            title="재고량" 
-            width="100px" 
+          <GridColumn
+            field="now_qty"
+            title="재고량"
+            width="100px"
             cell={NumberCell}
             footerCell={editNumberFooterCell}
           />
           <GridColumn field="qtyunit" title="단위" width="80px" />
         </Grid>
       </GridContainer>
-      <GridContainer height = "30vh">
+      <GridContainer height="30vh">
         <GridTitleContainer>
           <GridTitle>Keeping</GridTitle>
           <PrimaryP>※ 더블 클릭하여 Keeping 해제</PrimaryP>
         </GridTitleContainer>
         <Grid
-          style={{ height: "calc(100% - 40px)"}}
+          style={{ height: "calc(100% - 40px)" }}
           data={process(
             keepingDataResult.data.map((row) => ({
               ...row,
-              div: divListData.find(
-                (item: any) => item.code === row.div
-              )?.code_name,
+              div: divListData.find((item: any) => item.code === row.div)
+                ?.code_name,
               proccd: proccdListData.find(
                 (item: any) => item.sub_code === row.proccd
               )?.code_name,
               qtyunit: qtyunitListData.find(
                 (item: any) => item.sub_code === row.qtyunit
               )?.code_name,
-              itemlvl1 : itemlvl1ListData.find(
+              itemlvl1: itemlvl1ListData.find(
                 (item: any) => item.sub_code === row.itemlvl1
               )?.code_name,
-              itemlvl2 : itemlvl2ListData.find(
+              itemlvl2: itemlvl2ListData.find(
                 (item: any) => item.sub_code === row.itemlvl2
               )?.code_name,
-              itemlvl3 : itemlvl3ListData.find(
+              itemlvl3: itemlvl3ListData.find(
                 (item: any) => item.sub_code === row.itemlvl3
               )?.code_name,
-              [SELECTED_FIELD]: keepingSelectedState[keepingIdGetter(row)],   // 선택된 데이터
+              [SELECTED_FIELD]: keepingSelectedState[keepingIdGetter(row)], // 선택된 데이터
             })),
             keepingDataState
           )}
@@ -771,12 +774,12 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
           // 더블클릭
           onRowDoubleClick={onRemoveKeepRow}
         >
-          <GridColumn 
-            field="div" 
-            title="구분" 
+          <GridColumn
+            field="div"
+            title="구분"
             width="100px"
             footerCell={keepTotalFooterCell}
-            />
+          />
           <GridColumn field="itemcd" title="품목코드" width="120px" />
           <GridColumn field="itemnm" title="품목명" width="180px" />
           <GridColumn field="itemlvl1" title="대분류" width="100px" />
@@ -785,10 +788,10 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
           <GridColumn field="insiz" title="규격" width="150px" />
           <GridColumn field="lotnum" title="LOT NO" width="150px" />
           <GridColumn field="proccd" title="공정" width="100px" />
-          <GridColumn 
-            field="now_qty" 
-            title="재고량" 
-            width="100px" 
+          <GridColumn
+            field="now_qty"
+            title="재고량"
+            width="100px"
             cell={NumberCell}
           />
           <GridColumn field="qtyunit" title="단위" width="80px" />

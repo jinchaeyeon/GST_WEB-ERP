@@ -1,14 +1,14 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
 import { Button } from "@progress/kendo-react-buttons";
 import { Window } from "@progress/kendo-react-dialogs";
-import { Upload, UploadFileInfo } from "@progress/kendo-react-upload";
+import { EditorUtils } from "@progress/kendo-react-editor";
 import {
   TabStrip,
-  TabStripTab,
   TabStripSelectEventArguments,
+  TabStripTab,
 } from "@progress/kendo-react-layout";
-import { EditorUtils } from "@progress/kendo-react-editor";
+import { Upload, UploadFileInfo } from "@progress/kendo-react-upload";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 import { insertImageFiles } from "./utils";
 
 export const InsertImageDialog = (props: any) => {

@@ -46,6 +46,6 @@ export const gridList: Array<TGrid> = [
         caption: "종료시간",
         width: 120,
       },
-    ]
+    ],
   },
 ];

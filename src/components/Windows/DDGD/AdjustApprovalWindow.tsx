@@ -12,10 +12,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import {
-  Checkbox,
-  CheckboxChangeEvent,
-} from "@progress/kendo-react-inputs";
+import { Checkbox, CheckboxChangeEvent } from "@progress/kendo-react-inputs";
 import { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
@@ -28,14 +25,14 @@ import {
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
+import { Iparameters, TColumn } from "../../../store/types";
+import CenterCell from "../../Cells/CenterCell";
 import {
   UseGetValueFromSessionItem,
   UseParaPc,
   getGridItemChangedData,
 } from "../../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
-import { Iparameters, TColumn } from "../../../store/types";
-import CenterCell from "../../Cells/CenterCell";
 
 const CustomCheckBoxCell = (props: GridCellProps) => {
   const { ariaColumnIndex, columnIndex, dataItem, field, render, onChange } =
@@ -87,7 +84,11 @@ const DATA_ITEM_KEY = "membership_key";
 
 let targetRowIndex: null | number = null;
 
-const AdjustApprovalWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
+const AdjustApprovalWindow = ({
+  setVisible,
+  modal = false,
+  pathname,
+}: IWindow) => {
   const processApi = useApi();
 
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
@@ -96,7 +97,6 @@ const AdjustApprovalWindow = ({ setVisible, modal = false, pathname }: IWindow) 
 
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-
 
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -227,7 +227,7 @@ const AdjustApprovalWindow = ({ setVisible, modal = false, pathname }: IWindow) 
         "@p_work_type": "ADJLIST",
         "@p_orgdiv": orgdiv,
         "@p_custcd": "",
-        "@p_adjdt" : ""
+        "@p_adjdt": "",
       },
     };
 

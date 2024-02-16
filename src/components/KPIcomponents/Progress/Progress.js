@@ -15,7 +15,7 @@ const Progress = ({ strokeWidth, percentage, Count, TopTitle, color }) => {
   };
 
   return (
-    <div style={{textAlign: "center"}}>
+    <div style={{ textAlign: "center" }}>
       <svg
         className={"CircularProgressbar"}
         viewBox="0 0 100 100"

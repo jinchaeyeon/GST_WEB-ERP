@@ -32,6 +32,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
+import RadioGroupCell from "../components/Cells/RadioGroupCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
@@ -63,7 +64,6 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A1070W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import RadioGroupCell from "../components/Cells/RadioGroupCell";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -1321,10 +1321,10 @@ const AC_A1070W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 location: locationListData.find(
-                  (item: any) => (item.sub_code = row.location)
+                  (item: any) => item.sub_code == row.location
                 )?.code_name,
                 position: positionListData.find(
-                  (item: any) => (item.sub_code = row.position)
+                  (item: any) => item.sub_code == row.position
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),

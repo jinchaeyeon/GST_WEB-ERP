@@ -13,21 +13,17 @@ import { IWindowPosition } from "../../hooks/interfaces";
 type TKendoWindow = {
   setVisible(t: boolean): void;
   setData(number: number): void;
-  modal? : boolean;
+  modal?: boolean;
 };
 
-const KendoWindow = ({
-  setVisible,
-  setData,
-  modal = false
-}: TKendoWindow) => {
+const KendoWindow = ({ setVisible, setData, modal = false }: TKendoWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
 
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: isMobile == true? deviceWidth : 250,
+    width: isMobile == true ? deviceWidth : 250,
     height: 220,
   });
 
@@ -45,16 +41,16 @@ const KendoWindow = ({
 
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-      setInitialVal((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+    setInitialVal((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const onClose = () => {
     setVisible(false);
   };
-  
+
   const [initialVal, setInitialVal] = useState({
     number: 0,
   });
@@ -62,7 +58,7 @@ const KendoWindow = ({
   const onSaveClick = () => {
     setData(initialVal.number);
     onClose();
-  }
+  };
 
   return (
     <Window
@@ -80,20 +76,20 @@ const KendoWindow = ({
             <tr>
               <th>일괄등록</th>
               <td>
-                  <Input
-                    name="number"
-                    type="number"
-                    value={initialVal.number}
-                    onChange={filterInputChange}
-                  />
-                </td>
+                <Input
+                  name="number"
+                  type="number"
+                  value={initialVal.number}
+                  onChange={filterInputChange}
+                />
+              </td>
             </tr>
           </tbody>
         </FormBox>
       </FormBoxWrap>
       <BottomContainer>
         <ButtonContainer>
-        <Button themeColor={"primary"} onClick={onSaveClick}>
+          <Button themeColor={"primary"} onClick={onSaveClick}>
             저장
           </Button>
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>

@@ -100,7 +100,7 @@ export const gridList: Array<TGrid> = [
         caption: "12월",
         width: 100,
       },
-    ]
+    ],
   },
   {
     gridName: "grdList2",
@@ -201,6 +201,6 @@ export const gridList: Array<TGrid> = [
         caption: "12월",
         width: 100,
       },
-    ]
+    ],
   },
 ];

@@ -9,7 +9,7 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -45,9 +45,15 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   isValidDate,
-  setDefaultDate
+  setDefaultDate,
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, GAP, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
@@ -68,7 +74,12 @@ let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
 let temp = 0;
-const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) => {
+const CopyWindow = ({
+  setVisible,
+  setData,
+  modal = false,
+  pathname,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({

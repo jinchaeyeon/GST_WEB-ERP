@@ -828,7 +828,7 @@ const AC_A0000W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraDataDeleted.work_type = ""; //초기화

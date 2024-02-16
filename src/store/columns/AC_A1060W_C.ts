@@ -40,7 +40,7 @@ export const gridList: Array<TGrid> = [
         caption: "관리금액",
         width: 100,
       },
- 
+
       {
         id: "col_wonamt",
         field: "wonamt",

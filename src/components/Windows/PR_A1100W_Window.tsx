@@ -54,11 +54,10 @@ import {
   numberWithCommas,
 } from "../CommonFunction";
 import {
-  COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
   GAP,
   PAGE_SIZE,
-  SELECTED_FIELD,
+  SELECTED_FIELD
 } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
@@ -425,7 +424,7 @@ const KendoWindow = ({
   ordkey,
   itemcd,
   modal = false,
-  pathname
+  pathname,
 }: TKendoWindow) => {
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
 
@@ -778,7 +777,7 @@ const KendoWindow = ({
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
@@ -1833,7 +1832,7 @@ const KendoWindow = ({
         getVisible(false);
       }
     } else {
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraData.work_type = ""; //초기화
@@ -1843,7 +1842,11 @@ const KendoWindow = ({
     let sum = 0;
     mainDataResult2.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 

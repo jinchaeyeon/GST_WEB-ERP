@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
 import {
   RadioGroup,
   RadioGroupChangeEvent,
 } from "@progress/kendo-react-inputs";
-import { RADIO_GROUP_DEFAULT_DATA } from "../CommonString";
+import { useEffect, useState } from "react";
 import { GetPropertyValueByName } from "../CommonFunction";
+import { RADIO_GROUP_DEFAULT_DATA } from "../CommonString";
 
 type TCustomOptionRadioGroup = {
-  type?:"new" | "query" ;
+  type?: "new" | "query";
   name: string;
   customOptionData: any;
   changeData(e: any): void;
   excludedCodes?: any[]; // 제외할 코드값
-  disabled? :boolean;
+  disabled?: boolean;
 };
 const CustomOptionRadioGroup = ({
-  type = "query", 
+  type = "query",
   name,
   customOptionData,
   changeData,

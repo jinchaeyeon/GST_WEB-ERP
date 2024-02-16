@@ -39,7 +39,7 @@ export const gridList: Array<TGrid> = [
         field: "defrost",
         caption: "재상",
         width: 120,
-      }
+      },
     ],
   },
 ];

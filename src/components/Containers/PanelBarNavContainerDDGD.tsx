@@ -74,9 +74,7 @@ const PanelBarNavContainer = (props: any) => {
   const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
     unsavedAttadatnumsState
   );
-  const [menulist, setMenuList] = useRecoilState(
-    menuList
-  );
+  const [menulist, setMenuList] = useRecoilState(menuList);
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
   const companyCode = loginResult ? loginResult.companyCode : "";
   const customerName = loginResult ? loginResult.customerName : "";
@@ -213,18 +211,18 @@ const PanelBarNavContainer = (props: any) => {
         para: "menus?userId=" + userId + "&category=WEB",
       };
       const menuResponse = await processApi<any>("menus", menuPara);
-  
+
       const menu = menuResponse.usableMenu.map((item: any) => {
-        if(item.parentMenuId != "") {
-          if(item.menuCategory == "GROUP") {
+        if (item.parentMenuId != "") {
+          if (item.menuCategory == "GROUP") {
             var valid = true;
             menuResponse.usableMenu.map((item2: any) => {
-              if(item.menuId == item2.parentMenuId && valid != false) {
+              if (item.menuId == item2.parentMenuId && valid != false) {
                 valid = false;
               }
-            })
+            });
 
-            if(valid != true) {
+            if (valid != true) {
               return item;
             }
           } else {
@@ -233,8 +231,8 @@ const PanelBarNavContainer = (props: any) => {
         } else {
           return item;
         }
-      })
-      
+      });
+
       setMenus(menu.filter((item: any) => item != undefined));
       setMenuList(menu.filter((item: any) => item != undefined));
     } catch (e: any) {

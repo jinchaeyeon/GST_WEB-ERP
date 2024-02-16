@@ -58,7 +58,6 @@ import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
-import ItemsWindow from "./CommonWindows/ItemsWindow";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -73,7 +72,12 @@ const leftOverHeight = (topHeight + bottomHeight) / 2;
 let targetRowIndex: null | number = null;
 let temp = 0;
 
-const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) => {
+const CopyWindow = ({
+  setVisible,
+  setData,
+  modal = false,
+  pathname,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [loginResult] = useRecoilState(loginResultState);
@@ -263,7 +267,7 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) =
     compclass: string;
     ceonm: string;
   }
- 
+
   const setCustData = (data: ICustData) => {
     setFilters((prev) => ({
       ...prev,

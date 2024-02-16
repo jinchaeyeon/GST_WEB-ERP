@@ -28,7 +28,9 @@ import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -37,14 +39,12 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -53,7 +53,12 @@ type IWindow = {
   pathname: string;
 };
 
-const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) => {
+const CopyWindow = ({
+  setVisible,
+  setData,
+  modal = false,
+  pathname,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -94,7 +99,10 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) =
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
@@ -647,10 +655,7 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) =
         </GridContainer>
         <BottomContainer>
           <ButtonContainer>
-          <Button
-              themeColor={"primary"}
-              onClick={() => setData({})}
-            >
+            <Button themeColor={"primary"} onClick={() => setData({})}>
               미참조
             </Button>
             <Button

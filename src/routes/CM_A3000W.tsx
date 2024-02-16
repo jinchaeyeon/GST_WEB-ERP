@@ -1009,8 +1009,8 @@ const CM_A3000W: React.FC = () => {
       });
       setInfomation((prev) => ({
         ...prev,
-        workType: "D"
-      }))
+        workType: "D",
+      }));
     }
   };
 
@@ -1124,6 +1124,7 @@ const CM_A3000W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -1486,7 +1487,7 @@ const CM_A3000W: React.FC = () => {
             selectedField={SELECTED_FIELD}
             selectable={{
               enabled: true,
-              mode: "single"
+              mode: "single",
             }}
             onSelectionChange={onSubDataSelectionChange}
             //스크롤 조회 기능
@@ -1673,7 +1674,7 @@ const CM_A3000W: React.FC = () => {
                           enabled: true,
                           drag: false,
                           cell: false,
-                          mode: "single"
+                          mode: "single",
                         }}
                         onSelectionChange={onAttDataSelectionChange}
                         onItemChange={onAttItemChange}

@@ -677,7 +677,7 @@ const CM_A8000W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters1);
       setFilters1((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchMainGrid2(deepCopiedFilters);
@@ -691,7 +691,7 @@ const CM_A8000W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters2);
       setFilters2((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchMainGrid3(deepCopiedFilters);
@@ -705,7 +705,7 @@ const CM_A8000W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(filters3);
       setFilters3((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchMainGrid4(deepCopiedFilters);
@@ -857,7 +857,11 @@ const CM_A8000W: React.FC = () => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -1378,6 +1382,7 @@ const CM_A8000W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

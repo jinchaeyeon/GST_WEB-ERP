@@ -17,5 +17,5 @@ export const gridList: Array<TGrid> = [
         width: 150,
       },
     ],
-  }
+  },
 ];

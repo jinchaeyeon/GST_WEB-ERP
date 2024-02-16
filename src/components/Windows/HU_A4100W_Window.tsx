@@ -6,7 +6,7 @@ import {
   BottomContainer,
   ButtonContainer,
   FormBox,
-  FormBoxWrap
+  FormBoxWrap,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";

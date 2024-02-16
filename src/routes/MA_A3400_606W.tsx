@@ -28,7 +28,7 @@ import {
   GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
@@ -52,7 +52,7 @@ import {
   COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
   PAGE_SIZE,
-  SELECTED_FIELD
+  SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
@@ -976,6 +976,7 @@ const MA_A3400_606W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

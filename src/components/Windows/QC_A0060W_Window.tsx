@@ -33,7 +33,7 @@ import {
   deletedNameState,
   isLoading,
   loginResultState,
-  unsavedNameState
+  unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import ComboBoxCell from "../Cells/ComboBoxCell";
@@ -147,7 +147,7 @@ const CopyWindow = ({
   reloadData,
   rev,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -867,6 +867,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -1557,7 +1558,11 @@ const CopyWindow = ({
         </BottomContainer>
       </Window>
       {CopyWindowVisible && (
-        <CopyWindow2 setVisible={setCopyWindowVisible} setData={setCopyData} pathname={pathname}/>
+        <CopyWindow2
+          setVisible={setCopyWindowVisible}
+          setData={setCopyData}
+          pathname={pathname}
+        />
       )}
       {attachmentsWindowVisible && (
         <PopUpAttachmentsWindow

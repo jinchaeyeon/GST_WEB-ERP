@@ -21,7 +21,7 @@ export const gridList: Array<TGrid> = [
         field: "custprsnnm",
         caption: "의뢰자",
         width: 120,
-      },   
+      },
       {
         id: "col_materialtype",
         field: "materialtype",
@@ -92,7 +92,7 @@ export const gridList: Array<TGrid> = [
         field: "quounp",
         caption: "견적원가",
         width: 100,
-      },   
+      },
       {
         id: "col_margin",
         field: "margin",

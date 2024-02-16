@@ -14,6 +14,7 @@ import {
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -65,7 +66,6 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/EA_A2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { useHistory, useLocation } from "react-router-dom";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -202,14 +202,18 @@ const EA_A2000W: React.FC = () => {
           ...prev,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
-          dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
+          dptcd: defaultOption.find((item: any) => item.id === "dptcd")
+            .valueCode,
           person: defaultOption.find((item: any) => item.id === "person")
             .valueCode,
           stddiv: defaultOption.find((item: any) => item.id === "stddiv")
             .valueCode,
-          pgmgb: defaultOption.find((item: any) => item.id === "pgmgb").valueCode,
-          appyn: defaultOption.find((item: any) => item.id === "appyn").valueCode,
-          appgb: defaultOption.find((item: any) => item.id === "appgb").valueCode,
+          pgmgb: defaultOption.find((item: any) => item.id === "pgmgb")
+            .valueCode,
+          appyn: defaultOption.find((item: any) => item.id === "appyn")
+            .valueCode,
+          appgb: defaultOption.find((item: any) => item.id === "appgb")
+            .valueCode,
         }));
       }
     }
@@ -989,7 +993,7 @@ const EA_A2000W: React.FC = () => {
         time_s: "",
       });
     } else {
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     //초기화

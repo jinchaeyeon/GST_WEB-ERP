@@ -408,10 +408,7 @@ const PR_A0030W: React.FC = () => {
         const selectedRow =
           filters.find_row_value === ""
             ? rows[0]
-            : rows.find(
-                (row: any) =>
-                  row.pattern_id == filters.find_row_value
-              );
+            : rows.find((row: any) => row.pattern_id == filters.find_row_value);
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
           setWorkType("U");
@@ -579,10 +576,7 @@ const PR_A0030W: React.FC = () => {
         const selectedRow =
           subfilters2.find_row_value === ""
             ? rows[0]
-            : rows.find(
-                (row: any) =>
-                  row.seq == subfilters2.find_row_value
-              );
+            : rows.find((row: any) => row.seq == subfilters2.find_row_value);
         if (selectedRow != undefined) {
           setSelectedsubData2State({ [selectedRow[SUB_DATA_ITEM_KEY2]]: true });
         } else {
@@ -1693,7 +1687,7 @@ const PR_A0030W: React.FC = () => {
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
-                  mode: "single"
+                  mode: "single",
                 }}
                 onSelectionChange={onSubDataSelectionChange}
                 //스크롤 조회 기능
@@ -1800,7 +1794,7 @@ const PR_A0030W: React.FC = () => {
                   selectedField={SELECTED_FIELD}
                   selectable={{
                     enabled: true,
-                    mode: "single"
+                    mode: "single",
                   }}
                   onSelectionChange={onSubDataSelectionChange2}
                   //스크롤 조회 기능

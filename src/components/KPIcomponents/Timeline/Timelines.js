@@ -1,6 +1,5 @@
-import React from "react";
-import { Timeline } from "primereact/timeline";
 import { Card } from "primereact/card";
+import { Timeline } from "primereact/timeline";
 import { dateformat2 } from "../../CommonFunction";
 
 export default function Timelines(props) {
@@ -28,10 +27,10 @@ export default function Timelines(props) {
           fontWeight: "lighter",
           marginBottom: "10px",
           backgroundImage: `url(/proccd.jpg)`,
-          backgroundPosition: 'center',
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat',
-          opacity: 0.9
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          opacity: 0.9,
         }}
       >
         <h4>

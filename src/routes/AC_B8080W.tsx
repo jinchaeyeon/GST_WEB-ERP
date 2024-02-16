@@ -153,7 +153,7 @@ const AC_B8080W: React.FC = () => {
         para: "document-json?id=" + rows[0].document_id,
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
-        "@p_taxyy": convertDateToStr(filters.taxyy).substring(0,4),
+        "@p_taxyy": convertDateToStr(filters.taxyy).substring(0, 4),
         "@p_gisu": filters.gisu,
         "@p_chasu": filters.chasu,
         "@p_reqdt": convertDateToStr(filters.reqdt),
@@ -193,7 +193,6 @@ const AC_B8080W: React.FC = () => {
     setLoading(true);
     const parameters = {
       para: "list?emmId=AC_B8080_02",
-
     };
 
     try {
@@ -209,7 +208,7 @@ const AC_B8080W: React.FC = () => {
         para: "document-json?id=" + rows[0].document_id,
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
-        "@p_taxyy": convertDateToStr(filters.taxyy).substring(0,4),
+        "@p_taxyy": convertDateToStr(filters.taxyy).substring(0, 4),
         "@p_gisu": filters.gisu,
         "@p_chasu": filters.chasu,
         "@p_reqdt": convertDateToStr(filters.reqdt),

@@ -1,4 +1,3 @@
-import React from "react";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 import { TreeListCellProps } from "@progress/kendo-react-treelist";
 

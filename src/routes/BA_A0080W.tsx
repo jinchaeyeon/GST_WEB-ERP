@@ -2137,7 +2137,11 @@ const BA_A0080: React.FC = () => {
         />
       )}
       {CopyWindowVisible2 && (
-        <CopyWindow2 setVisible={setCopyWindowVisible2} modal={true}   pathname="BA_A0080W"/>
+        <CopyWindow2
+          setVisible={setCopyWindowVisible2}
+          modal={true}
+          pathname="BA_A0080W"
+        />
       )}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (

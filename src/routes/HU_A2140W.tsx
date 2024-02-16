@@ -255,7 +255,6 @@ const HU_A2140W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
-
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
@@ -1082,6 +1081,7 @@ const HU_A2140W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

@@ -94,8 +94,8 @@ export const gridList: Array<TGrid> = [
         caption: "끝전처리",
         width: 400,
       },
-    ]
-  }, 
+    ],
+  },
   {
     gridName: "grdList2",
     columns: [
@@ -135,6 +135,6 @@ export const gridList: Array<TGrid> = [
         caption: "끝전처리",
         width: 400,
       },
-    ]
+    ],
   },
 ];

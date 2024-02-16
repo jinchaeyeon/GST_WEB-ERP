@@ -13,11 +13,18 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
-import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -36,6 +43,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -47,7 +55,6 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -103,36 +110,33 @@ type TPurData = {
 };
 
 const ColumnCommandCell = (props: GridCellProps) => {
-  const {
-    dataItem,
-    render,
-  } = props;
+  const { dataItem, render } = props;
   const { setPutInfo } = useContext(FormContext);
 
   const setPurData = () => {
-    if(dataItem != undefined) {
+    if (dataItem != undefined) {
       setPutInfo({
         purnum: dataItem.purnum,
         purseq: dataItem.purseq,
-        recnum: dataItem.recnum
+        recnum: dataItem.recnum,
       });
     }
   };
 
   const defaultRendering = (
     <td
-    style={props.style} // this applies styles that lock the column at a specific position
-    className={props.className} // this adds classes needed for locked columns
-    colSpan={props.colSpan}
-    {...{ [GRID_COL_INDEX_ATTRIBUTE]: 0 }}
-  >
-    <Button
-      themeColor={"primary"}
-      fillMode="outline"
-      onClick={setPurData}
-      icon="edit"
-    ></Button>
-  </td>
+      style={props.style} // this applies styles that lock the column at a specific position
+      className={props.className} // this adds classes needed for locked columns
+      colSpan={props.colSpan}
+      {...{ [GRID_COL_INDEX_ATTRIBUTE]: 0 }}
+    >
+      <Button
+        themeColor={"primary"}
+        fillMode="outline"
+        onClick={setPurData}
+        icon="edit"
+      ></Button>
+    </td>
   );
 
   return (
@@ -149,7 +153,6 @@ const MA_B2800W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
 
-
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
@@ -160,13 +163,13 @@ const MA_B2800W: React.FC = () => {
   });
 
   useEffect(() => {
-    if(purInfo.purnum != "" && purInfo.recnum != "") {
+    if (purInfo.purnum != "" && purInfo.recnum != "") {
       setDetailFilters((prev) => ({
         ...prev,
         purnum: purInfo.purnum,
         purseq: purInfo.purseq,
       }));
-  
+
       setWindowVisible(true);
     }
   }, [purInfo]);
@@ -181,7 +184,10 @@ const MA_B2800W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setFilters((prev) => ({
         ...prev,
@@ -380,7 +386,7 @@ const MA_B2800W: React.FC = () => {
   };
 
   //그리드 데이터 조회
-  const fetchMainGrid = async (filters : any) => {
+  const fetchMainGrid = async (filters: any) => {
     // if (!permissions?.view) return;
     let data: any;
     setLoading(true);
@@ -460,7 +466,7 @@ const MA_B2800W: React.FC = () => {
     }
   }, [filters]);
 
-  let gridRef : any = useRef(null); 
+  let gridRef: any = useRef(null);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -493,7 +499,7 @@ const MA_B2800W: React.FC = () => {
       purseq: selectedRowData.purseq,
     }));
   };
-  
+
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {
@@ -665,13 +671,13 @@ const MA_B2800W: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
 
-  const pageChange = (event:GridPageChangeEvent) => {
+  const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
-      isSearch : true,
+      isSearch: true,
     }));
 
     setPage({
@@ -850,7 +856,7 @@ const MA_B2800W: React.FC = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
       setSelectedState({ [rowData.recnum]: true });
-      
+
       setDetailFilters((prev) => ({
         ...prev,
         purnum: rowData.purnum,
@@ -904,26 +910,26 @@ const MA_B2800W: React.FC = () => {
   );
 
   const enterEdit2 = (dataItem: any, field: string) => {
-      if (field == "") {
-        const newData = mainDataResult.data.map((item) =>
-          item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-            ? {
-                ...item,
-                [EDIT_FIELD]: field,
-              }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-        );
-  
-        setMainDataResult((prev) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-      }
+    if (field == "") {
+      const newData = mainDataResult.data.map((item) =>
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   const exitEdit2 = () => {
@@ -939,7 +945,7 @@ const MA_B2800W: React.FC = () => {
       };
     });
   };
-  
+
   return (
     <>
       <TitleContainer>
@@ -974,21 +980,21 @@ const MA_B2800W: React.FC = () => {
                 )}
               </th>
               <td>
-                  <CommonDateRangePicker
-                    value={{
-                      start: filters.frdt,
-                      end: filters.todt,
-                    }}
-                    onChange={(e: { value: { start: any; end: any } }) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        frdt: e.value.start,
-                        todt: e.value.end,
-                      }))
-                    }
-                    className="required"
-                  />
-                </td>
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.frdt,
+                    end: filters.todt,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      frdt: e.value.start,
+                      todt: e.value.end,
+                    }))
+                  }
+                  className="required"
+                />
+              </td>
               <th>사업장</th>
               <td>
                 {customOptionData !== null && (
@@ -1139,80 +1145,80 @@ const MA_B2800W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <FormContext.Provider
-          value={{
-            purInfo,
-            setPutInfo,
-          }}
-        >
-      <GridContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-        >
-          <GridTitleContainer>
-            <GridTitle>발주대비입고자료</GridTitle>
-          </GridTitleContainer>
-          <Grid
-            style={{ height: "73.8vh" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                doexdiv: doexdivListData.find(
-                  (item: any) => item.sub_code === row.doexdiv
-                )?.code_name,
-                amtunit: amtunitListData.find(
-                  (item: any) => item.sub_code === row.amtunit
-                )?.code_name,
-                finyn: row.finyn == "Y" ? true : false,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+        value={{
+          purInfo,
+          setPutInfo,
+        }}
+      >
+        <GridContainer>
+          <ExcelExport
+            data={mainDataResult.data}
+            ref={(exporter) => {
+              _export = exporter;
             }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onMainItemChange}
-            cellRender={customCellRender2}
-            rowRender={customRowRender2}
-            editField={EDIT_FIELD}
           >
-            <GridColumn cell={ColumnCommandCell} locked={true} width="60px" />
-            <GridColumn locked={true} title="자료">
-              {createColumn()}
-            </GridColumn>
-            <GridColumn title="발주">{createColumn2()}</GridColumn>
-            <GridColumn title="입고">{createColumn3()}</GridColumn>
-            <GridColumn title="미입고">{createColumn4()}</GridColumn>
-            <GridColumn title="">{createColumn5()}</GridColumn>
-          </Grid>
-        </ExcelExport>
-      </GridContainer>
+            <GridTitleContainer>
+              <GridTitle>발주대비입고자료</GridTitle>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: "73.8vh" }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  doexdiv: doexdivListData.find(
+                    (item: any) => item.sub_code === row.doexdiv
+                  )?.code_name,
+                  amtunit: amtunitListData.find(
+                    (item: any) => item.sub_code === row.amtunit
+                  )?.code_name,
+                  finyn: row.finyn == "Y" ? true : false,
+                  [SELECTED_FIELD]: selectedState[idGetter(row)],
+                })),
+                mainDataState
+              )}
+              {...mainDataState}
+              onDataStateChange={onMainDataStateChange}
+              //선택 기능
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              skip={page.skip}
+              take={page.take}
+              pageable={true}
+              onPageChange={pageChange}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef}
+              rowHeight={30}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onItemChange={onMainItemChange}
+              cellRender={customCellRender2}
+              rowRender={customRowRender2}
+              editField={EDIT_FIELD}
+            >
+              <GridColumn cell={ColumnCommandCell} locked={true} width="60px" />
+              <GridColumn locked={true} title="자료">
+                {createColumn()}
+              </GridColumn>
+              <GridColumn title="발주">{createColumn2()}</GridColumn>
+              <GridColumn title="입고">{createColumn3()}</GridColumn>
+              <GridColumn title="미입고">{createColumn4()}</GridColumn>
+              <GridColumn title="">{createColumn5()}</GridColumn>
+            </Grid>
+          </ExcelExport>
+        </GridContainer>
       </FormContext.Provider>
       {custWindowVisible && (
         <CustomersWindow
@@ -1231,9 +1237,13 @@ const MA_B2800W: React.FC = () => {
         />
       )}
       {windowVisible && (
-        <MA_B2800W_Window setVisible={setWindowVisible} para={detailFilters} pathname="MA_B2800W"/>
+        <MA_B2800W_Window
+          setVisible={setWindowVisible}
+          para={detailFilters}
+          pathname="MA_B2800W"
+        />
       )}
-     {gridList.map((grid: TGrid) =>
+      {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
             key={column.id}

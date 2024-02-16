@@ -3,10 +3,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
-import {
-  BottomContainer,
-  ButtonContainer
-} from "../../CommonStyled";
+import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { IWindowPosition } from "../../hooks/interfaces";
 
 type barcode = {
@@ -34,7 +31,7 @@ const CopyWindow = ({ setVisible, data, modal = false }: IWindow) => {
     width: isMobile == true ? deviceWidth : 800,
     height: 470,
   });
-  
+
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
   };

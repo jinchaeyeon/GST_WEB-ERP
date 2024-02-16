@@ -32,7 +32,7 @@ export default memo(({ data, selected }) => {
         {data.url == "" ? (
           <img src={image_add} style={{ width: "100%", height: "100%" }} />
         ) : (
-          <img src={data.url} style={{ width: "100%", height: "100%" }}/>
+          <img src={data.url} style={{ width: "100%", height: "100%" }} />
         )}
       </div>
       <Handle type="source" position={Position.Top} id="top" />

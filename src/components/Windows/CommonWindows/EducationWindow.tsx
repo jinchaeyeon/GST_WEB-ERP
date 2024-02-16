@@ -1,52 +1,39 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
-  GridSelectionChangeEvent,
-  getSelectedState,
-  GridEvent,
   GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState
 } from "@progress/kendo-react-grid";
-import { bytesToBase64 } from "byte-base64";
-import { DataResult, process, State, getter } from "@progress/kendo-data-query";
-import { useApi } from "../../../hooks/api";
-import NumberCell from "../../Cells/NumberCell";
+import { Input } from "@progress/kendo-react-inputs";
+import * as React from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  GridContainer,
   FilterBox,
-  GridTitleContainer,
-  GridTitle,
+  GridContainer,
   GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
   Title,
   TitleContainer,
 } from "../../../CommonStyled";
-import {
-  COM_CODE_DEFAULT_VALUE,
-  GAP,
-  SELECTED_FIELD,
-} from "../../CommonString";
-import { Input } from "@progress/kendo-react-inputs";
-import { Form, FormElement, FormRenderProps } from "@progress/kendo-react-form";
-import { Iparameters } from "../../../store/types";
-import {
-  UseBizComponent,
-  UseMessages,
-  handleKeyPressSearch,
-  UseParaPc,
-  getQueryFromBizComponent,
-  chkScrollHandler,
-  convertDateToStr,
-} from "../../CommonFunction";
-import { Button } from "@progress/kendo-react-buttons";
-import { IWindowPosition } from "../../../hooks/interfaces";
-import { EDIT_FIELD, FORM_DATA_INDEX, PAGE_SIZE } from "../../CommonString";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../../store/atoms";
 import FilterContainer from "../../../components/Containers/FilterContainer";
+import { useApi } from "../../../hooks/api";
+import { IWindowPosition } from "../../../hooks/interfaces";
+import { isLoading } from "../../../store/atoms";
+import {
+  handleKeyPressSearch
+} from "../../CommonFunction";
+import {
+  FORM_DATA_INDEX, PAGE_SIZE,
+  SELECTED_FIELD
+} from "../../CommonString";
 const SUB_DATA_ITEM_KEY = "edunum";
 
 // Create React.Context to pass props to the Form Field components from the main component
@@ -302,7 +289,7 @@ TKendoWindow) => {
             selectedField={SELECTED_FIELD}
             selectable={{
               enabled: true,
-              mode: "single"
+              mode: "single",
             }}
             onSelectionChange={onSubDataSelectionChange}
             fixedScroll={true}

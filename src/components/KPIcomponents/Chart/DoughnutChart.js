@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Chart } from "primereact/chart";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import { Chart } from "primereact/chart";
+import { useEffect, useState } from "react";
 import { numberWithCommas3 } from "../../CommonFunction";
 
 export default function DoughnutChart(props) {
@@ -41,7 +41,9 @@ export default function DoughnutChart(props) {
               font: {
                 weight: "bold",
               },
-              formatter: function(value, context) { return numberWithCommas3(value); },
+              formatter: function (value, context) {
+                return numberWithCommas3(value);
+              },
             },
           },
         };
@@ -75,12 +77,12 @@ export default function DoughnutChart(props) {
             position: "absolute",
             width: "100%",
             top: "50%",
-            left: "30%"
+            left: "30%",
           }}
         >
           <h5>총 생산량 : {props.data == undefined ? 0 : props.data.qty}</h5>
-          <h5>총 양품수 : {props.data== undefined ? 0 : props.data.badqty}</h5>
-          <h5>총 불량수 : {props.data== undefined ? 0 : props.data.totqty}</h5>
+          <h5>총 양품수 : {props.data == undefined ? 0 : props.data.badqty}</h5>
+          <h5>총 불량수 : {props.data == undefined ? 0 : props.data.totqty}</h5>
         </div>
       ) : (
         ""

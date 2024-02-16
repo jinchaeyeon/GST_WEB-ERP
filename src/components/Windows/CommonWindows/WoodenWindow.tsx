@@ -8,7 +8,7 @@ import {
   GridFooterCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { useEffect, useRef, useState } from "react";

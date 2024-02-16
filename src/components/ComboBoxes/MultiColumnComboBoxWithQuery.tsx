@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
 import {
-  MultiColumnComboBox as KendoMultiColumnComboBox,
   ComboBoxChangeEvent,
+  MultiColumnComboBox as KendoMultiColumnComboBox,
 } from "@progress/kendo-react-dropdowns";
+import { useCallback, useEffect, useState } from "react";
 
-import { useApi } from "../../hooks/api";
 import { bytesToBase64 } from "byte-base64";
+import { useApi } from "../../hooks/api";
 
 type TComboBox = {
   name: string;

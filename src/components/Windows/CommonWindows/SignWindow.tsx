@@ -1,17 +1,18 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
+  GridDataStateChangeEvent,
   GridFooterCellProps,
+  GridItemChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridDataStateChangeEvent,
-  GridItemChangeEvent,
 } from "@progress/kendo-react-grid";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../../hooks/api";
+import { SignatureChangeEvent } from "@progress/kendo-react-inputs";
+import { useEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -19,29 +20,17 @@ import {
   GridTitle,
   GridTitleContainer,
 } from "../../../CommonStyled";
-import { Iparameters } from "../../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
-import {
-  UseParaPc,
-  UseGetValueFromSessionItem,
-} from "../../CommonFunction";
+import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
-import {
-  PAGE_SIZE,
-  SELECTED_FIELD,
-  EDIT_FIELD,
-} from "../../CommonString";
-import {
-  getGridItemChangedData,
-} from "../../CommonFunction";
-import { CellRender, RowRender } from "../../Renderers/Renderers";
-import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoading, loginResultState } from "../../../store/atoms";
-import Sign from "../../Sign/Sign";
-import { SignatureChangeEvent } from "@progress/kendo-react-inputs";
+import { Iparameters } from "../../../store/types";
 import CheckBoxCell from "../../Cells/CheckBoxCell";
 import CheckBoxReadOnlyCell from "../../Cells/CheckBoxReadOnlyCell";
+import { UseGetValueFromSessionItem, UseParaPc, getGridItemChangedData } from "../../CommonFunction";
+import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 import RequiredHeader from "../../HeaderCells/RequiredHeader";
+import { CellRender, RowRender } from "../../Renderers/Renderers";
+import Sign from "../../Sign/Sign";
 
 let deletedMainRows: any[] = [];
 let temp = 0;
@@ -60,7 +49,6 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
-
 
   const [loginResult] = useRecoilState(loginResultState);
   const role = loginResult ? loginResult.role : "";
@@ -163,8 +151,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
             (row: any) =>
-              row.reference_key + "_" + row.seq ==
-              filters.find_row_value
+              row.reference_key + "_" + row.seq == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -177,7 +164,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
       setMainDataResult((prev) => {
         return {
           data: rows,
-           total: totalRowCnt == -1 ? 0 : totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
       if (totalRowCnt > 0) {
@@ -186,8 +173,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
             ? rows[0]
             : rows.find(
                 (row: any) =>
-                  row.reference_key + "_" + row.seq ==
-                  filters.find_row_value
+                  row.reference_key + "_" + row.seq == filters.find_row_value
               );
 
         if (selectedRow != undefined) {
@@ -438,7 +424,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
             newData.push(item);
             Object2.push(index);
           } else {
-            if(!item.rowstatus || item.rowstatus != "N") {
+            if (!item.rowstatus || item.rowstatus != "N") {
               const newData2 = {
                 ...item,
                 rowstatus: "D",
@@ -467,7 +453,6 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
   };
 
   const onAddClick = () => {
-
     mainDataResult.data.map((item) => {
       if (item.num > temp) {
         temp = item.num;
@@ -497,18 +482,17 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
 
   const onSave = async () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N") &&
-        item.rowstatus !== undefined
-      );
+      return item.rowstatus === "N" && item.rowstatus !== undefined;
     });
     const dataItem2 = mainDataResult.data.filter((item: any) => {
-      return (
-        (item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
+      return item.rowstatus === "U" && item.rowstatus !== undefined;
     });
-    if (dataItem.length === 0 && dataItem2.length === 0 && deletedMainRows.length === 0) return false;
+    if (
+      dataItem.length === 0 &&
+      dataItem2.length === 0 &&
+      deletedMainRows.length === 0
+    )
+      return false;
 
     //검증
     let valid = true;
@@ -575,10 +559,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
             )[0];
             setFilters((prev) => ({
               ...prev,
-              find_row_value:
-                datas != undefined
-                  ? data.returnString
-                  : "",
+              find_row_value: datas != undefined ? data.returnString : "",
               pgNum: prev.pgNum,
               isSearch: true,
             }));
@@ -636,10 +617,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
           )[0];
           setFilters((prev) => ({
             ...prev,
-            find_row_value:
-              datas != undefined
-                ? data.returnString
-                : "",
+            find_row_value: datas != undefined ? data.returnString : "",
             isSearch: true,
           }));
         }
@@ -693,10 +671,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
           )[0];
           setFilters((prev) => ({
             ...prev,
-            find_row_value:
-              datas != undefined
-                ? data.returnString
-                : "",
+            find_row_value: datas != undefined ? data.returnString : "",
             isSearch: true,
           }));
         }
@@ -798,11 +773,12 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
         <GridTitleContainer>
           <GridTitle>서명란</GridTitle>
         </GridTitleContainer>
-        <GridContainer height = "30vh">
+        <GridContainer height="30vh">
           <Sign
             value={
               mainDataResult.data.filter(
-                (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+                (item) =>
+                  item.num == Object.getOwnPropertyNames(selectedState)[0]
               )[0] == undefined
                 ? ""
                 : mainDataResult.data.filter(
@@ -812,7 +788,8 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
             }
             disabled={
               mainDataResult.data.filter(
-                (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+                (item) =>
+                  item.num == Object.getOwnPropertyNames(selectedState)[0]
               )[0] == undefined
                 ? true
                 : mainDataResult.data.filter(

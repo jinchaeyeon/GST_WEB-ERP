@@ -1,4 +1,3 @@
-import React from "react";
 import Grid from "@mui/material/Grid";
 import { RadioButton } from "primereact/radiobutton";
 import { GetPropertyValueByName } from "../../../../src/components/CommonFunction";
@@ -6,14 +5,21 @@ import { GetPropertyValueByName } from "../../../../src/components/CommonFunctio
 const Radio = (props) => {
   const dataList =
     props.option !== null
-      ? GetPropertyValueByName(props.option.menuCustomDefaultOptions, "query")//props.option.menuCustomDefaultOptions["query"]
+      ? GetPropertyValueByName(props.option.menuCustomDefaultOptions, "query") //props.option.menuCustomDefaultOptions["query"]
       : null;
   const dataItem = dataList.find((item) => item.id === props.id);
   const listData = dataItem.Rows;
 
   return (
     <>
-      <Grid item xs={props.xs} sm={props.sm} md={props.md} lg={props.lg} xl={props.xl}>
+      <Grid
+        item
+        xs={props.xs}
+        sm={props.sm}
+        md={props.md}
+        lg={props.lg}
+        xl={props.xl}
+      >
         <div className="flex flex-wrap gap-2">
           <h4 style={{ paddingTop: "20px" }}>{props.title} :</h4>
           {listData.map((item) => (

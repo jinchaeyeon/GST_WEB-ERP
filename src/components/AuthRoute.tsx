@@ -1,6 +1,4 @@
-import { Route, Redirect, RouteProps } from "react-router-dom";
-import { useRecoilValue } from "recoil";
-import { accessTokenState } from "../store/atoms";
+import { Redirect, Route, RouteProps } from "react-router-dom";
 // import { useRecoilState } from "recoil";
 // import { tokenState } from "../store/atoms";
 
@@ -165,6 +163,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "AC_A3000W" ||
       link == "AC_A3001W" ||
       link == "AC_A3100W" ||
+      link == "AC_A5020W" ||
       link == "AC_B1100W" ||
       link == "AC_B1240W" ||
       link == "AC_B1260W" ||

@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Chart } from "primereact/chart";
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { useEffect, useState } from "react";
 import { numberWithCommas3 } from "../../CommonFunction";
 
 export default function LineChart(props) {
   const [chartData, setChartData] = useState({});
   const [chartOptions, setChartOptions] = useState({});
 
-  function getRandomColor(){
-    return '#'+Math.floor(Math.random()*16777215).toString(16);
+  function getRandomColor() {
+    return "#" + Math.floor(Math.random() * 16777215).toString(16);
   }
 
   useEffect(() => {
@@ -27,17 +27,21 @@ export default function LineChart(props) {
         datasets: props.label.map((item, idx) => {
           return {
             label: props.label[idx],
-            backgroundColor: props.random == true? getRandomColor() : props.color[idx],
-            borderColor: props.random == true? getRandomColor() : props.borderColor[idx],
+            backgroundColor:
+              props.random == true ? getRandomColor() : props.color[idx],
+            borderColor:
+              props.random == true ? getRandomColor() : props.borderColor[idx],
             fill: true,
             tension: 0.4,
-            data: propsData.filter(item => item[props.name] == props.label[idx]).map((items)=>{
-              return items[props.value]
-            }),
-          }
+            data: propsData
+              .filter((item) => item[props.name] == props.label[idx])
+              .map((items) => {
+                return items[props.value];
+              }),
+          };
         }),
       };
- 
+
       const options = {
         maintainAspectRatio: false,
         aspectRatio: 0.6,
@@ -49,20 +53,22 @@ export default function LineChart(props) {
             align: "end",
           },
           datalabels: {
-            color: 'black',
-            display: function(context) {
+            color: "black",
+            display: function (context) {
               return context.dataset.data[context.dataIndex] > 0;
             },
             font: {
-              weight: 'bold',
+              weight: "bold",
             },
-            anchor: 'end',
+            anchor: "end",
             clamp: true,
             clip: true,
-            align: '-135',
+            align: "-135",
             offset: 1,
-            formatter: function(value, context) { return numberWithCommas3(value); },
-          }
+            formatter: function (value, context) {
+              return numberWithCommas3(value);
+            },
+          },
         },
         scales: {
           x: {
@@ -91,7 +97,12 @@ export default function LineChart(props) {
 
   return (
     <div className="card">
-      <Chart type="line" data={chartData} plugins={[ChartDataLabels]} options={chartOptions} />
+      <Chart
+        type="line"
+        data={chartData}
+        plugins={[ChartDataLabels]}
+        options={chartOptions}
+      />
     </div>
   );
 }

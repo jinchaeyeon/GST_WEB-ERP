@@ -1,4 +1,20 @@
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
+import {
+  Grid,
+  GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
+import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -10,7 +26,9 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
+import DateCell from "../components/Cells/DateCell";
+import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
   UseBizComponent,
@@ -26,44 +44,26 @@ import {
   setDefaultDate,
   useSysMessage,
 } from "../components/CommonFunction";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import FilterContainer from "../components/Containers/FilterContainer";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import { Input } from "@progress/kendo-react-inputs";
-import { Button } from "@progress/kendo-react-buttons";
-import { gridList } from "../store/columns/AC_A1020W_C";
+import AC_A1020W_Print_Window from "../components/Windows/AC_A1020W_Print_Window";
+import DetailWindow from "../components/Windows/AC_A1020W_Window";
+import ApprovalWindow from "../components/Windows/CommonWindows/ApprovalWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
-import {
-  Grid,
-  GridCellProps,
-  GridColumn,
-  GridDataStateChangeEvent,
-  GridFooterCellProps,
-  GridPageChangeEvent,
-  GridSelectionChangeEvent,
-  getSelectedState,
-} from "@progress/kendo-react-grid";
-import { DataResult, State, getter, process } from "@progress/kendo-data-query";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
   isLoading,
   loginResultState,
 } from "../store/atoms";
-import { useApi } from "../hooks/api";
-import { bytesToBase64 } from "byte-base64";
-import DateCell from "../components/Cells/DateCell";
-import NumberCell from "../components/Cells/NumberCell";
-import ApprovalWindow from "../components/Windows/CommonWindows/ApprovalWindow";
-import DetailWindow from "../components/Windows/AC_A1020W_Window";
-import AC_A1020W_Print_Window from "../components/Windows/AC_A1020W_Print_Window";
+import { gridList } from "../store/columns/AC_A1020W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 interface IPrsnnum {
   user_id: string;
@@ -622,7 +622,7 @@ const AC_A1020W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
     //초기화
     setParaDataDeleted((prev) => ({
@@ -872,7 +872,7 @@ const AC_A1020W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 location: locationListData.find(
-                  (item: any) => (item.sub_code = row.location)
+                  (item: any) => item.sub_code == row.location
                 )?.code_name,
                 dptcd: dptcdListData.find(
                   (item: any) => item.dptcd === row.dptcd

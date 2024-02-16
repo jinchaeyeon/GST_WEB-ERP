@@ -76,6 +76,6 @@ export const gridList: Array<TGrid> = [
         caption: "수정PC",
         width: 200,
       },
-    ]
+    ],
   },
 ];

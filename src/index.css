@@ -5,7 +5,7 @@ body {
     sans-serif, "TheJamsil5Bold";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --swiper-navigation-size : 20px;
+  --swiper-navigation-size: 20px;
 }
 
 code {
@@ -13,7 +13,7 @@ code {
     monospace;
 }
 
-.k-numerictextbox > .k-input-inner{
+.k-numerictextbox>.k-input-inner {
   text-align: right;
 }
 

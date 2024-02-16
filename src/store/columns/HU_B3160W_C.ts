@@ -58,6 +58,6 @@ export const gridList: Array<TGrid> = [
         caption: "실지급액",
         width: 100,
       },
-    ]
+    ],
   },
 ];

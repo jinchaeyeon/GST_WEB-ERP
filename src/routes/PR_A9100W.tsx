@@ -703,7 +703,7 @@ const PR_A9100W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     //조회조건 파라미터
     const parameters: Iparameters = {
@@ -863,7 +863,11 @@ const PR_A9100W: React.FC = () => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -1406,7 +1410,7 @@ const PR_A9100W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraData.work_type = ""; //초기화

@@ -33,6 +33,7 @@ import CheckBoxCell from "../Cells/CheckBoxCell";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -42,9 +43,12 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
@@ -62,7 +66,13 @@ const topHeight = 140.13;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
 let temp = 0;
-const CopyWindow = ({ setVisible, setData, custcd,custnm,pathname }: IWindow) => {
+const CopyWindow = ({
+  setVisible,
+  setData,
+  custcd,
+  custnm,
+  pathname,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -106,7 +116,10 @@ const CopyWindow = ({ setVisible, setData, custcd,custnm,pathname }: IWindow) =>
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
@@ -338,7 +351,7 @@ const CopyWindow = ({ setVisible, setData, custcd,custnm,pathname }: IWindow) =>
       setFilters((prev) => ({
         ...prev,
         custcd: custcd,
-        custnm: custnm
+        custnm: custnm,
       }));
     }
   }, []);

@@ -22,7 +22,6 @@ import {
   setDefaultDate,
 } from "../components/CommonFunction";
 import FilterContainer from "../components/Containers/FilterContainer";
-import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import FileViewers from "../components/Viewer/FileViewers";
 import { useApi } from "../hooks/api";
 import { isLoading, sessionItemState } from "../store/atoms";
@@ -97,7 +96,7 @@ const AC_B6040W: React.FC = () => {
     let data2: any;
     setLoading(true);
     const parameters = {
-     para: "list?emmId=AC_B6040_01",
+      para: "list?emmId=AC_B6040_01",
     };
 
     try {

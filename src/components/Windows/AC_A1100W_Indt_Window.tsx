@@ -2,24 +2,24 @@ import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
-    Grid,
-    GridColumn,
-    GridDataStateChangeEvent,
-    GridFooterCellProps,
-    GridPageChangeEvent,
-    GridSelectionChangeEvent,
-    getSelectedState,
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
-    BottomContainer,
-    ButtonContainer,
-    FilterBox,
-    GridContainer,
-    TitleContainer,
+  BottomContainer,
+  ButtonContainer,
+  FilterBox,
+  GridContainer,
+  TitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
@@ -27,7 +27,11 @@ import { isLoading, loginResultState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
-import { UseMessages, convertDateToStr, handleKeyPressSearch } from "../CommonFunction";
+import {
+  UseMessages,
+  convertDateToStr,
+  handleKeyPressSearch,
+} from "../CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 
@@ -289,7 +293,7 @@ const CopyWindow = ({
         tottaxamt: selectedData.amt,
         totwgt: selectedData.totwgt,
         wonamt: 0,
-        rowstatus: "N"
+        rowstatus: "N",
       };
       setData(newItem);
       onClose();
@@ -342,7 +346,7 @@ const CopyWindow = ({
       tottaxamt: selectedData.amt,
       totwgt: selectedData.totwgt,
       wonamt: 0,
-      rowstatus: "N"
+      rowstatus: "N",
     };
     setData(newItem);
     onClose();

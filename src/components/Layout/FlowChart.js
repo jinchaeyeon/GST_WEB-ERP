@@ -493,7 +493,8 @@ const FlowChart = (props) => {
           // it's important that you create a new object here
           // in order to notify react flow about the change
           edge.animated = str[str.length - 2] == "_" ? true : false;
-          edge.type = str[str.length - 2] == "_" ? str.slice(0,str.length-2) : str;
+          edge.type =
+            str[str.length - 2] == "_" ? str.slice(0, str.length - 2) : str;
         }
 
         return edge;
@@ -524,18 +525,19 @@ const FlowChart = (props) => {
       return false;
     }
     let valid = true;
-    if(nodes.filter((item) => {
-      if(item.type == "groupNode" || item.type == "customNode") {
-        if(item.data.color == "") {
-          valid = false;
+    if (
+      nodes.filter((item) => {
+        if (item.type == "groupNode" || item.type == "customNode") {
+          if (item.data.color == "") {
+            valid = false;
+          }
         }
+      })
+    )
+      if (valid != true) {
+        alert("필수값을 채워주세요");
+        return false;
       }
-    }))
-
-    if(valid != true) {
-      alert("필수값을 채워주세요");
-      return false;
-    }
     takeScreenShot(ref.current).then(download);
   };
 

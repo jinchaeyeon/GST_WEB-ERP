@@ -15,15 +15,14 @@ import {
 import { useApi } from "../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
-  deletedAttadatnumsState,
   deletedNameState,
   isLoading,
-  unsavedAttadatnumsState,
-  unsavedNameState,
+  unsavedNameState
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
@@ -33,10 +32,8 @@ import {
   findMessage,
   isValidDate,
   toDate,
-  GetPropertyValueByName,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
-import AttachmentsWindow from "./CommonWindows/AttachmentsWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
@@ -97,7 +94,7 @@ const CopyWindow = ({
   reloadData,
   basicdata,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -120,7 +117,7 @@ const CopyWindow = ({
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
-  
+
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
   const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
@@ -128,7 +125,10 @@ const CopyWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         causedcd: defaultOption.find((item: any) => item.id === "causedcd")
@@ -522,6 +522,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

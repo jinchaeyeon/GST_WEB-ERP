@@ -1,4 +1,3 @@
-import React from "react";
 import { GridCellProps } from "@progress/kendo-react-grid";
 import { Input, InputChangeEvent } from "@progress/kendo-react-inputs";
 
@@ -31,8 +30,10 @@ const EncryptedCell = (props: GridCellProps) => {
     <td aria-colindex={ariaColumnIndex} data-grid-col-index={columnIndex}>
       {isInEdit ? (
         <Input value={value} onChange={handleChange} type={"password"}></Input>
+      ) : value != "" ? (
+        "*********"
       ) : (
-        value != "" ? "*********" : ""
+        ""
       )}
     </td>
   );

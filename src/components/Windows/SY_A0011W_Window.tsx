@@ -6,16 +6,16 @@ import {
   BottomContainer,
   ButtonContainer,
   FormBox,
-  FormBoxWrap
+  FormBoxWrap,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { Iparameters } from "../../store/types";
 import {
   UseGetValueFromSessionItem,
+  UseMessages,
   UseParaPc,
   findMessage,
-  UseMessages
 } from "../CommonFunction";
 
 type TKendoWindow = {
@@ -26,7 +26,7 @@ type TKendoWindow = {
   user_group_id?: string;
   isCopy?: boolean;
   para?: Iparameters; //{};
-  modal? : boolean;
+  modal?: boolean;
   pathname: string;
 };
 
@@ -39,7 +39,7 @@ const KendoWindow = ({
   isCopy,
   para,
   modal = false,
-  pathname
+  pathname,
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
@@ -50,8 +50,8 @@ const KendoWindow = ({
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: isMobile == true? deviceWidth : 500,
-    height: isMobile == true? 500 : 320,
+    width: isMobile == true ? deviceWidth : 500,
+    height: isMobile == true ? 500 : 320,
   });
 
   const handleMove = (event: WindowMoveEvent) => {
@@ -85,7 +85,7 @@ const KendoWindow = ({
   const onClose = () => {
     setVisible(false);
   };
-  
+
   const processApi = useApi();
 
   useEffect(() => {
@@ -139,7 +139,6 @@ const KendoWindow = ({
       });
     }
   };
-  
 
   const [messagesData, setMessagesData] = useState<any>(null);
   UseMessages(pathname, setMessagesData);
@@ -200,8 +199,6 @@ const KendoWindow = ({
   };
 
   const handleSubmit = () => {
-    
-
     let valid = true;
     try {
       if (!initialVal.user_group_id) {
@@ -219,12 +216,11 @@ const KendoWindow = ({
     setParaData((prev) => ({
       ...prev,
       work_type: workType,
-      user_group_id : initialVal.user_group_id,
-      user_group_name : initialVal.user_group_name,
+      user_group_id: initialVal.user_group_id,
+      user_group_name: initialVal.user_group_name,
       memo: initialVal.memo,
       use_yn: initialVal.use_yn === "Y" ? "Y" : "N",
     }));
-    
   };
 
   useEffect(() => {
@@ -303,7 +299,7 @@ const KendoWindow = ({
       </FormBoxWrap>
       <BottomContainer>
         <ButtonContainer>
-        <Button themeColor={"primary"} onClick={handleSubmit}>
+          <Button themeColor={"primary"} onClick={handleSubmit}>
             저장
           </Button>
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>

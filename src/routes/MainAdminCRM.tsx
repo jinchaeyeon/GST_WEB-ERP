@@ -41,10 +41,10 @@ import {
 } from "../components/CommonString";
 import CurrentTime from "../components/DDGDcomponents/CurrentTime";
 import DetailWindow2 from "../components/Windows/CM_A0000_301W_Window";
+import AdjustApprovalWindow from "../components/Windows/DDGD/AdjustApprovalWindow";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
-import AdjustApprovalWindow from "../components/Windows/DDGD/AdjustApprovalWindow";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -269,7 +269,7 @@ const Main: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(mainNoticefilters);
       setMainNoticeFilters((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);

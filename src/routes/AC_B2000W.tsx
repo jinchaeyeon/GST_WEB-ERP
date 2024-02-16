@@ -28,6 +28,7 @@ import {
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
+import CenterCell from "../components/Cells/CenterCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
@@ -47,7 +48,6 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_B2000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import CenterCell from "../components/Cells/CenterCell";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -237,14 +237,14 @@ const AC_B2000W: React.FC = () => {
       custcd: "",
       acntcd: "",
       pgNum: 1,
-    }))
+    }));
     setFilters3((prev) => ({
       ...prev,
       acntcd: "",
       custcd: "",
       acntdt: "",
       pgNum: 1,
-    }))
+    }));
     if (e.selected == 0) {
       setFilters((prev) => ({
         ...prev,
@@ -563,7 +563,7 @@ const AC_B2000W: React.FC = () => {
             isSearch: true,
             pgNum: 1,
           }));
-        } 
+        }
       } else {
         setPage3(initialPageState);
         setMainDataResult3(process([], mainDataState3));
@@ -1165,8 +1165,8 @@ const AC_B2000W: React.FC = () => {
                             width={item.width}
                             cell={
                               centerField.includes(item.fieldName)
-                              ? CenterCell
-                              : numberField.includes(item.fieldName)
+                                ? CenterCell
+                                : numberField.includes(item.fieldName)
                                 ? NumberCell
                                 : undefined
                             }

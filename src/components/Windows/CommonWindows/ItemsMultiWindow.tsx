@@ -290,7 +290,7 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
       itemlvl5: selectedData.itemlvl5,
       itemnm: selectedData.itemnm,
       itemno: selectedData.itemno,
-      itemthick:selectedData.itemthick,
+      itemthick: selectedData.itemthick,
       load_place_601: selectedData.load_place_601,
       maker: selectedData.maker,
       model: selectedData.model,

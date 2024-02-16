@@ -1,20 +1,23 @@
 import { Button } from "@progress/kendo-react-buttons";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { Checkbox, Input, InputChangeEvent, TextArea } from "@progress/kendo-react-inputs";
+import {
+  Checkbox,
+  Input,
+  TextArea
+} from "@progress/kendo-react-inputs";
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
+  ButtonInInput,
   FormBox,
   FormBoxWrap,
-  ButtonInInput,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import {
-  isLoading,
-} from "../../store/atoms";
+import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
@@ -25,23 +28,20 @@ import {
   UseParaPc,
   convertDateToStr,
   dateformat,
-  findMessage,
-  GetPropertyValueByName,
+  findMessage
 } from "../CommonFunction";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 
 import BizComponentPopupWindow from "./CommonWindows/BizComponentPopupWindow";
 
-const firstDay = (date:Date) => {
+const firstDay = (date: Date) => {
   return new Date(date.getFullYear(), date.getMonth(), 1);
-}
+};
 
-const lastDay = (date:Date) => {
+const lastDay = (date: Date) => {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0);
-}
+};
 
-enum weekDay
-{
+enum weekDay {
   None = 0,
   Sunday = 1 << 0,
   Monday = 1 << 1,
@@ -49,7 +49,7 @@ enum weekDay
   Wednesday = 1 << 3,
   Thursday = 1 << 4,
   Friday = 1 << 5,
-  Saturday = 1 << 6
+  Saturday = 1 << 6,
 }
 
 type TKendoWindow = {
@@ -69,7 +69,7 @@ const KendoWindow = ({
   isCopy,
   membership_id,
   modal = false,
-  pathname
+  pathname,
 }: TKendoWindow) => {
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -82,14 +82,16 @@ const KendoWindow = ({
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    if (name == "strdt") { // 등록일자 변경 시 만기일자도 셋팅
-      let enddt:Date;
+    if (name == "strdt") {
+      // 등록일자 변경 시 만기일자도 셋팅
+      let enddt: Date;
 
       if (value) {
-        if (value.getDate() == 1) { // 등록일자가 월초면 만기일자를 월말로 셋팅
-        enddt = lastDay(value);
-        }
-        else { // 월초가 아니면 한달뒤로 셋팅
+        if (value.getDate() == 1) {
+          // 등록일자가 월초면 만기일자를 월말로 셋팅
+          enddt = lastDay(value);
+        } else {
+          // 월초가 아니면 한달뒤로 셋팅
           enddt = new Date(value);
           enddt.setMonth(enddt.getMonth() + 1);
         }
@@ -99,38 +101,32 @@ const KendoWindow = ({
           [name]: value,
           enddt: enddt,
         }));
-      }
-      else {
+      } else {
         setInitialVal((prev) => ({
           ...prev,
           [name]: value,
         }));
       }
-    }
-    else if (name == "enddt") {
+    } else if (name == "enddt") {
       setInitialVal((prev) => ({
         ...prev,
         [name]: value,
       }));
-    }
-    else if (name in weekDay) 
-    {
-      const day:any = weekDay[name];
+    } else if (name in weekDay) {
+      const day: any = weekDay[name];
 
       if (value) {
         setInitialVal((prev) => ({
           ...prev,
           dayofweek: prev.dayofweek | day,
         }));
-      }
-      else {
+      } else {
         setInitialVal((prev) => ({
           ...prev,
           dayofweek: prev.dayofweek & ~day,
         }));
       }
-    } 
-    else {
+    } else {
       setInitialVal((prev) => ({
         ...prev,
         [name]: value,
@@ -140,9 +136,10 @@ const KendoWindow = ({
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
 
-    if (name == "gubun"
-      && bizComponentData) {
-      const BA330 = bizComponentData.find((item: any) => item.bizComponentId === "L_BA330");
+    if (name == "gubun" && bizComponentData) {
+      const BA330 = bizComponentData.find(
+        (item: any) => item.bizComponentId === "L_BA330"
+      );
       const row = BA330.data.Rows.find((item: any) => item.sub_code == value);
 
       setInitialVal((prev) => ({
@@ -152,16 +149,13 @@ const KendoWindow = ({
         adjqty: row.numref2,
         amt: row.numref3,
       }));
-    }
-    else {
+    } else {
       setInitialVal((prev) => ({
         ...prev,
         [name]: value,
       }));
     }
   };
-
-
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
@@ -203,12 +197,13 @@ const KendoWindow = ({
     });
   };
 
-  const [standardWindowVisible, setStandardWindowVisible] = useState<boolean>(false);
+  const [standardWindowVisible, setStandardWindowVisible] =
+    useState<boolean>(false);
   const onStandardClick = () => {
     setStandardWindowVisible(true);
   };
 
-  const setPopupData = (data:any) => {
+  const setPopupData = (data: any) => {
     let custcd = "";
     let custnm = "";
     if (data.hasOwnProperty("custcd")) {
@@ -237,9 +232,7 @@ const KendoWindow = ({
     }
   }, []);
 
-  const [initialVal, setInitialVal] = useState<
-    {[id: string]: any}
-  >({
+  const [initialVal, setInitialVal] = useState<{ [id: string]: any }>({
     membership_id: "",
     custcd: "",
     custnm: "",
@@ -369,11 +362,19 @@ const KendoWindow = ({
     }
     if (data.isSuccess === true) {
       if (workType === "U") {
-        setFilters((prev:any) => ({ ...prev, find_row_value: data.returnString, isSearch: true })); // 한번만 조회되도록
+        setFilters((prev: any) => ({
+          ...prev,
+          find_row_value: data.returnString,
+          isSearch: true,
+        })); // 한번만 조회되도록
         fetchMain();
       } else {
         setVisible(false);
-        setFilters((prev:any) => ({ ...prev, find_row_value: data.returnString, isSearch: true })); // 한번만 조회되도록
+        setFilters((prev: any) => ({
+          ...prev,
+          find_row_value: data.returnString,
+          isSearch: true,
+        })); // 한번만 조회되도록
       }
     } else {
       console.log("[오류 발생]");
@@ -408,20 +409,16 @@ const KendoWindow = ({
       if (!custcd) {
         errorMessage = findMessage(messagesData, "CR_A0040W_001"); // 반려견코드를 입력해주세요.
         vaild = false;
-      }
-      else if (!janqty) {
+      } else if (!janqty) {
         errorMessage = findMessage(messagesData, "CR_A0040W_002"); // 등원횟수를 입력해주세요.
         vaild = false;
-      }
-      else if (!adjqty) {
+      } else if (!adjqty) {
         errorMessage = findMessage(messagesData, "CR_A0040W_003"); // 변경횟수를 입력해주세요.
         vaild = false;
-      }
-      else if (!strdt) {
+      } else if (!strdt) {
         errorMessage = findMessage(messagesData, "CR_A0040W_005"); // 시작일자를 입력해주세요.
         vaild = false;
-      }
-      else if (!enddt) {
+      } else if (!enddt) {
         errorMessage = findMessage(messagesData, "CR_A0040W_006"); // 만기일자를 입력해주세요.
         vaild = false;
       }
@@ -463,207 +460,209 @@ const KendoWindow = ({
       onClose={onClose}
       modal={modal}
     >
-        {/* <GridContainer width={`68%`}> */}
-          <FormBoxWrap>
-            <FormBox>
-              <tbody>
-                <tr>
-                  <th>회원권ID</th>
-                  <td>
-                    {workType == "N" ? (
-                      <Input
-                        name="membership_id"
-                        type="text"
-                        value="자동채번"// value={initialVal.membership_id}
-                        className="readonly"//className="required"
-                        //onChange={filterInputChange}
-                      />
-                    ) : (
-                      <Input
-                        name="membership_id"
-                        type="text"
-                        value={initialVal.membership_id}
-                        className="readonly"
-                      />
-                    )}
-                  </td>
-                  <th>반려견코드</th>
-                  <td>
-                    {workType == "N" ? (
-                      <>
-                        <Input
-                          name="custcd"
-                          type="text"
-                          value={initialVal.custcd}
-                          className="required"
-                          readOnly={true}
-                          onChange={filterInputChange}
-                        />
-                        <ButtonInInput>
-                          <Button
-                            type={"button"}
-                            onClick={onStandardClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </>
-                    ) : (
-                      <Input
-                        name="custcd"
-                        type="text"
-                        value={initialVal.custcd}
-                        className="readonly"
-                      />
-                    )}
-                  </td>
-                  <th>반려견명</th>
-                  <td>
-                      <Input
-                        name="custnm"
-                        type="text"
-                        value={initialVal.custnm}
-                        className="readonly"
-                      />
-                  </td>
-                </tr>
-                <tr>
-                  <th>회원권 종류</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        type="new"
-                        name="gubun"
-                        value={initialVal.gubun}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                  <th>시작일자</th>
-                  <td>
-                    <DatePicker
-                      name="strdt"
-                      value={initialVal.strdt}
-                      format="yyyy-MM-dd"
-                      className="required"
-                      onChange={filterInputChange}
-                      placeholder=""
-                    />
-                  </td>
-                  <th>등원가능 횟수</th>
-                  <td>
-                    {workType == "N" ? (
-                      <Input
-                        name="janqty"
-                        type="number"
-                        value={initialVal.janqty}
-                        className="required"
-                        onChange={filterInputChange}
-                      />
-                    ) : (
-                      <Input
-                        name="janqty"
-                        type="number"
-                        value={initialVal.janqty}
-                        className="readonly"
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>금액</th>
-                  <td>
+      {/* <GridContainer width={`68%`}> */}
+      <FormBoxWrap>
+        <FormBox>
+          <tbody>
+            <tr>
+              <th>회원권ID</th>
+              <td>
+                {workType == "N" ? (
+                  <Input
+                    name="membership_id"
+                    type="text"
+                    value="자동채번" // value={initialVal.membership_id}
+                    className="readonly" //className="required"
+                    //onChange={filterInputChange}
+                  />
+                ) : (
+                  <Input
+                    name="membership_id"
+                    type="text"
+                    value={initialVal.membership_id}
+                    className="readonly"
+                  />
+                )}
+              </td>
+              <th>반려견코드</th>
+              <td>
+                {workType == "N" ? (
+                  <>
                     <Input
-                      name="amt"
-                      type="number"
-                      value={initialVal.amt}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>만기일자</th>
-                  <td>
-                    <DatePicker
-                      name="enddt"
-                      value={initialVal.enddt}
-                      format="yyyy-MM-dd"
+                      name="custcd"
+                      type="text"
+                      value={initialVal.custcd}
                       className="required"
+                      readOnly={true}
                       onChange={filterInputChange}
-                      placeholder=""
                     />
-                  </td>
-                  <th>변경가능 횟수</th>
-                  <td>
-                    {workType == "N" ? (
-                      <Input
-                        name="adjqty"
-                        type="number"
-                        value={initialVal.adjqty}
-                        className="required"
-                        onChange={filterInputChange}
+                    <ButtonInInput>
+                      <Button
+                        type={"button"}
+                        onClick={onStandardClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
                       />
-                    ) : (
-                      <Input
-                        name="adjqty"
-                        type="number"
-                        value={initialVal.adjqty}
-                        className="readonly"
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>요일</th>
-                  <td>
-                    {" 월"}
-                    <Checkbox
-                      title="월"
-                      name="Monday"
-                      value={(initialVal.dayofweek & weekDay.Monday) ? true : false}
-                      onChange={filterInputChange}
-                    />
-                    {" 화"}
-                    <Checkbox
-                      title="화"
-                      name="Tuesday"
-                      value={(initialVal.dayofweek & weekDay.Tuesday) ? true : false}
-                      onChange={filterInputChange}
-                    />
-                    {" 수"}
-                    <Checkbox
-                      title="수"
-                      name="Wednesday"
-                      value={(initialVal.dayofweek & weekDay.Wednesday) ? true : false}
-                      onChange={filterInputChange}
-                    />
-                    {" 목"}
-                    <Checkbox
-                      title="목"
-                      name="Thursday"
-                      value={(initialVal.dayofweek & weekDay.Thursday) ? true : false}
-                      onChange={filterInputChange}
-                    />
-                    {" 금"}
-                    <Checkbox
-                      title="금"
-                      name="Friday"
-                      value={(initialVal.dayofweek & weekDay.Friday) ? true : false}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>메모</th>
-                  <td colSpan={7}>
-                    <TextArea
-                      value={initialVal.remark}
-                      name="remark"
-                      rows={2}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </FormBox>
-          </FormBoxWrap>
+                    </ButtonInInput>
+                  </>
+                ) : (
+                  <Input
+                    name="custcd"
+                    type="text"
+                    value={initialVal.custcd}
+                    className="readonly"
+                  />
+                )}
+              </td>
+              <th>반려견명</th>
+              <td>
+                <Input
+                  name="custnm"
+                  type="text"
+                  value={initialVal.custnm}
+                  className="readonly"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>회원권 종류</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    type="new"
+                    name="gubun"
+                    value={initialVal.gubun}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>시작일자</th>
+              <td>
+                <DatePicker
+                  name="strdt"
+                  value={initialVal.strdt}
+                  format="yyyy-MM-dd"
+                  className="required"
+                  onChange={filterInputChange}
+                  placeholder=""
+                />
+              </td>
+              <th>등원가능 횟수</th>
+              <td>
+                {workType == "N" ? (
+                  <Input
+                    name="janqty"
+                    type="number"
+                    value={initialVal.janqty}
+                    className="required"
+                    onChange={filterInputChange}
+                  />
+                ) : (
+                  <Input
+                    name="janqty"
+                    type="number"
+                    value={initialVal.janqty}
+                    className="readonly"
+                  />
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th>금액</th>
+              <td>
+                <Input
+                  name="amt"
+                  type="number"
+                  value={initialVal.amt}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>만기일자</th>
+              <td>
+                <DatePicker
+                  name="enddt"
+                  value={initialVal.enddt}
+                  format="yyyy-MM-dd"
+                  className="required"
+                  onChange={filterInputChange}
+                  placeholder=""
+                />
+              </td>
+              <th>변경가능 횟수</th>
+              <td>
+                {workType == "N" ? (
+                  <Input
+                    name="adjqty"
+                    type="number"
+                    value={initialVal.adjqty}
+                    className="required"
+                    onChange={filterInputChange}
+                  />
+                ) : (
+                  <Input
+                    name="adjqty"
+                    type="number"
+                    value={initialVal.adjqty}
+                    className="readonly"
+                  />
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th>요일</th>
+              <td>
+                {" 월"}
+                <Checkbox
+                  title="월"
+                  name="Monday"
+                  value={initialVal.dayofweek & weekDay.Monday ? true : false}
+                  onChange={filterInputChange}
+                />
+                {" 화"}
+                <Checkbox
+                  title="화"
+                  name="Tuesday"
+                  value={initialVal.dayofweek & weekDay.Tuesday ? true : false}
+                  onChange={filterInputChange}
+                />
+                {" 수"}
+                <Checkbox
+                  title="수"
+                  name="Wednesday"
+                  value={
+                    initialVal.dayofweek & weekDay.Wednesday ? true : false
+                  }
+                  onChange={filterInputChange}
+                />
+                {" 목"}
+                <Checkbox
+                  title="목"
+                  name="Thursday"
+                  value={initialVal.dayofweek & weekDay.Thursday ? true : false}
+                  onChange={filterInputChange}
+                />
+                {" 금"}
+                <Checkbox
+                  title="금"
+                  name="Friday"
+                  value={initialVal.dayofweek & weekDay.Friday ? true : false}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>메모</th>
+              <td colSpan={7}>
+                <TextArea
+                  value={initialVal.remark}
+                  name="remark"
+                  rows={2}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </FormBox>
+      </FormBoxWrap>
       <BottomContainer>
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={handleSubmit}>

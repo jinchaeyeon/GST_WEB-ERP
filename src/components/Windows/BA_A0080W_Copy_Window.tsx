@@ -24,7 +24,7 @@ import {
   FilterBox,
   GridContainer,
   GridTitleContainer,
-  TitleContainer
+  TitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
@@ -34,14 +34,19 @@ import CheckBoxCell from "../Cells/CheckBoxCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
-  GetPropertyValueByName,
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -67,7 +72,7 @@ const CopyWindow = ({
   setVisible,
   setData,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -91,7 +96,6 @@ const CopyWindow = ({
 
   //메시지 조회
 
-
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -99,7 +103,10 @@ const CopyWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
@@ -1028,7 +1035,10 @@ const CopyWindow = ({
             <GridColumn field="custnm" title="업체명" width="160px" />
           </Grid>
         </GridContainer>
-        <GridContainer height={`calc(50% - ${leftOverHeight}px)`} style={{marginTop: "35px"}}>
+        <GridContainer
+          height={`calc(50% - ${leftOverHeight}px)`}
+          style={{ marginTop: "35px" }}
+        >
           <GridTitleContainer>
             <ButtonContainer>
               <Button

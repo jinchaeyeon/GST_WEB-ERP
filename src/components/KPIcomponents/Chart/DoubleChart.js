@@ -1,20 +1,6 @@
-import React, { useState, useEffect } from "react";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Chart } from "primereact/chart";
-import {
-  red,
-  orange,
-  yellow,
-  lime,
-  lightGreen,
-  green,
-  cyan,
-  blue,
-  indigo,
-  purple,
-  pink,
-  grey,
-} from "@mui/material/colors";
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { useEffect, useState } from "react";
 import { numberWithCommas3 } from "../../CommonFunction";
 
 export default function DoubleChart(props) {
@@ -43,8 +29,8 @@ export default function DoubleChart(props) {
             }),
             datalabels: {
               align: "end",
-              anchor: "end"
-            }
+              anchor: "end",
+            },
           },
           {
             type: "bar",
@@ -55,8 +41,8 @@ export default function DoubleChart(props) {
             }),
             datalabels: {
               align: "end",
-              anchor: "end"
-            }
+              anchor: "end",
+            },
           },
         ],
       };
@@ -73,18 +59,20 @@ export default function DoubleChart(props) {
               color: textColor,
             },
             align: "end",
-            display: true
+            display: true,
           },
           datalabels: {
-            color: 'black',
-            display: function(context) {
+            color: "black",
+            display: function (context) {
               return context.dataset.data[context.dataIndex] > 0;
             },
             font: {
-              weight: 'bold'
+              weight: "bold",
             },
-            formatter: function(value, context) { return numberWithCommas3(value); },
-          }
+            formatter: function (value, context) {
+              return numberWithCommas3(value);
+            },
+          },
         },
         scales: {
           x: {
@@ -113,7 +101,12 @@ export default function DoubleChart(props) {
 
   return (
     <div className="card">
-      <Chart type="bar" data={chartData} plugins={[ChartDataLabels]} options={chartOptions} />
+      <Chart
+        type="bar"
+        data={chartData}
+        plugins={[ChartDataLabels]}
+        options={chartOptions}
+      />
     </div>
   );
 }

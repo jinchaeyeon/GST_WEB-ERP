@@ -1,14 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
 import {
   ComboBoxChangeEvent,
-  MultiColumnComboBox,
-  MultiColumnComboBoxChangeEvent,
+  MultiColumnComboBox
 } from "@progress/kendo-react-dropdowns";
-import { useApi } from "../../hooks/api";
-import { GridCellProps } from "@progress/kendo-react-grid";
-import { getQueryFromBizComponent } from "../CommonFunction";
 import { TreeListCellProps } from "@progress/kendo-react-treelist";
 import { bytesToBase64 } from "byte-base64";
+import { useCallback, useEffect, useState } from "react";
+import { useApi } from "../../hooks/api";
+import { getQueryFromBizComponent } from "../CommonFunction";
 
 interface CustomCellProps extends TreeListCellProps {
   bizComponent: any;

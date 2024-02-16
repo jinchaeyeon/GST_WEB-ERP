@@ -1,5 +1,4 @@
-import React from "react";
-import { Card, CardContent, CardHeader, Grid, Typography } from "@mui/material";
+import { Card, CardContent, CardHeader, Typography } from "@mui/material";
 
 const CardBox = (props) => {
   return (
@@ -17,7 +16,7 @@ const CardBox = (props) => {
         onClick={(e) => (props.Click == undefined ? "" : props.Click(e))}
       >
         <CardHeader
-        style={{paddingBottom: 0}}
+          style={{ paddingBottom: 0 }}
           title={
             <>
               <Typography
@@ -39,7 +38,7 @@ const CardBox = (props) => {
             </>
           }
         />
-        <CardContent style={{ display: "flex", justifyContent:"center" }}>
+        <CardContent style={{ display: "flex", justifyContent: "center" }}>
           <Typography
             style={{
               fontSize: props.fontsize,

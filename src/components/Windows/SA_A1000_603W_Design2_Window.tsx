@@ -146,7 +146,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
         "@p_quoseq": item.quoseq,
         "@p_status": "",
         "@p_person": "",
-        "@p_personnm":"",
+        "@p_personnm": "",
         "@p_cpmperson": "",
         "@p_cpmpersonnm": "",
         "@p_find_row_value": filters.find_row_value,

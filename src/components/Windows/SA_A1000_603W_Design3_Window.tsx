@@ -1,6 +1,7 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
 import { useCallback, useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
@@ -15,13 +16,12 @@ import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../CommonString";
 import {
   UseBizComponent,
   getQueryFromBizComponent,
   numberWithCommas3,
 } from "../CommonFunction";
-import { bytesToBase64 } from "byte-base64";
+import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE } from "../CommonString";
 type IWindow = {
   setVisible(t: boolean): void;
   filters: any;
@@ -121,7 +121,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
         "@p_quoseq": item.quoseq,
         "@p_status": "",
         "@p_person": "",
-        "@p_personnm":"",
+        "@p_personnm": "",
         "@p_cpmperson": "",
         "@p_cpmpersonnm": "",
         "@p_find_row_value": filters.find_row_value,

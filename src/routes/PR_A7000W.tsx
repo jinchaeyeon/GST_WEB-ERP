@@ -112,7 +112,7 @@ const numberField = [
   "planqty",
   "prodqty",
 ];
-const numberField2 = ["reqty"]
+const numberField2 = ["reqty"];
 const DateField = ["plandt", "finexpdt", "godt"];
 const customField = ["proccd", "prodmac", "prodemp"];
 const customHeaderField = ["proccd", "procseq", "reqty"];
@@ -570,7 +570,7 @@ const PR_A7000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -704,7 +704,7 @@ const PR_A7000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid2 = async (filters2: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     //조회조건 파라미터
     const parameters2: Iparameters = {
@@ -815,7 +815,7 @@ const PR_A7000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchDetailGrid = async (detailfilters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -927,7 +927,7 @@ const PR_A7000W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchDetailGrid2 = async (detailfilters2: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1289,7 +1289,11 @@ const PR_A7000W: React.FC = () => {
     let sum = 0;
     detailDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 

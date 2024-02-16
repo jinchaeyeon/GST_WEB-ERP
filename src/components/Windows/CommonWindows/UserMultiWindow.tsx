@@ -8,7 +8,7 @@ import {
   GridFooterCellProps,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -24,7 +24,7 @@ import {
   GridTitle,
   GridTitleContainer,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../../../CommonStyled";
 import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
@@ -33,7 +33,7 @@ import { isLoading, loginResultState } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import {
   UseBizComponent,
-  getQueryFromBizComponent
+  getQueryFromBizComponent,
 } from "../../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,

@@ -95,6 +95,7 @@ import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import SA_A1000_603W_Design2_Window from "../components/Windows/SA_A1000_603W_Design2_Window";
 import SA_A1000_603W_Design3_Window from "../components/Windows/SA_A1000_603W_Design3_Window";
 import SA_A1000_603W_Design4_Window from "../components/Windows/SA_A1000_603W_Design4_Window";
@@ -110,7 +111,6 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1000_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -1889,7 +1889,7 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quoseq": 0,
         "@p_status": "",
         "@p_person": "",
-        "@p_personnm":"",
+        "@p_personnm": "",
         "@p_cpmperson": "",
         "@p_cpmpersonnm": "",
         "@p_find_row_value": "",
@@ -1956,7 +1956,7 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quoseq": 0,
         "@p_status": "",
         "@p_person": "",
-        "@p_personnm":"",
+        "@p_personnm": "",
         "@p_cpmperson": "",
         "@p_cpmpersonnm": "",
         "@p_find_row_value": "",
@@ -2023,7 +2023,7 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quoseq": 0,
         "@p_status": "",
         "@p_person": "",
-        "@p_personnm":"",
+        "@p_personnm": "",
         "@p_cpmperson": "",
         "@p_cpmpersonnm": "",
         "@p_find_row_value": "",
@@ -2113,7 +2113,7 @@ const SA_A1000_603W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailfilters);
       setDetailFilters((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
@@ -2127,7 +2127,7 @@ const SA_A1000_603W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailfilters2);
       setDetailFilters2((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid2(deepCopiedFilters);
@@ -2141,7 +2141,7 @@ const SA_A1000_603W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailfilters3);
       setDetailFilters3((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid3(deepCopiedFilters);
@@ -3332,7 +3332,7 @@ const SA_A1000_603W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     //초기화

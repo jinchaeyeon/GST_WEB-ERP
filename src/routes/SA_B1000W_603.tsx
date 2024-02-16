@@ -1,6 +1,8 @@
 import Grid from "@mui/material/Grid";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
+import { MultiSelectChangeEvent } from "@progress/kendo-react-dropdowns";
+import { MultiSelect } from "@progress/kendo-react-dropdowns/dist/npm/MultiSelect/MultiSelect";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   GridColumn,
@@ -30,7 +32,6 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
   UseBizComponent,
@@ -48,13 +49,11 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B1000_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { MultiSelect } from "@progress/kendo-react-dropdowns/dist/npm/MultiSelect/MultiSelect";
-import { MultiSelectChangeEvent } from "@progress/kendo-react-dropdowns";
-import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 
 const DATA_ITEM_KEY = "num";
 
@@ -462,7 +461,7 @@ const SA_B1000W_603: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(subfilters);
       setSubFilters((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchSubGrid(deepCopiedFilters);
@@ -475,7 +474,7 @@ const SA_B1000W_603: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(subfilters2);
       setSubFilters2((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchSubGrid2(deepCopiedFilters);
@@ -488,7 +487,7 @@ const SA_B1000W_603: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(subfilters3);
       setSubFilters3((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchSubGrid3(deepCopiedFilters);
@@ -818,7 +817,7 @@ const SA_B1000W_603: React.FC = () => {
                   </td>
                   <th>SM담당자</th>
                   <td>
-                  <Input
+                    <Input
                       name="smpersonnm"
                       type="text"
                       value={filters.smpersonnm}

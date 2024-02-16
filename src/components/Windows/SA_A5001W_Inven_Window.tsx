@@ -36,6 +36,7 @@ import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -48,7 +49,6 @@ import {
   handleKeyPressSearch,
   isValidDate,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -75,7 +75,13 @@ type IWindow = {
   pathname: string;
 };
 
-const CopyWindow = ({ setVisible, setData, custcd, custnm, pathname }: IWindow) => {
+const CopyWindow = ({
+  setVisible,
+  setData,
+  custcd,
+  custnm,
+  pathname,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -120,7 +126,10 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm, pathname }: IWindow) 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
@@ -443,7 +452,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm, pathname }: IWindow) 
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
-      if(totalRowCnt > 0) {
+      if (totalRowCnt > 0) {
         setSelectedState({ [rows[0].num]: true });
       }
     } else {
@@ -963,7 +972,9 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm, pathname }: IWindow) 
         <TitleContainer style={{ float: "right" }}>
           <ButtonContainer>
             <Button
-              onClick={() => {search()}}
+              onClick={() => {
+                search();
+              }}
               icon="search"
               themeColor={"primary"}
             >
@@ -1452,19 +1463,19 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm, pathname }: IWindow) 
             <GridColumn field="remark" title="비고" width="350px" />
           </Grid>
           <BottomContainer>
-          <ButtonContainer>
-            <Button themeColor={"primary"} onClick={selectData}>
-              확인
-            </Button>
-            <Button
-              themeColor={"primary"}
-              fillMode={"outline"}
-              onClick={onClose}
-            >
-              닫기
-            </Button>
-          </ButtonContainer>
-        </BottomContainer>
+            <ButtonContainer>
+              <Button themeColor={"primary"} onClick={selectData}>
+                확인
+              </Button>
+              <Button
+                themeColor={"primary"}
+                fillMode={"outline"}
+                onClick={onClose}
+              >
+                닫기
+              </Button>
+            </ButtonContainer>
+          </BottomContainer>
         </GridContainer>
       </Window>
       {custWindowVisible && (

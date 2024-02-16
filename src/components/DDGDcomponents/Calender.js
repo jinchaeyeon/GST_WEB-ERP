@@ -1,11 +1,11 @@
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import { process } from "@progress/kendo-data-query";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import styled from "styled-components";
-import { convertDateToStr } from "../CommonFunction";
 import { useApi } from "../../hooks/api";
-import { process } from "@progress/kendo-data-query";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import { convertDateToStr } from "../CommonFunction";
 
 function App(props) {
   let deviceWidth = window.innerWidth;
@@ -117,7 +117,7 @@ function App(props) {
     fetchMainGrid();
     onChange(null);
   }, [props]);
-  console.log(schedulerData)
+  console.log(schedulerData);
   return (
     <CalendarContainer backgroundColor={data.color} isMobile={isMobile}>
       {isMobile ? (
@@ -283,7 +283,7 @@ function App(props) {
             (x) =>
               x.date == moment(date).format("YYYYMMDD") &&
               x.finyn == "N" &&
-              x.appyn == "Y" && 
+              x.appyn == "Y" &&
               x.planyn == "Y"
           )
             ? "no"
@@ -371,7 +371,9 @@ function App(props) {
                   ) {
                     return (
                       <>
-                        <div style={{ paddingTop: "30px", position: "absolute" }}>
+                        <div
+                          style={{ paddingTop: "30px", position: "absolute" }}
+                        >
                           {!isMobile ? (
                             <>
                               <FavoriteIcon
@@ -396,10 +398,13 @@ function App(props) {
                   } else {
                     return (
                       <>
-                        <div
-                          style={{ bottom: "10px", position: "absolute" }}
-                        >
-                          {schedulerData.filter((item) => item.date == moment(date).format("YYYYMMDD"))[0].capqty}
+                        <div style={{ bottom: "10px", position: "absolute" }}>
+                          {
+                            schedulerData.filter(
+                              (item) =>
+                                item.date == moment(date).format("YYYYMMDD")
+                            )[0].capqty
+                          }
                         </div>
                       </>
                     );

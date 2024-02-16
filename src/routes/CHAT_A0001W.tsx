@@ -1,15 +1,15 @@
-import React, { useCallback, useEffect, useState } from "react";
 import {
   Chat,
   ChatMessageSendEvent,
 } from "@progress/kendo-react-conversational-ui";
 import { bytesToBase64 } from "byte-base64";
-import { useApi } from "../hooks/api";
-import { Iparameters } from "../store/types";
+import React, { useEffect, useState } from "react";
 import {
   UseGetValueFromSessionItem,
   UseParaPc,
 } from "../components/CommonFunction";
+import { useApi } from "../hooks/api";
+import { Iparameters } from "../store/types";
 
 interface IData {
   id: string;

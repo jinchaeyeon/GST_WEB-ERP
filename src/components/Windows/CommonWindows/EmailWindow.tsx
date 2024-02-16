@@ -208,19 +208,19 @@ const KendoWindow = ({
                     ref={excelInput}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                       setFiles(event.target.files);
-                      if(event.target.files != null) {
-                        if(event.target.files.length > 0) {
+                      if (event.target.files != null) {
+                        if (event.target.files.length > 0) {
                           setPlaceholder(
-                            "현재 파일 : " + (event.target.files.length > 1
-                              ? (event.target.files[0].name +
+                            "현재 파일 : " +
+                              (event.target.files.length > 1
+                                ? event.target.files[0].name +
                                   "외 " +
-                                  (event.target.files.length -
-                                  1) +
-                                  "건")
-                              : event.target.files[0].name)
+                                  (event.target.files.length - 1) +
+                                  "건"
+                                : event.target.files[0].name)
                           );
                         } else {
-                          setPlaceholder("파일 선택")
+                          setPlaceholder("파일 선택");
                         }
                       }
                     }}

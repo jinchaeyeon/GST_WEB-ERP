@@ -47,10 +47,7 @@ import {
   ICustData,
   IWindowPosition,
 } from "../../hooks/interfaces";
-import {
-  deletedNameState,
-  unsavedNameState
-} from "../../store/atoms";
+import { deletedNameState, unsavedNameState } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import CheckBoxCell from "../Cells/CheckBoxCell";
 import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
@@ -431,12 +428,11 @@ const KendoWindow = ({
   isCopy,
   para,
   modal = false,
-  pathname
+  pathname,
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
-
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -1057,7 +1053,7 @@ const KendoWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraData.work_type = ""; //초기화
@@ -2317,7 +2313,11 @@ const KendoWindow = ({
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 

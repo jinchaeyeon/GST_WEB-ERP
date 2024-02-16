@@ -1,3 +1,4 @@
+import { getter } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import {
   createDataTree,
@@ -22,11 +23,10 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import {
-  UseParaPc,
   UseGetValueFromSessionItem,
+  UseParaPc,
   UsePermissions,
 } from "../components/CommonFunction";
-import { columns } from "../store/columns/CHAT_A0002_C";
 import {
   EDIT_FIELD,
   EXPANDED_FIELD,
@@ -35,8 +35,8 @@ import {
 import { Renderers } from "../components/Renderers/TreeListRenderers";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
+import { columns } from "../store/columns/CHAT_A0002_C";
 import { Iparameters, TPermissions } from "../store/types";
-import { getter } from "@progress/kendo-data-query";
 
 interface IQnaData {
   idx: number;
@@ -463,7 +463,7 @@ const CHAT_BOT_MNG: React.FC = () => {
               fillMode="outline"
               themeColor={"primary"}
               icon="minus"
-              title="행 삭제" 
+              title="행 삭제"
               disabled={permissions.save ? false : true}
             ></Button>
             <Button
@@ -505,7 +505,7 @@ const CHAT_BOT_MNG: React.FC = () => {
           selectedField={SELECTED_FIELD}
           selectable={{
             enabled: true,
-            mode: "single"
+            mode: "single",
           }}
           onSelectionChange={onSelectionChange}
           //

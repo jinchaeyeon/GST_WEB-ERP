@@ -58,7 +58,13 @@ type IWindow = {
   pathname: string;
 };
 
-const Badwindow = ({ setVisible, setData, renum, modal = false, pathname }: IWindow) => {
+const Badwindow = ({
+  setVisible,
+  setData,
+  renum,
+  modal = false,
+  pathname,
+}: IWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   const [pc, setPc] = useState("");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -252,6 +258,7 @@ const Badwindow = ({ setVisible, setData, renum, modal = false, pathname }: IWin
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -471,8 +478,7 @@ const Badwindow = ({ setVisible, setData, renum, modal = false, pathname }: IWin
   const exitEdit3 = () => {
     if (tempResult.data != mainDataResult.data) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] ==
-        Object.getOwnPropertyNames(selectedState)[0]
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
           ? {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U",

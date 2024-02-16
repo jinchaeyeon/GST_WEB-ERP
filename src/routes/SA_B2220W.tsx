@@ -398,7 +398,6 @@ const SA_B2220W: React.FC = () => {
 
   const [stackChartAllLabel2, setStackChartAllLabel2] = useState<any[]>([]);
 
-  
   const fetchMainGrid = async () => {
     //가데이터 라벨 셋팅
 
@@ -439,7 +438,7 @@ const SA_B2220W: React.FC = () => {
     ).map((item: { date: any }) => {
       return item.date;
     });
-    console.log(array4)
+    console.log(array4);
     setStackChartLabel2(array4);
     setStackChartAllLabel2(array3);
 
@@ -560,7 +559,7 @@ const SA_B2220W: React.FC = () => {
       fetchMainGrid();
     }
   }, [filters]);
-  
+
   const startContent = (
     <React.Fragment>
       <Grid container spacing={2}>

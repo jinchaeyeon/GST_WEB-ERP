@@ -89,7 +89,6 @@ const QC_B0040W: React.FC = () => {
   const idGetter4 = getter(DETAIL_DATA_ITEM_KEY3);
   const processApi = useApi();
 
-
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
@@ -372,7 +371,7 @@ const QC_B0040W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -799,7 +798,7 @@ const QC_B0040W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
@@ -813,7 +812,7 @@ const QC_B0040W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailFilters2);
       setDetailFilters2((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid2(deepCopiedFilters);
@@ -827,7 +826,7 @@ const QC_B0040W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailFilters3);
       setDetailFilters3((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid3(deepCopiedFilters);

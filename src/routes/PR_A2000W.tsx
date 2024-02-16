@@ -1,40 +1,39 @@
-import React from "react";
-import { 
-  Input, 
-  NumericTextBox, 
-  NumericTextBoxChangeEvent, 
-  TextArea 
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import {
+  Input,
+  NumericTextBox,
+  NumericTextBoxChangeEvent,
+  TextArea,
 } from "@progress/kendo-react-inputs";
-import { 
-  ButtonContainer, 
-  FilterBox, 
-  GridContainer, 
-  Title, 
-  TitleContainer 
+import React, { useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import {
+  ButtonContainer,
+  FilterBox,
+  GridContainer,
+  Title,
+  TitleContainer,
 } from "../CommonStyled";
-import { 
-  GetPropertyValueByName, 
-  UseCustomOption, 
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
+  UseCustomOption,
   UseGetValueFromSessionItem,
-  UseParaPc, 
-  UsePermissions, 
-  convertDateToStrWithTime2, 
+  UseParaPc,
+  UsePermissions,
+  convertDateToStrWithTime2,
   convertMilliSecondsToTimeStr,
 } from "../components/CommonFunction";
 import FilterContainer from "../components/Containers/FilterContainer";
-import { useApi } from "../hooks/api";
-import { DataResult, State, getter, process } from "@progress/kendo-data-query";
-import { useEffect, useState } from "react";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../store/atoms";
-import { Iparameters, TPermissions } from "../store/types";
-import { Button } from "@progress/kendo-react-buttons";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import PlanWindow from "../components/Windows/PR_A2000W_Plan_Window";
-import InLotWindow from "../components/Windows/PR_A2000W_InLot_Window"
-import StopWindow from "../components/Windows/PR_A2000W_Stop_Window";
 import DefectWindow from "../components/Windows/PR_A2000W_Defective_Window";
 import RemoveWindow from "../components/Windows/PR_A2000W_Del_Window";
+import InLotWindow from "../components/Windows/PR_A2000W_InLot_Window";
+import PlanWindow from "../components/Windows/PR_A2000W_Plan_Window";
+import StopWindow from "../components/Windows/PR_A2000W_Stop_Window";
+import { useApi } from "../hooks/api";
+import { isLoading } from "../store/atoms";
+import { Iparameters, TPermissions } from "../store/types";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -62,8 +61,11 @@ const PR_A2000W: React.FC = () => {
   UseCustomOption("PR_A2000W", setCustomOptionData);
 
   useEffect(() => {
-    if (customOptionData !== null)  {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+    if (customOptionData !== null) {
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         prodemp: userId,
@@ -75,8 +77,10 @@ const PR_A2000W: React.FC = () => {
   const [planWindowVisible, setPlanWindowVisible] = useState<boolean>(false);
   const [inLotWinVisible, setInLotWindowVisible] = useState<boolean>(false);
   const [stopWindowVisible, setStopWindowVisible] = useState<boolean>(false);
-  const [defectWindowVisible, setDefectWindowVisible] = useState<boolean>(false);
-  const [removeWindowVisible, setRemoveWindowVisible] = useState<boolean>(false);
+  const [defectWindowVisible, setDefectWindowVisible] =
+    useState<boolean>(false);
+  const [removeWindowVisible, setRemoveWindowVisible] =
+    useState<boolean>(false);
 
   const onPlanWndClick = () => {
     setPlanWindowVisible(true);
@@ -115,7 +119,7 @@ const PR_A2000W: React.FC = () => {
     goseq: number;
     proccd: string;
     qty: number;
-  };
+  }
 
   const setPlanData = (data: IPlanData) => {
     setFilters((prev) => ({
@@ -137,7 +141,7 @@ const PR_A2000W: React.FC = () => {
       gubun_s: data.gubun,
       initemcd_s: data.initemcd,
       initemnm_s: data.initemnm,
-      inlotnum_s:  data.inlotnum,
+      inlotnum_s: data.inlotnum,
       inqty_s: data.now_qty,
       qtyunit_s: data.qtyunit,
       proccd: data.proccd,
@@ -154,7 +158,7 @@ const PR_A2000W: React.FC = () => {
 
   // 팝업에서 저장 했을 경우 생산실적 재조회
   const reloadData = (saveyn: string | undefined) => {
-    if (saveyn = "Y") {
+    if ((saveyn = "Y")) {
       setFilters((prev) => ({ ...prev, isSearch: true }));
     }
   };
@@ -205,7 +209,7 @@ const PR_A2000W: React.FC = () => {
     }));
   };
 
-  const [filters,  setFilters] = useState({
+  const [filters, setFilters] = useState({
     work_type: "",
     prodemp: userId,
     prodmac: "",
@@ -234,7 +238,7 @@ const PR_A2000W: React.FC = () => {
     planqty: 0,
     rekey: "",
     renum: "",
-    reseq: 0, 
+    reseq: 0,
     qty: 0,
     badqty: 0,
     remark: "",
@@ -373,7 +377,7 @@ const PR_A2000W: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      if (totalRowCnt > 0 ) {
+      if (totalRowCnt > 0) {
         setStopStartOrEnd("end");
         setStopStartTime(rows[0].strtime);
         setParaSaved((prev) => ({
@@ -394,10 +398,7 @@ const PR_A2000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (
-      customOptionData != null &&
-      filters.isSearch
-    ) {
+    if (customOptionData != null && filters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, isSearch: false }));
@@ -419,10 +420,10 @@ const PR_A2000W: React.FC = () => {
           setDuration("00:00:00");
         }
       }, 1000);
-  
+
       return () => clearTimeout(timeId);
     }
-  }, [masterDataResult])
+  }, [masterDataResult]);
 
   const resetAllControl = (type: string) => {
     if (type == "END") {
@@ -450,7 +451,7 @@ const PR_A2000W: React.FC = () => {
         inlotnum_s: "",
         qty: 0,
       }));
-    } else if (type == "TIME") {  
+    } else if (type == "TIME") {
       // 진행 중인 실적 없을 경우 시간 초기화
       setMasterDataResult((prev) => ({
         ...prev,
@@ -458,7 +459,7 @@ const PR_A2000W: React.FC = () => {
         renum: "",
         reseq: 0,
       }));
-      
+
       setDuration("00:00:00");
       setStartOrEnd("start");
     }
@@ -495,7 +496,7 @@ const PR_A2000W: React.FC = () => {
         "@p_qtyunit_s": paraSaved.qtyunit_s,
         "@p_proccd_s": paraSaved.proccd_s,
         "@p_renum_s": "",
-        "@p_reseq_s" : "",
+        "@p_reseq_s": "",
         "@p_rowstatus_s": "",
         "@p_badnum_s": "",
         "@p_badseq_s": "",
@@ -507,7 +508,7 @@ const PR_A2000W: React.FC = () => {
         "@p_stopcd": "",
         "@p_userid": userId,
         "@p_pc": pc,
-        "@p_form_id": "PR_A2000W"
+        "@p_form_id": "PR_A2000W",
       },
     };
     try {
@@ -522,12 +523,14 @@ const PR_A2000W: React.FC = () => {
         return;
       }
 
-      if ( paraSaved.work_type === "START" ||
-        paraSaved.work_type === "END" 
-      ) {
+      if (paraSaved.work_type === "START" || paraSaved.work_type === "END") {
         if (startOrEnd === "start") {
           //시작 => 시작 정보 조회
-          setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: true }));
+          setFilters((prev) => ({
+            ...prev,
+            find_row_value: "",
+            isSearch: true,
+          }));
         } else {
           //종료 => 초기화
           setStartOrEnd("start");
@@ -540,30 +543,23 @@ const PR_A2000W: React.FC = () => {
     } else {
       console.log("[에러발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
       setParaSaved((prev) => ({ ...prev, work_type: "", isSave: false }));
     }
   };
 
   useEffect(() => {
-    if (
-      paraSaved.work_type !== "" &&
-      paraSaved.isSave
-    ) {
+    if (paraSaved.work_type !== "" && paraSaved.isSave) {
       fetchTodoSave();
     }
   }, [paraSaved]);
-  
+
   const onClickWork = () => {
-    if (
-      startOrEnd === "end" &&
-      filters.qty === 0 &&
-      paraSaved.badqty === 0
-    ) {
+    if (startOrEnd === "end" && filters.qty === 0 && paraSaved.badqty === 0) {
       alert("수량을 입력하세요.");
       return;
     }
-    
+
     setParaSaved((prev) => ({
       ...prev,
       work_type: startOrEnd.toUpperCase(),
@@ -590,7 +586,7 @@ const PR_A2000W: React.FC = () => {
   };
 
   const [duration, setDuration] = useState("");
-  
+
   return (
     <>
       <TitleContainer>
@@ -632,7 +628,7 @@ const PR_A2000W: React.FC = () => {
               <th>작업자</th>
               <td>
                 {customOptionData !== null && (
-                  <CustomOptionComboBox 
+                  <CustomOptionComboBox
                     name="prodemp"
                     value={filters.prodemp}
                     customOptionData={customOptionData}
@@ -692,8 +688,7 @@ const PR_A2000W: React.FC = () => {
                 <th>시작시간</th>
                 <td colSpan={3}>
                   {startOrEnd === "end"
-                    ? masterDataResult.strtime 
-                    +
+                    ? masterDataResult.strtime +
                       " (경과시간 : " +
                       duration +
                       ")"
@@ -719,7 +714,7 @@ const PR_A2000W: React.FC = () => {
                   />
                 </td>
               </tr>
-              {paraSaved.inlotnum_s !== "" ? 
+              {paraSaved.inlotnum_s !== "" ? (
                 <tr>
                   <th>투입LOT</th>
                   <td>
@@ -740,8 +735,9 @@ const PR_A2000W: React.FC = () => {
                     />
                   </td>
                 </tr>
-                : ""
-              }
+              ) : (
+                ""
+              )}
               <tr>
                 <th>비고</th>
                 <td colSpan={3}>
@@ -754,15 +750,15 @@ const PR_A2000W: React.FC = () => {
                 </td>
               </tr>
               {stopStartOrEnd === "end" && stopStartTime ? (
-              <tr>
-                <th>비가동시작시간</th>
-                <td colSpan={3}>
-                  {convertDateToStrWithTime2(new Date(stopStartTime))}
-                </td>
-              </tr>
-            ) : (
-              ""
-            )}
+                <tr>
+                  <th>비가동시작시간</th>
+                  <td colSpan={3}>
+                    {convertDateToStrWithTime2(new Date(stopStartTime))}
+                  </td>
+                </tr>
+              ) : (
+                ""
+              )}
             </tbody>
           </FilterBox>
         </FilterContainer>
@@ -772,7 +768,7 @@ const PR_A2000W: React.FC = () => {
           <>
             <Button
               onClick={onClickWork}
-             icon={startOrEnd === "start" ? "play-sm" : "stop-sm"}
+              icon={startOrEnd === "start" ? "play-sm" : "stop-sm"}
               themeColor={"primary"}
               disabled={
                 permissions.save && stopStartOrEnd === "start" ? false : true
@@ -793,7 +789,7 @@ const PR_A2000W: React.FC = () => {
                   : true
               }
               className="iot-btn red"
-            > 
+            >
               불량입력
             </Button>
             <Button

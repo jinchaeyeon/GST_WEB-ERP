@@ -345,7 +345,7 @@ const HU_B4001W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     // 필터 isSearch false처리, pgNum 세팅
@@ -432,7 +432,7 @@ const HU_B4001W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     // 필터 isSearch false처리, pgNum 세팅
@@ -517,7 +517,7 @@ const HU_B4001W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     // 필터 isSearch false처리, pgNum 세팅
@@ -704,7 +704,7 @@ const HU_B4001W: React.FC = () => {
       _export.save();
     }
   };
-  
+
   return (
     <>
       <TitleContainer>

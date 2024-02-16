@@ -106,7 +106,6 @@ export const gridList: Array<TGrid> = [
         caption: "적재장소",
         width: 120,
       },
-
     ],
   },
 ];

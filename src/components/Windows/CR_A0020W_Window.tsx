@@ -1,4 +1,5 @@
 import { Button } from "@progress/kendo-react-buttons";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { useEffect, useState } from "react";
@@ -11,22 +12,17 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import {
-  isLoading,
-} from "../../store/atoms";
+import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseParaPc,
   convertDateToStr,
   dateformat,
-  GetPropertyValueByName,
 } from "../CommonFunction";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-
-
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
@@ -45,7 +41,7 @@ const KendoWindow = ({
   orgdiv,
   custcd,
   modal = false,
-  pathname
+  pathname,
 }: TKendoWindow) => {
   const location = UseGetValueFromSessionItem("location");
   const userId = UseGetValueFromSessionItem("user_id");
@@ -62,14 +58,12 @@ const KendoWindow = ({
         ...prev,
         [name]: value == true ? "Y" : "N",
       }));
-    }
-    else if (name == "bircd") {
+    } else if (name == "bircd") {
       setInitialVal((prev) => ({
         ...prev,
         [name]: value == true ? "N" : "Y",
       }));
-    }
-    else {
+    } else {
       setInitialVal((prev) => ({
         ...prev,
         [name]: value,
@@ -85,8 +79,6 @@ const KendoWindow = ({
     }));
   };
 
-
-
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
@@ -94,11 +86,13 @@ const KendoWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType == "N") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "new");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "new"
+      );
       setInitialVal((prev) => ({
         ...prev,
-        class: defaultOption.find((item: any) => item.id === "class")
-          .valueCode,
+        class: defaultOption.find((item: any) => item.id === "class").valueCode,
         gender: defaultOption.find((item: any) => item.id === "gender")
           .valueCode,
         manager: defaultOption.find((item: any) => item.id === "manager")
@@ -147,9 +141,7 @@ const KendoWindow = ({
     }
   }, []);
 
-  const [initialVal, setInitialVal] = useState<
-    {[id: string]: any}
-  >({
+  const [initialVal, setInitialVal] = useState<{ [id: string]: any }>({
     custcd: "",
     custnm: "",
     class: "",
@@ -287,11 +279,19 @@ const KendoWindow = ({
     }
     if (data.isSuccess === true) {
       if (workType === "U") {
-        setFilters((prev:any) => ({ ...prev, find_row_value: data.returnString, isSearch: true })); // 한번만 조회되도록
+        setFilters((prev: any) => ({
+          ...prev,
+          find_row_value: data.returnString,
+          isSearch: true,
+        })); // 한번만 조회되도록
         fetchMain();
       } else {
         setVisible(false);
-        setFilters((prev:any) => ({ ...prev, find_row_value: data.returnString, isSearch: true })); // 한번만 조회되도록
+        setFilters((prev: any) => ({
+          ...prev,
+          find_row_value: data.returnString,
+          isSearch: true,
+        })); // 한번만 조회되도록
       }
     } else {
       console.log("[오류 발생]");
@@ -361,164 +361,164 @@ const KendoWindow = ({
       onClose={onClose}
       modal={modal}
     >
-        {/* <GridContainer width={`68%`}> */}
-          <FormBoxWrap>
-            <FormBox>
-              <tbody>
-                <tr>
-                  <th>반려견코드</th>
-                  <td>
-                    {workType == "N" ? (
-                      <Input
-                        name="custcd"
-                        type="text"
-                        value={initialVal.custcd}
-                        className="required"
-                        onChange={filterInputChange}
-                      />
-                    ) : (
-                      <Input
-                        name="custcd"
-                        type="text"
-                        value={initialVal.custcd}
-                        className="readonly"
-                      />
-                    )}
-                  </td>
-                  <th>반려견명</th>
-                  <td>
-                    <Input
-                      name="custnm"
-                      type="text"
-                      value={initialVal.custnm}
-                      className="required"
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>반려인</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        type="new"
-                        name="owner"
-                        value={initialVal.owner}
-                        customOptionData={customOptionData}
-                        valueField="code"
-                        textField="name"
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>그룹</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        type="new"
-                        name="species"
-                        value={initialVal.species}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                  <th>반</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        type="new"
-                        name="class"
-                        value={initialVal.class}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                  <th>성별</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        type="new"
-                        name="gender"
-                        value={initialVal.gender}
-                        customOptionData={customOptionData}
-                        valueField="code"
-                        textField="name"
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>담당자</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        type="new"
-                        name="manager"
-                        value={initialVal.manager}
-                        customOptionData={customOptionData}
-                        valueField="code"
-                        textField="name"
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                  <th>등록일자</th>
-                  <td>
-                    <DatePicker
-                      name="strdt"
-                      value={initialVal.strdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      placeholder=""
-                    />
-                  </td>
-                  <th>만기일자</th>
-                  <td>
-                    <DatePicker
-                      name="enddt"
-                      value={initialVal.enddt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      placeholder=""
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>생일</th>
-                  <td>
-                    <DatePicker
-                      width={"calc(100% - 52px)"}
-                      name="birdt"
-                      value={initialVal.birdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      placeholder=""
-                    />
-                    {" 음력"}
-                    <Checkbox
-                      title="음력"
-                      //width={"16px"}
-                      name="bircd"
-                      value={initialVal.bircd == "Y" ? false : true}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>메모</th>
-                  <td colSpan={7}>
-                    <TextArea
-                      value={initialVal.remark}
-                      name="remark"
-                      rows={2}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </FormBox>
-          </FormBoxWrap>
+      {/* <GridContainer width={`68%`}> */}
+      <FormBoxWrap>
+        <FormBox>
+          <tbody>
+            <tr>
+              <th>반려견코드</th>
+              <td>
+                {workType == "N" ? (
+                  <Input
+                    name="custcd"
+                    type="text"
+                    value={initialVal.custcd}
+                    className="required"
+                    onChange={filterInputChange}
+                  />
+                ) : (
+                  <Input
+                    name="custcd"
+                    type="text"
+                    value={initialVal.custcd}
+                    className="readonly"
+                  />
+                )}
+              </td>
+              <th>반려견명</th>
+              <td>
+                <Input
+                  name="custnm"
+                  type="text"
+                  value={initialVal.custnm}
+                  className="required"
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>반려인</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    type="new"
+                    name="owner"
+                    value={initialVal.owner}
+                    customOptionData={customOptionData}
+                    valueField="code"
+                    textField="name"
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th>그룹</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    type="new"
+                    name="species"
+                    value={initialVal.species}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>반</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    type="new"
+                    name="class"
+                    value={initialVal.class}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>성별</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    type="new"
+                    name="gender"
+                    value={initialVal.gender}
+                    customOptionData={customOptionData}
+                    valueField="code"
+                    textField="name"
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+            </tr>
+            <tr>
+              <th>담당자</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    type="new"
+                    name="manager"
+                    value={initialVal.manager}
+                    customOptionData={customOptionData}
+                    valueField="code"
+                    textField="name"
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>등록일자</th>
+              <td>
+                <DatePicker
+                  name="strdt"
+                  value={initialVal.strdt}
+                  format="yyyy-MM-dd"
+                  onChange={filterInputChange}
+                  placeholder=""
+                />
+              </td>
+              <th>만기일자</th>
+              <td>
+                <DatePicker
+                  name="enddt"
+                  value={initialVal.enddt}
+                  format="yyyy-MM-dd"
+                  onChange={filterInputChange}
+                  placeholder=""
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>생일</th>
+              <td>
+                <DatePicker
+                  width={"calc(100% - 52px)"}
+                  name="birdt"
+                  value={initialVal.birdt}
+                  format="yyyy-MM-dd"
+                  onChange={filterInputChange}
+                  placeholder=""
+                />
+                {" 음력"}
+                <Checkbox
+                  title="음력"
+                  //width={"16px"}
+                  name="bircd"
+                  value={initialVal.bircd == "Y" ? false : true}
+                  onChange={filterInputChange}
+                />
+              </td>
+              <th>메모</th>
+              <td colSpan={7}>
+                <TextArea
+                  value={initialVal.remark}
+                  name="remark"
+                  rows={2}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </FormBox>
+      </FormBoxWrap>
       <BottomContainer>
         <ButtonContainer>
           <Button themeColor={"primary"} onClick={handleSubmit}>

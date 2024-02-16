@@ -1,4 +1,3 @@
-import React from "react";
 import { Card } from "primereact/card";
 
 const CardBox = (props) => {
@@ -11,10 +10,10 @@ const CardBox = (props) => {
           marginRight: "15px",
           backgroundColor: props.backgroundColor,
           color: props.color == undefined ? "white" : props.color,
-          cursor: props.form == "QC_B0100W" ? "pointer" : ""
+          cursor: props.form == "QC_B0100W" ? "pointer" : "",
         }}
         title={props.title}
-        onClick={(e) => props.Click == undefined ? "" : props.Click(e)}
+        onClick={(e) => (props.Click == undefined ? "" : props.Click(e))}
       >
         <p
           style={{

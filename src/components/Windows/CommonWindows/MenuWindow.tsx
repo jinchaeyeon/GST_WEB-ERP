@@ -2,6 +2,7 @@ import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import { Input } from "@progress/kendo-react-inputs";
 import {
   TreeList,
   TreeListColumnProps,
@@ -18,14 +19,13 @@ import {
   BottomContainer,
   ButtonContainer,
   FilterBox,
-  FormBox,
-  FormBoxWrap,
   Title,
-  TitleContainer,
+  TitleContainer
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
+import { handleKeyPressSearch } from "../../CommonFunction";
 import {
   EDIT_FIELD,
   EXPANDED_FIELD,
@@ -33,8 +33,6 @@ import {
   SELECTED_FIELD,
 } from "../../CommonString";
 import FilterContainer from "../../Containers/FilterContainer";
-import { handleKeyPressSearch } from "../../CommonFunction";
-import { Input } from "@progress/kendo-react-inputs";
 
 let deletedMainRows: any[] = [];
 
@@ -196,7 +194,7 @@ const KendoWindow = ({
           expanded: ["M2022062210224011070"],
           editItem: undefined,
           editItemField: undefined,
-        })
+        });
       }
     } else {
       console.log("[에러발생]");

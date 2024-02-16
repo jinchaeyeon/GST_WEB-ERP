@@ -1,4 +1,3 @@
-import React from "react";
 
 // * 컨트롤명 규칙
 // - 라벨 (일반 텍스트) : lbl (ex. lblInsertdt)
@@ -16,7 +15,7 @@ const WordText = ({
     return <span data-control-name={controlName}>{altText ?? ""}</span>;
   }
   const wordData = wordInfoData.find(
-    (item: any) => item.controlName === controlName,
+    (item: any) => item.controlName === controlName
   );
 
   return (

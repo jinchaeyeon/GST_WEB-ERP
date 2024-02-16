@@ -68,7 +68,12 @@ const leftOverHeight = (topHeight + bottomHeight) / 2;
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 let temp = 0;
-const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) => {
+const CopyWindow = ({
+  setVisible,
+  setData,
+  modal = false,
+  pathname,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({

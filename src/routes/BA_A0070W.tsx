@@ -11,7 +11,7 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -47,7 +47,7 @@ import {
   handleKeyPressSearch,
   setDefaultDate,
   toDate,
-  useSysMessage
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -1091,6 +1091,7 @@ const BA_A0070W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

@@ -391,7 +391,7 @@ const QC_B0200W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
 
@@ -852,7 +852,7 @@ const QC_B0200W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailFilters);
       setDetailFilters((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);
@@ -866,7 +866,7 @@ const QC_B0200W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailFilters2);
       setDetailFilters2((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid2(deepCopiedFilters);
@@ -880,7 +880,7 @@ const QC_B0200W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailFilters3);
       setDetailFilters3((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid3(deepCopiedFilters);

@@ -91,4 +91,3 @@ export const gridList: Array<TGrid> = [
     ],
   },
 ];
-

@@ -19,7 +19,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_reqcustcd",
         field: "reqcustcd",
-        caption:"A/S 요청업체",
+        caption: "A/S 요청업체",
         width: 120,
       },
       {

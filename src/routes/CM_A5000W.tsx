@@ -110,22 +110,22 @@ const StatusCell = (props: GridCellProps) => {
     <td
       aria-colindex={ariaColumnIndex}
       data-grid-col-index={columnIndex}
-      style={{textAlign: "left" , display: "flex", alignItems: "center"}}
+      style={{ textAlign: "left", display: "flex", alignItems: "center" }}
     >
-        <StatusIcon status={dataItem[field]} />{" "}
-        {dataItem[field] === "001"
-          ? "컨설팅 요청"
-          : dataItem[field] === "002"
-          ? "담당자지정"
-          : dataItem[field] === "003"
-          ? "요청취소"
-          : dataItem[field] === "004"
-          ? "대응불가"
-          : dataItem[field] === "005"
-          ? "검토 중"
-          : dataItem[field] === "006"
-          ? "답변 완료"
-          : ""}
+      <StatusIcon status={dataItem[field]} />{" "}
+      {dataItem[field] === "001"
+        ? "컨설팅 요청"
+        : dataItem[field] === "002"
+        ? "담당자지정"
+        : dataItem[field] === "003"
+        ? "요청취소"
+        : dataItem[field] === "004"
+        ? "대응불가"
+        : dataItem[field] === "005"
+        ? "검토 중"
+        : dataItem[field] === "006"
+        ? "답변 완료"
+        : ""}
     </td>
   );
 };
@@ -764,7 +764,6 @@ const CM_A5000W: React.FC = () => {
           files: rows[0].files,
           ref_document_id: rows[0].ref_document_id,
         });
-        
       } else {
         setInformation2({
           document_id: "",

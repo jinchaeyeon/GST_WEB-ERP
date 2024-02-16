@@ -45,7 +45,7 @@ import {
   convertDateToStr,
   getGridItemChangedData,
   numberWithCommas,
-  toDate
+  toDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -598,7 +598,7 @@ const CopyWindow = ({
         total: prev.total,
       };
     });
-  }
+  };
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
@@ -1423,8 +1423,10 @@ const CopyWindow = ({
       amtunit: "",
       bankcd: "",
       closeyn: "",
-      custcd: workType == "N" ? cust.length > 0 ? cust[0].custcd : "" : data.custcd,
-      custnm: workType == "N" ? cust.length > 0 ? cust[0].custnm : "" : data.custnm,
+      custcd:
+        workType == "N" ? (cust.length > 0 ? cust[0].custcd : "") : data.custcd,
+      custnm:
+        workType == "N" ? (cust.length > 0 ? cust[0].custnm : "") : data.custnm,
       datnum: "",
       doexdiv: "",
       dptcd: "",

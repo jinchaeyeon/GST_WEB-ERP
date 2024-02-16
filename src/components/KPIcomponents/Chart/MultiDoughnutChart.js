@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { Chart } from "primereact/chart";
-import ChartDataLabels from "chartjs-plugin-datalabels";
 import {
-  red,
-  orange,
-  yellow,
-  lime,
-  lightGreen,
-  green,
-  cyan,
   blue,
-  indigo,
-  purple,
-  pink,
+  cyan,
+  green,
   grey,
+  indigo,
+  lightGreen,
+  lime,
+  orange,
+  pink,
+  purple,
+  red,
+  yellow,
 } from "@mui/material/colors";
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import { Chart } from "primereact/chart";
+import { useEffect, useState } from "react";
 import { numberWithCommas3 } from "../../CommonFunction";
 
 export default function MultiDoughnutChart(props) {
@@ -76,12 +76,14 @@ export default function MultiDoughnutChart(props) {
         cutout: "50%",
         plugins: {
           datalabels: {
-            color: 'black',
+            color: "black",
             display: true,
             font: {
-              weight: 'bold'
+              weight: "bold",
             },
-            formatter: function(value, context) { return numberWithCommas3(value) + "%"; },
+            formatter: function (value, context) {
+              return numberWithCommas3(value) + "%";
+            },
           },
         },
       };
@@ -93,7 +95,11 @@ export default function MultiDoughnutChart(props) {
   return (
     <div
       className="card flex justify-content-center"
-      style={{ position: "relative", display: "flex", justifyContent: "center" }}
+      style={{
+        position: "relative",
+        display: "flex",
+        justifyContent: "center",
+      }}
     >
       <Chart
         type="doughnut"

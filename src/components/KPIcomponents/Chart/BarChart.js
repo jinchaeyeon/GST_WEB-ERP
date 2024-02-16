@@ -1,7 +1,20 @@
-import React, { useState, useEffect } from "react";
+import {
+  blue,
+  cyan,
+  green,
+  grey,
+  indigo,
+  lightGreen,
+  lime,
+  orange,
+  pink,
+  purple,
+  red,
+  yellow,
+} from "@mui/material/colors";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Chart } from "primereact/chart";
-import { red, orange, yellow, lime, lightGreen, green, cyan, blue, indigo, purple, pink, grey } from '@mui/material/colors';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { useEffect, useState } from "react";
 import { numberWithCommas3 } from "../../CommonFunction";
 
 export default function BarChart(props) {
@@ -13,29 +26,29 @@ export default function BarChart(props) {
     const array = [100, 200, 300, 400, 500, 600, 700, 800, 900];
     const shuffled = [...array].sort(ranNum);
 
-    if(props.colorName == "Red") {
+    if (props.colorName == "Red") {
       return red[shuffled[0]];
-    } else if(props.colorName == "Orange") {
+    } else if (props.colorName == "Orange") {
       return orange[shuffled[0]];
-    } else if(props.colorName == "Yellow") {
+    } else if (props.colorName == "Yellow") {
       return yellow[shuffled[0]];
-    } else if(props.colorName == "Lime") {
+    } else if (props.colorName == "Lime") {
       return lime[shuffled[0]];
-    } else if(props.colorName == "LightGreen") {
+    } else if (props.colorName == "LightGreen") {
       return lightGreen[shuffled[0]];
-    }else if(props.colorName == "Green") {
+    } else if (props.colorName == "Green") {
       return green[shuffled[0]];
-    }else if(props.colorName == "Cyan") {
+    } else if (props.colorName == "Cyan") {
       return cyan[shuffled[0]];
-    }else if(props.colorName == "Blue") {
+    } else if (props.colorName == "Blue") {
       return blue[shuffled[0]];
-    }else if(props.colorName == "Navy") {
+    } else if (props.colorName == "Navy") {
       return indigo[shuffled[0]];
-    }else if(props.colorName == "Purple") {
+    } else if (props.colorName == "Purple") {
       return purple[shuffled[0]];
-    }else if(props.colorName == "Pink") {
+    } else if (props.colorName == "Pink") {
       return pink[shuffled[0]];
-    }else if(props.colorName == "Grey") {
+    } else if (props.colorName == "Grey") {
       return grey[shuffled[0]];
     } else {
       return blue[shuffled[0]];
@@ -66,8 +79,8 @@ export default function BarChart(props) {
             }),
             datalabels: {
               align: "end",
-              anchor: "end"
-            }
+              anchor: "end",
+            },
           },
         ],
       };
@@ -88,13 +101,15 @@ export default function BarChart(props) {
             display: false,
           },
           datalabels: {
-            color: 'black',
+            color: "black",
             display: true,
             font: {
-              weight: 'bold'
+              weight: "bold",
             },
-            formatter: function(value, context) { return numberWithCommas3(value); },
-          }
+            formatter: function (value, context) {
+              return numberWithCommas3(value);
+            },
+          },
         },
         scales: {
           x: {
@@ -122,8 +137,13 @@ export default function BarChart(props) {
   }, [props]);
 
   return (
-    <div className="card" style={{height: "100%"}}>
-      <Chart type="bar" data={chartData} plugins={[ChartDataLabels]} options={chartOptions} />
+    <div className="card" style={{ height: "100%" }}>
+      <Chart
+        type="bar"
+        data={chartData}
+        plugins={[ChartDataLabels]}
+        options={chartOptions}
+      />
     </div>
   );
 }

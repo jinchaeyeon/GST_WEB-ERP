@@ -44,11 +44,11 @@ import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
   deletedNameState,
   isLoading,
-  unsavedNameState
+  unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
-import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberCell from "../Cells/NumberCell";
+import RadioGroupCell from "../Cells/RadioGroupCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
@@ -73,8 +73,6 @@ import CodeWindow from "./CommonWindows/CodeWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
 import StandardWindow from "./CommonWindows/StandardWindow";
-import RadioGroupCell from "../Cells/RadioGroupCell";
-
 type IWindow = {
   workType: "N" | "A" | "C";
   data?: Idata;
@@ -613,14 +611,13 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
   );
 };
 
-
 const CopyWindow = ({
   workType,
   data,
   setVisible,
   setData,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -1776,7 +1773,11 @@ const CopyWindow = ({
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -1786,7 +1787,7 @@ const CopyWindow = ({
       </td>
     );
   };
-  
+
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -3570,7 +3571,7 @@ const CopyWindow = ({
                       title="차변금액"
                       width="100px"
                       cell={NumberCell}
-                                footerCell={editNumberFooterCell}
+                      footerCell={editNumberFooterCell}
                     />
                     <GridColumn
                       field="slipamt_2"

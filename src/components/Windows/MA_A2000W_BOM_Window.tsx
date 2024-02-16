@@ -147,7 +147,12 @@ export interface DataState {
   filter: FilterDescriptor[];
 }
 
-const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) => {
+const CopyWindow = ({
+  setVisible,
+  setData,
+  modal = false,
+  pathname,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({

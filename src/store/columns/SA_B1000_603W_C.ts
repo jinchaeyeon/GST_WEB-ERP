@@ -4,7 +4,7 @@ export const gridList: Array<TGrid> = [
   {
     // 요약정보
     gridName: "grdList",
-    columns: [ 
+    columns: [
       {
         id: "col_ref_key",
         field: "ref_key",
@@ -40,7 +40,7 @@ export const gridList: Array<TGrid> = [
   {
     // 요약정보
     gridName: "grdList2",
-    columns: [ 
+    columns: [
       {
         id: "col_meetingnum",
         field: "meetingnum",
@@ -70,7 +70,7 @@ export const gridList: Array<TGrid> = [
   {
     // 요약정보
     gridName: "grdList3",
-    columns: [ 
+    columns: [
       {
         id: "col_user_id",
         field: "user_id",
@@ -112,7 +112,7 @@ export const gridList: Array<TGrid> = [
   {
     // 요약정보
     gridName: "grdList4",
-    columns: [ 
+    columns: [
       {
         id: "col_quokey",
         field: "quokey",

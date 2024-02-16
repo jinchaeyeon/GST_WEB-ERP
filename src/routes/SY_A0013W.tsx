@@ -1292,7 +1292,7 @@ const Page: React.FC = () => {
       }));
       deletedMainRows = [];
     } else {
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
   };
 
@@ -1659,7 +1659,7 @@ const Page: React.FC = () => {
       console.log("[오류 발생]");
       console.log(data);
 
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraData.work_type = ""; //초기화
@@ -1762,7 +1762,7 @@ const Page: React.FC = () => {
         console.log("[오류 발생]");
         console.log(data);
 
-        alert("[" + data.statusCode + "] " + data.resultMessage);
+        alert(data.resultMessage);
       }
       setLoading(false);
     }
@@ -1868,7 +1868,7 @@ const Page: React.FC = () => {
         console.log("[오류 발생]");
         console.log(data);
 
-        alert("[" + data.statusCode + "] " + data.resultMessage);
+        alert(data.resultMessage);
       }
       setLoading(false);
     }

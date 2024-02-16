@@ -36,6 +36,7 @@ import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseMessages,
@@ -48,9 +49,13 @@ import {
   handleKeyPressSearch,
   isValidDate,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
@@ -70,7 +75,13 @@ type IWindow = {
   pathname: string;
 };
 
-const CopyWindow = ({ setVisible, setData, custcd, custnm, pathname }: IWindow) => {
+const CopyWindow = ({
+  setVisible,
+  setData,
+  custcd,
+  custnm,
+  pathname,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -115,7 +126,10 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm, pathname }: IWindow) 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
@@ -126,7 +140,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm, pathname }: IWindow) 
         dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
         ordsts: defaultOption.find((item: any) => item.id === "ordsts")
           .valueCode,
-        isSearch: true
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -427,7 +441,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm, pathname }: IWindow) 
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
-      if(totalRowCnt > 0) {
+      if (totalRowCnt > 0) {
         setSelectedState({ [rows[0].num]: true });
       }
     } else {
@@ -569,7 +583,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm, pathname }: IWindow) 
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "SA_A3000W_001");
-      } else if(
+      } else if (
         filters.dtgb == "" ||
         filters.dtgb == undefined ||
         filters.dtgb == null
@@ -625,7 +639,7 @@ const CopyWindow = ({ setVisible, setData, custcd, custnm, pathname }: IWindow) 
           dlvdt: selectRow.dlvdt,
           doqty: selectRow.doqty,
           dptcd: selectRow.dptcd,
-          extra_field6 : selectRow.extra_field6,
+          extra_field6: selectRow.extra_field6,
           insiz: selectRow.insiz,
           itemacnt: selectRow.itemacnt,
           itemcd: selectRow.itemcd,

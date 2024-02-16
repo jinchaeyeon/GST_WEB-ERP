@@ -1,5 +1,6 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
@@ -29,28 +30,30 @@ import { useApi } from "../../hooks/api";
 import { IItemData, IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
+import YearCalendar from "../Calendars/YearCalendar";
+import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
   chkScrollHandler,
   convertDateToStr,
   findMessage,
   getQueryFromBizComponent,
   handleKeyPressSearch,
-  setDefaultDate,
-  GetPropertyValueByName,
-  UseGetValueFromSessionItem,
-  toDate,
+  setDefaultDate
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import YearCalendar from "../Calendars/YearCalendar";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
-import DateCell from "../Cells/DateCell";
 type IWindow = {
   setVisible(t: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
@@ -61,7 +64,7 @@ const topHeight = 140.13;
 const bottomHeight = 55;
 const leftOverHeight = (topHeight + bottomHeight) / 2;
 let temp = 0;
-const CopyWindow = ({ setVisible, setData, pathname}: IWindow) => {
+const CopyWindow = ({ setVisible, setData, pathname }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -106,7 +109,10 @@ const CopyWindow = ({ setVisible, setData, pathname}: IWindow) => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
@@ -118,7 +124,7 @@ const CopyWindow = ({ setVisible, setData, pathname}: IWindow) => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA016,L_BA061,L_BA015",
-    //도사급, 품목계정, 수량단위, 
+    //도사급, 품목계정, 수량단위,
     setBizComponentData
   );
 
@@ -129,9 +135,7 @@ const CopyWindow = ({ setVisible, setData, pathname}: IWindow) => {
   const [qtyunitListData, setQtyunitListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [pacListData, setPacListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
+  const [pacListData, setPacListData] = useState([COM_CODE_DEFAULT_VALUE]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
@@ -204,7 +208,7 @@ const CopyWindow = ({ setVisible, setData, pathname}: IWindow) => {
       [name]: value,
     }));
   };
-  
+
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
@@ -647,9 +651,8 @@ const CopyWindow = ({ setVisible, setData, pathname}: IWindow) => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                pac: pacListData.find(
-                  (item: any) => item.sub_code = row.pac
-                )?.code_name,
+                pac: pacListData.find((item: any) => (item.sub_code = row.pac))
+                  ?.code_name,
                 qtyunit: qtyunitListData.find(
                   (item: any) => item.sub_code === row.qtyunit
                 )?.code_name,
@@ -687,10 +690,10 @@ const CopyWindow = ({ setVisible, setData, pathname}: IWindow) => {
             //더블클릭
             onRowDoubleClick={onRowDoubleClick}
           >
-            <GridColumn 
-              field="pac" 
-              title="도/사급" 
-              width="120px" 
+            <GridColumn
+              field="pac"
+              title="도/사급"
+              width="120px"
               footerCell={mainTotalFooterCell}
             />
             <GridColumn field="itemcd" title="품목코드" width="120px" />
@@ -706,10 +709,10 @@ const CopyWindow = ({ setVisible, setData, pathname}: IWindow) => {
               footerCell={gridSumQtyFooterCell}
             />
             <GridColumn field="qtyunit" title="수량단위" width="120px" />
-            <GridColumn 
-              field="indt" 
+            <GridColumn
+              field="indt"
               title="입고일자"
-              width="120px" 
+              width="120px"
               cell={DateCell}
             />
           </Grid>
@@ -731,9 +734,8 @@ const CopyWindow = ({ setVisible, setData, pathname}: IWindow) => {
             data={process(
               subDataResult.data.map((row) => ({
                 ...row,
-                pac: pacListData.find(
-                  (item: any) => item.sub_code = row.pac
-                )?.code_name,
+                pac: pacListData.find((item: any) => (item.sub_code = row.pac))
+                  ?.code_name,
                 qtyunit: qtyunitListData.find(
                   (item: any) => item.sub_code === row.qtyunit
                 )?.code_name,
@@ -767,10 +769,10 @@ const CopyWindow = ({ setVisible, setData, pathname}: IWindow) => {
             resizable={true}
             //더블클릭
           >
-            <GridColumn 
-              field="pac" 
-              title="도/사급" 
-              width="120px" 
+            <GridColumn
+              field="pac"
+              title="도/사급"
+              width="120px"
               footerCell={subTotalFooterCell}
             />
             <GridColumn field="itemcd" title="품목코드" width="120px" />
@@ -785,10 +787,10 @@ const CopyWindow = ({ setVisible, setData, pathname}: IWindow) => {
               cell={NumberCell}
             />
             <GridColumn field="qtyunit" title="수량단위" width="120px" />
-            <GridColumn 
-              field="indt" 
-              title="입고일자" 
-              width="120px" 
+            <GridColumn
+              field="indt"
+              title="입고일자"
+              width="120px"
               cell={DateCell}
             />
           </Grid>

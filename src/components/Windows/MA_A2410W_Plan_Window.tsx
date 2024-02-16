@@ -14,7 +14,7 @@ import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -28,7 +28,7 @@ import {
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IItemData, IWindowPosition } from "../../hooks/interfaces";
-import { isLoading, loginResultState } from "../../store/atoms";
+import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
@@ -40,11 +40,9 @@ import {
   UseGetValueFromSessionItem,
   UseMessages,
   convertDateToStr,
-  dateformat,
   getQueryFromBizComponent,
   handleKeyPressSearch,
-  isValidDate,
-  setDefaultDate,
+  setDefaultDate
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -69,7 +67,12 @@ const leftOverHeight = (topHeight + bottomHeight) / 2;
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 let temp = 0;
-const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) => {
+const CopyWindow = ({
+  setVisible,
+  setData,
+  modal = false,
+  pathname,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [position, setPosition] = useState<IWindowPosition>({
@@ -109,7 +112,8 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) =
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        finyn: defaultOption.find((item: any) => item.id === "finyn_plan").valueCode,
+        finyn: defaultOption.find((item: any) => item.id === "finyn_plan")
+          .valueCode,
         proccd: defaultOption.find((item: any) => item.id === "proccd")
           .valueCode,
       }));
@@ -241,7 +245,7 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) =
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
-  
+
   const setItemData = (data: IItemData) => {
     setFilters((prev) => ({
       ...prev,
@@ -915,10 +919,10 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) =
                 //컬럼너비조정
                 resizable={true}
               >
-                <GridColumn 
+                <GridColumn
                   field="plankey"
-                  title="생산계획번호" 
-                  width="120px" 
+                  title="생산계획번호"
+                  width="120px"
                   footerCell={mainTotalFooterCell}
                 />
                 <GridColumn field="ordkey" title="수주번호" width="120px" />
@@ -943,7 +947,6 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) =
                   title="계획량"
                   width="100px"
                   cell={NumberCell}
-                  
                   footerCell={gridSumQtyFooterCell}
                 />
                 <GridColumn
@@ -1066,10 +1069,10 @@ const CopyWindow = ({ setVisible, setData, modal = false, pathname }: IWindow) =
             //컬럼너비조정
             resizable={true}
           >
-            <GridColumn 
-              field="plankey" 
-              title="생산계획번호" 
-              width="120px" 
+            <GridColumn
+              field="plankey"
+              title="생산계획번호"
+              width="120px"
               footerCell={detailTotalFooterCell}
             />
             <GridColumn field="ordkey" title="수주번호" width="120px" />

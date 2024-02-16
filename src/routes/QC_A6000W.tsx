@@ -41,6 +41,7 @@ import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import RadioGroupCell from "../components/Cells/RadioGroupCell";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -52,10 +53,9 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
+  numberWithCommas,
   setDefaultDate,
   toDate,
-  GetPropertyValueByName,
-  numberWithCommas,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -65,13 +65,13 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import Badwindow from "../components/Windows/CommonWindows/BadWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
-import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -276,7 +276,10 @@ const QC_A6000: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
       setFilters((prev) => ({
         ...prev,
@@ -725,6 +728,7 @@ const QC_A6000: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -806,18 +810,17 @@ const QC_A6000: React.FC = () => {
   const exitEdit = () => {
     if (tempResult.data != mainDataResult.data) {
       const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] ==
-      Object.getOwnPropertyNames(selectedState)[0]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: undefined,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
-    );
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
       setTempResult((prev: { total: any }) => {
         return {
           data: newData,
@@ -871,7 +874,11 @@ const QC_A6000: React.FC = () => {
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 

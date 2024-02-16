@@ -242,7 +242,7 @@ export const gridList: Array<TGrid> = [
         caption: "측정기준명",
         width: 120,
       },
-    ]
+    ],
   },
   {
     gridName: "grdList4",

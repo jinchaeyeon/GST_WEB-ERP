@@ -1424,8 +1424,12 @@ const BA_A0050: React.FC = () => {
   const editNumberFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     subData2Result.data.forEach((item) =>
-       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+      props.field !== undefined
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -1982,6 +1986,7 @@ const BA_A0050: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

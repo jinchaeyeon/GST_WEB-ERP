@@ -122,7 +122,7 @@ export const gridList: Array<TGrid> = [
         field: "insiz",
         caption: "규격",
         width: 120,
-      }, 
+      },
       {
         id: "col_lotnum",
         field: "lotnum",

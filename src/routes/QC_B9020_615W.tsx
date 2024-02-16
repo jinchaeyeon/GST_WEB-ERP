@@ -10,7 +10,6 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
@@ -23,7 +22,9 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import CenterCell from "../components/Cells/CenterCell";
 import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
   UseCustomOption,
@@ -40,8 +41,6 @@ import { useApi } from "../hooks/api";
 import { isLoading, sessionItemState } from "../store/atoms";
 import { gridList } from "../store/columns/QC_B9020_615W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import CenterCell from "../components/Cells/CenterCell";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 
 const DATA_ITEM_KEY = "num";
 const numberField = ["temperature", "humidity"];

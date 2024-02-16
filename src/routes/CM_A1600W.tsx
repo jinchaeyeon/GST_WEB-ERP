@@ -1092,7 +1092,7 @@ const CM_A1600: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraData.work_type = ""; //초기화
@@ -1792,7 +1792,7 @@ const CM_A1600: React.FC = () => {
       }));
       deletedTodoRows = [];
     } else {
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
   };
 

@@ -24,7 +24,7 @@ import {
   ButtonContainer,
   FilterBox,
   GridContainer,
-  TitleContainer
+  TitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
@@ -35,6 +35,7 @@ import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -45,9 +46,13 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
-  GetPropertyValueByName,
 } from "../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  EDIT_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 
@@ -110,7 +115,10 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         unpitem: defaultOption.find((item: any) => item.id === "unpitem")

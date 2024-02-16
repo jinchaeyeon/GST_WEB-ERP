@@ -1,11 +1,11 @@
-import React, { useRef, useCallback, useEffect, useState } from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { useEffect, useRef, useState } from "react";
+import ReactToPrint from "react-to-print";
 import { ButtonContainer, LandscapePrint } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { Iparameters } from "../../store/types";
-import { convertDateToStr, numberWithCommas, toDate } from "../CommonFunction";
-import ReactToPrint from "react-to-print";
-import { Button } from "@progress/kendo-react-buttons";
-import { DataResult, process, State } from "@progress/kendo-data-query";
+import { convertDateToStr, numberWithCommas } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 
 const ReplaceTaxReport = (data?: any) => {
@@ -279,7 +279,11 @@ const ReplaceTaxReport = (data?: any) => {
           mainDataResult != null &&
           mainDataResult.data.map((item: any, idx: number) => (
             <div>
-              {idx != 0 ? ( <div style={{ pageBreakAfter: "always" }}/>) : (<div/>)}
+              {idx != 0 ? (
+                <div style={{ pageBreakAfter: "always" }} />
+              ) : (
+                <div />
+              )}
               <div className="title_container">
                 <h1 className="title">대체전표</h1>
                 <table className="tb_approval right">

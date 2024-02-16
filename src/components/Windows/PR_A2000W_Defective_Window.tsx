@@ -1,44 +1,44 @@
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { 
-  UseBizComponent, 
-  UseGetValueFromSessionItem, 
-  UseParaPc, 
-  convertDateToStr, 
-  getGridItemChangedData, 
-  numberWithCommas
-} from "../CommonFunction";
-import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
-import { useEffect, useRef, useState } from "react";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { 
-  Grid, 
-  GridCellProps, 
-  GridColumn, 
-  GridDataStateChangeEvent, 
-  GridFooterCellProps, 
-  GridItemChangeEvent, 
-  GridPageChangeEvent, 
-  GridSelectionChangeEvent, 
-  getSelectedState 
-} from "@progress/kendo-react-grid";
-import { 
-  BottomContainer, 
-  ButtonContainer, 
-  GridContainer, 
-  GridTitle, 
-  GridTitleContainer
-} from "../../CommonStyled";
 import { DataResult, State, process } from "@progress/kendo-data-query";
-import { getter } from "@progress/kendo-react-common";
 import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import {
+  Grid,
+  GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridItemChangeEvent,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
+import { useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import {
+  BottomContainer,
+  ButtonContainer,
+  GridContainer,
+  GridTitle,
+  GridTitleContainer,
+} from "../../CommonStyled";
+import { useApi } from "../../hooks/api";
+import { IWindowPosition } from "../../hooks/interfaces";
+import { isLoading } from "../../store/atoms";
+import { Iparameters } from "../../store/types";
+import ComboBoxCell from "../Cells/ComboBoxCell";
 import DateCell from "../Cells/DateCell";
 import NumberCell from "../Cells/NumberCell";
-import ComboBoxCell from "../Cells/ComboBoxCell";
-import { Iparameters } from "../../store/types";
-import { useApi } from "../../hooks/api";
+import {
+  UseBizComponent,
+  UseGetValueFromSessionItem,
+  UseParaPc,
+  convertDateToStr,
+  getGridItemChangedData,
+  numberWithCommas,
+} from "../CommonFunction";
+import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
 
 let temp = 0;
 const DATA_ITEM_KEY = "num";
@@ -47,24 +47,17 @@ let deletedMainRows: object[] = [];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent(
-    "L_QC002", setBizComponentData
-  );
+  UseBizComponent("L_QC002", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = 
-    field === "badcd" 
-      ? "L_QC002"
-      : "";
+  const bizComponentIdVal = field === "badcd" ? "L_QC002" : "";
 
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
 
   return bizComponent ? (
-    <ComboBoxCell
-      bizComponent={bizComponent} 
-      {...props} />
+    <ComboBoxCell bizComponent={bizComponent} {...props} />
   ) : (
     <td />
   );
@@ -78,8 +71,8 @@ type TData = {
 type TKendoWindow = {
   setVisible(visible: boolean): void;
   rekey: TData;
-  reloadData(saveyn: string): void;   // 저장 유무
-  modal? : boolean;
+  reloadData(saveyn: string): void; // 저장 유무
+  modal?: boolean;
 };
 
 const KendoWindow = ({
@@ -171,7 +164,7 @@ const KendoWindow = ({
   });
 
   let gridRef: any = useRef(null);
-  
+
   const fetchMainGrid = async (filters: any) => {
     let data: any;
     setLoading(true);
@@ -242,8 +235,8 @@ const KendoWindow = ({
         // 작업지시 사용여부 세팅
         const selectedRow =
           filters.find_row_value == ""
-          ? rows[0]
-          : rows.find((row: any) => row.badkey == filters.find_row_value);
+            ? rows[0]
+            : rows.find((row: any) => row.badkey == filters.find_row_value);
 
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -253,16 +246,16 @@ const KendoWindow = ({
       }
       deletedMainRows = [];
     } else {
-      console.log("[오류발생]")
+      console.log("[오류발생]");
       console.log(data);
     }
     // 필터 isSearch false처리, pgNum 세팅
     setFilters((prev) => ({
       ...prev,
       pgNum:
-      data && data.hasOwnProperty("pageNumber")
-        ? data.pageNumber
-        : prev.pgNum,
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
       isSearch: false,
     }));
     setLoading(false);
@@ -270,7 +263,7 @@ const KendoWindow = ({
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if ( filters.isSearch ) {
+    if (filters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
@@ -294,9 +287,9 @@ const KendoWindow = ({
   };
 
   const onMainSortChange = (e: any) => {
-    setMainDataState((prev) => ({...prev, sort: e.sort}));
+    setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-  
+
   const onMainItemChange = (event: GridItemChangeEvent) => {
     getGridItemChangedData(
       event,
@@ -322,7 +315,11 @@ const KendoWindow = ({
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -336,8 +333,8 @@ const KendoWindow = ({
   const onAddClick = () => {
     // 불량내역 행 추가
     mainDataResult.data.map((item) => {
-      if(item.num > temp) {
-        temp = item.num
+      if (item.num > temp) {
+        temp = item.num;
       }
     });
 
@@ -347,7 +344,7 @@ const KendoWindow = ({
       badcd: "",
       qty: 0,
       remark: "",
-      rowstatus: "N"
+      rowstatus: "N",
     };
 
     setMainDataResult((prev) => {
@@ -370,7 +367,7 @@ const KendoWindow = ({
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -422,15 +419,15 @@ const KendoWindow = ({
     if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
 
     type TRowData = {
-      rowstatus: string[],
-      badnum: string[],
-      badseq: string[],
-      baddt: string[],
-      badcd: string[],
-      qty: string[],
-      remark: string[],
+      rowstatus: string[];
+      badnum: string[];
+      badseq: string[];
+      baddt: string[];
+      badcd: string[];
+      qty: string[];
+      remark: string[];
     };
-    
+
     let rowsArr: TRowData = {
       rowstatus: [],
       badnum: [],
@@ -442,7 +439,7 @@ const KendoWindow = ({
     };
 
     dataItem.forEach((item: any) => {
-      const { rowstatus, badnum, badseq, baddt, badcd, qty, remark} = item;
+      const { rowstatus, badnum, badseq, baddt, badcd, qty, remark } = item;
       rowsArr.rowstatus.push(rowstatus);
       rowsArr.badnum.push(badnum);
       rowsArr.badseq.push(badseq);
@@ -453,7 +450,7 @@ const KendoWindow = ({
     });
 
     deletedMainRows.forEach((item: any) => {
-      const { rowstatus, badnum, badseq, baddt, badcd, qty, remark} = item;
+      const { rowstatus, badnum, badseq, baddt, badcd, qty, remark } = item;
       rowsArr.rowstatus.push(rowstatus);
       rowsArr.badnum.push(badnum);
       rowsArr.badseq.push(badseq);
@@ -507,7 +504,7 @@ const KendoWindow = ({
         "@p_qtyunit_s": "",
         "@p_proccd_s": "",
         "@p_renum_s": "",
-        "@p_reseq_s" : "",
+        "@p_reseq_s": "",
         "@p_rowstatus_s": paraSaved.rowstatus,
         "@p_badnum_s": paraSaved.badnum,
         "@p_badseq_s": paraSaved.badseq,
@@ -519,7 +516,7 @@ const KendoWindow = ({
         "@p_stopcd": "",
         "@p_userid": userId,
         "@p_pc": pc,
-        "@p_form_id": "PR_A2000W"
+        "@p_form_id": "PR_A2000W",
       },
     };
 
@@ -546,10 +543,10 @@ const KendoWindow = ({
           find_row_value: "",
           pgNum: isLastDataDeleted
             ? prev.pgNum != 1
-                ? prev.pgNum - 1
-                : prev.pgNum
-              : prev.pgNum,
-            isSearch: true,
+              ? prev.pgNum - 1
+              : prev.pgNum
+            : prev.pgNum,
+          isSearch: true,
         }));
       } else {
         setFilters((prev: any) => ({
@@ -577,15 +574,15 @@ const KendoWindow = ({
   const enterEdit = (dataItem: any, field: string) => {
     if (field !== "rowstatus") {
       const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
-        ? {
-            ...item,
-            [EDIT_FIELD]: field,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
+        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
       );
       setTempResult((prev) => {
         return {
@@ -612,17 +609,16 @@ const KendoWindow = ({
   const exitEdit = () => {
     if (tempResult.data != mainDataResult.data) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] == 
-        Object.getOwnPropertyNames(selectedState)[0]
-        ? {
-            ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-            [EDIT_FIELD]: undefined,
-          }
-        : {
-            ...item,
-            [EDIT_FIELD]: undefined,
-          }
+        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
       );
       setTempResult((prev) => {
         return {
@@ -706,7 +702,7 @@ const KendoWindow = ({
           </ButtonContainer>
         </GridTitleContainer>
         <Grid
-          style={{ height: "43vh"}}
+          style={{ height: "43vh" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -747,17 +743,17 @@ const KendoWindow = ({
           rowRender={customRowRender}
           editField={EDIT_FIELD}
         >
-          <GridColumn field="rowstatus" title=" "  width="30px" />
-          <GridColumn 
+          <GridColumn field="rowstatus" title=" " width="30px" />
+          <GridColumn
             field="baddt"
             title="불량일자"
             width="120px"
             cell={DateCell}
             footerCell={MainTotalFooterCell}
           />
-          <GridColumn 
-            field="badcd" 
-            title="불량유형" 
+          <GridColumn
+            field="badcd"
+            title="불량유형"
             width="120px"
             cell={CustomComboBoxCell}
           />
@@ -768,24 +764,20 @@ const KendoWindow = ({
             cell={NumberCell}
             footerCell={editNumberFooterCell}
           />
-          <GridColumn field="remark" title="비고" width="200px"/>
+          <GridColumn field="remark" title="비고" width="200px" />
         </Grid>
       </GridContainer>
       <BottomContainer>
         <ButtonContainer>
-          <Button 
-            onClick={onSaveClick} 
-            themeColor={"primary"} 
+          <Button
+            onClick={onSaveClick}
+            themeColor={"primary"}
             fillMode={"outline"}
-            icon = "save"
+            icon="save"
           >
             저장
           </Button>
-          <Button
-            onClick={onClose}
-            themeColor={"primary"}
-            fillMode="outline"
-          >
+          <Button onClick={onClose} themeColor={"primary"} fillMode="outline">
             닫기
           </Button>
         </ButtonContainer>

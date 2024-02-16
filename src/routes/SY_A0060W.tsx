@@ -282,7 +282,7 @@ const SY_A0060W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
-          <Box style={{ minHeight: "78vh"}}>
+          <Box style={{ minHeight: "78vh" }}>
             <GridTitleContainer>
               <GridTitle></GridTitle>
               <ButtonContainer>
@@ -296,7 +296,7 @@ const SY_A0060W: React.FC = () => {
                 </Button>
               </ButtonContainer>
             </GridTitleContainer>
-            <Grid style={{marginBottom: "30px"}} container spacing={2}>
+            <Grid style={{ marginBottom: "30px" }} container spacing={2}>
               {mainDataResult.data.map((item) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
                   <Card onClick={(e) => DetailView(item)}>

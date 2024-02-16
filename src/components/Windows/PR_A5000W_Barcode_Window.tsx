@@ -1,29 +1,19 @@
-import { useEffect, useState, useCallback, useRef } from "react";
-import * as React from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Barcode } from "@progress/kendo-react-barcodes";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
+import * as React from "react";
+import { useEffect, useRef, useState } from "react";
+import ReactToPrint from "react-to-print";
+import { useRecoilState } from "recoil";
 import {
   BottomContainer,
-  ButtonContainer,
-  GridContainer,
-  LandscapePrint,
-  MainWorkStartEndContainer,
+  ButtonContainer
 } from "../../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
-import { IWindowPosition } from "../../hooks/interfaces";
-import { Barcode } from "@progress/kendo-react-barcodes";
-import {
-  Grid,
-  GridColumn,
-  GridCellProps,
-  GridDataStateChangeEvent,
-} from "@progress/kendo-react-grid";
-import { DataResult, getter, process, State } from "@progress/kendo-data-query";
-import ReactToPrint from "react-to-print";
 import { useApi } from "../../hooks/api";
-import { Iparameters } from "../../store/types";
-import { TabStripNavigation } from "@progress/kendo-react-layout";
+import { IWindowPosition } from "../../hooks/interfaces";
 import { loginResultState } from "../../store/atoms";
-import { useRecoilState } from "recoil";
+import { Iparameters } from "../../store/types";
 
 type barcode = {
   barcode: string;
@@ -42,7 +32,7 @@ type IWindow = {
   data: barcode[];
   setVisible(t: boolean): void;
   total: number;
-  modal? :boolean;
+  modal?: boolean;
 };
 
 const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
@@ -113,17 +103,17 @@ const CopyWindow = ({ setVisible, data, total, modal = false }: IWindow) => {
     }
 
     if (data.isSuccess === true) {
-        const totalRowCnt = data.tables[0].RowCount;
-        const rows = data.tables[0].Rows;
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows;
 
-        if (totalRowCnt > 0)
-          setMainDataResult((prev) => {
-            return {
-              data: [...prev.data, rows],
-              total: totalRowCnt == -1 ? 0 : totalRowCnt,
-            };
-          });
-    }  
+      if (totalRowCnt > 0)
+        setMainDataResult((prev) => {
+          return {
+            data: [...prev.data, rows],
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
+          };
+        });
+    }
   };
 
   useEffect(() => {

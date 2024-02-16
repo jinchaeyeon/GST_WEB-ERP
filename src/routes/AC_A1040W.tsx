@@ -1581,13 +1581,13 @@ const AC_A1040W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 location: locationListData.find(
-                  (item: any) => (item.sub_code = row.location)
+                  (item: any) => item.sub_code == row.location
                 )?.code_name,
                 position: positionListData.find(
-                  (item: any) => (item.sub_code = row.position)
+                  (item: any) => item.sub_code == row.position
                 )?.code_name,
                 taxtype: taxtypeListData.find(
-                  (item: any) => (item.sub_code = row.taxtype)
+                  (item: any) => item.sub_code == row.taxtype
                 )?.code_name,
                 dptcd: dptcdListData.find(
                   (item: any) => item.dptcd === row.dptcd

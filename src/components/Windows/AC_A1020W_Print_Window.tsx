@@ -1,18 +1,13 @@
-import { DataResult, State, process } from "@progress/kendo-data-query";
-import { Barcode } from "@progress/kendo-react-barcodes";
 import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
+import { useSetRecoilState } from "recoil";
 import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
-import { Iparameters } from "../../store/types";
-import { convertDateToStr } from "../CommonFunction";
-import FileViewers from "../Viewer/FileViewers";
-import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../store/atoms";
+import FileViewers from "../Viewer/FileViewers";
 
 type IWindow = {
   para: any;

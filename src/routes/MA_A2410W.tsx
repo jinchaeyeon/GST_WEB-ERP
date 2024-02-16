@@ -617,7 +617,7 @@ const MA_A2410W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(detailfilters);
       setDetailFilters((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchDetailGrid(deepCopiedFilters);

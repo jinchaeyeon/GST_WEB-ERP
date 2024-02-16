@@ -12,6 +12,7 @@ import {
 import { Checkbox } from "@progress/kendo-react-inputs";
 import * as React from "react";
 import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 import {
   ButtonContainer,
   GridContainer,
@@ -19,6 +20,7 @@ import {
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../../hooks/interfaces";
+import { unsavedNameState } from "../../../store/atoms";
 import CenterCell from "../../Cells/CenterCell";
 import CheckBoxCell from "../../Cells/CheckBoxCell";
 import NumberCell from "../../Cells/NumberCell";
@@ -28,8 +30,6 @@ import {
 } from "../../CommonFunction";
 import { EDIT_FIELD, SELECTED_FIELD } from "../../CommonString";
 import { CellRender, RowRender } from "../../Renderers/Renderers";
-import { useRecoilState } from "recoil";
-import { unsavedNameState } from "../../../store/atoms";
 
 type permission = {
   upload: boolean;
@@ -63,9 +63,7 @@ const KendoWindow = ({
     width: isMobile == true ? deviceWidth : 1200,
     height: 810,
   });
-  const [unsavedName, setUnsavedName] = useRecoilState(
-    unsavedNameState
-  );
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
   const [attachmentNumber, setAttachmentNumber] = useState(para);
 
   const handleMove = (event: WindowMoveEvent) => {
@@ -551,7 +549,7 @@ const KendoWindow = ({
             enabled: true,
             drag: false,
             cell: false,
-            mode: "single"
+            mode: "single",
           }}
           onSelectionChange={onSelectionChange}
           onItemChange={onMainItemChange}

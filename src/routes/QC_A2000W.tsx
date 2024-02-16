@@ -654,7 +654,7 @@ const QC_A2000: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터
@@ -1185,7 +1185,11 @@ const QC_A2000: React.FC = () => {
     let sum = 0;
     detailDataResult2.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -1195,7 +1199,7 @@ const QC_A2000: React.FC = () => {
       </td>
     );
   };
-  
+
   const detailTotalFooterCell2 = (props: GridFooterCellProps) => {
     var parts = detailDataResult2.total.toString().split(".");
     return (
@@ -1654,6 +1658,7 @@ const QC_A2000: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -2388,7 +2393,7 @@ const QC_A2000: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="QC_A2000W" 
+              pathname="QC_A2000W"
             />
           )}
         </ButtonContainer>

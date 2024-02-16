@@ -4,12 +4,10 @@ import Dialog from "@mui/material/Dialog";
 import Paper, { PaperProps } from "@mui/material/Paper";
 import { useEffect, useState } from "react";
 import Draggable from "react-draggable";
-import { useRecoilState } from "recoil";
 import { BottomContainer, ButtonContainer } from "../../../CommonStyled";
-import { IWindowPosition } from "../../../hooks/interfaces";
-import { colors, colorsName } from "../../../store/atoms";
-import { UseGetValueFromSessionItem, UseParaPc } from "../../CommonFunction";
 import { useApi } from "../../../hooks/api";
+import { IWindowPosition } from "../../../hooks/interfaces";
+import { UseGetValueFromSessionItem, UseParaPc } from "../../CommonFunction";
 
 type IKendoWindow = {
   setVisible(arg: boolean): void;
@@ -44,84 +42,84 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
 
   useEffect(() => {
-    if(para != undefined) {
-      if(para == "#FFBEBE") {
+    if (para != undefined) {
+      if (para == "#FFBEBE") {
         setColorNames("빨강");
-      } else if(para == "#FFC8A2") {
+      } else if (para == "#FFC8A2") {
         setColorNames("주황");
-      } else if(para == "#fff8eb") {
+      } else if (para == "#fff8eb") {
         setColorNames("아이보리");
-      } else if(para == "#fff2cc") {
+      } else if (para == "#fff2cc") {
         setColorNames("노랑");
-      } else if(para == "#e2f0d9") {
+      } else if (para == "#e2f0d9") {
         setColorNames("연두");
-      } else if(para == "#85D4BE") {
+      } else if (para == "#85D4BE") {
         setColorNames("초록");
-      } else if(para == "#CDEEF3") {
+      } else if (para == "#CDEEF3") {
         setColorNames("하늘");
-      } else if(para == "#C4C5FF") {
+      } else if (para == "#C4C5FF") {
         setColorNames("파랑");
-      } else if(para == "#EADFF2") {
+      } else if (para == "#EADFF2") {
         setColorNames("연보라");
-      } else if(para == "#dcc8ed") {
+      } else if (para == "#dcc8ed") {
         setColorNames("보라");
-      } else if(para == "#FFE1E8") {
+      } else if (para == "#FFE1E8") {
         setColorNames("연핑크");
-      } else if(para == "#FFBCD9") {
+      } else if (para == "#FFBCD9") {
         setColorNames("핑크");
       } else {
         setColorNames("노랑");
       }
     }
-  },[])
+  }, []);
   const [colorNames, setColorNames] = useState("노랑");
-  
+
   const onClose = () => {
     setVisible(false);
-  }
+  };
 
   const onSave = async () => {
-    let code = ""
+    let code = "";
     setColorNames(colorNames);
-    if(colorNames == "빨강") {
+    if (colorNames == "빨강") {
       setData("#FFBEBE");
-      code = "#FFBEBE"
-    } else if(colorNames == "주황") {
+      code = "#FFBEBE";
+    } else if (colorNames == "주황") {
       setData("#FFC8A2");
-      code = "#FFC8A2"
-    } else if(colorNames == "아이보리") {
+      code = "#FFC8A2";
+    } else if (colorNames == "아이보리") {
       setData("#fff8eb");
-      code = "#fff8eb"
-    } else if(colorNames == "노랑") {
+      code = "#fff8eb";
+    } else if (colorNames == "노랑") {
       setData("#fff2cc");
-      code = "#fff2cc"
-    } else if(colorNames == "연두") {
+      code = "#fff2cc";
+    } else if (colorNames == "연두") {
       setData("#e2f0d9");
-      code = "#e2f0d9"
-    } else if(colorNames == "초록") {
+      code = "#e2f0d9";
+    } else if (colorNames == "초록") {
       setData("#85D4BE");
-      code = "#85D4BE"
-    } else if(colorNames == "하늘") {
+      code = "#85D4BE";
+    } else if (colorNames == "하늘") {
       setData("#CDEEF3");
-      code = "#CDEEF3"
-    } else if(colorNames == "파랑") {
+      code = "#CDEEF3";
+    } else if (colorNames == "파랑") {
       setData("#C4C5FF");
-      code = "#C4C5FF"
-    } else if(colorNames == "연보라") {
+      code = "#C4C5FF";
+    } else if (colorNames == "연보라") {
       setData("#EADFF2");
-      code = "#EADFF2"
-    } else if(colorNames == "보라") {
+      code = "#EADFF2";
+    } else if (colorNames == "보라") {
       setData("#dcc8ed");
-      code = "#dcc8ed"
-    } else if(colorNames == "연핑크") {
+      code = "#dcc8ed";
+    } else if (colorNames == "연핑크") {
       setData("#FFE1E8");
-      code = "#FFE1E8"
-    } else if(colorNames == "핑크") {
+      code = "#FFE1E8";
+    } else if (colorNames == "핑크") {
       setData("#FFBCD9");
-      code = "#FFBCD9"
+      code = "#FFBCD9";
     } else {
       setData("#fff2cc");
-      code = "#fff2cc"
+      code = "#fff2cc";
     }
     const paraSaved = {
       procedureName: "P_CR_A0020W_S",
@@ -166,7 +164,7 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
   };
 
@@ -192,7 +190,11 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
               <Button
                 variant="contained"
                 onClick={() => setColorNames("빨강")}
-                style={{ backgroundColor: "#FFBEBE", width: "100%", color: "black" }}
+                style={{
+                  backgroundColor: "#FFBEBE",
+                  width: "100%",
+                  color: "black",
+                }}
               >
                 빨강
               </Button>
@@ -201,7 +203,11 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
               <Button
                 variant="contained"
                 onClick={() => setColorNames("주황")}
-                style={{ backgroundColor: "#FFC8A2", width: "100%", color: "black" }}
+                style={{
+                  backgroundColor: "#FFC8A2",
+                  width: "100%",
+                  color: "black",
+                }}
               >
                 주황
               </Button>
@@ -210,7 +216,11 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
               <Button
                 variant="contained"
                 onClick={() => setColorNames("아이보리")}
-                style={{ backgroundColor: "#fff8eb", width: "100%", color: "black" }}
+                style={{
+                  backgroundColor: "#fff8eb",
+                  width: "100%",
+                  color: "black",
+                }}
               >
                 아이보리
               </Button>
@@ -219,7 +229,11 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
               <Button
                 variant="contained"
                 onClick={() => setColorNames("노랑")}
-                style={{ backgroundColor: "#fff2cc", width: "100%", color: "black" }}
+                style={{
+                  backgroundColor: "#fff2cc",
+                  width: "100%",
+                  color: "black",
+                }}
               >
                 노랑
               </Button>
@@ -228,7 +242,11 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
               <Button
                 variant="contained"
                 onClick={() => setColorNames("연두")}
-                style={{ backgroundColor: "#e2f0d9", width: "100%", color: "black" }}
+                style={{
+                  backgroundColor: "#e2f0d9",
+                  width: "100%",
+                  color: "black",
+                }}
               >
                 연두
               </Button>
@@ -237,7 +255,11 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
               <Button
                 variant="contained"
                 onClick={() => setColorNames("초록")}
-                style={{ backgroundColor: "#85D4BE", width: "100%", color: "black" }}
+                style={{
+                  backgroundColor: "#85D4BE",
+                  width: "100%",
+                  color: "black",
+                }}
               >
                 초록
               </Button>
@@ -246,7 +268,11 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
               <Button
                 variant="contained"
                 onClick={() => setColorNames("하늘")}
-                style={{ backgroundColor: "#CDEEF3", width: "100%", color: "black" }}
+                style={{
+                  backgroundColor: "#CDEEF3",
+                  width: "100%",
+                  color: "black",
+                }}
               >
                 하늘
               </Button>
@@ -255,7 +281,11 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
               <Button
                 variant="contained"
                 onClick={() => setColorNames("파랑")}
-                style={{ backgroundColor: "#C4C5FF", width: "100%", color: "black" }}
+                style={{
+                  backgroundColor: "#C4C5FF",
+                  width: "100%",
+                  color: "black",
+                }}
               >
                 파랑
               </Button>
@@ -264,7 +294,11 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
               <Button
                 variant="contained"
                 onClick={() => setColorNames("연보라")}
-                style={{ backgroundColor: "#EADFF2", width: "100%", color: "black" }}
+                style={{
+                  backgroundColor: "#EADFF2",
+                  width: "100%",
+                  color: "black",
+                }}
               >
                 연보라
               </Button>
@@ -273,7 +307,11 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
               <Button
                 variant="contained"
                 onClick={() => setColorNames("보라")}
-                style={{ backgroundColor: "#dcc8ed", width: "100%", color: "black" }}
+                style={{
+                  backgroundColor: "#dcc8ed",
+                  width: "100%",
+                  color: "black",
+                }}
               >
                 보라
               </Button>
@@ -282,7 +320,11 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
               <Button
                 variant="contained"
                 onClick={() => setColorNames("연핑크")}
-                style={{ backgroundColor: "#FFE1E8", width: "100%", color: "black" }}
+                style={{
+                  backgroundColor: "#FFE1E8",
+                  width: "100%",
+                  color: "black",
+                }}
               >
                 연핑크
               </Button>
@@ -291,7 +333,11 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
               <Button
                 variant="contained"
                 onClick={() => setColorNames("핑크")}
-                style={{ backgroundColor: "#FFBCD9", width: "100%", color: "black" }}
+                style={{
+                  backgroundColor: "#FFBCD9",
+                  width: "100%",
+                  color: "black",
+                }}
               >
                 핑크
               </Button>

@@ -56,12 +56,12 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import QC_A2500_603W_Window from "../components/Windows/QC_A2500_603W_Window";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/QC_A2500_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 
 const DATA_ITEM_KEY = "num";
 const COMMENT_DATA_ITEM_KEY = "num";
@@ -1316,7 +1316,7 @@ const BA_A0020_603: React.FC = () => {
         userid: userId,
         pc: pc,
         form_id: "QC_A2500_603W",
-      })
+      });
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1480,7 +1480,6 @@ const BA_A0020_603: React.FC = () => {
     });
   };
 
-  
   const questionToDelete = useSysMessage("QuestionToDelete");
   const onDeleteClick = () => {
     if (!window.confirm(questionToDelete)) {
@@ -1491,7 +1490,7 @@ const BA_A0020_603: React.FC = () => {
       const selectRows = mainDataResult.data.filter(
         (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
       )[0];
-  
+
       setParaData({
         workType: "D",
         orgdiv: "01",
@@ -1523,7 +1522,7 @@ const BA_A0020_603: React.FC = () => {
         userid: userId,
         pc: pc,
         form_id: "QC_A2500_603W",
-      })
+      });
     } else {
       alert("등록된 답변이 없습니다.");
       return;
@@ -1638,7 +1637,7 @@ const BA_A0020_603: React.FC = () => {
                   </td>
                   <th>SM담당자</th>
                   <td>
-                  <Input
+                    <Input
                       name="smpersonnm"
                       type="text"
                       value={filters.smpersonnm}

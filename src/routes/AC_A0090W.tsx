@@ -146,7 +146,11 @@ const CustomRadioCell = (props: GridCellProps) => {
   );
 
   return bizComponent ? (
-    <RadioGroupCell bizComponentData={bizComponent} {...props} disabled={props.dataItem.rowstatus != "N" ? true : false}/>
+    <RadioGroupCell
+      bizComponentData={bizComponent}
+      {...props}
+      disabled={props.dataItem.rowstatus != "N" ? true : false}
+    />
   ) : (
     <td />
   );
@@ -646,6 +650,14 @@ const AC_A0090W: React.FC = () => {
       fetchMainGrid2(deepCopiedFilters);
     }
   }, [filters2, permissions]);
+
+  useEffect(() => {
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [mainDataResult]);
 
   const onAddClick = () => {
     mainDataResult.data.map((item) => {

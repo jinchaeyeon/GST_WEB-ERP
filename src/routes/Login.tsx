@@ -1,29 +1,25 @@
 import { Button } from "@progress/kendo-react-buttons";
-import { Form, Field, FormElement } from "@progress/kendo-react-form";
+import { Field, Form, FormElement } from "@progress/kendo-react-form";
 import { KeyboardEvent, useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import {
-  passwordExpirationInfoState,
-  loginResultState,
-  accessTokenState,
-} from "../store/atoms";
-import { useApi } from "../hooks/api";
-import { IComboBoxColumns } from "../hooks/interfaces";
 import { useSetRecoilState } from "recoil";
-import { FormInput, FormComboBox } from "../components/Editors";
 import {
-  AppName,
   LoginAppName,
   LoginBox,
-  Logo,
-  LoginImg,
+  LoginImg
 } from "../CommonStyled";
+import { FormComboBox, FormInput } from "../components/Editors";
+import { useApi } from "../hooks/api";
+import { IComboBoxColumns } from "../hooks/interfaces";
+import {
+  accessTokenState,
+  loginResultState,
+  passwordExpirationInfoState,
+} from "../store/atoms";
 
-import { isLoading } from "../store/atoms";
+import { DEFAULT_LANG_CODE } from "../components/CommonString";
 import Loading from "../components/Loading";
-import { DEFAULT_LANG_CODE, PAGE_SIZE } from "../components/CommonString";
-import cookie from "react-cookies";
-import { Iparameters } from "../store/types";
+import { isLoading } from "../store/atoms";
 
 interface IFormData {
   langCode: string;
@@ -117,7 +113,7 @@ const Login: React.FC = () => {
         // );
 
         const response = await processApi<any>("login", para);
-      
+
         const {
           token,
           refreshToken,
@@ -134,7 +130,7 @@ const Login: React.FC = () => {
           profileImage,
           userConfig,
           serviceCategory,
-          defaultCulture
+          defaultCulture,
         } = response;
 
         localStorage.setItem("accessToken", token);
@@ -164,10 +160,10 @@ const Login: React.FC = () => {
           webTitle,
           homeMenuWeb,
           profileImage,
-          dptnm : userConfig == undefined ? "" : userConfig.Rows[6].value,
+          dptnm: userConfig == undefined ? "" : userConfig.Rows[6].value,
           serviceCategory,
           defaultCulture,
-          dptcd : userConfig == undefined ? "" : userConfig.Rows[5].value,
+          dptcd: userConfig == undefined ? "" : userConfig.Rows[5].value,
           position: userConfig == undefined ? "" : userConfig.Rows[4].value,
         });
 

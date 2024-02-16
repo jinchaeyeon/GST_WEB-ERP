@@ -323,8 +323,6 @@ const HU_A5020W: React.FC = () => {
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
 
-
-
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_A5020W", setMessagesData);
 
@@ -450,7 +448,7 @@ const HU_A5020W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-   //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //조회조건 파라미터

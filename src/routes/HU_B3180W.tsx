@@ -13,6 +13,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
@@ -46,7 +47,6 @@ import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
-import { bytesToBase64 } from "byte-base64";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;

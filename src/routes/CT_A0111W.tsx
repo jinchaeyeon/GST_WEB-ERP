@@ -1,55 +1,47 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import * as ReactDOM from "react-dom";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridColumn,
   GridDataStateChangeEvent,
   GridEvent,
+  GridFooterCellProps,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
+import { Input } from "@progress/kendo-react-inputs";
+import React, { useEffect, useRef, useState } from "react";
+import ReactToPrint from "react-to-print";
+import { useSetRecoilState } from "recoil";
 import {
-  Title,
+  ButtonContainer,
+  ButtonInInput,
   FilterBox,
   GridContainer,
-  GridTitle,
-  TitleContainer,
-  ButtonContainer,
-  GridTitleContainer,
   LandscapePrint,
-  ButtonInInput,
+  Title,
+  TitleContainer
 } from "../CommonStyled";
-import FilterContainer from "../components/Containers/FilterContainer";
-import { useApi } from "../hooks/api";
-import { Iparameters, TPermissions } from "../store/types";
+import TopButtons from "../components/Buttons/TopButtons";
+import CenterCell from "../components/Cells/CenterCell";
+import NumberCell from "../components/Cells/NumberCell";
 import {
+  UsePermissions,
   chkScrollHandler,
   convertDateToStr,
-  convertDateToStrWithTime2,
   dateformat2,
-  numberWithCommas,
-  setDefaultDate,
-  UseCustomOption,
-  UsePermissions,
   handleKeyPressSearch,
-  //UseMenuDefaults,
+  numberWithCommas
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
-import TopButtons from "../components/Buttons/TopButtons";
-import NumberCell from "../components/Cells/NumberCell";
-import CenterCell from "../components/Cells/CenterCell";
-import ReactToPrint from "react-to-print";
-import { Button } from "@progress/kendo-react-buttons";
-import { Input } from "@progress/kendo-react-inputs";
+import FilterContainer from "../components/Containers/FilterContainer";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
-import { useRecoilState, useSetRecoilState } from "recoil";
 import { isLoading } from "../store/atoms";
+import { Iparameters, TPermissions } from "../store/types";
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "idx";
@@ -133,7 +125,7 @@ const CT_A0111W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async () => {
-      //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
 
     setLoading(true);

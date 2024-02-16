@@ -1,13 +1,17 @@
-import React, { useRef, useCallback, useEffect, useState } from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { useEffect, useRef, useState } from "react";
+import ReactToPrint from "react-to-print";
+import { useSetRecoilState } from "recoil";
 import { ButtonContainer, DeliyReportPrint } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
-import { Iparameters } from "../../store/types";
-import { UseGetValueFromSessionItem, convertDateToStr, numberWithCommas } from "../CommonFunction";
-import ReactToPrint from "react-to-print";
-import { Button } from "@progress/kendo-react-buttons";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import { useSetRecoilState } from "recoil";
 import { isLoading } from "../../store/atoms";
+import { Iparameters } from "../../store/types";
+import {
+  UseGetValueFromSessionItem,
+  convertDateToStr,
+  numberWithCommas,
+} from "../CommonFunction";
 
 const DaliyReport = (filters: any) => {
   const userId = UseGetValueFromSessionItem("user_id");
@@ -51,7 +55,7 @@ const DaliyReport = (filters: any) => {
     } catch (error) {
       data = null;
     }
- 
+
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -69,11 +73,10 @@ const DaliyReport = (filters: any) => {
   };
 
   useEffect(() => {
-    if(mainDataResult.total == 0){
+    if (mainDataResult.total == 0) {
       fetchMainGrid();
     }
   });
-
 
   const componentRef = useRef(null);
 
@@ -91,11 +94,7 @@ const DaliyReport = (filters: any) => {
         />
       </ButtonContainer>
 
-      <div
-        id="DailyReport"
-        className="printable portrait"
-        ref={componentRef}
-      >
+      <div id="DailyReport" className="printable portrait" ref={componentRef}>
         <div className="title_container">
           <h1 className="title">일일업무일지</h1>
           <table className="tb_approval right">
@@ -113,60 +112,110 @@ const DaliyReport = (filters: any) => {
             </tbody>
           </table>
         </div>
-        <table style={{width: "100%"}}>
-            <tbody>
-              <tr>
-                <th style={{backgroundColor: "#D3D3D3"}}>작성일</th>
-                <td style={{textAlign: "center"}}>{mainDataResult.data.length == 0 ? "" : mainDataResult.data[0].recdt}</td>
-                <th style={{backgroundColor: "#D3D3D3"}}>업무지시</th>
-                <td style={{textAlign: "center"}}>{mainDataResult.data.length == 0 ? "" : mainDataResult.data[0].total_exptime}</td>
-                <th style={{backgroundColor: "#D3D3D3"}}>출근시간</th>
-                <td style={{textAlign: "center"}}>{mainDataResult.data.length == 0 ? "" : mainDataResult.data[0].workstart}</td>
-                <th style={{backgroundColor: "#D3D3D3"}}>퇴근시간</th>
-                <td style={{textAlign: "center"}}>{mainDataResult.data.length == 0 ? "" : mainDataResult.data[0].workend}</td>
-                <th style={{backgroundColor: "#D3D3D3"}}>지각여부</th>
-                <td style={{textAlign: "center"}}>{mainDataResult.data.length == 0 ? "" : mainDataResult.data[0].is_late}</td>
-              </tr>
-              <tr>
-                <th style={{backgroundColor: "#D3D3D3"}}>작성자</th>
-                <td style={{textAlign: "center"}}>{mainDataResult.data.length == 0 ? "" : mainDataResult.data[0].writer}</td>
-                <th style={{backgroundColor: "#D3D3D3"}}>소요시간</th>
-                <td style={{textAlign: "center"}}>{mainDataResult.data.length == 0 ? "" : mainDataResult.data[0].total_usetime}</td>
-                <th style={{backgroundColor: "#D3D3D3"}}>신규</th>
-                <td style={{textAlign: "center"}}>{mainDataResult.data.length == 0 ? "" : mainDataResult.data[0].cnt1}</td>
-                <th style={{backgroundColor: "#D3D3D3"}}>수정</th>
-                <td style={{textAlign: "center"}}>{mainDataResult.data.length == 0 ? "" : mainDataResult.data[0].cnt2}</td>
-                <th style={{backgroundColor: "#D3D3D3"}}>오류</th>
-                <td style={{textAlign: "center"}}>{mainDataResult.data.length == 0 ? "" : mainDataResult.data[0].cnt3}</td>
-              </tr>
-            </tbody>
-          </table>
+        <table style={{ width: "100%" }}>
+          <tbody>
+            <tr>
+              <th style={{ backgroundColor: "#D3D3D3" }}>작성일</th>
+              <td style={{ textAlign: "center" }}>
+                {mainDataResult.data.length == 0
+                  ? ""
+                  : mainDataResult.data[0].recdt}
+              </td>
+              <th style={{ backgroundColor: "#D3D3D3" }}>업무지시</th>
+              <td style={{ textAlign: "center" }}>
+                {mainDataResult.data.length == 0
+                  ? ""
+                  : mainDataResult.data[0].total_exptime}
+              </td>
+              <th style={{ backgroundColor: "#D3D3D3" }}>출근시간</th>
+              <td style={{ textAlign: "center" }}>
+                {mainDataResult.data.length == 0
+                  ? ""
+                  : mainDataResult.data[0].workstart}
+              </td>
+              <th style={{ backgroundColor: "#D3D3D3" }}>퇴근시간</th>
+              <td style={{ textAlign: "center" }}>
+                {mainDataResult.data.length == 0
+                  ? ""
+                  : mainDataResult.data[0].workend}
+              </td>
+              <th style={{ backgroundColor: "#D3D3D3" }}>지각여부</th>
+              <td style={{ textAlign: "center" }}>
+                {mainDataResult.data.length == 0
+                  ? ""
+                  : mainDataResult.data[0].is_late}
+              </td>
+            </tr>
+            <tr>
+              <th style={{ backgroundColor: "#D3D3D3" }}>작성자</th>
+              <td style={{ textAlign: "center" }}>
+                {mainDataResult.data.length == 0
+                  ? ""
+                  : mainDataResult.data[0].writer}
+              </td>
+              <th style={{ backgroundColor: "#D3D3D3" }}>소요시간</th>
+              <td style={{ textAlign: "center" }}>
+                {mainDataResult.data.length == 0
+                  ? ""
+                  : mainDataResult.data[0].total_usetime}
+              </td>
+              <th style={{ backgroundColor: "#D3D3D3" }}>신규</th>
+              <td style={{ textAlign: "center" }}>
+                {mainDataResult.data.length == 0
+                  ? ""
+                  : mainDataResult.data[0].cnt1}
+              </td>
+              <th style={{ backgroundColor: "#D3D3D3" }}>수정</th>
+              <td style={{ textAlign: "center" }}>
+                {mainDataResult.data.length == 0
+                  ? ""
+                  : mainDataResult.data[0].cnt2}
+              </td>
+              <th style={{ backgroundColor: "#D3D3D3" }}>오류</th>
+              <td style={{ textAlign: "center" }}>
+                {mainDataResult.data.length == 0
+                  ? ""
+                  : mainDataResult.data[0].cnt3}
+              </td>
+            </tr>
+          </tbody>
+        </table>
         {mainDataResult != null &&
           mainDataResult.data.map((item1: any, idx1: number) =>
             idx1 === 0 || idx1 % 10 === 0 ? (
               <>
-                <table className="main_tb" style={{width: "100%"}}>
+                <table className="main_tb" style={{ width: "100%" }}>
                   <tbody>
                     {mainDataResult.data.map((item2: any, idx2: number) =>
                       idx1 + 10 > idx2 && idx1 <= idx2 ? (
                         <>
-                        <tr>
-                          <th style={{backgroundColor: "#D3D3D3"}}>고객사</th>
-                          <td colSpan={3} className="center">{item2.custnm}</td>
-                          <th style={{backgroundColor: "#D3D3D3"}}>제목</th>
-                          <td colSpan={5}>{item2.title}</td>
-                          <th style={{backgroundColor: "#D3D3D3"}}>구분</th>
-                          <td>{item2.kind1_name}</td>
-                          <th style={{backgroundColor: "#D3D3D3"}}>ET</th>
-                          <td className="number">{numberWithCommas(item2.expect_time)}</td>
-                          <th style={{backgroundColor: "#D3D3D3"}}>AT</th>
-                          <td className="number">{numberWithCommas(item2.usetime)}</td>
-                          <th style={{backgroundColor: "#D3D3D3"}}>DT</th>
-                          <td className="number">{numberWithCommas(item2.over_time)}</td>
-                        </tr>
-                        <tr>
-                          <td colSpan={18}>{item2.contents}</td>
-                        </tr>
+                          <tr>
+                            <th style={{ backgroundColor: "#D3D3D3" }}>
+                              고객사
+                            </th>
+                            <td colSpan={3} className="center">
+                              {item2.custnm}
+                            </td>
+                            <th style={{ backgroundColor: "#D3D3D3" }}>제목</th>
+                            <td colSpan={5}>{item2.title}</td>
+                            <th style={{ backgroundColor: "#D3D3D3" }}>구분</th>
+                            <td>{item2.kind1_name}</td>
+                            <th style={{ backgroundColor: "#D3D3D3" }}>ET</th>
+                            <td className="number">
+                              {numberWithCommas(item2.expect_time)}
+                            </td>
+                            <th style={{ backgroundColor: "#D3D3D3" }}>AT</th>
+                            <td className="number">
+                              {numberWithCommas(item2.usetime)}
+                            </td>
+                            <th style={{ backgroundColor: "#D3D3D3" }}>DT</th>
+                            <td className="number">
+                              {numberWithCommas(item2.over_time)}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td colSpan={18}>{item2.contents}</td>
+                          </tr>
                         </>
                       ) : (
                         ""

@@ -93,9 +93,9 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0020W_603_C";
 
+import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
 const DATA_ITEM_KEY = "custcd";
 const SUB_DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY2 = "num";
@@ -119,7 +119,7 @@ const NumberField = [
 const requiredField = ["prsnnm", "yyyy"];
 const commandField = ["files"];
 const YearDateField = ["yyyy"];
-const comboField = ["postcd"]
+const comboField = ["postcd"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -2707,7 +2707,7 @@ const BA_A0020_603: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
     setParaDataDeleted((prev) => ({
       work_type: "",
@@ -2921,6 +2921,7 @@ const BA_A0020_603: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

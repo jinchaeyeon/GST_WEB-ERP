@@ -1,57 +1,17 @@
-import { useEffect, useState } from "react";
-import * as React from "react";
+import { DataResult, State, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { getter } from "@progress/kendo-react-common";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
-  GridColumn,
-  GridEvent,
   GridCellProps,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridEvent,
   GridItemChangeEvent,
   GridSelectionChangeEvent,
   getSelectedState,
-  GridDataStateChangeEvent,
 } from "@progress/kendo-react-grid";
-import { getter } from "@progress/kendo-react-common";
-import { DataResult, process, State } from "@progress/kendo-data-query";
-import { useApi } from "../../../hooks/api";
-import {
-  ButtonContainer,
-  GridContainer,
-  GridContainerWrap,
-  GridTitle,
-  GridTitleContainer,
-} from "../../../CommonStyled";
-import { Iparameters, TControlObj } from "../../../store/types";
-import {
-  chkScrollHandler,
-  getGridItemChangedData,
-  getYn,
-  UseBizComponent,
-  UseGetValueFromSessionItem,
-  UseParaPc,
-} from "../../CommonFunction";
-import { Button } from "@progress/kendo-react-buttons";
-import ColumnWindow from "./UserOptionsColumnWindow";
-import DefaultWindow from "./UserOptionsDefaultWindow";
-import { IWindowPosition } from "../../../hooks/interfaces";
-import {
-  EDIT_FIELD,
-  EXPANDED_FIELD,
-  PAGE_SIZE,
-  SELECTED_FIELD,
-} from "../../CommonString";
-import { CellRender, RowRender } from "../../Renderers/Renderers";
-import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
-import {
-  createDataTree,
-  extendDataItem,
-  mapTree,
-  TreeList,
-  TreeListColumnProps,
-  TreeListExpandChangeEvent,
-  TreeListTextEditor,
-  treeToFlat,
-} from "@progress/kendo-react-treelist";
 import {
   Checkbox,
   CheckboxChangeEvent,
@@ -59,14 +19,54 @@ import {
   NumericTextBox,
   NumericTextBoxChangeEvent,
 } from "@progress/kendo-react-inputs";
-import { loginResultState } from "../../../store/atoms";
+import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
+import {
+  TreeList,
+  TreeListColumnProps,
+  TreeListExpandChangeEvent,
+  TreeListTextEditor,
+  createDataTree,
+  extendDataItem,
+  mapTree,
+  treeToFlat,
+} from "@progress/kendo-react-treelist";
 import { bytesToBase64 } from "byte-base64";
+import * as React from "react";
+import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
-import ComboBoxCell from "../../Cells/ComboBoxCell";
-import RadioGroupCell from "../../Cells/RadioGroupCell";
-import NameCell from "../../Cells/NameCell";
+import {
+  ButtonContainer,
+  GridContainer,
+  GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
+} from "../../../CommonStyled";
+import { useApi } from "../../../hooks/api";
+import { IWindowPosition } from "../../../hooks/interfaces";
+import { loginResultState } from "../../../store/atoms";
+import { Iparameters, TControlObj } from "../../../store/types";
 import CheckBoxCell from "../../Cells/CheckBoxCell";
+import ComboBoxCell from "../../Cells/ComboBoxCell";
+import NameCell from "../../Cells/NameCell";
 import NumberCell from "../../Cells/NumberCell";
+import RadioGroupCell from "../../Cells/RadioGroupCell";
+import {
+  UseBizComponent,
+  UseGetValueFromSessionItem,
+  UseParaPc,
+  chkScrollHandler,
+  getGridItemChangedData,
+  getYn,
+} from "../../CommonFunction";
+import {
+  EDIT_FIELD,
+  EXPANDED_FIELD,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../../CommonString";
+import { CellRender, RowRender } from "../../Renderers/Renderers";
+import ColumnWindow from "./UserOptionsColumnWindow";
+import DefaultWindow from "./UserOptionsDefaultWindow";
 
 type TKendoWindow = {
   setVisible(t: boolean): void;
@@ -632,7 +632,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     controlData.work_type = ""; //초기화
@@ -923,7 +923,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     customOptionParaData.work_type = ""; //초기화
@@ -1596,7 +1596,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
       fetchMainColumn();
       fetchMainDefault();
     } else {
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraDataDeleted.work_type = ""; //초기화

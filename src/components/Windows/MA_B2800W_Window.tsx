@@ -1,46 +1,42 @@
-import { useEffect, useState, useRef } from "react";
-import * as React from "react";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
-  GridFooterCellProps,
-  GridEvent,
   GridDataStateChangeEvent,
-  getSelectedState,
-  GridSelectionChangeEvent,
+  GridFooterCellProps,
   GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState
 } from "@progress/kendo-react-grid";
-import { DataResult, process, State, getter } from "@progress/kendo-data-query";
-import { useApi } from "../../hooks/api";
+import { bytesToBase64 } from "byte-base64";
+import * as React from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
-  GridContainer,
-  Title,
-  TitleContainer,
+  GridContainer
 } from "../../CommonStyled";
-import { TColumn, TGrid, Iparameters } from "../../store/types";
-import { Button } from "@progress/kendo-react-buttons";
-import { IWindowPosition, TCommonCodeData } from "../../hooks/interfaces";
+import { useApi } from "../../hooks/api";
+import { IWindowPosition } from "../../hooks/interfaces";
+import { isLoading } from "../../store/atoms";
+import { gridList } from "../../store/columns/MA_B2800W_C";
+import { Iparameters, TColumn, TGrid } from "../../store/types";
+import DateCell from "../Cells/DateCell";
+import NumberCell from "../Cells/NumberCell";
 import {
-  chkScrollHandler,
-  convertDateToStr,
-  getQueryFromBizComponent,
   UseBizComponent,
   UseCustomOption,
+  convertDateToStr,
+  getQueryFromBizComponent
 } from "../CommonFunction";
 import {
+  COM_CODE_DEFAULT_VALUE,
   PAGE_SIZE,
   SELECTED_FIELD,
-  COM_CODE_DEFAULT_VALUE,
 } from "../CommonString";
-import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
-import { bytesToBase64 } from "byte-base64";
-import { gridList } from "../../store/columns/MA_B2800W_C";
-import NumberCell from "../Cells/NumberCell";
-import DateCell from "../Cells/DateCell";
 
 interface IFilter {
   pgSize: number;
@@ -88,8 +84,6 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
     width: 1200,
     height: 550,
   });
-
-
 
   const setLoading = useSetRecoilState(isLoading);
 
@@ -253,7 +247,7 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
   // }, [filters]);
 
   //요약정보 조회
-  const fetchMainGrid = async (filters : any) => {
+  const fetchMainGrid = async (filters: any) => {
     let data: any;
     setLoading(true);
     try {
@@ -334,13 +328,13 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
 
-  const pageChange = (event:GridPageChangeEvent) => {
+  const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
-      isSearch : true,
+      isSearch: true,
     }));
 
     setPage({
@@ -349,7 +343,7 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
     });
   };
 
-  let gridRef : any = useRef(null); 
+  let gridRef: any = useRef(null);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -358,7 +352,6 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
       targetRowIndex = null;
     }
   }, [mainDataResult]);
-
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -394,7 +387,7 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
     mainDataResult.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
-    if(sum != undefined){
+    if (sum != undefined) {
       var parts = sum.toString().split(".");
 
       return parts[0] != "NaN" ? (
@@ -406,7 +399,7 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
         <td></td>
       );
     } else {
-      return <td></td>
+      return <td></td>;
     }
   };
 
@@ -487,8 +480,8 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
                       item.sortOrder === 0
                         ? mainTotalFooterCell
                         : numberField2.includes(item.fieldName)
-                          ? gridSumQtyFooterCell2
-                          : undefined
+                        ? gridSumQtyFooterCell2
+                        : undefined
                     }
                   />
                 )

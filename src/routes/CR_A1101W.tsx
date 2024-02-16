@@ -49,7 +49,6 @@ const CR_A1101W: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
   const [count, setCount] = useState(30);
 
-
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CR_A1101W", setMessagesData);
@@ -305,6 +304,7 @@ const CR_A1101W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

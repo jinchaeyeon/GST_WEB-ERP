@@ -80,7 +80,7 @@ const KendoWindow = ({
   group_code = "",
   isCopy,
   modal = false,
-  pathname
+  pathname,
 }: TKendoWindow) => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
@@ -145,8 +145,6 @@ const KendoWindow = ({
       take: initialPageState.take,
     });
   };
-
-
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
@@ -1509,7 +1507,7 @@ const KendoWindow = ({
             enabled: true,
             drag: false,
             cell: false,
-            mode: "single"
+            mode: "single",
           }}
           onSelectionChange={onSelectionChange}
           onHeaderSelectionChange={onHeaderSelectionChange}

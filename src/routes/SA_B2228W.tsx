@@ -25,8 +25,8 @@ import MultiChart from "../components/KPIcomponents/Chart/MultiChart";
 import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutChart";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import Table from "../components/KPIcomponents/Table/Table";
-import { colors, colorsName, isLoading } from "../store/atoms";
 import { useApi } from "../hooks/api";
+import { colors, colorsName, isLoading } from "../store/atoms";
 
 const SA_B2228W: React.FC = () => {
   let deviceWidth = window.innerWidth;
@@ -242,16 +242,24 @@ const SA_B2228W: React.FC = () => {
     },
     {
       title: "이번달 계약금액",
-      data: AllPanel.month_amt != null ? numberWithCommas3(AllPanel.month_amt) + "원" : 0 + "원",
+      data:
+        AllPanel.month_amt != null
+          ? numberWithCommas3(AllPanel.month_amt) + "원"
+          : 0 + "원",
     },
     {
       title: "전달대비 증감액",
       data:
-        AllPanel.increase_amt != null ? numberWithCommas3(AllPanel.increase_amt) + "원" : 0 + "원",
+        AllPanel.increase_amt != null
+          ? numberWithCommas3(AllPanel.increase_amt) + "원"
+          : 0 + "원",
     },
     {
       title: convertDateToStr(filters.frdt).substring(0, 4) + "년 누적계약금액",
-      data: AllPanel.year_amt != null ? numberWithCommas3(AllPanel.year_amt) + "원" : 0 + "원",
+      data:
+        AllPanel.year_amt != null
+          ? numberWithCommas3(AllPanel.year_amt) + "원"
+          : 0 + "원",
     },
     {
       title: "당월 최고 매출액 사업부",

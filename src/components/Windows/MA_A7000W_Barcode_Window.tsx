@@ -5,10 +5,7 @@ import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 import ReactToPrint from "react-to-print";
-import {
-    BottomContainer,
-    ButtonContainer
-} from "../../CommonStyled";
+import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
 import { Iparameters } from "../../store/types";
@@ -139,7 +136,7 @@ const CopyWindow = ({
     if (barcodeFilters.isSearch) {
       setBarCodeFilters((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchBarcordGrid();

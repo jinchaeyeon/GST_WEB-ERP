@@ -53,7 +53,8 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
     ],
-  }, {
+  },
+  {
     gridName: "grdList1",
     columns: [
       {
@@ -99,7 +100,8 @@ export const gridList: Array<TGrid> = [
         width: 150,
       },
     ],
-  }, {
+  },
+  {
     gridName: "grdList2",
     columns: [
       {
@@ -175,7 +177,8 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
     ],
-  }, {
+  },
+  {
     gridName: "grdList3",
     columns: [
       {
@@ -209,5 +212,5 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
     ],
-  }
+  },
 ];

@@ -42,7 +42,7 @@ import {
   GridTitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
-import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
+import { IWindowPosition } from "../../hooks/interfaces";
 import {
   deletedAttadatnumsState,
   isLoading,
@@ -55,6 +55,7 @@ import ComboBoxCell from "../Cells/ComboBoxCell";
 import NumberCell from "../Cells/NumberCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -68,9 +69,8 @@ import {
   getQueryFromBizComponent,
   getUnpQuery,
   isValidDate,
-  toDate,
-  GetPropertyValueByName,
   numberWithCommas,
+  toDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
@@ -460,7 +460,7 @@ const CopyWindow = ({
   setVisible,
   reload,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -500,7 +500,10 @@ const CopyWindow = ({
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null && workType != "U") {
-      const defaultOption = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query");
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
       setFilters((prev) => ({
         ...prev,
         person: defaultOption.find((item: any) => item.id === "person2")
@@ -1779,7 +1782,11 @@ const CopyWindow = ({
     let sum = 0;
     mainDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
 
@@ -1790,7 +1797,6 @@ const CopyWindow = ({
     );
   };
 
-  
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -1951,7 +1957,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -2196,7 +2202,7 @@ const CopyWindow = ({
         newData.push(item);
         Object2.push(index);
       } else {
-        if(!item.rowstatus || item.rowstatus != "N") {
+        if (!item.rowstatus || item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -3070,7 +3076,7 @@ const CopyWindow = ({
                 title="총중량"
                 width="100px"
                 cell={NumberCell}
-                       footerCell={editNumberFooterCell}
+                footerCell={editNumberFooterCell}
               />
             </Grid>
             <BottomContainer>

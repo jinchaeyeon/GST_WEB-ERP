@@ -1,8 +1,7 @@
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { accessTokenState, loginResultState } from "../store/atoms";
 import axios from "axios";
+import { useRecoilState } from "recoil";
 import { resetLocalStorage } from "../components/CommonFunction";
-import cookie from "react-cookies";
+import { loginResultState } from "../store/atoms";
 
 let BASE_URL = process.env.REACT_APP_API_URL;
 const cachios = require("cachios");
@@ -19,7 +18,7 @@ const domain: any = {
   "biz-components": { action: "get", url: "api/data/:id" },
   permissions: { action: "get", url: "api/data/:para" },
   "culture-codes": { action: "get", url: "api/data/culture-codes" },
-  "icons": {action: "get", url: "api/data/process-layout/:para"},
+  icons: { action: "get", url: "api/data/process-layout/:para" },
   "get-password-requirements": {
     action: "get",
     url: "api/data/password-requirements",
@@ -48,7 +47,10 @@ const domain: any = {
   },
   "popup-data": { action: "post", url: "api/data/biz-components/:para" },
   logout: { action: "post", url: "api/auth/logout" },
-  login: { action: "post", url: "api/auth/login?withImage=true&withConfig=true" },
+  login: {
+    action: "post",
+    url: "api/auth/login?withImage=true&withConfig=true",
+  },
   "login-old": { action: "post", url: "api/auth/login-old" },
   "company-codes": { action: "get", url: "api/auth/company-codes" },
   "file-list": { action: "get", url: "api/files/attached/:attached" },
@@ -64,7 +66,7 @@ const domain: any = {
   }, // AttachmentNum 자체를 삭제
   "html-query": { action: "get", url: "api/data/html-doc" },
   "html-save": { action: "post", url: "api/data/:folder" },
-  "html-download": { action: "get", url: "api/data/html-doc/file"},
+  "html-download": { action: "get", url: "api/data/html-doc/file" },
   "excel-view": { action: "post", url: "api/data/emm-printout/:para" },
   "excel-view-mail": { action: "get", url: "api/data/emm-printout/:para" },
   //메뉴얼
@@ -72,7 +74,10 @@ const domain: any = {
   "manual-upload": { action: "post", url: "api/files/manual/:para" },
   "manual-delete": { action: "delete", url: "api/files/manual/:para" },
 
-  "excel-view2": { action: "post", url: "api/data/emm-printout/send-mail?id=S2023744A53" },
+  "excel-view2": {
+    action: "post",
+    url: "api/data/emm-printout/send-mail?id=S2023744A53",
+  },
 };
 
 let isTokenRefreshing = false;
@@ -137,7 +142,11 @@ export const useApi = () => {
 
       let headers: any = {};
 
-      if (name === "file-upload" || name === "file-download"|| name === "excel-view2")
+      if (
+        name === "file-upload" ||
+        name === "file-download" ||
+        name === "excel-view2"
+      )
         headers = {
           "Content-Type": "multipart/form-data",
           responseType: "stream",
@@ -150,7 +159,7 @@ export const useApi = () => {
           responseType: "application/pdf",
         };
 
-      if (name === "file-list" || name == "manual-upload" )
+      if (name === "file-list" || name == "manual-upload")
         headers = { "Content-Type": "multipart/form-data", accept: "*/*" };
 
       if (name === "platform-procedure" || name === "platform-query")
@@ -309,5 +318,5 @@ axiosInstance.interceptors.response.use(
     }
     // 오류 발생 시 오류 내용 출력 후 요청 거절
     return Promise.reject(error);
-  },
+  }
 );

@@ -4,13 +4,17 @@ import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import { Input, TextArea } from "@progress/kendo-react-inputs";
 import * as React from "react";
 import { useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
   FormBox,
   FormBoxWrap,
 } from "../../CommonStyled";
+import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
+import { isLoading } from "../../store/atoms";
+import { Iparameters } from "../../store/types";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
@@ -21,10 +25,6 @@ import {
   toDate2,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
-import { Iparameters } from "../../store/types";
-import { useSetRecoilState } from "recoil";
-import { useApi } from "../../hooks/api";
-import { isLoading } from "../../store/atoms";
 type IWindow = {
   workType: "N" | "U";
   data?: Idata;
@@ -71,7 +71,7 @@ const CopyWindow = ({
   stopcd,
   prodemp,
   modal = false,
-  pathname
+  pathname,
 }: IWindow) => {
   const setLoading = useSetRecoilState(isLoading);
   let deviceWidth = window.innerWidth;
@@ -301,7 +301,7 @@ const CopyWindow = ({
 
     if (data.isSuccess === true) {
       setData(data.returnString);
-      if(workType == "N") {
+      if (workType == "N") {
         onClose();
       }
       setParaData({
@@ -320,6 +320,7 @@ const CopyWindow = ({
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };

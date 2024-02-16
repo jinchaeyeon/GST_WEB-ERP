@@ -5,14 +5,9 @@ import {
   GridColumn,
   GridDataStateChangeEvent,
   GridEvent,
-  GridFooterCellProps
+  GridFooterCellProps,
 } from "@progress/kendo-react-grid";
-import React, {
-  CSSProperties,
-  useCallback,
-  useEffect,
-  useState
-} from "react";
+import React, { CSSProperties, useCallback, useEffect, useState } from "react";
 // ES2015 module syntax
 import { Button } from "@progress/kendo-react-buttons";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -98,8 +93,6 @@ const Main: React.FC = () => {
 
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-
-
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -961,7 +954,7 @@ const Main: React.FC = () => {
               selectedField={SELECTED_FIELD}
               selectable={{
                 enabled: true,
-                mode: "single"
+                mode: "single",
               }}
               //정렬기능
               sortable={true}

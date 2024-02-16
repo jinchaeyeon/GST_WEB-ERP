@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect } from "react";
-import { useState } from "react";
-import { ICustData, IWindowPosition } from "../../hooks/interfaces";
+import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
   Grid,
   GridColumn,
@@ -11,15 +11,25 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import {
-  COM_CODE_DEFAULT_VALUE,
-  PAGE_SIZE,
-  SELECTED_FIELD,
-} from "../CommonString";
-import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
-import { isLoading } from "../../store/atoms";
 import {
+  BottomContainer,
+  ButtonContainer,
+  FilterBox,
+  GridContainer,
+  TitleContainer
+} from "../../CommonStyled";
+import { useApi } from "../../hooks/api";
+import { ICustData, IWindowPosition } from "../../hooks/interfaces";
+import { isLoading } from "../../store/atoms";
+import { Iparameters } from "../../store/types";
+import DateCell from "../Cells/DateCell";
+import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -29,27 +39,15 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
-  GetPropertyValueByName,
 } from "../CommonFunction";
-import { bytesToBase64 } from "byte-base64";
-import { useApi } from "../../hooks/api";
-import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
-  BottomContainer,
-  ButtonContainer,
-  ButtonInInput,
-  FilterBox,
-  GridContainer,
-  TitleContainer,
-} from "../../CommonStyled";
-import { Button } from "@progress/kendo-react-buttons";
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
-import { Input } from "@progress/kendo-react-inputs";
-import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
-import { Iparameters } from "../../store/types";
-import DateCell from "../Cells/DateCell";
 
 type IWindow = {
   setVisible(t: boolean): void;

@@ -465,11 +465,7 @@ const KendoWindow = ({
     let valid = true;
 
     dataItem.map((item) => {
-      if (
-        item.overtime == "" ||
-        item.yyyymm == "" ||
-        item.yyyymm == null
-      ) {
+      if (item.overtime == "" || item.yyyymm == "" || item.yyyymm == null) {
         valid = false;
       }
     });
@@ -693,7 +689,7 @@ const KendoWindow = ({
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
-              yyyymm : toDate(row.yyyymm + "01"),
+              yyyymm: toDate(row.yyyymm + "01"),
               [SELECTED_FIELD]: selectedState[idGetter(row)],
             })),
             mainDataState

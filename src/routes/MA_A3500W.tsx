@@ -996,7 +996,7 @@ const MA_A2400W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(infomation);
       setInfomation((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchSubGrid(deepCopiedFilters);
@@ -1010,7 +1010,7 @@ const MA_A2400W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(infomation2);
       setInfomation2((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchSubGrid2(deepCopiedFilters);
@@ -1024,7 +1024,7 @@ const MA_A2400W: React.FC = () => {
       const deepCopiedFilters = _.cloneDeep(infomation3);
       setInfomation3((prev) => ({
         ...prev,
-                find_row_value: "",
+        find_row_value: "",
         isSearch: false,
       })); // 한번만 조회되도록
       fetchSubGrid3(deepCopiedFilters);
@@ -1348,7 +1348,13 @@ const MA_A2400W: React.FC = () => {
     let sum = 0;
     subDataResult2.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" ||
+              item[props.field] == undefined ||
+              item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
     return (
@@ -1362,7 +1368,13 @@ const MA_A2400W: React.FC = () => {
     let sum = 0;
     subDataResult.data.forEach((item) =>
       props.field !== undefined
-        ? (sum += parseFloat(item[props.field] == "" || item[props.field] == undefined || item[props.field] == undefined ? 0 : item[props.field]))
+        ? (sum += parseFloat(
+            item[props.field] == "" ||
+              item[props.field] == undefined ||
+              item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
         : 0
     );
     return (
@@ -2010,6 +2022,7 @@ const MA_A2400W: React.FC = () => {
     } else {
       console.log("[오류 발생]");
       console.log(data);
+      alert(data.resultMessage);
     }
     setLoading(false);
   };
@@ -2379,7 +2392,7 @@ const MA_A2400W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-               pathname="MA_A3500W"
+              pathname="MA_A3500W"
             />
           )}
         </ButtonContainer>

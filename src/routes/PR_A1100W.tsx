@@ -249,8 +249,6 @@ const PR_A1100W: React.FC = () => {
 
   const userId = UseGetValueFromSessionItem("user_id");
 
-
-
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("PR_A1100W", setMessagesData);
@@ -658,7 +656,7 @@ const PR_A1100W: React.FC = () => {
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     //수주상세 조회 파라미터
     const parameters: Iparameters = {
@@ -772,7 +770,7 @@ const PR_A1100W: React.FC = () => {
   };
 
   const fetchPlanGrid = async (filters: any) => {
-       //if (!permissions?.view) return;
+    //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
     //생산계획 조회 파라미터
@@ -1468,7 +1466,7 @@ const PR_A1100W: React.FC = () => {
 
       resetAllGrid();
     } else {
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraDataDeleted.work_type = ""; //초기화
@@ -1843,7 +1841,7 @@ const PR_A1100W: React.FC = () => {
       deletedPlanRows = [];
       deletedMaterialRows = [];
     } else {
-      alert("[" + data.statusCode + "] " + data.resultMessage);
+      alert(data.resultMessage);
     }
 
     paraDataDeleted.work_type = ""; //초기화

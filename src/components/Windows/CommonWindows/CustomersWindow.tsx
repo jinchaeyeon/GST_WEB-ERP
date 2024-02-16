@@ -11,6 +11,7 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
@@ -27,10 +28,17 @@ import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
 import { Iparameters } from "../../../store/types";
 import BizComponentComboBox from "../../ComboBoxes/BizComponentComboBox";
-import { UseBizComponent, getQueryFromBizComponent, handleKeyPressSearch } from "../../CommonFunction";
-import { COM_CODE_DEFAULT_VALUE, PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
+import {
+  UseBizComponent,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+} from "../../CommonFunction";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
-import { bytesToBase64 } from "byte-base64";
 
 type IKendoWindow = {
   setVisible(t: boolean): void;
@@ -71,7 +79,7 @@ const KendoWindow = ({
   const [custdivListData, setCustdivListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  
+
   useEffect(() => {
     if (bizComponentData !== null) {
       const custdivQueryStr = getQueryFromBizComponent(
@@ -216,11 +224,13 @@ const KendoWindow = ({
         filters.pgSize,
       custcd: filters.custcd,
       custnm: filters.custnm,
-      custdiv: custdivListData.find(
-        (item: any) => item.sub_code === filters.custdiv
-      )?.code_name == undefined ? "" : custdivListData.find(
-        (item: any) => item.sub_code === filters.custdiv
-      )?.code_name,
+      custdiv:
+        custdivListData.find((item: any) => item.sub_code === filters.custdiv)
+          ?.code_name == undefined
+          ? ""
+          : custdivListData.find(
+              (item: any) => item.sub_code === filters.custdiv
+            )?.code_name,
       useyn:
         filters.useyn === "Y" ? "사용" : filters.useyn === "N" ? "미사용" : "",
     };

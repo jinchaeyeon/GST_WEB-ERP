@@ -147,7 +147,7 @@ const ItemsWindow = ({
     });
   };
 
-  let gridRef : any = useRef(null); 
+  let gridRef: any = useRef(null);
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (targetRowIndex !== null && gridRef.current) {

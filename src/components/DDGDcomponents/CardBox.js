@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Card } from "primereact/card";
-import { CardContent, CardHeader, Typography } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
 import PaletteIcon from "@mui/icons-material/Palette";
+import { CardContent, CardHeader, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import DDGDColorWindow from "../Windows/DDGD/DDGDColorWindow";
-import { getQueryFromBizComponent, UseBizComponent } from "../CommonFunction";
+import IconButton from "@mui/material/IconButton";
 import { bytesToBase64 } from "byte-base64";
-import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
+import { Card } from "primereact/card";
+import { useCallback, useEffect, useState } from "react";
 import { useApi } from "../../hooks/api";
+import { UseBizComponent, getQueryFromBizComponent } from "../CommonFunction";
+import { COM_CODE_DEFAULT_VALUE } from "../CommonString";
+import DDGDColorWindow from "../Windows/DDGD/DDGDColorWindow";
 
 const CardBox = (props) => {
   const [colors, setColors] = useState(props.backgroundColor);
@@ -66,7 +66,7 @@ const CardBox = (props) => {
           marginRight: "15px",
           borderRadius: "10px",
           backgroundColor: colors,
-          cursor: "pointer"
+          cursor: "pointer",
         }}
         onClick={(e) => props.Click(e)}
       >
@@ -78,7 +78,7 @@ const CardBox = (props) => {
           }
           subheaderTypographyProps={{
             color: "#8f918d",
-            fontSize: isMobile? "14px" : "0.2vw",
+            fontSize: isMobile ? "14px" : "0.2vw",
             fontWeight: 500,
             fontFamily: "TheJamsil5Bold",
           }}
@@ -87,7 +87,7 @@ const CardBox = (props) => {
               <Typography
                 style={{
                   color: "black",
-                  fontSize: isMobile? "28px" : "1.5vw",
+                  fontSize: isMobile ? "28px" : "1.5vw",
                   fontWeight: 700,
                   display: "flex",
                   alignItems: "center",
@@ -105,7 +105,7 @@ const CardBox = (props) => {
                 <Typography
                   style={{
                     color: "#8f918d",
-                    fontSize: isMobile? "15px" :"0.8vw",
+                    fontSize: isMobile ? "15px" : "0.8vw",
                     fontWeight: 500,
                     marginLeft: "5px",
                     fontFamily: "TheJamsil5Bold",
@@ -123,10 +123,10 @@ const CardBox = (props) => {
             <Typography
               style={{
                 color: "#8f918d",
-                fontSize: isMobile? "12px" :"0.6vw",
+                fontSize: isMobile ? "12px" : "0.6vw",
                 fontWeight: 500,
                 fontFamily: "TheJamsil5Bold",
-                float: "left"
+                float: "left",
               }}
             >
               이용기간: {props.date} {props.day}
@@ -139,7 +139,7 @@ const CardBox = (props) => {
               <Typography
                 style={{
                   color: "#8f918d",
-                  fontSize: isMobile? "19px" :"1vw",
+                  fontSize: isMobile ? "19px" : "1vw",
                   fontWeight: 500,
                   fontFamily: "TheJamsil5Bold",
                   display: "flex",
@@ -150,7 +150,7 @@ const CardBox = (props) => {
                 <Typography
                   style={{
                     color: "#525252",
-                    fontSize: isMobile? "23px" :"1vw",
+                    fontSize: isMobile ? "23px" : "1vw",
                     fontWeight: 500,
                     marginLeft: "5px",
                     fontFamily: "TheJamsil5Bold",
@@ -165,7 +165,7 @@ const CardBox = (props) => {
               <Typography
                 style={{
                   color: "#8f918d",
-                  fontSize: isMobile? "19px" :"1vw",
+                  fontSize: isMobile ? "19px" : "1vw",
                   fontWeight: 500,
                   fontFamily: "TheJamsil5Bold",
                   display: "flex",
@@ -176,7 +176,7 @@ const CardBox = (props) => {
                 <Typography
                   style={{
                     color: "#525252",
-                    fontSize: isMobile? "23px" :"1vw",
+                    fontSize: isMobile ? "23px" : "1vw",
                     fontWeight: 500,
                     marginLeft: "5px",
                     fontFamily: "TheJamsil5Bold",
