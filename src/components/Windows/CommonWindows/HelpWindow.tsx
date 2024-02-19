@@ -158,7 +158,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
-const UserWindow = ({ setVisible, modal = false }: IWindow) => {
+const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
 
@@ -873,15 +873,12 @@ const UserWindow = ({ setVisible, modal = false }: IWindow) => {
       </TitleContainer>
       <div
         style={{
-          height: "340px",
-          border: "1px solid gray",
+          height: position.height - 570,
           marginBottom: "10px",
-          overflow: "scroll",
         }}
       >
         {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
       </div>
-
       <FormContext.Provider
         value={{
           attdatnum,
@@ -1029,4 +1026,4 @@ const UserWindow = ({ setVisible, modal = false }: IWindow) => {
   );
 };
 
-export default UserWindow;
+export default HelpWindow;

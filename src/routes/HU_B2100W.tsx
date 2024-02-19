@@ -212,8 +212,7 @@ const HU_B2100W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
-    useState<boolean>(false);
+  const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -524,8 +523,8 @@ const HU_B2100W: React.FC = () => {
     );
   };
 
-  const onPrsnnumWndClick = () => {
-    setPrsnnumWindowVisible(true);
+  const onUserWndClick = () => {
+    setuserWindowVisible(true);
   };
 
   interface IPrsnnum {
@@ -536,7 +535,7 @@ const HU_B2100W: React.FC = () => {
     postcd: string;
   }
 
-  const setPrsnnumData = (data: IPrsnnum) => {
+  const setUserData = (data: IPrsnnum) => {
     setFilters((prev) => ({
       ...prev,
       prsnnum: data.prsnnum,
@@ -612,7 +611,7 @@ const HU_B2100W: React.FC = () => {
                 />
                 <ButtonInInput>
                   <Button
-                    onClick={onPrsnnumWndClick}
+                    onClick={onUserWndClick}
                     icon="more-horizontal"
                     fillMode="flat"
                   />
@@ -782,10 +781,10 @@ const HU_B2100W: React.FC = () => {
             )}
         </Grid>
       </GridContainer>
-      {prsnnumWindowVisible && (
+      {userWindowVisible && (
         <UserWindow
-          setVisible={setPrsnnumWindowVisible}
-          setData={setPrsnnumData}
+          setVisible={setuserWindowVisible}
+          setData={setUserData}
           modal={true}
         />
       )}

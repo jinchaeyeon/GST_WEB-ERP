@@ -160,22 +160,20 @@ const ColumnCommandCell = (props: GridCellProps) => {
       });
     }
   };
-  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
-    useState<boolean>(false);
+  const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
-  const onPrsnnumWndClick = () => {
+  const onUserWndClick = () => {
     if (dataItem["rowstatus"] == "N") {
-      setPrsnnumWindowVisible(true);
+      setuserWindowVisible(true);
     } else {
       alert("사번은 수정이 불가합니다.");
     }
   };
 
-  const setPrsnnumData = (data: IPrsnnum) => {
-    setPrsnnum(data.prsnnum);
+  const setUserData = (data: IPrsnnum) => {
     setPrsnnm(data.prsnnm);
+    setPrsnnum(data.prsnnum);
   };
-
   const defaultRendering = (
     <td
       className={className}
@@ -191,7 +189,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       <ButtonInGridInput>
         <Button
           name="itemcd"
-          onClick={onPrsnnumWndClick}
+          onClick={onUserWndClick}
           icon="more-horizontal"
           fillMode="flat"
         />
@@ -204,10 +202,10 @@ const ColumnCommandCell = (props: GridCellProps) => {
       {render === undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
-      {prsnnumWindowVisible && (
+      {userWindowVisible && (
         <UserWindow
-          setVisible={setPrsnnumWindowVisible}
-          setData={setPrsnnumData}
+          setVisible={setuserWindowVisible}
+          setData={setUserData}
           modal={true}
         />
       )}

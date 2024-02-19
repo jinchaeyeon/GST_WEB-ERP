@@ -161,11 +161,10 @@ const HU_B2120W: React.FC = () => {
   }>({});
   const [tabSelected, setTabSelected] = React.useState(0);
 
-  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
-    useState<boolean>(false);
+  const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
-  const onPrsnnumWndClick = () => {
-    setPrsnnumWindowVisible(true);
+  const onUserWndClick = () => {
+    setuserWindowVisible(true);
   };
 
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -267,7 +266,7 @@ const HU_B2120W: React.FC = () => {
     isSearch: true,
   });
 
-  const setPrsnnumData = (data: IPrsnnum) => {
+  const setUserData = (data: IPrsnnum) => {
     setFilters((prev) => ({
       ...prev,
       prsnnum: data.prsnnum,
@@ -592,7 +591,7 @@ const HU_B2120W: React.FC = () => {
                 />
                 <ButtonInInput>
                   <Button
-                    onClick={onPrsnnumWndClick}
+                    onClick={onUserWndClick}
                     icon="more-horizontal"
                     fillMode="flat"
                   />
@@ -736,10 +735,10 @@ const HU_B2120W: React.FC = () => {
           </GridContainer>
         </TabStripTab>
       </TabStrip>
-      {prsnnumWindowVisible && (
+      {userWindowVisible && (
         <UserWindow
-          setVisible={setPrsnnumWindowVisible}
-          setData={setPrsnnumData}
+          setVisible={setuserWindowVisible}
+          setData={setUserData}
           modal={true}
         />
       )}

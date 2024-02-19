@@ -293,7 +293,12 @@ const KendoWindow = ({
   //조회조건 초기값
   const [information, setInformation] = useState({
     recdt: new Date(),
-    appnm: pgmgb == "Z" ? "지출결의서 결재요청(" + para.expenseno + ")" : "",
+    appnm:
+      pgmgb == "Z"
+        ? "지출결의서 결재요청(" + para.expenseno + ")"
+        : pgmgb == "W"
+        ? "근채허가신청 결재요청(" + para.expenseno + ")"
+        : "",
   });
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -1174,7 +1179,7 @@ const KendoWindow = ({
       appseq: ++seq,
       arbitragb: "N",
       orgdiv: "01",
-      pgmgb: "Z",
+      pgmgb: pgmgb,
       postcd: "",
       recdt: convertDateToStr(new Date()),
       resno: "",
@@ -1212,7 +1217,7 @@ const KendoWindow = ({
       appseq: ++seq,
       arbitragb: "N",
       orgdiv: "01",
-      pgmgb: "Z",
+      pgmgb: pgmgb,
       postcd: "",
       recdt: convertDateToStr(new Date()),
       resno: "",

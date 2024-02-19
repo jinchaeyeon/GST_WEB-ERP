@@ -73,7 +73,7 @@ import CopyWindow from "../components/Windows/CM_A5000W_Copy_Window";
 import ProjectsWindow from "../components/Windows/CM_A5000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import { useApi } from "../hooks/api";
 import { IAttachmentData, ICustData } from "../hooks/interfaces";
 import {
@@ -98,7 +98,7 @@ let reference = "";
 const DateField = ["request_date", "finexpdt", "completion_date"];
 const StatusField = ["status"];
 
-interface IUser {
+interface IPrsnnum {
   user_id: string;
   user_name: string;
 }
@@ -261,8 +261,10 @@ const CM_A5000W: React.FC = () => {
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
-  const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
-  const [userWindowVisible2, setUserWindowVisible2] = useState<boolean>(false);
+  const [PrsnnumWindowVisible, setPrsnnumWindowVisible] =
+    useState<boolean>(false);
+  const [PrsnnumWindowVisible2, setPrsnnumWindowVisible2] =
+    useState<boolean>(false);
   const [copyWindowVisible, setCopyWindowvisible] = useState<boolean>(false);
   const [projectWindowVisible, setProjectWindowVisible] =
     useState<boolean>(false);
@@ -279,12 +281,12 @@ const CM_A5000W: React.FC = () => {
     setCustWindowVisible2(true);
   };
 
-  const onUserWndClick = () => {
-    setUserWindowVisible(true);
+  const onPrsnnumWndClick = () => {
+    setPrsnnumWindowVisible(true);
   };
 
-  const onUserWndClick2 = () => {
-    setUserWindowVisible2(true);
+  const onPrsnnumWndClick2 = () => {
+    setPrsnnumWindowVisible2(true);
   };
 
   const onProjectWndClick = () => {
@@ -303,7 +305,6 @@ const CM_A5000W: React.FC = () => {
     setFilters((prev: any) => {
       return {
         ...prev,
-        //custcd: data.custcd,
         custnm: data.custnm,
       };
     });
@@ -319,17 +320,16 @@ const CM_A5000W: React.FC = () => {
     });
   };
 
-  const setUserData = (data: IUser) => {
+  const setPrsnnumData = (data: IPrsnnum) => {
     setFilters((prev: any) => {
       return {
         ...prev,
-        //user_id: data.user_id,
         user_name: data.user_name,
       };
     });
   };
 
-  const setUserData2 = (data: IUser) => {
+  const setPrsnnumData2 = (data: IPrsnnum) => {
     setInformation((prev: any) => {
       return {
         ...prev,
@@ -1358,7 +1358,7 @@ const CM_A5000W: React.FC = () => {
                             type="button"
                             icon="more-horizontal"
                             fillMode="flat"
-                            onClick={onUserWndClick}
+                            onClick={onPrsnnumWndClick}
                           />
                         </ButtonInInput>
                       </td>
@@ -1547,7 +1547,7 @@ const CM_A5000W: React.FC = () => {
                               type="button"
                               icon="more-horizontal"
                               fillMode="flat"
-                              onClick={onUserWndClick2}
+                              onClick={onPrsnnumWndClick2}
                             />
                           </ButtonInInput>
                         </td>
@@ -1819,19 +1819,19 @@ const CM_A5000W: React.FC = () => {
           modal={true}
         />
       )}
-      {userWindowVisible && (
-        <UserWindow
-          setVisible={setUserWindowVisible}
-          workType={"N"}
-          setData={setUserData}
+      {PrsnnumWindowVisible && (
+        <PrsnnumWindow
+          setVisible={setPrsnnumWindowVisible}
+          workType="N"
+          setData={setPrsnnumData}
           modal={true}
         />
       )}
-      {userWindowVisible2 && (
-        <UserWindow
-          setVisible={setUserWindowVisible2}
-          workType={"N"}
-          setData={setUserData2}
+      {PrsnnumWindowVisible2 && (
+        <PrsnnumWindow
+          setVisible={setPrsnnumWindowVisible2}
+          workType="N"
+          setData={setPrsnnumData2}
           modal={true}
         />
       )}

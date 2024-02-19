@@ -69,6 +69,7 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import ApprovalWindow from "../components/Windows/CommonWindows/ApprovalWindow";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
@@ -378,11 +379,12 @@ const HU_A2140W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
+  const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
+  const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
 
-  const onPrsnnumWndClick = () => {
-    setPrsnnumWindowVisible(true);
+  const onUserWndClick = () => {
+    setuserWindowVisible(true);
   };
 
   interface IPrsnnum {
@@ -393,7 +395,7 @@ const HU_A2140W: React.FC = () => {
     postcd: string;
   }
 
-  const setPrsnnumData = (data: IPrsnnum) => {
+  const setUserData = (data: IPrsnnum) => {
     setFilters((prev) => ({
       ...prev,
       prsnnum: data.prsnnum,
@@ -452,7 +454,10 @@ const HU_A2140W: React.FC = () => {
 
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        expenseno: item.recdt + "-" + item.seq,
+      }));
 
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
@@ -1093,7 +1098,9 @@ const HU_A2140W: React.FC = () => {
   }, [ParaData]);
 
   const onSaveClick = async () => {
+    let valid = true;
     let valid2 = true;
+    let valid3 = true;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
@@ -1102,7 +1109,14 @@ const HU_A2140W: React.FC = () => {
     });
 
     if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+
     dataItem.map((item) => {
+      if (item.prsnnum != userId) {
+        valid = false;
+      }
+      if (item.stddiv == "") {
+        valid3 = false;
+      }
       if (!isNaN(item.shh) == false || item.shh.length != 2) {
         valid2 = false;
       } else {
@@ -1132,6 +1146,21 @@ const HU_A2140W: React.FC = () => {
         }
       }
     });
+
+    deletedMainRows.map((item: any) => {
+      if (item.prsnnum != userId) {
+        valid = false;
+      }
+    });
+
+    if (valid != true) {
+      alert("본인이 아니면 수정, 삭제가 불가능합니다.");
+      return false;
+    }
+    if (valid3 != true) {
+      alert("근태구분은 필수값입니다.");
+      return false;
+    }
     let dataArr: TdataArr = {
       rowstatus_s: [],
       recdt_s: [],
@@ -1263,6 +1292,29 @@ const HU_A2140W: React.FC = () => {
     }
   };
 
+  const onCheckClick = () => {
+    if (mainDataResult.total > 0) {
+      const selectRow = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+
+      if (selectRow.rowstatus == "N") {
+        alert("저장 후 다시 시도해주세요.");
+      } else if (selectRow.prsnnum != userId) {
+        alert("본인만 결재요청 할 수 있습니다.");
+      } else {
+        if (selectRow.appyn == "") {
+          setDetailWindowVisible(true);
+        } else {
+          alert("해당 자료는 이미 결재가 진행 중이거나 완료 된 건입니다.");
+        }
+      }
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1322,7 +1374,7 @@ const HU_A2140W: React.FC = () => {
                 />
                 <ButtonInInput>
                   <Button
-                    onClick={onPrsnnumWndClick}
+                    onClick={onUserWndClick}
                     icon="more-horizontal"
                     fillMode="flat"
                   />
@@ -1399,6 +1451,13 @@ const HU_A2140W: React.FC = () => {
             <GridTitleContainer>
               <GridTitle>요약정보</GridTitle>
               <ButtonContainer>
+                <Button
+                  onClick={onCheckClick}
+                  themeColor={"primary"}
+                  icon="track-changes-accept"
+                >
+                  결재
+                </Button>
                 <Button
                   onClick={onAddClick}
                   themeColor={"primary"}
@@ -1533,10 +1592,38 @@ const HU_A2140W: React.FC = () => {
           </ExcelExport>
         </GridContainer>
       </FormContext.Provider>
-      {prsnnumWindowVisible && (
+      {detailWindowVisible && (
+        <ApprovalWindow
+          setVisible={setDetailWindowVisible}
+          para={
+            mainDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0] != undefined
+              ? mainDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0]
+              : ""
+          }
+          pathname="HU_A2140W"
+          pgmgb="W"
+          setData={(str) =>
+            setFilters((prev) => ({
+              ...prev,
+              find_row_value: str,
+              isSearch: true,
+            }))
+          }
+          modal={true}
+        />
+      )}
+      {userWindowVisible && (
         <UserWindow
-          setVisible={setPrsnnumWindowVisible}
-          setData={setPrsnnumData}
+          setVisible={setuserWindowVisible}
+          setData={setUserData}
           modal={true}
         />
       )}

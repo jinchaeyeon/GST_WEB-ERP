@@ -43,8 +43,8 @@ import {
 import { PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
-import CustomersWindow from "./CommonWindows/CustomersWindow";
 import ItemsWindow from "./CommonWindows/ItemsWindow";
+import UserWindow from "./CommonWindows/UserWindow";
 
 type IWindow = {
   setVisible(t: boolean): void;
@@ -52,6 +52,14 @@ type IWindow = {
   modal?: boolean;
   pathname: string;
 };
+
+interface IPrsnnum {
+  prsnnum: string;
+  prsnnm: string;
+  dptcd: string;
+  abilcd: string;
+  postcd: string;
+}
 
 const CopyWindow = ({
   setVisible,
@@ -114,7 +122,7 @@ const CopyWindow = ({
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_sysUserMaster_001",
+    "L_sysUserMaster_001, L_HU250T",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -122,6 +130,9 @@ const CopyWindow = ({
   //공통코드 리스트 조회 ()
   const [personListData, setPersonListData] = useState([
     { user_id: "", user_name: "" },
+  ]);
+  const [UserListData, setUserListData] = useState([
+    { prsnnum: "", prsnnm: "" },
   ]);
 
   useEffect(() => {
@@ -131,7 +142,11 @@ const CopyWindow = ({
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
+      const userQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_HU250T")
+      );
       fetchQuery(personQueryStr, setPersonListData);
+      fetchQuery(userQueryStr, setUserListData);
     }
   }, [bizComponentData]);
 
@@ -169,7 +184,6 @@ const CopyWindow = ({
     [id: string]: boolean | number[];
   }>({});
 
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [itemWindowVisible, setItemWindowVisible] = useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -207,26 +221,10 @@ const CopyWindow = ({
     setVisible(false);
   };
 
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-
   const onItemWndClick = () => {
     setItemWindowVisible(true);
   };
 
-  interface ICustData {
-    address: string;
-    custcd: string;
-    custnm: string;
-    custabbr: string;
-    bizregnum: string;
-    custdivnm: string;
-    useyn: string;
-    remark: string;
-    compclass: string;
-    ceonm: string;
-  }
   interface IItemData {
     itemcd: string;
     itemno: string;
@@ -264,14 +262,6 @@ const CopyWindow = ({
     itemlvl5: string;
     custitemnm: string;
   }
-
-  const setCustData = (data: ICustData) => {
-    setFilters((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
 
   const setItemData = (data: IItemData) => {
     setFilters((prev) => ({
@@ -460,6 +450,18 @@ const CopyWindow = ({
     selectData(selectedRowData);
   };
 
+  const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
+
+  const onUserWndClick = () => {
+    setuserWindowVisible(true);
+  };
+  const setUserData = (data: IPrsnnum) => {
+    setFilters((prev) => ({
+      ...prev,
+      chkperson: data.prsnnm,
+    }));
+  };
+
   return (
     <>
       <Window
@@ -549,6 +551,13 @@ const CopyWindow = ({
                     value={filters.chkperson}
                     onChange={filterInputChange}
                   />
+                  <ButtonInInput>
+                    <Button
+                      onClick={onUserWndClick}
+                      icon="more-horizontal"
+                      fillMode="flat"
+                    />
+                  </ButtonInInput>
                 </td>
                 <th>고객사</th>
                 <td>
@@ -604,9 +613,9 @@ const CopyWindow = ({
                 cpmperson: personListData.find(
                   (item: any) => item.user_id == row.cpmperson
                 )?.user_name,
-                chkperson: personListData.find(
-                  (item: any) => item.user_id == row.chkperson
-                )?.user_name,
+                chkperson: UserListData.find(
+                  (item: any) => item.prsnnum == row.chkperson
+                )?.prsnnm,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -688,19 +697,15 @@ const CopyWindow = ({
           </ButtonContainer>
         </BottomContainer>
       </Window>
-      {custWindowVisible && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible}
-          workType={"ROW_ADD"}
-          setData={setCustData}
-        />
-      )}
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
           workType={"ROW_ADD"}
           setData={setItemData}
         />
+      )}
+      {userWindowVisible && (
+        <UserWindow setVisible={setuserWindowVisible} setData={setUserData} />
       )}
     </>
   );

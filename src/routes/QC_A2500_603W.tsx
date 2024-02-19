@@ -56,7 +56,7 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import QC_A2500_603W_Window from "../components/Windows/QC_A2500_603W_Window";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
@@ -146,14 +146,16 @@ const BA_A0020_603: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent(
-    "L_sysUserMaster_001, L_QC001_603, L_QC040, L_QC111",
+    "L_sysUserMaster_001, L_QC001_603, L_QC040, L_QC111, L_HU250T",
     setBizComponentData
   );
 
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
-
+  const [UserListData2, setUserListData2] = useState([
+    { prsnnum: "", prsnnm: "" },
+  ]);
   const [statusListData, setStatusListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -184,10 +186,14 @@ const BA_A0020_603: React.FC = () => {
       const combytypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_QC111")
       );
+      const userQueryStr2 = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_HU250T")
+      );
       fetchQueryData(userQueryStr, setUserListData);
       fetchQueryData(statusQueryStr, setStatusListData);
       fetchQueryData(ncrdivQueryStr, setNcrdivListData);
       fetchQueryData(combytypeQueryStr, setCombytyleListData);
+      fetchQueryData(userQueryStr2, setUserListData2);
     }
   }, [bizComponentData]);
 
@@ -263,8 +269,6 @@ const BA_A0020_603: React.FC = () => {
     useState<boolean>(false);
   const [projectWindowVisible, setProjectWindowVisible] =
     useState<boolean>(false);
-  const [projectWindowVisible2, setProjectWindowVisible2] =
-    useState<boolean>(false);
 
   const onCustWndClick = () => {
     setCustWindowVisible(true);
@@ -276,9 +280,7 @@ const BA_A0020_603: React.FC = () => {
   const onProejctWndClick = () => {
     setProjectWindowVisible(true);
   };
-  const onProejctWndClick2 = () => {
-    setProjectWindowVisible2(true);
-  };
+
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -340,18 +342,6 @@ const BA_A0020_603: React.FC = () => {
 
   const setProjectData = (data: any) => {
     setFilters((prev: any) => {
-      return {
-        ...prev,
-        ref_key: data.ref_key == undefined ? "" : data.ref_key,
-        testnum: data.testnum == undefined ? "" : data.testnum,
-        smperson: data.smperson == undefined ? "" : data.smperson,
-        cpmperson: data.cpmperson == undefined ? "" : data.cpmperson,
-      };
-    });
-  };
-
-  const setProjectData2 = (data: any) => {
-    setInformation((prev: any) => {
       return {
         ...prev,
         ref_key: data.ref_key == undefined ? "" : data.ref_key,
@@ -440,9 +430,9 @@ const BA_A0020_603: React.FC = () => {
         "@p_testnum": filters.testnum,
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
-        "@p_smperson": filters.smperson,
+        "@p_smperson": filters.smpersonnm == "" ? "" : filters.smperson,
         "@p_smpersonnm": filters.smpersonnm,
-        "@p_cpmperson": filters.cpmperson,
+        "@p_cpmperson": filters.cpmpersonnm == "" ? "" : filters.cpmperson,
         "@p_cpmpersonnm": filters.cpmpersonnm,
         "@p_status": filters.status,
         "@p_quotestnum": filters.quotestnum,
@@ -549,9 +539,9 @@ const BA_A0020_603: React.FC = () => {
         "@p_testnum": filters.testnum,
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
-        "@p_smperson": filters.smperson,
+        "@p_smperson": filters.smpersonnm == "" ? "" : filters.smperson,
         "@p_smpersonnm": filters.smpersonnm,
-        "@p_cpmperson": filters.cpmperson,
+        "@p_cpmperson": filters.cpmpersonnm == "" ? "" : filters.cpmperson,
         "@p_cpmpersonnm": filters.cpmpersonnm,
         "@p_status": filters.status,
         "@p_datnum": commentFilter.datnum,
@@ -809,8 +799,8 @@ const BA_A0020_603: React.FC = () => {
     const cpmperson = userListData.find(
       (items: any) => items.user_name == data.cpmperson
     );
-    const chkperson = userListData.find(
-      (items: any) => items.user_name == data.chkperson
+    const chkperson = UserListData2.find(
+      (items: any) => items.prsnnm == data.chkperson
     );
 
     setInformation({
@@ -823,7 +813,7 @@ const BA_A0020_603: React.FC = () => {
       ncrdiv: "",
       combytype: "",
       status: "01",
-      chkperson: chkperson == undefined ? "" : chkperson.user_id,
+      chkperson: chkperson == undefined ? "" : chkperson.prsnnum,
       itemcd: data.itemcd == undefined ? "" : data.itemcd,
       itemnm: data.itemnm == undefined ? "" : data.itemnm,
       baddt: new Date(),
@@ -1445,22 +1435,24 @@ const BA_A0020_603: React.FC = () => {
     }
   };
 
-  const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
-  const [userWindowVisible2, setUserWindowVisible2] = useState<boolean>(false);
+  const [PrsnnumWindowVisible, setPrsnnumWindowVisible] =
+    useState<boolean>(false);
+  const [PrsnnumWindowVisible2, setPrsnnumWindowVisible2] =
+    useState<boolean>(false);
 
-  const onUserWndClick = () => {
-    setUserWindowVisible(true);
+  const onPrsnnumWndClick = () => {
+    setPrsnnumWindowVisible(true);
   };
-  const onUserWndClick2 = () => {
-    setUserWindowVisible2(true);
+  const onPrsnnumWndClick2 = () => {
+    setPrsnnumWindowVisible2(true);
   };
 
-  interface IUser {
+  interface IPrsnnum {
     user_id: string;
     user_name: string;
   }
 
-  const setUserData = (data: IUser) => {
+  const setPrsnnumData = (data: IPrsnnum) => {
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -1470,7 +1462,7 @@ const BA_A0020_603: React.FC = () => {
     });
   };
 
-  const setUserData2 = (data: IUser) => {
+  const setPrsnnumData2 = (data: IPrsnnum) => {
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -1648,7 +1640,7 @@ const BA_A0020_603: React.FC = () => {
                         type="button"
                         icon="more-horizontal"
                         fillMode="flat"
-                        onClick={onUserWndClick}
+                        onClick={onPrsnnumWndClick}
                       />
                     </ButtonInInput>
                   </td>
@@ -1665,7 +1657,7 @@ const BA_A0020_603: React.FC = () => {
                         type="button"
                         icon="more-horizontal"
                         fillMode="flat"
-                        onClick={onUserWndClick2}
+                        onClick={onPrsnnumWndClick2}
                       />
                     </ButtonInInput>
                   </td>
@@ -1708,9 +1700,9 @@ const BA_A0020_603: React.FC = () => {
                     smperson: userListData.find(
                       (items: any) => items.user_id == row.smperson
                     )?.user_name,
-                    chkperson: userListData.find(
-                      (items: any) => items.user_id == row.chkperson
-                    )?.user_name,
+                    chkperson: UserListData2.find(
+                      (items: any) => items.prsnnum == row.chkperson
+                    )?.prsnnm,
                     cpmperson: userListData.find(
                       (items: any) => items.user_id == row.cpmperson
                     )?.user_name,
@@ -1950,10 +1942,10 @@ const BA_A0020_603: React.FC = () => {
                           type="text"
                           value={
                             Information.chkperson != ""
-                              ? userListData.find(
+                              ? UserListData2.find(
                                   (items: any) =>
-                                    items.user_id == Information.chkperson
-                                )?.user_name
+                                    items.prsnnum == Information.chkperson
+                                )?.prsnnm
                               : ""
                           }
                           className="readonly"
@@ -2354,19 +2346,19 @@ const BA_A0020_603: React.FC = () => {
           pathname="QC_A2500_603W"
         />
       )}
-      {userWindowVisible && (
-        <UserWindow
-          setVisible={setUserWindowVisible}
-          workType={"N"}
-          setData={setUserData}
+      {PrsnnumWindowVisible && (
+        <PrsnnumWindow
+          setVisible={setPrsnnumWindowVisible}
+          workType="N"
+          setData={setPrsnnumData}
           modal={true}
         />
       )}
-      {userWindowVisible2 && (
-        <UserWindow
-          setVisible={setUserWindowVisible2}
-          workType={"N"}
-          setData={setUserData2}
+      {PrsnnumWindowVisible2 && (
+        <PrsnnumWindow
+          setVisible={setPrsnnumWindowVisible2}
+          workType="N"
+          setData={setPrsnnumData2}
           modal={true}
         />
       )}

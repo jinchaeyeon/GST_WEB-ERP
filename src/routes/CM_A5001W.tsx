@@ -70,7 +70,7 @@ import RichEditor from "../components/RichEditor";
 import ProjectsWindow from "../components/Windows/CM_A5001W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import { useApi } from "../hooks/api";
 import { IAttachmentData, ICustData } from "../hooks/interfaces";
 import {
@@ -94,7 +94,7 @@ let targetRowIndex: null | number = null;
 const DateField = ["request_date", "finexpdt", "completion_date"];
 const StatusField = ["status"];
 
-interface IUser {
+interface IPrsnnum {
   user_id: string;
   user_name: string;
 }
@@ -239,7 +239,7 @@ const CM_A5001W: React.FC = () => {
   }>({});
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
+  const [PrsnnumWindowVisible, setPrsnnumWindowVisible] = useState<boolean>(false);
   const [projectWindowVisible, setProjectWindowVisible] =
     useState<boolean>(false);
   const [attachmentsQWindowVisible, setAttachmentsQWindowVisible] =
@@ -251,8 +251,8 @@ const CM_A5001W: React.FC = () => {
     setCustWindowVisible(true);
   };
 
-  const onUserWndClick = () => {
-    setUserWindowVisible(true);
+  const onPrsnnumWndClick = () => {
+    setPrsnnumWindowVisible(true);
   };
 
   const onProjectWndClick = () => {
@@ -277,7 +277,7 @@ const CM_A5001W: React.FC = () => {
     });
   };
 
-  const setUserData = (data: IUser) => {
+  const setPrsnnumData = (data: IPrsnnum) => {
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -1215,7 +1215,7 @@ const CM_A5001W: React.FC = () => {
                             type="button"
                             icon="more-horizontal"
                             fillMode="flat"
-                            onClick={onUserWndClick}
+                            onClick={onPrsnnumWndClick}
                           />
                         </ButtonInInput>
                       </td>
@@ -1626,11 +1626,11 @@ const CM_A5001W: React.FC = () => {
           modal={true}
         />
       )}
-      {userWindowVisible && (
-        <UserWindow
-          setVisible={setUserWindowVisible}
-          workType={"N"}
-          setData={setUserData}
+      {PrsnnumWindowVisible && (
+        <PrsnnumWindow
+          setVisible={setPrsnnumWindowVisible}
+          workType="N"
+          setData={setPrsnnumData}
           modal={true}
         />
       )}

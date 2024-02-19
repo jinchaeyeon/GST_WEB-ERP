@@ -112,6 +112,7 @@ import EA_A1000W from "./routes/EA_A1000W";
 import EA_A2000W from "./routes/EA_A2000W";
 import GANTT from "./routes/GANTT";
 import HU_A1000W from "./routes/HU_A1000W";
+import HU_A1060W from "./routes/HU_A1060W";
 import HU_A2070W from "./routes/HU_A2070W";
 import HU_A2100W from "./routes/HU_A2100W";
 import HU_A2140W from "./routes/HU_A2140W";
@@ -776,6 +777,8 @@ const AppInner: React.FC = () => {
       return CT_A0111W;
     } else if (str == "HU_A1000W") {
       return HU_A1000W;
+    } else if (str == "HU_A1060W") {
+      return HU_A1060W;
     } else if (str == "HU_A2070W") {
       return HU_A2070W;
     } else if (str == "HU_A2100W") {
@@ -1126,6 +1129,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
                   {/* 인사관리 */}
                   <AuthRoute path="/HU_A1000W" component={HU_A1000W} exact />
+                  <AuthRoute path="/HU_A1060W" component={HU_A1060W} exact />
                   <AuthRoute path="/HU_A2070W" component={HU_A2070W} exact />
                   <AuthRoute path="/HU_A2100W" component={HU_A2100W} exact />
                   <AuthRoute path="/HU_A2140W" component={HU_A2140W} exact />

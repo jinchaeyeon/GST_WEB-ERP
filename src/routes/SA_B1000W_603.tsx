@@ -49,7 +49,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B1000_603W_C";
@@ -162,15 +162,6 @@ const SA_B1000W_603: React.FC = () => {
     }));
   };
 
-  const filterComboBoxChange = (e: any) => {
-    const { name, value } = e;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   function getName(data: { sub_code: string }[]) {
     let str = "";
     data.map((item: { sub_code: string }) => (str += item.sub_code + "|"));
@@ -200,7 +191,7 @@ const SA_B1000W_603: React.FC = () => {
         "@p_ref_key": filters.project,
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
-        "@p_smperson": filters.smperson,
+        "@p_smperson": filters.smpersonnm == "" ? "" : filters.smperson,
         "@p_smpersonnm": filters.smpersonnm,
         "@p_status_s": status,
         "@p_find_row_value": "",
@@ -733,18 +724,19 @@ const SA_B1000W_603: React.FC = () => {
     );
   };
 
-  const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
+  const [PrsnnumWindowVisible, setPrsnnumWindowVisible] =
+    useState<boolean>(false);
 
-  const onUserWndClick = () => {
-    setUserWindowVisible(true);
+  const onPrsnnumWndClick = () => {
+    setPrsnnumWindowVisible(true);
   };
 
-  interface IUser {
+  interface IPrsnnum {
     user_id: string;
     user_name: string;
   }
 
-  const setUserData = (data: IUser) => {
+  const setPrsnnumData = (data: IPrsnnum) => {
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -828,7 +820,7 @@ const SA_B1000W_603: React.FC = () => {
                         type="button"
                         icon="more-horizontal"
                         fillMode="flat"
-                        onClick={onUserWndClick}
+                        onClick={onPrsnnumWndClick}
                       />
                     </ButtonInInput>
                   </td>
@@ -1170,11 +1162,11 @@ const SA_B1000W_603: React.FC = () => {
           modal={true}
         />
       )}
-      {userWindowVisible && (
-        <UserWindow
-          setVisible={setUserWindowVisible}
-          workType={"N"}
-          setData={setUserData}
+      {PrsnnumWindowVisible && (
+        <PrsnnumWindow
+          setVisible={setPrsnnumWindowVisible}
+          workType="N"
+          setData={setPrsnnumData}
           modal={true}
         />
       )}

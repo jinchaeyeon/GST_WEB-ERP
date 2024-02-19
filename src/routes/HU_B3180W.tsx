@@ -250,11 +250,10 @@ const HU_B3180W: React.FC = () => {
       setListData(rows);
     }
   }, []);
-  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
-    useState<boolean>(false);
+  const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
-  const onPrsnnumWndClick = () => {
-    setPrsnnumWindowVisible(true);
+  const onUserWndClick = () => {
+    setuserWindowVisible(true);
   };
 
   const [mainDataState, setMainDataState] = useState<State>({
@@ -364,7 +363,7 @@ const HU_B3180W: React.FC = () => {
     }
   }, [mainDataResult]);
 
-  const setPrsnnumData = (data: IPrsnnum) => {
+  const setUserData = (data: IPrsnnum) => {
     setFilters((prev) => ({
       ...prev,
       user_id: data.prsnnum,
@@ -509,7 +508,7 @@ const HU_B3180W: React.FC = () => {
                 />
                 <ButtonInInput>
                   <Button
-                    onClick={onPrsnnumWndClick}
+                    onClick={onUserWndClick}
                     icon="more-horizontal"
                     fillMode="flat"
                   />
@@ -607,10 +606,10 @@ const HU_B3180W: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
-      {prsnnumWindowVisible && (
+      {userWindowVisible && (
         <UserWindow
-          setVisible={setPrsnnumWindowVisible}
-          setData={setPrsnnumData}
+          setVisible={setuserWindowVisible}
+          setData={setUserData}
           modal={true}
         />
       )}

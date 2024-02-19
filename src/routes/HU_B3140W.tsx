@@ -93,6 +93,7 @@ interface IPrsnnum {
   abilcd: string;
   postcd: string;
 }
+
 const initialGroup: GroupDescriptor[] = [{ field: "group_category_name" }];
 
 const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
@@ -302,11 +303,10 @@ const HU_B3140W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
-    useState<boolean>(false);
+  const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
-  const onPrsnnumWndClick = () => {
-    setPrsnnumWindowVisible(true);
+  const onUserWndClick = () => {
+    setuserWindowVisible(true);
   };
 
   const [tabSelected, setTabSelected] = React.useState(0);
@@ -1023,7 +1023,7 @@ const HU_B3140W: React.FC = () => {
     }
   };
 
-  const setPrsnnumData = (data: IPrsnnum) => {
+  const setUserData = (data: IPrsnnum) => {
     setFilters((prev) => ({
       ...prev,
       prsnnum: data.prsnnum,
@@ -1601,7 +1601,7 @@ const HU_B3140W: React.FC = () => {
                 />
                 <ButtonInInput>
                   <Button
-                    onClick={onPrsnnumWndClick}
+                    onClick={onUserWndClick}
                     icon="more-horizontal"
                     fillMode="flat"
                   />
@@ -2054,10 +2054,10 @@ const HU_B3140W: React.FC = () => {
           </GridContainer>
         </TabStripTab>
       </TabStrip>
-      {prsnnumWindowVisible && (
+      {userWindowVisible && (
         <UserWindow
-          setVisible={setPrsnnumWindowVisible}
-          setData={setPrsnnumData}
+          setVisible={setuserWindowVisible}
+          setData={setUserData}
           modal={true}
         />
       )}

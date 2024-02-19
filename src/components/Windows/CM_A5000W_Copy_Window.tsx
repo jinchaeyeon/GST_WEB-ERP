@@ -55,7 +55,7 @@ import {
 import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
-import UserWindow from "./CommonWindows/PrsnnumWindow";
+import PrsnnumWindow from "./CommonWindows/PrsnnumWindow";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -232,14 +232,15 @@ const KendoWindow = ({
   };
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
+  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
+    useState<boolean>(false);
 
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
 
-  const onUserWndClick = () => {
-    setUserWindowVisible(true);
+  const onPrsnnumWndClick = () => {
+    setPrsnnumWindowVisible(true);
   };
 
   const setCustData = (data: ICustData) => {
@@ -570,7 +571,7 @@ const KendoWindow = ({
                     type="button"
                     icon="more-horizontal"
                     fillMode="flat"
-                    onClick={onUserWndClick}
+                    onClick={onPrsnnumWndClick}
                   />
                 </ButtonInInput>
               </td>
@@ -702,9 +703,9 @@ const KendoWindow = ({
           setData={setCustData}
         />
       )}
-      {userWindowVisible && (
-        <UserWindow
-          setVisible={setUserWindowVisible}
+      {prsnnumWindowVisible && (
+        <PrsnnumWindow
+          setVisible={setPrsnnumWindowVisible}
           workType={"N"}
           setData={setUserData}
         />

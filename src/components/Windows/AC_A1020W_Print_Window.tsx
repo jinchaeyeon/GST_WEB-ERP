@@ -1,7 +1,6 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { useEffect, useRef, useState } from "react";
-import ReactToPrint from "react-to-print";
+import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { BottomContainer, ButtonContainer } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
@@ -90,8 +89,6 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
     }
   }, [para]);
 
-  const componentRef = useRef(null);
-
   return (
     <>
       <Window
@@ -103,31 +100,14 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
         onClose={onClose}
         modal={modal}
       >
-        <ButtonContainer>
-          <></>
-          <ReactToPrint
-            trigger={() => (
-              <Button fillMode="outline" themeColor={"primary"} icon="print">
-                출력
-              </Button>
-            )}
-            content={() => componentRef.current}
-          />
-        </ButtonContainer>
         <div
           style={{
-            height: "700px",
-            border: "1px solid gray",
+            height: position.height - 170,
             marginBottom: "10px",
             marginTop: "10px",
-            overflow: "scroll",
           }}
         >
-          {url != "" ? (
-            <FileViewers file={url} ref={componentRef} type="pdf" />
-          ) : (
-            ""
-          )}
+          {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
         </div>
         <BottomContainer>
           <ButtonContainer>

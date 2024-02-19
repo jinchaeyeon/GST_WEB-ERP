@@ -11,8 +11,6 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
-import { bytesToBase64 } from "byte-base64";
-import * as React from "react";
 import { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
@@ -27,16 +25,8 @@ import FilterContainer from "../../../components/Containers/FilterContainer";
 import { useApi } from "../../../hooks/api";
 import { IWindowPosition } from "../../../hooks/interfaces";
 import { isLoading } from "../../../store/atoms";
-import {
-  UseBizComponent,
-  getQueryFromBizComponent,
-  handleKeyPressSearch,
-} from "../../CommonFunction";
-import {
-  COM_CODE_DEFAULT_VALUE,
-  PAGE_SIZE,
-  SELECTED_FIELD,
-} from "../../CommonString";
+import { UseBizComponent, handleKeyPressSearch } from "../../CommonFunction";
+import { PAGE_SIZE, SELECTED_FIELD } from "../../CommonString";
 interface IPrsnnumMulti {
   prsnnum: string;
   prsnnm: string;
@@ -70,7 +60,7 @@ const UserWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   }>({});
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "R_RTR, L_dptcd_001, L_HU006, L_HU005",
+    "R_RTR",
     //사용여부,
     setBizComponentData
   );
@@ -90,59 +80,6 @@ const UserWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     });
   };
   const [page, setPage] = useState(initialPageState);
-  //공통코드 리스트 조회 ()
-  const [dptcdListData, setDptcdListData] = React.useState([
-    { dptcd: "", dptnm: "" },
-  ]);
-  const [abilcdListData, setAbilcdListDate] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [postcdListData, setPostcdListDate] = React.useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  useEffect(() => {
-    if (bizComponentData !== null) {
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
-        )
-      );
-      const abilcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU006")
-      );
-      const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
-      );
-      fetchQuery(dptcdQueryStr, setDptcdListData);
-      fetchQuery(abilcdQueryStr, setAbilcdListDate);
-      fetchQuery(postcdQueryStr, setPostcdListDate);
-    }
-  }, [bizComponentData]);
-
-  const fetchQuery = React.useCallback(
-    async (queryStr: string, setListData: any) => {
-      let data: any;
-
-      const bytes = require("utf8-bytes");
-      const convertedQueryStr = bytesToBase64(bytes(queryStr));
-
-      let query = {
-        query: convertedQueryStr,
-      };
-
-      try {
-        data = await processApi<any>("query", query);
-      } catch (error) {
-        data = null;
-      }
-
-      if (data.isSuccess === true) {
-        const rows = data.tables[0].Rows;
-        setListData(rows);
-      }
-    },
-    []
-  );
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -272,7 +209,7 @@ const UserWindow = ({ setVisible, setData, modal = false }: IWindow) => {
 
   const onConfirmBtnClick = (props: any) => {
     const selectedData = mainDataResult.data.find(
-      (row: any) => row.itemcd === Object.keys(selectedState)[0]
+      (row: any) => row[DATA_ITEM_KEY] === Object.keys(selectedState)[0]
     );
     selectData(selectedData);
   };
@@ -368,14 +305,6 @@ const UserWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
-              dptcd: dptcdListData.find((item: any) => item.dptcd === row.dptcd)
-                ?.dptnm,
-              abilcd: abilcdListData.find(
-                (item: any) => item.sub_code === row.abilcd
-              )?.code_name,
-              postcd: postcdListData.find(
-                (item: any) => item.sub_code === row.postcd
-              )?.code_name,
               [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
             })),
             mainDataState
@@ -414,9 +343,9 @@ const UserWindow = ({ setVisible, setData, modal = false }: IWindow) => {
             footerCell={mainTotalFooterCell}
           />
           <GridColumn field="prsnnm" title="성명" width="200px" />
-          <GridColumn field="dptcd" title="부서코드" width="130px" />
-          <GridColumn field="abilcd" title="직책" width="120px" />
-          <GridColumn field="postcd" title="직위" width="120px" />
+          <GridColumn field="dptnm" title="부서코드" width="130px" />
+          <GridColumn field="abilnm" title="직책" width="120px" />
+          <GridColumn field="postnm" title="직위" width="120px" />
         </Grid>
       </GridContainer>
       <BottomContainer>

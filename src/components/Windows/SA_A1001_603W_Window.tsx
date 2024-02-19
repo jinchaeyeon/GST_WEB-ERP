@@ -1,7 +1,6 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
-import { useEffect, useRef, useState } from "react";
-import ReactToPrint from "react-to-print";
+import { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -21,7 +20,12 @@ type IWindow = {
   modal?: boolean;
 };
 
-const UserWindow = ({ setVisible, quonum, quorev, modal = false }: IWindow) => {
+const SA_A1001_603W_Window = ({
+  setVisible,
+  quonum,
+  quorev,
+  modal = false,
+}: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
 
@@ -98,8 +102,6 @@ const UserWindow = ({ setVisible, quonum, quorev, modal = false }: IWindow) => {
     fetchmanualGrid();
   }, []);
 
-  const componentRef = useRef(null);
-
   return (
     <Window
       title={"견적서출력"}
@@ -112,30 +114,14 @@ const UserWindow = ({ setVisible, quonum, quorev, modal = false }: IWindow) => {
     >
       <TitleContainer>
         <Title>견적서</Title>
-        <ButtonContainer>
-          <ReactToPrint
-            trigger={() => (
-              <Button fillMode="outline" themeColor={"primary"} icon="print">
-                출력
-              </Button>
-            )}
-            content={() => componentRef.current}
-          />
-        </ButtonContainer>
       </TitleContainer>
       <div
         style={{
-          height: "680px",
-          border: "1px solid gray",
+          height: position.height - 220,
           marginBottom: "10px",
-          overflow: "scroll",
         }}
       >
-        {url != "" ? (
-          <FileViewers file={url} ref={componentRef} type="pdf" />
-        ) : (
-          ""
-        )}
+        {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
       </div>
       <BottomContainer>
         <ButtonContainer>
@@ -148,4 +134,4 @@ const UserWindow = ({ setVisible, quonum, quorev, modal = false }: IWindow) => {
   );
 };
 
-export default UserWindow;
+export default SA_A1001_603W_Window;

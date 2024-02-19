@@ -2,6 +2,10 @@ import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
+import {
+  MultiSelect,
+  MultiSelectChangeEvent,
+} from "@progress/kendo-react-dropdowns";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
@@ -15,11 +19,6 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-
-import {
-  MultiSelect,
-  MultiSelectChangeEvent,
-} from "@progress/kendo-react-dropdowns";
 import {
   Checkbox,
   Input,
@@ -95,7 +94,7 @@ import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import SA_A1000_603W_Design2_Window from "../components/Windows/SA_A1000_603W_Design2_Window";
 import SA_A1000_603W_Design3_Window from "../components/Windows/SA_A1000_603W_Design3_Window";
 import SA_A1000_603W_Design4_Window from "../components/Windows/SA_A1000_603W_Design4_Window";
@@ -131,7 +130,7 @@ type TdataArr2 = {
   progress_status_s: string[];
 };
 
-interface IUser {
+interface IPrsnnum {
   user_id: string;
   user_name: string;
 }
@@ -1487,9 +1486,9 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": filters.quonum,
         "@p_quorev": filters.quorev,
         "@p_quoseq": filters.quoseq,
-        "@p_person": filters.person,
+        "@p_person": filters.personnm == "" ? "" : filters.person,
         "@p_personnm": filters.personnm,
-        "@p_cpmperson": filters.cpmperson,
+        "@p_cpmperson": filters.cpmpersonnm == "" ? "" : filters.cpmperson,
         "@p_cpmpersonnm": filters.cpmpersonnm,
         "@p_status": status,
         "@p_find_row_value": filters.find_row_value,
@@ -1590,9 +1589,9 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": subfilters.quonum,
         "@p_quorev": subfilters.quorev,
         "@p_quoseq": filters.quoseq,
-        "@p_person": filters.person,
+        "@p_person": filters.personnm == "" ? "" : filters.person,
         "@p_personnm": filters.personnm,
-        "@p_cpmperson": filters.cpmperson,
+        "@p_cpmperson": filters.cpmpersonnm == "" ? "" : filters.cpmperson,
         "@p_cpmpersonnm": filters.cpmpersonnm,
         "@p_status": "",
         "@p_find_row_value": filters.find_row_value,
@@ -1788,9 +1787,9 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": subfilters2.quonum,
         "@p_quorev": subfilters2.quorev,
         "@p_quoseq": filters.quoseq,
-        "@p_person": filters.person,
+        "@p_person": filters.personnm == "" ? "" : filters.person,
         "@p_personnm": filters.personnm,
-        "@p_cpmperson": filters.cpmperson,
+        "@p_cpmperson": filters.cpmpersonnm == "" ? "" : filters.cpmperson,
         "@p_cpmpersonnm": filters.cpmpersonnm,
         "@p_status": "",
         "@p_find_row_value": filters.find_row_value,
@@ -3443,16 +3442,18 @@ const SA_A1000_603W: React.FC = () => {
     }));
   };
 
-  const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
-  const [userWindowVisible2, setUserWindowVisible2] = useState<boolean>(false);
+  const [PrsnnumWindowVisible, setPrsnnumWindowVisible] =
+    useState<boolean>(false);
+  const [PrsnnumWindowVisible2, setPrsnnumWindowVisible2] =
+    useState<boolean>(false);
 
-  const onUserWndClick = () => {
-    setUserWindowVisible(true);
+  const onPrsnnumWndClick = () => {
+    setPrsnnumWindowVisible(true);
   };
-  const onUserWndClick2 = () => {
-    setUserWindowVisible2(true);
+  const onPrsnnumWndClick2 = () => {
+    setPrsnnumWindowVisible2(true);
   };
-  const setUserData = (data: IUser) => {
+  const setPrsnnumData = (data: IPrsnnum) => {
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -3462,7 +3463,7 @@ const SA_A1000_603W: React.FC = () => {
     });
   };
 
-  const setUserData2 = (data: IUser) => {
+  const setPrsnnumData2 = (data: IPrsnnum) => {
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -3585,7 +3586,7 @@ const SA_A1000_603W: React.FC = () => {
                         type="button"
                         icon="more-horizontal"
                         fillMode="flat"
-                        onClick={onUserWndClick2}
+                        onClick={onPrsnnumWndClick2}
                       />
                     </ButtonInInput>
                   </td>
@@ -3602,7 +3603,7 @@ const SA_A1000_603W: React.FC = () => {
                         type="button"
                         icon="more-horizontal"
                         fillMode="flat"
-                        onClick={onUserWndClick}
+                        onClick={onPrsnnumWndClick}
                       />
                     </ButtonInInput>
                   </td>
@@ -4753,19 +4754,19 @@ const SA_A1000_603W: React.FC = () => {
           modal={true}
         />
       )}
-      {userWindowVisible && (
-        <UserWindow
-          setVisible={setUserWindowVisible}
-          workType={"N"}
-          setData={setUserData}
+      {PrsnnumWindowVisible && (
+        <PrsnnumWindow
+          setVisible={setPrsnnumWindowVisible}
+          workType="N"
+          setData={setPrsnnumData}
           modal={true}
         />
       )}
-      {userWindowVisible2 && (
-        <UserWindow
-          setVisible={setUserWindowVisible2}
-          workType={"N"}
-          setData={setUserData2}
+      {PrsnnumWindowVisible2 && (
+        <PrsnnumWindow
+          setVisible={setPrsnnumWindowVisible2}
+          workType="N"
+          setData={setPrsnnumData2}
           modal={true}
         />
       )}

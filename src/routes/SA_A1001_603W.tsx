@@ -68,7 +68,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import EmailWindow from "../components/Windows/CommonWindows/EmailWindow";
-import UserWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import SA_A1001_603W_Window from "../components/Windows/SA_A1001_603W_Window";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
@@ -430,7 +430,7 @@ const SA_A1001_603W: React.FC = () => {
         "@p_custnm": filters.custnm,
         "@p_custprsnnm": filters.custprsnnm,
         "@p_materialtype": filters.materialtype,
-        "@p_person": filters.person,
+        "@p_person": filters.personnm == "" ? "" : filters.person,
         "@p_personnm": filters.personnm,
         "@p_remark": filters.remark,
         "@p_rev": filters.rev,
@@ -793,18 +793,19 @@ const SA_A1001_603W: React.FC = () => {
     setPrintWindowVisible(true);
   };
 
-  const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
+  const [PrsnnumWindowVisible, setPrsnnumWindowVisible] =
+    useState<boolean>(false);
 
-  const onUserWndClick = () => {
-    setUserWindowVisible(true);
+  const onPrsnnumWndClick = () => {
+    setPrsnnumWindowVisible(true);
   };
 
-  interface IUser {
+  interface IPrsnnum {
     user_id: string;
     user_name: string;
   }
 
-  const setUserData = (data: IUser) => {
+  const setPrsnnumData = (data: IPrsnnum) => {
     setFilters((prev: any) => {
       return {
         ...prev,
@@ -1310,7 +1311,7 @@ const SA_A1001_603W: React.FC = () => {
                         type="button"
                         icon="more-horizontal"
                         fillMode="flat"
-                        onClick={onUserWndClick}
+                        onClick={onPrsnnumWndClick}
                       />
                     </ButtonInInput>
                   </td>
@@ -1732,11 +1733,11 @@ const SA_A1001_603W: React.FC = () => {
           modal={true}
         />
       )}
-      {userWindowVisible && (
-        <UserWindow
-          setVisible={setUserWindowVisible}
-          workType={"N"}
-          setData={setUserData}
+      {PrsnnumWindowVisible && (
+        <PrsnnumWindow
+          setVisible={setPrsnnumWindowVisible}
+          workType="N"
+          setData={setPrsnnumData}
           modal={true}
         />
       )}

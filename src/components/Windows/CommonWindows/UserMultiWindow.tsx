@@ -41,7 +41,7 @@ import {
   SELECTED_FIELD,
 } from "../../CommonString";
 import BizComponentRadioGroup from "../../RadioGroups/BizComponentRadioGroup";
-import PrsnnumWindow from "./PrsnnumWindow";
+import UserWindow from "./UserWindow";
 
 interface IPrsnnumMulti {
   prsnnum: string;
@@ -52,8 +52,11 @@ interface IPrsnnumMulti {
 }
 
 interface IPrsnnum {
-  user_id: string;
-  user_name: string;
+  prsnnum: string;
+  prsnnm: string;
+  dptcd: string;
+  abilcd: string;
+  postcd: string;
 }
 
 type IWindow = {
@@ -67,7 +70,7 @@ const KEEPING_DATA_ITEM_KEY = "idx";
 let targetRowIndex: null | number = null;
 let temp = 0;
 
-const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
+const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
 
@@ -452,18 +455,17 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     }));
   };
 
-  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
-    useState<boolean>(false);
+  const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
-  const onPrsnnumWndClick = () => {
-    setPrsnnumWindowVisible(true);
+  const onUserWndClick = () => {
+    setuserWindowVisible(true);
   };
 
-  const setPrsnnumData = (data: IPrsnnum) => {
+  const setUserData = (data: IPrsnnum) => {
     setFilters((prev) => ({
       ...prev,
-      prsnnum: data.user_id,
-      prsnnm: data.user_name,
+      prsnnum: data.prsnnum,
+      prsnnm: data.prsnnm,
     }));
   };
 
@@ -499,7 +501,7 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
                 />
                 <ButtonInInput>
                   <Button
-                    onClick={onPrsnnumWndClick}
+                    onClick={onUserWndClick}
                     icon="more-horizontal"
                     fillMode="flat"
                   />
@@ -652,15 +654,11 @@ const ItemsMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           </Button>
         </ButtonContainer>
       </BottomContainer>
-      {prsnnumWindowVisible && (
-        <PrsnnumWindow
-          setVisible={setPrsnnumWindowVisible}
-          workType={"FILTER"}
-          setData={setPrsnnumData}
-        />
+      {userWindowVisible && (
+        <UserWindow setVisible={setuserWindowVisible} setData={setUserData} />
       )}
     </Window>
   );
 };
 
-export default ItemsMultiWindow;
+export default UserMultiWindow;

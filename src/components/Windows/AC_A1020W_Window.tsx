@@ -63,7 +63,7 @@ import {
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import UserWindow from "../Windows/CommonWindows/PrsnnumWindow";
+import PrsnnumWindow from "../Windows/CommonWindows/PrsnnumWindow";
 import CodeWindow from "./CommonWindows/CodeWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
@@ -553,7 +553,8 @@ const KendoWindow = ({
     });
   };
 
-  const [userWindowVisible, setUserWindowVisible] = useState<boolean>(false);
+  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
+    useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [codeWindowVisible, setCodeWindowVisible] = useState<boolean>(false);
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
@@ -561,8 +562,8 @@ const KendoWindow = ({
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
-  const onUserWndClick = () => {
-    setUserWindowVisible(true);
+  const onPrsnnumWndClick = () => {
+    setPrsnnumWindowVisible(true);
   };
   const onCodeWndClick = () => {
     setCodeWindowVisible(true);
@@ -1388,7 +1389,7 @@ const KendoWindow = ({
                     type="button"
                     icon="more-horizontal"
                     fillMode="flat"
-                    onClick={onUserWndClick}
+                    onClick={onPrsnnumWndClick}
                   />
                 </ButtonInInput>
               </td>
@@ -1888,9 +1889,9 @@ const KendoWindow = ({
           </Button>
         </ButtonContainer>
       </BottomContainer>
-      {userWindowVisible && (
-        <UserWindow
-          setVisible={setUserWindowVisible}
+      {prsnnumWindowVisible && (
+        <PrsnnumWindow
+          setVisible={setPrsnnumWindowVisible}
           workType={"N"}
           setData={setUserData}
         />

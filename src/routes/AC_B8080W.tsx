@@ -390,12 +390,26 @@ const AC_B8080W: React.FC = () => {
       >
         <TabStripTab title="수출실적 일괄제출명세서">
           <GridContainer>
-            {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+            <div
+              style={{
+                height: "76vh",
+                marginBottom: "10px",
+              }}
+            >
+              {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+            </div>
           </GridContainer>
         </TabStripTab>
         <TabStripTab title="수출실적명세서">
           <GridContainer>
-            {url2 != "" ? <FileViewers file={url2} type="pdf" /> : ""}
+            <div
+              style={{
+                height: "76vh",
+                marginBottom: "10px",
+              }}
+            >
+              {url2 != "" ? <FileViewers file={url2} type="pdf" /> : ""}
+            </div>
           </GridContainer>
         </TabStripTab>
       </TabStrip>

@@ -1303,7 +1303,14 @@ const AC_B5060W: React.FC = () => {
         </TabStripTab>
         <TabStripTab title="매출처별세금계산서합계표">
           <GridContainer>
-            {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+            <div
+              style={{
+                height: "76vh",
+                marginBottom: "10px",
+              }}
+            >
+              {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+            </div>
           </GridContainer>
         </TabStripTab>
         <TabStripTab title="매입처별 세금계산서">
@@ -1505,13 +1512,34 @@ const AC_B5060W: React.FC = () => {
           </TabStrip>
         </TabStripTab>
         <TabStripTab title="매입처별세금계산서합계표">
-          {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+          <div
+            style={{
+              height: "76vh",
+              marginBottom: "10px",
+            }}
+          >
+            {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+          </div>
         </TabStripTab>
         <TabStripTab title="신용카드등수취금액">
-          {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+          <div
+            style={{
+              height: "76vh",
+              marginBottom: "10px",
+            }}
+          >
+            {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+          </div>
         </TabStripTab>
         <TabStripTab title="공제받지못할매입세액명세서">
-          {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+          <div
+            style={{
+              height: "76vh",
+              marginBottom: "10px",
+            }}
+          >
+            {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+          </div>
         </TabStripTab>
       </TabStrip>
       {gridList.map((grid: TGrid) =>

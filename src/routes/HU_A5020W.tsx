@@ -65,7 +65,7 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
-import PrsnnumMultiWindow from "../components/Windows/CommonWindows/UserMultiWindow";
+import UserMultiWindow from "../components/Windows/CommonWindows/UserMultiWindow";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
@@ -167,18 +167,17 @@ const ColumnCommandCell = (props: GridCellProps) => {
       });
     }
   };
-  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
-    useState<boolean>(false);
+  const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
-  const onPrsnnumWndClick = () => {
+  const onUserWndClick = () => {
     if (dataItem["rowstatus"] == "N") {
-      setPrsnnumWindowVisible(true);
+      setuserWindowVisible(true);
     } else {
       alert("사번은 수정이 불가합니다.");
     }
   };
 
-  const setPrsnnumData = (data: IPrsnnum) => {
+  const setUserData = (data: IPrsnnum) => {
     setPrsnnm(data.prsnnm);
     setPrsnnum(data.prsnnum);
   };
@@ -197,7 +196,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       <ButtonInGridInput>
         <Button
           name="itemcd"
-          onClick={onPrsnnumWndClick}
+          onClick={onUserWndClick}
           icon="more-horizontal"
           fillMode="flat"
         />
@@ -210,10 +209,10 @@ const ColumnCommandCell = (props: GridCellProps) => {
       {render === undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
-      {prsnnumWindowVisible && (
+      {userWindowVisible && (
         <UserWindow
-          setVisible={setPrsnnumWindowVisible}
-          setData={setPrsnnumData}
+          setVisible={setuserWindowVisible}
+          setData={setUserData}
           modal={true}
         />
       )}
@@ -406,10 +405,9 @@ const HU_A5020W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
-  const [prsnnumWindowVisible, setPrsnnumWindowVisible] =
-    useState<boolean>(false);
+  const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
 
-  const [prsnnumMultiWindowVisible, setPrsnnumMultiWindowVisible] =
+  const [UserMultiWindowVisible, setUserMultiWindowVisible] =
     useState<boolean>(false);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -1035,15 +1033,15 @@ const HU_A5020W: React.FC = () => {
     setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
   };
 
-  const onPrsnnumWndClick = () => {
-    setPrsnnumWindowVisible(true);
+  const onUserWndClick = () => {
+    setuserWindowVisible(true);
   };
 
-  const onPrsnnumMultiWndClick = () => {
-    setPrsnnumMultiWindowVisible(true);
+  const onUserMultiWndClick = () => {
+    setUserMultiWindowVisible(true);
   };
 
-  const setPrsnnumData = (data: IPrsnnum) => {
+  const setUserData = (data: IPrsnnum) => {
     setFilters((prev) => ({
       ...prev,
       prsnnum: data.prsnnum,
@@ -1051,7 +1049,7 @@ const HU_A5020W: React.FC = () => {
     }));
   };
 
-  const setPrsnnumMultiData = (data: IPrsnnumMulti[]) => {
+  const setUserMultiData = (data: IPrsnnumMulti[]) => {
     data.map((item) => {
       mainDataResult.data.map((item) => {
         if (item.num > temp2) {
@@ -1228,7 +1226,7 @@ const HU_A5020W: React.FC = () => {
                 />
                 <ButtonInInput>
                   <Button
-                    onClick={onPrsnnumWndClick}
+                    onClick={onUserWndClick}
                     icon="more-horizontal"
                     fillMode="flat"
                   />
@@ -1282,7 +1280,7 @@ const HU_A5020W: React.FC = () => {
                 <ButtonContainer>
                   <Button
                     themeColor={"primary"}
-                    onClick={onPrsnnumMultiWndClick}
+                    onClick={onUserMultiWndClick}
                     icon="folder-open"
                   >
                     일괄등록
@@ -1407,17 +1405,17 @@ const HU_A5020W: React.FC = () => {
           </FormContext2.Provider>
         </FormContext.Provider>
       </GridContainer>
-      {prsnnumWindowVisible && (
+      {userWindowVisible && (
         <UserWindow
-          setVisible={setPrsnnumWindowVisible}
-          setData={setPrsnnumData}
+          setVisible={setuserWindowVisible}
+          setData={setUserData}
           modal={true}
         />
       )}
-      {prsnnumMultiWindowVisible && (
-        <PrsnnumMultiWindow
-          setVisible={setPrsnnumMultiWindowVisible}
-          setData={setPrsnnumMultiData}
+      {UserMultiWindowVisible && (
+        <UserMultiWindow
+          setVisible={setUserMultiWindowVisible}
+          setData={setUserMultiData}
           modal={true}
         />
       )}

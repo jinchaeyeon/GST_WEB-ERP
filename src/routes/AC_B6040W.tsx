@@ -221,7 +221,14 @@ const AC_B6040W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
-        {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+        <div
+          style={{
+            height: "82vh",
+            marginBottom: "10px",
+          }}
+        >
+          {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+        </div>
       </GridContainer>
     </>
   );
