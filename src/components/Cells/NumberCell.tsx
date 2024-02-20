@@ -7,6 +7,7 @@ import { numberWithCommas3 } from "../CommonFunction";
 
 interface CustomCellProps extends GridCellProps {
   myProp?: item[];
+  color?: string;
 }
 
 interface item {
@@ -23,6 +24,7 @@ const NumberCell = (props: CustomCellProps) => {
     field = "",
     className = "",
     myProp,
+    color = "black",
   } = props;
   let isInEdit = field === dataItem.inEdit;
   const value = dataItem[field];
@@ -44,7 +46,7 @@ const NumberCell = (props: CustomCellProps) => {
   const defaultRendering =
     myProp == undefined ? (
       <td
-        style={{ textAlign: "right" }}
+        style={{ textAlign: "right", color: color }}
         aria-colindex={ariaColumnIndex}
         data-grid-col-index={columnIndex}
       >

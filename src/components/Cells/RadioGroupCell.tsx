@@ -8,7 +8,9 @@ import { RADIO_GROUP_DEFAULT_DATA } from "../CommonString";
 interface CustomCellProps extends GridCellProps {
   bizComponentData: any;
   disabled?: boolean;
+  color?: string;
 }
+
 const RadioGroupCell = (props: CustomCellProps) => {
   const {
     ariaColumnIndex,
@@ -19,6 +21,7 @@ const RadioGroupCell = (props: CustomCellProps) => {
     onChange,
     disabled = false,
     bizComponentData,
+    color = "black",
   } = props;
 
   const value = dataItem[field ?? ""];
@@ -50,7 +53,11 @@ const RadioGroupCell = (props: CustomCellProps) => {
 
   const defaultRendering =
     disabled == false ? (
-      <td aria-colindex={ariaColumnIndex} data-grid-col-index={columnIndex}>
+      <td
+        aria-colindex={ariaColumnIndex}
+        data-grid-col-index={columnIndex}
+        style={{ color: color }}
+      >
         <RadioGroup
           data={newRadioGroup}
           layout={"horizontal"}
@@ -60,7 +67,11 @@ const RadioGroupCell = (props: CustomCellProps) => {
         />
       </td>
     ) : (
-      <td aria-colindex={ariaColumnIndex} data-grid-col-index={columnIndex}>
+      <td
+        aria-colindex={ariaColumnIndex}
+        data-grid-col-index={columnIndex}
+        style={{ color: color }}
+      >
         <RadioGroup data={newRadioGroup} layout={"horizontal"} value={value} />
       </td>
     );

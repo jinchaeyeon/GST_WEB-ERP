@@ -2,7 +2,12 @@ import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { GridCellProps } from "@progress/kendo-react-grid";
 import Calendars from "../Calendars/Calendar";
 import { convertDateToStr, dateformat2 } from "../CommonFunction";
-const DateCell = (props: GridCellProps) => {
+
+interface CustomCellProps extends GridCellProps {
+  color?: string;
+}
+
+const DateCell = (props: CustomCellProps) => {
   const {
     ariaColumnIndex,
     columnIndex,
@@ -11,6 +16,7 @@ const DateCell = (props: GridCellProps) => {
     render,
     onChange,
     className = "",
+    color = "black",
   } = props;
   let isInEdit = field === dataItem.inEdit;
 
@@ -46,7 +52,7 @@ const DateCell = (props: GridCellProps) => {
 
   const defaultRendering = (
     <td
-      style={{ textAlign: "center" }}
+      style={{ textAlign: "center", color: color }}
       aria-colindex={ariaColumnIndex}
       data-grid-col-index={columnIndex}
     >

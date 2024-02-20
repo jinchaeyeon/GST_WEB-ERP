@@ -1201,10 +1201,24 @@ const SA_A1000_603W: React.FC = () => {
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "personnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        person: value == "" ? "" : prev.person,
+      }));
+    } else if (name == "cpmpersonnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        cpmperson: value == "" ? "" : prev.cpmperson,
+      }));
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const setProjectData = (data: any) => {

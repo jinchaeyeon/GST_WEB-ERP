@@ -239,7 +239,8 @@ const CM_A5001W: React.FC = () => {
   }>({});
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [PrsnnumWindowVisible, setPrsnnumWindowVisible] = useState<boolean>(false);
+  const [PrsnnumWindowVisible, setPrsnnumWindowVisible] =
+    useState<boolean>(false);
   const [projectWindowVisible, setProjectWindowVisible] =
     useState<boolean>(false);
   const [attachmentsQWindowVisible, setAttachmentsQWindowVisible] =
@@ -397,10 +398,18 @@ const CM_A5001W: React.FC = () => {
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "user_name") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        user_id: value == "" ? "" : prev.user_id,
+      }));
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 ComboBox에 입력한 값을 조회 파라미터로 세팅

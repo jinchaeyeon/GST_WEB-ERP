@@ -284,10 +284,18 @@ const SA_A1001_603W: React.FC = () => {
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "personnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        person: value == "" ? "" : prev.person,
+      }));
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const filterRadioChange = (e: any) => {

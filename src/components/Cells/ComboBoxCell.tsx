@@ -20,6 +20,7 @@ interface CustomCellProps extends GridCellProps {
   myProp?: item[];
   colorprops?: boolean;
   page?: string;
+  color?: string;
 }
 
 const ComboBoxCell = (props: CustomCellProps) => {
@@ -37,6 +38,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
     myProp,
     colorprops = false,
     page = "",
+    color = "black",
   } = props;
   const processApi = useApi();
   const [listData, setListData]: any = useState([]);
@@ -137,7 +139,11 @@ const ComboBoxCell = (props: CustomCellProps) => {
           )}
         </td>
       ) : (
-        <td aria-colindex={ariaColumnIndex} data-grid-col-index={columnIndex}>
+        <td
+          aria-colindex={ariaColumnIndex}
+          data-grid-col-index={columnIndex}
+          style={{ color: color }}
+        >
           {isInEdit ? (
             <MultiColumnComboBox
               data={listData}

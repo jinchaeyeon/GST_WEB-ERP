@@ -484,10 +484,18 @@ const CM_A5000W: React.FC = () => {
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "user_name") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        user_id: value == "" ? "" : prev.user_id,
+      }));
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 ComboBox에 입력한 값을 조회 파라미터로 세팅
@@ -513,10 +521,18 @@ const CM_A5000W: React.FC = () => {
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setInformation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "user_name") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        user_id: value == "" ? "" : prev.user_id,
+      }));
+    } else {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const ComboBoxChange = (e: any) => {

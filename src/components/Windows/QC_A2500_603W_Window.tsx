@@ -190,10 +190,18 @@ const CopyWindow = ({
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "chkpersonnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        chkperson: value == "" ? "" : prev.chkperson,
+      }));
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const filterComboBoxChange = (e: any) => {
@@ -289,6 +297,7 @@ const CopyWindow = ({
     quotestnum: "",
     testnum: "",
     chkperson: "",
+    chkpersonnm: "",
     isSearch: false,
     pgNum: 1,
   });
@@ -317,6 +326,7 @@ const CopyWindow = ({
         "@p_quotestnum": filters.quotestnum,
         "@p_testnum": filters.testnum,
         "@p_chkperson": filters.chkperson,
+        "@p_chkpersonnm": filters.chkpersonnm,
         "@p_find_row_value": "",
       },
     };
@@ -458,7 +468,8 @@ const CopyWindow = ({
   const setUserData = (data: IPrsnnum) => {
     setFilters((prev) => ({
       ...prev,
-      chkperson: data.prsnnm,
+      chkperson: data.prsnnum,
+      chkpersonnm: data.prsnnm,
     }));
   };
 
@@ -546,9 +557,9 @@ const CopyWindow = ({
                 <th>시험책임자</th>
                 <td>
                   <Input
-                    name="chkperson"
+                    name="chkpersonnm"
                     type="text"
-                    value={filters.chkperson}
+                    value={filters.chkpersonnm}
                     onChange={filterInputChange}
                   />
                   <ButtonInInput>
@@ -607,8 +618,8 @@ const CopyWindow = ({
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                smperson: personListData.find(
-                  (item: any) => item.user_id == row.smperson
+                person: personListData.find(
+                  (item: any) => item.user_id == row.person
                 )?.user_name,
                 cpmperson: personListData.find(
                   (item: any) => item.user_id == row.cpmperson
@@ -655,7 +666,7 @@ const CopyWindow = ({
             <GridColumn field="ordnum" title="수주번호" width="150px" />
             <GridColumn field="quotestnum" title="예약시험번호" width="150px" />
             <GridColumn field="testnum" title="시험번호" width="150px" />
-            <GridColumn field="smperson" title="SM담당자" width="120px" />
+            <GridColumn field="person" title="SM담당자" width="120px" />
             <GridColumn field="cpmperson" title="CPM담당자" width="120px" />
             <GridColumn field="chkperson" title="시험책임자" width="120px" />
             <GridColumn field="itemcd" title="품목코드" width="120px" />

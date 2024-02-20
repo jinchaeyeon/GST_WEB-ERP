@@ -284,10 +284,24 @@ const BA_A0020_603: React.FC = () => {
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "smpersonnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        smperson: value == "" ? "" : prev.smperson,
+      }));
+    } else if (name == "cpmpersonnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        cpmperson: value == "" ? "" : prev.cpmperson,
+      }));
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const filterComboBoxChange = (e: any) => {
@@ -341,13 +355,23 @@ const BA_A0020_603: React.FC = () => {
   };
 
   const setProjectData = (data: any) => {
+    setProjectWindowVisible(false);
+    const smperson = userListData.find(
+      (items: any) => items.user_id == data.person
+    );
+    const cpmperson = userListData.find(
+      (items: any) => items.user_id == data.cpmperson
+    );
+
     setFilters((prev: any) => {
       return {
         ...prev,
-        ref_key: data.ref_key == undefined ? "" : data.ref_key,
+        ref_key: data.quokey == undefined ? "" : data.quokey,
+        ordnum: data.ordnum == undefined ? "" : data.ordnum,
+        quotestnum: data.quotestnum == undefined ? "" : data.quotestnum,
         testnum: data.testnum == undefined ? "" : data.testnum,
-        smperson: data.smperson == undefined ? "" : data.smperson,
-        cpmperson: data.cpmperson == undefined ? "" : data.cpmperson,
+        smpersonnm: smperson != undefined ? smperson.user_name : data.person,
+        cpmpersonnm: cpmperson != undefined ? cpmperson.user_name : data.cpmperson,
       };
     });
   };
@@ -437,6 +461,7 @@ const BA_A0020_603: React.FC = () => {
         "@p_status": filters.status,
         "@p_quotestnum": filters.quotestnum,
         "@p_datnum": filters.datnum,
+        "@p_ordnum": filters.ordnum,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -546,6 +571,7 @@ const BA_A0020_603: React.FC = () => {
         "@p_status": filters.status,
         "@p_datnum": commentFilter.datnum,
         "@p_quotestnum": filters.quotestnum,
+        "@p_ordnum": filters.ordnum,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -794,7 +820,7 @@ const BA_A0020_603: React.FC = () => {
   const setData = (data: any) => {
     setDetailWindowVisible(false);
     const smperson = userListData.find(
-      (items: any) => items.user_name == data.smperson
+      (items: any) => items.user_name == data.person
     );
     const cpmperson = userListData.find(
       (items: any) => items.user_name == data.cpmperson
@@ -808,12 +834,12 @@ const BA_A0020_603: React.FC = () => {
       ref_key: data.quokey == undefined ? "" : data.quokey,
       quotestnum: data.quotestnum == undefined ? "" : data.quotestnum,
       testnum: data.testnum == undefined ? "" : data.testnum,
-      smperson: smperson == undefined ? "" : smperson.user_id,
-      cpmperson: cpmperson == undefined ? "" : cpmperson.user_id,
+      smperson: smperson == undefined ? data.person : smperson.user_id,
+      cpmperson: cpmperson == undefined ? data.cpmperson : cpmperson.user_id,
       ncrdiv: "",
       combytype: "",
       status: "01",
-      chkperson: chkperson == undefined ? "" : chkperson.prsnnum,
+      chkperson: chkperson == undefined ? data.chkperson : chkperson.prsnnum,
       itemcd: data.itemcd == undefined ? "" : data.itemcd,
       itemnm: data.itemnm == undefined ? "" : data.itemnm,
       baddt: new Date(),
@@ -1516,7 +1542,7 @@ const BA_A0020_603: React.FC = () => {
         form_id: "QC_A2500_603W",
       });
     } else {
-      alert("등록된 답변이 없습니다.");
+      alert("등록된 데이터가 없습니다.");
       return;
     }
   };
@@ -1568,7 +1594,7 @@ const BA_A0020_603: React.FC = () => {
                     <Input
                       name="ordnum"
                       type="text"
-                      value={filters.ref_key}
+                      value={filters.ordnum}
                       onChange={filterInputChange}
                     />
                   </td>

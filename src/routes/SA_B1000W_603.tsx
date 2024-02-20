@@ -146,10 +146,18 @@ const SA_B1000W_603: React.FC = () => {
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "smpersonnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        smperson: value == "" ? "" : prev.smperson,
+      }));
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const filterMultiSelectChange = (event: MultiSelectChangeEvent) => {
