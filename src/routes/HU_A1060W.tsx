@@ -326,9 +326,6 @@ const HU_A1060W: React.FC = () => {
   //조회조건 초기값
   const [filters2, setFilters2] = useState({
     datnum: "",
-    prsnnm: "",
-    dptcd: "",
-    usekind: "",
     kind: "",
     radType: "",
     isSearch: false,
@@ -421,9 +418,6 @@ const HU_A1060W: React.FC = () => {
           setFilters2((prev) => ({
             ...prev,
             datnum: selectedRow.datnum,
-            prsnnm: selectedRow.prsnnm,
-            dptcd: selectedRow.dptcd,
-            usekind: selectedRow.usekind,
             kind: selectedRow.kind,
             isSearch: true,
           }));
@@ -432,9 +426,6 @@ const HU_A1060W: React.FC = () => {
           setFilters2((prev) => ({
             ...prev,
             datnum: rows[0].datnum,
-            prsnnm: rows[0].prsnnm,
-            dptcd: rows[0].dptcd,
-            usekind: rows[0].usekind,
             kind: rows[0].kind,
             isSearch: true,
           }));
@@ -561,9 +552,6 @@ const HU_A1060W: React.FC = () => {
       setFilters2((prev) => ({
         ...prev,
         datnum: selectedRowData.datnum,
-        prsnnm: selectedRowData.prsnnm,
-        dptcd: selectedRowData.dptcd,
-        usekind: selectedRowData.usekind,
         kind: selectedRowData.kind,
         isSearch: true,
       }));
@@ -784,9 +772,6 @@ const HU_A1060W: React.FC = () => {
           setFilters2((prev) => ({
             ...prev,
             datnum: data.datnum,
-            prsnnm: data.prsnnm,
-            dptcd: data.dptcd,
-            usekind: data.usekind,
             kind: data.kind,
             isSearch: true,
           }));
@@ -794,9 +779,6 @@ const HU_A1060W: React.FC = () => {
           setFilters2((prev) => ({
             ...prev,
             datnum: newData[0].datnum,
-            prsnnm: newData[0].prsnnm,
-            dptcd: newData[0].dptcd,
-            usekind: newData[0].usekind,
             kind: newData[0].kind,
             isSearch: true,
           }));
@@ -852,13 +834,14 @@ const HU_A1060W: React.FC = () => {
     const parameters = {
       para: `document-json?id=${
         filters2.kind == "1"
-          ? "S202375FF20"
+          ? "S2024E812FB"
           : filters2.kind == "2"
-          ? "S2023F1F2D1"
-          : "S20233444D5"
+          ? "S20241AC071"
+          : "S202425B48F"
       }`,
       "@p_orgdiv": filters.orgdiv,
       "@p_datnum": filters2.datnum,
+      "@p_radtype": filters2.radType,
     };
 
     try {

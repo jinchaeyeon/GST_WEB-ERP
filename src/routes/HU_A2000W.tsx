@@ -1,4 +1,5 @@
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
@@ -35,7 +36,9 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
+  UseParaPc,
   UsePermissions,
   convertDateToStr,
   findMessage,
@@ -63,6 +66,18 @@ const dateField = ["yyyymmdd"];
 const comboField = ["daygb"];
 const radioField = ["workdiv"];
 const numberField = ["week", "mweek"];
+
+type TdataArr = {
+  rowstatus_s: string[];
+  yyyymmdd_s: string[];
+  workgb_s: string[];
+  workcls_s: string[];
+  daygb_s: string[];
+  workdiv_s: string[];
+  remark_s: string[];
+  week_s: string[];
+  mweek_s: string[];
+};
 
 const CustomDateCell = (props: GridCellProps) => {
   const color =
@@ -161,6 +176,9 @@ const CustomColorCell = (props: GridCellProps) => {
 const HU_A2000W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+  const userId = UseGetValueFromSessionItem("user_id");
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
   UseCustomOption("HU_A2000W", setCustomOptionData);
@@ -568,6 +586,358 @@ const HU_A2000W: React.FC = () => {
     }
   };
 
+  function getdays(day: Date) {
+    const WEEKDAY = ["(일)", "(월)", "(화)", "(수)", "(목)", "(금)", "(토)"];
+    let week = WEEKDAY[day.getDay()];
+
+    return week;
+  }
+
+  const getYearWeek = (date: Date) => {
+    const onejan = new Date(date.getFullYear(), 0, 1);
+    return Math.ceil(
+      ((date.getTime() - onejan.getTime()) / 86400000 + onejan.getDay() + 1) / 7
+    );
+  };
+
+  const getWeek = (date: Date) => {
+    const currentDate = date.getDate();
+    const firstDay = new Date(date.setDate(1)).getDay();
+
+    return Math.ceil((currentDate + firstDay) / 7);
+  };
+
+  const onAddClick = async () => {
+    let data: any;
+    setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_HU_A2000W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.workType,
+        "@p_orgdiv": "01",
+        "@p_stddt": convertDateToStr(filters.stddt).substring(0, 6),
+        "@p_location": filters.location,
+        "@p_workgb": filters.workgb,
+        "@p_workcls": filters.workcls,
+        "@p_find_row_value": "",
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+
+      if (totalRowCnt > 0) {
+        alert(
+          `${convertDateToStr(filters.stddt).substring(
+            0,
+            4
+          )}년 ${convertDateToStr(filters.stddt).substring(
+            4,
+            6
+          )}월의 데이터는 이미 존재합니다.`
+        );
+      } else {
+        resetAllGrid();
+        let now = new Date(
+          parseInt(convertDateToStr(filters.stddt).substring(0, 4)),
+          parseInt(convertDateToStr(filters.stddt).substring(4, 6)) - 1,
+          1
+        );
+        let oneMonthFast = new Date(now.setMonth(now.getMonth() + 1));
+        let lastday = new Date(
+          parseInt(convertDateToStr(oneMonthFast).substring(0, 4)),
+          parseInt(convertDateToStr(oneMonthFast).substring(4, 6)) - 1,
+          0
+        ).getDate();
+
+        for (var i = 1; i <= lastday; i++) {
+          const newDataItem = {
+            [DATA_ITEM_KEY]: i,
+            daygb: "",
+            dayofweek: getdays(
+              new Date(
+                parseInt(convertDateToStr(filters.stddt).substring(0, 4)),
+                parseInt(convertDateToStr(filters.stddt).substring(4, 6)) - 1,
+                i
+              )
+            ),
+            location: filters.location,
+            mweek: getWeek(
+              new Date(
+                parseInt(convertDateToStr(filters.stddt).substring(0, 4)),
+                parseInt(convertDateToStr(filters.stddt).substring(4, 6)) - 1,
+                i
+              )
+            ),
+            orgdiv: filters.orgdiv,
+            remark:
+              getdays(
+                new Date(
+                  parseInt(convertDateToStr(filters.stddt).substring(0, 4)),
+                  parseInt(convertDateToStr(filters.stddt).substring(4, 6)) - 1,
+                  i
+                )
+              ) == "(토)" ||
+              getdays(
+                new Date(
+                  parseInt(convertDateToStr(filters.stddt).substring(0, 4)),
+                  parseInt(convertDateToStr(filters.stddt).substring(4, 6)) - 1,
+                  i
+                )
+              ) == "(일)"
+                ? "휴무"
+                : "",
+            week: getYearWeek(
+              new Date(
+                parseInt(convertDateToStr(filters.stddt).substring(0, 4)),
+                parseInt(convertDateToStr(filters.stddt).substring(4, 6)) - 1,
+                i
+              )
+            ),
+            workcls: filters.workcls,
+            workdiv:
+              getdays(
+                new Date(
+                  parseInt(convertDateToStr(filters.stddt).substring(0, 4)),
+                  parseInt(convertDateToStr(filters.stddt).substring(4, 6)) - 1,
+                  i
+                )
+              ) == "(토)" ||
+              getdays(
+                new Date(
+                  parseInt(convertDateToStr(filters.stddt).substring(0, 4)),
+                  parseInt(convertDateToStr(filters.stddt).substring(4, 6)) - 1,
+                  i
+                )
+              ) == "(일)"
+                ? "A03"
+                : "A01",
+            workgb: filters.workgb,
+            yyyymmdd: convertDateToStr(
+              new Date(
+                parseInt(convertDateToStr(filters.stddt).substring(0, 4)),
+                parseInt(convertDateToStr(filters.stddt).substring(4, 6)) - 1,
+                i
+              )
+            ),
+            rowstatus: "N",
+          };
+
+          setMainDataResult((prev) => {
+            return {
+              data: [...prev.data, newDataItem],
+              total: prev.total + 1,
+            };
+          });
+          setPage((prev) => ({
+            ...prev,
+            skip: 0,
+            take: prev.take + 1,
+          }));
+          setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+        }
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    setLoading(false);
+  };
+
+  const onSaveClick = () => {
+    const dataItem = mainDataResult.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    if (dataItem.length === 0) return false;
+
+    let dataArr: TdataArr = {
+      rowstatus_s: [],
+      yyyymmdd_s: [],
+      workgb_s: [],
+      workcls_s: [],
+      daygb_s: [],
+      workdiv_s: [],
+      remark_s: [],
+      week_s: [],
+      mweek_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        yyyymmdd = "",
+        workgb = "",
+        workcls = "",
+        daygb = "",
+        workdiv = "",
+        remark = "",
+        week = "",
+        mweek = "",
+      } = item;
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.yyyymmdd_s.push(yyyymmdd);
+      dataArr.workgb_s.push(workgb);
+      dataArr.workcls_s.push(workcls);
+      dataArr.daygb_s.push(daygb);
+      dataArr.workdiv_s.push(workdiv);
+      dataArr.remark_s.push(remark);
+      dataArr.week_s.push(week);
+      dataArr.mweek_s.push(mweek);
+    });
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "N",
+      rowstatus_s: dataArr.rowstatus_s.join("|"),
+      yyyymmdd_s: dataArr.yyyymmdd_s.join("|"),
+      workgb_s: dataArr.workgb_s.join("|"),
+      workcls_s: dataArr.workcls_s.join("|"),
+      daygb_s: dataArr.daygb_s.join("|"),
+      workdiv_s: dataArr.workdiv_s.join("|"),
+      remark_s: dataArr.remark_s.join("|"),
+      week_s: dataArr.week_s.join("|"),
+      mweek_s: dataArr.mweek_s.join("|"),
+    }));
+  };
+
+  const [ParaData, setParaData] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "",
+    orgdiv: filters.orgdiv,
+    location: filters.location,
+    stddt: convertDateToStr(filters.stddt).substring(0, 6),
+    workgb: filters.workgb,
+    workcls: filters.workcls,
+    rowstatus_s: "",
+    yyyymmdd_s: "",
+    workgb_s: "",
+    workcls_s: "",
+    daygb_s: "",
+    workdiv_s: "",
+    remark_s: "",
+    week_s: "",
+    mweek_s: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_HU_A2000W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_location": ParaData.location,
+      "@p_stddt": ParaData.stddt,
+      "@p_workgb": ParaData.workgb,
+      "@p_workcls": ParaData.workcls,
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+      "@p_yyyymmdd_s": ParaData.yyyymmdd_s,
+      "@p_workgb_s": ParaData.workgb_s,
+      "@p_workcls_s": ParaData.workcls_s,
+      "@p_daygb_s": ParaData.daygb_s,
+      "@p_workdiv_s": ParaData.workdiv_s,
+      "@p_remark_s": ParaData.remark_s,
+      "@p_week_s": ParaData.week_s,
+      "@p_mweek_s": ParaData.mweek_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "HU_A2000W",
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      setParaData({
+        pgSize: PAGE_SIZE,
+        workType: "",
+        orgdiv: filters.orgdiv,
+        location: filters.location,
+        stddt: convertDateToStr(filters.stddt).substring(0, 6),
+        workgb: filters.workgb,
+        workcls: filters.workcls,
+        rowstatus_s: "",
+        yyyymmdd_s: "",
+        workgb_s: "",
+        workcls_s: "",
+        daygb_s: "",
+        workdiv_s: "",
+        remark_s: "",
+        week_s: "",
+        mweek_s: "",
+      });
+
+      resetAllGrid();
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        pgNum: 1,
+        isSearch: true,
+      }));
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (ParaData.workType != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
+  const onDeleteClick = () => {
+    if (
+      !window.confirm(
+        `[${convertDateToStr(filters.stddt).substring(
+          0,
+          4
+        )}년 ${convertDateToStr(filters.stddt).substring(
+          4,
+          6
+        )}월]의 데이터를 삭제하시겠습니까?`
+      )
+    ) {
+      return false;
+    }
+
+    if (mainDataResult.total == 0) {
+      alert("데이터가 없습니다.");
+    } else {
+      setParaData((prev) => ({
+        ...prev,
+        workType: "D",
+        orgdiv: filters.orgdiv,
+        location: filters.location,
+        stddt: convertDateToStr(filters.stddt).substring(0, 6),
+        workgb: filters.workgb,
+        workcls: filters.workcls,
+      }));
+    }
+  };
+
   return (
     <>
       <TitleContainer>
@@ -649,6 +1019,31 @@ const HU_A2000W: React.FC = () => {
         >
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onAddClick}
+                themeColor={"primary"}
+                icon="file-add"
+              >
+                생성
+              </Button>
+              <Button
+                onClick={onDeleteClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="delete"
+              >
+                삭제
+              </Button>
+              <Button
+                onClick={onSaveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+              >
+                저장
+              </Button>
+            </ButtonContainer>
           </GridTitleContainer>
           <Grid
             style={{ height: "80vh" }}
