@@ -371,7 +371,8 @@ const BA_A0020_603: React.FC = () => {
         quotestnum: data.quotestnum == undefined ? "" : data.quotestnum,
         testnum: data.testnum == undefined ? "" : data.testnum,
         smpersonnm: smperson != undefined ? smperson.user_name : data.person,
-        cpmpersonnm: cpmperson != undefined ? cpmperson.user_name : data.cpmperson,
+        cpmpersonnm:
+          cpmperson != undefined ? cpmperson.user_name : data.cpmperson,
       };
     });
   };
