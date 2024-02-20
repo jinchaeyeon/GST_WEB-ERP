@@ -1213,6 +1213,12 @@ const SA_A1000_603W: React.FC = () => {
         [name]: value,
         cpmperson: value == "" ? "" : prev.cpmperson,
       }));
+    } else if (name == "custnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        custcd: value == "" ? "" : prev.custcd,
+      }));
     } else {
       setFilters((prev) => ({
         ...prev,
@@ -1493,7 +1499,7 @@ const SA_A1000_603W: React.FC = () => {
         "@p_work_type": filters.workType,
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
-        "@p_custcd": filters.custcd,
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
         "@p_custnm": filters.custnm,
         "@p_testnum": filters.testnum,
         "@p_finyn": filters.finyn,
@@ -1596,7 +1602,7 @@ const SA_A1000_603W: React.FC = () => {
         "@p_work_type": subfilters.workType,
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
-        "@p_custcd": filters.custcd,
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
         "@p_custnm": filters.custnm,
         "@p_testnum": filters.testnum,
         "@p_finyn": filters.finyn,
@@ -1794,7 +1800,7 @@ const SA_A1000_603W: React.FC = () => {
         "@p_work_type": subfilters2.workType,
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
-        "@p_custcd": filters.custcd,
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
         "@p_custnm": filters.custnm,
         "@p_testnum": filters.testnum,
         "@p_finyn": filters.finyn,

@@ -490,6 +490,12 @@ const CM_A5000W: React.FC = () => {
         [name]: value,
         user_id: value == "" ? "" : prev.user_id,
       }));
+    } else if (name == "custnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        customer_code: value == "" ? "" : prev.customer_code,
+      }));
     } else {
       setFilters((prev) => ({
         ...prev,
@@ -648,7 +654,7 @@ const CM_A5000W: React.FC = () => {
         "@p_medicine_type": medicine_type,
         "@p_user_id": filters.user_id,
         "@p_user_name": filters.user_name,
-        "@p_customer_code": filters.customer_code,
+        "@p_customer_code": filters.custnm == "" ? "" : filters.customer_code,
         "@p_customernm": filters.custnm,
         "@p_find_row_value": filters.find_row_value,
       },

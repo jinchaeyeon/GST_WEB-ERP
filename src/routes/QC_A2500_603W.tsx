@@ -296,6 +296,12 @@ const BA_A0020_603: React.FC = () => {
         [name]: value,
         cpmperson: value == "" ? "" : prev.cpmperson,
       }));
+    } else if (name == "custnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        custcd: value == "" ? "" : prev.custcd,
+      }));
     } else {
       setFilters((prev) => ({
         ...prev,
@@ -453,7 +459,7 @@ const BA_A0020_603: React.FC = () => {
         "@p_location": filters.location,
         "@p_ref_key": filters.ref_key,
         "@p_testnum": filters.testnum,
-        "@p_custcd": filters.custcd,
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
         "@p_custnm": filters.custnm,
         "@p_smperson": filters.smpersonnm == "" ? "" : filters.smperson,
         "@p_smpersonnm": filters.smpersonnm,
@@ -563,7 +569,7 @@ const BA_A0020_603: React.FC = () => {
         "@p_location": filters.location,
         "@p_ref_key": filters.ref_key,
         "@p_testnum": filters.testnum,
-        "@p_custcd": filters.custcd,
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
         "@p_custnm": filters.custnm,
         "@p_smperson": filters.smpersonnm == "" ? "" : filters.smperson,
         "@p_smpersonnm": filters.smpersonnm,

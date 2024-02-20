@@ -152,6 +152,12 @@ const SA_B1000W_603: React.FC = () => {
         [name]: value,
         smperson: value == "" ? "" : prev.smperson,
       }));
+    } else if (name == "custnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        custcd: value == "" ? "" : prev.custcd,
+      }));
     } else {
       setFilters((prev) => ({
         ...prev,
@@ -197,7 +203,7 @@ const SA_B1000W_603: React.FC = () => {
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
         "@p_ref_key": filters.project,
-        "@p_custcd": filters.custcd,
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
         "@p_custnm": filters.custnm,
         "@p_smperson": filters.smpersonnm == "" ? "" : filters.smperson,
         "@p_smpersonnm": filters.smpersonnm,

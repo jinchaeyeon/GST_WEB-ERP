@@ -449,10 +449,18 @@ const SA_A1100_603W: React.FC = () => {
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "custnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        custcd: value == "" ? "" : prev.custcd,
+      }));
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const InfoInputChange = (e: any) => {
@@ -699,7 +707,7 @@ const SA_A1100_603W: React.FC = () => {
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
         "@p_quokey": filters.quokey,
-        "@p_custcd": filters.custcd,
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
         "@p_custnm": filters.custnm,
         "@p_testnum": filters.testnum,
         "@p_finyn": filters.finyn,
