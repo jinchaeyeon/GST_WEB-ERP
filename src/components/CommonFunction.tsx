@@ -11,10 +11,7 @@ import captionEnUs from "../store/cultures/Captions.en-US.json";
 import captionKoKr from "../store/cultures/Captions.ko-KR.json";
 import messageEnUs from "../store/cultures/Messages.en-US.json";
 import messageKoKr from "../store/cultures/Messages.ko-KR.json";
-import {
-  TSysCaptionKey,
-  TSysMessageKey
-} from "../store/types";
+import { TSysCaptionKey, TSysMessageKey } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
 
 //소수점3자리에서 반올림
@@ -641,6 +638,10 @@ export const chkScrollHandler = (
   }
 
   return chk;
+};
+
+export const getMonPayQuery = (para: any) => {
+  return "SELECT monpay FROM HU250T WHERE prsnnum = '" + para.prsnnum + "'";
 };
 
 //object로 custcd, custnm 받아서 업체정보 조회 쿼리 스트링 반환

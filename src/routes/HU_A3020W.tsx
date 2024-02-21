@@ -468,16 +468,6 @@ const HU_A3020W: React.FC = () => {
     setSelectedState(newSelectedState);
   };
 
-  const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedState2,
-      dataItemKey: DATA_ITEM_KEY,
-    });
-
-    setSelectedState2(newSelectedState);
-  };
-
   //엑셀 내보내기
   let _export: ExcelExport | null | undefined;
   const exportExcel = () => {

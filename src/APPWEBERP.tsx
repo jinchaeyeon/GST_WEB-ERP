@@ -111,6 +111,7 @@ import CR_A1101W from "./routes/CR_A1101W";
 import CT_A0111W from "./routes/CT_A0111W";
 import EA_A1000W from "./routes/EA_A1000W";
 import EA_A2000W from "./routes/EA_A2000W";
+import EA_A3000W from "./routes/EA_A3000W";
 import GANTT from "./routes/GANTT";
 import HU_A1000W from "./routes/HU_A1000W";
 import HU_A1060W from "./routes/HU_A1060W";
@@ -119,6 +120,7 @@ import HU_A2070W from "./routes/HU_A2070W";
 import HU_A2100W from "./routes/HU_A2100W";
 import HU_A2140W from "./routes/HU_A2140W";
 import HU_A3020W from "./routes/HU_A3020W";
+import HU_A3040W from "./routes/HU_A3040W";
 import HU_A4100W from "./routes/HU_A4100W";
 import HU_A5020W from "./routes/HU_A5020W";
 import HU_B1020W from "./routes/HU_B1020W";
@@ -775,6 +777,8 @@ const AppInner: React.FC = () => {
       return EA_A1000W;
     } else if (str == "EA_A2000W") {
       return EA_A2000W;
+    } else if (str == "EA_A3000W") {
+      return EA_A3000W;
     } else if (str == "CT_A0111W") {
       return CT_A0111W;
     } else if (str == "HU_A1000W") {
@@ -791,6 +795,8 @@ const AppInner: React.FC = () => {
       return HU_A2140W;
     } else if (str == "HU_A3020W") {
       return HU_A3020W;
+    } else if (str == "HU_A3040W") {
+      return HU_A3040W;
     } else if (str == "HU_A4100W") {
       return HU_A4100W;
     } else if (str == "HU_A5020W") {
@@ -1131,6 +1137,7 @@ const AppInner: React.FC = () => {
                   {/* 전자결재 */}
                   <AuthRoute path="/EA_A1000W" component={EA_A1000W} exact />
                   <AuthRoute path="/EA_A2000W" component={EA_A2000W} exact />
+                  <AuthRoute path="/EA_A3000W" component={EA_A3000W} exact />
                   {/* 원가관리 */}
                   <AuthRoute path="/CT_A0111W" component={CT_A0111W} exact />
                   {/* 인사관리 */}
@@ -1141,6 +1148,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/HU_A2100W" component={HU_A2100W} exact />
                   <AuthRoute path="/HU_A2140W" component={HU_A2140W} exact />
                   <AuthRoute path="/HU_A3020W" component={HU_A3020W} exact />
+                  <AuthRoute path="/HU_A3040W" component={HU_A3040W} exact />
                   <AuthRoute path="/HU_A4100W" component={HU_A4100W} exact />
                   <AuthRoute path="/HU_A5020W" component={HU_A5020W} exact />
                   <AuthRoute path="/HU_B1020W" component={HU_B1020W} exact />

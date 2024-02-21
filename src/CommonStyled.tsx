@@ -418,6 +418,7 @@ type TGridContainer = {
   margin?: TMargin;
   overflowY?: string;
   mobilemaxWidth?: number;
+  color?: string;
 };
 
 type TMargin = {
@@ -486,6 +487,17 @@ export const GridContainer = styled.div<TGridContainer>`
   /* .required {
     background-color: #fff0ef;
   } */
+
+  .k-panelbar-item-icon.k-icon {
+    color: ${(props) => props.color} !important;
+  }
+
+  .k-panelbar > .k-panelbar-header > .k-link.k-selected,
+  .k-panelbar > .k-panelbar-header > .k-link.k-selected:hover,
+  .k-panelbar-group > .k-panelbar-item > .k-link.k-selected,
+  .k-panelbar-group > .k-panelbar-item > .k-link.k-selected:hover {
+    background-color: ${(props) => props.color} !important;
+  }
 
   @media (max-width: ${(props) =>
       props.mobilemaxWidth != undefined ? props.mobilemaxWidth : 1200}px) {
