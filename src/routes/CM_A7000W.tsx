@@ -787,26 +787,26 @@ const CM_A7000W: React.FC = () => {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade1: e.e.value.numref1,
+        grade1: e.e.value == null ? 0 : e.e.value.numref1,
         totgrade1:
-          e.e.value.numref1 +
+          (e.e.value == null ? 0 : e.e.value.numref1) +
           information.grade2 +
           information.grade3 +
           information.grade4,
         level1:
-          e.e.value.numref1 +
+          (e.e.value == null ? 0 : e.e.value.numref1) +
             information.grade2 +
             information.grade3 +
             information.grade4 >=
           12
             ? "상"
-            : e.e.value.numref1 +
+            : (e.e.value == null ? 0 : e.e.value.numref1) +
                 information.grade2 +
                 information.grade3 +
                 information.grade4 >=
               7
             ? "중"
-            : e.e.value.numref1 +
+            : (e.e.value == null ? 0 : e.e.value.numref1) +
                 information.grade2 +
                 information.grade3 +
                 information.grade4 >=
@@ -818,27 +818,27 @@ const CM_A7000W: React.FC = () => {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade2: e.e.value.numref1,
+        grade2: e.e.value == null ? 0 : e.e.value.numref1,
         totgrade1:
           information.grade1 +
-          e.e.value.numref1 +
+          (e.e.value == null ? 0 : e.e.value.numref1) +
           information.grade3 +
           information.grade4,
         level1:
           information.grade1 +
-            e.e.value.numref1 +
+            (e.e.value == null ? 0 : e.e.value.numref1) +
             information.grade3 +
             information.grade4 >=
           12
             ? "상"
             : information.grade1 +
-                e.e.value.numref1 +
+                (e.e.value == null ? 0 : e.e.value.numref1) +
                 information.grade3 +
                 information.grade4 >=
               7
             ? "중"
             : information.grade1 +
-                e.e.value.numref1 +
+                (e.e.value == null ? 0 : e.e.value.numref1) +
                 information.grade3 +
                 information.grade4 >=
               1
@@ -849,28 +849,28 @@ const CM_A7000W: React.FC = () => {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade3: e.e.value.numref1,
+        grade3: e.e.value == null ? 0 : e.e.value.numref1,
         totgrade1:
           information.grade1 +
           information.grade2 +
-          e.e.value.numref1 +
+          (e.e.value == null ? 0 : e.e.value.numref1) +
           information.grade4,
         level1:
           information.grade1 +
             information.grade2 +
-            e.e.value.numref1 +
+            (e.e.value == null ? 0 : e.e.value.numref1) +
             information.grade4 >=
           12
             ? "상"
             : information.grade1 +
                 information.grade2 +
-                e.e.value.numref1 +
+                (e.e.value == null ? 0 : e.e.value.numref1) +
                 information.grade4 >=
               7
             ? "중"
             : information.grade1 +
                 information.grade2 +
-                e.e.value.numref1 +
+                (e.e.value == null ? 0 : e.e.value.numref1) +
                 information.grade4 >=
               1
             ? "하"
@@ -880,29 +880,29 @@ const CM_A7000W: React.FC = () => {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade4: e.e.value.numref1,
+        grade4: e.e.value == null ? 0 : e.e.value.numref1,
         totgrade1:
           information.grade1 +
           information.grade2 +
           information.grade3 +
-          e.e.value.numref1,
+          (e.e.value == null ? 0 : e.e.value.numref1),
         level1:
           information.grade1 +
             information.grade2 +
             information.grade3 +
-            e.e.value.numref1 >=
+            (e.e.value == null ? 0 : e.e.value.numref1) >=
           12
             ? "상"
             : information.grade1 +
                 information.grade2 +
                 information.grade3 +
-                e.e.value.numref1 >=
+                (e.e.value == null ? 0 : e.e.value.numref1) >=
               7
             ? "중"
             : information.grade1 +
                 information.grade2 +
                 information.grade3 +
-                e.e.value.numref1 >=
+                (e.e.value == null ? 0 : e.e.value.numref1) >=
               1
             ? "하"
             : "",
@@ -911,14 +911,26 @@ const CM_A7000W: React.FC = () => {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade5: e.e.value.numref1,
-        totgrade2: e.e.value.numref1 + information.grade6 + information.grade7,
+        grade5: e.e.value == null ? 0 : e.e.value.numref1,
+        totgrade2:
+          (e.e.value == null ? 0 : e.e.value.numref1) +
+          information.grade6 +
+          information.grade7,
         level2:
-          e.e.value.numref1 + information.grade6 + information.grade7 >= 7
+          (e.e.value == null ? 0 : e.e.value.numref1) +
+            information.grade6 +
+            information.grade7 >=
+          7
             ? "상"
-            : e.e.value.numref1 + information.grade6 + information.grade7 >= 4
+            : (e.e.value == null ? 0 : e.e.value.numref1) +
+                information.grade6 +
+                information.grade7 >=
+              4
             ? "중"
-            : e.e.value.numref1 + information.grade6 + information.grade7 >= 1
+            : (e.e.value == null ? 0 : e.e.value.numref1) +
+                information.grade6 +
+                information.grade7 >=
+              1
             ? "하"
             : "",
       }));
@@ -926,14 +938,26 @@ const CM_A7000W: React.FC = () => {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade6: e.e.value.numref1,
-        totgrade2: information.grade5 + e.e.value.numref1 + information.grade7,
+        grade6: e.e.value == null ? 0 : e.e.value.numref1,
+        totgrade2:
+          information.grade5 +
+          (e.e.value == null ? 0 : e.e.value.numref1) +
+          information.grade7,
         level2:
-          information.grade5 + e.e.value.numref1 + information.grade7 >= 7
+          information.grade5 +
+            (e.e.value == null ? 0 : e.e.value.numref1) +
+            information.grade7 >=
+          7
             ? "상"
-            : information.grade5 + e.e.value.numref1 + information.grade7 >= 4
+            : information.grade5 +
+                (e.e.value == null ? 0 : e.e.value.numref1) +
+                information.grade7 >=
+              4
             ? "중"
-            : information.grade5 + e.e.value.numref1 + information.grade7 >= 1
+            : information.grade5 +
+                (e.e.value == null ? 0 : e.e.value.numref1) +
+                information.grade7 >=
+              1
             ? "하"
             : "",
       }));
@@ -941,14 +965,26 @@ const CM_A7000W: React.FC = () => {
       setInformation((prev) => ({
         ...prev,
         [name]: value,
-        grade7: e.e.value.numref1,
-        totgrade2: information.grade5 + information.grade6 + e.e.value.numref1,
+        grade7: e.e.value == null ? 0 : e.e.value.numref1,
+        totgrade2:
+          information.grade5 +
+          information.grade6 +
+          (e.e.value == null ? 0 : e.e.value.numref1),
         level2:
-          information.grade5 + information.grade6 + e.e.value.numref1 >= 7
+          information.grade5 +
+            information.grade6 +
+            (e.e.value == null ? 0 : e.e.value.numref1) >=
+          7
             ? "상"
-            : information.grade5 + information.grade6 + e.e.value.numref1 >= 4
+            : information.grade5 +
+                information.grade6 +
+                (e.e.value == null ? 0 : e.e.value.numref1) >=
+              4
             ? "중"
-            : information.grade5 + information.grade6 + e.e.value.numref1 >= 1
+            : information.grade5 +
+                information.grade6 +
+                (e.e.value == null ? 0 : e.e.value.numref1) >=
+              1
             ? "하"
             : "",
       }));
