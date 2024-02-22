@@ -1211,8 +1211,6 @@ const KendoWindow = ({
       return;
     }
 
-    console.log(jsonArr); //
-
     const columns: string[] = ["코드", "코드명"];
 
     setLoading(true);
