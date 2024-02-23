@@ -577,7 +577,7 @@ const KendoWindow = ({
 
     if (data.isSuccess === true) {
       setUnsavedName([]);
-
+      setValues2(false);
       deletedMainRows = [];
       deletedMainRows2 = [];
 

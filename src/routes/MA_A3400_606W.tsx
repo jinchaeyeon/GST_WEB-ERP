@@ -937,6 +937,7 @@ const MA_A3400_606W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      setValues2(false);
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,

@@ -1459,6 +1459,7 @@ const MA_A3000W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      setValues2(false);
       deletedMainRows = [];
       setFilters((prev) => ({
         ...prev,

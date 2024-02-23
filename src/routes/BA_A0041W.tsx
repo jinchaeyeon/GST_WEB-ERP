@@ -1380,6 +1380,7 @@ const BA_A0041W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      setValues2(false);
       if (paraData.workType == "N") {
         const isLastDataDeleted =
           mainDataResult.data.length == 0 && filters.pgNum > 0;

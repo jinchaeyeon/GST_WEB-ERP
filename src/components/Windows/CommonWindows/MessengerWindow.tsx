@@ -207,6 +207,7 @@ const KendoWindow = ({
     }
 
     if (data.isSuccess === true) {
+      setValues2(false);
       if (ParaData.workType == "new") {
         alert("쪽지가 전송되었습니다.");
       }

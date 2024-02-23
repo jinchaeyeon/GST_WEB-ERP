@@ -1868,6 +1868,7 @@ const CopyWindow = ({
     if (data.isSuccess === true) {
       deletedMainRows = [];
       setUnsavedName([]);
+      setValues2(false);
       reload(data.returnString);
       if (workType == "N") {
         setVisible(false);

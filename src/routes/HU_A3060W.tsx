@@ -3122,19 +3122,16 @@ const HU_A3060W: React.FC = () => {
         ...row,
       }));
 
-      mainDataResult.data.forEach((item: any, index: number) => {
-        const newData2 = {
-          ...item,
-          rowstatus: "D",
-        };
-        deletedMainRows.push(newData2);
-      });
-      setPage(initialPageState);
-      setMainDataResult(process([], mainDataState));
       if (totalRowCnt > 0) {
+        mainDataResult.data.map((item) => {
+          if (item.num > temp) {
+            temp = item.num;
+          }
+        });
+
         rows.map((item: any, idx: number) => {
           const newDataItem = {
-            [DATA_ITEM_KEY]: idx,
+            [DATA_ITEM_KEY]: ++temp,
             gradualdeduct: item.gradualdeduct,
             orgdiv: item.orgdiv,
             seq: item.seq,

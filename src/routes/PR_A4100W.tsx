@@ -625,6 +625,7 @@ const PR_A4100W: React.FC = () => {
       } else {
         setPage(initialPageState); // 페이지 초기화
         resetAllGrid();
+        setValues2(false);
         setFilters((prev) => ({
           ...prev,
           pgNum: 1,
@@ -907,6 +908,7 @@ const PR_A4100W: React.FC = () => {
       console.log(data);
       alert(data.resultMessage);
     } else {
+      setValues2(false);
       setFilters((prev) => ({
         ...prev,
         find_row_value: data.returnString,
@@ -981,6 +983,7 @@ const PR_A4100W: React.FC = () => {
       alert(data.resultMessage);
     } else {
       resetAllGrid();
+      setValues2(false);
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
@@ -1081,6 +1084,7 @@ const PR_A4100W: React.FC = () => {
       alert(data.resultMessage);
     } else {
       resetAllGrid();
+      setValues2(false);
       setFilters((prev) => ({
         ...prev,
         isSearch: true,

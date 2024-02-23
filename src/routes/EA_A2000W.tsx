@@ -971,6 +971,7 @@ const EA_A2000W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      setValues2(false);
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,

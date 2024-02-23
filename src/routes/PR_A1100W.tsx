@@ -262,6 +262,8 @@ const PR_A1100W: React.FC = () => {
     deletedMaterialRows = [];
     deletedPlanRows = [];
     resetAllGrid();
+    setValues(false);
+    setValues2(false);
     setFilters((prev) => ({
       ...prev,
       pgNum: 1,
@@ -885,7 +887,7 @@ const PR_A1100W: React.FC = () => {
       console.log(data);
     }
     // 필터 isSearch false처리, pgNum 세팅
-    setFilters((prev) => ({
+    setMaterialFilters((prev) => ({
       ...prev,
       pgNum:
         data && data.hasOwnProperty("pageNumber")
@@ -1777,6 +1779,8 @@ const PR_A1100W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      setValues(false);
+      setValues2(false);
       if (paraDataPlanSaved.work_type == "INLIST") {
         const isLastDataDeleted =
           materialDataResult.data.length == 0 && materialFilters.pgNum > 0;
@@ -2367,6 +2371,8 @@ const PR_A1100W: React.FC = () => {
         throw findMessage(messagesData, "PR_A1100W_007");
       } else {
         resetAllGrid();
+        setValues(false);
+        setValues2(false);
         setFilters((prev) => ({
           ...prev,
           isSearch: true,

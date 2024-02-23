@@ -1020,7 +1020,7 @@ const HU_A2140W: React.FC = () => {
       const isLastDataDeleted =
         mainDataResult.data.length == 0 && filters.pgNum > 0;
       let array: any[] = [];
-
+      setValues2(false);
       deletedMainRows.map((item: any) => {
         array.push(item.attdatnum);
       });

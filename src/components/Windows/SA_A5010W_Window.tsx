@@ -1903,6 +1903,7 @@ const CopyWindow = ({
       deletedMainRows = [];
       setUnsavedAttadatnums([]);
       reload(data.returnString);
+      setValues2(false);
       if (workType == "N") {
         onClose();
       } else {

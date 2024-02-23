@@ -1622,6 +1622,9 @@ const PR_A7000W: React.FC = () => {
         console.log(datas);
         alert(datas.resultMessage);
       } else {
+        setValues2(false);
+        setValues3(false);
+        setValues4(false);
         setFilters((prev) => ({
           ...prev,
           isSearch: true,
@@ -1695,6 +1698,9 @@ const PR_A7000W: React.FC = () => {
       console.log(datas);
       alert(datas.resultMessage);
     } else {
+      setValues2(false);
+      setValues3(false);
+      setValues4(false);
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
@@ -1773,6 +1779,9 @@ const PR_A7000W: React.FC = () => {
       console.log(datas);
       alert(datas.resultMessage);
     } else {
+      setValues2(false);
+      setValues3(false);
+      setValues4(false);
       setFilters((prev) => ({
         ...prev,
         find_row_value: datas.returnString,
@@ -1874,6 +1883,9 @@ const PR_A7000W: React.FC = () => {
         console.log(datas);
         alert(datas.resultMessage);
       } else {
+        setValues2(false);
+        setValues3(false);
+        setValues4(false);
         setFilters2((prev) => ({
           ...prev,
           find_row_value: datas.returnString,
@@ -1904,6 +1916,9 @@ const PR_A7000W: React.FC = () => {
       } else {
         setPage(initialPageState); // 페이지 초기화
         resetAllGrid();
+        setValues2(false);
+        setValues3(false);
+        setValues4(false);
         if (tabSelected == 0) {
           setFilters((prev) => ({
             ...prev,

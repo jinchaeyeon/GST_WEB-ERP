@@ -810,6 +810,7 @@ const KendoWindow = ({
       const isLastDataDeleted =
         detailDataResult.data.length == 0 && filters.pgNum > 0;
       setUnsavedName([]);
+      setValues2(false);
       if (isLastDataDeleted) {
         setPage({
           skip:

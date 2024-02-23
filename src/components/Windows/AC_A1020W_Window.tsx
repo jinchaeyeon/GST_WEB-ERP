@@ -1271,6 +1271,7 @@ const KendoWindow = ({
       if (ParaData.workType == "N") {
         setVisible(false);
       }
+      setValues2(false);
       setParaData({
         workType: "",
         expensedt: "",

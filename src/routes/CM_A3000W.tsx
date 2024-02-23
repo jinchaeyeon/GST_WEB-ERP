@@ -1074,6 +1074,7 @@ const CM_A3000W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      setValues2(false);
       if (infomation.workType == "D") {
         const isLastDataDeleted =
           subDataResult.data.length == 1 && subfilters.pgNum > 1;

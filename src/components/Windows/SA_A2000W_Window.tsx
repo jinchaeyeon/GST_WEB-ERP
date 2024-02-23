@@ -1042,6 +1042,7 @@ const KendoWindow = ({
     if (data.isSuccess === true) {
       deletedRows = []; //초기화
       setUnsavedName([]);
+      setValues2(false);
       if (workType == "U") {
         reloadData(paraData.ordnum);
         fetchMainGrid();

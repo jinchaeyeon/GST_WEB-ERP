@@ -1551,6 +1551,9 @@ const MA_A2400W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      setValues(false);
+      setValues2(false);
+      setValues3(false);
       const isLastDataDeleted =
         mainDataResult.data.length === 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
@@ -2009,6 +2012,9 @@ const MA_A2400W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      setValues(false);
+      setValues2(false);
+      setValues3(false);
       resetAllGrid();
       deletedMainRows = [];
       setFilters((prev) => ({

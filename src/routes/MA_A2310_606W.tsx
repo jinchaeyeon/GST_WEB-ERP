@@ -970,6 +970,7 @@ const MA_A2310_606W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      setValues2(false);
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,

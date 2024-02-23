@@ -836,6 +836,8 @@ const PR_A5000W: React.FC = () => {
 
   const search = () => {
     resetAllGrid();
+    setValues(false);
+    setValues2(false);
     setFilters((prev) => ({
       ...prev,
       isSearch: true,

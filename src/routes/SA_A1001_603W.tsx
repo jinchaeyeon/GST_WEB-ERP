@@ -242,6 +242,7 @@ const SA_A1001_603W: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
+    setValues2(false);
     if (e.selected == 0) {
       setFilters((prev) => ({
         ...prev,
@@ -752,8 +753,8 @@ const SA_A1001_603W: React.FC = () => {
       ) {
         throw findMessage(messagesData, "SA_A1001_603W_001");
       } else {
+        setValues2(false);
         setPage(initialPageState); // 페이지 초기화
-        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
         setTabSelected(0);
         setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       }
