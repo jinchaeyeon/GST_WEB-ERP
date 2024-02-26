@@ -13,6 +13,14 @@ code {
     monospace;
 }
 
+#CM_A3100W_CALENDAR {
+  width: 98% !important;
+}
+
+#CM_A3100W_SCHEDULER {
+  height: 40vh !important;
+}
+
 .k-numerictextbox>.k-input-inner {
   text-align: right;
 }
