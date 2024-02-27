@@ -8,18 +8,19 @@ type TFieldComboBox = {
   listData: any;
   valueField: string;
   textField: string;
+  className?: string;
 };
 const FieldComboBox: React.FC<TFieldComboBox> = ({
   fieldRenderProps,
   listData,
   valueField,
   textField,
+  className = "",
 }: TFieldComboBox) => {
   const {
     validationMessage,
     visited,
     value,
-    className,
     label,
     id,
     valid,

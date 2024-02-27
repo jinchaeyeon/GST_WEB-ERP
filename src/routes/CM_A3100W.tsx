@@ -9,17 +9,25 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import { guid } from "@progress/kendo-react-common";
+import {
+  GroupDescriptor,
+  GroupResult,
+  groupBy,
+} from "@progress/kendo-data-query";
+import { Button } from "@progress/kendo-react-buttons";
+import { setGroupIds } from "@progress/kendo-react-data-tools";
 import { Calendar } from "@progress/kendo-react-dateinputs";
 import {
   AgendaView,
   DayView,
   MonthView,
   Scheduler,
+  SchedulerDataChangeEvent,
   TimelineView,
   WeekView,
 } from "@progress/kendo-react-scheduler";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   GridContainer,
@@ -30,43 +38,57 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
-import { UsePermissions } from "../components/CommonFunction";
+import {
+  UseMessages,
+  UseParaPc,
+  UsePermissions,
+  convertDateToStr,
+  convertDateToStrWithTime,
+  findMessage,
+} from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
-import { TPermissions } from "../store/types";
+import { FormWithCustomEditor } from "../components/Scheduler/custom-form_CM_A3100W";
+import { useApi } from "../hooks/api";
+import { isLoading, loginResultState } from "../store/atoms";
+import { Iparameters, TPermissions } from "../store/types";
+
+let temp = 0;
+const initialGroup: GroupDescriptor[] = [{ field: "group_category_name" }];
+
+const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
+  const newDataState = groupBy(data, group);
+
+  setGroupIds({ data: newDataState, group: group });
+
+  return newDataState;
+};
 
 const CM_A3100W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages("CM_A3100W", setMessagesData);
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
-
-  const [data, setData] = React.useState<any[]>([
-    {
-      id: 1,
-      title: "302호 관리자",
-      resource: 1,
-      person: "admin",
-      type: "Room",
-      start: new Date("2024-02-26T10:00:00.000Z"),
-      end: new Date("2024-02-26T12:00:00.000Z"),
-    },
-    {
-      id: 2,
-      title: "303호 관리자",
-      resource: 2,
-      person: "admin",
-      type: "Room",
-      start: new Date("2024-02-26T13:00:00.000Z"),
-      end: new Date("2024-02-26T14:00:00.000Z"),
-    },
-  ]);
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const userId = loginResult ? loginResult.userId : "";
+  const setLoading = useSetRecoilState(isLoading);
+  const processApi = useApi();
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+  const [data, setData] = React.useState<any[]>([]);
+  const [group, setGroup] = useState(initialGroup);
+  const [total, setTotal] = useState(0);
+  const [resultState, setResultState] = useState<GroupResult[]>(
+    processWithGroups([], initialGroup)
+  );
+  const [list, setList] = useState([]);
   const [view, setView] = React.useState("timeline");
   const [date, setDate] = React.useState(new Date());
   const [orientation, setOrientation] = React.useState<
     "horizontal" | "vertical"
   >("vertical");
-
+  console.log(data);
   const handleViewChange = React.useCallback(
     (event: any) => {
       setView(event.value);
@@ -80,30 +102,222 @@ const CM_A3100W: React.FC = () => {
     [setDate]
   );
 
-  const handleDataChange = React.useCallback(
-    ({ created, updated, deleted }: any) => {
-      setData((old) =>
-        old
-          .filter(
-            (item) =>
-              deleted.find((current: any) => current.id === item.id) ===
-              undefined
-          )
-          .map(
-            (item) =>
-              updated.find((current: any) => current.id === item.id) || item
-          )
-          .concat(
-            created.map((item: any) =>
-              Object.assign({}, item, {
-                id: guid(),
-              })
-            )
-          )
+  const handleDataChange = ({
+    created,
+    updated,
+    deleted,
+  }: SchedulerDataChangeEvent) => {
+    let valid = true;
+    let valid2 = true;
+
+    created.map((item) => {
+      if (item.title == "") {
+        valid2 = false;
+      }
+      if (
+        item.resource == "" ||
+        item.resource == undefined ||
+        item.resource == null
+      ) {
+        valid2 = false;
+      }
+    });
+
+    updated.map((item) => {
+      if (item.person != userId) {
+        valid = false;
+      }
+      if (item.title == "") {
+        valid2 = false;
+      }
+      if (
+        item.resource == "" ||
+        item.resource == undefined ||
+        item.resource == null ||
+        item.resource.sub_code == ""
+      ) {
+        valid2 = false;
+      }
+    });
+    deleted.map((item) => {
+      if (item.person != userId) {
+        valid = false;
+      }
+      if (item.title == "") {
+        valid2 = false;
+      }
+      if (
+        item.resource == "" ||
+        item.resource == undefined ||
+        item.resource == null ||
+        item.resource.sub_code == ""
+      ) {
+        valid2 = false;
+      }
+    });
+
+    if (valid != true) {
+      alert(findMessage(messagesData, "CM_A3100W_001"));
+      return false;
+    }
+    if (valid2 != true) {
+      alert(findMessage(messagesData, "CM_A3100W_002"));
+      return false;
+    }
+
+    type TdataArr = {
+      rowstatus_s: string[];
+      datnum_s: string[];
+      seq_s: string[];
+      title_s: string[];
+      strtime_s: string[];
+      endtime_s: string[];
+      resource_s: string[];
+    };
+
+    let dataArr: TdataArr = {
+      rowstatus_s: [],
+      datnum_s: [],
+      seq_s: [],
+      title_s: [],
+      strtime_s: [],
+      endtime_s: [],
+      resource_s: [],
+    };
+    created.forEach((item) => (item["rowstatus"] = "N"));
+    updated.forEach((item) => (item["rowstatus"] = "U"));
+    deleted.forEach((item) => (item["rowstatus"] = "D"));
+
+    const mergedArr = [...created, ...updated, ...deleted];
+
+    mergedArr.forEach((item) => {
+      const {
+        rowstatus = "",
+        datnum = "",
+        seq = "",
+        start,
+        end,
+        title = "",
+        isAllDay,
+        resource,
+      } = item;
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.datnum_s.push(rowstatus == "N" ? "" : datnum);
+      dataArr.seq_s.push(rowstatus == "N" ? "0" : seq);
+      dataArr.title_s.push(title);
+      dataArr.strtime_s.push(
+        isAllDay
+          ? convertDateToStrWithTime(start).substr(0, 8) + " 0:0"
+          : convertDateToStrWithTime(start)
       );
+      dataArr.endtime_s.push(
+        isAllDay
+          ? convertDateToStrWithTime(
+              new Date(start.setDate(start.getDate() + 1))
+            ).substr(0, 8) + " 0:0"
+          : convertDateToStrWithTime(end)
+      );
+      dataArr.resource_s.push(
+        typeof resource == "string" ? resource : resource.sub_code
+      );
+    });
+
+    setParaData((prev) => ({
+      ...prev,
+      work_type: "N",
+      rowstatus_s: dataArr.rowstatus_s.join("|"),
+      datnum_s: dataArr.datnum_s.join("|"),
+      seq_s: dataArr.seq_s.join("|"),
+      strtime_s: dataArr.strtime_s.join("|"),
+      endtime_s: dataArr.endtime_s.join("|"),
+      title_s: dataArr.title_s.join("|"),
+      resource_s: dataArr.resource_s.join("|"),
+    }));
+  };
+
+  //프로시저 파라미터 초기값
+  const [paraData, setParaData] = useState({
+    work_type: "",
+    orgdiv: "01",
+    rowstatus_s: "",
+    datnum_s: "",
+    seq_s: "",
+    title_s: "",
+    strtime_s: "",
+    endtime_s: "",
+    resource_s: "",
+    userid: userId,
+    pc: pc,
+    form_id: "CM_A3100W",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_CM_A3100W_S",
+    pageNumber: 1,
+    pageSize: 10,
+    parameters: {
+      "@p_work_type": paraData.work_type,
+      "@p_orgdiv": paraData.orgdiv,
+      "@p_rowstatus_s": paraData.rowstatus_s,
+      "@p_datnum_s": paraData.datnum_s,
+      "@p_seq_s": paraData.seq_s,
+      "@p_title_s": paraData.title_s,
+      "@p_strtime_s": paraData.strtime_s,
+      "@p_endtime_s": paraData.endtime_s,
+      "@p_resource_s": paraData.resource_s,
+      "@p_userid": paraData.userid,
+      "@p_pc": paraData.pc,
+      "@p_form_id": paraData.form_id,
     },
-    [setData]
-  );
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+      }));
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+      }));
+      setFilters3((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+      }));
+      setParaData({
+        work_type: "",
+        orgdiv: "01",
+        rowstatus_s: "",
+        datnum_s: "",
+        seq_s: "",
+        title_s: "",
+        strtime_s: "",
+        endtime_s: "",
+        resource_s: "",
+        userid: userId,
+        pc: pc,
+        form_id: "CM_A3100W",
+      });
+    } else {
+      alert(data.resultMessage);
+    }
+  };
+
+  useEffect(() => {
+    if (paraData.work_type !== "") fetchTodoGridSaved();
+  }, [paraData]);
 
   //엑셀 내보내기
   let _export: any;
@@ -113,14 +327,60 @@ const CM_A3100W: React.FC = () => {
     }
   };
 
-  const search = () => {};
+  const search = () => {
+    setFilters((prev) => ({
+      ...prev,
+      resource: "%",
+      group: "%",
+      isSearch: true,
+      pgNum: 1,
+    }));
+    setFilters2((prev) => ({
+      ...prev,
+      resource: "%",
+      group: "%",
+      isSearch: true,
+      pgNum: 1,
+    }));
+    setFilters3((prev) => ({
+      ...prev,
+      resource: "%",
+      group: "%",
+      isSearch: true,
+      pgNum: 1,
+    }));
+  };
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
+    workType: "resource",
     orgdiv: "01",
     todt: new Date(),
-    type: "%",
+    resource: "%",
+    group: "%",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+  const [filters2, setFilters2] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "schedule",
+    orgdiv: "01",
+    resource: "%",
+    group: "%",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+
+  const [filters3, setFilters3] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "list",
+    orgdiv: "01",
+    todt: new Date(),
+    resource: "%",
+    group: "%",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -130,8 +390,13 @@ const CM_A3100W: React.FC = () => {
     const { value, name } = e.target;
 
     if (name == undefined) {
-      //resetAllGrid();
       setFilters((prev) => ({
+        ...prev,
+        todt: value,
+        isSearch: true,
+        pgNum: 1,
+      }));
+      setFilters3((prev) => ({
         ...prev,
         todt: value,
         isSearch: true,
@@ -142,8 +407,220 @@ const CM_A3100W: React.FC = () => {
         ...prev,
         [name]: value,
       }));
+      setFilters3((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
+
+  //그리드 데이터 조회
+  const fetchMainGrid = async (filters: any) => {
+    //if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_CM_A3100W_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.workType,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_date": convertDateToStr(filters.todt),
+        "@p_resource": filters.resource,
+        "@p_group": filters.group,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        text: item.resource_name,
+        groupId: item.group + "group",
+        group_category_name: item.group,
+      }));
+
+      if (totalRowCnt > 0) {
+        const newDataState = processWithGroups(rows, group);
+        setTotal(totalRowCnt);
+
+        setResultState(
+          newDataState
+            .filter((item: any, index: any) => index != 0)
+            .map((item2) => ({
+              ...item2,
+              text:
+                rows.filter(
+                  (items: any) => items.office_resource_num == item2.value
+                )[0] != undefined
+                  ? rows.filter(
+                      (items: any) => items.office_resource_num == item2.value
+                    )[0].resource_name
+                  : "",
+            }))
+        );
+      } else {
+        setResultState([]);
+      }
+    } else {
+      console.log("[에러발생]");
+      console.log(data);
+    }
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid2 = async (filters2: any) => {
+    temp = 0;
+    //if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_CM_A3100W_Q",
+      pageNumber: filters2.pgNum,
+      pageSize: filters2.pgSize,
+      parameters: {
+        "@p_work_type": filters2.workType,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_date": convertDateToStr(filters.todt),
+        "@p_resource": filters2.resource,
+        "@p_group": filters2.group,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        //resource까지 사용컬럼
+        start: new Date(item.strtime),
+        end: new Date(item.endtime),
+        title: item.contents,
+        person: item.user_id,
+      }));
+
+      setData(rows);
+      rows.map((item: { num: number }) => {
+        if (item.num > temp) {
+          temp = item.num;
+        }
+      });
+    } else {
+      console.log("[에러발생]");
+      console.log(data);
+    }
+    setFilters2((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid3 = async (filters3: any) => {
+    //if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_CM_A3100W_Q",
+      pageNumber: filters3.pgNum,
+      pageSize: filters3.pgSize,
+      parameters: {
+        "@p_work_type": filters3.workType,
+        "@p_orgdiv": filters3.orgdiv,
+        "@p_date": convertDateToStr(filters3.todt),
+        "@p_resource": filters3.resource,
+        "@p_group": filters3.group,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        text: item.resources_name,
+        value: item.office_resources_num,
+      }));
+
+      if (totalRowCnt > 0) {
+        setList(rows);
+      } else {
+        setList([]);
+      }
+    } else {
+      console.log("[에러발생]");
+      console.log(data);
+    }
+    setFilters3((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid(deepCopiedFilters);
+    }
+  }, [filters]);
+
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (filters2.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters2);
+      setFilters2((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid2(deepCopiedFilters);
+    }
+  }, [filters2]);
+
+  useEffect(() => {
+    if (filters3.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters3);
+      setFilters3((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid3(deepCopiedFilters);
+    }
+  }, [filters3]);
 
   return (
     <>
@@ -167,8 +644,6 @@ const CM_A3100W: React.FC = () => {
           style={{
             height: isMobile ? "100%" : "88vh",
             marginTop: "5px",
-            borderRight: "1px solid #d3d3d3",
-            borderBottom: "1px solid #d3d3d3",
             paddingRight: "10px",
           }}
         >
@@ -187,100 +662,80 @@ const CM_A3100W: React.FC = () => {
             <GridTitleContainer>
               <GridTitle>자원</GridTitle>
             </GridTitleContainer>
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1-content"
-                id="panel1-header"
-                style={{ backgroundColor: "#edf4fb" }}
-              >
-                <Typography>전체</Typography>
-              </AccordionSummary>
-              <AccordionDetails
-                style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
-              >
-                <List>
-                  <ListItem disablePadding>
-                    <ListItemButton>
-                      <ListItemText primary={"전체"} />
-                    </ListItemButton>
-                  </ListItem>
-                </List>
-              </AccordionDetails>
-            </Accordion>
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1-content"
-                id="panel1-header"
-                style={{ backgroundColor: "#edf4fb" }}
-              >
-                <Typography>회의실</Typography>
-              </AccordionSummary>
-              <AccordionDetails
-                style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
-              >
-                <List>
-                  <ListItem disablePadding>
-                    <ListItemButton>
-                      <ListItemText primary={"전체"} />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem disablePadding>
-                    <ListItemButton>
-                      <ListItemText primary={"301호"} />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem disablePadding>
-                    <ListItemButton component="a" href="#simple-list">
-                      <ListItemText primary={"302호"} />
-                    </ListItemButton>
-                  </ListItem>
-                </List>
-              </AccordionDetails>
-            </Accordion>
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1-content"
-                id="panel1-header"
-                style={{ backgroundColor: "#edf4fb" }}
-              >
-                <Typography>자동차</Typography>
-              </AccordionSummary>
-              <AccordionDetails
-                style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
-              >
-                <List>
-                  <ListItem disablePadding>
-                    <ListItemButton>
-                      <ListItemText primary={"전체"} />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem disablePadding>
-                    <ListItemButton>
-                      <ListItemText primary={"카니발"} />
-                    </ListItemButton>
-                  </ListItem>
-                  <ListItem disablePadding>
-                    <ListItemButton>
-                      <ListItemText primary={"니로"} />
-                    </ListItemButton>
-                  </ListItem>
-                </List>
-              </AccordionDetails>
-            </Accordion>
+            {resultState.length > 0
+              ? resultState.map((item: any, index: any) => {
+                  return (
+                    <Accordion defaultExpanded={true}>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1-content"
+                        id="panel1-header"
+                        style={{ backgroundColor: "#edf4fb" }}
+                      >
+                        <Typography>{item.text}</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails
+                        style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
+                      >
+                        <List>
+                          {item.items != undefined
+                            ? item.items.length > 0 &&
+                              item.items.map((items: any) => {
+                                return (
+                                  <ListItem disablePadding>
+                                    <ListItemButton
+                                      onClick={() => {
+                                        setFilters2((prev) => ({
+                                          ...prev,
+                                          isSearch: true,
+                                          group: items.group,
+                                          resource: items.office_resource_num,
+                                        }));
+                                        setFilters3((prev) => ({
+                                          ...prev,
+                                          isSearch: true,
+                                          group: items.group,
+                                          resource: items.office_resource_num,
+                                        }));
+                                      }}
+                                    >
+                                      <ListItemText
+                                        primary={items.resource_name}
+                                      />
+                                    </ListItemButton>
+                                  </ListItem>
+                                );
+                              })
+                            : ""}
+                        </List>
+                      </AccordionDetails>
+                    </Accordion>
+                  );
+                })
+              : ""}
           </GridContainer>
         </GridContainer>
         <GridContainer
           style={{
             height: isMobile ? "100%" : "88vh",
-            borderBottom: "1px solid #d3d3d3",
             paddingRight: "10px",
           }}
           width={`calc(100% - 370px)`}
         >
           <GridContainer>
+            <GridTitleContainer>
+              <GridTitle></GridTitle>
+              <ButtonContainer>
+                <Button
+                  //onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                >
+                  저장
+                </Button>
+              </ButtonContainer>
+            </GridTitleContainer>
             <Scheduler
               id="CM_A3100W_SCHEDULER"
               data={data}
@@ -293,22 +748,19 @@ const CM_A3100W: React.FC = () => {
               defaultDate={filters.todt}
               footer={(props) => <React.Fragment />}
               group={{
-                resources: ["자원"],
+                resources: ["전체"],
                 orientation,
               }}
               resources={[
                 {
-                  name: "자원",
-                  data: [
-                    { text: "302호", value: 1 },
-                    { text: "303호", value: 2 },
-                  ],
+                  name: "전체",
+                  data: list,
                   field: "resource",
                   valueField: "value",
                   textField: "text",
-                  colorField: "color",
                 },
               ]}
+              form={FormWithCustomEditor}
             >
               <TimelineView showWorkHours={false} />
               <DayView showWorkHours={false} />
@@ -317,6 +769,7 @@ const CM_A3100W: React.FC = () => {
               <AgendaView />
             </Scheduler>
           </GridContainer>
+          <GridContainer style={{ marginTop: "10px" }}></GridContainer>
         </GridContainer>
       </GridContainerWrap>
     </>

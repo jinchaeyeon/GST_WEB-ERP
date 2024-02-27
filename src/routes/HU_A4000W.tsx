@@ -67,6 +67,7 @@ import {
   getQueryFromBizComponent,
   setDefaultDate,
   toDate,
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -215,6 +216,7 @@ const ColumnCommandCell6 = (props: GridCellProps) => {
           setData={getAttachmentsData}
           para={dataItem.attdatnum}
           modal={true}
+          permission={{ upload: false, download: true, delete: false }}
         />
       )}
     </>
@@ -370,6 +372,8 @@ type TdataArr = {
   seq_s: string[];
   rnpdiv_s: string[];
   reqdt_s: string[];
+  attdatnum_s: string[];
+  reloffice_s: string[];
 };
 
 const HU_A4000W: React.FC = () => {
@@ -516,6 +520,12 @@ const HU_A4000W: React.FC = () => {
       if (convertDateToStr(filters.todt).substring(0, 4) < "1997") {
         throw findMessage(messagesData, "HU_A4000W_001");
       } else {
+        if (unsavedName.length > 0) {
+          setDeletedName(unsavedName);
+        }
+        if (unsavedAttadatnums.length > 0) {
+          setDeletedAttadatnums(unsavedAttadatnums);
+        }
         resetAllGrid();
         deletedMainRows = [];
         deletedMainRows2 = [];
@@ -539,12 +549,6 @@ const HU_A4000W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    if (unsavedName.length > 0) {
-      setDeletedName(unsavedName);
-    }
-    if (unsavedAttadatnums.length > 0) {
-      setDeletedAttadatnums(unsavedAttadatnums);
-    }
     setPage(initialPageState);
     setPage2(initialPageState);
     setPage3(initialPageState);
@@ -610,7 +614,7 @@ const HU_A4000W: React.FC = () => {
     if (unsavedAttadatnums.length > 0) {
       setDeletedAttadatnums(unsavedAttadatnums);
     }
-    if(mainDataResult3.total > 0){
+    if (mainDataResult3.total > 0) {
       if (e.selected == 0) {
         setFilters5((prev) => ({
           ...prev,
@@ -2991,6 +2995,8 @@ const HU_A4000W: React.FC = () => {
       seq_s: [],
       rnpdiv_s: [],
       reqdt_s: [],
+      attdatnum_s: [],
+      reloffice_s: [],
     };
 
     dataItem.forEach((item: any, idx: number) => {
@@ -3073,6 +3079,8 @@ const HU_A4000W: React.FC = () => {
       seq_s: [],
       rnpdiv_s: [],
       reqdt_s: [],
+      attdatnum_s: [],
+      reloffice_s: [],
     };
 
     dataItem.forEach((item: any, idx: number) => {
@@ -3116,6 +3124,197 @@ const HU_A4000W: React.FC = () => {
     }));
   };
 
+  const onSaveClick5 = () => {
+    const dataItem = mainDataResult5.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    if (dataItem.length === 0 && deletedMainRows5.length == 0) return false;
+    let dataArr: TdataArr = {
+      rowstatus_s: [],
+      hrreviewnum_s: [],
+      reviewlvl1_s: [],
+      title_s: [],
+      contents_s: [],
+      commyn_s: [],
+
+      hrreview_stnum_s: [],
+      dptcd_s: [],
+      remark1_s: [],
+
+      monthlyhrreview_s: [],
+      monthlyhrreviewseq_s: [],
+      quantitative_evalution_s: [],
+      qualitative_evalution_s: [],
+
+      badnum_s: [],
+      badseq_s: [],
+      baddt_s: [],
+      badcd_s: [],
+      remark_s: [],
+
+      seq_s: [],
+      rnpdiv_s: [],
+      reqdt_s: [],
+      attdatnum_s: [],
+      reloffice_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        badnum = "",
+        badseq = "",
+        baddt = "",
+        badcd = "",
+        remark = "",
+      } = item;
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.badnum_s.push(badnum);
+      dataArr.badseq_s.push(badseq);
+      dataArr.baddt_s.push(
+        typeof baddt == "string" ? baddt : convertDateToStr(baddt)
+      );
+      dataArr.badcd_s.push(badcd);
+      dataArr.remark_s.push(remark);
+    });
+    deletedMainRows5.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        badnum = "",
+        badseq = "",
+        baddt = "",
+        badcd = "",
+        remark = "",
+      } = item;
+      dataArr.rowstatus_s.push("D");
+      dataArr.badnum_s.push(badnum);
+      dataArr.badseq_s.push(badseq);
+      dataArr.baddt_s.push(
+        typeof baddt == "string" ? baddt : convertDateToStr(baddt)
+      );
+      dataArr.badcd_s.push(badcd);
+      dataArr.remark_s.push(remark);
+    });
+    setParaData((prev) => ({
+      ...prev,
+      workType: "BAD",
+      orgdiv: "01",
+      location: location,
+      interviewee: information.interviewee,
+      monthlyhrreview: information.monthlyhrreview,
+      rowstatus_s: dataArr.rowstatus_s.join("|"),
+      badnum_s: dataArr.badnum_s.join("|"),
+      badseq_s: dataArr.badseq_s.join("|"),
+      baddt_s: dataArr.baddt_s.join("|"),
+      badcd_s: dataArr.badcd_s.join("|"),
+      remark_s: dataArr.remark_s.join("|"),
+    }));
+  };
+
+  const onSaveClick7 = () => {
+    const dataItem = mainDataResult7.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    if (dataItem.length === 0 && deletedMainRows7.length == 0) return false;
+    let dataArr: TdataArr = {
+      rowstatus_s: [],
+      hrreviewnum_s: [],
+      reviewlvl1_s: [],
+      title_s: [],
+      contents_s: [],
+      commyn_s: [],
+
+      hrreview_stnum_s: [],
+      dptcd_s: [],
+      remark1_s: [],
+
+      monthlyhrreview_s: [],
+      monthlyhrreviewseq_s: [],
+      quantitative_evalution_s: [],
+      qualitative_evalution_s: [],
+
+      badnum_s: [],
+      badseq_s: [],
+      baddt_s: [],
+      badcd_s: [],
+      remark_s: [],
+
+      seq_s: [],
+      rnpdiv_s: [],
+      reqdt_s: [],
+      attdatnum_s: [],
+      reloffice_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        rnpdiv = "",
+        reqdt = "",
+        contents = "",
+        remark = "",
+        seq = "",
+        attdatnum = "",
+        reloffice = "",
+      } = item;
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.rnpdiv_s.push(rnpdiv);
+      dataArr.reqdt_s.push(
+        typeof reqdt == "string" ? reqdt : convertDateToStr(reqdt)
+      );
+      dataArr.contents_s.push(contents);
+      dataArr.remark_s.push(remark);
+      dataArr.seq_s.push(seq);
+      dataArr.attdatnum_s.push(attdatnum);
+      dataArr.reloffice_s.push(reloffice);
+    });
+    deletedMainRows7.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        rnpdiv = "",
+        reqdt = "",
+        contents = "",
+        remark = "",
+        seq = "",
+        attdatnum = "",
+        reloffice = "",
+      } = item;
+      dataArr.rowstatus_s.push("D");
+      dataArr.rnpdiv_s.push(rnpdiv);
+      dataArr.reqdt_s.push(
+        typeof reqdt == "string" ? reqdt : convertDateToStr(reqdt)
+      );
+      dataArr.contents_s.push(contents);
+      dataArr.remark_s.push(remark);
+      dataArr.seq_s.push(seq);
+      dataArr.attdatnum_s.push(attdatnum);
+      dataArr.reloffice_s.push(reloffice);
+    });
+    setParaData((prev) => ({
+      ...prev,
+      workType: "REWARD",
+      orgdiv: "01",
+      location: location,
+      interviewee: information.interviewee,
+      rowstatus_s: dataArr.rowstatus_s.join("|"),
+      rnpdiv_s: dataArr.rnpdiv_s.join("|"),
+      reqdt_s: dataArr.reqdt_s.join("|"),
+      contents_s: dataArr.contents_s.join("|"),
+      remark_s: dataArr.remark_s.join("|"),
+      seq_s: dataArr.seq_s.join("|"),
+      attdatnum_s: dataArr.attdatnum_s.join("|"),
+      reloffice_s: dataArr.reloffice_s.join("|"),
+    }));
+  };
+
   const [paraData, setParaData] = useState({
     workType: "",
     orgdiv: "01",
@@ -3153,6 +3352,8 @@ const HU_A4000W: React.FC = () => {
     seq_s: "",
     rnpdiv_s: "",
     reqdt_s: "",
+    attdatnum_s: "",
+    reloffice_s: "",
   });
 
   const para: Iparameters = {
@@ -3197,6 +3398,8 @@ const HU_A4000W: React.FC = () => {
       "@p_seq_s": paraData.seq_s,
       "@p_rnpdiv_s": paraData.rnpdiv_s,
       "@p_reqdt_s": paraData.reqdt_s,
+      "@p_attdatnum_s": paraData.attdatnum_s,
+      "@p_reloffice_s": paraData.reloffice_s,
 
       "@p_userid": userId,
       "@p_pc": pc,
@@ -3220,8 +3423,28 @@ const HU_A4000W: React.FC = () => {
     }
 
     if (data.isSuccess === true) {
+      let array: any[] = [];
+
+      if (paraData.workType == "REWARD") {
+        deletedMainRows7.map((item: any) => {
+          array.push(item.attdatnum);
+        });
+        setDeletedAttadatnums(array);
+      } else {
+        if (unsavedName.length > 0) {
+          setDeletedName(unsavedName);
+        }
+        if (unsavedAttadatnums.length > 0) {
+          setDeletedAttadatnums(unsavedAttadatnums);
+        }
+      }
       deletedMainRows = [];
       deletedMainRows2 = [];
+      deletedMainRows5 = [];
+      deletedMainRows6 = [];
+      deletedMainRows7 = [];
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
       resetAllGrid();
       if (tabSelected == 0) {
         setFilters((prev) => ({
@@ -3236,7 +3459,55 @@ const HU_A4000W: React.FC = () => {
           pgNum: 1,
           isSearch: true,
         }));
+        setFilters5((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: 1,
+          isSearch: true,
+        }));
+        setFilters6((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: 1,
+          isSearch: true,
+        }));
+        setFilters7((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: 1,
+          isSearch: true,
+        }));
       } else if (tabSelected == 1) {
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: 1,
+          isSearch: true,
+        }));
+        setFilters3((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: 1,
+          isSearch: true,
+        }));
+        setFilters5((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: 1,
+          isSearch: true,
+        }));
+        setFilters6((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: 1,
+          isSearch: true,
+        }));
+        setFilters7((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: 1,
+          isSearch: true,
+        }));
       }
       setParaData({
         workType: "",
@@ -3275,6 +3546,8 @@ const HU_A4000W: React.FC = () => {
         seq_s: "",
         rnpdiv_s: "",
         reqdt_s: "",
+        attdatnum_s: "",
+        reloffice_s: "",
       });
     } else {
       console.log("[오류 발생]");
@@ -3328,6 +3601,72 @@ const HU_A4000W: React.FC = () => {
     });
   }, [attdatnum7, files7]);
 
+  const onAddALLClick = () => {
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
+    setWorkType("N");
+    setInformation({
+      orgdiv: "01",
+      monthlyhrreview: "",
+      interviewdt: new Date(),
+      interviewer: userId,
+      interviewee: "",
+      dptcd: "",
+      difficulty: "0.0",
+      remark1: "",
+      yyyymm: monthAgo,
+    });
+    setInformation2({
+      orgdiv: "",
+      prsnnum: "",
+      rate: "0 건",
+      stay: "0시간 0분",
+      workOrderMM: "",
+      workOrdercnt: "",
+      OrderPercent: 0,
+      newworkcnt: "",
+      ModWorkCnt: "",
+      workTime: "",
+      bad: "0 건",
+      edu: "0 건",
+      annsum: "",
+      annMonth: "",
+    });
+    deletedMainRows5 = [];
+    deletedMainRows6 = [];
+    deletedMainRows7 = [];
+    setPage5(initialPageState);
+    setPage6(initialPageState);
+    setPage7(initialPageState);
+    setMainDataResult5(process([], mainDataState5));
+    setMainDataResult6(process([], mainDataState6));
+    setMainDataResult7(process([], mainDataState7));
+  };
+
+  const questionToDelete = useSysMessage("QuestionToDelete");
+
+  const onDeleteALLClick = () => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+    if (mainDataResult3.data.length == 0) {
+      alert("데이터가 없습니다.");
+    } else {
+      const selectRow = mainDataResult3.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState3)[0]
+      )[0];
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: "D",
+        monthlyhrreview: selectRow.monthlyhrreview,
+      }));
+    }
+  };
   return (
     <>
       <TitleContainer>
@@ -3692,6 +4031,31 @@ const HU_A4000W: React.FC = () => {
             <GridContainer width="30%">
               <GridTitleContainer>
                 <GridTitle>월별인사평가요약</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddALLClick}
+                    themeColor={"primary"}
+                    icon="file-add"
+                  >
+                    신규
+                  </Button>
+                  <Button
+                    onClick={onDeleteALLClick}
+                    icon="delete"
+                    fillMode="outline"
+                    themeColor={"primary"}
+                  >
+                    삭제
+                  </Button>
+                  <Button
+                    //onClick={onSaveClick}
+                    icon="save"
+                    fillMode="outline"
+                    themeColor={"primary"}
+                  >
+                    저장
+                  </Button>
+                </ButtonContainer>
               </GridTitleContainer>
               <Grid
                 style={{ height: "85vh" }}
@@ -3825,18 +4189,34 @@ const HU_A4000W: React.FC = () => {
                     <tr>
                       <th>면접자</th>
                       <td>
-                        {bizComponentData !== null && (
-                          <BizComponentComboBox
-                            name="interviewee"
-                            value={information.interviewee}
-                            bizComponentId="L_HU250T"
-                            bizComponentData={bizComponentData}
-                            changeData={ComboBoxChange}
-                            valueField="prsnnum"
-                            textField="prsnnm"
-                            para="HU_A4000W"
-                          />
-                        )}
+                        {information.monthlyhrreview == ""
+                          ? bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="interviewee"
+                                value={information.interviewee}
+                                bizComponentId="L_HU250T"
+                                bizComponentData={bizComponentData}
+                                changeData={ComboBoxChange}
+                                valueField="prsnnum"
+                                textField="prsnnm"
+                                para="HU_A4000W"
+                                className="required"
+                              />
+                            )
+                          : bizComponentData !== null && (
+                              <BizComponentComboBox
+                                name="interviewee"
+                                value={information.interviewee}
+                                bizComponentId="L_HU250T"
+                                bizComponentData={bizComponentData}
+                                changeData={ComboBoxChange}
+                                valueField="prsnnum"
+                                textField="prsnnm"
+                                para="HU_A4000W"
+                                disabled={true}
+                                className="readonly"
+                              />
+                            )}
                       </td>
                       <th>면접자 부서</th>
                       <td>
@@ -4100,6 +4480,7 @@ const HU_A4000W: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={wortkType == "N" ? true : false}
                         ></Button>
                         <Button
                           onClick={onDeleteClick5}
@@ -4107,13 +4488,15 @@ const HU_A4000W: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={wortkType == "N" ? true : false}
                         ></Button>
                         <Button
-                          //onClick={onSaveClick}
+                          onClick={onSaveClick5}
                           fillMode="outline"
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
+                          disabled={wortkType == "N" ? true : false}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -4208,6 +4591,7 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="plus"
                             title="행 추가"
+                            disabled={wortkType == "N" ? true : false}
                           ></Button>
                           <Button
                             onClick={onDeleteClick6}
@@ -4215,13 +4599,15 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="minus"
                             title="행 삭제"
+                            disabled={wortkType == "N" ? true : false}
                           ></Button>
                           <Button
-                            //onClick={onSaveClick}
+                            //onClick={onSaveClick6}
                             fillMode="outline"
                             themeColor={"primary"}
                             icon="save"
                             title="저장"
+                            disabled={wortkType == "N" ? true : false}
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
@@ -4319,6 +4705,7 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="plus"
                             title="행 추가"
+                            disabled={wortkType == "N" ? true : false}
                           ></Button>
                           <Button
                             onClick={onDeleteClick7}
@@ -4326,13 +4713,15 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="minus"
                             title="행 삭제"
+                            disabled={wortkType == "N" ? true : false}
                           ></Button>
                           <Button
-                            //onClick={onSaveClick}
+                            onClick={onSaveClick7}
                             fillMode="outline"
                             themeColor={"primary"}
                             icon="save"
                             title="저장"
+                            disabled={wortkType == "N" ? true : false}
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>

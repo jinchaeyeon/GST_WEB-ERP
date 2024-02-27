@@ -1,5 +1,5 @@
 /*  Form 내에서 사용되는 컴포넌트들을 저장하는 페이지   */
-import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { DatePicker, DateTimePicker } from "@progress/kendo-react-dateinputs";
 import {
   Field,
   FieldRenderProps,
@@ -416,6 +416,23 @@ export const FormInput = (fieldRenderProps: FieldRenderProps) => {
   );
 };
 
+//Form Field에서 사용되는 Input
+export const FormRequiredInput = (fieldRenderProps: FieldRenderProps) => {
+  const { validationMessage, visited, label, id, valid, ...others } =
+    fieldRenderProps;
+
+  return (
+    <FieldWrapper>
+      <Label editorId={id} editorValid={valid}>
+        {label}
+      </Label>
+      <div className={"k-form-field-wrap"}>
+        <Input valid={valid} id={id} {...others} className="required" />
+      </div>
+    </FieldWrapper>
+  );
+};
+
 export const FormTextArea = (fieldRenderProps: FieldRenderProps) => {
   const {
     validationMessage,
@@ -474,7 +491,13 @@ export const FormReadOnly = (fieldRenderProps: FieldRenderProps) => {
         {label}
       </Label>
       <div className={"k-form-field-wrap"}>
-        <Input valid={valid} id={id} {...others} readOnly />
+        <Input
+          valid={valid}
+          id={id}
+          {...others}
+          readOnly
+          className="readonly"
+        />
       </div>
     </FieldWrapper>
   );
@@ -565,6 +588,7 @@ export const FormComboBox = (fieldRenderProps: FieldRenderProps) => {
           listData={data ? data : listData}
           valueField={valueField}
           textField={textField}
+          className={className}
         />
       </div>
     </FieldWrapper>
@@ -613,6 +637,40 @@ export const FormDatePicker = (fieldRenderProps: FieldRenderProps) => {
       <div className={"k-form-field-wrap"}>
         <DatePicker
           format="yyyy-MM-dd"
+          valid={!!dateValid}
+          value={value}
+          className={className ?? ""}
+          id={id}
+          {...others}
+        />
+      </div>
+    </FieldWrapper>
+  );
+};
+
+//Form Field에서 사용되는 DatePicker
+export const FormDateTimePicker = (fieldRenderProps: FieldRenderProps) => {
+  const {
+    validationMessage,
+    visited,
+    label,
+    id,
+    valid,
+    value,
+    className,
+    ...others
+  } = fieldRenderProps;
+
+  const dateValid = moment(value, "YYYY-MM-DD HH:mm:ss", true).isValid();
+
+  return (
+    <FieldWrapper>
+      <Label editorId={id} editorValid={valid}>
+        {label}
+      </Label>
+      <div className={"k-form-field-wrap"}>
+        <DateTimePicker
+          format="yyyy-MM-dd hh:mm:ss a"
           valid={!!dateValid}
           value={value}
           className={className ?? ""}
