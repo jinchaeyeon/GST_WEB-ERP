@@ -30,7 +30,7 @@ import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import "hammerjs";
 import React, { useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -64,7 +64,7 @@ import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
-import { isLoading } from "../store/atoms";
+import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2211W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -91,7 +91,8 @@ let targetRowIndex3: null | number = null;
 const SA_B2211W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
-
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
@@ -577,8 +578,9 @@ const SA_B2211W: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>수주집계(업체)</Title>
-
+        <Title>
+          {companyCode == "2302BA03" ? "고객사별 실적 집계" : "수주집계(업체)"}
+        </Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons

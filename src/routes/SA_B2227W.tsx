@@ -175,7 +175,7 @@ const SA_B2227W: React.FC = () => {
                   <TitleContainer
                     style={{ marginBottom: "0px", justifyContent: "center" }}
                   >
-                    <Title>신규 고객 유치현황</Title>
+                    <Title>고객현황 DASHBOARD</Title>
                   </TitleContainer>
                   <TitleContainer
                     style={{ paddingBottom: "25px", justifyContent: "center" }}

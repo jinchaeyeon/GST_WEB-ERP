@@ -1449,6 +1449,21 @@ const CopyWindow = ({
               total: prev.total,
             };
           });
+        } else {
+          const newData = mainDataResult.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: "",
+              files: "",
+            };
+          });
+
+          setMainDataResult((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
         }
       } else if (tabSelected == 5) {
         if (tempattach.attdatnumList2.length > 0) {
@@ -1457,6 +1472,21 @@ const CopyWindow = ({
               ...item,
               attdatnum: tempattach.attdatnumList2[item.num - 1],
               files: tempattach.filesList2[item.num - 1],
+            };
+          });
+
+          setMainDataResult2((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        } else {
+          const newData = mainDataResult2.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: "",
+              files: "",
             };
           });
 
@@ -1483,6 +1513,21 @@ const CopyWindow = ({
               total: prev.total,
             };
           });
+        } else {
+          const newData = mainDataResult3.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: "",
+              files: "",
+            };
+          });
+
+          setMainDataResult3((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
         }
       } else if (tabSelected == 7) {
         if (tempattach.attdatnumList4.length > 0) {
@@ -1491,6 +1536,21 @@ const CopyWindow = ({
               ...item,
               attdatnum: tempattach.attdatnumList4[item.num - 1],
               files: tempattach.filesList4[item.num - 1],
+            };
+          });
+
+          setMainDataResult4((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        } else {
+          const newData = mainDataResult4.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: "",
+              files: "",
             };
           });
 
@@ -1517,6 +1577,21 @@ const CopyWindow = ({
               total: prev.total,
             };
           });
+        } else {
+          const newData = mainDataResult5.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: "",
+              files: "",
+            };
+          });
+
+          setMainDataResult5((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
         }
       } else if (tabSelected == 9) {
         if (tempattach.attdatnumList6.length > 0) {
@@ -1525,6 +1600,21 @@ const CopyWindow = ({
               ...item,
               attdatnum: tempattach.attdatnumList6[item.num - 1],
               files: tempattach.filesList6[item.num - 1],
+            };
+          });
+
+          setMainDataResult6((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        } else {
+          const newData = mainDataResult6.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: "",
+              files: "",
             };
           });
 
@@ -1551,6 +1641,21 @@ const CopyWindow = ({
               total: prev.total,
             };
           });
+        } else {
+          const newData = mainDataResult7.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: "",
+              files: "",
+            };
+          });
+
+          setMainDataResult7((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
         }
       } else if (tabSelected == 11) {
         if (tempattach.attdatnumList8.length > 0) {
@@ -1559,6 +1664,21 @@ const CopyWindow = ({
               ...item,
               attdatnum: tempattach.attdatnumList8[item.num - 1],
               files: tempattach.filesList8[item.num - 1],
+            };
+          });
+
+          setMainDataResult8((prev) => {
+            return {
+              data: newData,
+              total: prev.total,
+            };
+          });
+        } else {
+          const newData = mainDataResult8.data.map((item: any) => {
+            return {
+              ...item,
+              attdatnum: "",
+              files: "",
             };
           });
 

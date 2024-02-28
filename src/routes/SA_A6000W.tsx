@@ -781,7 +781,7 @@ const SA_A6000W: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>영업목표관리</Title>
+        <Title>판매계획관리</Title>
 
         <ButtonContainer>
           {permissions && (

@@ -75,6 +75,7 @@ import AC_B8080W from "./routes/AC_B8080W";
 import AC_B8100W from "./routes/AC_B8100W";
 import BA_A0020W from "./routes/BA_A0020W";
 import BA_A0020W_603 from "./routes/BA_A0020W_603";
+import BA_A0021W_603 from "./routes/BA_A0021W_603";
 import BA_A0040W from "./routes/BA_A0040W";
 import BA_A0041W from "./routes/BA_A0041W";
 import BA_A0050W from "./routes/BA_A0050W";
@@ -936,6 +937,8 @@ const AppInner: React.FC = () => {
       return PR_B1104W;
     } else if (str == "BA_A0020W_603") {
       return BA_A0020W_603;
+    } else if (str == "BA_A0021W_603") {
+      return BA_A0021W_603;
     } else if (str == "CR_A0010W") {
       return CR_A0010W;
     } else if (str == "CR_A0020W") {
@@ -1282,6 +1285,11 @@ const AppInner: React.FC = () => {
                   <AuthRoute
                     path="/BA_A0020W_603"
                     component={BA_A0020W_603}
+                    exact
+                  />
+                  <AuthRoute
+                    path="/BA_A0021W_603"
+                    component={BA_A0021W_603}
                     exact
                   />
                   <AuthRoute

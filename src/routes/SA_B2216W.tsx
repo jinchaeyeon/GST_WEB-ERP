@@ -337,7 +337,7 @@ const SA_B2216W: React.FC = () => {
       <div style={{ fontFamily: "TheJamsil5Bold" }}>
         <ThemeProvider theme={theme}>
           <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
-            <Title>DASHBOARD(담당자별)</Title>
+            <Title>개인실적 DASHBOARD</Title>
             {isMobile ? (
               <ButtonContainer>
                 <Button

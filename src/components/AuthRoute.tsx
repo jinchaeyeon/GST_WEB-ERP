@@ -207,6 +207,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "QC_B0100W" ||
       link == "PR_B1104W" ||
       link == "BA_A0020W_603" ||
+      link == "BA_A0021W_603" ||
       link == "CR_A1000W" ||
       link == "CR_A0010W" ||
       link == "CR_A0020W" ||
