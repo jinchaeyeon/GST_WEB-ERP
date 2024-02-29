@@ -1673,14 +1673,6 @@ const CM_A5000W: React.FC = () => {
                     >
                       이전요청 복사
                     </Button>
-                    <Button
-                      onClick={onDeleteClick}
-                      themeColor={"primary"}
-                      fillMode={"outline"}
-                      icon="delete"
-                    >
-                      삭제
-                    </Button>
                   </ButtonContainer>
                 </GridTitleContainer>
                 <Grid
@@ -1770,13 +1762,21 @@ const CM_A5000W: React.FC = () => {
                   <GridTitle>상세정보</GridTitle>
 
                   <ButtonContainer>
+                  <Button
+                      onClick={onDeleteClick}
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                      icon="delete"
+                    >
+                      문의삭제
+                    </Button>
                     <Button
                       onClick={onSaveClick}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
                     >
-                      문의 저장
+                     문의저장
                     </Button>
                   </ButtonContainer>
                 </GridTitleContainer>
