@@ -8,7 +8,6 @@ import {
   GridDataStateChangeEvent,
   GridFooterCellProps,
   GridPageChangeEvent,
-  GridRowDoubleClickEvent,
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
@@ -748,6 +747,18 @@ const BA_A0021W_603: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY2,
     });
     setSelectedState2(newSelectedState);
+
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+
+    const origin = window.location.origin;
+    window.open(
+      origin +
+        `/CM_A7000W?go=` +
+        selectedRowData.orgdiv +
+        "_" +
+        selectedRowData.meetingnum
+    );
   };
 
   const onSelectionChange3 = (event: GridSelectionChangeEvent) => {
@@ -757,6 +768,18 @@ const BA_A0021W_603: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY3,
     });
     setSelectedState3(newSelectedState);
+
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+
+    const origin = window.location.origin;
+    window.open(
+      origin +
+        `/SA_A1001_603W?go=` +
+        selectedRowData.quonum +
+        "-" +
+        selectedRowData.quorev
+    );
   };
 
   const onSelectionChange4 = (event: GridSelectionChangeEvent) => {
@@ -766,6 +789,12 @@ const BA_A0021W_603: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY4,
     });
     setSelectedState4(newSelectedState);
+
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+
+    const origin = window.location.origin;
+    window.open(origin + `/SA_A1100_603W?go=` + selectedRowData.connum);
   };
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {

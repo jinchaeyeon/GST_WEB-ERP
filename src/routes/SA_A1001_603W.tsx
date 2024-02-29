@@ -17,6 +17,7 @@ import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
@@ -159,22 +160,41 @@ const SA_A1001_603W: React.FC = () => {
     });
   };
 
+  const history = useHistory();
+  const location = useLocation();
+
   useEffect(() => {
     if (customOptionData !== null) {
+      const queryParams = new URLSearchParams(location.search);
       const defaultOption = GetPropertyValueByName(
         customOptionData.menuCustomDefaultOptions,
         "query"
       );
-      setFilters((prev) => ({
-        ...prev,
-        materialtype: defaultOption.find(
-          (item: any) => item.id === "materialtype"
-        ).valueCode,
-        rev: defaultOption.find((item: any) => item.id === "rev").valueCode,
-        frdt: setDefaultDate(customOptionData, "frdt"),
-        todt: setDefaultDate(customOptionData, "todt"),
-        isSearch: true,
-      }));
+      if (queryParams.has("go")) {
+        history.replace({}, "");
+        setFilters((prev) => ({
+          ...prev,
+          materialtype: defaultOption.find(
+            (item: any) => item.id === "materialtype"
+          ).valueCode,
+          rev: defaultOption.find((item: any) => item.id === "rev").valueCode,
+          frdt: setDefaultDate(customOptionData, "frdt"),
+          todt: setDefaultDate(customOptionData, "todt"),
+          isSearch: true,
+          find_row_value: queryParams.get("go") as string,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          materialtype: defaultOption.find(
+            (item: any) => item.id === "materialtype"
+          ).valueCode,
+          rev: defaultOption.find((item: any) => item.id === "rev").valueCode,
+          frdt: setDefaultDate(customOptionData, "frdt"),
+          todt: setDefaultDate(customOptionData, "todt"),
+          isSearch: true,
+        }));
+      }
     }
   }, [customOptionData]);
 

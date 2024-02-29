@@ -731,7 +731,7 @@ const SA_B1000W_603: React.FC = () => {
     const origin = window.location.origin;
     window.open(
       origin +
-        `/SA_A1100_603W?go=` +
+        `/SA_A1001_603W?go=` +
         dataItem.quokey.split("-")[0] +
         "-" +
         dataItem.quokey.split("-")[1]

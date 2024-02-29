@@ -731,7 +731,7 @@ const SA_A1100_603W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.quokey == filters.find_row_value
+            (row: any) => row.reckey == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -756,7 +756,7 @@ const SA_A1100_603W: React.FC = () => {
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.quokey == filters.find_row_value);
+            : rows.find((row: any) => row.reckey == filters.find_row_value);
 
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });

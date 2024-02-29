@@ -3414,7 +3414,7 @@ const SA_A1000_603W: React.FC = () => {
     const origin = window.location.origin;
     window.open(
       origin +
-        `/SA_A1100_603W?go=` +
+        `/SA_A1001_603W?go=` +
         selectedRowData.quokey.split("-")[0] +
         "-" +
         selectedRowData.quokey.split("-")[1]
