@@ -71,6 +71,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import RichEditor from "../components/RichEditor";
 import CopyWindow from "../components/Windows/CM_A5000W_Copy_Window";
 import ProjectsWindow from "../components/Windows/CM_A5000W_Project_Window";
+import CM_A5000W_Project_Window_PoP from "../components/Windows/CM_A5000W_Project_Window_PoP";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
@@ -268,6 +269,8 @@ const CM_A5000W: React.FC = () => {
   const [copyWindowVisible, setCopyWindowvisible] = useState<boolean>(false);
   const [projectWindowVisible, setProjectWindowVisible] =
     useState<boolean>(false);
+  const [projectWindowVisible2, setProjectWindowVisible2] =
+    useState<boolean>(false);
   const [attachmentsQWindowVisible, setAttachmentsQWindowVisible] =
     useState<boolean>(false);
   const [attachmentsAWindowVisible, setAttachmentsAWindowVisible] =
@@ -291,6 +294,10 @@ const CM_A5000W: React.FC = () => {
 
   const onProjectWndClick = () => {
     setProjectWindowVisible(true);
+  };
+
+  const onProjectWndClick2 = () => {
+    setProjectWindowVisible2(true);
   };
 
   const onAttachQuestionWndClick = () => {
@@ -340,6 +347,7 @@ const CM_A5000W: React.FC = () => {
   };
 
   const setCopyData = (data: any) => {
+    fetchHtmlDocument("");
     setWorkType("N");
     setTabSelected(1);
     setInformation({
@@ -360,12 +368,15 @@ const CM_A5000W: React.FC = () => {
       testnum: data.testnum,
       attdatnum: data.attdatnum,
       files: data.files,
+      ref_document_id: "",
     });
     setInformation2({
       document_id: "",
       attdatnum: "",
       files: "",
       ref_document_id: "",
+      person: "",
+      recdt: null,
     });
   };
 
@@ -453,12 +464,17 @@ const CM_A5000W: React.FC = () => {
         testnum: selectedRowData.testnum,
         attdatnum: selectedRowData.attdatnum,
         files: selectedRowData.files,
+        ref_document_id: selectedRowData.ref_document_id,
       });
+
       setInformation2({
-        document_id: selectedRowData.ref_document_id,
+        document_id: selectedRowData.document_id,
         attdatnum: selectedRowData.answer_attdatnum,
         files: selectedRowData.answer_files,
-        ref_document_id: selectedRowData.document_id,
+        ref_document_id: selectedRowData.ref_document_id,
+        person: selectedRowData.person == null ? "" : selectedRowData.person,
+        recdt:
+          selectedRowData.recdt == null ? null : toDate(selectedRowData.recdt),
       });
       fetchHtmlDocument(selectedRowData);
     }
@@ -550,6 +566,24 @@ const CM_A5000W: React.FC = () => {
     }));
   };
 
+  const InputChange2 = (e: any) => {
+    const { value, name } = e.target;
+
+    setInformation2((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const ComboBoxChange2 = (e: any) => {
+    const { name, value } = e;
+
+    setInformation2((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const CheckChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -604,13 +638,16 @@ const CM_A5000W: React.FC = () => {
     testnum: "",
     attdatnum: "",
     files: "",
+    ref_document_id: "", //답변
   });
 
-  const [information2, setInformation2] = useState({
-    document_id: "",
+  const [information2, setInformation2] = useState<{ [name: string]: any }>({
+    document_id: "", //질문
     attdatnum: "",
     files: "",
-    ref_document_id: "",
+    ref_document_id: "", //답변
+    person: "",
+    recdt: null,
   });
 
   function getName(data: { sub_code: string }[]) {
@@ -714,6 +751,27 @@ const CM_A5000W: React.FC = () => {
             pgNum: 1,
             isSearch: true,
           }));
+
+          setInformation({
+            document_id: selectedRow.document_id,
+            cpmnum: selectedRow.cpmnum,
+            user_id: selectedRow.user_id,
+            user_name: selectedRow.user_name,
+            request_date: toDate(selectedRow.request_date),
+            finexpdt: toDate(selectedRow.finexpdt),
+            require_type: selectedRow.require_type,
+            completion_method: selectedRow.completion_method,
+            medicine_type: selectedRow.medicine_type,
+            status: selectedRow.status,
+            customer_code: selectedRow.customer_code,
+            customernm: selectedRow.customernm,
+            title: selectedRow.title,
+            is_emergency: selectedRow.is_emergency,
+            testnum: selectedRow.testnum,
+            attdatnum: selectedRow.attdatnum,
+            files: selectedRow.files,
+            ref_document_id: selectedRow.ref_document_id,
+          });
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
           setWorkType("U");
@@ -723,6 +781,26 @@ const CM_A5000W: React.FC = () => {
             pgNum: 1,
             isSearch: true,
           }));
+          setInformation({
+            document_id: rows[0].document_id,
+            cpmnum: rows[0].cpmnum,
+            user_id: rows[0].user_id,
+            user_name: rows[0].user_name,
+            request_date: toDate(rows[0].request_date),
+            finexpdt: toDate(rows[0].finexpdt),
+            require_type: rows[0].require_type,
+            completion_method: rows[0].completion_method,
+            medicine_type: rows[0].medicine_type,
+            status: rows[0].status,
+            customer_code: rows[0].customer_code,
+            customernm: rows[0].customernm,
+            title: rows[0].title,
+            is_emergency: rows[0].is_emergency,
+            testnum: rows[0].testnum,
+            attdatnum: rows[0].attdatnum,
+            files: rows[0].files,
+            ref_document_id: rows[0].ref_document_id,
+          });
         }
       } else {
         setWorkType("");
@@ -781,10 +859,12 @@ const CM_A5000W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         setInformation2({
-          document_id: rows[0].document_id,
+          document_id: rows[0].ref_document_id,
           attdatnum: rows[0].attdatnum,
           files: rows[0].files,
-          ref_document_id: rows[0].ref_document_id,
+          ref_document_id: rows[0].document_id,
+          person: rows[0].person,
+          recdt: rows[0].recdt == "" ? null : toDate(rows[0].recdt),
         });
       } else {
         setInformation2({
@@ -792,6 +872,8 @@ const CM_A5000W: React.FC = () => {
           attdatnum: "",
           files: "",
           ref_document_id: "",
+          person: "",
+          recdt: null,
         });
       }
     } else {
@@ -840,8 +922,8 @@ const CM_A5000W: React.FC = () => {
 
       if (key.ref_document_id != "") {
         const para1 = {
-          folder: "CM_A5001W",
-          id: key.ref_document_id,
+          folder: "CM_A5000W_ANS",
+          id: key.document_id,
         };
 
         try {
@@ -853,10 +935,10 @@ const CM_A5000W: React.FC = () => {
         if (data1 !== null && data1.document !== "") {
           // Edior에 HTML & CSS 세팅
           if (docEditorRef1.current) {
-            setHtmlOnEditor({ document: data1.document, type: "Answer" });
+            setHtmlOnEditor2({ document: data1.document, type: "Answer" });
           }
         } else {
-          setHtmlOnEditor({ document: "", type: "Answer" });
+          setHtmlOnEditor2({ document: "", type: "Answer" });
         }
       }
     } else {
@@ -879,6 +961,20 @@ const CM_A5000W: React.FC = () => {
       docEditorRef1.current.updateEditable(true);
       docEditorRef1.current.setHtml(document);
       docEditorRef1.current.updateEditable(false);
+    }
+  };
+
+  const setHtmlOnEditor2 = ({
+    document,
+    type,
+  }: {
+    document: string;
+    type: string;
+  }) => {
+    if (docEditorRef.current && type == "Question") {
+      docEditorRef.current.setHtml(document);
+    } else if (docEditorRef1.current && type == "Answer") {
+      docEditorRef1.current.setHtml(document);
     }
   };
 
@@ -915,6 +1011,34 @@ const CM_A5000W: React.FC = () => {
     setWorkType("");
     setPage(initialPageState); // 페이지 초기화
     setMainDataResult(process([], mainDataState));
+    setInformation({
+      document_id: "",
+      cpmnum: "",
+      user_id: "",
+      user_name: "",
+      request_date: new Date(),
+      finexpdt: new Date(),
+      require_type: "",
+      completion_method: "",
+      medicine_type: "",
+      status: "",
+      customer_code: "",
+      customernm: "",
+      title: "",
+      is_emergency: "",
+      testnum: "",
+      attdatnum: "",
+      files: "",
+      ref_document_id: "", //답변
+    });
+    setInformation2({
+      document_id: "",
+      attdatnum: "",
+      files: "",
+      ref_document_id: "",
+      person: "",
+      recdt: null,
+    });
   };
 
   // 엑셀 내보내기
@@ -1033,12 +1157,16 @@ const CM_A5000W: React.FC = () => {
       testnum: selectedRowData.testnum,
       attdatnum: selectedRowData.attdatnum,
       files: selectedRowData.files,
+      ref_document_id: selectedRowData.ref_document_id,
     });
     setInformation2({
-      document_id: selectedRowData.ref_document_id,
+      document_id: selectedRowData.document_id,
       attdatnum: selectedRowData.answer_attdatnum,
       files: selectedRowData.answer_files,
-      ref_document_id: selectedRowData.document_id,
+      ref_document_id: selectedRowData.ref_document_id,
+      person: selectedRowData.person == null ? "" : selectedRowData.person,
+      recdt:
+        selectedRowData.recdt == null ? null : toDate(selectedRowData.recdt),
     });
     fetchHtmlDocument(selectedRowData);
   };
@@ -1059,6 +1187,9 @@ const CM_A5000W: React.FC = () => {
     is_emergency: "",
     testnum: "",
     attdatnum: "",
+    document_id_A: "",
+    person: "",
+    recdt: "",
     userid: "",
     username: "",
     pc: pc,
@@ -1096,7 +1227,8 @@ const CM_A5000W: React.FC = () => {
 
     if (!valid) return false;
 
-    setParaDataSaved({
+    setParaDataSaved((prev) => ({
+      ...prev,
       workType: workType,
       document_id: information.document_id,
       cpmnum: information.cpmnum,
@@ -1115,7 +1247,45 @@ const CM_A5000W: React.FC = () => {
       userid: information.user_id,
       pc: pc,
       formid: "CM_A5000W",
-    });
+    }));
+  };
+
+  const onSaveClick2 = () => {
+    if (workType == "N") {
+      alert("문의를 등록해주세요.");
+    } else {
+      if (
+        information2.person == "" ||
+        convertDateToStr(information2.recdt).substring(0, 4) < "1997" ||
+        convertDateToStr(information2.recdt).substring(6, 8) > "31" ||
+        convertDateToStr(information2.recdt).substring(6, 8) < "01" ||
+        convertDateToStr(information2.recdt).substring(6, 8).length != 2 ||
+        information2.recdt == null ||
+        information2.recdt == undefined ||
+        information2.recdt == ""
+      ) {
+        alert("필수값을 입력해주세요.");
+      } else {
+        const selectedRowData = mainDataResult.data.filter(
+          (item) =>
+            item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        )[0];
+
+        // 답변 문서 ID가 없을 경우 신규, 있으면 업데이트
+        setParaDataSaved((prev) => ({
+          ...prev,
+          workType: selectedRowData.ref_document_id == "" ? "N1" : "U1",
+          document_id: selectedRowData.document_id,
+          document_id_A: information.ref_document_id,
+          attdatnum: information2.attdatnum,
+          person: information2.person,
+          recdt: convertDateToStr(information2.recdt),
+          userid: userId,
+          pc: pc,
+          formid: "CM_A5000W",
+        }));
+      }
+    }
   };
 
   useEffect(() => {
@@ -1132,38 +1302,62 @@ const CM_A5000W: React.FC = () => {
     if (docEditorRef.current) {
       editorContent = docEditorRef.current.getContent();
     }
+    let editorContent2: any = "";
+    if (docEditorRef1.current) {
+      editorContent2 = docEditorRef1.current.getContent();
+    }
     const bytes = require("utf8-bytes");
+    const bytes2 = require("utf8-bytes");
     const convertedEditorContent =
       workType == "D"
         ? bytesToBase64(bytes(reference))
         : bytesToBase64(bytes(editorContent));
+    const convertedEditorContent2 = bytesToBase64(bytes2(editorContent2));
 
     const parameters = {
-      folder: "html-doc?folder=" + "CM_A5000W",
-      procedureName: "P_CM_A5000W_S",
+      folder:
+        "html-doc?folder=" +
+        (paraDataSaved.workType.length == 1 ? "CM_A5000W" : "CM_A5000W_ANS"),
+      procedureName:
+        paraDataSaved.workType.length == 1
+          ? "P_CM_A5000W_S"
+          : "P_CM_A5000W_ANS_S",
       pageNumber: 0,
       pageSize: 0,
       parameters: {
-        "@p_work_type": paraDataSaved.workType,
+        "@p_work_type":
+          paraDataSaved.workType.length == 1
+            ? paraDataSaved.workType
+            : paraDataSaved.workType[0],
         "@p_document_id": paraDataSaved.document_id,
         "@p_cpmnum": paraDataSaved.cpmnum,
         "@p_request_date": paraDataSaved.request_date,
         "@p_finexpdt": paraDataSaved.finexpdt,
         "@p_require_type": paraDataSaved.require_type,
-        "@p_completion_method": paraDataSaved.completion_method,
+        "@p_completion_method":
+          paraDataSaved.completion_method == undefined
+            ? ""
+            : paraDataSaved.completion_method,
         "@p_medicine_type": paraDataSaved.medicine_type,
         "@p_status": paraDataSaved.status,
         "@p_customer_code": paraDataSaved.customer_code,
         "@p_title": paraDataSaved.title,
         "@p_is_emergency": paraDataSaved.is_emergency,
         "@p_testnum": paraDataSaved.testnum,
-        "@p_attdatnum": paraDataSaved.attdatnum,
+        "@p_attdatnum":
+          paraDataSaved.attdatnum == undefined ? "" : paraDataSaved.attdatnum,
+        "@p_document_id_A": paraDataSaved.document_id_A,
+        "@p_person": paraDataSaved.person,
+        "@p_recdt": paraDataSaved.recdt,
         "@p_user_id_sm": paraDataSaved.userid,
         "@p_user_name": paraDataSaved.username,
         "@p_userid": userId,
         "@p_pc": paraDataSaved.pc,
       },
-      fileBytes: convertedEditorContent,
+      fileBytes:
+        paraDataSaved.workType.length == 1
+          ? convertedEditorContent
+          : convertedEditorContent2,
     };
 
     try {
@@ -1177,15 +1371,8 @@ const CM_A5000W: React.FC = () => {
         setTabSelected(0);
       } else {
         setTabSelected(1);
-
-        const selectedRowData = mainDataResult.data.filter(
-          (item) =>
-            item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-        )[0];
-
-        fetchHtmlDocument(selectedRowData);
       }
-
+  
       if (workType == "D" && paraDataSaved.attdatnum != "") {
         setDeletedAttadatnums([paraDataSaved.attdatnum]);
       }
@@ -1197,6 +1384,29 @@ const CM_A5000W: React.FC = () => {
         find_row_value: data.returnString,
         isSearch: true,
       }));
+      setParaDataSaved({
+        workType: "",
+        document_id: "",
+        cpmnum: "",
+        request_date: "",
+        finexpdt: "",
+        require_type: "",
+        completion_method: "",
+        medicine_type: "",
+        status: "",
+        customer_code: "",
+        title: "",
+        is_emergency: "",
+        testnum: "",
+        attdatnum: "",
+        document_id_A: "",
+        person: "",
+        recdt: "",
+        userid: "",
+        username: "",
+        pc: pc,
+        formid: "CM_A5000W",
+      });
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -1235,12 +1445,15 @@ const CM_A5000W: React.FC = () => {
       testnum: "",
       attdatnum: "",
       files: "",
+      ref_document_id: "",
     });
     setInformation2({
       document_id: "",
       attdatnum: "",
       files: "",
       ref_document_id: "",
+      person: "",
+      recdt: null,
     });
   };
 
@@ -1269,15 +1482,42 @@ const CM_A5000W: React.FC = () => {
         ...prev,
         workType: "D",
         document_id: selectRows.document_id,
-        atttdatnum: selectRows.attdatnum,
+        attdatnum: selectRows.attdatnum,
       }));
+    }
+  };
+
+  const onDeleteClick2 = () => {
+    if (workType == "N") {
+      alert("문의를 등록해주세요.");
+    } else {
+      if (!window.confirm(questionToDelete)) {
+        return false;
+      }
+      const selectRows = mainDataResult.data.filter(
+        (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+
+      if (selectRows.ref_document_id == "") {
+        alert("등록된 답변이 없습니다.");
+        return;
+      } else {
+        setWorkType("D");
+        setParaDataSaved((prev) => ({
+          ...prev,
+          workType: "D1",
+          document_id: selectRows.document_id,
+          document_id_A: selectRows.ref_document_id,
+          attdatnum: selectRows.answer_attdatnum,
+        }));
+      }
     }
   };
 
   return (
     <>
       <TitleContainer>
-        <Title>컨설팅 요청등록</Title>
+        <Title>컨설팅(문의·답변) 관리</Title>
         <ButtonContainer>
           {permissions && (
             <TopButtons
@@ -1523,24 +1763,22 @@ const CM_A5000W: React.FC = () => {
             mainDataResult.data.length == 0 && workType == "" ? true : false
           }
         >
-          <GridTitleContainer>
-            <GridTitle> </GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-              >
-                저장
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <GridContainerWrap>
             <GridContainer width="50%">
               <GridContainer>
                 <GridTitleContainer>
                   <GridTitle>상세정보</GridTitle>
+
+                  <ButtonContainer>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                    >
+                      문의 저장
+                    </Button>
+                  </ButtonContainer>
                 </GridTitleContainer>
                 <FormBoxWrap border={true}>
                   <FormBox>
@@ -1684,6 +1922,12 @@ const CM_A5000W: React.FC = () => {
                               icon="more-horizontal"
                               fillMode="flat"
                             />
+                            <Button
+                              type={"button"}
+                              onClick={onProjectWndClick2}
+                              icon="search"
+                              fillMode="flat"
+                            />
                           </ButtonInInput>
                         </td>
                       </tr>
@@ -1716,13 +1960,13 @@ const CM_A5000W: React.FC = () => {
                   </FormBox>
                 </FormBoxWrap>
               </GridContainer>
-              <GridContainer height="37.5vh">
-                <RichEditor
-                  id="docEditor"
-                  ref={docEditorRef}
-                  hideTools
-                  border={true}
-                />
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>문의</GridTitle>
+                </GridTitleContainer>
+                <GridContainer height="35.5vh">
+                  <RichEditor id="docEditor" ref={docEditorRef} hideTools />
+                </GridContainer>
               </GridContainer>
               <FormBoxWrap border={true}>
                 <FormBox>
@@ -1757,7 +2001,7 @@ const CM_A5000W: React.FC = () => {
                     <p style={{ marginRight: "5px" }}>답변</p>
                     {workType == "N" ? (
                       ""
-                    ) : information2.document_id != "" ? (
+                    ) : information2.ref_document_id != "" ? (
                       <div
                         style={{
                           width: "80px",
@@ -1792,8 +2036,84 @@ const CM_A5000W: React.FC = () => {
                     )}
                   </div>
                 </GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onDeleteClick2}
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    icon="delete"
+                  >
+                    답변삭제
+                  </Button>
+                  <Button
+                    onClick={onSaveClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                  >
+                    답변 저장
+                  </Button>
+                </ButtonContainer>
               </GridTitleContainer>
-              <GridContainer height={`calc(100% - 115px)`}>
+              <FormBoxWrap border={true}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>답변일</th>
+                      <td>
+                        {workType == "N" ? (
+                          <DatePicker
+                            name="recdt"
+                            value={information2.recdt}
+                            format="yyyy-MM-dd"
+                            placeholder=""
+                            className="readonly"
+                          />
+                        ) : (
+                          <DatePicker
+                            name="recdt"
+                            value={information2.recdt}
+                            format="yyyy-MM-dd"
+                            placeholder=""
+                            onChange={InputChange2}
+                            className="required"
+                          />
+                        )}
+                      </td>
+                      <th>담당자</th>
+                      <td>
+                        {workType == "N"
+                          ? customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="person"
+                                value={information2.person}
+                                type="new"
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange2}
+                                textField="user_name"
+                                valueField="user_id"
+                                className="readonly"
+                                disabled={true}
+                              />
+                            )
+                          : customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="person"
+                                value={information2.person}
+                                type="new"
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange2}
+                                textField="user_name"
+                                valueField="user_id"
+                                className="required"
+                              />
+                            )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <GridContainer height={`calc(100% - 185px)`}>
                 <RichEditor id="docEditor" ref={docEditorRef1} hideTools />
               </GridContainer>
               <FormBoxWrap border={true}>
@@ -1871,7 +2191,11 @@ const CM_A5000W: React.FC = () => {
           setData={getAttachmentsAData}
           para={information2.attdatnum}
           modal={true}
-          permission={{ upload: false, download: true, delete: false }}
+          permission={
+            workType == "N"
+              ? { upload: false, download: true, delete: false }
+              : { upload: true, download: true, delete: true }
+          }
         />
       )}
       {copyWindowVisible && (
@@ -1886,6 +2210,14 @@ const CM_A5000W: React.FC = () => {
         <ProjectsWindow
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
+          modal={true}
+          pathname="CM_A5000W"
+        />
+      )}
+      {projectWindowVisible2 && (
+        <CM_A5000W_Project_Window_PoP
+          setVisible={setProjectWindowVisible2}
+          testnum={information.testnum}
           modal={true}
           pathname="CM_A5000W"
         />

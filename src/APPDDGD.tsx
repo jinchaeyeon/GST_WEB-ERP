@@ -163,7 +163,6 @@ import AC_B8040W from "./routes/AC_B8040W";
 import AC_B8080W from "./routes/AC_B8080W";
 import AC_B8100W from "./routes/AC_B8100W";
 import CM_A5000W from "./routes/CM_A5000W";
-import CM_A5001W from "./routes/CM_A5001W";
 import CM_A7000W from "./routes/CM_A7000W";
 import CR_A0000W from "./routes/CR_A0000W";
 import HU_B1040W from "./routes/HU_B1040W";
@@ -644,8 +643,6 @@ const AppInner: React.FC = () => {
       return CM_A4100W;
     } else if (str == "CM_A5000W") {
       return CM_A5000W;
-    } else if (str == "CM_A5001W") {
-      return CM_A5001W;
     } else if (str == "CM_A7000W") {
       return CM_A7000W;
     } else if (str == "CM_A8000W") {
@@ -1066,7 +1063,6 @@ const AppInner: React.FC = () => {
                     exact
                   />
                   <AuthRoute path="/CM_A5000W" component={CM_A5000W} exact />
-                  <AuthRoute path="/CM_A5001W" component={CM_A5001W} exact />
 
                   <AuthRoute
                     path="/MA_B1000W_603"

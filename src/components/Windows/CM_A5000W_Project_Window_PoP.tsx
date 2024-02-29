@@ -281,7 +281,7 @@ const KendoWindow = ({
 
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_CM_A5001W_Sub1_Q",
+      procedureName: "P_CM_A5000W_Sub3_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {

@@ -119,7 +119,6 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "CM_A3100W" ||
       link == "CM_A4100W" ||
       link == "CM_A5000W" ||
-      link == "CM_A5001W" ||
       link == "CM_A7000W" ||
       link == "CM_A8000W" ||
       link == "CM_A8210W" ||

@@ -1557,7 +1557,7 @@ const BA_A0020_603: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>Claim, Complain관리</Title>
+        <Title>컴플레인관리</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -1826,7 +1826,7 @@ const BA_A0020_603: React.FC = () => {
             <GridContainer width="20%">
               <FormBoxWrap border={true}>
                 <GridTitleContainer>
-                  <GridTitle>Claim, Complain 기본사항</GridTitle>
+                  <GridTitle>컴플레인 기본사항</GridTitle>
                 </GridTitleContainer>
                 <FormBox>
                   <tbody>
@@ -2024,7 +2024,7 @@ const BA_A0020_603: React.FC = () => {
               <FormBoxWrap border={true}>
                 <GridContainer>
                   <GridTitleContainer>
-                    <GridTitle>Claim, Complain 사유</GridTitle>
+                    <GridTitle>컴플레인 사유</GridTitle>
                   </GridTitleContainer>
                   <Typography
                     style={{
