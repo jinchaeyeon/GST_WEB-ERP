@@ -1039,7 +1039,7 @@ const BA_A0021W_603: React.FC = () => {
               }}
             >
               <Grid
-                style={{ height: "75vh" }}
+                style={{ height: "70vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1286,7 +1286,7 @@ const BA_A0021W_603: React.FC = () => {
                   }
                   form_id={"BA_A0021W_603"}
                   table_id={"BA020T"}
-                  style={{ height: "65vh" }}
+                  style={{ height: "60vh" }}
                 />
               </GridContainer>
             </TabStripTab>
