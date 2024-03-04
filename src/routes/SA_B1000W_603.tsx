@@ -189,7 +189,7 @@ const SA_B1000W_603: React.FC = () => {
     setLoading(true);
     const status =
       filters.status.length == 0
-        ? "1|2|3|4|5"
+        ? "1|2|3|4"
         : filters.status.length == 1
         ? filters.status[0].sub_code
         : getName(filters.status);

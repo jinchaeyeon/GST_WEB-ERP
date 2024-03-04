@@ -18,6 +18,7 @@ import { isLoading } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import {
   UseBizComponent,
+  convertDateToStr,
   getQueryFromBizComponent,
   numberWithCommas3,
 } from "../CommonFunction";
@@ -128,19 +129,18 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
         "@p_work_type": "POPUP",
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
-        "@p_custcd": filters.custcd,
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
         "@p_custnm": filters.custnm,
-        "@p_testnum": filters.testnum,
-        "@p_quotestnum": filters.quotestnum,
         "@p_finyn": filters.finyn,
+        "@p_quotype": filters.quotype,
+        "@p_materialtype": filters.materialtype,
         "@p_quonum": item.quonum,
         "@p_quorev": item.quorev,
         "@p_quoseq": item.quoseq,
+        "@p_targetdt": convertDateToStr(filters.targetdt),
+        "@p_cpmperson": filters.cpmpersonnm == "" ? "" : filters.cpmperson,
+        "@p_cpmpersonnm": filters.cpmpersonnm,
         "@p_status": "",
-        "@p_person": "",
-        "@p_personnm": "",
-        "@p_cpmperson": "",
-        "@p_cpmpersonnm": "",
         "@p_find_row_value": filters.find_row_value,
       },
     };
