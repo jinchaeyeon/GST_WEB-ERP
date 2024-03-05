@@ -115,7 +115,6 @@ type TdataArr = {
   quoseq_s: string[];
   itemcd_s: string[];
   itemnm_s: string[];
-  testnum_s: string[];
   glpyn_s: string[];
   startdt_s: string[];
   enddt_s: string[];
@@ -1105,6 +1104,12 @@ const SA_A1000_603W: React.FC = () => {
   const search = () => {
     resetAllGrid();
     setTabSelected(0);
+    setFilters((prev: any) => ({
+      ...prev,
+      isSearch: true,
+      pgNum: 1,
+      find_row_value: "",
+    }));
   };
 
   const resetAllGrid = () => {
@@ -1231,84 +1236,62 @@ const SA_A1000_603W: React.FC = () => {
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
-    if (
-      name == "glp1" ||
-      name == "guid1" ||
-      name == "report1" ||
-      name == "translate1"
-    ) {
+    if (name == "glp1" || name == "guid1") {
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "A" : "",
       }));
-    } else if (
-      name == "glp2" ||
-      name == "guid2" ||
-      name == "report2" ||
-      name == "translate2"
-    ) {
+    } else if (name == "glp2" || name == "guid2") {
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "B" : "",
       }));
-    } else if (
-      name == "glp3" ||
-      name == "guid3" ||
-      name == "report3" ||
-      name == "translate3"
-    ) {
+    } else if (name == "glp3" || name == "guid3") {
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "C" : "",
       }));
-    } else if (
-      name == "glp4" ||
-      name == "guid4" ||
-      name == "report4" ||
-      name == "translate4"
-    ) {
+    } else if (name == "glp4" || name == "guid4") {
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "D" : "",
       }));
-    } else if (
-      name == "glp5" ||
-      name == "guid5" ||
-      name == "report5" ||
-      name == "translate5"
-    ) {
-      setInformation((prev) => ({
-        ...prev,
-        [name]: value == true ? "E" : "",
-      }));
-    } else if (name == "guid6") {
-      setInformation((prev) => ({
-        ...prev,
-        [name]: value == true ? "F" : "",
-      }));
-    } else if (name == "guid7") {
+    } else if (name == "guid5") {
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "K" : "",
         etcguid: value == false ? "" : prev.etcguid,
       }));
-    } else if (name == "glp6") {
+    } else if (name == "glp5") {
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "K" : "",
         etcglp: value == false ? "" : prev.etcglp,
       }));
-    } else if (name == "translate6") {
+    } else if (name == "translate1" || name == "report1") {
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "K" : "",
-        etctranslate: value == false ? "" : prev.etctranslate,
       }));
-    } else if (name == "report6") {
+    } else if (name == "translate2" || name == "report2") {
       setInformation((prev) => ({
         ...prev,
-        [name]: value == true ? "K" : "",
-        etcreport: value == false ? "" : prev.etcreport,
+        [name]: value == true ? "E" : "",
+      }));
+    } else if (name == "translate3" || name == "report3") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value == true ? "J" : "",
+      }));
+    } else if (name == "translate4" || name == "report4") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value == true ? "P" : "",
+      }));
+    } else if (name == "report5" || name == "translate5") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value == true ? "B" : "",
       }));
     } else {
       setInformation((prev) => ({
@@ -1458,15 +1441,12 @@ const SA_A1000_603W: React.FC = () => {
     glp3: "",
     glp4: "",
     glp5: "",
-    glp6: "",
     etcglp: "",
     guid1: "",
     guid2: "",
     guid3: "",
     guid4: "",
     guid5: "",
-    guid6: "",
-    guid7: "",
     etcguid: "",
     materialindt: new Date(),
     materialnm: "",
@@ -1490,8 +1470,6 @@ const SA_A1000_603W: React.FC = () => {
     report3: "",
     report4: "",
     report5: "",
-    report6: "",
-    etcreport: "",
     requestgb: "A",
     testenddt: null,
     teststdt: null,
@@ -1501,8 +1479,6 @@ const SA_A1000_603W: React.FC = () => {
     translate3: "",
     translate4: "",
     translate5: "",
-    translate6: "",
-    etctranslate: "",
     validt: null,
   });
 
@@ -1688,15 +1664,12 @@ const SA_A1000_603W: React.FC = () => {
           glp3: row[0].glp3,
           glp4: row[0].glp4,
           glp5: row[0].glp5,
-          glp6: row[0].glp6,
           etcglp: row[0].etcglp,
           guid1: row[0].guid1,
           guid2: row[0].guid2,
           guid3: row[0].guid3,
           guid4: row[0].guid4,
           guid5: row[0].guid5,
-          guid6: row[0].guid6,
-          guid7: row[0].guid7,
           etcguid: row[0].etcguid,
           materialindt: toDate(row[0].materialindt),
           materialnm: row[0].materialnm,
@@ -1720,8 +1693,6 @@ const SA_A1000_603W: React.FC = () => {
           report3: row[0].report3,
           report4: row[0].report4,
           report5: row[0].report5,
-          report6: row[0].report6,
-          etcreport: row[0].etcreport,
           requestgb: row[0].requestgb,
           testenddt: isValidDate(row[0].testenddt)
             ? new Date(dateformat(row[0].testenddt))
@@ -1735,8 +1706,6 @@ const SA_A1000_603W: React.FC = () => {
           translate3: row[0].translate3,
           translate4: row[0].translate4,
           translate5: row[0].translate5,
-          translate6: row[0].translate6,
-          etctranslate: row[0].etctranslate,
           validt: isValidDate(row[0].validt)
             ? new Date(dateformat(row[0].validt))
             : null,
@@ -1754,15 +1723,12 @@ const SA_A1000_603W: React.FC = () => {
           glp3: "",
           glp4: "",
           glp5: "",
-          glp6: "",
           etcglp: "",
           guid1: "",
           guid2: "",
           guid3: "",
           guid4: "",
           guid5: "",
-          guid6: "",
-          guid7: "",
           etcguid: "",
           materialindt: new Date(),
           materialnm: "",
@@ -1786,8 +1752,6 @@ const SA_A1000_603W: React.FC = () => {
           report3: "",
           report4: "",
           report5: "",
-          report6: "",
-          etcreport: "",
           requestgb: "A",
           testenddt: null,
           teststdt: null,
@@ -1797,8 +1761,6 @@ const SA_A1000_603W: React.FC = () => {
           translate3: "",
           translate4: "",
           translate5: "",
-          translate6: "",
-          etctranslate: "",
           validt: null,
         });
       }
@@ -2720,15 +2682,12 @@ const SA_A1000_603W: React.FC = () => {
       glp3: "",
       glp4: "",
       glp5: "",
-      glp6: "",
       etcglp: "",
       guid1: "",
       guid2: "",
       guid3: "",
       guid4: "",
       guid5: "",
-      guid6: "",
-      guid7: "",
       etcguid: "",
       materialindt: new Date(),
       materialnm: "",
@@ -2752,8 +2711,6 @@ const SA_A1000_603W: React.FC = () => {
       report3: "",
       report4: "",
       report5: "",
-      report6: "",
-      etcreport: "",
       requestgb: "A",
       testenddt: null,
       teststdt: null,
@@ -2763,8 +2720,6 @@ const SA_A1000_603W: React.FC = () => {
       translate3: "",
       translate4: "",
       translate5: "",
-      translate6: "",
-      etctranslate: "",
       validt: null,
     });
     resetAllGrid();
@@ -2782,7 +2737,6 @@ const SA_A1000_603W: React.FC = () => {
     quosts: "",
     quodt: "",
     person: "",
-    dptcd: "",
     chkperson: "",
     custcd: "",
     custnm: "",
@@ -2792,7 +2746,6 @@ const SA_A1000_603W: React.FC = () => {
     rcvcustprsnnm: "",
     remark3: "",
     materialtype: "",
-    materialinfo: "",
     materialindt: "",
     materialnm: "",
     guideline: "",
@@ -2803,13 +2756,12 @@ const SA_A1000_603W: React.FC = () => {
     custprsnnm: "",
     requestgb: "",
     glpgb: "",
-    rev_reason: "",
     validt: "",
+    numbering_id: "",
     rowstatus_s: "",
     quoseq_s: "",
     itemcd_s: "",
     itemnm_s: "",
-    testnum_s: "",
     glpyn_s: "",
     startdt_s: "",
     enddt_s: "",
@@ -2836,7 +2788,6 @@ const SA_A1000_603W: React.FC = () => {
       "@p_quosts": ParaData.quosts,
       "@p_quodt": ParaData.quodt,
       "@p_person": ParaData.person,
-      "@p_dptcd": ParaData.dptcd,
       "@p_chkperson": ParaData.chkperson,
       "@p_custcd": ParaData.custcd,
       "@p_custnm": ParaData.custnm,
@@ -2846,7 +2797,6 @@ const SA_A1000_603W: React.FC = () => {
       "@p_rcvcustprsnnm": ParaData.rcvcustprsnnm,
       "@p_remark3": ParaData.remark3,
       "@p_materialtype": ParaData.materialtype,
-      "@p_materialinfo": ParaData.materialinfo,
       "@p_materialindt": ParaData.materialindt,
       "@p_materialnm": ParaData.materialnm,
       "@p_guideline": ParaData.guideline,
@@ -2857,13 +2807,12 @@ const SA_A1000_603W: React.FC = () => {
       "@p_custprsnnm": ParaData.custprsnnm,
       "@p_requestgb": ParaData.requestgb,
       "@p_glpgb": ParaData.glpgb,
-      "@p_rev_reason": ParaData.rev_reason,
       "@p_validt": ParaData.validt,
+      "@p_numbering_id": ParaData.numbering_id,
       "@p_rowstatus_s": ParaData.rowstatus_s,
       "@p_quoseq_s": ParaData.quoseq_s,
       "@p_itemcd_s": ParaData.itemcd_s,
       "@p_itemnm_s": ParaData.itemnm_s,
-      "@p_testnum_s": ParaData.testnum_s,
       "@p_glpyn_s": ParaData.glpyn_s,
       "@p_startdt_s": ParaData.startdt_s,
       "@p_enddt_s": ParaData.enddt_s,
@@ -2972,44 +2921,52 @@ const SA_A1000_603W: React.FC = () => {
         throw findMessage(messagesData, "SA_A1000_603W_001");
       } else {
         const guid =
-          Information.guid1 +
+          (Information.guid1 == "" ? "N" : Information.guid1) +
           "|" +
-          Information.guid2 +
+          (Information.guid2 == "" ? "N" : Information.guid2) +
           "|" +
-          Information.guid3 +
+          (Information.guid3 == "" ? "N" : Information.guid3) +
           "|" +
-          Information.guid4 +
+          (Information.guid4 == "" ? "N" : Information.guid4) +
           "|" +
-          Information.guid5;
+          (Information.guid5 == "" ? "N" : Information.guid5) +
+          "|" +
+          Information.etcguid;
 
         const glp =
-          Information.glp1 +
+          (Information.glp1 == "" ? "N" : Information.glp1) +
           "|" +
-          Information.glp2 +
+          (Information.glp2 == "" ? "N" : Information.glp2) +
           "|" +
-          Information.glp3 +
+          (Information.glp3 == "" ? "N" : Information.glp3) +
           "|" +
-          Information.glp4 +
+          (Information.glp4 == "" ? "N" : Information.glp4) +
           "|" +
-          Information.glp5;
+          (Information.glp5 == "" ? "N" : Information.glp5) +
+          "|" +
+          Information.etcglp;
 
         const translatereport =
-          Information.translate1 +
+          (Information.translate1 == "" ? "N" : Information.translate1) +
           "|" +
-          Information.translate2 +
+          (Information.translate2 == "" ? "N" : Information.translate2) +
           "|" +
-          Information.translate3 +
+          (Information.translate3 == "" ? "N" : Information.translate3) +
           "|" +
-          Information.translate4;
+          (Information.translate4 == "" ? "N" : Information.translate4) +
+          "|" +
+          (Information.translate5 == "" ? "N" : Information.translate5);
 
         const report =
-          Information.report1 +
+          (Information.report1 == "" ? "N" : Information.report1) +
           "|" +
-          Information.report2 +
+          (Information.report2 == "" ? "N" : Information.report2) +
           "|" +
-          Information.report3 +
+          (Information.report3 == "" ? "N" : Information.report3) +
           "|" +
-          Information.report4;
+          (Information.report4 == "" ? "N" : Information.report4) +
+          "|" +
+          (Information.report5 == "" ? "N" : Information.report5);
 
         if (dataItem.length === 0 && deletedMainRows2.length === 0) {
           setParaData({
@@ -3023,7 +2980,6 @@ const SA_A1000_603W: React.FC = () => {
             quosts: Information.quosts,
             quodt: convertDateToStr(Information.quodt),
             person: Information.person,
-            dptcd: Information.dptcd,
             chkperson: Information.chkperson,
             custcd: Information.custcd,
             custnm: Information.custnm,
@@ -3033,7 +2989,6 @@ const SA_A1000_603W: React.FC = () => {
             rcvcustprsnnm: Information.rcvcustprsnnm,
             remark3: Information.remark3,
             materialtype: Information.materialtype,
-            materialinfo: "",
             materialindt: convertDateToStr(Information.materialindt),
             materialnm: Information.materialnm,
             guideline: guid,
@@ -3048,15 +3003,14 @@ const SA_A1000_603W: React.FC = () => {
             custprsnnm: Information.custprsnnm,
             requestgb: Information.requestgb,
             glpgb: glp,
-            rev_reason: Information.rev_reason,
             validt: isValidDate(Information.validt)
               ? convertDateToStr(Information.validt)
               : "",
+            numbering_id: Information.numbering_id,
             rowstatus_s: "",
             quoseq_s: "",
             itemcd_s: "",
             itemnm_s: "",
-            testnum_s: "",
             glpyn_s: "",
             startdt_s: "",
             enddt_s: "",
@@ -3074,7 +3028,6 @@ const SA_A1000_603W: React.FC = () => {
             quoseq_s: [],
             itemcd_s: [],
             itemnm_s: [],
-            testnum_s: [],
             glpyn_s: [],
             startdt_s: [],
             enddt_s: [],
@@ -3086,7 +3039,6 @@ const SA_A1000_603W: React.FC = () => {
               quoseq = "",
               itemcd = "",
               itemnm = "",
-              testnum = "",
               glpyn = "",
               startdt = "",
               enddt = "",
@@ -3097,13 +3049,12 @@ const SA_A1000_603W: React.FC = () => {
             dataArr.quoseq_s.push(quoseq);
             dataArr.itemcd_s.push(itemcd);
             dataArr.itemnm_s.push(itemnm);
-            dataArr.testnum_s.push(testnum);
             dataArr.glpyn_s.push(glpyn);
             dataArr.startdt_s.push(
-              isValidDate(startdt) ? convertDateToStr(startdt) : startdt
+              typeof startdt == "string" ? startdt : convertDateToStr(startdt)
             );
             dataArr.enddt_s.push(
-              isValidDate(enddt) ? convertDateToStr(enddt) : enddt
+              typeof enddt == "string" ? enddt : convertDateToStr(enddt)
             );
             dataArr.remark_s.push(remark);
           });
@@ -3113,7 +3064,6 @@ const SA_A1000_603W: React.FC = () => {
               quoseq = "",
               itemcd = "",
               itemnm = "",
-              testnum = "",
               glpyn = "",
               startdt = "",
               enddt = "",
@@ -3124,13 +3074,12 @@ const SA_A1000_603W: React.FC = () => {
             dataArr.quoseq_s.push(quoseq);
             dataArr.itemcd_s.push(itemcd);
             dataArr.itemnm_s.push(itemnm);
-            dataArr.testnum_s.push(testnum);
             dataArr.glpyn_s.push(glpyn);
             dataArr.startdt_s.push(
-              isValidDate(startdt) ? convertDateToStr(startdt) : startdt
+              typeof startdt == "string" ? startdt : convertDateToStr(startdt)
             );
             dataArr.enddt_s.push(
-              isValidDate(enddt) ? convertDateToStr(enddt) : enddt
+              typeof enddt == "string" ? enddt : convertDateToStr(enddt)
             );
             dataArr.remark_s.push(remark);
           });
@@ -3145,7 +3094,6 @@ const SA_A1000_603W: React.FC = () => {
             quosts: Information.quosts,
             quodt: convertDateToStr(Information.quodt),
             person: Information.person,
-            dptcd: Information.dptcd,
             chkperson: Information.chkperson,
             custcd: Information.custcd,
             custnm: Information.custnm,
@@ -3155,7 +3103,6 @@ const SA_A1000_603W: React.FC = () => {
             rcvcustprsnnm: Information.rcvcustprsnnm,
             remark3: Information.remark3,
             materialtype: Information.materialtype,
-            materialinfo: "",
             materialindt: convertDateToStr(Information.materialindt),
             materialnm: Information.materialnm,
             guideline: guid,
@@ -3170,15 +3117,14 @@ const SA_A1000_603W: React.FC = () => {
             custprsnnm: Information.custprsnnm,
             requestgb: Information.requestgb,
             glpgb: glp,
-            rev_reason: Information.rev_reason,
             validt: isValidDate(Information.validt)
               ? convertDateToStr(Information.validt)
               : "",
+            numbering_id: Information.numbering_id,
             rowstatus_s: dataArr.rowstatus_s.join("|"),
             quoseq_s: dataArr.quoseq_s.join("|"),
             itemcd_s: dataArr.itemcd_s.join("|"),
             itemnm_s: dataArr.itemnm_s.join("|"),
-            testnum_s: dataArr.testnum_s.join("|"),
             glpyn_s: dataArr.glpyn_s.join("|"),
             startdt_s: dataArr.startdt_s.join("|"),
             enddt_s: dataArr.enddt_s.join("|"),
@@ -3226,7 +3172,6 @@ const SA_A1000_603W: React.FC = () => {
         quosts: "",
         quodt: "",
         person: "",
-        dptcd: "",
         chkperson: "",
         custcd: "",
         custnm: "",
@@ -3236,7 +3181,6 @@ const SA_A1000_603W: React.FC = () => {
         rcvcustprsnnm: "",
         remark3: "",
         materialtype: "",
-        materialinfo: "",
         materialindt: "",
         materialnm: "",
         guideline: "",
@@ -3247,13 +3191,12 @@ const SA_A1000_603W: React.FC = () => {
         custprsnnm: "",
         requestgb: "",
         glpgb: "",
-        rev_reason: "",
         validt: "",
+        numbering_id: "",
         rowstatus_s: "",
         quoseq_s: "",
         itemcd_s: "",
         itemnm_s: "",
-        testnum_s: "",
         glpyn_s: "",
         startdt_s: "",
         enddt_s: "",
@@ -3302,7 +3245,6 @@ const SA_A1000_603W: React.FC = () => {
       "@p_quosts": "",
       "@p_quodt": "",
       "@p_person": "",
-      "@p_dptcd": "",
       "@p_chkperson": "",
       "@p_custcd": "",
       "@p_custnm": "",
@@ -3312,7 +3254,6 @@ const SA_A1000_603W: React.FC = () => {
       "@p_rcvcustprsnnm": "",
       "@p_remark3": "",
       "@p_materialtype": "",
-      "@p_materialinfo": "",
       "@p_materialindt": "",
       "@p_materialnm": "",
       "@p_guideline": "",
@@ -3323,13 +3264,12 @@ const SA_A1000_603W: React.FC = () => {
       "@p_custprsnnm": "",
       "@p_requestgb": "",
       "@p_glpgb": "",
-      "@p_rev_reason": "",
       "@p_validt": "",
+      "@p_numbering_id": "",
       "@p_rowstatus_s": "",
       "@p_quoseq_s": "",
       "@p_itemcd_s": "",
       "@p_itemnm_s": "",
-      "@p_testnum_s": "",
       "@p_glpyn_s": "",
       "@p_startdt_s": "",
       "@p_enddt_s": "",
@@ -3860,7 +3800,7 @@ const SA_A1000_603W: React.FC = () => {
             <GridTitle></GridTitle>
             <ButtonContainer>
               <Button
-                //onClick={onSaveClick2}
+                onClick={onSaveClick2}
                 fillMode="outline"
                 themeColor={"primary"}
                 icon="save"
@@ -4159,7 +4099,7 @@ const SA_A1000_603W: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
-                  <th>시험기준</th>
+                  <th>가이드라인</th>
                   <td colSpan={5}>
                     <Checkbox
                       title="식약처"
@@ -4169,51 +4109,37 @@ const SA_A1000_603W: React.FC = () => {
                       onChange={InputChange}
                     />
                     <Checkbox
-                      title="ICH"
+                      title="국립환경과학원"
                       name="guid2"
-                      label={"ICH"}
+                      label={"국립환경과학원"}
                       value={Information.guid2 == "B" ? true : false}
                       onChange={InputChange}
                     />
                     <Checkbox
-                      title="OLED"
+                      title="OECD"
                       name="guid3"
-                      label={"OLED"}
+                      label={"OECD"}
                       value={Information.guid3 == "C" ? true : false}
                       onChange={InputChange}
                     />
                     <Checkbox
-                      title="국립환경과학원"
+                      title="농진청"
                       name="guid4"
-                      label={"국립환경과학원"}
+                      label={"농진청"}
                       value={Information.guid4 == "D" ? true : false}
                       onChange={InputChange}
                     />
                     <Checkbox
-                      title="농촌진흥원"
-                      name="guid5"
-                      label={"농촌진흥원"}
-                      value={Information.guid5 == "E" ? true : false}
-                      onChange={InputChange}
-                    />
-                    <Checkbox
-                      title="농림축산검역본부"
-                      name="guid6"
-                      label={"농림축산검역본부"}
-                      value={Information.guid6 == "F" ? true : false}
-                      onChange={InputChange}
-                    />
-                    <Checkbox
                       title="기타"
-                      name="guid7"
+                      name="guid5"
                       label={"기타"}
-                      value={Information.guid7 == "K" ? true : false}
+                      value={Information.guid5 == "K" ? true : false}
                       onChange={InputChange}
                     />
                   </td>
                   <th>기타 입력</th>
                   <td>
-                    {Information.guid7 == "K" ? (
+                    {Information.guid5 == "K" ? (
                       <Input
                         name="etcguid"
                         type="text"
@@ -4231,7 +4157,7 @@ const SA_A1000_603W: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
-                  <th>GLP 가이드라인</th>
+                  <th>GLP</th>
                   <td colSpan={5}>
                     <Checkbox
                       title="식약처"
@@ -4241,44 +4167,37 @@ const SA_A1000_603W: React.FC = () => {
                       onChange={InputChange}
                     />
                     <Checkbox
-                      title="OLED"
+                      title="국립환경과학원"
                       name="glp2"
-                      label={"OLED"}
+                      label={"국립환경과학원"}
                       value={Information.glp2 == "B" ? true : false}
                       onChange={InputChange}
                     />
                     <Checkbox
-                      title="FDA"
+                      title="OECD"
                       name="glp3"
-                      label={"FDA"}
+                      label={"OECD"}
                       value={Information.glp3 == "C" ? true : false}
                       onChange={InputChange}
                     />
                     <Checkbox
-                      title="국립환경과학원"
+                      title="농진청"
                       name="glp4"
-                      label={"국립환경과학원"}
+                      label={"농진청"}
                       value={Information.glp4 == "D" ? true : false}
                       onChange={InputChange}
                     />
                     <Checkbox
-                      title="농촌진흥원"
-                      name="glp5"
-                      label={"농촌진흥원"}
-                      value={Information.glp5 == "E" ? true : false}
-                      onChange={InputChange}
-                    />
-                    <Checkbox
                       title="기타"
-                      name="glp6"
+                      name="glp5"
                       label={"기타"}
-                      value={Information.glp6 == "K" ? true : false}
+                      value={Information.glp5 == "K" ? true : false}
                       onChange={InputChange}
                     />
                   </td>
                   <th>기타 입력</th>
                   <td>
-                    {Information.glp6 == "K" ? (
+                    {Information.glp5 == "K" ? (
                       <Input
                         name="etcglp"
                         type="text"
@@ -4296,134 +4215,88 @@ const SA_A1000_603W: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
-                  <th>보고서(원문)</th>
+                  <th>원문보고서</th>
                   <td colSpan={5}>
                     <Checkbox
-                      title="한국어"
+                      title="국문"
                       name="translate1"
-                      label={"한국어"}
-                      value={Information.translate1 == "A" ? true : false}
+                      label={"국문"}
+                      value={Information.translate1 == "K" ? true : false}
                       onChange={InputChange}
                     />
                     <Checkbox
-                      title="영어"
+                      title="영문"
                       name="translate2"
-                      label={"영어"}
-                      value={Information.translate2 == "B" ? true : false}
+                      label={"영문"}
+                      value={Information.translate2 == "E" ? true : false}
                       onChange={InputChange}
                     />
                     <Checkbox
-                      title="일본어"
+                      title="일문"
                       name="translate3"
-                      label={"일본어"}
-                      value={Information.translate3 == "C" ? true : false}
+                      label={"일문"}
+                      value={Information.translate3 == "J" ? true : false}
                       onChange={InputChange}
                     />
                     <Checkbox
                       title="PDF"
                       name="translate4"
                       label={"PDF"}
-                      value={Information.translate4 == "D" ? true : false}
+                      value={Information.translate4 == "P" ? true : false}
                       onChange={InputChange}
                     />
                     <Checkbox
                       title="제본"
                       name="translate5"
                       label={"제본"}
-                      value={Information.translate5 == "E" ? true : false}
-                      onChange={InputChange}
-                    />
-                    <Checkbox
-                      title="기타"
-                      name="translate6"
-                      label={"기타"}
-                      value={Information.translate6 == "K" ? true : false}
+                      value={Information.translate5 == "B" ? true : false}
                       onChange={InputChange}
                     />
                   </td>
-                  <th>기타 입력</th>
-                  <td>
-                    {Information.translate6 == "K" ? (
-                      <Input
-                        name="etctranslate"
-                        type="text"
-                        value={Information.etctranslate}
-                        onChange={InputChange}
-                      />
-                    ) : (
-                      <Input
-                        name="etctranslate"
-                        type="text"
-                        value={Information.etctranslate}
-                        className="readonly"
-                      />
-                    )}
-                  </td>
+                  <th></th>
+                  <td></td>
                 </tr>
                 <tr>
-                  <th>보고서(기본)</th>
+                  <th>기본보고서</th>
                   <td colSpan={5}>
                     <Checkbox
-                      title="한국어"
+                      title="국문"
                       name="report1"
-                      label={"한국어"}
-                      value={Information.report1 == "A" ? true : false}
+                      label={"국문"}
+                      value={Information.report1 == "K" ? true : false}
                       onChange={InputChange}
                     />
                     <Checkbox
-                      title="영어"
+                      title="영문"
                       name="report2"
-                      label={"영어"}
-                      value={Information.report2 == "B" ? true : false}
+                      label={"영문"}
+                      value={Information.report2 == "E" ? true : false}
                       onChange={InputChange}
                     />
                     <Checkbox
-                      title="일본어"
+                      title="한문"
                       name="report3"
-                      label={"일본어"}
-                      value={Information.report3 == "C" ? true : false}
+                      label={"한문"}
+                      value={Information.report3 == "J" ? true : false}
                       onChange={InputChange}
                     />
                     <Checkbox
                       title="PDF"
                       name="report4"
                       label={"PDF"}
-                      value={Information.report4 == "D" ? true : false}
+                      value={Information.report4 == "P" ? true : false}
                       onChange={InputChange}
                     />
                     <Checkbox
                       title="제본"
                       name="report5"
                       label={"제본"}
-                      value={Information.report5 == "E" ? true : false}
-                      onChange={InputChange}
-                    />
-                    <Checkbox
-                      title="기타"
-                      name="report6"
-                      label={"기타"}
-                      value={Information.report6 == "K" ? true : false}
+                      value={Information.report5 == "B" ? true : false}
                       onChange={InputChange}
                     />
                   </td>
-                  <th>기타 입력</th>
-                  <td>
-                    {Information.report6 == "K" ? (
-                      <Input
-                        name="etcreport"
-                        type="text"
-                        value={Information.etcreport}
-                        onChange={InputChange}
-                      />
-                    ) : (
-                      <Input
-                        name="etcreport"
-                        type="text"
-                        value={Information.etcreport}
-                        className="readonly"
-                      />
-                    )}
-                  </td>
+                  <th></th>
+                  <td></td>
                 </tr>
                 <tr>
                   <th>비고</th>

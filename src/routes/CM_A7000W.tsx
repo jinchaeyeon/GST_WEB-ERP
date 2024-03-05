@@ -76,6 +76,7 @@ import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersPersonWindow from "../components/Windows/CommonWindows/CustomersPersonWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import { useApi } from "../hooks/api";
 import { IAttachmentData, ICustData } from "../hooks/interfaces";
 import {
@@ -196,7 +197,36 @@ const CM_A7000W: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const refEditorRef = useRef<TEditorHandle>(null);
-
+  const content = `
+  <head><style>
+        p, span{
+          font-family: Arial, sans-serif; 
+        }
+        table {
+          margin: 0;
+          border-collapse: collapse;
+          table-layout: fixed;
+          width: 100%;
+          overflow: hidden;
+        }
+        table td {          
+          padding: 0pt 5.4pt 0pt 5.4pt;
+          border: 1pt #000000 solid;
+        }
+        table td p {            
+          margin: 0;
+          padding: 0;
+        }
+        #parent {
+          width: 200px;
+          float: right;
+        }
+        #title {
+          background-color: #2289C3;
+          color: white;
+        }
+        null</style></head><body><table id="parent"><tbody><tr><td id="title"><p style="text-align: center;"><strong>참석자</strong></p></td></tr></tbody></table></body>
+  `;
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [mainDataState, setMainDataState] = useState<State>({
@@ -479,6 +509,7 @@ const CM_A7000W: React.FC = () => {
         testtype: data.testtype,
         requestgb: data.requestgb,
         materialtype: data.materialtype,
+        type: data.type,
       });
 
       fetchDetail();
@@ -636,6 +667,7 @@ const CM_A7000W: React.FC = () => {
     testtype: "",
     requestgb: "",
     materialtype: "",
+    type: "",
   });
 
   //그리드 데이터 조회
@@ -775,7 +807,7 @@ const CM_A7000W: React.FC = () => {
       }
     } else {
       if (refEditorRef.current) {
-        refEditorRef.current.setHtml("");
+        refEditorRef.current.setHtml(content);
       }
     }
     setLoading(false);
@@ -903,6 +935,7 @@ const CM_A7000W: React.FC = () => {
       testtype: selectedRowData.testtype,
       requestgb: selectedRowData.requestgb,
       materialtype: selectedRowData.materialtype,
+      type: selectedRowData.type,
     });
     fetchDetail();
   };
@@ -923,6 +956,7 @@ const CM_A7000W: React.FC = () => {
     testtype: "",
     requestgb: "",
     materialtype: "",
+    type: "",
     contents: "",
     userid: userId,
     pc: pc,
@@ -964,6 +998,7 @@ const CM_A7000W: React.FC = () => {
       testtype: information.testtype,
       requestgb: information.requestgb,
       materialtype: information.materialtype,
+      type: information.type,
       contents: "",
       userid: userId,
       pc: pc,
@@ -1017,6 +1052,7 @@ const CM_A7000W: React.FC = () => {
         "@p_testtype": paraDataSaved.testtype,
         "@p_requestgb": paraDataSaved.requestgb,
         "@p_materialtype": paraDataSaved.materialtype,
+        "@p_type": paraDataSaved.type,
         "@p_contents": paraDataSaved.contents,
         "@p_userid": userId,
         "@p_pc": pc,
@@ -1060,6 +1096,7 @@ const CM_A7000W: React.FC = () => {
         testtype: "",
         requestgb: "",
         materialtype: "",
+        type: "",
         contents: "",
         userid: userId,
         pc: pc,
@@ -1110,8 +1147,17 @@ const CM_A7000W: React.FC = () => {
       testtype: "",
       requestgb: "",
       materialtype: "",
+      type: "",
     });
   };
+
+  useEffect(() => {
+    if (tabSelected == 1 && workType == "N") {
+      if (refEditorRef.current) {
+        refEditorRef.current.setHtml(content);
+      }
+    }
+  }, [tabSelected]);
 
   const questionToDelete = useSysMessage("QuestionToDelete");
   const onDeleteClick = () => {
@@ -1171,6 +1217,74 @@ const CM_A7000W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {};
 
   const exitEdit = () => {};
+
+  const [PrsnnumWindowVisible, setPrsnnumWindowVisible] =
+    useState<boolean>(false);
+
+  interface IPrsnnum {
+    user_id: string;
+    user_name: string;
+  }
+
+  const onPrsnnumWndClick = () => {
+    setPrsnnumWindowVisible(true);
+  };
+
+  const setPrsnnumData = (data: IPrsnnum) => {
+    let editorContent: any = "";
+    if (refEditorRef.current) {
+      editorContent = refEditorRef.current.getContent();
+    }
+    const parser = new DOMParser();
+    const htmlDoc = parser.parseFromString(editorContent, "text/html");
+    let table = htmlDoc.getElementById("parent");
+    if (table != null) {
+      let tbody = table.querySelector("tbody");
+      let tr = htmlDoc.createElement("tr");
+      let td = htmlDoc.createElement("td");
+      td.style.textAlign = "center";
+      let p = htmlDoc.createElement("p");
+      p.append(data.user_name);
+      td.appendChild(p);
+      tr.appendChild(td);
+      tbody?.insertBefore(tr, null);
+      if (refEditorRef.current) {
+        refEditorRef.current.setHtml(htmlDoc.documentElement.outerHTML);
+      }
+    } else {
+      //해더만들기
+      let table = htmlDoc.createElement("table");
+      table.id = "parent";
+      let tbody = htmlDoc.createElement("tbody");
+      let tr = htmlDoc.createElement("tr");
+      let td = htmlDoc.createElement("td");
+      td.id = "title";
+      let p = htmlDoc.createElement("p");
+      p.style.textAlign = "center";
+      let strong = htmlDoc.createElement("strong");
+      strong.append("참석자");
+      p.append(strong);
+      td.appendChild(p);
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      table.appendChild(tbody);
+
+      //컬럼 추가
+      let tbody2 = table.querySelector("tbody");
+      let tr2 = htmlDoc.createElement("tr");
+      let td2 = htmlDoc.createElement("td");
+      td2.style.textAlign = "center";
+      let p2 = htmlDoc.createElement("p");
+      p2.append(data.user_name);
+      td2.appendChild(p2);
+      tr2.appendChild(td2);
+      tbody2?.insertBefore(tr2, null);
+      htmlDoc.body.prepend(table);
+      if (refEditorRef.current) {
+        refEditorRef.current.setHtml(htmlDoc.documentElement.outerHTML);
+      }
+    }
+  };
 
   return (
     <>
@@ -1438,13 +1552,23 @@ const CM_A7000W: React.FC = () => {
                     </tr>
                     <tr>
                       <th>유형</th>
-                      <td></td>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="type"
+                            value={information.type}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                      </td>
                       <th>참석자</th>
                       <td>
                         <Button
                           themeColor={"primary"}
                           style={{ width: "100%" }}
-                          onClick={() => {}}
+                          onClick={() => onPrsnnumWndClick()}
                         >
                           등록
                         </Button>
@@ -1737,6 +1861,14 @@ const CM_A7000W: React.FC = () => {
           setVisible={setCustPersonWindowVisible}
           custcd={information.custcd}
           setData={setCustPersonData}
+          modal={true}
+        />
+      )}
+      {PrsnnumWindowVisible && (
+        <PrsnnumWindow
+          setVisible={setPrsnnumWindowVisible}
+          workType="N"
+          setData={setPrsnnumData}
           modal={true}
         />
       )}

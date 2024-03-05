@@ -25,7 +25,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_usegb",
         field: "usegb",
-        caption: "회의록 구분",
+        caption: "회의록 목적",
         width: 120,
       },
       {
