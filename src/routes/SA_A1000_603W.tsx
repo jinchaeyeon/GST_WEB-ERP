@@ -4438,7 +4438,7 @@ const SA_A1000_603W: React.FC = () => {
           </FormBoxWrap>
         </TabStripTab>
         <TabStripTab
-          title="상세정보"
+          title="계약가능성 관리"
           disabled={mainDataResult.total == 0 ? true : false}
         >
           <GridContainerWrap>
