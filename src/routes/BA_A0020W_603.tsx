@@ -54,7 +54,7 @@ import {
   deletedNameState,
   isLoading,
   unsavedAttadatnumsState,
-  unsavedNameState
+  unsavedNameState,
 } from "../store/atoms";
 
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
@@ -446,7 +446,7 @@ const BA_A0020W_603: React.FC = () => {
   UseCustomOption("BA_A0020W_603", setCustomOptionData);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA026, L_LISTRING, L_BA075, L_BA076, L_BA077, L_BA008, L_BA027, L_BA025",
+    "L_BA057, L_CR007, L_BA026, L_LISTRING, L_BA075, L_BA076, L_BA077, L_BA008, L_BA027, L_BA025",
     setBizComponentData
   );
 
@@ -592,6 +592,7 @@ const BA_A0020W_603: React.FC = () => {
     setMainDataResult3(process([], mainDataState3));
     setMainDataResult4(process([], mainDataState4));
     setInformation({
+      area: "",
       custabbr: "",
       custdiv: "",
       listringyn: true,
@@ -605,6 +606,7 @@ const BA_A0020W_603: React.FC = () => {
       repreregno: "",
       compclass: "",
       comptype: "",
+      countrycd: "",
       groupnm: "",
       itemlvl1: "",
       ceonm: "",
@@ -722,6 +724,7 @@ const BA_A0020W_603: React.FC = () => {
   });
 
   const [information, setInformation] = useState<any>({
+    area: "",
     custabbr: "",
     custdiv: "",
     listringyn: true,
@@ -735,6 +738,7 @@ const BA_A0020W_603: React.FC = () => {
     repreregno: "",
     compclass: "",
     comptype: "",
+    countrycd: "",
     groupnm: "",
     itemlvl1: "",
     ceonm: "",
@@ -841,6 +845,7 @@ const BA_A0020W_603: React.FC = () => {
             pgNum: 1,
           }));
           setInformation({
+            area: selectedRow.area,
             custabbr: selectedRow.custabbr,
             custdiv: selectedRow.custdiv,
             listringyn: selectedRow.listringyn,
@@ -854,6 +859,7 @@ const BA_A0020W_603: React.FC = () => {
             repreregno: selectedRow.repreregno,
             compclass: selectedRow.compclass,
             comptype: selectedRow.comptype,
+            countrycd: selectedRow.countrycd,
             groupnm: selectedRow.groupnm,
             itemlvl1: selectedRow.itemlvl1,
             ceonm: selectedRow.ceonm,
@@ -893,6 +899,7 @@ const BA_A0020W_603: React.FC = () => {
             pgNum: 1,
           }));
           setInformation({
+            area: rows[0].area,
             custabbr: rows[0].custabbr,
             custdiv: rows[0].custdiv,
             listringyn: rows[0].listringyn,
@@ -906,6 +913,7 @@ const BA_A0020W_603: React.FC = () => {
             repreregno: rows[0].repreregno,
             compclass: rows[0].compclass,
             comptype: rows[0].comptype,
+            countrycd: rows[0].countrycd,
             groupnm: rows[0].groupnm,
             itemlvl1: rows[0].itemlvl1,
             ceonm: rows[0].ceonm,
@@ -1289,6 +1297,7 @@ const BA_A0020W_603: React.FC = () => {
     }));
     setWorkType("U");
     setInformation({
+      area: selectedRowData.area,
       custabbr: selectedRowData.custabbr,
       custdiv:
         custdivListData.find(
@@ -1309,6 +1318,7 @@ const BA_A0020W_603: React.FC = () => {
       repreregno: selectedRowData.repreregno,
       compclass: selectedRowData.compclass,
       comptype: selectedRowData.comptype,
+      countrycd: selectedRowData.countrycd,
       groupnm: selectedRowData.groupnm,
       itemlvl1: selectedRowData.itemlvl1,
       ceonm: selectedRowData.ceonm,
@@ -1845,6 +1855,7 @@ const BA_A0020W_603: React.FC = () => {
     setMainDataResult3(process([], mainDataState3));
     setMainDataResult4(process([], mainDataState4));
     setInformation({
+      area: "",
       custabbr: "",
       custdiv: "",
       listringyn: true,
@@ -1858,6 +1869,7 @@ const BA_A0020W_603: React.FC = () => {
       repreregno: "",
       compclass: "",
       comptype: "",
+      countrycd: "",
       groupnm: "",
       itemlvl1: "",
       ceonm: "",
@@ -2104,6 +2116,7 @@ const BA_A0020W_603: React.FC = () => {
       setParaData((prev) => ({
         ...prev,
         workType: workType,
+        area: information.area,
         custcd: information.custcd,
         custnm: information.custnm,
         custabbr: information.custabbr,
@@ -2120,6 +2133,7 @@ const BA_A0020W_603: React.FC = () => {
         unpitem: information.unpitem,
         compclass: information.compclass,
         comptype: information.comptype,
+        countrycd: information.countrycd,
         groupnm: information.groupnm,
         itemlvl1: information.itemlvl1,
         itemlvl2: information.itemlvl2,
@@ -2134,6 +2148,7 @@ const BA_A0020W_603: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "",
+    area: "",
     custcd: "",
     custnm: "",
     custabbr: "",
@@ -2150,6 +2165,7 @@ const BA_A0020W_603: React.FC = () => {
     unpitem: "",
     compclass: "",
     comptype: "",
+    countrycd: "",
     groupnm: "",
     itemlvl1: "",
     itemlvl2: "",
@@ -2193,6 +2209,7 @@ const BA_A0020W_603: React.FC = () => {
     parameters: {
       "@p_work_type": paraData.workType,
 
+      "@p_area": paraData.area,
       "@p_custcd": paraData.custcd,
       "@p_custnm": paraData.custnm,
       "@p_custabbr": paraData.custabbr,
@@ -2209,6 +2226,7 @@ const BA_A0020W_603: React.FC = () => {
       "@p_unpitem": paraData.unpitem,
       "@p_compclass": paraData.compclass,
       "@p_comptype": paraData.comptype,
+      "@p_countrycd": paraData.countrycd,
       "@p_groupnm": paraData.groupnm,
       "@p_itemlvl1": paraData.itemlvl1,
       "@p_itemlvl2": paraData.itemlvl2,
@@ -2324,6 +2342,7 @@ const BA_A0020W_603: React.FC = () => {
       });
       setParaData({
         workType: "",
+        area: "",
         custcd: "",
         custnm: "",
         custabbr: "",
@@ -2340,6 +2359,7 @@ const BA_A0020W_603: React.FC = () => {
         unpitem: "",
         compclass: "",
         comptype: "",
+        countrycd: "",
         groupnm: "",
         itemlvl1: "",
         itemlvl2: "",
@@ -2801,7 +2821,7 @@ const BA_A0020W_603: React.FC = () => {
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "40vh" }}
+            style={{ height: "35vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -3179,8 +3199,34 @@ const BA_A0020W_603: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>첨부파일</th>
+                  <th>지역</th>
                   <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="area"
+                        value={information.area}
+                        bizComponentId="L_CR007"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>국가</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="countrycd"
+                        value={information.countrycd}
+                        bizComponentId="L_BA057"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>첨부파일</th>
+                  <td colSpan={3}>
                     <Input
                       name="files"
                       type="text"

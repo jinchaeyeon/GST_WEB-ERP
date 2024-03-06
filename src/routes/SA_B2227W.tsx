@@ -1,37 +1,28 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Typography
-} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { Knob } from "primereact/knob";
 import React, { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   GridContainer,
   GridContainerWrap,
   GridTitle,
   GridTitleContainer,
-  SubTitle,
   Title,
   TitleContainer,
 } from "../CommonStyled";
-import CardBox from "../components/BIOComponents/CardBox";
-import { convertDateToStr, dateformat2 } from "../components/CommonFunction";
-import { GAP } from "../components/CommonString";
+import { GAP, PAGE_SIZE } from "../components/CommonString";
 import BarChart from "../components/KPIcomponents/Chart/BarChart";
 import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
 import Table from "../components/KPIcomponents/Table/Table";
 import ClusterMap from "../components/Map/ClusterMap";
-import { colors, colorsName } from "../store/atoms";
+import { useApi } from "../hooks/api";
+import { colors, colorsName, isLoading } from "../store/atoms";
 
 const SA_B2227W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 1200;
   const [color, setColor] = useRecoilState(colors);
   const [colorName, setColorName] = useRecoilState(colorsName);
+  const processApi = useApi();
+  const setLoading = useSetRecoilState(isLoading);
 
   const theme = createTheme({
     palette: {
@@ -48,115 +39,169 @@ const SA_B2227W: React.FC = () => {
 
   useEffect(() => {}, [color]);
 
-  const [AllPanel, setAllPanel] = useState({
-    three_cnt: 380,
-    cnt: 21,
-    contract_rate: 60,
-    new_question_cnt: 30,
-    new_contract_cnt: 20,
+  const [filters, setFilters] = useState({
+    pgSize: PAGE_SIZE,
+    orgdiv: "01",
+    isSearch: true,
   });
 
-  const cardOption = [
-    {
-      title: "3년간 수주 고객 수",
-      data:
-        AllPanel.three_cnt != null ? AllPanel.three_cnt + "개사" : 0 + "개사",
-      backgroundColor: theme.palette.primary.dark,
+  const parameters = {
+    procedureName: "P_SA_B2227W_Q",
+    pageNumber: 1,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "CHART",
+      "@p_orgdiv": filters.orgdiv,
     },
-    {
-      title: "올해 신규 고객 수",
-      data: AllPanel.cnt != null ? AllPanel.cnt + "개사" : 0 + "개사",
-      backgroundColor: theme.palette.primary.main,
-    },
-  ];
+  };
 
-  const [ItemList, setItemList] = useState<any[]>([
-    {
-      testpart: "일반독성",
-      cnt: 5,
-      num: 1,
+  const parameters2 = {
+    procedureName: "P_SA_B2227W_Q",
+    pageNumber: 1,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "LIST",
+      "@p_orgdiv": filters.orgdiv,
     },
-    {
-      testpart: "생식독성",
-      cnt: 3,
-      num: 2,
-    },
-    {
-      testpart: "국소/면역",
-      cnt: 1,
-      num: 3,
-    },
-    {
-      testpart: "안전성약리",
-      cnt: 50,
-      num: 4,
-    },
-    {
-      testpart: "유전독성",
-      cnt: 1,
-      num: 5,
-    },
-    {
-      testpart: "대체독성",
-      cnt: 0,
-      num: 6,
-    },
-    {
-      testpart: "분석",
-      cnt: 1,
-      num: 7,
-    },
-  ]);
+  };
 
-  const [TeamList, setTeamList] = useState<any[]>([
-    {
-      teamnm: "1팀",
-      cnt: 7,
-      num: 1,
+  const parameters3 = {
+    procedureName: "P_SA_B2227W_Q",
+    pageNumber: 1,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "MAP",
+      "@p_orgdiv": filters.orgdiv,
     },
-    {
-      teamnm: "2팀",
-      cnt: 12,
-      num: 2,
-    },
-    {
-      teamnm: "3팀",
-      cnt: 5,
-      num: 3,
-    },
-  ]);
+  };
 
-  const [ThreeList, setThreeList] = useState<any[]>([
-    {
-      yyyy: "23년",
-      cnt: 21,
-      num: 1,
-    },
-    {
-      yyyy: "22년",
-      cnt: 150,
-      num: 2,
-    },
-    {
-      yyyy: "21년",
-      cnt: 219,
-      num: 3,
-    },
-  ]);
+  const [ChartList, setChartList] = useState([]);
+  const [ChartList2, setChartList2] = useState([]);
+  const [ChartList3, setChartList3] = useState([]);
+  const [ChartList4, setChartList4] = useState([]);
 
-  const [CountryData, setCountryData] = useState<any[]>([
-    {
-      KR_cnt: 90,
-      JP_cnt: 20,
-      CN_cnt: 16,
-      US_cnt: 10,
-      DE_cnt: 9,
-      SE_cnt: 8,
-      RU_cnt: 7,
-      Any_cnt: 13,
-      total_cnt: 173,
-    },
-  ]);
+  const [Column1, setColumn1] = useState([]);
+  const [Column2, setColumn2] = useState([]);
+  const [GridList1, setGridList1] = useState([]);
+  const [GridList2, setGridList2] = useState([]);
+
+  const [Map, setMap] = useState([]);
+
+  const fetchMainGrid = async () => {
+    setLoading(true);
+    let data: any;
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      const rows2 = data.tables[1].Rows;
+      const rows3 = data.tables[2].Rows;
+      const rows4 = data.tables[3].Rows;
+
+      setChartList(rows);
+      setChartList2(rows2);
+      setChartList3(rows3);
+      setChartList4(rows4);
+    }
+    setLoading(false);
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
+  };
+
+  function getArray(obj: any) {
+    if (obj.length != 0) {
+      if (obj[0].length != 0) {
+        for (let key in obj[0]) {
+          /* 키/값 출력 */
+          console.log(key);
+          console.log(obj[0][key]);
+          if (obj[0][key] == null) {
+            delete obj[0][key];
+          }
+        }
+      }
+    }
+
+    return obj;
+  }
+
+  const fetchMainGrid2 = async () => {
+    setLoading(true);
+    let data: any;
+    try {
+      data = await processApi<any>("procedure", parameters2);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      const rows2 = data.tables[1].Rows;
+      const rows3 = data.tables[2].Rows;
+      const rows4 = data.tables[3].Rows;
+
+      setColumn1(getArray(rows));
+      setGridList1(getArray(rows2));
+      setColumn2(getArray(rows3));
+      setGridList2(getArray(rows4));
+    }
+    setLoading(false);
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
+  };
+
+  const fetchMainGrid3 = async () => {
+    setLoading(true);
+    let data: any;
+    try {
+      data = await processApi<any>("procedure", parameters3);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+
+      setMap(rows);
+    }
+    setLoading(false);
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: false,
+    }));
+  };
+
+  useEffect(() => {
+    if (filters.isSearch) {
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: false,
+      }));
+      fetchMainGrid();
+      fetchMainGrid2();
+      fetchMainGrid3();
+    }
+  }, [filters]);
+
+  function getWidth(arr: any) {
+    let array = [];
+
+    if (arr.length != 0) {
+      for (var i = 0; i < Object.keys(arr[0]).length; i++) {
+        array.push(100);
+      }
+    }
+
+    return array;
+  }
 
   return (
     <>
@@ -164,92 +209,39 @@ const SA_B2227W: React.FC = () => {
         style={{
           fontFamily: "TheJamsil5Bold",
           marginBottom: "50px",
-          paddingTop: "25px",
         }}
       >
         <ThemeProvider theme={theme}>
-          <GridContainerWrap mobilemaxWidth={1600}>
-            <GridContainer mobilemaxWidth={1600} width="50%">
-              <GridContainerWrap height="15vh">
-                <GridContainer width="35%">
-                  <TitleContainer
-                    style={{ marginBottom: "0px", justifyContent: "center" }}
-                  >
-                    <Title>고객현황 DASHBOARD</Title>
-                  </TitleContainer>
-                  <TitleContainer
-                    style={{ paddingBottom: "25px", justifyContent: "center" }}
-                  >
-                    <SubTitle>
-                      {dateformat2(convertDateToStr(new Date()))}
-                    </SubTitle>
-                  </TitleContainer>
-                </GridContainer>
-                <GridContainer width={`calc(65% - ${GAP}px)`}>
-                  <Grid container spacing={2} style={{ marginBottom: "15px" }}>
-                    {cardOption.map((item) => (
-                      <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
-                        <Card
-                          style={{
-                            height: "120px",
-                            width: "100%",
-                            marginRight: "15px",
-                            backgroundColor: item.backgroundColor,
-                            color: "white",
-                            fontFamily: "TheJamsil5Bold",
-                          }}
-                        >
-                          <CardContent
-                            style={{
-                              display: "flex",
-                              justifyContent: "center",
-                              paddingBottom: 0,
-                            }}
-                          >
-                            <Typography
-                              style={{
-                                fontSize: "2rem",
-                                fontWeight: 900,
-                                color: "white",
-                                fontFamily: "TheJamsil5Bold",
-                                display: "flex",
-                                alignItems: "center",
-                              }}
-                            >
-                              {item.data}
-                            </Typography>
-                          </CardContent>
-                          <CardHeader
-                            title={
-                              <>
-                                <Typography
-                                  style={{
-                                    fontSize: "1.1rem",
-                                    color: "white",
-                                    fontWeight: 600,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    fontFamily: "TheJamsil5Bold",
-                                  }}
-                                >
-                                  {item.title}
-                                </Typography>
-                              </>
-                            }
-                          />
-                        </Card>
-                      </Grid>
-                    ))}
-                  </Grid>
-                </GridContainer>
-              </GridContainerWrap>
+          <TitleContainer>
+            <Title>고객현황 DASHBOARD</Title>
+          </TitleContainer>
+          <GridContainerWrap>
+            <GridContainer width="40%">
               <GridContainer>
-                <GridTitle>지도로 보는 고객사 현황</GridTitle>
-                <ClusterMap />
+                <ClusterMap data={Map} />
+              </GridContainer>
+              <GridContainer style={{ marginTop: "15px" }}>
+                <GridTitleContainer>
+                  <GridTitle>지역별 고객사 집계</GridTitle>
+                </GridTitleContainer>
+                <Table
+                  value={GridList1}
+                  column={Column1.length == 0 ? [] : Column1[0]}
+                  width={getWidth(Column1)}
+                />
+              </GridContainer>
+              <GridContainer style={{ marginTop: "15px" }}>
+                <GridTitleContainer>
+                  <GridTitle>국가별 고객사 집계</GridTitle>
+                </GridTitleContainer>
+                <Table
+                  value={GridList2}
+                  column={Column2.length == 0 ? [] : Column2[0]}
+                  width={getWidth(Column2)}
+                />
               </GridContainer>
             </GridContainer>
-            <GridContainer mobilemaxWidth={1600} width={`calc(50% - ${GAP}px)`}>
+            <GridContainer width={`calc(60% - ${GAP}px)`}>
               <Grid container spacing={2}>
                 <Grid
                   item
@@ -260,62 +252,12 @@ const SA_B2227W: React.FC = () => {
                   xl={6}
                   style={{ marginBottom: "10px" }}
                 >
-                  <GridTitle>신규 고객 계약율</GridTitle>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                      <div
-                        style={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <Knob
-                          value={AllPanel.contract_rate}
-                          size={200}
-                          valueTemplate={"{value}%"}
-                          valueColor={theme.palette.primary.dark}
-                          rangeColor={theme.palette.secondary.main}
-                          readOnly
-                          strokeWidth={10}
-                        />
-                      </div>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
-                      <CardBox
-                        title={"신규고객 문의 건수"}
-                        titlefontsize={"1rem"}
-                        data={AllPanel.new_question_cnt + "건"}
-                        backgroundColor={theme.palette.primary.dark}
-                        fontsize={"1.6rem"}
-                        form={"SA_B2227W"}
-                        height={"120px"}
-                      />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={6} lg={12} xl={6}>
-                      <CardBox
-                        title={"신규고객 계약 건수"}
-                        titlefontsize={"1rem"}
-                        data={AllPanel.new_contract_cnt + "건"}
-                        backgroundColor={theme.palette.primary.dark}
-                        fontsize={"1.6rem"}
-                        form={"SA_B2227W"}
-                        height={"120px"}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  sm={6}
-                  md={6}
-                  lg={6}
-                  xl={6}
-                  style={{ marginBottom: "10px" }}
-                >
-                  <GridTitle>사업부별 신규 문의 건수</GridTitle>
+                  <GridTitle>개발분야별 고객현황</GridTitle>
                   <BarChart
-                    props={ItemList}
-                    value="cnt"
-                    alllabel={ItemList.map((item) => item.testpart)}
-                    name="testpart"
+                    props={ChartList}
+                    value="value"
+                    alllabel={ChartList.map((item: any) => item.name)}
+                    name="name"
                     random={true}
                     colorName={colorName}
                   />
@@ -329,12 +271,12 @@ const SA_B2227W: React.FC = () => {
                   xl={6}
                   style={{ marginBottom: "10px" }}
                 >
-                  <GridTitle>팀별 신규 고객 유치</GridTitle>
+                  <GridTitle>기업구분별 고객현황</GridTitle>
                   <BarChart
-                    props={TeamList}
-                    value="cnt"
-                    alllabel={TeamList.map((item) => item.teamnm)}
-                    name="teamnm"
+                    props={ChartList2}
+                    value="value"
+                    alllabel={ChartList2.map((item: any) => item.name)}
+                    name="name"
                     random={true}
                     colorName={colorName}
                   />
@@ -348,12 +290,31 @@ const SA_B2227W: React.FC = () => {
                   xl={6}
                   style={{ marginBottom: "10px" }}
                 >
-                  <GridTitle>3개년 신규고객 수 현황</GridTitle>
+                  <GridTitle>신규 고객현황</GridTitle>
                   <BarChart
-                    props={ThreeList}
-                    value="cnt"
-                    alllabel={ThreeList.map((item) => item.yyyy)}
-                    name="yyyy"
+                    props={ChartList3}
+                    value="value"
+                    alllabel={ChartList3.map((item: any) => item.name)}
+                    name="name"
+                    random={true}
+                    colorName={colorName}
+                  />
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  sm={6}
+                  md={6}
+                  lg={6}
+                  xl={6}
+                  style={{ marginBottom: "10px" }}
+                >
+                  <GridTitle>거래기준별 고객현황</GridTitle>
+                  <BarChart
+                    props={ChartList4}
+                    value="value"
+                    alllabel={ChartList4.map((item: any) => item.name)}
+                    name="name"
                     random={true}
                     colorName={colorName}
                   />
@@ -361,26 +322,6 @@ const SA_B2227W: React.FC = () => {
               </Grid>
             </GridContainer>
           </GridContainerWrap>
-          <GridContainer style={{ marginTop: "25px" }}>
-            <GridTitleContainer>
-              <GridTitle>국가별 고객사 집계</GridTitle>
-            </GridTitleContainer>
-            <Table
-              value={CountryData}
-              column={{
-                KR_cnt: "한국",
-                JP_cnt: "일본",
-                CN_cnt: "중국",
-                US_cnt: "미국",
-                DE_cnt: "독일",
-                SE_cnt: "스웨덴",
-                RU_cnt: "러시아",
-                Any_cnt: "기타",
-                total_cnt: "합계",
-              }}
-              width={[100, 100, 100, 100, 100, 100, 100, 100, 100, 100]}
-            />
-          </GridContainer>
           <SpecialDial />
         </ThemeProvider>
       </div>

@@ -78,7 +78,7 @@ export default function BarChart(props) {
               return items[props.value];
             }),
             datalabels: {
-              align: "end",
+              align: "center",
               anchor: "end",
             },
           },
