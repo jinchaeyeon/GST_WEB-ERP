@@ -863,10 +863,7 @@ const PanelBarNavContainer = (props: any) => {
               <Logo size="32px" name={"GST WEB"} />
               {loginResult.webTitle}
             </AppName>
-            <GridContainerWrap
-              height={"100px"}
-              style={{ gap: "0px", marginBottom: "10px" }}
-            >
+            <GridContainerWrap height={"120px"} style={{ gap: "0px" }}>
               <GridContainer
                 width="80%"
                 style={{
@@ -939,6 +936,15 @@ const PanelBarNavContainer = (props: any) => {
                   onClick={onHelpWndClick}
                   fillMode="flat"
                   title="도움말"
+                ></Button>
+                <Button
+                  icon="question"
+                  themeColor={"primary"}
+                  onClick={() => {
+                    window.open(`https://spm.gsti.co.kr/QnA`);
+                  }}
+                  fillMode="flat"
+                  title="QnA"
                 ></Button>
                 <Popup
                   offset={offset}

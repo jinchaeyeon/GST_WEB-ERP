@@ -26,7 +26,6 @@ import {
   FormBox,
   FormBoxWrap,
   GridContainer,
-  GridContainerWrap,
   GridTitle,
   GridTitleContainer,
   Title,
@@ -59,7 +58,6 @@ import {
 import {
   COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
-  GAP,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
@@ -70,6 +68,10 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import EmailWindow from "../components/Windows/CommonWindows/EmailWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import SA_A1000_603W_Design2_Window from "../components/Windows/SA_A1000_603W_Design2_Window";
+import SA_A1000_603W_Design3_Window from "../components/Windows/SA_A1000_603W_Design3_Window";
+import SA_A1000_603W_Design4_Window from "../components/Windows/SA_A1000_603W_Design4_Window";
+import SA_A1000_603W_Design_Window from "../components/Windows/SA_A1000_603W_Design_Window";
 import SA_A1001_603W_Window from "../components/Windows/SA_A1001_603W_Window";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
@@ -373,10 +375,40 @@ const SA_A1001_603W: React.FC = () => {
   });
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const [designWindowVisible, setDesignWindowVisible] =
+    useState<boolean>(false);
+  const [designWindowVisible2, setDesignWindowVisible2] =
+    useState<boolean>(false);
+  const [designWindowVisible3, setDesignWindowVisible3] =
+    useState<boolean>(false);
+  const [designWindowVisible4, setDesignWindowVisible4] =
+    useState<boolean>(false);
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
 
+  const onDesignWndClick = () => {
+    const data = mainDataResult2.data.filter(
+      (item) =>
+        item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
+    )[0];
+
+    if (data != undefined) {
+      if (data.type == "Basic") {
+        setDesignWindowVisible(true);
+      } else if (data.type == "Cheomdan") {
+        setDesignWindowVisible2(true);
+      } else if (data.type == "Invitro") {
+        setDesignWindowVisible3(true);
+      } else if (data.type == "Analyze") {
+        setDesignWindowVisible4(true);
+      } else {
+        alert("미정");
+      }
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
   interface ICustData {
     address: string;
     custcd: string;
@@ -459,6 +491,11 @@ const SA_A1001_603W: React.FC = () => {
         "@p_custnm": filters.custnm,
         "@p_custprsnnm": filters.custprsnnm,
         "@p_materialtype": filters.materialtype,
+        "@p_designyn": "",
+        "@p_quocalyn": "",
+        "@p_quofinyn": "",
+        "@p_quodt": "",
+        "@p_quoamt": 0,
         "@p_person": filters.personnm == "" ? "" : filters.person,
         "@p_personnm": filters.personnm,
         "@p_remark": filters.remark,
@@ -581,6 +618,11 @@ const SA_A1001_603W: React.FC = () => {
         "@p_custnm": "",
         "@p_custprsnnm": "",
         "@p_materialtype": "",
+        "@p_designyn": "",
+        "@p_quocalyn": "",
+        "@p_quofinyn": "",
+        "@p_quodt": "",
+        "@p_quoamt": 0,
         "@p_person": "",
         "@p_personnm": "",
         "@p_remark": "",
@@ -1131,7 +1173,12 @@ const SA_A1001_603W: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "itemcd" && field != "testitem") {
+    if (
+      field != "rowstatus" &&
+      field != "itemcd" &&
+      field != "testitem" &&
+      field != "confinyn"
+    ) {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
@@ -1468,6 +1515,14 @@ const SA_A1001_603W: React.FC = () => {
                 이메일 전송
               </Button>
               <Button
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="palette"
+                onClick={onDesignWndClick}
+              >
+                디자인상세
+              </Button>
+              <Button
                 themeColor={"primary"}
                 fillMode="outline"
                 onClick={onCal}
@@ -1595,99 +1650,86 @@ const SA_A1001_603W: React.FC = () => {
               </tbody>
             </FormBox>
           </FormBoxWrap>
-          <GridContainerWrap>
-            <GridContainer width="55%">
-              <GridTitleContainer>
-                <GridTitle>견적리스트</GridTitle>
-              </GridTitleContainer>
-              <Grid
-                style={{ height: "65vh" }}
-                data={process(
-                  mainDataResult2.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-                  })),
-                  mainDataState2
+          <GridContainer>
+            <GridTitleContainer>
+              <GridTitle>견적리스트</GridTitle>
+            </GridTitleContainer>
+            <Grid
+              style={{ height: "65vh" }}
+              data={process(
+                mainDataResult2.data.map((row) => ({
+                  ...row,
+                  [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                })),
+                mainDataState2
+              )}
+              {...mainDataState2}
+              onDataStateChange={onMainDataStateChange2}
+              //선택 기능
+              dataItemKey={DATA_ITEM_KEY2}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange2}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={mainDataResult2.total}
+              skip={page2.skip}
+              take={page2.take}
+              pageable={true}
+              onPageChange={pageChange2}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef2}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange2}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onItemChange={onMainItemChange}
+              cellRender={customCellRender}
+              rowRender={customRowRender}
+              editField={EDIT_FIELD}
+            >
+              <GridColumn field="rowstatus" title=" " width="50px" />
+              <GridColumn
+                field="chk"
+                title=" "
+                width="45px"
+                headerCell={CustomCheckBoxCell2}
+                cell={CheckBoxCell}
+              />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 0
+                            ? mainTotalFooterCell2
+                            : numberField2.includes(item.fieldName)
+                            ? editNumberFooterCell
+                            : undefined
+                        }
+                      />
+                    )
                 )}
-                {...mainDataState2}
-                onDataStateChange={onMainDataStateChange2}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY2}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSelectionChange2}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult2.total}
-                skip={page2.skip}
-                take={page2.take}
-                pageable={true}
-                onPageChange={pageChange2}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef2}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange2}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
-              >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                <GridColumn
-                  field="chk"
-                  title=" "
-                  width="45px"
-                  headerCell={CustomCheckBoxCell2}
-                  cell={CheckBoxCell}
-                />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder === 0
-                              ? mainTotalFooterCell2
-                              : numberField2.includes(item.fieldName)
-                              ? editNumberFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
-              </Grid>
-            </GridContainer>
-            <GridContainer width={`calc(45% - ${GAP}px)`}>
-              <GridTitleContainer>
-                <GridTitle>시험상세디자인</GridTitle>
-              </GridTitleContainer>
-              <div
-                style={{
-                  border: "solid 1px rgba(0, 0, 0, 0.08)",
-                  height: "65.5vh",
-                }}
-              ></div>
-            </GridContainer>
-          </GridContainerWrap>
+            </Grid>
+          </GridContainer>
         </TabStripTab>
       </TabStrip>
       {custWindowVisible && (
@@ -1767,6 +1809,86 @@ const SA_A1001_603W: React.FC = () => {
           setVisible={setPrsnnumWindowVisible}
           workType="N"
           setData={setPrsnnumData}
+          modal={true}
+        />
+      )}
+      {designWindowVisible && (
+        <SA_A1000_603W_Design_Window
+          setVisible={setDesignWindowVisible}
+          filters={filters}
+          item={
+            mainDataResult2.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+            )[0] != undefined
+              ? mainDataResult2.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(selectedState2)[0]
+                )[0]
+              : ""
+          }
+          modal={true}
+        />
+      )}
+      {designWindowVisible2 && (
+        <SA_A1000_603W_Design2_Window
+          setVisible={setDesignWindowVisible2}
+          filters={filters}
+          item={
+            mainDataResult2.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+            )[0] != undefined
+              ? mainDataResult2.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(selectedState2)[0]
+                )[0]
+              : ""
+          }
+          modal={true}
+        />
+      )}
+      {designWindowVisible3 && (
+        <SA_A1000_603W_Design3_Window
+          setVisible={setDesignWindowVisible3}
+          filters={filters}
+          item={
+            mainDataResult2.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+            )[0] != undefined
+              ? mainDataResult2.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(selectedState2)[0]
+                )[0]
+              : ""
+          }
+          modal={true}
+        />
+      )}
+      {designWindowVisible4 && (
+        <SA_A1000_603W_Design4_Window
+          setVisible={setDesignWindowVisible4}
+          filters={filters}
+          item={
+            mainDataResult2.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+            )[0] != undefined
+              ? mainDataResult2.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(selectedState2)[0]
+                )[0]
+              : ""
+          }
           modal={true}
         />
       )}

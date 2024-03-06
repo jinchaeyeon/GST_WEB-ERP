@@ -193,4 +193,98 @@ export const gridList: Array<TGrid> = [
       },
     ],
   },
+  {
+    gridName: "grdList8",
+    columns: [
+      {
+        id: "col_title3",
+        field: "title",
+        caption: "교과요소",
+        width: 120,
+      },
+      {
+        id: "col_contents4",
+        field: "contents",
+        caption: "착안점",
+        width: 200,
+      },
+      {
+        id: "col_reviewlvl12",
+        field: "reviewlvl1",
+        caption: "고과분류",
+        width: 120,
+      },
+      {
+        id: "col_bf_qualitative_evalution",
+        field: "bf_qualitative_evalution",
+        caption: "이번달 정서적평가",
+        width: 120,
+      },
+      {
+        id: "col_qualitative_evalution",
+        field: "qualitative_evalution",
+        caption: "정서적평가",
+        width: 120,
+      },
+      {
+        id: "col_bf_quantitative_evalution",
+        field: "bf_quantitative_evalution",
+        caption: "이번달 정량적평가",
+        width: 120,
+      },
+      {
+        id: "col_quantitative_evalution",
+        field: "quantitative_evalution",
+        caption: "정량적평가",
+        width: 120,
+      },
+    ],
+  },
+  {
+    gridName: "grdList9",
+    columns: [
+      {
+        id: "col_reviewlvl13",
+        field: "reviewlvl1",
+        caption: "고과분류",
+        width: 120,
+      },
+      {
+        id: "col_title4",
+        field: "title",
+        caption: "교과요소",
+        width: 120,
+      },
+      {
+        id: "col_contents5",
+        field: "contents",
+        caption: "착안점",
+        width: 120,
+      },
+      {
+        id: "col_bf_qualitative_evalution2",
+        field: "bf_qualitative_evalution",
+        caption: "이번달 정서적평가",
+        width: 120,
+      },
+      {
+        id: "col_qualitative_evalution2",
+        field: "qualitative_evalution",
+        caption: "정서적평가",
+        width: 120,
+      },
+      {
+        id: "col_bf_quantitative_evalution2",
+        field: "bf_quantitative_evalution",
+        caption: "이번달 정량적평가",
+        width: 120,
+      },
+      {
+        id: "col_quantitative_evalution2",
+        field: "quantitative_evalution",
+        caption: "정량적평가",
+        width: 120,
+      },
+    ],
+  },
 ];

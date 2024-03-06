@@ -849,9 +849,6 @@ const KendoWindow = ({
         if (!item.code_name) {
           throw findMessage(messagesData, "SY_A0010W_005");
         }
-        if (!item.sort_seq) {
-          throw findMessage(messagesData, "SY_A0010W_006");
-        }
 
         detailDataResult.data.forEach((chkItem: any, chkIdx: number) => {
           if (
@@ -1583,7 +1580,6 @@ const KendoWindow = ({
             width="120px"
             title="정렬순서"
             cell={NumberCell}
-            headerCell={RequiredHeader}
           />
           <GridColumn
             field="use_yn"

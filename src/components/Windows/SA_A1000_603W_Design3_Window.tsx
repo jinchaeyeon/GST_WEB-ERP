@@ -112,18 +112,29 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
       parameters: {
         "@p_work_type": "POPUP",
         "@p_orgdiv": filters.orgdiv,
-        "@p_location": filters.location,
-        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
-        "@p_custnm": filters.custnm,
-        "@p_finyn": filters.finyn,
-        "@p_quotype": filters.quotype,
-        "@p_materialtype": filters.materialtype,
+        "@p_location": filters.location == undefined ? "01" : filters.location,
+        "@p_custcd":
+          filters.custnm == "" || filters.custnm == undefined
+            ? ""
+            : filters.custcd,
+        "@p_custnm": filters.custnm == undefined ? "" : filters.custnm,
+        "@p_finyn": filters.finyn == undefined ? "" : filters.finyn,
+        "@p_quotype": filters.quotype == undefined ? "" : filters.quotype,
+        "@p_materialtype":
+          filters.materialtype == undefined ? "" : filters.materialtype,
         "@p_quonum": item.quonum,
         "@p_quorev": item.quorev,
         "@p_quoseq": item.quoseq,
-        "@p_targetdt": convertDateToStr(filters.targetdt),
-        "@p_cpmperson": filters.cpmpersonnm == "" ? "" : filters.cpmperson,
-        "@p_cpmpersonnm": filters.cpmpersonnm,
+        "@p_targetdt":
+          filters.targetdt == undefined
+            ? ""
+            : convertDateToStr(filters.targetdt),
+        "@p_cpmperson":
+          filters.cpmpersonnm == "" || filters.cpmpersonnm == undefined
+            ? ""
+            : filters.cpmperson,
+        "@p_cpmpersonnm":
+          filters.cpmpersonnm == undefined ? "" : filters.cpmpersonnm,
         "@p_status": "",
         "@p_find_row_value": filters.find_row_value,
       },

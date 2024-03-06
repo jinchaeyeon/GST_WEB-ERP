@@ -841,12 +841,27 @@ const BA_A0020_603: React.FC = () => {
       ref_key: data.quokey == undefined ? "" : data.quokey,
       quotestnum: data.quotestnum == undefined ? "" : data.quotestnum,
       testnum: data.testnum == undefined ? "" : data.testnum,
-      smperson: smperson == undefined ? data.person : smperson.user_id,
-      cpmperson: cpmperson == undefined ? data.cpmperson : cpmperson.user_id,
+      smperson:
+        smperson == undefined
+          ? data.person == undefined
+            ? ""
+            : data.person
+          : smperson.user_id,
+      cpmperson:
+        cpmperson == undefined
+          ? data.cpmperson == undefined
+            ? ""
+            : data.cpmperson
+          : cpmperson.user_id,
       ncrdiv: "",
       combytype: "",
       status: "01",
-      chkperson: chkperson == undefined ? data.chkperson : chkperson.prsnnum,
+      chkperson:
+        chkperson == undefined
+          ? data.chkperson == undefined
+            ? ""
+            : data.chkperson
+          : chkperson.prsnnum,
       itemcd: data.itemcd == undefined ? "" : data.itemcd,
       itemnm: data.itemnm == undefined ? "" : data.itemnm,
       baddt: new Date(),

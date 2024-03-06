@@ -507,7 +507,7 @@ const SA_A1000_603W: React.FC = () => {
   let gridRef: any = useRef(null);
   let gridRef3: any = useRef(null);
   const userId = UseGetValueFromSessionItem("user_id");
-  const [step, setStep] = React.useState(0);
+  const [step, setStep] = React.useState(2);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   //커스텀 옵션 조회
@@ -918,11 +918,11 @@ const SA_A1000_603W: React.FC = () => {
     )[0];
 
     if (data != undefined) {
-      if (data.type == "Basics") {
+      if (data.type == "Basic") {
         setDesignWindowVisible(true);
       } else if (data.type == "Cheomdan") {
         setDesignWindowVisible2(true);
-      } else if (data.type == "Vitro") {
+      } else if (data.type == "Invitro") {
         setDesignWindowVisible3(true);
       } else if (data.type == "Analyze") {
         setDesignWindowVisible4(true);
@@ -2041,7 +2041,8 @@ const SA_A1000_603W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         setSelectedState7({ [rows[0][DATA_ITEM_KEY7]]: true });
-        setStep(rows[0].status);
+        //추후 셋팅
+        //setStep(rows[0].status);
       }
     } else {
       console.log("[오류 발생]");
@@ -2346,7 +2347,8 @@ const SA_A1000_603W: React.FC = () => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
-    setStep(selectedRowData.status);
+    //추후 셋팅
+    //setStep(selectedRowData.status);
   };
 
   const onRowDoubleClick = (props: any) => {
@@ -3402,7 +3404,7 @@ const SA_A1000_603W: React.FC = () => {
       <span
         className="flex w-2rem h-2rem align-items-center justify-content-center text-white border-circle z-1 shadow-1"
         style={{
-          backgroundColor: active ? "#2289c3" : completed ? "#2289c3" : "#ccc",
+          backgroundColor: active ? "#cce2f1" : "#ccc",
         }}
       >
         <i className="pi pi-cog"></i>
@@ -3410,16 +3412,18 @@ const SA_A1000_603W: React.FC = () => {
     );
   };
 
-  const customizedContent = (item: any) => {
+  const customizedContent = (item: any, key: any) => {
     return (
       <Card
         style={{
           backgroundImage: `url(/proccd.jpg)`,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
+          backgroundPosition: "center right",
+          backgroundSize: "auto 250%",
           backgroundRepeat: "no-repeat",
           opacity: 0.9,
           height: "9.5vh",
+          backgroundColor:
+            step == key ? "#cce2f1" : step > key ? "#ccc" : "white",
         }}
       >
         <CardContent
@@ -4442,13 +4446,29 @@ const SA_A1000_603W: React.FC = () => {
           disabled={mainDataResult.total == 0 ? true : false}
         >
           <GridContainerWrap>
-            <GridContainer width="50%"></GridContainer>
+            <GridContainer width="50%">
+              <GridTitleContainer>
+                <GridTitle>계약가능성 관리</GridTitle>
+              </GridTitleContainer>
+              <FormBoxWrap border={true} style={{ display: "flex" }}>
+                <FormBox width={"50%"}>
+                  <GridTitleContainer>
+                    <GridTitle>Feasibility</GridTitle>
+                  </GridTitleContainer>
+                </FormBox>
+                <FormBox width={"50%"}>
+                  <GridTitleContainer>
+                    <GridTitle>Weight</GridTitle>
+                  </GridTitleContainer>
+                </FormBox>
+              </FormBoxWrap>
+            </GridContainer>
             <GridContainer width={`calc(50% - ${GAP}px)`}>
+              <GridTitleContainer>
+                <GridTitle>상담</GridTitle>
+              </GridTitleContainer>
               <FormBoxWrap border={true}>
                 <GridContainer width={"100%"}>
-                  <GridTitleContainer>
-                    <GridTitle>상담</GridTitle>
-                  </GridTitleContainer>
                   <Grid
                     style={{ height: "20vh" }}
                     data={process(
@@ -4513,11 +4533,11 @@ const SA_A1000_603W: React.FC = () => {
                   </Grid>
                 </GridContainer>
               </FormBoxWrap>
+              <GridTitleContainer>
+                <GridTitle>컨설팅</GridTitle>
+              </GridTitleContainer>
               <FormBoxWrap border={true}>
                 <GridContainer width={"100%"}>
-                  <GridTitleContainer>
-                    <GridTitle>컨설팅</GridTitle>
-                  </GridTitleContainer>
                   <Grid
                     style={{ height: "20vh" }}
                     data={process(
@@ -4588,11 +4608,11 @@ const SA_A1000_603W: React.FC = () => {
                   </Grid>
                 </GridContainer>
               </FormBoxWrap>
+              <GridTitleContainer>
+                <GridTitle>견적</GridTitle>
+              </GridTitleContainer>
               <FormBoxWrap border={true}>
                 <GridContainer width={"100%"}>
-                  <GridTitleContainer>
-                    <GridTitle>견적</GridTitle>
-                  </GridTitleContainer>
                   <Grid
                     style={{ height: "20vh" }}
                     data={process(
@@ -4740,34 +4760,34 @@ const SA_A1000_603W: React.FC = () => {
                 <GridTitle>진행상황</GridTitle>
               </GridTitleContainer>
               <Stepper activeStep={step} orientation="vertical">
-                <Step key={"시험계획서(안) 제출일"}>
+                <Step key={0}>
                   <StepLabel StepIconComponent={customizedMarker}>
-                    {customizedContent("시험계획서(안) 제출일")}
+                    {customizedContent("시험계획서(안) 제출일", 0)}
                   </StepLabel>
                 </Step>
-                <Step key={"시험개시"}>
+                <Step key={1}>
                   <StepLabel StepIconComponent={customizedMarker}>
-                    {customizedContent("시험개시")}
+                    {customizedContent("시험개시", 1)}
                   </StepLabel>
                 </Step>
-                <Step key={"동물입수"}>
+                <Step key={2}>
                   <StepLabel StepIconComponent={customizedMarker}>
-                    {customizedContent("동물입수")}
+                    {customizedContent("동물입수", 2)}
                   </StepLabel>
                 </Step>
-                <Step key={"투여개시"}>
+                <Step key={3}>
                   <StepLabel StepIconComponent={customizedMarker}>
-                    {customizedContent("투여개시")}
+                    {customizedContent("투여개시", 3)}
                   </StepLabel>
                 </Step>
-                <Step key={"병리보고서(안) 제출일"}>
+                <Step key={4}>
                   <StepLabel StepIconComponent={customizedMarker}>
-                    {customizedContent("병리보고서(안) 제출일")}
+                    {customizedContent("병리보고서(안) 제출일", 4)}
                   </StepLabel>
                 </Step>
-                <Step key={"최종보고서(안) 제출일"}>
+                <Step key={5}>
                   <StepLabel StepIconComponent={customizedMarker}>
-                    {customizedContent("최종보고서(안) 제출일")}
+                    {customizedContent("최종보고서(안) 제출일", 5)}
                   </StepLabel>
                 </Step>
               </Stepper>

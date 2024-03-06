@@ -111,6 +111,12 @@ export const gridList: Array<TGrid> = [
         caption: "최종견적금액",
         width: 100,
       },
+      {
+        id: "col_confinyn",
+        field: "confinyn",
+        caption: "계약전환여부",
+        width: 80,
+      },
     ],
   },
 ];

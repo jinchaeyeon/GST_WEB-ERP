@@ -772,6 +772,7 @@ const CM_A5000W: React.FC = () => {
             files: selectedRow.files,
             ref_document_id: selectedRow.ref_document_id,
           });
+          fetchHtmlDocument(selectedRow);
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
           setWorkType("U");
@@ -801,6 +802,7 @@ const CM_A5000W: React.FC = () => {
             files: rows[0].files,
             ref_document_id: rows[0].ref_document_id,
           });
+          fetchHtmlDocument(rows[0]);
         }
       } else {
         setWorkType("");
@@ -1308,10 +1310,7 @@ const CM_A5000W: React.FC = () => {
     }
     const bytes = require("utf8-bytes");
     const bytes2 = require("utf8-bytes");
-    const convertedEditorContent =
-      workType == "D"
-        ? bytesToBase64(bytes(reference))
-        : bytesToBase64(bytes(editorContent));
+    const convertedEditorContent = bytesToBase64(bytes(editorContent));
     const convertedEditorContent2 = bytesToBase64(bytes2(editorContent2));
 
     const parameters = {
@@ -1372,7 +1371,7 @@ const CM_A5000W: React.FC = () => {
       } else {
         setTabSelected(1);
       }
-  
+
       if (workType == "D" && paraDataSaved.attdatnum != "") {
         setDeletedAttadatnums([paraDataSaved.attdatnum]);
       }
@@ -1762,13 +1761,13 @@ const CM_A5000W: React.FC = () => {
                   <GridTitle>상세정보</GridTitle>
 
                   <ButtonContainer>
-                  <Button
+                    <Button
                       onClick={onDeleteClick}
                       themeColor={"primary"}
                       fillMode={"outline"}
                       icon="delete"
                     >
-                      문의삭제
+                      문의 삭제
                     </Button>
                     <Button
                       onClick={onSaveClick}
@@ -1776,7 +1775,7 @@ const CM_A5000W: React.FC = () => {
                       themeColor={"primary"}
                       icon="save"
                     >
-                     문의저장
+                      문의 저장
                     </Button>
                   </ButtonContainer>
                 </GridTitleContainer>
@@ -2043,7 +2042,7 @@ const CM_A5000W: React.FC = () => {
                     fillMode={"outline"}
                     icon="delete"
                   >
-                    답변삭제
+                    답변 삭제
                   </Button>
                   <Button
                     onClick={onSaveClick2}
