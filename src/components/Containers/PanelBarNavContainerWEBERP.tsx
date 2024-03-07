@@ -944,7 +944,7 @@ const PanelBarNavContainer = (props: any) => {
                     window.open(`https://spm.gsti.co.kr/QnA`);
                   }}
                   fillMode="flat"
-                  title="QnA"
+                  title="Q&A: SPM 프로그램으로 연결됩니다. 프로그램 관련 문의 글을 올리실 수 있습니다."
                 ></Button>
                 <Popup
                   offset={offset}

@@ -145,6 +145,8 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 let deletedMainRows: any[] = [];
 let deletedMainRows2: any[] = [];
 const SA_A1100_603W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -2611,60 +2613,122 @@ const SA_A1100_603W: React.FC = () => {
               </GridTitleContainer>
               <FormBoxWrap border={true}>
                 <FormBox>
-                  <tbody>
-                    <tr>
-                      <th style={{ textAlign: "center" }}>거래금액</th>
-                      <th style={{ textAlign: "center" }}>수금금액</th>
-                      <th style={{ textAlign: "center" }}>수주금액</th>
-                      <th style={{ textAlign: "center" }}>미수잔액</th>
-                    </tr>
-                    <tr>
-                      <td>
-                        <Input
-                          name="saleamt"
-                          type="text"
-                          value={numberWithCommas3(Information.saleamt)}
-                          style={{
-                            textAlign: "end",
-                          }}
-                          readOnly={true}
-                        />
-                      </td>
-                      <td>
-                        <Input
-                          name="collamt"
-                          type="text"
-                          value={numberWithCommas3(Information.collamt)}
-                          style={{
-                            textAlign: "end",
-                          }}
-                          readOnly={true}
-                        />
-                      </td>
-                      <td>
-                        <Input
-                          name="ordamt"
-                          type="text"
-                          value={numberWithCommas3(Information.ordamt)}
-                          style={{
-                            textAlign: "end",
-                          }}
-                          readOnly={true}
-                        />
-                      </td>
-                      <td>
-                        <Input
-                          name="janamt"
-                          type="text"
-                          value={numberWithCommas3(Information.janamt)}
-                          style={{
-                            textAlign: "end",
-                          }}
-                          readOnly={true}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
+                  {isMobile ? (
+                    <tbody>
+                      <tr>
+                        <th style={{ textAlign: "center" }}>거래금액</th>
+                        <td>
+                          <Input
+                            name="saleamt"
+                            type="text"
+                            value={numberWithCommas3(Information.saleamt)}
+                            style={{
+                              textAlign: "end",
+                            }}
+                            readOnly={true}
+                          />
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th style={{ textAlign: "center" }}>수금금액</th>
+                        <td>
+                          <Input
+                            name="collamt"
+                            type="text"
+                            value={numberWithCommas3(Information.collamt)}
+                            style={{
+                              textAlign: "end",
+                            }}
+                            readOnly={true}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style={{ textAlign: "center" }}>수주금액</th>
+                        <td>
+                          <Input
+                            name="ordamt"
+                            type="text"
+                            value={numberWithCommas3(Information.ordamt)}
+                            style={{
+                              textAlign: "end",
+                            }}
+                            readOnly={true}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style={{ textAlign: "center" }}>미수잔액</th>
+                        <td>
+                          <Input
+                            name="janamt"
+                            type="text"
+                            value={numberWithCommas3(Information.janamt)}
+                            style={{
+                              textAlign: "end",
+                            }}
+                            readOnly={true}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  ) : (
+                    <tbody>
+                      <tr>
+                        <th style={{ textAlign: "center" }}>거래금액</th>
+                        <th style={{ textAlign: "center" }}>수금금액</th>
+                        <th style={{ textAlign: "center" }}>수주금액</th>
+                        <th style={{ textAlign: "center" }}>미수잔액</th>
+                      </tr>
+                      <tr>
+                        <td>
+                          <Input
+                            name="saleamt"
+                            type="text"
+                            value={numberWithCommas3(Information.saleamt)}
+                            style={{
+                              textAlign: "end",
+                            }}
+                            readOnly={true}
+                          />
+                        </td>
+                        <td>
+                          <Input
+                            name="collamt"
+                            type="text"
+                            value={numberWithCommas3(Information.collamt)}
+                            style={{
+                              textAlign: "end",
+                            }}
+                            readOnly={true}
+                          />
+                        </td>
+                        <td>
+                          <Input
+                            name="ordamt"
+                            type="text"
+                            value={numberWithCommas3(Information.ordamt)}
+                            style={{
+                              textAlign: "end",
+                            }}
+                            readOnly={true}
+                          />
+                        </td>
+                        <td>
+                          <Input
+                            name="janamt"
+                            type="text"
+                            value={numberWithCommas3(Information.janamt)}
+                            style={{
+                              textAlign: "end",
+                            }}
+                            readOnly={true}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  )}
                 </FormBox>
               </FormBoxWrap>
               <Grid

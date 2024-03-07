@@ -502,6 +502,8 @@ const SA_A1000_603W: React.FC = () => {
   const idGetter5 = getter(DATA_ITEM_KEY5);
   const idGetter6 = getter(DATA_ITEM_KEY6);
   const idGetter7 = getter(DATA_ITEM_KEY7);
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
 
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -2373,7 +2375,7 @@ const SA_A1000_603W: React.FC = () => {
         }
         if (index == -1 && (rows[0].status == "3" || rows[0].status == "")) {
           index = 0;
-  
+
           const rows2 = rows.map((item: any, index: any) => {
             if (index == 0) {
               return {
@@ -2387,7 +2389,7 @@ const SA_A1000_603W: React.FC = () => {
               };
             }
           });
-  
+
           setMainDataResult8((prev) => {
             return {
               data: rows2,
@@ -4028,7 +4030,7 @@ const SA_A1000_603W: React.FC = () => {
             >
               <GridTitleContainer>
                 <GridTitle>
-                  <ButtonContainer>
+                  <ButtonContainer style={{ justifyContent: "flex-start" }}>
                     요약정보
                     <div
                       style={{
@@ -4864,7 +4866,10 @@ const SA_A1000_603W: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>계약가능성 관리</GridTitle>
               </GridTitleContainer>
-              <FormBoxWrap border={true} style={{ display: "flex" }}>
+              <FormBoxWrap
+                border={true}
+                style={{ display: isMobile ? "block" : "flex" }}
+              >
                 <FormBox width={"50%"}>
                   <GridTitleContainer>
                     <GridTitle>Feasibility</GridTitle>

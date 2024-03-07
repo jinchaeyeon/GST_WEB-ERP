@@ -740,7 +740,9 @@ const CR_A0020W: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                birdt: row.birdt ? new Date(dateformat(row.birdt)) : null, //new Date(dateformat("19991231")),
+                birdt: row.birdt
+                  ? new Date(dateformat(row.birdt))
+                  : new Date(dateformat("19991231")), //new Date(dateformat("19991231")),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState

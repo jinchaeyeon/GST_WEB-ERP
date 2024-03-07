@@ -264,6 +264,7 @@ const SA_B3000W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       [name]: value,
+      isSearch: name == "yyyy" ? true : false,
     }));
   };
 

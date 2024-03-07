@@ -2045,7 +2045,7 @@ const BA_A0020_603: React.FC = () => {
                     <Typography
                       style={{
                         color: "black",
-                        fontSize: "0.8vw",
+
                         fontWeight: 500,
                         marginBottom: "10px",
                         display: "flex",
@@ -2139,6 +2139,7 @@ const BA_A0020_603: React.FC = () => {
                                       whiteSpace: "nowrap",
                                       textOverflow: "ellipsis",
                                       overflow: "hidden",
+                                      minWidth: item.width,
                                     }}
                                   />
                                 )
@@ -2157,7 +2158,7 @@ const BA_A0020_603: React.FC = () => {
                   <Typography
                     style={{
                       color: "black",
-                      fontSize: "0.8vw",
+
                       fontWeight: 500,
                       marginBottom: "10px",
                       display: "flex",
@@ -2250,6 +2251,7 @@ const BA_A0020_603: React.FC = () => {
                                     whiteSpace: "nowrap",
                                     textOverflow: "ellipsis",
                                     overflow: "hidden",
+                                    minWidth: item.width,
                                   }}
                                 />
                               )
@@ -2267,7 +2269,7 @@ const BA_A0020_603: React.FC = () => {
                   <Typography
                     style={{
                       color: "black",
-                      fontSize: "0.8vw",
+
                       fontWeight: 500,
                       marginBottom: "10px",
                       display: "flex",
@@ -2360,6 +2362,7 @@ const BA_A0020_603: React.FC = () => {
                                     whiteSpace: "nowrap",
                                     textOverflow: "ellipsis",
                                     overflow: "hidden",
+                                    minWidth: item.width,
                                   }}
                                 />
                               )

@@ -839,9 +839,6 @@ const Main: React.FC = () => {
           <Button icon={"home"} fillMode={"flat"} themeColor={"primary"}>
             HOMEPAGE
           </Button>
-          <Button icon={"email"} fillMode={"flat"} themeColor={"primary"}>
-            E-MAIL
-          </Button>
         </ButtonContainer>
         {!visible ? (
           <>
