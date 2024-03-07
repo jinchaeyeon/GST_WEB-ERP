@@ -5389,7 +5389,7 @@ const SA_A1000_603W: React.FC = () => {
                 <GridTitle>시험리스트</GridTitle>
               </GridTitleContainer>
               <Grid
-                style={{ height: "93vh" }}
+                style={{ height: "80vh" }}
                 data={process(
                   mainDataResult7.data.map((row) => ({
                     ...row,
