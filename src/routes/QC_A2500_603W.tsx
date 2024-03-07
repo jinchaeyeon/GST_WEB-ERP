@@ -2037,114 +2037,117 @@ const BA_A0020_603: React.FC = () => {
             </GridContainer>
             <GridContainer width={`calc(80% - ${GAP}px)`}>
               <FormBoxWrap border={true}>
-                <GridContainer>
-                  <GridTitleContainer>
-                    <GridTitle>컴플레인 사유</GridTitle>
-                  </GridTitleContainer>
-                  <Typography
-                    style={{
-                      color: "black",
-                      fontSize: "0.8vw",
-                      fontWeight: 500,
-                      marginBottom: "10px",
-                      display: "flex",
-                    }}
-                  >
-                    <p style={{ minWidth: "70px" }}>작성자 :</p>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="devperson"
-                        value={Information.devperson}
-                        type="new"
-                        customOptionData={customOptionData}
-                        changeData={ComboBoxChange}
-                        textField="user_name"
-                        valueField="user_id"
-                      />
-                    )}
-                  </Typography>
-                  <TextArea
-                    value={Information.requiretext}
-                    name="requiretext"
-                    rows={3}
-                    onChange={InputChange}
-                    style={{ backgroundColor: "rgba(34, 137, 195, 0.25)" }}
-                  />
-                  <Card
-                    style={{
-                      width: "100%",
-                      marginRight: "15px",
-                      borderRadius: "10px",
-                      backgroundColor: "white",
-                      marginTop: "10px",
-                    }}
-                  >
-                    <CardContent>
-                      <GridTitleContainer>
-                        <GridTitle></GridTitle>
-                        <ButtonContainer>
-                          <Button
-                            onClick={onCommentAddClick}
-                            themeColor={"primary"}
-                            icon="plus"
-                            title="행 추가"
-                          ></Button>
-                          <Button
-                            onClick={onCommentRemoveClick}
-                            fillMode="outline"
-                            themeColor={"primary"}
-                            icon="minus"
-                            title="행 삭제"
-                          ></Button>
-                        </ButtonContainer>
-                      </GridTitleContainer>
-                      <DataTable
-                        value={commentDataResult.data}
-                        tableStyle={{ marginTop: "5px" }}
-                        selectionMode="single"
-                        dataKey={COMMENT_DATA_ITEM_KEY}
-                        emptyMessage="No DATA."
-                        footer={footer}
-                        selection={commentselectedState}
-                        onSelectionChange={(e: any) => {
-                          setCommentSelectedState(e.value);
-                        }}
-                        columnResizeMode="expand"
-                        resizableColumns
-                        reorderableColumns
-                        scrollable
-                        scrollHeight="25vh"
-                        editMode="cell"
-                        showGridlines
-                      >
-                        <Column
-                          field="rowstatus"
-                          header=" "
-                          style={{ width: "50px" }}
+                <GridTitleContainer>
+                  <GridTitle>컴플레인 사유</GridTitle>
+                </GridTitleContainer>
+                <GridContainerWrap>
+                  <GridContainer width="30%">
+                    <Typography
+                      style={{
+                        color: "black",
+                        fontSize: "0.8vw",
+                        fontWeight: 500,
+                        marginBottom: "10px",
+                        display: "flex",
+                      }}
+                    >
+                      <p style={{ minWidth: "70px" }}>작성자 :</p>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="devperson"
+                          value={Information.devperson}
+                          type="new"
+                          customOptionData={customOptionData}
+                          changeData={ComboBoxChange}
+                          textField="user_name"
+                          valueField="user_id"
                         />
-                        {customOptionData !== null &&
-                          customOptionData.menuCustomColumnOptions[
-                            "grdList2"
-                          ].map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <Column
-                                  field={item.fieldName}
-                                  header={item.caption}
-                                  editor={(options) => cellEditor(options)}
-                                  style={{
-                                    width: item.width,
-                                    whiteSpace: "nowrap",
-                                    textOverflow: "ellipsis",
-                                    overflow: "hidden",
-                                  }}
-                                />
-                              )
-                          )}
-                      </DataTable>
-                    </CardContent>
-                  </Card>
-                </GridContainer>
+                      )}
+                    </Typography>
+                    <TextArea
+                      value={Information.requiretext}
+                      name="requiretext"
+                      rows={14}
+                      onChange={InputChange}
+                      style={{ backgroundColor: "rgba(34, 137, 195, 0.25)" }}
+                    />
+                  </GridContainer>
+                  <GridContainer width={`calc(70% - ${GAP}px)`}>
+                    <Card
+                      style={{
+                        width: "100%",
+                        marginRight: "15px",
+                        borderRadius: "10px",
+                        backgroundColor: "white",
+                      }}
+                    >
+                      <CardContent>
+                        <GridTitleContainer>
+                          <GridTitle></GridTitle>
+                          <ButtonContainer>
+                            <Button
+                              onClick={onCommentAddClick}
+                              themeColor={"primary"}
+                              icon="plus"
+                              title="행 추가"
+                            ></Button>
+                            <Button
+                              onClick={onCommentRemoveClick}
+                              fillMode="outline"
+                              themeColor={"primary"}
+                              icon="minus"
+                              title="행 삭제"
+                            ></Button>
+                          </ButtonContainer>
+                        </GridTitleContainer>
+                        <DataTable
+                          value={commentDataResult.data}
+                          tableStyle={{ marginTop: "5px", fontSize: "14px" }}
+                          selectionMode="single"
+                          dataKey={COMMENT_DATA_ITEM_KEY}
+                          emptyMessage="No DATA."
+                          footer={footer}
+                          selection={commentselectedState}
+                          onSelectionChange={(e: any) => {
+                            setCommentSelectedState(e.value);
+                          }}
+                          columnResizeMode="expand"
+                          resizableColumns
+                          reorderableColumns
+                          scrollable
+                          scrollHeight="25vh"
+                          editMode="cell"
+                          showGridlines
+                        >
+                          <Column
+                            field="rowstatus"
+                            header=" "
+                            style={{ width: "50px" }}
+                          />
+                          {customOptionData !== null &&
+                            customOptionData.menuCustomColumnOptions[
+                              "grdList2"
+                            ].map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <Column
+                                    field={item.fieldName}
+                                    header={item.caption}
+                                    editor={(options) => cellEditor(options)}
+                                    style={{
+                                      width: item.width,
+                                      whiteSpace: "nowrap",
+                                      textOverflow: "ellipsis",
+                                      overflow: "hidden",
+                                    }}
+                                  />
+                                )
+                            )}
+                        </DataTable>
+                      </CardContent>
+                    </Card>
+                  </GridContainer>
+                </GridContainerWrap>
               </FormBoxWrap>
               <FormBoxWrap border={true}>
                 <GridContainer style={{ marginTop: "5px" }}>

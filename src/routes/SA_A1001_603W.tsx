@@ -4,6 +4,7 @@ import { getter } from "@progress/kendo-react-common";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
@@ -92,6 +93,8 @@ const numberField = [
   "finalquowonamt",
 ];
 
+const iconField = ["confinyn"];
+
 const centerField = ["designyn"];
 
 const numberField2 = ["quounp", "finalquowonamt"];
@@ -106,6 +109,25 @@ type TdataArr = {
   margin_s: string[];
   discount_s: string[];
   amt_s: string[];
+};
+
+const iconCell = (props: GridCellProps) => {
+  const data = props.dataItem;
+
+  return data ? (
+    data.confinyn == "Y" ? (
+      <td style={{ textAlign: "center" }}>
+        <span
+          className="k-icon k-i-checkmark-circle k-icon-md"
+          style={{ color: "green" }}
+        ></span>
+      </td>
+    ) : (
+      <td />
+    )
+  ) : (
+    <td />
+  );
 };
 
 const SA_A1001_603W: React.FC = () => {
@@ -180,6 +202,10 @@ const SA_A1001_603W: React.FC = () => {
             (item: any) => item.id === "materialtype"
           ).valueCode,
           rev: defaultOption.find((item: any) => item.id === "rev").valueCode,
+          designyn: defaultOption.find((item: any) => item.id === "designyn")
+            .valueCode,
+          quocalyn: defaultOption.find((item: any) => item.id === "quocalyn")
+            .valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
           isSearch: true,
@@ -191,6 +217,10 @@ const SA_A1001_603W: React.FC = () => {
           materialtype: defaultOption.find(
             (item: any) => item.id === "materialtype"
           ).valueCode,
+          designyn: defaultOption.find((item: any) => item.id === "designyn")
+            .valueCode,
+          quocalyn: defaultOption.find((item: any) => item.id === "quocalyn")
+            .valueCode,
           rev: defaultOption.find((item: any) => item.id === "rev").valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
@@ -354,6 +384,13 @@ const SA_A1001_603W: React.FC = () => {
     custnm: "",
     custprsnnm: "",
     materialtype: "",
+    designyn: "",
+    quocalyn: "",
+    quofinyn: "",
+    //quodt fetchMainGrid에서 셋팅해야함
+    quodt: new Date(),
+    quoamt_str: 0,
+    quoamt_end: 0,
     person: "",
     personnm: "",
     remark: "",
@@ -491,11 +528,12 @@ const SA_A1001_603W: React.FC = () => {
         "@p_custnm": filters.custnm,
         "@p_custprsnnm": filters.custprsnnm,
         "@p_materialtype": filters.materialtype,
-        "@p_designyn": "",
-        "@p_quocalyn": "",
-        "@p_quofinyn": "",
+        "@p_designyn": filters.designyn,
+        "@p_quocalyn": filters.quocalyn,
+        "@p_quofinyn": filters.quofinyn,
         "@p_quodt": "",
-        "@p_quoamt": 0,
+        "@p_quoamt_str": filters.quoamt_str,
+        "@p_quoamt_end": filters.quoamt_end,
         "@p_person": filters.personnm == "" ? "" : filters.person,
         "@p_personnm": filters.personnm,
         "@p_remark": filters.remark,
@@ -618,11 +656,12 @@ const SA_A1001_603W: React.FC = () => {
         "@p_custnm": "",
         "@p_custprsnnm": "",
         "@p_materialtype": "",
-        "@p_designyn": "",
-        "@p_quocalyn": "",
-        "@p_quofinyn": "",
+        "@p_designyn": filters.designyn,
+        "@p_quocalyn": filters.quocalyn,
+        "@p_quofinyn": filters.quofinyn,
         "@p_quodt": "",
-        "@p_quoamt": 0,
+        "@p_quoamt_str": filters.quoamt_str,
+        "@p_quoamt_end": filters.quoamt_end,
         "@p_person": "",
         "@p_personnm": "",
         "@p_remark": "",
@@ -814,6 +853,15 @@ const SA_A1001_603W: React.FC = () => {
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "SA_A1001_603W_001");
+      } else if (
+        filters.quoamt_str == null ||
+        filters.quoamt_str == undefined ||
+        filters.quoamt_end == null ||
+        filters.quoamt_end == undefined
+      ) {
+        throw findMessage(messagesData, "SA_A1001_603W_002");
+      } else if (filters.quoamt_str > filters.quoamt_end) {
+        throw findMessage(messagesData, "SA_A1001_603W_003");
       } else {
         setValues2(false);
         setPage(initialPageState); // 페이지 초기화
@@ -1410,6 +1458,52 @@ const SA_A1001_603W: React.FC = () => {
                       />
                     )}
                   </td>
+                  <th>디자인 입력 여부</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="designyn"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>견적산출여부</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="quocalyn"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                  <th>견적확정여부</th>
+                  <td></td>
+                  <th>견적발행일</th>
+                  <td></td>
+                  <th>견적금액</th>
+                  <td>
+                    <div className="filter-item-wrap">
+                      <Input
+                        name="quoamt_str"
+                        type="number"
+                        value={filters.quoamt_str}
+                        onChange={filterInputChange}
+                        className="required"
+                      />
+                      ~
+                      <Input
+                        name="quoamt_end"
+                        type="number"
+                        value={filters.quoamt_end}
+                        onChange={filterInputChange}
+                        className="required"
+                      />
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </FilterBox>
@@ -1425,7 +1519,7 @@ const SA_A1001_603W: React.FC = () => {
                 <GridTitle>요약정보</GridTitle>
               </GridTitleContainer>
               <Grid
-                style={{ height: "72vh" }}
+                style={{ height: "65vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1655,7 +1749,7 @@ const SA_A1001_603W: React.FC = () => {
               <GridTitle>견적리스트</GridTitle>
             </GridTitleContainer>
             <Grid
-              style={{ height: "65vh" }}
+              style={{ height: "60vh" }}
               data={process(
                 mainDataResult2.data.map((row) => ({
                   ...row,
@@ -1716,6 +1810,8 @@ const SA_A1001_603W: React.FC = () => {
                         cell={
                           numberField.includes(item.fieldName)
                             ? NumberCell
+                            : iconField.includes(item.fieldName)
+                            ? iconCell
                             : undefined
                         }
                         footerCell={

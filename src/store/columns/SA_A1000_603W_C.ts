@@ -17,9 +17,9 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_concat_status",
-        field: "concat_status",
-        caption: "계약여부",
+        id: "col_consts",
+        field: "consts",
+        caption: "계약등록여부",
         width: 120,
       },
       {

@@ -79,12 +79,14 @@ import {
   UsePermissions,
   convertDateToStr,
   dateformat,
+  dateformat2,
   findMessage,
   getGridItemChangedData,
   getItemQuery,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   isValidDate,
+  numberWithCommas3,
   setDefaultDate,
   toDate,
   useSysMessage,
@@ -507,7 +509,7 @@ const SA_A1000_603W: React.FC = () => {
   let gridRef: any = useRef(null);
   let gridRef3: any = useRef(null);
   const userId = UseGetValueFromSessionItem("user_id");
-  const [step, setStep] = React.useState(2);
+  const [step, setStep] = React.useState(-1);
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   //커스텀 옵션 조회
@@ -620,10 +622,33 @@ const SA_A1000_603W: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent(
-    "L_SA002, L_BA171, L_BA057, L_Requestgb, L_SA019_603, L_SA001_603, L_SA004, L_SA016, L_CM501_603, L_SA011_603, L_CM500_603, L_sysUserMaster_001",
+    "L_SA018_603,L_SA017_603,L_SA016_603L_SA015_603, L_SA014_603, L_SA013_603, L_SA012_603, L_BA016_603, L_SA002, L_BA171, L_BA057, L_Requestgb, L_SA019_603, L_SA001_603, L_SA004, L_SA016, L_CM501_603, L_SA011_603, L_CM500_603, L_sysUserMaster_001",
     setBizComponentData
   );
-
+  const [materialgbListData, setMaterialgbListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [assaygbeListData, setAssaygbeListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [startschgbListData, setStartschgbListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [financegbListData, setFinancegbListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [amtgbListData, setAmtgbListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [addordgbListData, setAddordgbListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [relationgbListData, setRelationgbListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [statusListData3, setStatusListData3] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
@@ -654,6 +679,46 @@ const SA_A1000_603W: React.FC = () => {
   ]);
   useEffect(() => {
     if (bizComponentData.length > 0) {
+      const materialgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA012_603"
+        )
+      );
+      const assaygbeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA013_603"
+        )
+      );
+      const startschgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA014_603"
+        )
+      );
+      const financegbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA015_603"
+        )
+      );
+      const amtgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA016_603"
+        )
+      );
+      const addordgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA017_603"
+        )
+      );
+      const relationgbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA018_603"
+        )
+      );
+      const statusQueryStr3 = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_BA016_603"
+        )
+      );
       const ordstsQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
       );
@@ -694,6 +759,14 @@ const SA_A1000_603W: React.FC = () => {
           (item: any) => item.bizComponentId === "L_SA001_603"
         )
       );
+      fetchQueryData(materialgbQueryStr, setMaterialgbListData);
+      fetchQueryData(assaygbeQueryStr, setAssaygbeListData);
+      fetchQueryData(startschgbQueryStr, setStartschgbListData);
+      fetchQueryData(financegbQueryStr, setFinancegbListData);
+      fetchQueryData(amtgbQueryStr, setAmtgbListData);
+      fetchQueryData(addordgbQueryStr, setAddordgbListData);
+      fetchQueryData(relationgbQueryStr, setRelationgbListData);
+      fetchQueryData(statusQueryStr3, setStatusListData3);
       fetchQueryData(ordstsQueryStr, setOrdstsListData);
       fetchQueryData(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQueryData(userQueryStr, setUserListData);
@@ -850,6 +923,9 @@ const SA_A1000_603W: React.FC = () => {
   const [mainDataState7, setMainDataState7] = useState<State>({
     sort: [],
   });
+  const [mainDataState8, setMainDataState8] = useState<State>({
+    sort: [],
+  });
   const [tempState, setTempState] = useState<State>({
     sort: [],
   });
@@ -872,8 +948,11 @@ const SA_A1000_603W: React.FC = () => {
   const [mainDataResult6, setMainDataResult6] = useState<DataResult>(
     process([], mainDataState6)
   );
-  const [mainDataResult7, setmainDataResult7] = useState<DataResult>(
+  const [mainDataResult7, setMainDataResult7] = useState<DataResult>(
     process([], mainDataState7)
+  );
+  const [mainDataResult8, setMainDataResult8] = useState<DataResult>(
+    process([], mainDataState8)
   );
   const [tempResult, setTempResult] = useState<DataResult>(
     process([], tempState)
@@ -1124,7 +1203,8 @@ const SA_A1000_603W: React.FC = () => {
     setMainDataResult4(process([], mainDataState4));
     setMainDataResult5(process([], mainDataState5));
     setMainDataResult6(process([], mainDataState6));
-    setmainDataResult7(process([], mainDataState7));
+    setMainDataResult7(process([], mainDataState7));
+    setMainDataResult8(process([], mainDataState8));
     deletedMainRows2 = [];
   };
 
@@ -1155,6 +1235,13 @@ const SA_A1000_603W: React.FC = () => {
         (item) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       )[0];
+      setFilters3((prev) => ({
+        ...prev,
+        pgNum: 1,
+        quonum: selectedRowData.quonum,
+        quorev: selectedRowData.quorev,
+        isSearch: true,
+      }));
       setFilters4((prev) => ({
         ...prev,
         pgNum: 1,
@@ -1397,6 +1484,14 @@ const SA_A1000_603W: React.FC = () => {
     pgNum: 1,
     isSearch: true,
   });
+  const [filters3, setFilters3] = useState({
+    pgSize: PAGE_SIZE,
+    find_row_value: "",
+    quonum: "",
+    quorev: 0,
+    pgNum: 1,
+    isSearch: true,
+  });
   const [filters4, setFilters4] = useState({
     pgSize: PAGE_SIZE,
     find_row_value: "",
@@ -1423,9 +1518,17 @@ const SA_A1000_603W: React.FC = () => {
   });
   const [filters7, setFilters7] = useState({
     pgSize: PAGE_SIZE,
-    workType: "DETAIL2",
     quonum: "",
     quorev: 0,
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+  const [filters8, setFilters8] = useState({
+    pgSize: PAGE_SIZE,
+    quonum: "",
+    quorev: 0,
+    quoseq: 0,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -1480,6 +1583,28 @@ const SA_A1000_603W: React.FC = () => {
     translate4: "",
     translate5: "",
     validt: null,
+  });
+
+  const [Information2, setInformation2] = useState<{ [name: string]: any }>({
+    addordgb: "",
+    amtgb: "",
+    assaygbe: "",
+    financegb: "",
+    grade1: 0,
+    grade2: 0,
+    grade3: 0,
+    grade4: 0,
+    grade5: 0,
+    grade6: 0,
+    grade7: 0,
+    materialgb: "",
+    orgdiv: "01",
+    relationgb: "",
+    startschgb: "",
+    totgrade1: 0,
+    totgrade2: 0,
+    level1: "",
+    level2: "",
   });
 
   function getName(data: { sub_code: string }[]) {
@@ -1581,9 +1706,23 @@ const SA_A1000_603W: React.FC = () => {
             quonum: selectedRow.quonum,
             quorev: selectedRow.quorev,
           }));
+          setFilters3((prev) => ({
+            ...prev,
+            pgNum: 1,
+            isSearch: true,
+            quonum: selectedRow.quonum,
+            quorev: selectedRow.quorev,
+          }));
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
           setFilters2((prev) => ({
+            ...prev,
+            pgNum: 1,
+            isSearch: true,
+            quonum: rows[0].quonum,
+            quorev: rows[0].quorev,
+          }));
+          setFilters3((prev) => ({
             ...prev,
             pgNum: 1,
             isSearch: true,
@@ -1790,6 +1929,126 @@ const SA_A1000_603W: React.FC = () => {
     }));
     setLoading(false);
   };
+  //그리드 데이터 조회
+  const fetchMainGrid3 = async (filters3: any) => {
+    //if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_SA_A1000_603W_Q",
+      pageNumber: filters3.pgNum,
+      pageSize: filters3.pgSize,
+      parameters: {
+        "@p_work_type": "CONTRACT",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_custcd": "",
+        "@p_custnm": "",
+        "@p_finyn": "",
+        "@p_quotype": "",
+        "@p_materialtype": "",
+        "@p_quonum": filters3.quonum,
+        "@p_quorev": filters3.quorev,
+        "@p_quoseq": 0,
+        "@p_targetdt": "",
+        "@p_cpmperson": "",
+        "@p_cpmpersonnm": "",
+        "@p_status": "",
+        "@p_find_row_value": "",
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows.map((item: any) => ({
+        ...item,
+        level1:
+          item.totgrade1 >= 12
+            ? "상"
+            : item.totgrade1 >= 7
+            ? "중"
+            : item.totgrade1 >= 1
+            ? "하"
+            : "",
+        level2:
+          item.totgrade2 >= 7
+            ? "상"
+            : item.totgrade2 >= 4
+            ? "중"
+            : item.totgrade2 >= 1
+            ? "하"
+            : "",
+      }));
+
+      if (totalRowCnt > 0) {
+        setInformation2({
+          addordgb: rows[0].addordgb,
+          amtgb: rows[0].amtgb,
+          assaygbe: rows[0].assaygbe,
+          financegb: rows[0].financegb,
+          grade1: rows[0].grade1,
+          grade2: rows[0].grade2,
+          grade3: rows[0].grade3,
+          grade4: rows[0].grade4,
+          grade5: rows[0].grade5,
+          grade6: rows[0].grade6,
+          grade7: rows[0].grade7,
+          materialgb: rows[0].materialgb,
+          orgdiv: rows[0].orgdiv,
+          relationgb: rows[0].relationgb,
+          startschgb: rows[0].startschgb,
+          totgrade1: rows[0].totgrade1,
+          totgrade2: rows[0].totgrade2,
+          level1: rows[0].level1,
+          level2: rows[0].level2,
+        });
+      } else {
+        setInformation2({
+          addordgb: "",
+          amtgb: "",
+          assaygbe: "",
+          financegb: "",
+          grade1: 0,
+          grade2: 0,
+          grade3: 0,
+          grade4: 0,
+          grade5: 0,
+          grade6: 0,
+          grade7: 0,
+          materialgb: "",
+          orgdiv: "01",
+          relationgb: "",
+          startschgb: "",
+          totgrade1: 0,
+          totgrade2: 0,
+          level1: "",
+          level2: "",
+        });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters3((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
   //그리드 데이터 조회
   const fetchMainGrid4 = async (filters4: any) => {
     //if (!permissions?.view) return;
@@ -2003,7 +2262,7 @@ const SA_A1000_603W: React.FC = () => {
       pageNumber: filters7.pgNum,
       pageSize: filters7.pgSize,
       parameters: {
-        "@p_work_type": filters7.workType,
+        "@p_work_type": "DETAIL2",
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
         "@p_custcd": "",
@@ -2032,7 +2291,7 @@ const SA_A1000_603W: React.FC = () => {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
-      setmainDataResult7((prev) => {
+      setMainDataResult7((prev) => {
         return {
           data: rows,
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
@@ -2041,8 +2300,13 @@ const SA_A1000_603W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         setSelectedState7({ [rows[0][DATA_ITEM_KEY7]]: true });
-        //추후 셋팅
-        //setStep(rows[0].status);
+        setFilters8((prev) => ({
+          ...prev,
+          quonum: rows[0].quonum,
+          quorev: rows[0].quorev,
+          quoseq: rows[0].quoseq,
+          isSearch: true,
+        }));
       }
     } else {
       console.log("[오류 발생]");
@@ -2050,6 +2314,109 @@ const SA_A1000_603W: React.FC = () => {
     }
     // 필터 isSearch false처리, pgNum 세팅
     setFilters7((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  const fetchMainGrid8 = async (filters8: any) => {
+    //if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_SA_A1000_603W_Q",
+      pageNumber: filters8.pgNum,
+      pageSize: filters8.pgSize,
+      parameters: {
+        "@p_work_type": "DETAIL3",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_custcd": "",
+        "@p_custnm": "",
+        "@p_finyn": "",
+        "@p_quotype": "",
+        "@p_materialtype": "",
+        "@p_quonum": filters8.quonum,
+        "@p_quorev": filters8.quorev,
+        "@p_quoseq": filters8.quoseq,
+        "@p_targetdt": "",
+        "@p_cpmperson": "",
+        "@p_cpmpersonnm": "",
+        "@p_status": "",
+        "@p_find_row_value": "",
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+    let index = -1;
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      if (totalRowCnt > 0) {
+        for (var i = 0; i < rows.length; i++) {
+          if (rows[i].status == 2) {
+            index = i;
+          }
+        }
+        if (index == -1 && (rows[0].status == "3" || rows[0].status == "")) {
+          index = 0;
+  
+          const rows2 = rows.map((item: any, index: any) => {
+            if (index == 0) {
+              return {
+                ...item,
+                status: "2",
+              };
+            } else {
+              return {
+                ...item,
+                status: item.status == "" ? "3" : item.status,
+              };
+            }
+          });
+  
+          setMainDataResult8((prev) => {
+            return {
+              data: rows2,
+              total: totalRowCnt == -1 ? 0 : totalRowCnt,
+            };
+          });
+        } else {
+          setMainDataResult8((prev) => {
+            return {
+              data: rows,
+              total: totalRowCnt == -1 ? 0 : totalRowCnt,
+            };
+          });
+        }
+      } else {
+        setMainDataResult8((prev) => {
+          return {
+            data: rows,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
+          };
+        });
+      }
+      setStep(index);
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters8((prev) => ({
       ...prev,
       pgNum:
         data && data.hasOwnProperty("pageNumber")
@@ -2084,6 +2451,21 @@ const SA_A1000_603W: React.FC = () => {
       fetchMainGrid2(deepCopiedFilters);
     }
   }, [filters2]);
+
+  useEffect(() => {
+    if (filters3.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters3);
+
+      setFilters3((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      }));
+
+      fetchMainGrid3(deepCopiedFilters);
+    }
+  }, [filters3]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
@@ -2128,14 +2510,6 @@ const SA_A1000_603W: React.FC = () => {
   }, [filters6]);
 
   useEffect(() => {
-    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
-    if (targetRowIndex !== null && gridRef.current) {
-      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
-      targetRowIndex = null;
-    }
-  }, [mainDataResult]);
-
-  useEffect(() => {
     if (filters7.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters7);
@@ -2149,6 +2523,27 @@ const SA_A1000_603W: React.FC = () => {
       fetchMainGrid7(deepCopiedFilters);
     }
   }, [filters7]);
+
+  useEffect(() => {
+    if (filters8.isSearch && permissions !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters8);
+      setFilters8((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchMainGrid8(deepCopiedFilters);
+    }
+  }, [filters8]);
+
+  useEffect(() => {
+    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
+    if (targetRowIndex !== null && gridRef.current) {
+      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
+      targetRowIndex = null;
+    }
+  }, [mainDataResult]);
 
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
@@ -2347,8 +2742,13 @@ const SA_A1000_603W: React.FC = () => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
-    //추후 셋팅
-    //setStep(selectedRowData.status);
+    setFilters8((prev) => ({
+      ...prev,
+      quonum: selectedRowData.quonum,
+      quorev: selectedRowData.quorev,
+      quoseq: selectedRowData.quoseq,
+      isSearch: true,
+    }));
   };
 
   const onRowDoubleClick = (props: any) => {
@@ -3400,6 +3800,7 @@ const SA_A1000_603W: React.FC = () => {
 
   const customizedMarker = (props: StepIconProps) => {
     const { active, completed } = props;
+
     return (
       <span
         className="flex w-2rem h-2rem align-items-center justify-content-center text-white border-circle z-1 shadow-1"
@@ -3412,7 +3813,7 @@ const SA_A1000_603W: React.FC = () => {
     );
   };
 
-  const customizedContent = (item: any, key: any) => {
+  const customizedContent = (item: any) => {
     return (
       <Card
         style={{
@@ -3423,14 +3824,15 @@ const SA_A1000_603W: React.FC = () => {
           opacity: 0.9,
           height: "9.5vh",
           backgroundColor:
-            step == key ? "#cce2f1" : step > key ? "#ccc" : "white",
+            item.status == 2 ? "#cce2f1" : item.status == 1 ? "#ccc" : "white",
         }}
       >
         <CardContent
           style={{
             height: "100%",
             display: "flex",
-            alignItems: "center",
+            flexDirection: "column",
+            justifyContent: "space-between",
             paddingBottom: "16px",
           }}
         >
@@ -3444,7 +3846,19 @@ const SA_A1000_603W: React.FC = () => {
               alignItems: "center",
             }}
           >
-            {item}
+            {item.code_name}
+          </Typography>
+          <Typography
+            style={{
+              color: "black",
+              fontSize: "0.8rem",
+              fontFamily: "TheJamsil5Bold",
+              fontWeight: 500,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            {dateformat2(item.dlvdt)}
           </Typography>
         </CardContent>
       </Card>
@@ -4446,7 +4860,7 @@ const SA_A1000_603W: React.FC = () => {
           disabled={mainDataResult.total == 0 ? true : false}
         >
           <GridContainerWrap>
-            <GridContainer width="50%">
+            <GridContainer width="60%">
               <GridTitleContainer>
                 <GridTitle>계약가능성 관리</GridTitle>
               </GridTitleContainer>
@@ -4455,15 +4869,299 @@ const SA_A1000_603W: React.FC = () => {
                   <GridTitleContainer>
                     <GridTitle>Feasibility</GridTitle>
                   </GridTitleContainer>
+                  <tbody>
+                    <tr>
+                      <th>물질확보여부</th>
+                      <td>
+                        <Input
+                          name="materialgb"
+                          type="text"
+                          value={
+                            materialgbListData.find(
+                              (items: any) =>
+                                items.sub_code == Information2.materialgb
+                            )?.code_name != undefined
+                              ? materialgbListData.find(
+                                  (items: any) =>
+                                    items.sub_code == Information2.materialgb
+                                )?.code_name
+                              : ""
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          name="grade1"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(Information2.grade1)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>분석법 보유 여부</th>
+                      <td>
+                        <Input
+                          name="assaygbe"
+                          type="text"
+                          value={
+                            assaygbeListData.find(
+                              (items: any) =>
+                                items.sub_code == Information2.assaygbe
+                            )?.code_name != undefined
+                              ? assaygbeListData.find(
+                                  (items: any) =>
+                                    items.sub_code == Information2.assaygbe
+                                )?.code_name
+                              : ""
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          name="grade2"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(Information2.grade2)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>시작예정</th>
+                      <td>
+                        <Input
+                          name="startschgb"
+                          type="text"
+                          value={
+                            startschgbListData.find(
+                              (items: any) =>
+                                items.sub_code == Information2.startschgb
+                            )?.code_name != undefined
+                              ? startschgbListData.find(
+                                  (items: any) =>
+                                    items.sub_code == Information2.startschgb
+                                )?.code_name
+                              : ""
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          name="grade3"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(Information2.grade3)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>재무/투자현황</th>
+                      <td>
+                        <Input
+                          name="financegb"
+                          type="text"
+                          value={
+                            financegbListData.find(
+                              (items: any) =>
+                                items.sub_code == Information2.financegb
+                            )?.code_name != undefined
+                              ? financegbListData.find(
+                                  (items: any) =>
+                                    items.sub_code == Information2.financegb
+                                )?.code_name
+                              : ""
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          name="grade4"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(Information2.grade4)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>합계</th>
+                      <td colSpan={2}>
+                        <Input
+                          name="totgrade1"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(Information2.totgrade1)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>결과</th>
+                      <td colSpan={2}>
+                        <Input
+                          name="level1"
+                          type="text"
+                          style={{
+                            textAlign: "center",
+                          }}
+                          value={Information2.level1}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
                 </FormBox>
                 <FormBox width={"50%"}>
                   <GridTitleContainer>
                     <GridTitle>Weight</GridTitle>
                   </GridTitleContainer>
+                  <tbody>
+                    <tr>
+                      <th>금액</th>
+                      <td>
+                        <Input
+                          name="amtgb"
+                          type="text"
+                          value={
+                            amtgbListData.find(
+                              (items: any) =>
+                                items.sub_code == Information2.amtgb
+                            )?.code_name != undefined
+                              ? amtgbListData.find(
+                                  (items: any) =>
+                                    items.sub_code == Information2.amtgb
+                                )?.code_name
+                              : ""
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          name="grade5"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(Information2.grade5)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>추가수주</th>
+                      <td>
+                        <Input
+                          name="addordgb"
+                          type="text"
+                          value={
+                            addordgbListData.find(
+                              (items: any) =>
+                                items.sub_code == Information2.addordgb
+                            )?.code_name != undefined
+                              ? addordgbListData.find(
+                                  (items: any) =>
+                                    items.sub_code == Information2.addordgb
+                                )?.code_name
+                              : ""
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          name="grade6"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(Information2.grade6)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>BTT관계사 확장</th>
+                      <td>
+                        <Input
+                          name="relationgb"
+                          type="text"
+                          value={
+                            relationgbListData.find(
+                              (items: any) =>
+                                items.sub_code == Information2.relationgb
+                            )?.code_name != undefined
+                              ? relationgbListData.find(
+                                  (items: any) =>
+                                    items.sub_code == Information2.relationgb
+                                )?.code_name
+                              : ""
+                          }
+                          className="readonly"
+                        />
+                      </td>
+                      <td>
+                        <Input
+                          name="grade7"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(Information2.grade7)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>합계</th>
+                      <td colSpan={2}>
+                        <Input
+                          name="totgrade2"
+                          type="number"
+                          style={{
+                            textAlign: "right",
+                          }}
+                          value={numberWithCommas3(Information2.totgrade2)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>결과</th>
+                      <td colSpan={2}>
+                        <Input
+                          name="level2"
+                          type="text"
+                          style={{
+                            textAlign: "center",
+                          }}
+                          value={Information2.level2}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
                 </FormBox>
               </FormBoxWrap>
             </GridContainer>
-            <GridContainer width={`calc(50% - ${GAP}px)`}>
+            <GridContainer width={`calc(40% - ${GAP}px)`}>
               <GridTitleContainer>
                 <GridTitle>상담</GridTitle>
               </GridTitleContainer>
@@ -4691,7 +5389,7 @@ const SA_A1000_603W: React.FC = () => {
                 <GridTitle>시험리스트</GridTitle>
               </GridTitleContainer>
               <Grid
-                style={{ height: "80vh" }}
+                style={{ height: "93vh" }}
                 data={process(
                   mainDataResult7.data.map((row) => ({
                     ...row,
@@ -4701,6 +5399,9 @@ const SA_A1000_603W: React.FC = () => {
                       row.rowstatus == undefined
                         ? ""
                         : row.rowstatus,
+                    status: statusListData3.find(
+                      (items: any) => items.sub_code == row.status
+                    )?.code_name,
                     [SELECTED_FIELD]: selectedState7[idGetter7(row)],
                   })),
                   mainDataState7
@@ -4755,41 +5456,21 @@ const SA_A1000_603W: React.FC = () => {
                   )}
               </Grid>
             </GridContainer>
-            <GridContainer width={`calc(30% - ${GAP}px)`}>
+            <GridContainer
+              width={`calc(30% - ${GAP}px)`}
+              style={{ marginBottom: "10px" }}
+            >
               <GridTitleContainer>
                 <GridTitle>진행상황</GridTitle>
               </GridTitleContainer>
               <Stepper activeStep={step} orientation="vertical">
-                <Step key={0}>
-                  <StepLabel StepIconComponent={customizedMarker}>
-                    {customizedContent("시험계획서(안) 제출일", 0)}
-                  </StepLabel>
-                </Step>
-                <Step key={1}>
-                  <StepLabel StepIconComponent={customizedMarker}>
-                    {customizedContent("시험개시", 1)}
-                  </StepLabel>
-                </Step>
-                <Step key={2}>
-                  <StepLabel StepIconComponent={customizedMarker}>
-                    {customizedContent("동물입수", 2)}
-                  </StepLabel>
-                </Step>
-                <Step key={3}>
-                  <StepLabel StepIconComponent={customizedMarker}>
-                    {customizedContent("투여개시", 3)}
-                  </StepLabel>
-                </Step>
-                <Step key={4}>
-                  <StepLabel StepIconComponent={customizedMarker}>
-                    {customizedContent("병리보고서(안) 제출일", 4)}
-                  </StepLabel>
-                </Step>
-                <Step key={5}>
-                  <StepLabel StepIconComponent={customizedMarker}>
-                    {customizedContent("최종보고서(안) 제출일", 5)}
-                  </StepLabel>
-                </Step>
+                {mainDataResult8.data.map((item, index) => (
+                  <Step key={index}>
+                    <StepLabel StepIconComponent={customizedMarker}>
+                      {customizedContent(item)}
+                    </StepLabel>
+                  </Step>
+                ))}
               </Stepper>
             </GridContainer>
           </GridContainerWrap>
