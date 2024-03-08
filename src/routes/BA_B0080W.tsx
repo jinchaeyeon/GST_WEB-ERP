@@ -448,10 +448,12 @@ const BA_B0080W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: any;;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -641,15 +643,16 @@ const BA_B0080W: React.FC = () => {
       </FilterContainer>
 
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>요약정보</GridTitle>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="단가조회"
         >
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-          </GridTitleContainer>
           <Grid
             style={{ height: "80.5vh" }}
             data={process(

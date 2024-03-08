@@ -25,7 +25,8 @@ import {
   TreeListExpandChangeEvent,
   createDataTree,
   extendDataItem,
-  mapTree
+  mapTree,
+  treeToFlat,
 } from "@progress/kendo-react-treelist";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -738,7 +739,23 @@ const SY_A0125W: React.FC = () => {
   let _export2: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      const optionsGridOne = _export.workbookOptions();
+      const optionsGridOne = _export.workbookOptions(
+        treeToFlat(
+          mapTree(data, SUB_ITEMS_FIELD, (item) =>
+            extendDataItem(item, SUB_ITEMS_FIELD, {
+              [EXPANDED_FIELD]: true,
+              [EDIT_FIELD]:
+                item[ALL_MENU_DATA_ITEM_KEY] === editItemId
+                  ? editItemField
+                  : undefined,
+              [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
+            })
+          ),
+          EXPANDED_FIELD,
+          SUB_ITEMS_FIELD
+        ),
+        allMenuColumns
+      );
       const optionsGridTwo = _export2.workbookOptions();
       optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
       optionsGridOne.sheets[0].title = "부서리스트";

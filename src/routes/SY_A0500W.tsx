@@ -1,6 +1,7 @@
 import { Divider } from "@mui/material";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridColumn,
@@ -1158,6 +1159,16 @@ const SY_A0500W: React.FC = () => {
     }
   };
 
+  //엑셀 내보내기
+  let _export: any;
+  const exportExcel = () => {
+    if (_export !== null && _export !== undefined) {
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "레이아웃 설정";
+      _export.save(optionsGridOne);
+    }
+  };
+
   return (
     <>
       <TitleContainer>
@@ -1168,7 +1179,7 @@ const SY_A0500W: React.FC = () => {
             <TopButtons
               search={search}
               permissions={permissions}
-              disable={true}
+              exportExcel={exportExcel}
               pathname="SY_A0500W"
             />
           )}
@@ -1198,63 +1209,69 @@ const SY_A0500W: React.FC = () => {
               </tbody>
             </FormBox>
           </FormBoxWrap>
-          <Grid
-            style={{ height: "79vh" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                location: locationListData.find(
-                  (item: any) => item.sub_code == row.location
-                )?.code_name,
-                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onMainSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
+          <ExcelExport
+            ref={(exporter) => (_export = exporter)}
+            data={mainDataResult.data}
+            fileName="레이아웃 설정"
           >
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
-                      }
-                    />
-                  )
+            <Grid
+              style={{ height: "79vh" }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  location: locationListData.find(
+                    (item: any) => item.sub_code == row.location
+                  )?.code_name,
+                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                })),
+                mainDataState
               )}
-          </Grid>
+              {...mainDataState}
+              onDataStateChange={onMainDataStateChange}
+              //선택 기능
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onMainSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              skip={page.skip}
+              take={page.take}
+              pageable={true}
+              onPageChange={pageChange}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+            >
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        footerCell={
+                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
+            </Grid>
+          </ExcelExport>
         </GridContainer>
         <GridContainer width={`calc(80% - ${GAP}px)`}>
           <GridTitleContainer>

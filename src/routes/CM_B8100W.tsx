@@ -331,10 +331,12 @@ const CM_B8100W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: any;;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "기본정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -432,15 +434,16 @@ const CM_B8100W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>기본정보</GridTitle>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="사용자별 근무현황"
         >
-          <GridTitleContainer>
-            <GridTitle>기본정보</GridTitle>
-          </GridTitleContainer>
           <Grid
             style={{ height: "80.7vh" }}
             data={process(

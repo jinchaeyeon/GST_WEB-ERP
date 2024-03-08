@@ -515,10 +515,17 @@ const BA_A0100W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: any;;
+  //엑셀 내보내기
+  let _export: any;
+  let _export2: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      const optionsGridTwo = _export2.workbookOptions();
+      optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+      optionsGridOne.sheets[0].title = "기본정보";
+      optionsGridOne.sheets[1].title = "상세정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -1454,37 +1461,38 @@ const BA_A0100W: React.FC = () => {
       </FilterContainer>
       <GridContainerWrap>
         <GridContainer width={`65%`}>
+          <GridTitleContainer>
+            <GridTitle>기본정보</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onAddClick}
+                themeColor={"primary"}
+                icon="plus"
+                title="행 추가"
+              ></Button>
+              <Button
+                onClick={onDeleteClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="minus"
+                title="행 삭제"
+              ></Button>
+              <Button
+                onClick={onSaveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+                title="저장"
+              ></Button>
+            </ButtonContainer>
+          </GridTitleContainer>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
               _export = exporter;
             }}
+            fileName="동물실관리"
           >
-            <GridTitleContainer>
-              <GridTitle>기본정보</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onAddClick}
-                  themeColor={"primary"}
-                  icon="plus"
-                  title="행 추가"
-                ></Button>
-                <Button
-                  onClick={onDeleteClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="minus"
-                  title="행 삭제"
-                ></Button>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                  title="저장"
-                ></Button>
-              </ButtonContainer>
-            </GridTitleContainer>
             <Grid
               style={{ height: "80.5vh" }}
               data={process(
@@ -1601,82 +1609,90 @@ const BA_A0100W: React.FC = () => {
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
-          <Grid
-            style={{ height: "80.5vh" }}
-            data={process(
-              subDataResult.data.map((row) => ({
-                ...row,
-                [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
-              })),
-              subDataState
-            )}
-            {...subDataState}
-            onDataStateChange={onSubDataStateChange}
-            //선택 기능
-            dataItemKey={SUB_DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+          <ExcelExport
+            data={subDataResult.data}
+            ref={(exporter) => {
+              _export2 = exporter;
             }}
-            onSelectionChange={onSubDataSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={subDataResult.total}
-            skip={page2.skip}
-            take={page2.take}
-            pageable={true}
-            onPageChange={pageChange2}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef2}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onSubDataSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            //incell 수정 기능
-            onItemChange={onSubItemChange}
-            cellRender={customCellRender2}
-            rowRender={customRowRender2}
-            editField={EDIT_FIELD}
+            fileName="동물실관리"
           >
-            <GridColumn
-              field="rowstatus"
-              title=" "
-              width="50px"
-              editable={false}
-            />
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList2"].map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : checkField.includes(item.fieldName)
-                          ? CheckBoxCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder === 0
-                          ? subTotalFooterCell
-                          : numberField.includes(item.fieldName)
-                          ? editNumberFooterCell
-                          : undefined
-                      }
-                    />
-                  )
+            <Grid
+              style={{ height: "80.5vh" }}
+              data={process(
+                subDataResult.data.map((row) => ({
+                  ...row,
+                  [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
+                })),
+                subDataState
               )}
-          </Grid>
+              {...subDataState}
+              onDataStateChange={onSubDataStateChange}
+              //선택 기능
+              dataItemKey={SUB_DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSubDataSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={subDataResult.total}
+              skip={page2.skip}
+              take={page2.take}
+              pageable={true}
+              onPageChange={pageChange2}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef2}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onSubDataSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              //incell 수정 기능
+              onItemChange={onSubItemChange}
+              cellRender={customCellRender2}
+              rowRender={customRowRender2}
+              editField={EDIT_FIELD}
+            >
+              <GridColumn
+                field="rowstatus"
+                title=" "
+                width="50px"
+                editable={false}
+              />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : checkField.includes(item.fieldName)
+                            ? CheckBoxCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 0
+                            ? subTotalFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? editNumberFooterCell
+                            : undefined
+                        }
+                      />
+                    )
+                )}
+            </Grid>
+          </ExcelExport>
         </GridContainer>
       </GridContainerWrap>
       {detailWindowVisible && (

@@ -224,7 +224,7 @@ const HU_B3160W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: any;;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();

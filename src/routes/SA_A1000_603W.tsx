@@ -1019,7 +1019,7 @@ const SA_A1000_603W: React.FC = () => {
     setProjectWindowVisible(true);
   };
 
-  let _export: any;;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();

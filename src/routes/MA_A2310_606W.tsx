@@ -583,7 +583,7 @@ const MA_A2310_606W: React.FC = () => {
     }
   };
 
-  let _export: any;;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();

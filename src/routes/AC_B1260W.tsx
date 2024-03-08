@@ -260,7 +260,7 @@ const AC_B1260W: React.FC = () => {
     }
   }, [filters, permissions]);
 
-  let _export: any;;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();

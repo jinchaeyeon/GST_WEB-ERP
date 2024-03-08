@@ -319,10 +319,12 @@ const SY_A0120: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: any;;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "로그인 현황";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -499,6 +501,7 @@ const SY_A0120: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="로그인 현황"
         >
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
