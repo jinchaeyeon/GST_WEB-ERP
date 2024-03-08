@@ -237,9 +237,29 @@ const AC_B5040W: React.FC = () => {
 
   //엑셀 내보내기
   let _export: any;
+  let _export2: any;
+  let _export3: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        optionsGridOne.sheets[0].title = "국세청자료";
+        _export.save(optionsGridOne);
+      }
+    }
+    if (_export2 !== null && _export2 !== undefined) {
+      if (tabSelected == 1) {
+        const optionsGridTwo = _export2.workbookOptions();
+        optionsGridTwo.sheets[0].title = "매출";
+        _export2.save(optionsGridTwo);
+      }
+    }
+    if (_export3 !== null && _export3 !== undefined) {
+      if (tabSelected == 2) {
+        const optionsGridThree = _export3.workbookOptions();
+        optionsGridThree.sheets[0].title = "매입";
+        _export3.save(optionsGridThree);
+      }
     }
   };
 
@@ -1229,6 +1249,7 @@ const AC_B5040W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
+              fileName="전자세금계산서비교현황"
             >
               <Grid
                 style={{ height: "60vh" }}
@@ -1390,8 +1411,9 @@ const AC_B5040W: React.FC = () => {
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
-                _export = exporter;
+                _export2 = exporter;
               }}
+              fileName="전자세금계산서비교현황"
             >
               <Grid
                 style={{ height: "74vh" }}
@@ -1527,8 +1549,9 @@ const AC_B5040W: React.FC = () => {
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
-                _export = exporter;
+                _export3 = exporter;
               }}
+              fileName="전자세금계산서비교현황"
             >
               <Grid
                 style={{ height: "74vh" }}

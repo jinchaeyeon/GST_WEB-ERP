@@ -502,7 +502,9 @@ const PR_A4100W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -1291,37 +1293,39 @@ const PR_A4100W: React.FC = () => {
       </FilterContainer>
 
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>요약정보</GridTitle>
+          <ButtonContainer>
+            <Button
+              onClick={onCheckClick}
+              themeColor={"primary"}
+              icon="check"
+              title="일괄처리"
+            ></Button>
+            <Button
+              onClick={onDeleteClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="minus"
+              title="행 삭제"
+            ></Button>
+            <Button
+              onClick={onSaveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="save"
+              title="저장"
+            ></Button>
+          </ButtonContainer>
+        </GridTitleContainer>
         <ExcelExport
-          data={mainDataResult.data}
+          data={newData}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="생산계획현황"
+          group={group}
         >
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onCheckClick}
-                themeColor={"primary"}
-                icon="check"
-                title="일괄처리"
-              ></Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-                title="저장"
-              ></Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
             style={{ height: "70vh" }}
             data={newData.map((item: { items: any[] }) => ({

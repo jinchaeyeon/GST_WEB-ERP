@@ -2,7 +2,6 @@ import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridColumn,
@@ -217,14 +216,6 @@ const AC_B3000W: React.FC = () => {
     setSelectedState(newSelectedState);
   };
 
-  //엑셀 내보내기
-  let _export: any;
-  const exportExcel = () => {
-    if (_export !== null && _export !== undefined) {
-      _export.save();
-    }
-  };
-
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
@@ -382,7 +373,7 @@ const AC_B3000W: React.FC = () => {
           {permissions && (
             <TopButtons
               search={search}
-              exportExcel={exportExcel}
+              disable={true}
               permissions={permissions}
               pathname="AC_B3000W"
             />
@@ -448,114 +439,107 @@ const AC_B3000W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
+        <Grid
+          style={{ height: "800px", display: "none" }}
+          data={process(
+            mainDataResult.data.map((row) => ({
+              ...row,
+              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+            })),
+            mainDataState
+          )}
+          {...mainDataState}
+          onDataStateChange={onMainDataStateChange}
+          //선택 기능
+          dataItemKey={DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
           }}
+          onSelectionChange={onMainSelectionChange}
+          //스크롤 조회 기능
+          fixedScroll={true}
+          total={mainDataResult.total}
+          onScroll={onMainScrollHandler}
+          //정렬기능
+          sortable={true}
+          onSortChange={onMainSortChange}
+          //컬럼순서조정
+          reorderable={true}
+          //컬럼너비조정
+          resizable={true}
         >
-          <Grid
-            style={{ height: "800px", display: "none" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onMainSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-          >
-            <GridColumn
-              field="fxnum"
-              title="구분"
-              width="80px"
-              cell={CenterCell}
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn field="fxnm" title="품명" width="150px" />
-            <GridColumn
-              field="indt"
-              title="구입일"
-              cell={DateCell}
-              width="120px"
-            />
-            <GridColumn
-              field="fxpurcost"
-              title="금액"
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn field="fxdepyrmm" title="내용연수" width="120px" />
-            <GridColumn
-              field="curdamt6"
-              title={dates6}
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="curdamt5"
-              title={dates5}
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="curdamt4"
-              title={dates4}
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="curdamt3"
-              title={dates3}
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="curdamt2"
-              title={dates2}
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="curdamt1"
-              title={dates}
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="totamt"
-              title="합계"
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="chamt"
-              title="잔존가액"
-              width="100px"
-              cell={NumberCell}
-            />
-          </Grid>
-        </ExcelExport>
+          <GridColumn
+            field="fxnum"
+            title="구분"
+            width="80px"
+            cell={CenterCell}
+            footerCell={mainTotalFooterCell}
+          />
+          <GridColumn field="fxnm" title="품명" width="150px" />
+          <GridColumn
+            field="indt"
+            title="구입일"
+            cell={DateCell}
+            width="120px"
+          />
+          <GridColumn
+            field="fxpurcost"
+            title="금액"
+            width="100px"
+            cell={NumberCell}
+          />
+          <GridColumn field="fxdepyrmm" title="내용연수" width="120px" />
+          <GridColumn
+            field="curdamt6"
+            title={dates6}
+            width="100px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="curdamt5"
+            title={dates5}
+            width="100px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="curdamt4"
+            title={dates4}
+            width="100px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="curdamt3"
+            title={dates3}
+            width="100px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="curdamt2"
+            title={dates2}
+            width="100px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="curdamt1"
+            title={dates}
+            width="100px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="totamt"
+            title="합계"
+            width="100px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="chamt"
+            title="잔존가액"
+            width="100px"
+            cell={NumberCell}
+          />
+        </Grid>
       </GridContainer>
       <LandscapePrint>
         <div

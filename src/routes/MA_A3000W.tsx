@@ -712,10 +712,15 @@ const MA_A3000W: React.FC = () => {
 
   //엑셀 내보내기
   let _export: any;
-
+  let _export2: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      const optionsGridTwo = _export2.workbookOptions();
+      optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+      optionsGridOne.sheets[0].title = "요약정보";
+      optionsGridOne.sheets[1].title = "이력";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -2231,51 +2236,52 @@ const MA_A3000W: React.FC = () => {
       </FilterContainer>
 
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>
+            요약정보
+            <Button
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onPrint}
+              icon="print"
+              style={{ marginLeft: "15px" }}
+            >
+              바코드출력
+            </Button>
+          </GridTitle>
+          <ButtonContainer>
+            <Button
+              themeColor={"primary"}
+              onClick={onDataWndClick}
+              icon="folder-open"
+            >
+              입고참조
+            </Button>
+            <Button
+              onClick={onDeleteClick}
+              icon="delete"
+              fillMode="outline"
+              themeColor={"primary"}
+            >
+              장비관리삭제
+            </Button>
+            <Button
+              onClick={onSave}
+              fillMode="outline"
+              icon="save"
+              themeColor={"primary"}
+            >
+              장비관리저장
+            </Button>
+          </ButtonContainer>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="장비관리"
         >
-          <GridTitleContainer>
-            <GridTitle>
-              요약정보
-              <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onPrint}
-                icon="print"
-                style={{ marginLeft: "15px" }}
-              >
-                바코드출력
-              </Button>
-            </GridTitle>
-            <ButtonContainer>
-              <Button
-                themeColor={"primary"}
-                onClick={onDataWndClick}
-                icon="folder-open"
-              >
-                입고참조
-              </Button>
-              <Button
-                onClick={onDeleteClick}
-                icon="delete"
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                장비관리삭제
-              </Button>
-              <Button
-                onClick={onSave}
-                fillMode="outline"
-                icon="save"
-                themeColor={"primary"}
-              >
-                장비관리저장
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
             style={{ height: "40vh" }}
             data={process(
@@ -2422,89 +2428,97 @@ const MA_A3000W: React.FC = () => {
             ></Button>
           </ButtonContainer>
         </GridTitleContainer>
-        <Grid
-          style={{ height: "33.6vh" }}
-          data={process(
-            detailDataResult.data.map((row) => ({
-              ...row,
-              rowstatus:
-                row.rowstatus == null ||
-                row.rowstatus == "" ||
-                row.rowstatus == undefined
-                  ? ""
-                  : row.rowstatus,
-              indt: row.indt == "" ? new Date() : toDate(row.indt),
-              strdt: row.strdt == "" ? new Date() : toDate(row.strdt),
-              enddt: row.enddt == "" ? new Date() : toDate(row.enddt),
-              outdt: row.outdt == "" ? new Date() : toDate(row.outdt),
-              [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
-            })),
-            detailDataState
-          )}
-          {...detailDataState}
-          onDataStateChange={onDetailDataStateChange}
-          //스크롤 조회 기능
-          dataItemKey={DETAIL_DATA_ITEM_KEY}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
+        <ExcelExport
+          data={detailDataResult.data}
+          ref={(exporter) => {
+            _export2 = exporter;
           }}
-          onSelectionChange={onDetailSelectionChange}
-          fixedScroll={true}
-          total={detailDataResult.total}
-          skip={page2.skip}
-          take={page2.take}
-          pageable={true}
-          onPageChange={pageChange2}
-          //원하는 행 위치로 스크롤 기능
-          ref={gridRef2}
-          rowHeight={30}
-          //정렬기능
-          sortable={true}
-          onSortChange={onDetailSortChange}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
-          onItemChange={onDetailItemChange}
-          cellRender={customCellRender2}
-          rowRender={customRowRender2}
-          editField={EDIT_FIELD}
+          fileName="장비관리"
         >
-          <GridColumn field="rowstatus" title=" " width="50px" />
-          <GridColumn title="A/S이력">{createColumn()}</GridColumn>
-          <GridColumn
-            field="person"
-            title="담당자"
-            width="120px"
-            cell={CustomComboBoxCell}
-          />
-          <GridColumn field="remark" title="증상" width="120px" />
-          <GridColumn
-            field="strdt"
-            title="발송일자"
-            width="120px"
-            cell={DateCell}
-          />
-          <GridColumn
-            field="custcd"
-            title="발송업체"
-            width="120px"
-            cell={CustomComboBoxCell}
-          />
-          <GridColumn field="address" title="업체주소" width="200px" />
-          <GridColumn field="phonenum" title="전화번호" width="120px" />
-          <GridColumn field="extra_field5" title="조치내용" width="150px" />
-          <GridColumn title="금액">{createColumn2()}</GridColumn>
-          <GridColumn
-            field="enddt"
-            title="수령일자"
-            width="120px"
-            cell={DateCell}
-          />
-          <GridColumn title="재출하">{createColumn3()}</GridColumn>
-        </Grid>
+          <Grid
+            style={{ height: "33.6vh" }}
+            data={process(
+              detailDataResult.data.map((row) => ({
+                ...row,
+                rowstatus:
+                  row.rowstatus == null ||
+                  row.rowstatus == "" ||
+                  row.rowstatus == undefined
+                    ? ""
+                    : row.rowstatus,
+                indt: row.indt == "" ? new Date() : toDate(row.indt),
+                strdt: row.strdt == "" ? new Date() : toDate(row.strdt),
+                enddt: row.enddt == "" ? new Date() : toDate(row.enddt),
+                outdt: row.outdt == "" ? new Date() : toDate(row.outdt),
+                [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
+              })),
+              detailDataState
+            )}
+            {...detailDataState}
+            onDataStateChange={onDetailDataStateChange}
+            //스크롤 조회 기능
+            dataItemKey={DETAIL_DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onDetailSelectionChange}
+            fixedScroll={true}
+            total={detailDataResult.total}
+            skip={page2.skip}
+            take={page2.take}
+            pageable={true}
+            onPageChange={pageChange2}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef2}
+            rowHeight={30}
+            //정렬기능
+            sortable={true}
+            onSortChange={onDetailSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+            onItemChange={onDetailItemChange}
+            cellRender={customCellRender2}
+            rowRender={customRowRender2}
+            editField={EDIT_FIELD}
+          >
+            <GridColumn field="rowstatus" title=" " width="50px" />
+            <GridColumn title="A/S이력">{createColumn()}</GridColumn>
+            <GridColumn
+              field="person"
+              title="담당자"
+              width="120px"
+              cell={CustomComboBoxCell}
+            />
+            <GridColumn field="remark" title="증상" width="120px" />
+            <GridColumn
+              field="strdt"
+              title="발송일자"
+              width="120px"
+              cell={DateCell}
+            />
+            <GridColumn
+              field="custcd"
+              title="발송업체"
+              width="120px"
+              cell={CustomComboBoxCell}
+            />
+            <GridColumn field="address" title="업체주소" width="200px" />
+            <GridColumn field="phonenum" title="전화번호" width="120px" />
+            <GridColumn field="extra_field5" title="조치내용" width="150px" />
+            <GridColumn title="금액">{createColumn2()}</GridColumn>
+            <GridColumn
+              field="enddt"
+              title="수령일자"
+              width="120px"
+              cell={DateCell}
+            />
+            <GridColumn title="재출하">{createColumn3()}</GridColumn>
+          </Grid>
+        </ExcelExport>
       </GridContainer>
       {custWindowVisible && (
         <CustomersWindow

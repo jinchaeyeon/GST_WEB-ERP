@@ -556,7 +556,9 @@ const AC_A1000W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -1057,62 +1059,59 @@ const AC_A1000W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>요약정보</GridTitle>
+          <ButtonContainer>
+            <Button
+              onClick={onReceive}
+              themeColor={"primary"}
+              icon="track-changes-accept"
+            >
+              받을어음
+            </Button>
+            <Button
+              onClick={onPayment}
+              themeColor={"primary"}
+              icon="track-changes-accept"
+            >
+              지급어음
+            </Button>
+            <Button
+              themeColor={"primary"}
+              fillMode="outline"
+              onClick={onPrint}
+              icon="print"
+            >
+              출력
+            </Button>
+            <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
+              대체전표생성
+            </Button>
+            <Button
+              onClick={onCopyClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="copy"
+            >
+              대체전표복사
+            </Button>
+            <Button
+              onClick={onDeleteClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="delete"
+            >
+              대체전표삭제
+            </Button>
+          </ButtonContainer>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="대체전표"
         >
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onReceive}
-                themeColor={"primary"}
-                icon="track-changes-accept"
-              >
-                받을어음
-              </Button>
-              <Button
-                onClick={onPayment}
-                themeColor={"primary"}
-                icon="track-changes-accept"
-              >
-                지급어음
-              </Button>
-              <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onPrint}
-                icon="print"
-              >
-                출력
-              </Button>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="file-add"
-              >
-                대체전표생성
-              </Button>
-              <Button
-                onClick={onCopyClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="copy"
-              >
-                대체전표복사
-              </Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="delete"
-              >
-                대체전표삭제
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
             style={{ height: "66vh" }}
             data={process(

@@ -679,9 +679,15 @@ const QC_A2500W: React.FC = () => {
 
   //엑셀 내보내기
   let _export: any;
+  let _export2: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      const optionsGridTwo = _export2.workbookOptions();
+      optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+      optionsGridOne.sheets[0].title = "불량내역";
+      optionsGridOne.sheets[1].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -1131,15 +1137,16 @@ const QC_A2500W: React.FC = () => {
       </FilterContainer>
 
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>불량내역</GridTitle>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="NCR관리"
         >
-          <GridTitleContainer>
-            <GridTitle>불량내역</GridTitle>
-          </GridTitleContainer>
           <Grid
             style={{ height: "34vh" }}
             data={process(
@@ -1229,78 +1236,86 @@ const QC_A2500W: React.FC = () => {
             </Button>
           </ButtonContainer>
         </GridTitleContainer>
-        <Grid
-          style={{ height: "32.6vh" }}
-          data={process(
-            detailDataResult.data.map((row) => ({
-              ...row,
-              proccd: proccdListData.find(
-                (item: any) => item.sub_code === row.proccd
-              )?.code_name,
-              person: usersListData.find(
-                (item: any) => item.user_id === row.person
-              )?.user_name,
-              [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
-            })),
-            detailDataState
-          )}
-          {...detailDataState}
-          onDataStateChange={onDetailDataStateChange}
-          //스크롤 조회 기능
-          dataItemKey={DETAIL_DATA_ITEM_KEY}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
+        <ExcelExport
+          data={detailDataResult.data}
+          ref={(exporter) => {
+            _export2 = exporter;
           }}
-          onSelectionChange={onDetailSelectionChange}
-          fixedScroll={true}
-          total={detailDataResult.total}
-          skip={page2.skip}
-          take={page2.take}
-          pageable={true}
-          onPageChange={pageChange2}
-          //원하는 행 위치로 스크롤 기능
-          ref={gridRef2}
-          rowHeight={30}
-          //정렬기능
-          sortable={true}
-          onSortChange={onDetailSortChange}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
+          fileName="NCR관리"
         >
-          <GridColumn cell={CommandCell} width="50px" />
-          {customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["grdList2"].map(
-              (item: any, idx: number) =>
-                item.sortOrder !== -1 && (
-                  <GridColumn
-                    key={idx}
-                    field={item.fieldName}
-                    title={item.caption}
-                    width={item.width}
-                    cell={
-                      numberField.includes(item.fieldName)
-                        ? NumberCell
-                        : dateField.includes(item.fieldName)
-                        ? DateCell
-                        : numberField2.includes(item.fieldName)
-                        ? NumberCell
-                        : undefined
-                    }
-                    footerCell={
-                      item.sortOrder === 0
-                        ? detailTotalFooterCell
-                        : numberField.includes(item.fieldName)
-                        ? gridSumQtyFooterCell2
-                        : undefined
-                    }
-                  />
-                )
+          <Grid
+            style={{ height: "32.6vh" }}
+            data={process(
+              detailDataResult.data.map((row) => ({
+                ...row,
+                proccd: proccdListData.find(
+                  (item: any) => item.sub_code === row.proccd
+                )?.code_name,
+                person: usersListData.find(
+                  (item: any) => item.user_id === row.person
+                )?.user_name,
+                [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
+              })),
+              detailDataState
             )}
-        </Grid>
+            {...detailDataState}
+            onDataStateChange={onDetailDataStateChange}
+            //스크롤 조회 기능
+            dataItemKey={DETAIL_DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onDetailSelectionChange}
+            fixedScroll={true}
+            total={detailDataResult.total}
+            skip={page2.skip}
+            take={page2.take}
+            pageable={true}
+            onPageChange={pageChange2}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef2}
+            rowHeight={30}
+            //정렬기능
+            sortable={true}
+            onSortChange={onDetailSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+          >
+            <GridColumn cell={CommandCell} width="50px" />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList2"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        numberField.includes(item.fieldName)
+                          ? NumberCell
+                          : dateField.includes(item.fieldName)
+                          ? DateCell
+                          : numberField2.includes(item.fieldName)
+                          ? NumberCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0
+                          ? detailTotalFooterCell
+                          : numberField.includes(item.fieldName)
+                          ? gridSumQtyFooterCell2
+                          : undefined
+                      }
+                    />
+                  )
+              )}
+          </Grid>
+        </ExcelExport>
       </GridContainer>
       {detailWindowVisible && (
         <DetailWindow

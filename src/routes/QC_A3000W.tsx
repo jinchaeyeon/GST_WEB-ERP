@@ -1135,9 +1135,19 @@ const QC_A3000: React.FC = () => {
 
   //엑셀 내보내기
   let _export: any;
+  let _export2: any;
+  let _export3: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      const optionsGridTwo = _export2.workbookOptions();
+      const optionsGridThree = _export3.workbookOptions();
+      optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+      optionsGridOne.sheets[2] = optionsGridThree.sheets[0];
+      optionsGridOne.sheets[0].title = "생산실적리스트";
+      optionsGridOne.sheets[1].title = "검사상세정보";
+      optionsGridOne.sheets[2].title = "결과";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -2102,15 +2112,16 @@ const QC_A3000: React.FC = () => {
       </FilterContainer>
       <GridContainerWrap>
         <GridContainer style={{ width: "50vw" }}>
+          <GridTitleContainer>
+            <GridTitle>생산실적리스트</GridTitle>
+          </GridTitleContainer>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
               _export = exporter;
             }}
+            fileName="공정검사"
           >
-            <GridTitleContainer>
-              <GridTitle>생산실적리스트</GridTitle>
-            </GridTitleContainer>
             <Grid
               style={{ height: "35.4vh" }}
               data={process(
@@ -2213,68 +2224,78 @@ const QC_A3000: React.FC = () => {
               </Button>
             </ButtonContainer>
           </GridTitleContainer>
-          <Grid
-            style={{ height: "35.4vh" }}
-            data={process(
-              detailDataResult.data.map((row) => ({
-                ...row,
-                person: usersListData.find(
-                  (item: any) => item.user_id === row.person
-                )?.user_name,
-                qcno: qcnoListData.find((item: any) => item.code === row.qcno)
-                  ?.name,
-                [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
-              })),
-              detailDataState
-            )}
-            {...detailDataState}
-            onDataStateChange={onDetailDataStateChange}
-            dataItemKey={DETAIL_DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+          <ExcelExport
+            data={detailDataResult.data}
+            ref={(exporter) => {
+              _export2 = exporter;
             }}
-            onSelectionChange={ondetailSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={detailDataResult.total}
-            skip={page2.skip}
-            take={page2.take}
-            pageable={true}
-            onPageChange={pageChange2}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef2}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onDetailSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
+            fileName="공정검사"
           >
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList2"].map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      cell={
-                        numberField.includes(item.fieldName)
-                          ? NumberCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder === 0 ? detailTotalFooterCell : undefined
-                      }
-                    />
-                  )
+            <Grid
+              style={{ height: "35.4vh" }}
+              data={process(
+                detailDataResult.data.map((row) => ({
+                  ...row,
+                  person: usersListData.find(
+                    (item: any) => item.user_id === row.person
+                  )?.user_name,
+                  qcno: qcnoListData.find((item: any) => item.code === row.qcno)
+                    ?.name,
+                  [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
+                })),
+                detailDataState
               )}
-          </Grid>
+              {...detailDataState}
+              onDataStateChange={onDetailDataStateChange}
+              dataItemKey={DETAIL_DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={ondetailSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={detailDataResult.total}
+              skip={page2.skip}
+              take={page2.take}
+              pageable={true}
+              onPageChange={pageChange2}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef2}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onDetailSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+            >
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 0
+                            ? detailTotalFooterCell
+                            : undefined
+                        }
+                      />
+                    )
+                )}
+            </Grid>
+          </ExcelExport>
         </GridContainer>
         <FormBoxWrap border={true} style={{ width: "40vw", marginTop: "4vh" }}>
           <FormBox style={{ marginLeft: "-3vh" }}>
@@ -2425,46 +2446,54 @@ const QC_A3000: React.FC = () => {
             </tbody>
           </FormBox>
           <GridContainer>
-            <Grid
-              style={{ height: "37.5vh" }}
-              data={process(
-                detailDataResult2.data.map((row) => ({
-                  ...row,
-                  inspeccd: inspeccdListData.find(
-                    (item: any) => item.sub_code === row.inspeccd
-                  )?.code_name,
-                  [SELECTED_FIELD]: detailSelectedState2[idGetter3(row)],
-                })),
-                detailDataState2
-              )}
-              {...detailDataState2}
-              onDataStateChange={onDetailDataStateChange2}
-              //선택 기능
-              dataItemKey={DETAIL_DATA_ITEM_KEY2}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
+            <ExcelExport
+              data={detailDataResult2.data}
+              ref={(exporter) => {
+                _export3 = exporter;
               }}
-              onSelectionChange={ondetailSelectionChange2}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={detailDataResult2.total}
-              //정렬기능
-              sortable={true}
-              onSortChange={onDetailSortChange2}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              onItemChange={onMainItemChange}
-              cellRender={customCellRender}
-              rowRender={customRowRender}
-              editField={EDIT_FIELD}
+              fileName="공정검사"
             >
-              <GridColumn title="검사항목">{createColumn()}</GridColumn>
-              <GridColumn title="측정">{createColumn2()}</GridColumn>
-            </Grid>
+              <Grid
+                style={{ height: "37.5vh" }}
+                data={process(
+                  detailDataResult2.data.map((row) => ({
+                    ...row,
+                    inspeccd: inspeccdListData.find(
+                      (item: any) => item.sub_code === row.inspeccd
+                    )?.code_name,
+                    [SELECTED_FIELD]: detailSelectedState2[idGetter3(row)],
+                  })),
+                  detailDataState2
+                )}
+                {...detailDataState2}
+                onDataStateChange={onDetailDataStateChange2}
+                //선택 기능
+                dataItemKey={DETAIL_DATA_ITEM_KEY2}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={ondetailSelectionChange2}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={detailDataResult2.total}
+                //정렬기능
+                sortable={true}
+                onSortChange={onDetailSortChange2}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn title="검사항목">{createColumn()}</GridColumn>
+                <GridColumn title="측정">{createColumn2()}</GridColumn>
+              </Grid>
+            </ExcelExport>
           </GridContainer>
         </FormBoxWrap>
       </GridContainerWrap>

@@ -365,9 +365,15 @@ const HU_B3220W: React.FC = () => {
   }, [detailDataResult]);
 
   let _export: any;
+  let _export2: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      const optionsGridTwo = _export2.workbookOptions();
+      optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+      optionsGridOne.sheets[0].title = "기본정보";
+      optionsGridOne.sheets[1].title = "상세정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -799,15 +805,16 @@ const HU_B3220W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>기본정보</GridTitle>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="사회보험현황집계표"
         >
-          <GridTitleContainer>
-            <GridTitle>기본정보</GridTitle>
-          </GridTitleContainer>
           <Grid
             style={{ height: "38vh" }}
             data={process(
@@ -863,69 +870,78 @@ const HU_B3220W: React.FC = () => {
         <GridTitleContainer>
           <GridTitle>상세정보</GridTitle>
         </GridTitleContainer>
-        <Grid
-          style={{ height: "38vh" }}
-          data={process(
-            detailDataResult.data.map((row) => ({
-              ...row,
-              dptcd: dptcdListData.find((item: any) => item.dptcd == row.dptcd)
-                ?.dptnm,
-              [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
-            })),
-            detailDataState
-          )}
-          {...detailDataState}
-          onDataStateChange={onDetailDataStateChange}
-          //선택 기능
-          dataItemKey={DATA_ITEM_KEY2}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
+        <ExcelExport
+          data={detailDataResult.data}
+          ref={(exporter) => {
+            _export2 = exporter;
           }}
-          onSelectionChange={onDetailSelectionChange}
-          //스크롤 조회 기능
-          fixedScroll={true}
-          total={detailDataResult.total}
-          skip={page2.skip}
-          take={page2.take}
-          pageable={true}
-          onPageChange={pageChange2}
-          //원하는 행 위치로 스크롤 기능
-          ref={gridRef2}
-          rowHeight={30}
-          //정렬기능
-          sortable={true}
-          onSortChange={onDetailSortChange}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
+          fileName="사회보험현황집계표"
         >
-          <GridColumn
-            field={"prsnnm"}
-            title={"성명"}
-            width="120px"
-            footerCell={detailTotalFooterCell}
-          />
-          <GridColumn
-            field={"rtrdt"}
-            title={"퇴사일"}
-            width="120px"
-            cell={DateCell}
-          />
-          <GridColumn title="국민연금">{createColumn5()}</GridColumn>
-          <GridColumn title="고용보혐">{createColumn6()}</GridColumn>
-          <GridColumn field={"dptcd"} title={"부서명"} width="120px" />
-          <GridColumn
-            field={"regorgdt"}
-            title={"입사일"}
-            width="120px"
-            cell={DateCell}
-          />
-          <GridColumn title="건강보험">{createColumn7()}</GridColumn>
-          <GridColumn title="산재보험">{createColumn8()}</GridColumn>
-        </Grid>
+          <Grid
+            style={{ height: "38vh" }}
+            data={process(
+              detailDataResult.data.map((row) => ({
+                ...row,
+                dptcd: dptcdListData.find(
+                  (item: any) => item.dptcd == row.dptcd
+                )?.dptnm,
+                [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
+              })),
+              detailDataState
+            )}
+            {...detailDataState}
+            onDataStateChange={onDetailDataStateChange}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY2}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onDetailSelectionChange}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={detailDataResult.total}
+            skip={page2.skip}
+            take={page2.take}
+            pageable={true}
+            onPageChange={pageChange2}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef2}
+            rowHeight={30}
+            //정렬기능
+            sortable={true}
+            onSortChange={onDetailSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+          >
+            <GridColumn
+              field={"prsnnm"}
+              title={"성명"}
+              width="120px"
+              footerCell={detailTotalFooterCell}
+            />
+            <GridColumn
+              field={"rtrdt"}
+              title={"퇴사일"}
+              width="120px"
+              cell={DateCell}
+            />
+            <GridColumn title="국민연금">{createColumn5()}</GridColumn>
+            <GridColumn title="고용보혐">{createColumn6()}</GridColumn>
+            <GridColumn field={"dptcd"} title={"부서명"} width="120px" />
+            <GridColumn
+              field={"regorgdt"}
+              title={"입사일"}
+              width="120px"
+              cell={DateCell}
+            />
+            <GridColumn title="건강보험">{createColumn7()}</GridColumn>
+            <GridColumn title="산재보험">{createColumn8()}</GridColumn>
+          </Grid>
+        </ExcelExport>
       </GridContainer>
     </>
   );

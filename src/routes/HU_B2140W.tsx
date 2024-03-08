@@ -578,9 +578,23 @@ const HU_B2140W: React.FC = () => {
   }, [mainDataResult4]);
 
   let _export: any;
+  let _export2: any;
+  let _export3: any;
+  let _export4: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      const optionsGridTwo = _export2.workbookOptions();
+      const optionsGridThree = _export3.workbookOptions();
+      const optionsGridFour = _export4.workbookOptions();
+      optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+      optionsGridOne.sheets[2] = optionsGridThree.sheets[0];
+      optionsGridOne.sheets[3] = optionsGridFour.sheets[0];
+      optionsGridOne.sheets[0].title = "연차/반차";
+      optionsGridOne.sheets[1].title = "외근";
+      optionsGridOne.sheets[2].title = "연장";
+      optionsGridOne.sheets[3].title = "지각";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -773,15 +787,16 @@ const HU_B2140W: React.FC = () => {
       </FilterContainer>
       <GridContainerWrap>
         <GridContainer width="25%">
+          <GridTitleContainer>
+            <GridTitle>연차/반차</GridTitle>
+          </GridTitleContainer>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
               _export = exporter;
             }}
+            fileName="근태모니터링"
           >
-            <GridTitleContainer>
-              <GridTitle>연차/반차</GridTitle>
-            </GridTitleContainer>
             <Grid
               style={{ height: "50vh" }}
               data={process(
@@ -842,15 +857,16 @@ const HU_B2140W: React.FC = () => {
           </ExcelExport>
         </GridContainer>
         <GridContainer width={`calc(50% - ${GAP}px)`}>
+          <GridTitleContainer>
+            <GridTitle>외근</GridTitle>
+          </GridTitleContainer>
           <ExcelExport
             data={mainDataResult2.data}
             ref={(exporter) => {
-              _export = exporter;
+              _export2 = exporter;
             }}
+            fileName="근태모니터링"
           >
-            <GridTitleContainer>
-              <GridTitle>외근</GridTitle>
-            </GridTitleContainer>
             <Grid
               style={{ height: "50vh" }}
               data={process(
@@ -913,15 +929,16 @@ const HU_B2140W: React.FC = () => {
           </ExcelExport>
         </GridContainer>
         <GridContainer width={`calc(25% - ${GAP}px)`}>
+          <GridTitleContainer>
+            <GridTitle>연장</GridTitle>
+          </GridTitleContainer>
           <ExcelExport
             data={mainDataResult3.data}
             ref={(exporter) => {
-              _export = exporter;
+              _export3 = exporter;
             }}
+            fileName="근태모니터링"
           >
-            <GridTitleContainer>
-              <GridTitle>연장</GridTitle>
-            </GridTitleContainer>
             <Grid
               style={{ height: "50vh" }}
               data={process(
@@ -988,60 +1005,68 @@ const HU_B2140W: React.FC = () => {
         <GridTitleContainer>
           <GridTitle>지각</GridTitle>
         </GridTitleContainer>
-        <Grid
-          style={{ height: "24vh" }}
-          data={process(
-            mainDataResult4.data.map((row) => ({
-              ...row,
-              [SELECTED_FIELD]: selectedState4[idGetter4(row)],
-            })),
-            mainDataState4
-          )}
-          {...mainDataState4}
-          onDataStateChange={onMainDataStateChange4}
-          //선택 기능
-          dataItemKey={DATA_ITEM_KEY4}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
+        <ExcelExport
+          data={mainDataResult4.data}
+          ref={(exporter) => {
+            _export4 = exporter;
           }}
-          onSelectionChange={onSelectionChange4}
-          //스크롤 조회 기능
-          fixedScroll={true}
-          total={mainDataResult4.total}
-          skip={page4.skip}
-          take={page4.take}
-          pageable={true}
-          onPageChange={pageChange4}
-          //원하는 행 위치로 스크롤 기능
-          ref={gridRef4}
-          rowHeight={30}
-          //정렬기능
-          sortable={true}
-          onSortChange={onMainSortChange4}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
+          fileName="근태모니터링"
         >
-          {customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["grdList4"].map(
-              (item: any, idx: number) =>
-                item.sortOrder !== -1 && (
-                  <GridColumn
-                    key={idx}
-                    id={item.id}
-                    field={item.fieldName}
-                    title={item.caption}
-                    width={item.width}
-                    footerCell={
-                      item.sortOrder === 0 ? mainTotalFooterCell4 : undefined
-                    }
-                  />
-                )
+          <Grid
+            style={{ height: "24vh" }}
+            data={process(
+              mainDataResult4.data.map((row) => ({
+                ...row,
+                [SELECTED_FIELD]: selectedState4[idGetter4(row)],
+              })),
+              mainDataState4
             )}
-        </Grid>
+            {...mainDataState4}
+            onDataStateChange={onMainDataStateChange4}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY4}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onSelectionChange4}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={mainDataResult4.total}
+            skip={page4.skip}
+            take={page4.take}
+            pageable={true}
+            onPageChange={pageChange4}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef4}
+            rowHeight={30}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange4}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+          >
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList4"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      footerCell={
+                        item.sortOrder === 0 ? mainTotalFooterCell4 : undefined
+                      }
+                    />
+                  )
+              )}
+          </Grid>
+        </ExcelExport>
       </GridContainer>
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (

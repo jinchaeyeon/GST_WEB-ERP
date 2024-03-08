@@ -495,9 +495,15 @@ const CM_B1000W: React.FC = () => {
 
   //엑셀 내보내기
   let _export: any;
+  let _export2: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      const optionsGridTwo = _export2.workbookOptions();
+      optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+      optionsGridOne.sheets[0].title = "인원정보";
+      optionsGridOne.sheets[1].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -706,59 +712,69 @@ const CM_B1000W: React.FC = () => {
             value={filters.todt}
             onChange={filterInputChange}
           />
-          <Grid
-            style={{ height: "55vh" }}
-            data={process(
-              subDataResult.data.map((row) => ({
-                ...row,
-                [SELECTED_FIELD]: subselectedState[idGetter2(row)],
-              })),
-              subDataState
-            )}
-            {...subDataState}
-            onDataStateChange={onSubDataStateChange}
-            //선택 기능
-            dataItemKey={SUB_DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+          <ExcelExport
+            data={subDataResult.data}
+            ref={(exporter) => {
+              _export = exporter;
             }}
-            onSelectionChange={onSubSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={subDataResult.total}
-            skip={page2.skip}
-            take={page2.take}
-            pageable={true}
-            onPageChange={pageChange2}
-            //원하는 행 위치로 스크롤 기능
-            //정렬기능
-            sortable={true}
-            onSortChange={onSubSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
+            fileName="일정조회"
           >
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList2"]
-                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                .map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        footerCell={
-                          item.sortOrder === 0 ? subTotalFooterCell : undefined
-                        }
-                      ></GridColumn>
-                    )
-                )}
-          </Grid>
+            <Grid
+              style={{ height: "55vh" }}
+              data={process(
+                subDataResult.data.map((row) => ({
+                  ...row,
+                  [SELECTED_FIELD]: subselectedState[idGetter2(row)],
+                })),
+                subDataState
+              )}
+              {...subDataState}
+              onDataStateChange={onSubDataStateChange}
+              //선택 기능
+              dataItemKey={SUB_DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSubSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={subDataResult.total}
+              skip={page2.skip}
+              take={page2.take}
+              pageable={true}
+              onPageChange={pageChange2}
+              //원하는 행 위치로 스크롤 기능
+              //정렬기능
+              sortable={true}
+              onSortChange={onSubSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+            >
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList2"]
+                  .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  .map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          footerCell={
+                            item.sortOrder === 0
+                              ? subTotalFooterCell
+                              : undefined
+                          }
+                        ></GridColumn>
+                      )
+                  )}
+            </Grid>
+          </ExcelExport>
         </GridContainer>
         <GridContainer width={`calc(100% - 370px)`}>
           <FilterContainer>
@@ -906,15 +922,16 @@ const CM_B1000W: React.FC = () => {
           </FilterContainer>
 
           <GridContainer>
+            <GridTitleContainer>
+              <GridTitle>요약정보</GridTitle>
+            </GridTitleContainer>
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
-                _export = exporter;
+                _export2 = exporter;
               }}
+              fileName="일정조회"
             >
-              <GridTitleContainer>
-                <GridTitle>요약정보</GridTitle>
-              </GridTitleContainer>
               <Grid
                 style={{ height: "37vh" }}
                 data={process(

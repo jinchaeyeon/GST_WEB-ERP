@@ -519,7 +519,9 @@ const QC_A6000: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "기본정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -1174,6 +1176,7 @@ const QC_A6000: React.FC = () => {
             ref={(exporter) => {
               _export = exporter;
             }}
+            fileName="최종검사"
           >
             <Grid
               style={{ height: "80vh" }}

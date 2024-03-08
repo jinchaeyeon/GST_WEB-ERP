@@ -252,7 +252,9 @@ const AC_B6020W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -318,6 +320,7 @@ const AC_B6020W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="자금현황"
         >
           <Grid
             style={{ height: "80vh" }}

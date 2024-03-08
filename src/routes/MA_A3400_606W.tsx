@@ -567,7 +567,11 @@ const MA_A3400_606W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (isVisibleDetail == true) {
+        const optionsGridOne = _export.workbookOptions();
+        optionsGridOne.sheets[0].title = "요약정보";
+        _export.save(optionsGridOne);
+      }
     }
   };
 
@@ -1187,6 +1191,7 @@ const MA_A3400_606W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
+              fileName="출고처리"
             >
               <GridTitleContainer>
                 <GridTitle>요약정보</GridTitle>

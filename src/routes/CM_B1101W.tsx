@@ -577,9 +577,28 @@ const CM_B1101W: React.FC = () => {
 
   //엑셀 내보내기
   let _export: any;
+  let _export2: any;
+  let _export3: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        const optionsGridThree = _export3.workbookOptions();
+        optionsGridOne.sheets[1] = optionsGridThree.sheets[0];
+        optionsGridOne.sheets[0].title = "일자별";
+        optionsGridOne.sheets[1].title = "상세정보";
+        _export.save(optionsGridOne);
+      }
+    }
+    if (_export2 !== null && _export2 !== undefined) {
+      if (tabSelected == 1) {
+        const optionsGridTwo = _export2.workbookOptions();
+        const optionsGridThree = _export3.workbookOptions();
+        optionsGridTwo.sheets[1] = optionsGridThree.sheets[0];
+        optionsGridTwo.sheets[0].title = "월별";
+        optionsGridTwo.sheets[1].title = "상세정보";
+        _export2.save(optionsGridTwo);
+      }
     }
   };
 
@@ -839,15 +858,16 @@ const CM_B1101W: React.FC = () => {
       >
         <TabStripTab title="일자별">
           <GridContainer>
+            <GridTitleContainer>
+              <GridTitle>요약정보</GridTitle>
+            </GridTitleContainer>
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
                 _export = exporter;
               }}
+              fileName="고객대응시간분석"
             >
-              <GridTitleContainer>
-                <GridTitle>요약정보</GridTitle>
-              </GridTitleContainer>
               <Grid
                 style={{ height: "40vh" }}
                 data={process(
@@ -912,15 +932,16 @@ const CM_B1101W: React.FC = () => {
         </TabStripTab>
         <TabStripTab title="월별">
           <GridContainer>
+            <GridTitleContainer>
+              <GridTitle>요약정보</GridTitle>
+            </GridTitleContainer>
             <ExcelExport
               data={mainDataResult2.data}
               ref={(exporter) => {
-                _export = exporter;
+                _export2 = exporter;
               }}
+              fileName="고객대응시간분석"
             >
-              <GridTitleContainer>
-                <GridTitle>요약정보</GridTitle>
-              </GridTitleContainer>
               <Grid
                 style={{ height: "40vh" }}
                 data={process(
@@ -988,61 +1009,69 @@ const CM_B1101W: React.FC = () => {
         <GridTitleContainer>
           <GridTitle>상세정보</GridTitle>
         </GridTitleContainer>
-        <Grid
-          style={{ height: "28vh" }}
-          data={process(
-            detailDataResult.data.map((row) => ({
-              ...row,
-              [SELECTED_FIELD]: detailselectedState[idGetter3(row)], //선택된 데이터
-            })),
-            detailDataState
-          )}
-          {...detailDataState}
-          onDataStateChange={onDetailDataStateChange}
-          //선택 기능
-          dataItemKey={DATA_ITEM_KEY}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
+        <ExcelExport
+          data={detailDataResult.data}
+          ref={(exporter) => {
+            _export3 = exporter;
           }}
-          onSelectionChange={onDetailSelectionChange}
-          //스크롤 조회 기능
-          fixedScroll={true}
-          total={detailDataResult.total}
-          skip={page3.skip}
-          take={page3.take}
-          pageable={true}
-          onPageChange={pageChange3}
-          //정렬기능
-          sortable={true}
-          onSortChange={onDetailSortChange}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
+          fileName="고객대응시간분석"
         >
-          {customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["grdList3"].map(
-              (item: any, idx: number) =>
-                item.sortOrder !== -1 && (
-                  <GridColumn
-                    key={idx}
-                    field={item.fieldName}
-                    title={item.caption}
-                    width={item.width}
-                    cell={
-                      centerField.includes(item.fieldName)
-                        ? CenterCell
-                        : undefined
-                    }
-                    footerCell={
-                      item.sortOrder === 0 ? detailTotalFooterCell : undefined
-                    }
-                  />
-                )
+          <Grid
+            style={{ height: "28vh" }}
+            data={process(
+              detailDataResult.data.map((row) => ({
+                ...row,
+                [SELECTED_FIELD]: detailselectedState[idGetter3(row)], //선택된 데이터
+              })),
+              detailDataState
             )}
-        </Grid>
+            {...detailDataState}
+            onDataStateChange={onDetailDataStateChange}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onDetailSelectionChange}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={detailDataResult.total}
+            skip={page3.skip}
+            take={page3.take}
+            pageable={true}
+            onPageChange={pageChange3}
+            //정렬기능
+            sortable={true}
+            onSortChange={onDetailSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+          >
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList3"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        centerField.includes(item.fieldName)
+                          ? CenterCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0 ? detailTotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
+          </Grid>
+        </ExcelExport>
       </GridContainer>
       {custWindowVisible && (
         <CustomersWindow

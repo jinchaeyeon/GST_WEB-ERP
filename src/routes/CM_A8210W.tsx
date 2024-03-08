@@ -643,9 +643,29 @@ const CM_A8210W: React.FC = () => {
 
   //엑셀 내보내기
   let _export: any;
+  let _export2: any;
+  let _export3: any;
+  let _export4: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        const optionsGridTwo = _export2.workbookOptions();
+        optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+        optionsGridOne.sheets[0].title = "기본정보";
+        optionsGridOne.sheets[1].title = "상세정보";
+        _export.save(optionsGridOne);
+      }
+    }
+    if (_export3 !== null && _export3 !== undefined) {
+      if (tabSelected == 1) {
+        const optionsGridThree = _export3.workbookOptions();
+        const optionsGridFour = _export4.workbookOptions();
+        optionsGridThree.sheets[1] = optionsGridFour.sheets[0];
+        optionsGridThree.sheets[0].title = "기본정보";
+        optionsGridThree.sheets[1].title = "상세정보";
+        _export3.save(optionsGridThree);
+      }
     }
   };
 
@@ -1429,57 +1449,65 @@ const CM_A8210W: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>기본정보</GridTitle>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "72.5vh" }}
-                data={process(
-                  subDataResult.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
-                  })),
-                  subDataState
-                )}
-                {...subDataState}
-                onDataStateChange={onSubDataStateChange}
-                //선택 기능
-                dataItemKey={SUB_DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+              <ExcelExport
+                data={subDataResult.data}
+                ref={(exporter) => {
+                  _export = exporter;
                 }}
-                onSelectionChange={onSubDataSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={subDataResult.total}
-                skip={page.skip}
-                take={page.take}
-                pageable={true}
-                onPageChange={pageChange}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onSubDataSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
+                fileName="임률관리"
               >
-                <GridColumn
-                  field="recdt"
-                  title="입력일자"
-                  cell={DateCell}
-                  width="120px"
-                  footerCell={subTotalFooterCell}
-                />
-                <GridColumn
-                  field="cnt"
-                  title="건수"
-                  cell={NumberCell}
-                  width="100"
-                />
-              </Grid>
+                <Grid
+                  style={{ height: "72.5vh" }}
+                  data={process(
+                    subDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
+                    })),
+                    subDataState
+                  )}
+                  {...subDataState}
+                  onDataStateChange={onSubDataStateChange}
+                  //선택 기능
+                  dataItemKey={SUB_DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSubDataSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={subDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onSubDataSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="recdt"
+                    title="입력일자"
+                    cell={DateCell}
+                    width="120px"
+                    footerCell={subTotalFooterCell}
+                  />
+                  <GridColumn
+                    field="cnt"
+                    title="건수"
+                    cell={NumberCell}
+                    width="100"
+                  />
+                </Grid>
+              </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(85% - ${GAP}px)`}>
               <GridTitleContainer>
@@ -1531,8 +1559,9 @@ const CM_A8210W: React.FC = () => {
               <ExcelExport
                 data={mainDataResult.data}
                 ref={(exporter) => {
-                  _export = exporter;
+                  _export2 = exporter;
                 }}
+                fileName="임률관리"
               >
                 <Grid
                   style={{ height: `calc(72.5vh - 70px)` }}
@@ -1671,54 +1700,62 @@ const CM_A8210W: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>기본정보</GridTitle>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "72.5vh" }}
-                data={process(
-                  subDataResult.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
-                  })),
-                  subDataState
-                )}
-                {...subDataState}
-                onDataStateChange={onSubDataStateChange}
-                //선택 기능
-                dataItemKey={SUB_DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+              <ExcelExport
+                data={subDataResult.data}
+                ref={(exporter) => {
+                  _export3 = exporter;
                 }}
-                onSelectionChange={onSubDataSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={subDataResult.total}
-                skip={page.skip}
-                take={page.take}
-                pageable={true}
-                onPageChange={pageChange}
-                //정렬기능
-                sortable={true}
-                onSortChange={onSubDataSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
+                fileName="임률관리"
               >
-                <GridColumn
-                  field="recdt"
-                  title="입력일자"
-                  cell={DateCell}
-                  width="120px"
-                  footerCell={subTotalFooterCell}
-                />
-                <GridColumn
-                  field="cnt"
-                  title="건수"
-                  cell={NumberCell}
-                  width="100"
-                />
-              </Grid>
+                <Grid
+                  style={{ height: "72.5vh" }}
+                  data={process(
+                    subDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
+                    })),
+                    subDataState
+                  )}
+                  {...subDataState}
+                  onDataStateChange={onSubDataStateChange}
+                  //선택 기능
+                  dataItemKey={SUB_DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSubDataSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={subDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onSubDataSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="recdt"
+                    title="입력일자"
+                    cell={DateCell}
+                    width="120px"
+                    footerCell={subTotalFooterCell}
+                  />
+                  <GridColumn
+                    field="cnt"
+                    title="건수"
+                    cell={NumberCell}
+                    width="100"
+                  />
+                </Grid>
+              </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(85% - ${GAP}px)`}>
               <GridTitleContainer>
@@ -1770,8 +1807,9 @@ const CM_A8210W: React.FC = () => {
               <ExcelExport
                 data={mainDataResult.data}
                 ref={(exporter) => {
-                  _export = exporter;
+                  _export4 = exporter;
                 }}
+                fileName="임률관리"
               >
                 <Grid
                   style={{ height: "62vh" }}

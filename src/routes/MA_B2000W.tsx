@@ -353,7 +353,9 @@ const MA_B2000W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -692,6 +694,7 @@ const MA_B2000W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="발주현황"
         >
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>

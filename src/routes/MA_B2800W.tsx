@@ -504,7 +504,9 @@ const MA_B2800W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "발주대비입고자료";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -1151,15 +1153,16 @@ const MA_B2800W: React.FC = () => {
         }}
       >
         <GridContainer>
+          <GridTitleContainer>
+            <GridTitle>발주대비입고자료</GridTitle>
+          </GridTitleContainer>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
               _export = exporter;
             }}
+            fileName="발주대비입고현황"
           >
-            <GridTitleContainer>
-              <GridTitle>발주대비입고자료</GridTitle>
-            </GridTitleContainer>
             <Grid
               style={{ height: "73.8vh" }}
               data={process(

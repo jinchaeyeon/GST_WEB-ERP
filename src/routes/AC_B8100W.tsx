@@ -1,5 +1,4 @@
 import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
 import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
@@ -135,14 +134,6 @@ const AC_B8100W: React.FC = () => {
     setLoading(false);
   };
 
-  //엑셀 내보내기
-  let _export: any;
-  const exportExcel = () => {
-    if (_export !== null && _export !== undefined) {
-      _export.save();
-    }
-  };
-
   // 최초 한번만 실행
   useEffect(() => {
     if (isInitSearch === false && permissions !== null) {
@@ -197,7 +188,7 @@ const AC_B8100W: React.FC = () => {
           {permissions && (
             <TopButtons
               search={search}
-              exportExcel={exportExcel}
+              disable={true}
               permissions={permissions}
               pathname="AC_B8100W"
             />

@@ -572,7 +572,11 @@ const CM_A7000W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        optionsGridOne.sheets[0].title = "요약정보";
+        _export.save(optionsGridOne);
+      }
     }
   };
 
@@ -1372,32 +1376,33 @@ const CM_A7000W: React.FC = () => {
               }}
             >
               <GridContainer width={`calc(88% - ${GAP}px)`}>
+                <GridTitleContainer>
+                  <GridTitle>요약정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="file-add"
+                    >
+                      신규
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                      icon="delete"
+                    >
+                      삭제
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult.data}
                   ref={(exporter) => {
                     _export = exporter;
                   }}
+                  fileName="상담일지"
                 >
-                  <GridTitleContainer>
-                    <GridTitle>요약정보</GridTitle>
-                    <ButtonContainer>
-                      <Button
-                        onClick={onAddClick}
-                        themeColor={"primary"}
-                        icon="file-add"
-                      >
-                        신규
-                      </Button>
-                      <Button
-                        onClick={onDeleteClick}
-                        themeColor={"primary"}
-                        fillMode={"outline"}
-                        icon="delete"
-                      >
-                        삭제
-                      </Button>
-                    </ButtonContainer>
-                  </GridTitleContainer>
                   <Grid
                     style={{ height: "78vh" }}
                     data={process(

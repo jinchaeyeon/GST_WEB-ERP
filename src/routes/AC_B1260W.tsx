@@ -261,9 +261,45 @@ const AC_B1260W: React.FC = () => {
   }, [filters, permissions]);
 
   let _export: any;
+  let _export2: any;
+  let _export3: any;
+  let _export4: any;
+  let _export5: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        optionsGridOne.sheets[0].title = "제조경비";
+        _export.save(optionsGridOne);
+      }
+    }
+    if (_export2 !== null && _export2 !== undefined) {
+      if (tabSelected == 1) {
+        const optionsGridTwo = _export2.workbookOptions();
+        optionsGridTwo.sheets[0].title = "판매관리비";
+        _export2.save(optionsGridTwo);
+      }
+    }
+    if (_export3 !== null && _export3 !== undefined) {
+      if (tabSelected == 2) {
+        const optionsGridThree = _export3.workbookOptions();
+        optionsGridThree.sheets[0].title = "매출액";
+        _export3.save(optionsGridThree);
+      }
+    }
+    if (_export4 !== null && _export4 !== undefined) {
+      if (tabSelected == 3) {
+        const optionsGridFour = _export4.workbookOptions();
+        optionsGridFour.sheets[0].title = "영업외손익";
+        _export4.save(optionsGridFour);
+      }
+    }
+    if (_export5 !== null && _export5 !== undefined) {
+      if (tabSelected == 4) {
+        const optionsGridFive = _export5.workbookOptions();
+        optionsGridFive.sheets[0].title = "특별손익";
+        _export5.save(optionsGridFive);
+      }
     }
   };
 
@@ -893,6 +929,7 @@ const AC_B1260W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
+                fileName="단축코드별집계"
               >
                 <Grid
                   style={{ height: "28vh" }}
@@ -1070,8 +1107,9 @@ const AC_B1260W: React.FC = () => {
               <ExcelExport
                 data={gridDataResult.data}
                 ref={(exporter) => {
-                  _export = exporter;
+                  _export2 = exporter;
                 }}
+                fileName="단축코드별집계"
               >
                 <Grid
                   style={{ height: "28vh" }}
@@ -1249,8 +1287,9 @@ const AC_B1260W: React.FC = () => {
               <ExcelExport
                 data={gridDataResult.data}
                 ref={(exporter) => {
-                  _export = exporter;
+                  _export3 = exporter;
                 }}
+                fileName="단축코드별집계"
               >
                 <Grid
                   style={{ height: "28vh" }}
@@ -1428,8 +1467,9 @@ const AC_B1260W: React.FC = () => {
               <ExcelExport
                 data={gridDataResult.data}
                 ref={(exporter) => {
-                  _export = exporter;
+                  _export4 = exporter;
                 }}
+                fileName="단축코드별집계"
               >
                 <Grid
                   style={{ height: "28vh" }}
@@ -1607,8 +1647,9 @@ const AC_B1260W: React.FC = () => {
               <ExcelExport
                 data={gridDataResult.data}
                 ref={(exporter) => {
-                  _export = exporter;
+                  _export5 = exporter;
                 }}
+                fileName="단축코드별집계"
               >
                 <Grid
                   style={{ height: "28vh" }}

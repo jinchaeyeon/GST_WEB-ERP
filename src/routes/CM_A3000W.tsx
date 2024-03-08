@@ -29,6 +29,7 @@ import {
   createDataTree,
   extendDataItem,
   mapTree,
+  treeToFlat,
 } from "@progress/kendo-react-treelist";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -877,9 +878,31 @@ const CM_A3000W: React.FC = () => {
 
   //엑셀 내보내기
   let _export: any;
+  let _export2: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions(
+        treeToFlat(
+          mapTree(data, SUB_ITEMS_FIELD, (item) =>
+            extendDataItem(item, SUB_ITEMS_FIELD, {
+              [EXPANDED_FIELD]: true,
+              [EDIT_FIELD]:
+                item[ALL_MENU_DATA_ITEM_KEY] === editItemId
+                  ? editItemField
+                  : undefined,
+              [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
+            })
+          ),
+          EXPANDED_FIELD,
+          SUB_ITEMS_FIELD
+        ),
+        allMenuColumns
+      );
+      const optionsGridTwo = _export2.workbookOptions();
+      optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+      optionsGridOne.sheets[0].title = "자료리스트";
+      optionsGridOne.sheets[1].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -1432,6 +1455,7 @@ const CM_A3000W: React.FC = () => {
           <ExcelExport
             ref={(exporter) => (_export = exporter)}
             hierarchy={true}
+            fileName="자료실"
           >
             <GridTitleContainer>
               <GridTitle>자료리스트</GridTitle>
@@ -1469,75 +1493,81 @@ const CM_A3000W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
-          <Grid
-            style={{ height: "23.7vh" }}
-            data={process(
-              subDataResult.data.map((row) => ({
-                ...row,
-                person: userListData.find(
-                  (item: any) => item.user_id === row.person
-                )?.user_name,
-                [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
-              })),
-              subDataState
-            )}
-            {...subDataState}
-            onDataStateChange={onSubDataStateChange}
-            //선택 기능
-            dataItemKey={SUB_DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onSubDataSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={subDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onSubDataSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
+          <ExcelExport
+            ref={(exporter) => (_export2 = exporter)}
+            data={subDataResult.data}
+            fileName="자료실"
           >
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      className={
-                        item.sortOrder === 0
-                          ? "readonly"
-                          : item.sortOrder === 1
-                          ? "readonly"
-                          : undefined
-                      }
-                      cell={
-                        DateField.includes(item.fieldName)
-                          ? DateCell
-                          : undefined
-                      }
-                      footerCell={
-                        item.sortOrder === 0 ? subTotalFooterCell : undefined
-                      }
-                    />
-                  )
+            <Grid
+              style={{ height: "23.7vh" }}
+              data={process(
+                subDataResult.data.map((row) => ({
+                  ...row,
+                  person: userListData.find(
+                    (item: any) => item.user_id === row.person
+                  )?.user_name,
+                  [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
+                })),
+                subDataState
               )}
-          </Grid>
+              {...subDataState}
+              onDataStateChange={onSubDataStateChange}
+              //선택 기능
+              dataItemKey={SUB_DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSubDataSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={subDataResult.total}
+              skip={page.skip}
+              take={page.take}
+              pageable={true}
+              onPageChange={pageChange}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onSubDataSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+            >
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        className={
+                          item.sortOrder === 0
+                            ? "readonly"
+                            : item.sortOrder === 1
+                            ? "readonly"
+                            : undefined
+                        }
+                        cell={
+                          DateField.includes(item.fieldName)
+                            ? DateCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder === 0 ? subTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
+            </Grid>
+          </ExcelExport>
           <GridTitleContainer>
             <GridTitle>세부정보</GridTitle>
             <ButtonContainer>

@@ -227,7 +227,9 @@ const HU_B3160W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "기본정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -396,15 +398,16 @@ const HU_B3160W: React.FC = () => {
       </FilterContainer>
 
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>기본정보</GridTitle>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="급상여이체명부"
         >
-          <GridTitleContainer>
-            <GridTitle>기본정보</GridTitle>
-          </GridTitleContainer>
           <Grid
             style={{ height: "81.5vh" }}
             data={process(
