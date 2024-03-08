@@ -1190,7 +1190,7 @@ const BA_A0020W_603: React.FC = () => {
   }, [filters4, permissions, customOptionData]);
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();

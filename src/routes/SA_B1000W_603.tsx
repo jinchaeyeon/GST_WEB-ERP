@@ -499,7 +499,7 @@ const SA_B1000W_603: React.FC = () => {
     }
   }, [subfilters3]);
 
-  let _export: ExcelExport | null | undefined;
+  let _export: any;;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();

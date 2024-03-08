@@ -1440,7 +1440,7 @@ const MA_A9001W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();

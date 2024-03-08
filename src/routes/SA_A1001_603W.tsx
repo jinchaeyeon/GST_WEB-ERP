@@ -726,7 +726,7 @@ const SA_A1001_603W: React.FC = () => {
     }
   }, [filters2, permissions]);
 
-  let _export: ExcelExport | null | undefined;
+  let _export: any;;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();

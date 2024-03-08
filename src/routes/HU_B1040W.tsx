@@ -435,7 +435,7 @@ const HU_B1040W: React.FC = () => {
     }
   }, [mainDataResult]);
 
-  let _export: ExcelExport | null | undefined;
+  let _export: any;;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();

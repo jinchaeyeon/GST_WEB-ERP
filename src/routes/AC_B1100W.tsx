@@ -358,7 +358,7 @@ const AC_B1100W: React.FC = () => {
     setMainDataResult(process([], mainDataState));
   };
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();

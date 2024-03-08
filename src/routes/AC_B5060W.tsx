@@ -170,7 +170,7 @@ const AC_B5060W: React.FC = () => {
   }>({});
   const [url, setUrl] = useState<string>("");
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       _export.save();
