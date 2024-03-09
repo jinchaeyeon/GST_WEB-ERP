@@ -1080,7 +1080,11 @@ const CM_A5000W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        optionsGridOne.sheets[0].title = "요약정보";
+        _export.save(optionsGridOne);
+      }
     }
   };
 
@@ -1685,32 +1689,33 @@ const CM_A5000W: React.FC = () => {
               </FilterContainer>
             </GridContainer>
             <GridContainer width={`calc(88% - ${GAP}px)`}>
+              <GridTitleContainer>
+                <GridTitle>요약정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="file-add"
+                  >
+                    신규
+                  </Button>
+                  <Button
+                    onClick={onCopyClick}
+                    themeColor={"primary"}
+                    fillMode={"outline"}
+                    icon="copy"
+                  >
+                    이전요청 복사
+                  </Button>
+                </ButtonContainer>
+              </GridTitleContainer>
               <ExcelExport
                 data={mainDataResult.data}
                 ref={(exporter) => {
                   _export = exporter;
                 }}
+                fileName="컨설팅(문의·답변)관리"
               >
-                <GridTitleContainer>
-                  <GridTitle>요약정보</GridTitle>
-                  <ButtonContainer>
-                    <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="file-add"
-                    >
-                      신규
-                    </Button>
-                    <Button
-                      onClick={onCopyClick}
-                      themeColor={"primary"}
-                      fillMode={"outline"}
-                      icon="copy"
-                    >
-                      이전요청 복사
-                    </Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
                 <Grid
                   style={{ height: "78vh" }}
                   data={process(

@@ -253,7 +253,9 @@ const AC_A5020W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "세금계산서LIST";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -880,33 +882,34 @@ const AC_A5020W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>세금계산서LIST</GridTitle>
+          <ButtonContainer>
+            <Button
+              onClick={onCheckAll}
+              icon="check"
+              fillMode="outline"
+              themeColor={"primary"}
+            >
+              일괄확정
+            </Button>
+            <Button
+              onClick={onSave}
+              icon="save"
+              fillMode="outline"
+              themeColor={"primary"}
+            >
+              세금계산서저장
+            </Button>
+          </ButtonContainer>
+        </GridTitleContainer>{" "}
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="세금계산서확정"
         >
-          <GridTitleContainer>
-            <GridTitle>세금계산서LIST</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onCheckAll}
-                icon="check"
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                일괄확정
-              </Button>
-              <Button
-                onClick={onSave}
-                icon="save"
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                세금계산서저장
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
             style={{ height: "78vh" }}
             data={process(

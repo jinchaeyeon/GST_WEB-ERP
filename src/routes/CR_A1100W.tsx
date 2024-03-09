@@ -370,7 +370,9 @@ const CR_A1100W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "출석 리스트";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -857,24 +859,25 @@ const CR_A1100W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>출석 리스트</GridTitle>
+          <ButtonContainer>
+            <Button
+              onClick={onSaveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="save"
+              title="저장"
+            ></Button>
+          </ButtonContainer>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="출석관리"
         >
-          <GridTitleContainer>
-            <GridTitle>출석 리스트</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-                title="저장"
-              ></Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
             style={{ height: "75vh" }}
             data={process(

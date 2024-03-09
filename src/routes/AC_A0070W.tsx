@@ -690,9 +690,15 @@ const AC_A0070W: React.FC = () => {
 
   //엑셀 내보내기
   let _export: any;
+  let _export2: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      const optionsGridTwo = _export2.workbookOptions();
+      optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+      optionsGridOne.sheets[0].title = "요약정보";
+      optionsGridOne.sheets[1].title = "관리항목";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -1271,25 +1277,26 @@ const AC_A0070W: React.FC = () => {
       </FilterContainer>
       <GridContainerWrap>
         <GridContainer width={`60%`}>
+          <GridTitleContainer>
+            <GridTitle>요약정보</GridTitle>
+          </GridTitleContainer>
+          <ButtonContainer>
+            <Button
+              onClick={onCarryClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="redo"
+            >
+              회계이월처리
+            </Button>
+          </ButtonContainer>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
               _export = exporter;
             }}
+            fileName="기초잔액"
           >
-            <GridTitleContainer>
-              <GridTitle>요약정보</GridTitle>
-            </GridTitleContainer>
-            <ButtonContainer>
-              <Button
-                onClick={onCarryClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="redo"
-              >
-                회계이월처리
-              </Button>
-            </ButtonContainer>
             <Grid
               style={{ height: "76vh" }} //76vh
               data={process(
@@ -1555,82 +1562,92 @@ const AC_A0070W: React.FC = () => {
             <GridTitleContainer>
               <GridTitle>관리항목</GridTitle>
             </GridTitleContainer>
-            <Grid
-              style={{ height: `calc(76vh - 305px)` }} // 65
-              data={process(
-                subDataResult.data.map((row) => ({
-                  ...row,
-                  rowstatus: !row.rowstatus ? "" : row.rowstatus,
-                  [SELECTED_FIELD]: selectedsubDataState[detailIdGetter(row)],
-                })),
-                subDataState
-              )}
-              {...subDataState}
-              onDataStateChange={onSubDataStateChange}
-              //선택 기능
-              dataItemKey={SUB_DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
+            <ExcelExport
+              data={subDataResult.data}
+              ref={(exporter) => {
+                _export2 = exporter;
               }}
-              onSelectionChange={onSubDataSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={subDataResult.total}
-              onScroll={onSubScrollHandler}
-              //정렬기능
-              sortable={true}
-              onSortChange={onSubDataSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              onItemChange={onSubItemChange}
-              cellRender={customCellRender}
-              rowRender={customRowRender}
-              editField={EDIT_FIELD}
+              fileName="기초잔액"
             >
-              <GridColumn field="rowstatus" title=" " width="50px" />
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdItem"]?.map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        className={
-                          readOnlyField.includes(item.fieldName)
-                            ? "read-only"
-                            : undefined
-                        }
-                        headerCell={
-                          requiredField.includes(item.fieldName)
-                            ? RequiredHeader
-                            : undefined
-                        }
-                        cell={
-                          item.fieldName == "mngdata"
-                            ? ColumnCommandCell
-                            : checkBoxField.includes(item.fieldName)
-                            ? CheckBoxCell
-                            : undefined
-                        }
-                        editable={
-                          readOnlyField.includes(item.fieldName) ? false : true
-                        }
-                        footerCell={
-                          item.sortOrder === 0
-                            ? detailTotalFooterCell
-                            : undefined
-                        }
-                      />
-                    )
+              <Grid
+                style={{ height: `calc(76vh - 305px)` }} // 65
+                data={process(
+                  subDataResult.data.map((row) => ({
+                    ...row,
+                    rowstatus: !row.rowstatus ? "" : row.rowstatus,
+                    [SELECTED_FIELD]: selectedsubDataState[detailIdGetter(row)],
+                  })),
+                  subDataState
                 )}
-            </Grid>
+                {...subDataState}
+                onDataStateChange={onSubDataStateChange}
+                //선택 기능
+                dataItemKey={SUB_DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSubDataSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={subDataResult.total}
+                onScroll={onSubScrollHandler}
+                //정렬기능
+                sortable={true}
+                onSortChange={onSubDataSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onSubItemChange}
+                cellRender={customCellRender}
+                rowRender={customRowRender}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdItem"]?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          className={
+                            readOnlyField.includes(item.fieldName)
+                              ? "read-only"
+                              : undefined
+                          }
+                          headerCell={
+                            requiredField.includes(item.fieldName)
+                              ? RequiredHeader
+                              : undefined
+                          }
+                          cell={
+                            item.fieldName == "mngdata"
+                              ? ColumnCommandCell
+                              : checkBoxField.includes(item.fieldName)
+                              ? CheckBoxCell
+                              : undefined
+                          }
+                          editable={
+                            readOnlyField.includes(item.fieldName)
+                              ? false
+                              : true
+                          }
+                          footerCell={
+                            item.sortOrder === 0
+                              ? detailTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
           </GridContainer>
         </GridContainer>
       </GridContainerWrap>

@@ -95,7 +95,9 @@ const AC_A1120W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "기본정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -545,15 +547,16 @@ const AC_A1120W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>기본정보</GridTitle>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="전표리스트"
         >
-          <GridTitleContainer>
-            <GridTitle>기본정보</GridTitle>
-          </GridTitleContainer>
           <Grid
             style={{ height: "72vh" }}
             data={process(

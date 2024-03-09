@@ -185,7 +185,9 @@ const AC_A1020W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -814,58 +816,55 @@ const AC_A1020W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>
+            요약정보
+            <Button
+              onClick={onPrintClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="file"
+              style={{ marginLeft: 15 }}
+            >
+              미리보기
+            </Button>
+          </GridTitle>
+          <ButtonContainer>
+            <Button
+              onClick={onCheckClick}
+              themeColor={"primary"}
+              icon="track-changes-accept"
+            >
+              지출결의서결재
+            </Button>
+            <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
+              지출결의서생성
+            </Button>
+            <Button
+              onClick={onCopyClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="copy"
+            >
+              지출결의서복사
+            </Button>
+            <Button
+              onClick={onDeleteClick}
+              icon="delete"
+              fillMode="outline"
+              themeColor={"primary"}
+            >
+              지출결의서삭제
+            </Button>
+          </ButtonContainer>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="지출결의서"
         >
-          <GridTitleContainer>
-            <GridTitle>
-              요약정보
-              <Button
-                onClick={onPrintClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="file"
-                style={{ marginLeft: 15 }}
-              >
-                미리보기
-              </Button>
-            </GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onCheckClick}
-                themeColor={"primary"}
-                icon="track-changes-accept"
-              >
-                지출결의서결재
-              </Button>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="file-add"
-              >
-                지출결의서생성
-              </Button>
-              <Button
-                onClick={onCopyClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="copy"
-              >
-                지출결의서복사
-              </Button>
-              <Button
-                onClick={onDeleteClick}
-                icon="delete"
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                지출결의서삭제
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
             style={{ height: "75vh" }}
             data={process(

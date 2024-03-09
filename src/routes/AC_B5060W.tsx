@@ -171,9 +171,39 @@ const AC_B5060W: React.FC = () => {
   const [url, setUrl] = useState<string>("");
   //엑셀 내보내기
   let _export: any;
+  let _export2: any;
+  let _export3: any;
+  let _export4: any;
+  let _export5: any;
+  let _export6: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        const optionsGridTwo = _export2.workbookOptions();
+        const optionsGridThree = _export3.workbookOptions();
+        optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+        optionsGridOne.sheets[2] = optionsGridThree.sheets[0];
+        optionsGridOne.sheets[0].title = "매출처별 세금계산서 기본정보";
+        optionsGridOne.sheets[1].title = "매출처별 세금계산서 전자세금계산서분";
+        optionsGridOne.sheets[2].title = "매출처별 세금계산서 전자세금계산서외";
+        _export.save(optionsGridOne);
+      }
+    }
+    if (_export4 !== null && _export4 !== undefined) {
+      if (tabSelected == 2) {
+        const optionsGridFour = _export4.workbookOptions();
+        const optionsGridFive = _export5.workbookOptions();
+        const optionsGridSix = _export6.workbookOptions();
+        optionsGridFour.sheets[1] = optionsGridFive.sheets[0];
+        optionsGridFour.sheets[2] = optionsGridSix.sheets[0];
+        optionsGridFour.sheets[0].title = "매입처별 세금계산서 기본정보";
+        optionsGridFour.sheets[1].title =
+          "매입처별 세금계산서 전자세금계산서분";
+        optionsGridFour.sheets[2].title =
+          "매입처별 세금계산서 전자세금계산서외";
+        _export4.save(optionsGridFour);
+      }
     }
   };
 
@@ -1113,6 +1143,7 @@ const AC_B5060W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
+              fileName="세금계산서합계표"
             >
               <Grid
                 style={{ height: "30vh" }}
@@ -1171,132 +1202,148 @@ const AC_B5060W: React.FC = () => {
           >
             <TabStripTab title="전자세금계산서분">
               <GridContainer width="100%">
-                <Grid
-                  style={{ height: "35vh" }}
-                  data={process(
-                    mainDataResult2.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-                    })),
-                    mainDataState2
-                  )}
-                  {...mainDataState2}
-                  onDataStateChange={onMainDataStateChange2}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY2}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
+                <ExcelExport
+                  data={mainDataResult2.data}
+                  ref={(exporter) => {
+                    _export2 = exporter;
                   }}
-                  onSelectionChange={onSelectionChange2}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult2.total}
-                  skip={page2.skip}
-                  take={page2.take}
-                  pageable={true}
-                  onPageChange={pageChange2}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange2}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
+                  fileName="세금계산서합계표"
                 >
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"]
-                      .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                      .map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder === 0
-                                  ? mainTotalFooterCell2
-                                  : numberField.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell2
-                                  : undefined
-                              }
-                            ></GridColumn>
-                          )
-                      )}
-                </Grid>
+                  <Grid
+                    style={{ height: "35vh" }}
+                    data={process(
+                      mainDataResult2.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                      })),
+                      mainDataState2
+                    )}
+                    {...mainDataState2}
+                    onDataStateChange={onMainDataStateChange2}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY2}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange2}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult2.total}
+                    skip={page2.skip}
+                    take={page2.take}
+                    pageable={true}
+                    onPageChange={pageChange2}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange2}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        .map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder === 0
+                                    ? mainTotalFooterCell2
+                                    : numberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell2
+                                    : undefined
+                                }
+                              ></GridColumn>
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
               </GridContainer>
             </TabStripTab>
             <TabStripTab title="전자세금계산서외">
               <GridContainer width="100%">
-                <Grid
-                  style={{ height: "35vh" }}
-                  data={process(
-                    mainDataResult3.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState3[idGetter3(row)],
-                    })),
-                    mainDataState3
-                  )}
-                  {...mainDataState3}
-                  onDataStateChange={onMainDataStateChange3}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY3}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
+                <ExcelExport
+                  data={mainDataResult3.data}
+                  ref={(exporter) => {
+                    _export3 = exporter;
                   }}
-                  onSelectionChange={onSelectionChange3}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult3.total}
-                  skip={page3.skip}
-                  take={page3.take}
-                  pageable={true}
-                  onPageChange={pageChange3}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange3}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
+                  fileName="세금계산서합계표"
                 >
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"]
-                      .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                      .map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder === 0
-                                  ? mainTotalFooterCell3
-                                  : numberField.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell3
-                                  : undefined
-                              }
-                            ></GridColumn>
-                          )
-                      )}
-                </Grid>
+                  <Grid
+                    style={{ height: "35vh" }}
+                    data={process(
+                      mainDataResult3.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                      })),
+                      mainDataState3
+                    )}
+                    {...mainDataState3}
+                    onDataStateChange={onMainDataStateChange3}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY3}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange3}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult3.total}
+                    skip={page3.skip}
+                    take={page3.take}
+                    pageable={true}
+                    onPageChange={pageChange3}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange3}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        .map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder === 0
+                                    ? mainTotalFooterCell3
+                                    : numberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell3
+                                    : undefined
+                                }
+                              ></GridColumn>
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
               </GridContainer>
             </TabStripTab>
           </TabStrip>
@@ -1321,8 +1368,9 @@ const AC_B5060W: React.FC = () => {
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
-                _export = exporter;
+                _export4 = exporter;
               }}
+              fileName="세금계산서합계표"
             >
               <Grid
                 style={{ height: "30vh" }}
@@ -1381,132 +1429,148 @@ const AC_B5060W: React.FC = () => {
           >
             <TabStripTab title="전자세금계산서분">
               <GridContainer width="100%">
-                <Grid
-                  style={{ height: "35vh" }}
-                  data={process(
-                    mainDataResult2.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-                    })),
-                    mainDataState2
-                  )}
-                  {...mainDataState2}
-                  onDataStateChange={onMainDataStateChange2}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY2}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
+                <ExcelExport
+                  data={mainDataResult2.data}
+                  ref={(exporter) => {
+                    _export5 = exporter;
                   }}
-                  onSelectionChange={onSelectionChange2}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult2.total}
-                  skip={page2.skip}
-                  take={page2.take}
-                  pageable={true}
-                  onPageChange={pageChange2}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange2}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
+                  fileName="세금계산서합계표"
                 >
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"]
-                      .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                      .map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder === 0
-                                  ? mainTotalFooterCell2
-                                  : numberField.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell2
-                                  : undefined
-                              }
-                            ></GridColumn>
-                          )
-                      )}
-                </Grid>
+                  <Grid
+                    style={{ height: "35vh" }}
+                    data={process(
+                      mainDataResult2.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                      })),
+                      mainDataState2
+                    )}
+                    {...mainDataState2}
+                    onDataStateChange={onMainDataStateChange2}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY2}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange2}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult2.total}
+                    skip={page2.skip}
+                    take={page2.take}
+                    pageable={true}
+                    onPageChange={pageChange2}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange2}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        .map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder === 0
+                                    ? mainTotalFooterCell2
+                                    : numberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell2
+                                    : undefined
+                                }
+                              ></GridColumn>
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
               </GridContainer>
             </TabStripTab>
             <TabStripTab title="전자세금계산서외">
               <GridContainer width="100%">
-                <Grid
-                  style={{ height: "35vh" }}
-                  data={process(
-                    mainDataResult3.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState3[idGetter3(row)],
-                    })),
-                    mainDataState3
-                  )}
-                  {...mainDataState3}
-                  onDataStateChange={onMainDataStateChange3}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY3}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
+                <ExcelExport
+                  data={mainDataResult3.data}
+                  ref={(exporter) => {
+                    _export6 = exporter;
                   }}
-                  onSelectionChange={onSelectionChange3}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult3.total}
-                  skip={page3.skip}
-                  take={page3.take}
-                  pageable={true}
-                  onPageChange={pageChange3}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange3}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
+                  fileName="세금계산서합계표"
                 >
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"]
-                      .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                      .map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                numberField.includes(item.fieldName)
-                                  ? NumberCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder === 0
-                                  ? mainTotalFooterCell3
-                                  : numberField.includes(item.fieldName)
-                                  ? gridSumQtyFooterCell3
-                                  : undefined
-                              }
-                            ></GridColumn>
-                          )
-                      )}
-                </Grid>
+                  <Grid
+                    style={{ height: "35vh" }}
+                    data={process(
+                      mainDataResult3.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                      })),
+                      mainDataState3
+                    )}
+                    {...mainDataState3}
+                    onDataStateChange={onMainDataStateChange3}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY3}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange3}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult3.total}
+                    skip={page3.skip}
+                    take={page3.take}
+                    pageable={true}
+                    onPageChange={pageChange3}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange3}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]
+                        .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                        .map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder === 0
+                                    ? mainTotalFooterCell3
+                                    : numberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell3
+                                    : undefined
+                                }
+                              ></GridColumn>
+                            )
+                        )}
+                  </Grid>
+                </ExcelExport>
               </GridContainer>
             </TabStripTab>
           </TabStrip>

@@ -115,7 +115,9 @@ const AC_A3100W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -625,32 +627,29 @@ const AC_A3100W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>요약정보</GridTitle>
+          <ButtonContainer>
+            <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
+              고정자산생성
+            </Button>
+            <Button
+              onClick={onDeleteClick}
+              icon="delete"
+              fillMode="outline"
+              themeColor={"primary"}
+            >
+              고정자산삭제
+            </Button>
+          </ButtonContainer>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="고정자산MASTER"
         >
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="file-add"
-              >
-                고정자산생성
-              </Button>
-              <Button
-                onClick={onDeleteClick}
-                icon="delete"
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                고정자산삭제
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
             style={{ height: "78vh" }}
             data={process(

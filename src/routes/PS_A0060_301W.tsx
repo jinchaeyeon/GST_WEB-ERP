@@ -351,7 +351,9 @@ const PS_A0060_301W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "휴일리스트";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -1004,58 +1006,59 @@ const PS_A0060_301W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>휴일 리스트</GridTitle>
+          <ButtonContainer>
+            <Button
+              onClick={onSetSaturdayClick}
+              themeColor={"primary"}
+              icon="calendar"
+            >
+              토요일 자동 생성
+            </Button>
+            <Button
+              onClick={onSetSundayClick}
+              themeColor={"primary"}
+              icon="calendar"
+            >
+              일요일 자동 생성
+            </Button>
+            <Button
+              onClick={onHolidayClick}
+              themeColor={"primary"}
+              icon="calendar"
+            >
+              공휴일 자동 생성
+            </Button>
+            <Button
+              onClick={onAddClick}
+              themeColor={"primary"}
+              icon="plus"
+              title="행 추가"
+            ></Button>
+            <Button
+              onClick={onRemoveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="minus"
+              title="행 삭제"
+            ></Button>
+            <Button
+              onClick={onSaveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="save"
+              title="저장"
+            ></Button>
+          </ButtonContainer>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="휴일관리"
         >
-          <GridTitleContainer>
-            <GridTitle>휴일 리스트</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onSetSaturdayClick}
-                themeColor={"primary"}
-                icon="calendar"
-              >
-                토요일 자동 생성
-              </Button>
-              <Button
-                onClick={onSetSundayClick}
-                themeColor={"primary"}
-                icon="calendar"
-              >
-                일요일 자동 생성
-              </Button>
-              <Button
-                onClick={onHolidayClick}
-                themeColor={"primary"}
-                icon="calendar"
-              >
-                공휴일 자동 생성
-              </Button>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="plus"
-                title="행 추가"
-              ></Button>
-              <Button
-                onClick={onRemoveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-                title="저장"
-              ></Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
             style={{ height: "78vh" }}
             data={process(

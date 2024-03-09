@@ -228,7 +228,9 @@ const AC_A1080W: React.FC = () => {
   let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "전표리스트";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -858,33 +860,34 @@ const AC_A1080W: React.FC = () => {
         }}
       >
         <GridContainer>
+          <GridTitleContainer>
+            <GridTitle>전표리스트</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onCheckAll}
+                fillMode={"outline"}
+                themeColor={"primary"}
+                icon="check-circle"
+              >
+                행 전체 선택
+              </Button>
+              <Button
+                onClick={onSaveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+              >
+                저장
+              </Button>
+            </ButtonContainer>
+          </GridTitleContainer>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
               _export = exporter;
             }}
+            fileName="전표결재"
           >
-            <GridTitleContainer>
-              <GridTitle>전표리스트</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onCheckAll}
-                  fillMode={"outline"}
-                  themeColor={"primary"}
-                  icon="check-circle"
-                >
-                  행 전체 선택
-                </Button>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                >
-                  저장
-                </Button>
-              </ButtonContainer>
-            </GridTitleContainer>
             <Grid
               style={{ height: "78vh" }}
               data={process(
