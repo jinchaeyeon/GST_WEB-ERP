@@ -144,6 +144,7 @@ import MA_A0010W from "./routes/MA_A0010W";
 import MA_A1000W from "./routes/MA_A1000W";
 import MA_A2000W from "./routes/MA_A2000W";
 import MA_A2300W from "./routes/MA_A2300W";
+import MA_A2300_615_PDAW from "./routes/MA_A2300_615_PDAW";
 import MA_A2310_606W from "./routes/MA_A2310_606W";
 import MA_A2400W from "./routes/MA_A2400W";
 import MA_A2410W from "./routes/MA_A2410W";
@@ -592,6 +593,8 @@ const AppInner: React.FC = () => {
       return MA_A2300W;
     } else if (str == "MA_A2310_606W") {
       return MA_A2310_606W;
+    } else if (str == "MA_A2300_615_PDAW") {
+      return MA_A2300_615_PDAW;
     } else if (str == "MA_A2400W") {
       return MA_A2400W;
     } else if (str == "MA_A2410W") {
@@ -1033,6 +1036,11 @@ const AppInner: React.FC = () => {
                   <AuthRoute
                     path="/MA_A2310_606W"
                     component={MA_A2310_606W}
+                    exact
+                  />
+                  <AuthRoute
+                    path="/MA_A2300_615_PDAW"
+                    component={MA_A2300_615_PDAW}
                     exact
                   />
                   <AuthRoute path="/MA_A2400W" component={MA_A2400W} exact />

@@ -94,7 +94,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
     }
   }, []);
 
-  const handleChange = (e: ComboBoxChangeEvent) => {
+  const handleChange = async (e: ComboBoxChangeEvent) => {
     if (onChange) {
       onChange({
         dataIndex: 0,
@@ -112,6 +112,79 @@ const ComboBoxCell = (props: CustomCellProps) => {
           syntheticEvent: e.syntheticEvent,
           value: e.value.postcd,
         });
+      }
+
+      if (page == "reviewlvl1") {
+        onChange({
+          dataIndex: 0,
+          dataItem: dataItem,
+          field: "title",
+          syntheticEvent: e.syntheticEvent,
+          value: "",
+        });
+        onChange({
+          dataIndex: 0,
+          dataItem: dataItem,
+          field: "contents",
+          syntheticEvent: e.syntheticEvent,
+          value: "",
+        });
+      }
+
+      if (page == "title") {
+        let data: any;
+        const queryStr2 = `SELECT reviewlvl1, contents FROM HU270T WHERE ORGDIV = '${
+          dataItem.orgdiv
+        }' AND hrreviewnum = '${
+          e.target.value ? e.target.value[valueField] : ""
+        }'`;
+        const bytes = require("utf8-bytes");
+        const convertedQueryStr = bytesToBase64(bytes(queryStr2));
+
+        let query = {
+          query: convertedQueryStr,
+        };
+
+        try {
+          data = await processApi<any>("query", query);
+        } catch (error) {
+          data = null;
+        }
+
+        if (data.isSuccess === true) {
+          const rows = data.tables[0].Rows;
+          if (rows[0].reviewlvl1 != dataItem.reviewlvl1) {
+            onChange({
+              dataIndex: 0,
+              dataItem: dataItem,
+              field: "title",
+              syntheticEvent: e.syntheticEvent,
+              value: "",
+            });
+            onChange({
+              dataIndex: 0,
+              dataItem: dataItem,
+              field: "contents",
+              syntheticEvent: e.syntheticEvent,
+              value: "",
+            });
+            onChange({
+              dataIndex: 0,
+              dataItem: dataItem,
+              field: "hrreviewnum",
+              syntheticEvent: e.syntheticEvent,
+              value: "",
+            });
+          } else {
+            onChange({
+              dataIndex: 0,
+              dataItem: dataItem,
+              field: "contents",
+              syntheticEvent: e.syntheticEvent,
+              value: rows[0].contents,
+            });
+          }
+        }
       }
     }
   };

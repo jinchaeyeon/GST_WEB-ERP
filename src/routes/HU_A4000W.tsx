@@ -70,12 +70,14 @@ import {
   useSysMessage,
 } from "../components/CommonFunction";
 import {
+  COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
   GAP,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import { useApi } from "../hooks/api";
@@ -114,7 +116,15 @@ let deletedMainRows6: object[] = [];
 let deletedMainRows7: object[] = [];
 let deletedMainRows8: object[] = [];
 
-const comboField = ["reviewlvl1", "dptcd", "badcd", "person", "rnpdiv"];
+const comboField = [
+  "reviewlvl1",
+  "dptcd",
+  "badcd",
+  "person",
+  "rnpdiv",
+  "title",
+];
+const requiredField = ["reviewlvl1", "title"];
 const checkField = ["commyn"];
 const dateField = ["interviewdt", "baddt", "recdt", "reqdt"];
 const monthField = ["yyyymm"];
@@ -315,7 +325,7 @@ const ColumnCommandCell7 = (props: GridCellProps) => {
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
-    "L_HU110, L_dptcd_001, L_QC002, L_HU017",
+    "L_sysUserMaster_001, L_HU115, L_HU110, L_dptcd_001, L_QC002, L_HU017",
     setBizComponentData
   );
   //보고서구분, 그룹구분, 그룹특성, 품목계정, 내수구분
@@ -329,22 +339,45 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       : field === "badcd"
       ? "L_QC002"
       : field === "person"
-      ? "L_HU110"
+      ? "L_sysUserMaster_001"
       : field === "rnpdiv"
       ? "L_HU017"
+      : field === "title"
+      ? "L_HU115"
       : "";
 
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
-  const textField = field == "dptcd" ? "dptnm" : "code_name";
-  const valueField = field == "dptcd" ? "dptcd" : "sub_code";
+  const textField =
+    field == "dptcd"
+      ? "dptnm"
+      : field == "title"
+      ? "title"
+      : field == "person"
+      ? "user_name"
+      : "code_name";
+  const valueField =
+    field == "dptcd"
+      ? "dptcd"
+      : field == "title"
+      ? "hrreviewnum"
+      : field == "person"
+      ? "user_id"
+      : "sub_code";
 
   return bizComponent ? (
     <ComboBoxCell
       bizComponent={bizComponent}
       textField={textField}
       valueField={valueField}
+      page={
+        field == "reviewlvl1"
+          ? "reviewlvl1"
+          : field == "title"
+          ? "title"
+          : undefined
+      }
       {...props}
     />
   ) : (
@@ -397,7 +430,7 @@ const HU_A4000W: React.FC = () => {
   UseCustomOption("HU_A4000W", setCustomOptionData);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_A4000W", setMessagesData);
-  const [wortkType, setWorkType] = useState("N");
+  const [workType, setWorkType] = useState("N");
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
@@ -467,16 +500,21 @@ const HU_A4000W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const location = UseGetValueFromSessionItem("location");
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_dptcd_001, L_HU250T", setBizComponentData);
+  UseBizComponent("L_HU110, L_dptcd_001, L_HU250T", setBizComponentData);
   const [dptcdListData, setdptcdListData] = useState([
     { dptcd: "", dptnm: "" },
   ]);
   const [UserListData, setUserListData] = useState([
     { prsnnum: "", prsnnm: "" },
   ]);
-
+  const [reviewlvl1ListData, setReviewlvl1ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
+      const reviewlvl1QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_HU110")
+      );
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_dptcd_001"
@@ -485,6 +523,7 @@ const HU_A4000W: React.FC = () => {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_HU250T")
       );
+      fetchQuery(reviewlvl1QueryStr, setReviewlvl1ListData);
       fetchQuery(userQueryStr, setUserListData);
       fetchQuery(dptcdQueryStr, setdptcdListData);
     }
@@ -671,7 +710,7 @@ const HU_A4000W: React.FC = () => {
     if (unsavedAttadatnums.length > 0) {
       setDeletedAttadatnums(unsavedAttadatnums);
     }
-    if (mainDataResult3.total > 0) {
+    if (mainDataResult3.total > 0 && workType != "N") {
       if (e.selected == 0) {
         setFilters5((prev) => ({
           ...prev,
@@ -882,12 +921,20 @@ const HU_A4000W: React.FC = () => {
   };
 
   const ComboBoxChange = (e: any) => {
-    const { name, value } = e;
+    const { name, value, values } = e;
 
-    setInformation((prev: any) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "interviewee") {
+      setInformation((prev: any) => ({
+        ...prev,
+        [name]: values.prsnnum,
+        dptcd: values.dptcd,
+      }));
+    } else {
+      setInformation((prev: any) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   let gridRef: any = useRef(null);
@@ -1243,7 +1290,7 @@ const HU_A4000W: React.FC = () => {
         "@p_orgdiv": filters3.orgdiv,
         "@p_frdt": convertDateToStr(filters3.frdt).substring(0, 6),
         "@p_todt": convertDateToStr(filters3.todt).substring(0, 6),
-        "@p_Interviewer": userId,
+        "@p_Interviewer": filters3.Interviewer,
         "@p_Interviewee": filters3.Interviewee,
         "@p_dptcd": filters3.dptcd,
         "@p_hrreviewnum": filters3.hrreviewnum,
@@ -1318,7 +1365,9 @@ const HU_A4000W: React.FC = () => {
             difficulty: selectedRow.difficulty,
             remark1: selectedRow.remark1,
             yyyymm:
-              selectedRow.yyyymm == "" ? monthAgo : toDate(selectedRow.yyyymm),
+              selectedRow.yyyymm == ""
+                ? monthAgo
+                : toDate(selectedRow.yyyymm + "01"),
           });
           setFilters4((prev) => ({
             ...prev,
@@ -1379,15 +1428,17 @@ const HU_A4000W: React.FC = () => {
                 ? new Date()
                 : toDate(rows[0].interviewdt),
             interviewer: rows[0].interviewer,
-            interviewee: rows[0].interviewee,
+            interviewee:
+              rows[0].interviewee == undefined ? "" : rows[0].interviewee,
             dptcd: rows[0].dptcd,
             difficulty: rows[0].difficulty,
             remark1: rows[0].remark1,
-            yyyymm: rows[0].yyyymm == "" ? monthAgo : toDate(rows[0].yyyymm),
+            yyyymm:
+              rows[0].yyyymm == "" ? monthAgo : toDate(rows[0].yyyymm + "01"),
           });
           setFilters4((prev) => ({
             ...prev,
-            userid: rows[0].interviewee,
+            userid: rows[0].interviewee == undefined ? "" : rows[0].interviewee,
             yyyymm: rows[0].yyyymm,
             ref_key: rows[0].monthlyhrreview,
             isSearch: true,
@@ -1395,7 +1446,7 @@ const HU_A4000W: React.FC = () => {
           }));
           setFilters5((prev) => ({
             ...prev,
-            userid: rows[0].interviewee,
+            userid: rows[0].interviewee == undefined ? "" : rows[0].interviewee,
             yyyymm: rows[0].yyyymm,
             ref_key: rows[0].monthlyhrreview,
             isSearch: true,
@@ -1403,7 +1454,7 @@ const HU_A4000W: React.FC = () => {
           }));
           setFilters6((prev) => ({
             ...prev,
-            userid: rows[0].interviewee,
+            userid: rows[0].interviewee == undefined ? "" : rows[0].interviewee,
             yyyymm: rows[0].yyyymm,
             ref_key: rows[0].monthlyhrreview,
             isSearch: true,
@@ -1411,7 +1462,7 @@ const HU_A4000W: React.FC = () => {
           }));
           setFilters7((prev) => ({
             ...prev,
-            userid: rows[0].interviewee,
+            userid: rows[0].interviewee == undefined ? "" : rows[0].interviewee,
             yyyymm: rows[0].yyyymm,
             ref_key: rows[0].monthlyhrreview,
             isSearch: true,
@@ -1419,7 +1470,7 @@ const HU_A4000W: React.FC = () => {
           }));
           setFilters8((prev) => ({
             ...prev,
-            userid: rows[0].interviewee,
+            userid: rows[0].interviewee == undefined ? "" : rows[0].interviewee,
             yyyymm: rows[0].yyyymm,
             ref_key: rows[0].monthlyhrreview,
             isSearch: true,
@@ -1427,7 +1478,7 @@ const HU_A4000W: React.FC = () => {
           }));
           setFilters9((prev) => ({
             ...prev,
-            userid: rows[0].interviewee,
+            userid: rows[0].interviewee == undefined ? "" : rows[0].interviewee,
             yyyymm: rows[0].yyyymm,
             ref_key: rows[0].monthlyhrreview,
             isSearch: true,
@@ -1502,13 +1553,13 @@ const HU_A4000W: React.FC = () => {
       parameters: {
         "@p_work_type": filters4.work_type,
         "@p_orgdiv": filters.orgdiv,
-        "@p_frdt": convertDateToStr(filters.frdt).substring(0, 6),
-        "@p_todt": convertDateToStr(filters.todt).substring(0, 6),
-        "@p_Interviewer": userId,
-        "@p_Interviewee": filters.Interviewee,
-        "@p_dptcd": filters.dptcd,
+        "@p_frdt": convertDateToStr(filters3.frdt).substring(0, 6),
+        "@p_todt": convertDateToStr(filters3.todt).substring(0, 6),
+        "@p_Interviewer": filters3.Interviewer,
+        "@p_Interviewee": filters3.Interviewee,
+        "@p_dptcd": filters3.dptcd,
         "@p_hrreviewnum": filters2.hrreviewnum,
-        "@p_Monthly_hrreview": filters.Monthly_hrreview,
+        "@p_Monthly_hrreview": filters3.Monthly_hrreview,
         "@p_userid": filters4.userid,
         "@p_yyyymm": filters4.yyyymm,
         "@p_ref_key": filters4.ref_key,
@@ -1591,13 +1642,13 @@ const HU_A4000W: React.FC = () => {
       parameters: {
         "@p_work_type": filters5.work_type,
         "@p_orgdiv": filters.orgdiv,
-        "@p_frdt": convertDateToStr(filters.frdt).substring(0, 6),
-        "@p_todt": convertDateToStr(filters.todt).substring(0, 6),
-        "@p_Interviewer": userId,
-        "@p_Interviewee": filters.Interviewee,
-        "@p_dptcd": filters.dptcd,
+        "@p_frdt": convertDateToStr(filters3.frdt).substring(0, 6),
+        "@p_todt": convertDateToStr(filters3.todt).substring(0, 6),
+        "@p_Interviewer": filters3.Interviewer,
+        "@p_Interviewee": filters3.Interviewee,
+        "@p_dptcd": filters3.dptcd,
         "@p_hrreviewnum": filters2.hrreviewnum,
-        "@p_Monthly_hrreview": filters.Monthly_hrreview,
+        "@p_Monthly_hrreview": filters3.Monthly_hrreview,
         "@p_userid": filters5.userid,
         "@p_yyyymm": filters5.yyyymm,
         "@p_ref_key": filters5.ref_key,
@@ -1655,13 +1706,13 @@ const HU_A4000W: React.FC = () => {
       parameters: {
         "@p_work_type": filters6.work_type,
         "@p_orgdiv": filters.orgdiv,
-        "@p_frdt": convertDateToStr(filters.frdt).substring(0, 6),
-        "@p_todt": convertDateToStr(filters.todt).substring(0, 6),
-        "@p_Interviewer": userId,
-        "@p_Interviewee": filters.Interviewee,
-        "@p_dptcd": filters.dptcd,
+        "@p_frdt": convertDateToStr(filters3.frdt).substring(0, 6),
+        "@p_todt": convertDateToStr(filters3.todt).substring(0, 6),
+        "@p_Interviewer": filters3.Interviewer,
+        "@p_Interviewee": filters3.Interviewee,
+        "@p_dptcd": filters3.dptcd,
         "@p_hrreviewnum": filters2.hrreviewnum,
-        "@p_Monthly_hrreview": filters.Monthly_hrreview,
+        "@p_Monthly_hrreview": filters3.Monthly_hrreview,
         "@p_userid": filters6.userid,
         "@p_yyyymm": filters6.yyyymm,
         "@p_ref_key": filters6.ref_key,
@@ -1719,13 +1770,13 @@ const HU_A4000W: React.FC = () => {
       parameters: {
         "@p_work_type": filters7.work_type,
         "@p_orgdiv": filters.orgdiv,
-        "@p_frdt": convertDateToStr(filters.frdt).substring(0, 6),
-        "@p_todt": convertDateToStr(filters.todt).substring(0, 6),
-        "@p_Interviewer": userId,
-        "@p_Interviewee": filters.Interviewee,
-        "@p_dptcd": filters.dptcd,
+        "@p_frdt": convertDateToStr(filters3.frdt).substring(0, 6),
+        "@p_todt": convertDateToStr(filters3.todt).substring(0, 6),
+        "@p_Interviewer": filters3.Interviewer,
+        "@p_Interviewee": filters3.Interviewee,
+        "@p_dptcd": filters3.dptcd,
         "@p_hrreviewnum": filters2.hrreviewnum,
-        "@p_Monthly_hrreview": filters.Monthly_hrreview,
+        "@p_Monthly_hrreview": filters3.Monthly_hrreview,
         "@p_userid": filters7.userid,
         "@p_yyyymm": filters7.yyyymm,
         "@p_ref_key": filters7.ref_key,
@@ -1783,11 +1834,11 @@ const HU_A4000W: React.FC = () => {
       parameters: {
         "@p_work_type": filters8.work_type,
         "@p_orgdiv": filters.orgdiv,
-        "@p_frdt": convertDateToStr(filters.frdt).substring(0, 6),
-        "@p_todt": convertDateToStr(filters.todt).substring(0, 6),
-        "@p_Interviewer": userId,
-        "@p_Interviewee": filters.Interviewee,
-        "@p_dptcd": filters.dptcd,
+        "@p_frdt": convertDateToStr(filters3.frdt).substring(0, 6),
+        "@p_todt": convertDateToStr(filters3.todt).substring(0, 6),
+        "@p_Interviewer": filters3.Interviewer,
+        "@p_Interviewee": filters3.Interviewee,
+        "@p_dptcd": filters3.dptcd,
         "@p_hrreviewnum": filters2.hrreviewnum,
         "@p_Monthly_hrreview": filters8.ref_key,
         "@p_userid": filters8.userid,
@@ -1846,11 +1897,11 @@ const HU_A4000W: React.FC = () => {
       parameters: {
         "@p_work_type": filters9.work_type,
         "@p_orgdiv": filters9.orgdiv,
-        "@p_frdt": convertDateToStr(filters.frdt).substring(0, 6),
-        "@p_todt": convertDateToStr(filters.todt).substring(0, 6),
-        "@p_Interviewer": userId,
-        "@p_Interviewee": filters.Interviewee,
-        "@p_dptcd": filters.dptcd,
+        "@p_frdt": convertDateToStr(filters3.frdt).substring(0, 6),
+        "@p_todt": convertDateToStr(filters3.todt).substring(0, 6),
+        "@p_Interviewer": filters3.Interviewer,
+        "@p_Interviewee": filters3.Interviewee,
+        "@p_dptcd": filters3.dptcd,
         "@p_hrreviewnum": filters2.hrreviewnum,
         "@p_Monthly_hrreview": filters9.ref_key,
         "@p_userid": filters9.userid,
@@ -2183,6 +2234,21 @@ const HU_A4000W: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
+    const interviewee: any =
+      UserListData.find(
+        (item: any) => item.prsnnm == selectedRowData.interviewee
+      ) == undefined
+        ? ""
+        : UserListData.find(
+            (item: any) => item.prsnnm == selectedRowData.interviewee
+          );
+    const dptcd: any =
+      dptcdListData.find((item: any) => item.dptnm == selectedRowData.dptcd) ==
+      undefined
+        ? ""
+        : dptcdListData.find(
+            (item: any) => item.dptnm == selectedRowData.dptcd
+          );
     setWorkType("U");
     setInformation({
       orgdiv: selectedRowData.orgdiv,
@@ -2192,18 +2258,18 @@ const HU_A4000W: React.FC = () => {
           ? new Date()
           : toDate(selectedRowData.interviewdt),
       interviewer: selectedRowData.interviewer,
-      interviewee: selectedRowData.interviewee,
-      dptcd: selectedRowData.dptcd,
+      interviewee: interviewee.prsnnum == undefined ? "" : interviewee.prsnnum,
+      dptcd: dptcd.dptcd == undefined ? "" : dptcd.dptcd,
       difficulty: selectedRowData.difficulty,
       remark1: selectedRowData.remark1,
       yyyymm:
         selectedRowData.yyyymm == ""
           ? monthAgo
-          : toDate(selectedRowData.yyyymm),
+          : toDate(selectedRowData.yyyymm + "01"),
     });
     setFilters4((prev) => ({
       ...prev,
-      userid: selectedRowData.interviewee,
+      userid: interviewee.prsnnum == undefined ? "" : interviewee.prsnnum,
       yyyymm: selectedRowData.yyyymm,
       ref_key: selectedRowData.monthlyhrreview,
       isSearch: true,
@@ -2217,7 +2283,7 @@ const HU_A4000W: React.FC = () => {
     }
     setFilters5((prev) => ({
       ...prev,
-      userid: selectedRowData.interviewee,
+      userid: interviewee.prsnnum == undefined ? "" : interviewee.prsnnum,
       yyyymm: selectedRowData.yyyymm,
       ref_key: selectedRowData.monthlyhrreview,
       isSearch: true,
@@ -2225,7 +2291,7 @@ const HU_A4000W: React.FC = () => {
     }));
     setFilters6((prev) => ({
       ...prev,
-      userid: selectedRowData.interviewee,
+      userid: interviewee.prsnnum == undefined ? "" : interviewee.prsnnum,
       yyyymm: selectedRowData.yyyymm,
       ref_key: selectedRowData.monthlyhrreview,
       isSearch: true,
@@ -2233,7 +2299,7 @@ const HU_A4000W: React.FC = () => {
     }));
     setFilters7((prev) => ({
       ...prev,
-      userid: selectedRowData.interviewee,
+      userid: interviewee.prsnnum == undefined ? "" : interviewee.prsnnum,
       yyyymm: selectedRowData.yyyymm,
       ref_key: selectedRowData.monthlyhrreview,
       isSearch: true,
@@ -2241,7 +2307,7 @@ const HU_A4000W: React.FC = () => {
     }));
     setFilters8((prev) => ({
       ...prev,
-      userid: selectedRowData.interviewee,
+      userid: interviewee.prsnnum == undefined ? "" : interviewee.prsnnum,
       yyyymm: selectedRowData.yyyymm,
       ref_key: selectedRowData.monthlyhrreview,
       isSearch: true,
@@ -2249,7 +2315,7 @@ const HU_A4000W: React.FC = () => {
     }));
     setFilters9((prev) => ({
       ...prev,
-      userid: selectedRowData.interviewee,
+      userid: interviewee.prsnnum == undefined ? "" : interviewee.prsnnum,
       yyyymm: selectedRowData.yyyymm,
       ref_key: selectedRowData.monthlyhrreview,
       isSearch: true,
@@ -3303,6 +3369,221 @@ const HU_A4000W: React.FC = () => {
     });
   };
 
+  const onAddClick8 = () => {
+    mainDataResult8.data.map((item) => {
+      if (item.num > temp8) {
+        temp8 = item.num;
+      }
+    });
+
+    const datas = mainDataResult3.data.filter(
+      (item) =>
+        item[DATA_ITEM_KEY3] == Object.getOwnPropertyNames(selectedState3)[0]
+    )[0];
+
+    const newDataItem = {
+      [DATA_ITEM_KEY8]: ++temp8,
+      bf_qualitative_evalution: "",
+      bf_quantitative_evalution: 0,
+      contents: "",
+      hrreviewnum: "",
+      monthlyhrreview: datas.monthlyhrreview,
+      monthlyhrreviewseq: datas.monthlyhrreviewseq,
+      orgdiv: "01",
+      qualitative_evalution: "",
+      quantitative_evalution: 0,
+      reviewlvl1: "",
+      title: "",
+      rowstatus: "N",
+    };
+
+    setSelectedState8({ [newDataItem[DATA_ITEM_KEY8]]: true });
+    setPage8((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
+    setMainDataResult8((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onreviewlvl1AddClick = async () => {
+    if (information.dptcd == "") {
+      alert("면접자 부서를 입력해주세요.");
+    } else {
+      let data: any;
+      setLoading(true);
+
+      //조회조건 파라미터
+      const parameters: Iparameters = {
+        procedureName: "P_HU_A4000W_Q",
+        pageNumber: filters9.pgNum,
+        pageSize: filters9.pgSize,
+        parameters: {
+          "@p_work_type": "DETAIL2_N",
+          "@p_orgdiv": filters9.orgdiv,
+          "@p_frdt": convertDateToStr(filters.frdt).substring(0, 6),
+          "@p_todt": convertDateToStr(filters.todt).substring(0, 6),
+          "@p_Interviewer": userId,
+          "@p_Interviewee": filters.Interviewee,
+          "@p_dptcd": information.dptcd,
+          "@p_hrreviewnum": filters2.hrreviewnum,
+          "@p_Monthly_hrreview": filters9.ref_key,
+          "@p_userid": filters9.userid,
+          "@p_yyyymm": filters9.yyyymm,
+          "@p_ref_key": filters9.ref_key,
+          "@p_find_row_value": filters.find_row_value,
+        },
+      };
+      try {
+        data = await processApi<any>("procedure", parameters);
+      } catch (error) {
+        data = null;
+      }
+      if (data.isSuccess === true) {
+        const totalRowCnt = data.tables[0].TotalRowCount;
+        const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
+          ...row,
+        }));
+
+        rows.map((item: any) => {
+          mainDataResult8.data.map((item) => {
+            if (item.num > temp8) {
+              temp8 = item.num;
+            }
+          });
+
+          const datas = mainDataResult3.data.filter(
+            (item) =>
+              item[DATA_ITEM_KEY3] ==
+              Object.getOwnPropertyNames(selectedState3)[0]
+          )[0];
+
+          const newDataItem = {
+            [DATA_ITEM_KEY8]: ++temp8,
+            bf_qualitative_evalution: item.bf_qualitative_evalution,
+            bf_quantitative_evalution: item.bf_quantitative_evalution,
+            contents: item.contents,
+            hrreviewnum: item.hrreviewnum,
+            monthlyhrreview: datas.monthlyhrreview,
+            monthlyhrreviewseq: datas.monthlyhrreviewseq,
+            orgdiv: "01",
+            qualitative_evalution: item.qualitative_evalution,
+            quantitative_evalution: item.quantitative_evalution,
+            reviewlvl1: item.reviewlvl1,
+            title: item.title,
+            rowstatus: "N",
+          };
+
+          setSelectedState8({ [newDataItem[DATA_ITEM_KEY8]]: true });
+          setPage8((prev) => ({
+            ...prev,
+            skip: 0,
+            take: prev.take + 1,
+          }));
+          setMainDataResult8((prev) => {
+            return {
+              data: [newDataItem, ...prev.data],
+              total: prev.total + 1,
+            };
+          });
+        });
+      } else {
+        console.log("[오류 발생]");
+        console.log(data);
+      }
+      setLoading(false);
+    }
+  };
+
+  const onreviewlvl1AddClick2 = async () => {
+    if (information.dptcd == "") {
+      alert("면접자 부서를 입력해주세요.");
+    } else {
+      let data: any;
+      setLoading(true);
+      //조회조건 파라미터
+      const parameters: Iparameters = {
+        procedureName: "P_HU_A4000W_Q",
+        pageNumber: filters9.pgNum,
+        pageSize: filters9.pgSize,
+        parameters: {
+          "@p_work_type": "DETAIL3_N",
+          "@p_orgdiv": filters9.orgdiv,
+          "@p_frdt": convertDateToStr(filters.frdt).substring(0, 6),
+          "@p_todt": convertDateToStr(filters.todt).substring(0, 6),
+          "@p_Interviewer": userId,
+          "@p_Interviewee": filters.Interviewee,
+          "@p_dptcd": information.dptcd,
+          "@p_hrreviewnum": filters2.hrreviewnum,
+          "@p_Monthly_hrreview": filters9.ref_key,
+          "@p_userid": filters9.userid,
+          "@p_yyyymm": filters9.yyyymm,
+          "@p_ref_key": filters9.ref_key,
+          "@p_find_row_value": filters.find_row_value,
+        },
+      };
+      try {
+        data = await processApi<any>("procedure", parameters);
+      } catch (error) {
+        data = null;
+      }
+      if (data.isSuccess === true) {
+        const totalRowCnt = data.tables[0].TotalRowCount;
+        const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
+          ...row,
+        }));
+        rows.map((item: any) => {
+          mainDataResult9.data.map((item) => {
+            if (item.num > temp9) {
+              temp9 = item.num;
+            }
+          });
+          const datas = mainDataResult3.data.filter(
+            (item) =>
+              item[DATA_ITEM_KEY3] ==
+              Object.getOwnPropertyNames(selectedState3)[0]
+          )[0];
+          const newDataItem = {
+            [DATA_ITEM_KEY9]: ++temp9,
+            bf_qualitative_evalution: item.bf_qualitative_evalution,
+            bf_quantitative_evalution: item.bf_quantitative_evalution,
+            contents: item.contents,
+            hrreviewnum: item.hrreviewnum,
+            monthlyhrreview: datas.monthlyhrreview,
+            monthlyhrreviewseq: datas.monthlyhrreviewseq,
+            orgdiv: "01",
+            qualitative_evalution: item.qualitative_evalution,
+            quantitative_evalution: item.quantitative_evalution,
+            reviewlvl1: item.reviewlvl1,
+            title: item.title,
+            rowstatus: "N",
+          };
+          setSelectedState9({ [newDataItem[DATA_ITEM_KEY9]]: true });
+          setPage9((prev) => ({
+            ...prev,
+            skip: 0,
+            take: prev.take + 1,
+          }));
+          setMainDataResult9((prev) => {
+            return {
+              data: [newDataItem, ...prev.data],
+              total: prev.total + 1,
+            };
+          });
+        });
+      } else {
+        console.log("[오류 발생]");
+        console.log(data);
+      }
+      setLoading(false);
+    }
+  };
+
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
     let Object: any[] = [];
@@ -3504,6 +3785,44 @@ const HU_A4000W: React.FC = () => {
     }
   };
 
+  const onDeleteClick8 = (e: any) => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
+    mainDataResult8.data.forEach((item: any, index: number) => {
+      if (!selectedState8[item[DATA_ITEM_KEY8]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows8.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult8.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult8.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult8((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    if (Object.length > 0) {
+      setSelectedState8({
+        [data != undefined ? data[DATA_ITEM_KEY8] : newData[0]]: true,
+      });
+    }
+  };
+
   const onSaveClick = () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
@@ -3665,6 +3984,163 @@ const HU_A4000W: React.FC = () => {
       dptcd_s: dataArr.dptcd_s.join("|"),
       remark1_s: dataArr.remark1_s.join("|"),
     }));
+  };
+
+  const onSaveClick3 = () => {
+    if (information.interviewee == "") {
+      alert("필수값을 채워주세요");
+    } else {
+      let dataArr: TdataArr = {
+        rowstatus_s: [],
+        hrreviewnum_s: [],
+        reviewlvl1_s: [],
+        title_s: [],
+        contents_s: [],
+        commyn_s: [],
+
+        hrreview_stnum_s: [],
+        dptcd_s: [],
+        remark1_s: [],
+
+        monthlyhrreview_s: [],
+        monthlyhrreviewseq_s: [],
+        quantitative_evalution_s: [],
+        qualitative_evalution_s: [],
+
+        badnum_s: [],
+        badseq_s: [],
+        baddt_s: [],
+        badcd_s: [],
+        remark_s: [],
+
+        seq_s: [],
+        rnpdiv_s: [],
+        reqdt_s: [],
+        attdatnum_s: [],
+        reloffice_s: [],
+      };
+
+      let valid = true;
+
+      const dataItem = mainDataResult8.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+      const dataItem2 = mainDataResult9.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+
+      dataItem.map((item) => {
+        if (item.reviewlvl1 == "" || item.title == "") {
+          valid = false;
+        }
+      });
+
+      if (valid != true) {
+        alert("필수값을 입력해주세요.");
+        return false;
+      }
+
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          reviewlvl1 = "",
+          title = "",
+          contents = "",
+          monthlyhrreview = "",
+          monthlyhrreviewseq = "",
+          quantitative_evalution = "",
+          qualitative_evalution = "",
+          hrreviewnum = "",
+        } = item;
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.reviewlvl1_s.push(reviewlvl1);
+        dataArr.title_s.push(title);
+        dataArr.contents_s.push(contents);
+        dataArr.monthlyhrreview_s.push(monthlyhrreview);
+        dataArr.monthlyhrreviewseq_s.push(
+          monthlyhrreviewseq == undefined ? 0 : monthlyhrreviewseq
+        );
+        dataArr.quantitative_evalution_s.push(quantitative_evalution);
+        dataArr.qualitative_evalution_s.push(qualitative_evalution);
+        dataArr.hrreviewnum_s.push(hrreviewnum);
+      });
+      dataItem2.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          reviewlvl1 = "",
+          title = "",
+          contents = "",
+          monthlyhrreview = "",
+          monthlyhrreviewseq = "",
+          quantitative_evalution = "",
+          qualitative_evalution = "",
+          hrreviewnum = "",
+        } = item;
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.reviewlvl1_s.push(reviewlvl1);
+        dataArr.title_s.push(title);
+        dataArr.contents_s.push(contents);
+        dataArr.monthlyhrreview_s.push(monthlyhrreview);
+        dataArr.monthlyhrreviewseq_s.push(
+          monthlyhrreviewseq == undefined ? 0 : monthlyhrreviewseq
+        );
+        dataArr.quantitative_evalution_s.push(quantitative_evalution);
+        dataArr.qualitative_evalution_s.push(qualitative_evalution);
+        dataArr.hrreviewnum_s.push(hrreviewnum);
+      });
+      deletedMainRows8.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          reviewlvl1 = "",
+          title = "",
+          contents = "",
+          monthlyhrreview = "",
+          monthlyhrreviewseq = "",
+          quantitative_evalution = "",
+          qualitative_evalution = "",
+          hrreviewnum = "",
+        } = item;
+        dataArr.rowstatus_s.push("D");
+        dataArr.reviewlvl1_s.push(reviewlvl1);
+        dataArr.title_s.push(title);
+        dataArr.contents_s.push(contents);
+        dataArr.monthlyhrreview_s.push(monthlyhrreview);
+        dataArr.monthlyhrreviewseq_s.push(monthlyhrreviewseq);
+        dataArr.quantitative_evalution_s.push(quantitative_evalution);
+        dataArr.qualitative_evalution_s.push(qualitative_evalution);
+        dataArr.hrreviewnum_s.push(hrreviewnum);
+      });
+      setParaData((prev) => ({
+        ...prev,
+        workType: workType,
+        orgdiv: "01",
+        location: location,
+
+        hrreviewnum_s: dataArr.hrreviewnum_s.join("|"),
+        monthlyhrreview: information.monthlyhrreview,
+        interviewdt: convertDateToStr(information.interviewdt),
+        yyyymm: convertDateToStr(information.yyyymm).substring(0, 6),
+        interviewer: information.interviewer,
+        interviewee: information.interviewee,
+        difficulty: information.difficulty,
+        remark: information.remark1,
+
+        rowstatus_s: dataArr.rowstatus_s.join("|"),
+        reviewlvl1_s: dataArr.reviewlvl1_s.join("|"),
+        title_s: dataArr.title_s.join("|"),
+        contents_s: dataArr.contents_s.join("|"),
+        monthlyhrreview_s: dataArr.monthlyhrreview_s.join("|"),
+        monthlyhrreviewseq_s: dataArr.monthlyhrreviewseq_s.join("|"),
+        quantitative_evalution_s: dataArr.quantitative_evalution_s.join("|"),
+        qualitative_evalution_s: dataArr.qualitative_evalution_s.join("|"),
+      }));
+    }
   };
 
   const onSaveClick5 = () => {
@@ -3986,6 +4462,7 @@ const HU_A4000W: React.FC = () => {
       deletedMainRows5 = [];
       deletedMainRows6 = [];
       deletedMainRows7 = [];
+      deletedMainRows8 = [];
       setUnsavedName([]);
       setUnsavedAttadatnums([]);
       resetAllGrid();
@@ -4029,7 +4506,7 @@ const HU_A4000W: React.FC = () => {
         }));
         setFilters3((prev) => ({
           ...prev,
-          find_row_value: "",
+          find_row_value: data.returnString,
           pgNum: 1,
           isSearch: true,
         }));
@@ -4182,12 +4659,17 @@ const HU_A4000W: React.FC = () => {
     deletedMainRows5 = [];
     deletedMainRows6 = [];
     deletedMainRows7 = [];
+    deletedMainRows8 = [];
     setPage5(initialPageState);
     setPage6(initialPageState);
     setPage7(initialPageState);
+    setPage8(initialPageState);
+    setPage9(initialPageState);
     setMainDataResult5(process([], mainDataState5));
     setMainDataResult6(process([], mainDataState6));
     setMainDataResult7(process([], mainDataState7));
+    setMainDataResult8(process([], mainDataState8));
+    setMainDataResult9(process([], mainDataState9));
   };
 
   const questionToDelete = useSysMessage("QuestionToDelete");
@@ -4600,7 +5082,7 @@ const HU_A4000W: React.FC = () => {
                     삭제
                   </Button>
                   <Button
-                    //onClick={onSaveClick}
+                    onClick={onSaveClick3}
                     icon="save"
                     fillMode="outline"
                     themeColor={"primary"}
@@ -4790,6 +5272,8 @@ const HU_A4000W: React.FC = () => {
                             valueField="dptcd"
                             textField="dptnm"
                             para="HU_A4000W"
+                            disabled={true}
+                            className="readonly"
                           />
                         )}
                       </td>
@@ -5040,7 +5524,7 @@ const HU_A4000W: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
-                          disabled={wortkType == "N" ? true : false}
+                          disabled={workType == "N" ? true : false}
                         ></Button>
                         <Button
                           onClick={onDeleteClick5}
@@ -5048,7 +5532,7 @@ const HU_A4000W: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
-                          disabled={wortkType == "N" ? true : false}
+                          disabled={workType == "N" ? true : false}
                         ></Button>
                         <Button
                           onClick={onSaveClick5}
@@ -5056,7 +5540,7 @@ const HU_A4000W: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
-                          disabled={wortkType == "N" ? true : false}
+                          disabled={workType == "N" ? true : false}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -5159,7 +5643,7 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="plus"
                             title="행 추가"
-                            disabled={wortkType == "N" ? true : false}
+                            disabled={workType == "N" ? true : false}
                           ></Button>
                           <Button
                             onClick={onDeleteClick6}
@@ -5167,7 +5651,7 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="minus"
                             title="행 삭제"
-                            disabled={wortkType == "N" ? true : false}
+                            disabled={workType == "N" ? true : false}
                           ></Button>
                           <Button
                             //onClick={onSaveClick6}
@@ -5175,7 +5659,7 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="save"
                             title="저장"
-                            disabled={wortkType == "N" ? true : false}
+                            disabled={workType == "N" ? true : false}
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
@@ -5289,7 +5773,7 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="plus"
                             title="행 추가"
-                            disabled={wortkType == "N" ? true : false}
+                            disabled={workType == "N" ? true : false}
                           ></Button>
                           <Button
                             onClick={onDeleteClick7}
@@ -5297,7 +5781,7 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="minus"
                             title="행 삭제"
-                            disabled={wortkType == "N" ? true : false}
+                            disabled={workType == "N" ? true : false}
                           ></Button>
                           <Button
                             onClick={onSaveClick7}
@@ -5305,7 +5789,7 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="save"
                             title="저장"
-                            disabled={wortkType == "N" ? true : false}
+                            disabled={workType == "N" ? true : false}
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
@@ -5412,17 +5896,45 @@ const HU_A4000W: React.FC = () => {
                       <GridTitle>월별인사평가상세</GridTitle>
                       <ButtonContainer>
                         <Button
-                          //onClick={onAddClick7}
+                          themeColor={"primary"}
+                          onClick={onreviewlvl1AddClick}
+                          icon="folder-open"
+                          disabled={
+                            workType == "N"
+                              ? true
+                              : mainDataResult3.total > 0
+                              ? false
+                              : true
+                          }
+                        >
+                          고과기준셋팅
+                        </Button>
+                        <Button
+                          onClick={onAddClick8}
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
+                          disabled={
+                            workType == "N"
+                              ? true
+                              : mainDataResult3.total > 0
+                              ? false
+                              : true
+                          }
                         ></Button>
                         <Button
-                          //onClick={onDeleteClick7}
+                          onClick={onDeleteClick8}
                           fillMode="outline"
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
+                          disabled={
+                            workType == "N"
+                              ? true
+                              : mainDataResult3.total > 0
+                              ? false
+                              : true
+                          }
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
@@ -5483,15 +5995,16 @@ const HU_A4000W: React.FC = () => {
                                   field={item.fieldName}
                                   title={item.caption}
                                   width={item.width}
-                                  // cell={
-                                  //   comboField.includes(item.fieldName)
-                                  //     ? CustomComboBoxCell
-                                  //     : dateField.includes(item.fieldName)
-                                  //     ? DateCell
-                                  //     : attdatnumField.includes(item.fieldName)
-                                  //     ? ColumnCommandCell7
-                                  //     : undefined
-                                  // }
+                                  cell={
+                                    comboField.includes(item.fieldName)
+                                      ? CustomComboBoxCell
+                                      : undefined
+                                  }
+                                  headerCell={
+                                    requiredField.includes(item.fieldName)
+                                      ? RequiredHeader
+                                      : undefined
+                                  }
                                   footerCell={
                                     item.sortOrder === 0
                                       ? mainTotalFooterCell8
@@ -5508,7 +6021,22 @@ const HU_A4000W: React.FC = () => {
                   <GridContainer>
                     <GridTitleContainer>
                       <GridTitle>월별인사평가상세</GridTitle>
-                      <ButtonContainer></ButtonContainer>
+                      <ButtonContainer>
+                        <Button
+                          themeColor={"primary"}
+                          onClick={onreviewlvl1AddClick2}
+                          icon="folder-open"
+                          disabled={
+                            workType == "N"
+                              ? true
+                              : mainDataResult3.total > 0
+                              ? false
+                              : true
+                          }
+                        >
+                          고과기준셋팅
+                        </Button>
+                      </ButtonContainer>
                     </GridTitleContainer>
                     <ExcelExport
                       data={mainDataResult9.data}
@@ -5522,6 +6050,9 @@ const HU_A4000W: React.FC = () => {
                         data={process(
                           mainDataResult9.data.map((row) => ({
                             ...row,
+                            reviewlvl1: reviewlvl1ListData.find(
+                              (item: any) => item.sub_code == row.reviewlvl1
+                            )?.code_name,
                             [SELECTED_FIELD]: selectedState9[idGetter9(row)], //선택된 데이터
                           })),
                           mainDataState9
@@ -5563,15 +6094,6 @@ const HU_A4000W: React.FC = () => {
                                   field={item.fieldName}
                                   title={item.caption}
                                   width={item.width}
-                                  // cell={
-                                  //   comboField.includes(item.fieldName)
-                                  //     ? CustomComboBoxCell
-                                  //     : dateField.includes(item.fieldName)
-                                  //     ? DateCell
-                                  //     : attdatnumField.includes(item.fieldName)
-                                  //     ? ColumnCommandCell7
-                                  //     : undefined
-                                  // }
                                   locked={
                                     lockField.includes(item.fieldName)
                                       ? true
