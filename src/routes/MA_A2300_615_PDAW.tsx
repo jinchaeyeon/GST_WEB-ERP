@@ -1,4 +1,4 @@
-import { Grid, Input } from "@mui/material";
+import { Card, CardContent, Grid, Input, Typography } from "@mui/material";
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import React, { useEffect, useState } from "react";
@@ -14,7 +14,6 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
-import TopButtons from "../components/Buttons/TopButtons";
 import { UsePermissions } from "../components/CommonFunction";
 import { TPermissions } from "../store/types";
 
@@ -24,54 +23,110 @@ const MA_A2300_615_PDAW: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [swiper, setSwiper] = useState<SwiperCore>();
-  const search = () => {};
   const [state, setState] = useState("1");
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
-
-  let _export: any;
-  const exportExcel = () => {
-    // if (_export !== null && _export !== undefined) {
-    //   if (isVisibleDetail == true) {
-    //     const optionsGridOne = _export.workbookOptions();
-    //     optionsGridOne.sheets[0].title = "요약정보";
-    //     _export.save(optionsGridOne);
-    //   }
-    // }
-  };
+  const [slice, setSlice] = useState(false);
   const [mainDataState, setMainDataState] = useState<State>({
+    sort: [],
+  });
+  const [checkDataState, setCheckDataState] = useState<State>({
     sort: [],
   });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
+  const [checkDataResult, setCheckDataResult] = useState<DataResult>(
+    process([], checkDataState)
+  );
+  const [Information, setInformation] = useState({
+    heatno: "",
+    str: "",
+    isSearch: false,
+  });
+  useEffect(() => {
+    if (state == "1") {
+      if (Information.isSearch && Information.str != "") {
+        if (Information.heatno == "") {
+          setInformation((prev) => ({
+            ...prev,
+            heatno: prev.str,
+            isSearch: false,
+          })); // 한번만 조회되도록
+        } else {
+          const newItem = {
+            heatno: Information.heatno,
+            scanno: Information.str,
+          };
+
+          let checkData = mainDataResult.data.filter(
+            (item) =>
+              item.heatno == newItem.heatno && item.scanno == newItem.scanno
+          )[0];
+
+          if (checkData != undefined) {
+            alert("이미 존재하는 데이터입니다.");
+          } else {
+            setMainDataResult((prev) => ({
+              data: [...prev.data, newItem],
+              total: prev.total + 1,
+            }));
+            setCheckDataResult((prev) => ({
+              data: [...prev.data, newItem],
+              total: prev.total + 1,
+            }));
+          }
+          setInformation((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
+        }
+        barcode = "";
+      }
+    } else {
+      if (Information.isSearch && Information.str != "") {
+        if (Information.heatno == "") {
+          setInformation((prev) => ({
+            ...prev,
+            heatno: prev.str,
+            isSearch: false,
+          })); // 한번만 조회되도록
+        } else {
+          const newItem = {
+            heatno: Information.heatno,
+            scanno: Information.str,
+          };
+          let checkData = mainDataResult.data.filter(
+            (item) =>
+              item.heatno == newItem.heatno && item.scanno == newItem.scanno
+          )[0];
+
+          if (checkData != undefined) {
+            alert("이미 존재하는 데이터입니다.");
+          } else {
+            setMainDataResult((prev) => ({
+              data: [...prev.data, newItem],
+              total: prev.total + 1,
+            }));
+            setCheckDataResult((prev) => ({
+              data: [...prev.data, newItem],
+              total: prev.total + 1,
+            }));
+          }
+          setInformation((prev) => ({ ...prev, heatno: "", isSearch: false })); // 한번만 조회되도록
+        }
+        barcode = "";
+      }
+    }
+  }, [Information]);
 
   useEffect(() => {
     document.addEventListener("keydown", function (evt) {
       if (evt.code == "Enter") {
         if (barcode != "") {
-          if (state == "1") {
-            if (filters.heatno != "") {
-              const newItem = {
-                heatno: filters.heatno,
-                scan: barcode,
-              };
-
-              setMainDataResult((prev) => ({
-                data: [...prev.data, newItem],
-                total: prev.total + 1,
-              }));
-            }
-
-            setFilters((prev) => ({
-              ...prev,
-              heatno: prev.heatno == "" ? barcode : prev.heatno,
-              scan: "",
-            }));
-          } else {
-          }
+          setInformation((prev) => ({
+            ...prev,
+            str: barcode,
+            isSearch: true,
+          }));
         }
-        barcode = ""
       } else if (
         evt.code != "ShiftLeft" &&
         evt.code != "Shift" &&
@@ -80,38 +135,138 @@ const MA_A2300_615_PDAW: React.FC = () => {
         barcode += evt.key;
       }
     });
-    document.addEventListener("click", function (evt) {
-      barcode = "";
-    });
   }, []);
 
-  const [filters, setFilters] = useState({
-    heatno: "",
-    scan: "",
-  });
-  console.log(mainDataResult.data)
+  const onCheckClick = (datas: any) => {
+    const data = checkDataResult.data.filter(
+      (item) => item.heatno == datas.heatno && item.scanno == datas.scanno
+    )[0];
+
+    if (data != undefined) {
+      const setdatas = checkDataResult.data.filter(
+        (item) => !(item.heatno == datas.heatno && item.scanno == datas.scanno)
+      );
+      setCheckDataResult((prev) => ({
+        data: setdatas,
+        total: setdatas.length,
+      }));
+      if (setdatas.length == 0) {
+        setSlice(false);
+      } else {
+        setSlice(true);
+      }
+    } else {
+      setCheckDataResult((prev) => ({
+        data: [...prev.data, datas],
+        total: prev.total + 1,
+      }));
+      setSlice(true);
+    }
+  };
+
+  const onClick1 = () => {
+    setInformation((prev) => ({
+      ...prev,
+      heatno: "",
+      str: "",
+      isSearch: false,
+    })); // 한번만 조회되도록
+
+    barcode = "";
+    setState("1");
+
+    let availableWidthPx = document.getElementById("button1");
+    if (availableWidthPx) {
+      availableWidthPx.blur();
+    }
+  };
+
+  const onClick2 = () => {
+    setInformation((prev) => ({
+      ...prev,
+      heatno: "",
+      str: "",
+      isSearch: false,
+    })); // 한번만 조회되도록
+    barcode = "";
+    setState("2");
+    let availableWidthPx = document.getElementById("button2");
+    if (availableWidthPx) {
+      availableWidthPx.blur();
+    }
+  };
+
   return (
     <>
       <TitleContainer>
         <Title>원료육입고</Title>
-
         <ButtonContainer>
-          {permissions && (
-            <TopButtons
-              search={search}
-              exportExcel={exportExcel}
-              permissions={permissions}
-              pathname="MA_A2300_615_PDAW"
-            />
-          )}
+          <Button
+            themeColor={"primary"}
+            fillMode={"solid"}
+            onClick={() => {
+              setMainDataResult(process([], mainDataState));
+              setCheckDataResult(process([], checkDataState));
+              setInformation({
+                heatno: "",
+                str: "",
+                isSearch: false,
+              });
+              setState("1");
+              barcode = "";
+              setSlice(false);
+            }}
+            icon="reset"
+          >
+            Reset
+          </Button>
+          <Button
+            onClick={() => {
+              if (
+                Object.entries(checkDataResult.data).toString() ===
+                Object.entries(mainDataResult.data).toString()
+              ) {
+                setCheckDataResult((prev) => ({
+                  data: [],
+                  total: 0,
+                }));
+              } else {
+                setCheckDataResult((prev) => ({
+                  data: mainDataResult.data,
+                  total: mainDataResult.total,
+                }));
+              }
+              if (mainDataResult.total > 0) {
+                setSlice(true);
+              } else {
+                setSlice(false);
+              }
+            }}
+            icon="check"
+          >
+            AllCheck
+          </Button>
+          <Button
+            onClick={() => {
+              if (swiper) {
+                if (checkDataResult.total > 0) {
+                  swiper.slideTo(1);
+                  setSlice(true);
+                } else {
+                  alert("데이터를 선택해주세요");
+                }
+              }
+            }}
+            icon="arrow-right"
+          >
+            다음
+          </Button>
         </ButtonContainer>
       </TitleContainer>
       <Swiper
         className="leading_PDA_Swiper"
         onSwiper={(swiper) => {
-          if (mainDataResult.total != 0) {
-            setSwiper(swiper);
-          }
+          setSwiper(swiper);
         }}
       >
         <SwiperSlide key={0} className="leading_PDA">
@@ -125,22 +280,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
                       <Input
                         name="heatno"
                         type="text"
-                        value={filters.heatno}
+                        value={Information.heatno}
                         style={{ width: "100%" }}
                         disabled={true}
-                      />
-                    </td>
-                  </tr>
-                  <tr style={{ display: "flex", flexDirection: "row" }}>
-                    <th style={{ width: "5%", minWidth: "80px" }}>스캔</th>
-                    <td>
-                      <Input
-                        name="scan"
-                        type="text"
-                        value={filters.scan}
-                        className="required"
-                        placeholder="여기를 클릭 후 스캔해주세요"
-                        style={{ width: "100%" }}
                       />
                     </td>
                   </tr>
@@ -149,42 +291,42 @@ const MA_A2300_615_PDAW: React.FC = () => {
             </FormBoxWrap>
           </GridContainer>
           <GridContainer
-            width="100%"
             style={{
               height: "60vh",
               overflowY: "scroll",
               marginBottom: "10px",
+              width: "100%",
             }}
           >
             {mainDataResult.data.map((item, idx) => (
               <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 <AdminQuestionBox key={idx}>
-                  <div
+                  <Card
                     style={{
                       width: "100%",
-                      display: "flex",
-                      marginBottom: "5px",
+                      cursor: "pointer",
+                      backgroundColor:
+                        checkDataResult.data.filter(
+                          (data) =>
+                            data.heatno == item.heatno &&
+                            data.scanno == item.scanno
+                        )[0] != undefined
+                          ? "#d6d8f9"
+                          : "white",
                     }}
                   >
-                    <div
-                      style={{
-                        backgroundColor: "#2289c3",
-                        color: "orange",
-                        width: "100px",
-                        height: "32px",
-                        borderRadius: "5px",
-                        padding: "5px",
-                        textAlign: "center",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        marginRight: "10px",
-                        fontWeight: 700,
-                      }}
+                    <CardContent
+                      onClick={() => onCheckClick(item)}
+                      style={{ textAlign: "left", padding: "8px" }}
                     >
-                      ddd
-                    </div>
-                  </div>
+                      <Typography gutterBottom variant="h6" component="div">
+                        {item.heatno}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {item.scanno}
+                      </Typography>
+                    </CardContent>
+                  </Card>
                 </AdminQuestionBox>
               </Grid>
             ))}
@@ -202,10 +344,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                         style={{
                           textAlign: "right",
                         }}
-                        value={
-                          mainDataResult.data.filter((item) => item.chk == true)
-                            .length
-                        }
+                        value={checkDataResult.total}
                       />
                     </td>
                     <th style={{ width: "5%", minWidth: "80px" }}>스캔건수</th>
@@ -223,9 +362,10 @@ const MA_A2300_615_PDAW: React.FC = () => {
                   <tr style={{ display: "flex", flexDirection: "row" }}>
                     <th colSpan={2}>
                       <Button
+                        id={"button1"}
                         themeColor={"primary"}
                         fillMode={state == "1" ? "solid" : "outline"}
-                        onClick={() => setState("1")}
+                        onClick={() => onClick1()}
                         style={{ width: "100%" }}
                       >
                         이력번호
@@ -233,9 +373,10 @@ const MA_A2300_615_PDAW: React.FC = () => {
                     </th>
                     <td colSpan={2}>
                       <Button
+                        id={"button2"}
                         themeColor={"primary"}
                         fillMode={state == "2" ? "solid" : "outline"}
-                        onClick={() => setState("2")}
+                        onClick={() => onClick2()}
                         style={{ width: "100%" }}
                       >
                         제품바코드
@@ -247,7 +388,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
             </FormBoxWrap>
           </GridContainer>
         </SwiperSlide>
-        <SwiperSlide key={1}></SwiperSlide>
+        {slice == true ? <SwiperSlide key={1}></SwiperSlide> : ""}
       </Swiper>
     </>
   );
