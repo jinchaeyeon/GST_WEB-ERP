@@ -22,16 +22,12 @@ import {
 import { bytesToBase64 } from "byte-base64";
 import { useRecoilState } from "recoil";
 import {
-  ApprovalBox,
-  ApprovalInner,
   ButtonContainer,
   GridContainer,
   GridContainerWrap,
   GridTitle,
   GridTitleContainer,
-  MainTopContainer,
-  MainWorkStartEndContainer,
-  TextContainer,
+  MainTopContainer
 } from "../CommonStyled";
 import CenterCell from "../components/Cells/CenterCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -805,41 +801,6 @@ const Main: React.FC = () => {
             HOMEPAGE
           </Button>
         </ButtonContainer>
-        <MainWorkStartEndContainer>
-          <TextContainer theme={"#2289c3"}>
-            {workTimeDataResult.strtime} - {workTimeDataResult.endtime}
-          </TextContainer>
-          <Button
-            themeColor={"primary"}
-            onClick={() => {
-              fetchWorkTimeSaved("start");
-            }}
-          >
-            출근
-          </Button>
-          <Button
-            themeColor={"primary"}
-            onClick={() => {
-              fetchWorkTimeSaved("end");
-            }}
-          >
-            퇴근
-          </Button>
-        </MainWorkStartEndContainer>
-        <ApprovalBox>
-          <ApprovalInner>
-            <div>미결</div>
-            <div>{approvalValueState.app}</div>
-          </ApprovalInner>
-          <ApprovalInner>
-            <div>참조</div>
-            <div>{approvalValueState.ref}</div>
-          </ApprovalInner>
-          <ApprovalInner>
-            <div>반려</div>
-            <div>{approvalValueState.rtr}</div>
-          </ApprovalInner>
-        </ApprovalBox>
       </MainTopContainer>
       <GridContainerWrap>
         <GridContainer width="65%">

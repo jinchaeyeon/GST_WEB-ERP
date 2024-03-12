@@ -255,6 +255,7 @@ import {
 import { Iparameters } from "./store/types";
 const Login = lazy(() => import("./routes/Login"));
 const Main = lazy(() => import("./routes/Main"));
+const MainNotApproval = lazy(() => import("./routes/MainNotApproval"));
 
 load(
   likelySubtags,
@@ -548,8 +549,13 @@ const AppInner: React.FC = () => {
     if (str == "Home" || str == "") {
       if (loginResult.companyCode == "2302BA03") {
         return MainBIO;
-      } else {
+      } else if (
+        loginResult.companyCode == "2301A110" ||
+        loginResult.companyCode == "2207A046"
+      ) {
         return Main;
+      } else {
+        return MainNotApproval;
       }
     } else if (str == "AC_A0000W") {
       return AC_A0000W;
@@ -976,8 +982,10 @@ const AppInner: React.FC = () => {
     } else {
       if (loginResult.companyCode == "2302BA03") {
         return MainBIO;
-      } else {
+      } else if (loginResult.companyCode == "2301A110") {
         return Main;
+      } else {
+        return MainNotApproval;
       }
     }
   }
