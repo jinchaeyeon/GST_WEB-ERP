@@ -593,7 +593,7 @@ const CM_A1600: React.FC = () => {
     const schedulerParameters: Iparameters = {
       procedureName: "P_CM_A1600W_Q",
       pageNumber: 1,
-      pageSize: 500,
+      pageSize: 100000,
       parameters: {
         "@p_work_type": schedulerFilter.work_type,
         "@p_orgdiv": "01",
@@ -654,7 +654,7 @@ const CM_A1600: React.FC = () => {
     const schedulerParameters: Iparameters = {
       procedureName: "P_CM_A1600W_Q",
       pageNumber: 1,
-      pageSize: 500,
+      pageSize: 100000,
       parameters: {
         "@p_work_type": schedulerFilter2.work_type,
         "@p_orgdiv": "01",
