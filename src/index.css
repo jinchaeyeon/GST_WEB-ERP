@@ -212,7 +212,7 @@ code {
 
 .leading_PDA_Swiper {
   width: 100% !important;
-  height: 90% !important;
+  height: auto !important;
 }
 
 .swiper-slide {
