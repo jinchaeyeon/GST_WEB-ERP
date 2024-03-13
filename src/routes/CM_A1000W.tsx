@@ -1091,7 +1091,7 @@ const CM_A1000W: React.FC = () => {
       setUnsavedAttadatnums([]);
       setUnsavedName([]);
       setParaData({
-        workType: "N",
+        workType: "",
         orgdiv: "01",
         datnum: "",
         strdt: "",
