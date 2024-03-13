@@ -42,8 +42,7 @@ import {
   findMessage,
   getGridItemChangedData,
   numberWithCommas,
-  setDefaultDate,
-  toDate,
+  setDefaultDate
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
@@ -687,10 +686,6 @@ const CopyWindow = ({
                   row.rowstatus == undefined
                     ? ""
                     : row.rowstatus,
-                enddt:
-                  typeof row.enddt === "object" && row.enddt instanceof Date
-                    ? row.enddt
-                    : toDate(row.enddt),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState

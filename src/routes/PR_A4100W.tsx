@@ -53,14 +53,14 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
-  toDate,
-  useSysMessage,
+  useSysMessage
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -1332,7 +1332,9 @@ const PR_A4100W: React.FC = () => {
               ...item,
               items: item.items.map((row: any) => ({
                 ...row,
-                finexpdt: toDate(row.finexpdt),
+                finexpdt: row.finexpdt
+                  ? new Date(dateformat(row.finexpdt))
+                  : new Date(dateformat("19000101")),
                 proccd: proccdListData.find(
                   (items: any) => items.sub_code === row.proccd
                 )?.code_name,

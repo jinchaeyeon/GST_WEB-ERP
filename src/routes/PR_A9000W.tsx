@@ -51,14 +51,14 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   getItemQuery,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate,
-  toDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -1969,7 +1969,7 @@ const PR_A9000W: React.FC = () => {
       planseq: 0,
       proccd: "",
       procseq: "",
-      proddt: new Date(),
+      proddt: convertDateToStr(new Date()),
       prodemp: "",
       prodmac: "",
       qty: 0,
@@ -2022,7 +2022,7 @@ const PR_A9000W: React.FC = () => {
       planseq: 0,
       proccd: "",
       procseq: "",
-      proddt: new Date(),
+      proddt: convertDateToStr(new Date()),
       qty: 0,
       qtyunit: "",
       remark: "",
@@ -2135,6 +2135,8 @@ const PR_A9000W: React.FC = () => {
         valid = false;
       } else if (item.qtyunit == "") {
         valid = false;
+      } else if (item.proddt == "") {
+        valid = false;
       }
     });
 
@@ -2185,9 +2187,7 @@ const PR_A9000W: React.FC = () => {
         dataArr.renum_s.push(renum);
         dataArr.reseq_s.push(reseq);
         dataArr.seq_s.push(seq);
-        dataArr.proddt_s.push(
-          proddt.length == 8 ? proddt : convertDateToStr(proddt)
-        );
+        dataArr.proddt_s.push(proddt);
         dataArr.proccd_s.push(proccd);
         dataArr.itemcd_s.push(itemcd);
         dataArr.qty_s.push(qty);
@@ -2224,9 +2224,7 @@ const PR_A9000W: React.FC = () => {
         dataArr.renum_s.push(renum);
         dataArr.reseq_s.push(reseq);
         dataArr.seq_s.push(seq);
-        dataArr.proddt_s.push(
-          proddt.length == 8 ? proddt : convertDateToStr(proddt)
-        );
+        dataArr.proddt_s.push(proddt);
         dataArr.proccd_s.push(proccd);
         dataArr.itemcd_s.push(itemcd);
         dataArr.qty_s.push(qty);
@@ -2312,6 +2310,8 @@ const PR_A9000W: React.FC = () => {
         valid = false;
       } else if (item.qty == 0) {
         valid = false;
+      } else if (item.proddt == "") {
+        valid = false;
       }
     });
 
@@ -2363,9 +2363,7 @@ const PR_A9000W: React.FC = () => {
         dataArr.renum_s.push(renum);
         dataArr.reseq_s.push(reseq == "" ? 0 : reseq);
         dataArr.seq_s.push(keyseq);
-        dataArr.proddt_s.push(
-          proddt.length == 8 ? proddt : convertDateToStr(proddt)
-        );
+        dataArr.proddt_s.push(proddt);
         dataArr.proccd_s.push(proccd);
         dataArr.itemcd_s.push(itemcd);
         dataArr.qty_s.push(qty);
@@ -2403,9 +2401,7 @@ const PR_A9000W: React.FC = () => {
         dataArr.renum_s.push(renum);
         dataArr.reseq_s.push(reseq == "" ? 0 : reseq);
         dataArr.seq_s.push(keyseq);
-        dataArr.proddt_s.push(
-          proddt.length == 8 ? proddt : convertDateToStr(proddt)
-        );
+        dataArr.proddt_s.push(proddt);
         dataArr.proccd_s.push(proccd);
         dataArr.itemcd_s.push(itemcd);
         dataArr.qty_s.push(qty);
@@ -2512,7 +2508,7 @@ const PR_A9000W: React.FC = () => {
         planseq: item.planseq,
         proccd: item.proccd,
         procseq: "",
-        proddt: new Date(),
+        proddt: convertDateToStr(new Date()),
         qty: item.stockqty,
         qtyunit: item.qtyunit,
         remark: "",
@@ -2564,7 +2560,7 @@ const PR_A9000W: React.FC = () => {
         planseq: 0,
         proccd: "",
         procseq: "",
-        proddt: new Date(),
+        proddt: convertDateToStr(new Date()),
         prodemp: "",
         prodmac: "",
         qty: 0,
@@ -2758,10 +2754,9 @@ const PR_A9000W: React.FC = () => {
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
-                        proddt:
-                          row.proddt.length == 8
-                            ? toDate(row.proddt)
-                            : row.proddt,
+                        proddt: row.proddt
+                          ? new Date(dateformat(row.proddt))
+                          : new Date(dateformat("19000101")),
                         [SELECTED_FIELD]: selectedState[idGetter(row)],
                       })),
                       mainDataState
@@ -2892,10 +2887,9 @@ const PR_A9000W: React.FC = () => {
                   data={process(
                     detailDataResult.data.map((row) => ({
                       ...row,
-                      proddt:
-                        row.proddt.length == 8
-                          ? toDate(row.proddt)
-                          : row.proddt,
+                      proddt: row.proddt
+                        ? new Date(dateformat(row.proddt))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
                     })),
                     detailDataState

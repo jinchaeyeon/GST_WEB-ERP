@@ -43,14 +43,14 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getCustDataQuery,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
-  toDate,
-  useSysMessage,
+  useSysMessage
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -60,6 +60,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
@@ -76,6 +77,7 @@ const DETAIL_DATA_ITEM_KEY = "num";
 const dateField = ["outdt1", "outdt2", "outdt3", "purdt"];
 const numberField = ["asfin"];
 const lockField = ["fxmngnum", "itemcd", "itemnm", "insiz", "serialno"];
+const comboField = ["fxdiv"];
 let temp = 0;
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
@@ -121,7 +123,7 @@ type TdataArr2 = {
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_CUST, L_sysUserMaster_001", setBizComponentData);
+  UseBizComponent("L_CUST, L_sysUserMaster_001, L_BA801", setBizComponentData);
 
   const field = props.field ?? "";
   const bizComponentIdVal =
@@ -131,6 +133,8 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       ? "L_CUST"
       : field === "person"
       ? "L_sysUserMaster_001"
+      : field == "fxdiv"
+      ? "L_BA801"
       : "";
 
   const bizComponent = bizComponentData.find(
@@ -797,14 +801,14 @@ const MA_A3000W: React.FC = () => {
       amt: 0,
       custcd: "",
       custnm: "",
-      enddt: convertDateToStr(new Date()),
+      enddt: "19000101",
       extra_field5: "",
       indt: convertDateToStr(new Date()),
       load_place: "0",
       outcustcd: "",
       outcustnm: "",
-      outdt: convertDateToStr(new Date()),
-      outrecdt: convertDateToStr(new Date()),
+      outdt: "19000101",
+      outrecdt: "19000101",
       outseq1: 0,
       outseq2: 0,
       person: "admin",
@@ -813,7 +817,7 @@ const MA_A3000W: React.FC = () => {
       remark: "",
       seq1: 0,
       seq2: 0,
-      strdt: convertDateToStr(new Date()),
+      strdt: "19000101",
       taxamt: 0,
       unp: 0,
       wonamt: 0,
@@ -1223,6 +1227,20 @@ const MA_A3000W: React.FC = () => {
 
     if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
 
+    let valid = true;
+
+    dataItem.map((item: any) => {
+      if (item.indt == "" && valid == true) {
+        alert("입고일자를 입력해주세요.");
+        valid = false;
+        return false;
+      }
+    });
+
+    if (valid != true) {
+      return false;
+    }
+
     let dataArr: TdataArr2 = {
       rowstatus_s: [],
       remark_s: [],
@@ -1278,36 +1296,22 @@ const MA_A3000W: React.FC = () => {
       dataArr.amt_s.push(amt == undefined ? 0 : amt);
       dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
       dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
-      dataArr.recdt_s.push(
-        recdt == undefined || recdt == "" ? convertDateToStr(new Date()) : recdt
-      );
-      dataArr.indt_s.push(
-        indt == undefined || indt == "" ? convertDateToStr(new Date()) : indt
-      );
+      dataArr.recdt_s.push(recdt);
+      dataArr.indt_s.push(indt);
       dataArr.person_s.push(person == undefined ? "" : person);
       dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
       dataArr.extra_field5_s.push(
         extra_field5 == undefined ? "" : extra_field5
       );
-      dataArr.strdt_s.push(
-        strdt == undefined || strdt == "" ? convertDateToStr(new Date()) : strdt
-      );
-      dataArr.enddt_s.push(
-        enddt == undefined || enddt == "" ? convertDateToStr(new Date()) : enddt
-      );
+      dataArr.strdt_s.push(strdt);
+      dataArr.enddt_s.push(enddt);
       dataArr.seq1_s.push(seq1 == "" ? 0 : seq1);
       dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
-      dataArr.outrecdt_s.push(
-        outrecdt == undefined || outrecdt == ""
-          ? convertDateToStr(new Date())
-          : outrecdt
-      );
+      dataArr.outrecdt_s.push(outrecdt);
       dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
       dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
       dataArr.outcustcd_s.push(outcustcd == undefined ? "" : outcustcd);
-      dataArr.outdt_s.push(
-        outdt == undefined || outdt == "" ? convertDateToStr(new Date()) : outdt
-      );
+      dataArr.outdt_s.push(outdt);
       dataArr.load_place_s.push(load_place == undefined ? "" : load_place);
     });
     deletedMainRows.forEach((item: any, idx: number) => {
@@ -1341,36 +1345,22 @@ const MA_A3000W: React.FC = () => {
       dataArr.amt_s.push(amt == undefined ? 0 : amt);
       dataArr.wonamt_s.push(wonamt == "" ? 0 : wonamt);
       dataArr.taxamt_s.push(taxamt == "" ? 0 : taxamt);
-      dataArr.recdt_s.push(
-        recdt == undefined || recdt == "" ? convertDateToStr(new Date()) : recdt
-      );
-      dataArr.indt_s.push(
-        indt == undefined || indt == "" ? convertDateToStr(new Date()) : indt
-      );
+      dataArr.recdt_s.push(recdt);
+      dataArr.indt_s.push(indt);
       dataArr.person_s.push(person == undefined ? "" : person);
       dataArr.custcd_s.push(custcd == undefined ? "" : custcd);
       dataArr.extra_field5_s.push(
         extra_field5 == undefined ? "" : extra_field5
       );
-      dataArr.strdt_s.push(
-        strdt == undefined || strdt == "" ? convertDateToStr(new Date()) : strdt
-      );
-      dataArr.enddt_s.push(
-        enddt == undefined || enddt == "" ? convertDateToStr(new Date()) : enddt
-      );
+      dataArr.strdt_s.push(strdt);
+      dataArr.enddt_s.push(enddt);
       dataArr.seq1_s.push(seq1 == "" ? 0 : seq1);
       dataArr.seq2_s.push(seq2 == "" ? 0 : seq2);
-      dataArr.outrecdt_s.push(
-        outrecdt == undefined || outrecdt == ""
-          ? convertDateToStr(new Date())
-          : outrecdt
-      );
+      dataArr.outrecdt_s.push(outrecdt);
       dataArr.outseq1_s.push(outseq1 == "" ? 0 : outseq1);
       dataArr.outseq2_s.push(outseq2 == "" ? 0 : outseq2);
       dataArr.outcustcd_s.push(outcustcd == undefined ? "" : outcustcd);
-      dataArr.outdt_s.push(
-        outdt == undefined || outdt == "" ? convertDateToStr(new Date()) : outdt
-      );
+      dataArr.outdt_s.push(outdt);
       dataArr.load_place_s.push(load_place == undefined ? "" : load_place);
     });
 
@@ -1877,6 +1867,7 @@ const MA_A3000W: React.FC = () => {
         title={"입고일자"}
         width="120px"
         cell={DateCell}
+        headerCell={RequiredHeader}
       />
     );
     return array;
@@ -2293,7 +2284,9 @@ const MA_A3000W: React.FC = () => {
                   row.rowstatus == undefined
                     ? ""
                     : row.rowstatus,
-                purdt: row.purdt == "" ? new Date() : toDate(row.purdt),
+                purdt: row.purdt
+                  ? new Date(dateformat(row.purdt))
+                  : new Date(dateformat("19000101")),
                 custcd: custListData.find(
                   (item: any) => item.custcd === row.custcd
                 )?.custnm,
@@ -2379,6 +2372,8 @@ const MA_A3000W: React.FC = () => {
                           ? NumberCell
                           : dateField.includes(item.fieldName)
                           ? DateCell
+                          : comboField.includes(item.fieldName)
+                          ? CustomComboBoxCell
                           : undefined
                       }
                       locked={lockField.includes(item.fieldName) ? true : false}
@@ -2446,10 +2441,18 @@ const MA_A3000W: React.FC = () => {
                   row.rowstatus == undefined
                     ? ""
                     : row.rowstatus,
-                indt: row.indt == "" ? new Date() : toDate(row.indt),
-                strdt: row.strdt == "" ? new Date() : toDate(row.strdt),
-                enddt: row.enddt == "" ? new Date() : toDate(row.enddt),
-                outdt: row.outdt == "" ? new Date() : toDate(row.outdt),
+                indt: row.indt
+                  ? new Date(dateformat(row.indt))
+                  : new Date(dateformat("19000101")),
+                strdt: row.strdt
+                  ? new Date(dateformat(row.strdt))
+                  : new Date(dateformat("19000101")),
+                enddt: row.enddt
+                  ? new Date(dateformat(row.enddt))
+                  : new Date(dateformat("19000101")),
+                outdt: row.outdt
+                  ? new Date(dateformat(row.outdt))
+                  : new Date(dateformat("19000101")),
                 [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
               })),
               detailDataState

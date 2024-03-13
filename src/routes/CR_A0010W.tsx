@@ -899,9 +899,9 @@ const CR_A0010W: React.FC = () => {
     const newDataItem = {
       [DATA_ITEM_KEY]: ++temp,
       apply_start_date: convertDateToStr(new Date()),
-      apply_end_date: "99991231",
+      apply_end_date: "19000101",
       bircd: "Y",
-      birdt: "19991231",
+      birdt: "19000101",
       custcd: "",
       dptcd: "",
       email: "",
@@ -1222,96 +1222,6 @@ const CR_A0010W: React.FC = () => {
     setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
 
-  // 행추가만 하는 방식
-  // const saveExcel = (jsonArr: any[]) => {
-  //   if (jsonArr.length == 0) {
-  //     alert("데이터가 없습니다.");
-  //   } else {
-  //     setLoading(true);
-  //     let valid = true;
-  //     jsonArr.map((item: any) => {
-  //       Object.keys(item).map((items: any) => {
-  //         if (
-  //           items != "사용자ID" &&
-  //           items != "사용자명" &&
-  //           items != "전화번호" &&
-  //           items != "휴대폰번호" &&
-  //           items != "생년월일"
-  //         ) {
-  //           valid = false;
-  //         }
-  //       });
-  //     });
-  //     if (valid == true) {
-  //       mainDataResult.data.map((item) => {
-  //         if (item.num > temp) {
-  //           temp = item.num;
-  //         }
-  //       });
-
-  //       jsonArr.forEach((item: any, idx: number) => {
-  //         const {
-  //           사용자ID = "",
-  //           사용자명 = "",
-  //           전화번호 = "",
-  //           휴대폰번호 = "",
-  //           생년월일 = "",
-  //         } = item;
-
-  //         const newDataItem = {
-  //           [DATA_ITEM_KEY]: ++temp,
-  //           apply_start_date: convertDateToStr(new Date()),
-  //           apply_end_date: "99991231",
-  //           bircd: "Y",
-  //           birdt: 생년월일.toString(),
-  //           custcd: "",
-  //           dptcd: "",
-  //           email: "",
-  //           hold_check_yn: "N",
-  //           home_menu_id: "",
-  //           ip_check_yn: "N",
-  //           location: filters.cboLocation,
-  //           mbouseyn: "N",
-  //           memo: "",
-  //           mobile_no: 휴대폰번호,
-  //           opengb: "",
-  //           orgdiv: filters.cboOrgdiv ? filters.cboOrgdiv : "01",
-  //           password: 사용자ID,
-  //           password_confirm: 사용자ID,
-  //           position: "",
-  //           postcd: "",
-  //           profile_image: "",
-  //           rtrchk: "N",
-  //           tel_no: 전화번호,
-  //           temp: 사용자ID,
-  //           usediv: "Y",
-  //           user_category: "EXTERNAL",
-  //           user_id: 사용자ID,
-  //           user_ip: "",
-  //           user_name: 사용자명,
-  //           rowstatus: "N",
-  //         };
-  //         console.log(newDataItem)
-  //         setMainDataResult((prev) => {
-  //           return {
-  //             data: [newDataItem, ...prev.data],
-  //             total: prev.total + 1,
-  //           };
-  //         });
-  //         setPage((prev) => ({
-  //           ...prev,
-  //           skip: 0,
-  //           take: prev.take + 1,
-  //         }));
-  //         setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
-  //       });
-  //     } else {
-  //       alert("양식이 맞지 않습니다.");
-  //     }
-  //     setLoading(false);
-  //   }
-  // };
-
   // 바로 저장하는 방식
   const saveExcel = (jsonArr: any[]) => {
     if (jsonArr.length == 0) {
@@ -1367,7 +1277,7 @@ const CR_A0010W: React.FC = () => {
               "@p_tel_no": 전화번호,
               "@p_mobile_no": 휴대폰번호,
               "@p_apply_start_date": convertDateToStr(new Date()),
-              "@p_apply_end_date": "99991231",
+              "@p_apply_end_date": "19000101",
               "@p_hold_check_yn": "N",
               "@p_memo": "",
               "@p_ip_check_yn": "N",
@@ -1595,13 +1505,13 @@ const CR_A0010W: React.FC = () => {
                     ...row,
                     birdt: row.birdt
                       ? new Date(dateformat(row.birdt))
-                      : new Date(dateformat("19991231")),
+                      : new Date(dateformat("19000101")),
                     apply_start_date: row.apply_start_date
                       ? new Date(dateformat(row.apply_start_date))
-                      : new Date(dateformat("19991231")),
+                      : new Date(dateformat("19000101")),
                     apply_end_date: row.apply_end_date
                       ? new Date(dateformat(row.apply_end_date))
-                      : new Date(dateformat("99991231")),
+                      : new Date(dateformat("19000101")),
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
                   mainDataState

@@ -389,7 +389,7 @@ const CopyWindow = ({
     reqdt: new Date(),
     remark: "",
     reqnum: "",
-    shipdt: new Date(),
+    shipdt: null,
     userid: userId,
     pc: pc,
     form_id: "SA_A2300W",
@@ -511,7 +511,7 @@ const CopyWindow = ({
         remark: data.remark,
         reqdt: toDate(data.reqdt),
         reqnum: data.reqnum,
-        shipdt: data.shipdt == "" ? new Date() : toDate(data.shipdt),
+        shipdt: data.shipdt == "" ? null : toDate(data.shipdt),
         trcost: data.trcost,
         isSearch: true,
         pgNum: 1,
@@ -675,13 +675,6 @@ const CopyWindow = ({
       if (mainDataResult.data.length == 0) {
         throw findMessage(messagesData, "SA_A3000W_002");
       } else if (
-        convertDateToStr(filters.shipdt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.shipdt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.shipdt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.shipdt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "SA_A3000W_001");
-      } else if (
         filters.custcd == "" ||
         filters.custcd == undefined ||
         filters.custcd == null
@@ -708,7 +701,8 @@ const CopyWindow = ({
               reqnum: filters.reqnum,
               location: filters.location,
               reqdt: filters.reqdt,
-              shipdt: filters.shipdt,
+              shipdt:
+                filters.shipdt == null ? "" : convertDateToStr(filters.shipdt),
               person: filters.person,
               custcd: filters.custcd,
               custnm: filters.custnm,
@@ -878,7 +872,8 @@ const CopyWindow = ({
               reqnum: filters.reqnum,
               location: filters.location,
               reqdt: filters.reqdt,
-              shipdt: filters.shipdt,
+              shipdt:
+                filters.shipdt == null ? "" : convertDateToStr(filters.shipdt),
               person: filters.person,
               custcd: filters.custcd,
               custnm: filters.custnm,
@@ -935,7 +930,7 @@ const CopyWindow = ({
     location: "01",
     position: "",
     reqdt: new Date(),
-    shipdt: new Date(),
+    shipdt: "",
     person: "",
     custcd: "",
     custnm: "",
@@ -995,7 +990,7 @@ const CopyWindow = ({
       "@p_location": ParaData.location,
       "@p_position": ParaData.position,
       "@p_reqdt": convertDateToStr(ParaData.reqdt),
-      "@p_shipdt": convertDateToStr(ParaData.shipdt),
+      "@p_shipdt": ParaData.shipdt,
       "@p_person": ParaData.person,
       "@p_custcd": ParaData.custcd,
       "@p_custnm": ParaData.custnm,
@@ -1074,7 +1069,7 @@ const CopyWindow = ({
         location: "01",
         position: "",
         reqdt: new Date(),
-        shipdt: new Date(),
+        shipdt: "",
         person: "",
         custcd: "",
         custnm: "",

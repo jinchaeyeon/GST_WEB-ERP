@@ -1227,40 +1227,45 @@ const QC_A3000: React.FC = () => {
     const data = mainDataResult.data.filter(
       (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
-    if (unsavedName.length > 0) {
-      setDeletedName(unsavedName);
-    }
-    if (unsavedAttadatnums.length > 0) {
-      setDeletedAttadatnums(unsavedAttadatnums);
-    }
-    setInformation((prev) => ({
-      ...prev,
-      workType: "N",
-      itemcd: data.itemcd,
-      itemnm: data.itemnm,
-      attdatnum: "",
-      badqty: 0,
-      files: "",
-      person: data.prodemp,
-      qcdecision: "",
-      qcdt: new Date(),
-      qcno: "",
-      qcnum: "",
-      qcqty: 0,
-      remark: "",
-      strtime: convertDateToStrWithTime2(new Date()),
-      endtime: convertDateToStrWithTime2(new Date()),
-    }));
 
-    setDetailFilters2((prev) => ({
-      ...prev,
-      itemcd: data.itemcd,
-      renum: data.renum,
-      reseq: data.reseq,
-      qcnum: "",
-      isSearch: true,
-      pgNum: 1,
-    }));
+    if (data != undefined) {
+      if (unsavedName.length > 0) {
+        setDeletedName(unsavedName);
+      }
+      if (unsavedAttadatnums.length > 0) {
+        setDeletedAttadatnums(unsavedAttadatnums);
+      }
+      setInformation((prev) => ({
+        ...prev,
+        workType: "N",
+        itemcd: data.itemcd,
+        itemnm: data.itemnm,
+        attdatnum: "",
+        badqty: 0,
+        files: "",
+        person: data.prodemp,
+        qcdecision: "",
+        qcdt: new Date(),
+        qcno: "",
+        qcnum: "",
+        qcqty: 0,
+        remark: "",
+        strtime: convertDateToStrWithTime2(new Date()),
+        endtime: convertDateToStrWithTime2(new Date()),
+      }));
+
+      setDetailFilters2((prev) => ({
+        ...prev,
+        itemcd: data.itemcd,
+        renum: data.renum,
+        reseq: data.reseq,
+        qcnum: "",
+        isSearch: true,
+        pgNum: 1,
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
   };
 
   const onItemWndClick = () => {

@@ -50,6 +50,7 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
@@ -821,11 +822,7 @@ const HU_A5020W: React.FC = () => {
             attdatnum = "",
           } = item;
           dataArr.rowstatus_s.push(rowstatus);
-          if (typeof payyrmm == "string") {
-            dataArr.payyrmm_s.push(payyrmm);
-          } else {
-            dataArr.payyrmm_s.push(convertDateToStr(payyrmm));
-          }
+          dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
           dataArr.prsnnum_s.push(prsnnum);
           dataArr.dptcd_s.push(dptcd);
           dataArr.amt_s.push(amt);
@@ -843,11 +840,7 @@ const HU_A5020W: React.FC = () => {
             attdatnum = "",
           } = item;
           dataArr.rowstatus_s.push(rowstatus);
-          if (typeof payyrmm == "string") {
-            dataArr.payyrmm_s.push(payyrmm);
-          } else {
-            dataArr.payyrmm_s.push(convertDateToStr(payyrmm));
-          }
+          dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
           dataArr.prsnnum_s.push(prsnnum);
           dataArr.dptcd_s.push(dptcd);
           dataArr.amt_s.push(amt);
@@ -1014,7 +1007,7 @@ const HU_A5020W: React.FC = () => {
       files: "",
       location: "",
       orgdiv: "01",
-      payyrmm: new Date(),
+      payyrmm: convertDateToStr(new Date()),
       prsnnm: "",
       prsnnum: "",
       remark: "",
@@ -1066,7 +1059,7 @@ const HU_A5020W: React.FC = () => {
         files: "",
         location: "",
         orgdiv: "01",
-        payyrmm: new Date(),
+        payyrmm: convertDateToStr(new Date()),
         prsnnm: item.prsnnm,
         prsnnum: item.prsnnum,
         remark: "",
@@ -1331,6 +1324,9 @@ const HU_A5020W: React.FC = () => {
                     dptcd: dptcdListData.find(
                       (item: any) => item.dptcd === row.dptcd
                     )?.dptnm,
+                    payyrmm: row.payyrmm
+                      ? new Date(dateformat(row.payyrmm))
+                      : new Date(dateformat("19000101")),
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
                   mainDataState

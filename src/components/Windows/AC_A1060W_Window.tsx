@@ -42,9 +42,9 @@ import {
   UseGetValueFromSessionItem,
   UseParaPc,
   convertDateToStr,
+  dateformat,
   getGridItemChangedData,
   numberWithCommas,
-  toDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -673,14 +673,14 @@ const CopyWindow = ({
       custcd: cust[0].custcd,
       custnm: cust[0].custnm,
       drcrdiv: "1",
-      enddt: "",
+      enddt: "19000101",
       fornamt: 0,
       location: "",
       mngitemcd1: "",
       notenum: "",
       orgdiv: "01",
       pubbank: "",
-      pubdt: "",
+      pubdt: "19000101",
       pubperson: "",
       remark: "",
       remark1: "",
@@ -992,9 +992,9 @@ const CopyWindow = ({
       dataArr.taxnum_s.push(salenum == undefined ? "" : salenum);
       dataArr.acntnum_s.push(acntnum == undefined ? "" : acntnum);
       dataArr.notenum_s.push(notenum == undefined ? "" : notenum);
-      dataArr.enddt_s.push(enddt.length <= 8 ? enddt : convertDateToStr(enddt));
+      dataArr.enddt_s.push(enddt);
       dataArr.pubbank_s.push(pubbank == undefined ? "" : pubbank);
-      dataArr.pubdt_s.push(pubdt.length <= 8 ? pubdt : convertDateToStr(pubdt));
+      dataArr.pubdt_s.push(pubdt);
       dataArr.pubperson_s.push(pubperson == undefined ? "" : pubperson);
       dataArr.fornamt_s.push(fornamt == undefined ? 0 : fornamt);
       dataArr.salerat_s.push(salerat == undefined ? 0 : salerat);
@@ -1308,8 +1308,12 @@ const CopyWindow = ({
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
-                    pubdt: row.pubdt == "" ? new Date() : toDate(row.pubdt),
-                    enddt: row.enddt == "" ? new Date() : toDate(row.enddt),
+                    pubdt: row.pubdt
+                      ? new Date(dateformat(row.pubdt))
+                      : new Date(dateformat("19000101")),
+                    enddt: row.enddt
+                      ? new Date(dateformat(row.enddt))
+                      : new Date(dateformat("19000101")),
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
                   mainDataState

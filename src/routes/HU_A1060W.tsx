@@ -47,10 +47,10 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   getGridItemChangedData,
   handleKeyPressSearch,
-  setDefaultDate,
-  toDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -1180,7 +1180,9 @@ const HU_A1060W: React.FC = () => {
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
-                    pubdt: row.pubdt == "" ? new Date() : toDate(row.pubdt),
+                    pubdt: row.pubdt
+                      ? new Date(dateformat(row.pubdt))
+                      : new Date(dateformat("19000101")),
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
                   mainDataState

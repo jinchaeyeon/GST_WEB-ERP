@@ -51,11 +51,11 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
-  toDate,
   useSysMessage,
 } from "../components/CommonFunction";
 import {
@@ -1697,12 +1697,7 @@ const BA_A0040: React.FC = () => {
 
     try {
       dataItem.map((item: any) => {
-        if (
-          item.recdt.substring(0, 4) < "1997" ||
-          item.recdt.substring(6, 8) > "31" ||
-          item.recdt.substring(6, 8) < "01" ||
-          item.recdt.substring(6, 8).length != 2
-        ) {
+        if (item.recdt == "") {
           throw findMessage(messagesData, "BA_A0040W_003");
         }
       });
@@ -1740,7 +1735,7 @@ const BA_A0040: React.FC = () => {
       dataArr.unp.push(unp);
       dataArr.itemacnt.push(itemacnt);
       dataArr.remark.push(remark);
-      dataArr.recdt.push(recdt.length == 8 ? recdt : convertDateToStr(recdt));
+      dataArr.recdt.push(recdt);
       dataArr.amtunit.push(amtunit);
     });
     deletedMainRows.forEach((item: any, idx: number) => {
@@ -1758,7 +1753,7 @@ const BA_A0040: React.FC = () => {
       dataArr.unp.push(unp);
       dataArr.itemacnt.push(itemacnt);
       dataArr.remark.push(remark);
-      dataArr.recdt.push(recdt.length == 8 ? recdt : convertDateToStr(recdt));
+      dataArr.recdt.push(recdt);
       dataArr.amtunit.push(amtunit);
     });
 
@@ -2556,7 +2551,9 @@ const BA_A0040: React.FC = () => {
                         row.rowstatus == undefined
                           ? ""
                           : row.rowstatus,
-                      recdt: toDate(row.recdt),
+                      recdt: row.recdt
+                        ? new Date(dateformat(row.recdt))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: selectedsubData2State[idGetter2(row)],
                     })),
                     subData2State

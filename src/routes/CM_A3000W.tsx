@@ -1746,8 +1746,8 @@ const CM_A3000W: React.FC = () => {
                 </tr>
                 <tr>
                   <th></th>
-                  <td>
-                    <ButtonContainer>
+                  <td colSpan={2}>
+                    <ButtonContainer style={{ justifyContent: "flex-start" }}>
                       <Button
                         onClick={upload}
                         themeColor={"primary"}
@@ -1785,6 +1785,11 @@ const CM_A3000W: React.FC = () => {
                       </Button>
                     </ButtonContainer>
                   </td>
+                  <td></td>
+                  <th></th>
+                  <td></td>
+                  <th></th>
+                  <td></td>
                 </tr>
               </tbody>
             </FormBox>

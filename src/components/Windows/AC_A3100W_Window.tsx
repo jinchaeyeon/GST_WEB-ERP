@@ -45,6 +45,7 @@ import {
   UseGetValueFromSessionItem,
   UseParaPc,
   convertDateToStr,
+  dateformat,
   getGridItemChangedData,
   numberWithCommas,
   setDefaultDate,
@@ -428,8 +429,6 @@ const CopyWindow = ({
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
-        fxyrmm:
-          item.fxyrmm == "" ? convertDateToStr(new Date()) : item.fxyrmm + "01",
       }));
 
       setMainDataResult2({
@@ -487,10 +486,6 @@ const CopyWindow = ({
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
-        fxyrmm:
-          item.fxyrmm == ""
-            ? convertDateToStr(new Date())
-            : item.fxyrmm + "0101",
       }));
 
       setMainDataResult3({
@@ -2397,7 +2392,9 @@ const CopyWindow = ({
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
-                    fxdt: row.fxdt == "" ? new Date() : toDate(row.fxdt),
+                    fxdt: row.fxdt
+                      ? new Date(dateformat(row.fxdt))
+                      : new Date(dateformat("19000101")),
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
                   mainDataState
@@ -2531,7 +2528,9 @@ const CopyWindow = ({
                 data={process(
                   mainDataResult2.data.map((row) => ({
                     ...row,
-                    fxyrmm: row.fxyrmm == "" ? new Date() : toDate(row.fxyrmm),
+                    fxyrmm: row.fxyrmm
+                      ? new Date(dateformat(row.fxyrmm))
+                      : new Date(dateformat("19000101")),
                     [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                   })),
                   mainDataState2
@@ -2654,7 +2653,9 @@ const CopyWindow = ({
                 data={process(
                   mainDataResult3.data.map((row) => ({
                     ...row,
-                    fxyrmm: row.fxyrmm == "" ? new Date() : toDate(row.fxyrmm),
+                    fxyrmm: row.fxyrmm
+                      ? new Date(dateformat(row.fxyrmm))
+                      : new Date(dateformat("19000101")),
                     [SELECTED_FIELD]: selectedState3[idGetter3(row)],
                   })),
                   mainDataState3

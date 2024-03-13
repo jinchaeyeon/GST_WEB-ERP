@@ -488,12 +488,7 @@ const CR_A1100W: React.FC = () => {
 
     try {
       dataItem.map((item: any) => {
-        if (
-          item.recdt.substring(0, 4) < "1997" ||
-          item.recdt.substring(6, 8) > "31" ||
-          item.recdt.substring(6, 8) < "01" ||
-          item.recdt.substring(6, 8).length != 2
-        ) {
+        if (item.recdt == "") {
           throw findMessage(messagesData, "CR_A1100W_002");
         } else if (
           toDate(item.recdt) < toDate(item.plandt) // 등원예정일자 이전 일자로 수정할 경우
@@ -885,7 +880,7 @@ const CR_A1100W: React.FC = () => {
                 ...row,
                 recdt: row.recdt
                   ? new Date(dateformat(row.recdt))
-                  : new Date(dateformat("19991231")),
+                  : new Date(dateformat("19000101")),
                 rowstatus:
                   row.rowstatus == null ||
                   row.rowstatus == "" ||

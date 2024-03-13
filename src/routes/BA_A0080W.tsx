@@ -206,7 +206,7 @@ const DateField = ["recdt"];
 const CommandField = ["itemcd"];
 const NumberField = ["unp"];
 const CustomComboField = ["itemacnt", "amtunit"];
-const requiredField = ["itemcd", "unp"];
+const requiredField = ["itemcd", "unp", "recdt"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -2029,7 +2029,7 @@ const BA_A0080: React.FC = () => {
                     ...row,
                     recdt: row.recdt
                       ? new Date(dateformat(row.recdt))
-                      : new Date(),
+                      : new Date(dateformat("19000101")),
                     itemlvl1: itemlvl1ListData.find(
                       (item: any) => item.sub_code === row.itemlvl1
                     )?.code_name,

@@ -3046,7 +3046,7 @@ const SA_A1000_603W: React.FC = () => {
 
     const newDataItem = {
       [DATA_ITEM_KEY2]: ++temp2,
-      enddt: "",
+      enddt: "19000101",
       glpyn: "G",
       itemcd: "",
       itemlvl1: "",
@@ -3057,7 +3057,7 @@ const SA_A1000_603W: React.FC = () => {
       quoseq: 0,
       quotestnum: "",
       remark: "",
-      startdt: "",
+      startdt: "19000101",
       type: "",
       rowstatus: "N",
     };
@@ -3492,12 +3492,8 @@ const SA_A1000_603W: React.FC = () => {
             dataArr.itemcd_s.push(itemcd);
             dataArr.itemnm_s.push(itemnm);
             dataArr.glpyn_s.push(glpyn);
-            dataArr.startdt_s.push(
-              typeof startdt == "string" ? startdt : convertDateToStr(startdt)
-            );
-            dataArr.enddt_s.push(
-              typeof enddt == "string" ? enddt : convertDateToStr(enddt)
-            );
+            dataArr.startdt_s.push(startdt);
+            dataArr.enddt_s.push(enddt);
             dataArr.remark_s.push(remark);
           });
           deletedMainRows2.forEach((item: any, idx: number) => {
@@ -3517,12 +3513,8 @@ const SA_A1000_603W: React.FC = () => {
             dataArr.itemcd_s.push(itemcd);
             dataArr.itemnm_s.push(itemnm);
             dataArr.glpyn_s.push(glpyn);
-            dataArr.startdt_s.push(
-              typeof startdt == "string" ? startdt : convertDateToStr(startdt)
-            );
-            dataArr.enddt_s.push(
-              typeof enddt == "string" ? enddt : convertDateToStr(enddt)
-            );
+            dataArr.startdt_s.push(startdt);
+            dataArr.enddt_s.push(enddt);
             dataArr.remark_s.push(remark);
           });
           setParaData({
@@ -4823,9 +4815,12 @@ const SA_A1000_603W: React.FC = () => {
                           row.rowstatus == undefined
                             ? ""
                             : row.rowstatus,
-                        startdt:
-                          row.startdt == "" ? new Date() : toDate(row.startdt),
-                        enddt: row.enddt == "" ? new Date() : toDate(row.enddt),
+                        startdt: row.startdt
+                          ? new Date(dateformat(row.startdt))
+                          : new Date(dateformat("19000101")),
+                        enddt: row.enddt
+                          ? new Date(dateformat(row.enddt))
+                          : new Date(dateformat("19000101")),
                         quosts: quostsListData.find(
                           (items: any) => items.sub_code == row.quosts
                         )?.code_name,

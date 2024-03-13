@@ -50,6 +50,7 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
@@ -754,7 +755,7 @@ const HU_A4100W: React.FC = () => {
         );
       });
       dataItem.map((item) => {
-        if (item.yyyy == undefined || item.yyyy == null || item.yyyy == "") {
+        if (item.yyyy == "") {
           valid = false;
         }
         if (
@@ -793,11 +794,7 @@ const HU_A4100W: React.FC = () => {
             remark = "",
           } = item;
           dataArr.rowstatus_s.push(rowstatus);
-          if (typeof yyyy == "string") {
-            dataArr.yyyy_s.push(yyyy);
-          } else {
-            dataArr.yyyy_s.push(convertDateToStr(yyyy).substring(0, 4));
-          }
+          dataArr.yyyy_s.push(yyyy.substring(0, 4));
           dataArr.prsnnum_s.push(prsnnum);
           dataArr.Semiannualgb_s.push(Semiannualgb);
           dataArr.amt_s.push(amt);
@@ -813,11 +810,7 @@ const HU_A4100W: React.FC = () => {
             remark = "",
           } = item;
           dataArr.rowstatus_s.push(rowstatus);
-          if (typeof yyyy == "string") {
-            dataArr.yyyy_s.push(yyyy);
-          } else {
-            dataArr.yyyy_s.push(convertDateToStr(yyyy).substring(0, 4));
-          }
+          dataArr.yyyy_s.push(yyyy.substring(0, 4));
           dataArr.prsnnum_s.push(prsnnum);
           dataArr.Semiannualgb_s.push(Semiannualgb);
           dataArr.amt_s.push(amt);
@@ -972,7 +965,7 @@ const HU_A4100W: React.FC = () => {
       prsnnm: "",
       prsnnum: "",
       remark: "",
-      yyyy: new Date(),
+      yyyy: convertDateToStr(new Date()),
       rowstatus: "N",
     };
 
@@ -1013,7 +1006,7 @@ const HU_A4100W: React.FC = () => {
         prsnnm: item.prsnnm,
         prsnnum: item.prsnnum,
         remark: "",
-        yyyy: new Date(),
+        yyyy: convertDateToStr(new Date()),
         rowstatus: "N",
       };
 
@@ -1194,6 +1187,9 @@ const HU_A4100W: React.FC = () => {
                   update_userid: userListData.find(
                     (item: any) => item.user_id === row.update_userid
                   )?.user_name,
+                  yyyy: row.yyyy
+                    ? new Date(dateformat(row.yyyy))
+                    : new Date(dateformat("19000101")),
                   [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                 })),
                 mainDataState

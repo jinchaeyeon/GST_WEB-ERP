@@ -52,12 +52,12 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
-  toDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -3431,11 +3431,7 @@ const HU_A3080W: React.FC = () => {
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.paytype_s.push(paytype);
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
@@ -3453,11 +3449,7 @@ const HU_A3080W: React.FC = () => {
         remark = "",
       } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.paytype_s.push(paytype);
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
@@ -3533,11 +3525,7 @@ const HU_A3080W: React.FC = () => {
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.paytype_s.push(paytype);
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
@@ -3555,11 +3543,7 @@ const HU_A3080W: React.FC = () => {
         remark = "",
       } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.paytype_s.push(paytype);
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
@@ -3633,11 +3617,7 @@ const HU_A3080W: React.FC = () => {
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
       dataArr.amt_s.push(amt);
@@ -3653,11 +3633,7 @@ const HU_A3080W: React.FC = () => {
         remark = "",
       } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
       dataArr.amt_s.push(amt);
@@ -3729,11 +3705,7 @@ const HU_A3080W: React.FC = () => {
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.payitemcd_s.push(
         filters5.paydeductdiv == "1" ? "" : filters5.payitemcd
       );
@@ -3754,11 +3726,7 @@ const HU_A3080W: React.FC = () => {
         bnsrat = "",
       } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.payitemcd_s.push(
         filters5.paydeductdiv == "1" ? "" : filters5.payitemcd
       );
@@ -4778,7 +4746,9 @@ const HU_A3080W: React.FC = () => {
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
-                      payyrmm: toDate(row.payyrmm + "01"),
+                      payyrmm: row.payyrmm
+                        ? new Date(dateformat(row.payyrmm))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
                     })),
                     mainDataState2
@@ -4931,7 +4901,9 @@ const HU_A3080W: React.FC = () => {
                   data={process(
                     mainDataResult3.data.map((row) => ({
                       ...row,
-                      payyrmm: toDate(row.payyrmm + "01"),
+                      payyrmm: row.payyrmm
+                        ? new Date(dateformat(row.payyrmm))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
                     })),
                     mainDataState3
@@ -5077,7 +5049,9 @@ const HU_A3080W: React.FC = () => {
                   data={process(
                     mainDataResult4.data.map((row) => ({
                       ...row,
-                      payyrmm: toDate(row.payyrmm + "01"),
+                      payyrmm: row.payyrmm
+                        ? new Date(dateformat(row.payyrmm))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
                     })),
                     mainDataState4
@@ -5223,7 +5197,9 @@ const HU_A3080W: React.FC = () => {
                   data={process(
                     mainDataResult5.data.map((row) => ({
                       ...row,
-                      payyrmm: toDate(row.payyrmm + "01"),
+                      payyrmm: row.payyrmm
+                        ? new Date(dateformat(row.payyrmm))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: selectedState5[idGetter5(row)], //선택된 데이터
                     })),
                     mainDataState5

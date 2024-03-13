@@ -2851,8 +2851,12 @@ const PR_A1100W: React.FC = () => {
                       ...item,
                       items: item.items.map((row: any) => ({
                         ...row,
-                        plandt: new Date(dateformat(row.plandt)),
-                        finexpdt: new Date(dateformat(row.finexpdt)),
+                        plandt: row.plandt
+                          ? new Date(dateformat(row.plandt))
+                          : new Date(dateformat("19000101")),
+                        finexpdt: row.finexpdt
+                          ? new Date(dateformat(row.finexpdt))
+                          : new Date(dateformat("19000101")),
                         qtyunit: qtyunitListData.find(
                           (item: any) => item.sub_code === row.qtyunit
                         )?.code_name,

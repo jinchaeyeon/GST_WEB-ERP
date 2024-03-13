@@ -479,65 +479,48 @@ const CM_A1710W: React.FC = () => {
     });
     if (dataItem.length === 0) return false;
 
-    let valid = true;
-
-    dataItem.map((item) => {
-      if (
-        item.birdt.substring(0, 4) < "1900" ||
-        item.birdt.substring(6, 8) > "31" ||
-        item.birdt.substring(6, 8) < "01" ||
-        item.birdt.substring(6, 8).length != 2
-      ) {
-        valid = false;
-      }
+    let dataArr: TdataArr = {
+      rowstatus: [],
+      user_id: [],
+      user_name: [],
+      tel_no: [],
+      mobile_no: [],
+      user_ip: [],
+      birdt: [],
+      bircd: [],
+    };
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        user_id = "",
+        user_name = "",
+        tel_no = "",
+        mobile_no = "",
+        user_ip = "",
+        birdt = "",
+        bircd = "",
+      } = item;
+      dataArr.rowstatus.push(rowstatus);
+      dataArr.user_id.push(user_id == undefined ? "" : user_id);
+      dataArr.user_name.push(user_name == undefined ? "" : user_name);
+      dataArr.tel_no.push(tel_no == undefined ? "" : tel_no);
+      dataArr.mobile_no.push(mobile_no == undefined ? "" : mobile_no);
+      dataArr.user_ip.push(user_ip == undefined ? "" : user_ip);
+      dataArr.birdt.push(birdt);
+      dataArr.bircd.push(bircd);
     });
 
-    if (valid == true) {
-      let dataArr: TdataArr = {
-        rowstatus: [],
-        user_id: [],
-        user_name: [],
-        tel_no: [],
-        mobile_no: [],
-        user_ip: [],
-        birdt: [],
-        bircd: [],
-      };
-      dataItem.forEach((item: any, idx: number) => {
-        const {
-          rowstatus = "",
-          user_id = "",
-          user_name = "",
-          tel_no = "",
-          mobile_no = "",
-          user_ip = "",
-          birdt = "",
-          bircd = "",
-        } = item;
-        dataArr.rowstatus.push(rowstatus);
-        dataArr.user_id.push(user_id == undefined ? "" : user_id);
-        dataArr.user_name.push(user_name == undefined ? "" : user_name);
-        dataArr.tel_no.push(tel_no == undefined ? "" : tel_no);
-        dataArr.mobile_no.push(mobile_no == undefined ? "" : mobile_no);
-        dataArr.user_ip.push(user_ip == undefined ? "" : user_ip);
-        dataArr.birdt.push(birdt.length == 8 ? birdt : convertDateToStr(birdt));
-        dataArr.bircd.push(bircd);
-      });
-
-      setParaData((prev) => ({
-        ...prev,
-        rowstatus: dataArr.rowstatus.join("|"),
-        user_id: dataArr.user_id.join("|"),
-        user_name: dataArr.user_name.join("|"),
-        tel_no: dataArr.tel_no.join("|"),
-        mobile_no: dataArr.mobile_no.join("|"),
-        user_ip: dataArr.user_ip.join("|"),
-        birdt: dataArr.birdt.join("|"),
-        bircd: dataArr.bircd.join("|"),
-      }));
-    } else {
-      alert("생년월일을 다시 설정해주세요.");
-    }
+    setParaData((prev) => ({
+      ...prev,
+      rowstatus: dataArr.rowstatus.join("|"),
+      user_id: dataArr.user_id.join("|"),
+      user_name: dataArr.user_name.join("|"),
+      tel_no: dataArr.tel_no.join("|"),
+      mobile_no: dataArr.mobile_no.join("|"),
+      user_ip: dataArr.user_ip.join("|"),
+      birdt: dataArr.birdt.join("|"),
+      bircd: dataArr.bircd.join("|"),
+    }));
   };
 
   const [ParaData, setParaData] = useState({

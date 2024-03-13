@@ -67,7 +67,7 @@ const DateCell = (props: CustomCellProps) => {
           show={true}
         />
       ) : typeof value === "object" ? (
-        convertDateToStr(value) == "19991231" ? (
+        convertDateToStr(value) == "19000101" ? (
           ""
         ) : (
           dateformat2(convertDateToStr(value))

@@ -33,11 +33,12 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
+  findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
-  toDate,
   useSysMessage,
 } from "../components/CommonFunction";
 import {
@@ -77,6 +78,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import YearDateCell from "../components/Cells/YearDateCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import { IAttachmentData } from "../hooks/interfaces";
@@ -95,6 +97,7 @@ let deletedMainRows2: object[] = [];
 let deletedMainRows3: object[] = [];
 let deletedMainRows4: object[] = [];
 
+const requiredField = ["prsnnm", "yyyy"];
 const numberField = [
   "num",
   "dedt_ratio",
@@ -2453,12 +2456,24 @@ const BA_A0020W_603: React.FC = () => {
   };
 
   const onSaveClick2 = () => {
+    let valid = true;
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
         item.rowstatus !== undefined
       );
     });
+    try {
+      dataItem.map((item: any) => {
+        if (item.yyyy == "") {
+          throw findMessage(messagesData, "BA_A0020W_603_001");
+        }
+      });
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+    if (!valid) return false;
     if (dataItem.length === 0 && deletedMainRows2.length === 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -2499,11 +2514,7 @@ const BA_A0020W_603: React.FC = () => {
 
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(
-        typeof yyyy == "string"
-          ? yyyy.substring(0, 4)
-          : convertDateToStr(yyyy).substring(0, 4)
-      );
+      dataArr.yyyy_s.push(yyyy.substring(0, 4));
       dataArr.dedt_rati_s.push(dedt_ratio);
       dataArr.totasset_s.push(totasset);
       dataArr.salesmoney_s.push(salesmoney);
@@ -2526,11 +2537,7 @@ const BA_A0020W_603: React.FC = () => {
 
       dataArr.rowstatus_s.push("D");
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(
-        typeof yyyy == "string"
-          ? yyyy.substring(0, 4)
-          : convertDateToStr(yyyy).substring(0, 4)
-      );
+      dataArr.yyyy_s.push(yyyy.substring(0, 4));
       dataArr.dedt_rati_s.push(dedt_ratio);
       dataArr.totasset_s.push(totasset);
       dataArr.salesmoney_s.push(salesmoney);
@@ -2561,12 +2568,24 @@ const BA_A0020W_603: React.FC = () => {
   };
 
   const onSaveClick3 = () => {
+    let valid = true;
     const dataItem = mainDataResult3.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
         item.rowstatus !== undefined
       );
     });
+    try {
+      dataItem.map((item: any) => {
+        if (item.yyyy == "") {
+          throw findMessage(messagesData, "BA_A0020W_603_001");
+        }
+      });
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+    if (!valid) return false;
     if (dataItem.length === 0 && deletedMainRows3.length === 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -2603,11 +2622,7 @@ const BA_A0020W_603: React.FC = () => {
 
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.paid_up_capital_s.push(paid_up_capital);
-      dataArr.yyyy_s.push(
-        typeof yyyy == "string"
-          ? yyyy.substring(0, 4)
-          : convertDateToStr(yyyy).substring(0, 4)
-      );
+      dataArr.yyyy_s.push(yyyy.substring(0, 4));
       dataArr.seq_s.push(seq);
       dataArr.remark_s.push(remark);
     });
@@ -2622,11 +2637,7 @@ const BA_A0020W_603: React.FC = () => {
 
       dataArr.rowstatus_s.push("D");
       dataArr.paid_up_capital_s.push(paid_up_capital);
-      dataArr.yyyy_s.push(
-        typeof yyyy == "string"
-          ? yyyy.substring(0, 4)
-          : convertDateToStr(yyyy).substring(0, 4)
-      );
+      dataArr.yyyy_s.push(yyyy.substring(0, 4));
       dataArr.seq_s.push(seq);
       dataArr.remark_s.push(remark);
     });
@@ -2655,6 +2666,18 @@ const BA_A0020W_603: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
+    let valid = true;
+    try {
+      dataItem.map((item: any) => {
+        if (item.prsnnm == "") {
+          throw findMessage(messagesData, "BA_A0020W_603_001");
+        }
+      });
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+    if (!valid) return false;
     if (dataItem.length === 0 && deletedMainRows4.length === 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -3332,7 +3355,9 @@ const BA_A0020W_603: React.FC = () => {
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
-                      yyyy: toDate(row.yyyy + "0101"),
+                      yyyy: row.yyyy
+                        ? new Date(dateformat(row.yyyy))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
                     })),
                     mainDataState2
@@ -3383,6 +3408,11 @@ const BA_A0020W_603: React.FC = () => {
                                 ? YearDateCell
                                 : commandField.includes(item.fieldName)
                                 ? ColumnCommandCell
+                                : undefined
+                            }
+                            headerCell={
+                              requiredField.includes(item.fieldName)
+                                ? RequiredHeader
                                 : undefined
                             }
                             footerCell={
@@ -3439,7 +3469,9 @@ const BA_A0020W_603: React.FC = () => {
                 data={process(
                   mainDataResult3.data.map((row) => ({
                     ...row,
-                    yyyy: toDate(row.yyyy + "0101"),
+                    yyyy: row.yyyy
+                      ? new Date(dateformat(row.yyyy))
+                      : new Date(dateformat("19000101")),
                     [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
                   })),
                   mainDataState3
@@ -3488,6 +3520,11 @@ const BA_A0020W_603: React.FC = () => {
                               ? NumberCell
                               : dateField.includes(item.fieldName)
                               ? YearDateCell
+                              : undefined
+                          }
+                          headerCell={
+                            requiredField.includes(item.fieldName)
+                              ? RequiredHeader
                               : undefined
                           }
                           footerCell={
@@ -3589,6 +3626,11 @@ const BA_A0020W_603: React.FC = () => {
                           cell={
                             comboField.includes(item.fieldName)
                               ? CustomComboBoxCell
+                              : undefined
+                          }
+                          headerCell={
+                            requiredField.includes(item.fieldName)
+                              ? RequiredHeader
                               : undefined
                           }
                           footerCell={

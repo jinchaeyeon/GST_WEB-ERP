@@ -33,9 +33,9 @@ import NumberCell from "../Cells/NumberCell";
 import {
   UseParaPc,
   convertDateToStr,
+  dateformat,
   getGridItemChangedData,
-  handleKeyPressSearch,
-  toDate,
+  handleKeyPressSearch
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
@@ -498,11 +498,7 @@ const KendoWindow = ({
           dataArr.rowstatus.push(rowstatus);
           dataArr.location.push("01");
           dataArr.prsnnum.push(prsnnum);
-          dataArr.yyyymm.push(
-            typeof yyyymm == "string"
-              ? yyyymm.substring(0, 6)
-              : convertDateToStr(yyyymm).substring(0, 6)
-          );
+          dataArr.yyyymm.push(yyyymm.substring(0, 6));
           dataArr.overtime.push(overtime);
           dataArr.remark.push(remark);
         });
@@ -520,11 +516,7 @@ const KendoWindow = ({
           dataArr.rowstatus.push(rowstatus);
           dataArr.location.push("01");
           dataArr.prsnnum.push(prsnnum);
-          dataArr.yyyymm.push(
-            typeof yyyymm == "string"
-              ? yyyymm.substring(0, 6)
-              : convertDateToStr(yyyymm).substring(0, 6)
-          );
+          dataArr.yyyymm.push(yyyymm.substring(0, 6));
           dataArr.overtime.push(overtime);
           dataArr.remark.push(remark);
         });
@@ -689,7 +681,9 @@ const KendoWindow = ({
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
-              yyyymm: toDate(row.yyyymm + "01"),
+              yyyymm: row.yyyymm
+                ? new Date(dateformat(row.yyyymm))
+                : new Date(dateformat("19000101")),
               [SELECTED_FIELD]: selectedState[idGetter(row)],
             })),
             mainDataState

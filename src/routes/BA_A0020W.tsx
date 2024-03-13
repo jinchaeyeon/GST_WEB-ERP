@@ -1022,7 +1022,7 @@ const BA_A0020: React.FC = () => {
 
       const row = rows.map((item: any) => ({
         ...item,
-        yyyy: item.yyyy < "1999" ? null : item.yyyy,
+        yyyy: item.yyyy + "0101",
       }));
 
       if (subfilters2.find_row_value !== "") {
@@ -1539,7 +1539,7 @@ const BA_A0020: React.FC = () => {
       seq: 0,
       totasset: 0,
       totcapital: 0,
-      yyyy: new Date(),
+      yyyy: convertDateToStr(new Date()),
       rowstatus: "N",
     };
     setSelectedsubDataState2({ [newDataItem[SUB_DATA_ITEM_KEY2]]: true });
@@ -2012,7 +2012,7 @@ const BA_A0020: React.FC = () => {
     address: "",
     phonenum: "",
     faxnum: "",
-    estbdt: new Date(),
+    estbdt: "",
     compnm_eng: "",
     address_eng: "",
     bnkinfo: "",
@@ -2106,7 +2106,7 @@ const BA_A0020: React.FC = () => {
       "@p_address": paraData.address,
       "@p_phonenum": paraData.phonenum,
       "@p_faxnum": paraData.faxnum,
-      "@p_estbdt": convertDateToStr(paraData.estbdt),
+      "@p_estbdt": paraData.estbdt,
       "@p_compnm_eng": paraData.compnm_eng,
       "@p_address_eng": paraData.address_eng,
       "@p_bnkinfo": paraData.bnkinfo,
@@ -2187,7 +2187,8 @@ const BA_A0020: React.FC = () => {
       "@p_address": infomation.address,
       "@p_phonenum": infomation.phonenum,
       "@p_faxnum": infomation.faxnum,
-      "@p_estbdt": convertDateToStr(infomation.estbdt),
+      "@p_estbdt":
+        infomation.estbdt == null ? "" : convertDateToStr(infomation.estbdt),
       "@p_compnm_eng": infomation.compnm_eng,
       "@p_address_eng": infomation.address_eng,
       "@p_bnkinfo": infomation.bnkinfo,
@@ -2281,7 +2282,8 @@ const BA_A0020: React.FC = () => {
       "@p_address": infomation.address,
       "@p_phonenum": infomation.phonenum,
       "@p_faxnum": infomation.faxnum,
-      "@p_estbdt": convertDateToStr(infomation.estbdt),
+      "@p_estbdt":
+        infomation.estbdt == null ? "" : convertDateToStr(infomation.estbdt),
       "@p_compnm_eng": infomation.compnm_eng,
       "@p_address_eng": infomation.address_eng,
       "@p_bnkinfo": infomation.bnkinfo,
@@ -2460,7 +2462,7 @@ const BA_A0020: React.FC = () => {
       address: infomation.address,
       phonenum: infomation.phonenum,
       faxnum: infomation.faxnum,
-      estbdt: infomation.estbdt,
+      estbdt: infomation.estbdt == null ? "" : infomation.estbdt,
       compnm_eng: infomation.compnm_eng,
       address_eng: infomation.address_eng,
       bnkinfo: infomation.bnkinfo,
@@ -2524,20 +2526,11 @@ const BA_A0020: React.FC = () => {
 
     try {
       dataItem.map((item: any) => {
-        if (typeof item.yyyy == "string") {
-          if (
-            item.yyyy.substring(0, 4) < "1997" ||
-            item.yyyy.substring(0, 4).length != 4
-          ) {
-            throw findMessage(messagesData, "BA_A0020W_007");
-          }
-        } else {
-          if (
-            convertDateToStr(item.yyyy).substring(0, 4) < "1997" ||
-            convertDateToStr(item.yyyy).substring(0, 4).length != 4
-          ) {
-            throw findMessage(messagesData, "BA_A0020W_007");
-          }
+        if (
+          item.yyyy.substring(0, 4) < "1997" ||
+          item.yyyy.substring(0, 4).length != 4
+        ) {
+          throw findMessage(messagesData, "BA_A0020W_007");
         }
       });
     } catch (e) {
@@ -2581,11 +2574,7 @@ const BA_A0020: React.FC = () => {
       dataArr.rowstatus.push(rowstatus);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(
-        typeof yyyy == "string"
-          ? yyyy.substring(0, 4)
-          : convertDateToStr(yyyy).substring(0, 4)
-      );
+      dataArr.yyyy_s.push(yyyy.substring(0, 4));
       dataArr.totasset_s.push(totasset);
       dataArr.paid_up_capital_s.push(paid_up_capital);
       dataArr.totcaptial_s.push(totcapital);
@@ -2614,11 +2603,7 @@ const BA_A0020: React.FC = () => {
       dataArr.rowstatus.push(rowstatus);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(
-        typeof yyyy == "string"
-          ? yyyy.substring(0, 4)
-          : convertDateToStr(yyyy).substring(0, 4)
-      );
+      dataArr.yyyy_s.push(yyyy.substring(0, 4));
       dataArr.totasset_s.push(totasset);
       dataArr.paid_up_capital_s.push(paid_up_capital);
       dataArr.totcaptial_s.push(totcapital);
@@ -2648,7 +2633,7 @@ const BA_A0020: React.FC = () => {
       address: infomation.address,
       phonenum: infomation.phonenum,
       faxnum: infomation.faxnum,
-      estbdt: infomation.estbdt,
+      estbdt: infomation.estbdt == null ? "" : infomation.estbdt,
       compnm_eng: infomation.compnm_eng,
       address_eng: infomation.address_eng,
       bnkinfo: infomation.bnkinfo,
@@ -2929,7 +2914,7 @@ const BA_A0020: React.FC = () => {
         address: "",
         phonenum: "",
         faxnum: "",
-        estbdt: new Date(),
+        estbdt: "",
         compnm_eng: "",
         address_eng: "",
         bnkinfo: "",
@@ -4048,6 +4033,9 @@ const BA_A0020: React.FC = () => {
                           row.rowstatus == undefined
                             ? ""
                             : row.rowstatus,
+                        yyyy: row.yyyy
+                          ? new Date(dateformat(row.yyyy))
+                          : new Date(dateformat("19000101")),
                         [SELECTED_FIELD]: selectedsubDataState2[idGetter3(row)],
                       })),
                       subDataState2

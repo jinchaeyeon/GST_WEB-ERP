@@ -1030,8 +1030,7 @@ const CopyWindow = ({
         recdtfind: data.recdtfind,
         remark: data.remark,
         seq1: data.seq1,
-        shipdt:
-          data.shipdt.length == 8 ? new Date(dateformat(data.shipdt)) : null,
+        shipdt: data.shipdt == "" ? null : toDate(data.shipdt),
         taxamt: data.taxamt,
         taxdiv: data.taxdiv,
         taxdt: data.taxdt.length == 8 ? new Date(dateformat(data.taxdt)) : null,
@@ -1196,7 +1195,7 @@ const CopyWindow = ({
         rtnyn: "",
         seq1: filters.seq1,
         seq2: 0,
-        shipdt: convertDateToStr(filters.shipdt),
+        shipdt: filters.shipdt == null ? "" : convertDateToStr(filters.shipdt),
         shipnm: "",
         specialunp: 0,
         spno: 0,
@@ -1388,7 +1387,8 @@ const CopyWindow = ({
               outkind: "",
               outtype: filters.outtype,
               outdt: filters.outdt,
-              shipdt: filters.shipdt,
+              shipdt:
+                filters.shipdt == null ? "" : convertDateToStr(filters.shipdt),
               person: filters.person,
               custcd: filters.custcd,
               rcvcustcd: filters.rcvcustcd,
@@ -1697,7 +1697,8 @@ const CopyWindow = ({
               outkind: "",
               outtype: filters.outtype,
               outdt: filters.outdt,
-              shipdt: filters.shipdt,
+              shipdt:
+                filters.shipdt == null ? "" : convertDateToStr(filters.shipdt),
               person: filters.person,
               custcd: filters.custcd,
               rcvcustcd: filters.rcvcustcd,
@@ -1906,8 +1907,7 @@ const CopyWindow = ({
       "@p_outkind": ParaData.outkind,
       "@p_outtype": ParaData.outtype,
       "@p_outdt": convertDateToStr(ParaData.outdt),
-      "@p_shipdt":
-        ParaData.shipdt == "" ? "" : convertDateToStr(ParaData.shipdt),
+      "@p_shipdt": ParaData.shipdt,
       "@p_person": ParaData.person,
       "@p_custcd": ParaData.custcd,
       "@p_rcvcustcd": ParaData.rcvcustcd,

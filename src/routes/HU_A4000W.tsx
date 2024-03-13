@@ -62,6 +62,7 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
@@ -4194,9 +4195,7 @@ const HU_A4000W: React.FC = () => {
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.badnum_s.push(badnum);
       dataArr.badseq_s.push(badseq);
-      dataArr.baddt_s.push(
-        typeof baddt == "string" ? baddt : convertDateToStr(baddt)
-      );
+      dataArr.baddt_s.push(baddt);
       dataArr.badcd_s.push(badcd);
       dataArr.remark_s.push(remark);
     });
@@ -4212,9 +4211,7 @@ const HU_A4000W: React.FC = () => {
       dataArr.rowstatus_s.push("D");
       dataArr.badnum_s.push(badnum);
       dataArr.badseq_s.push(badseq);
-      dataArr.baddt_s.push(
-        typeof baddt == "string" ? baddt : convertDateToStr(baddt)
-      );
+      dataArr.baddt_s.push(baddt);
       dataArr.badcd_s.push(badcd);
       dataArr.remark_s.push(remark);
     });
@@ -4286,9 +4283,7 @@ const HU_A4000W: React.FC = () => {
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.rnpdiv_s.push(rnpdiv);
-      dataArr.reqdt_s.push(
-        typeof reqdt == "string" ? reqdt : convertDateToStr(reqdt)
-      );
+      dataArr.reqdt_s.push(reqdt);
       dataArr.contents_s.push(contents);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
@@ -4308,9 +4303,7 @@ const HU_A4000W: React.FC = () => {
       } = item;
       dataArr.rowstatus_s.push("D");
       dataArr.rnpdiv_s.push(rnpdiv);
-      dataArr.reqdt_s.push(
-        typeof reqdt == "string" ? reqdt : convertDateToStr(reqdt)
-      );
+      dataArr.reqdt_s.push(reqdt);
       dataArr.contents_s.push(contents);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
@@ -5556,8 +5549,9 @@ const HU_A4000W: React.FC = () => {
                         data={process(
                           mainDataResult5.data.map((row) => ({
                             ...row,
-                            baddt:
-                              row.baddt == "" ? new Date() : toDate(row.baddt),
+                            baddt: row.baddt
+                              ? new Date(dateformat(row.baddt))
+                              : new Date(dateformat("19000101")),
                             [SELECTED_FIELD]: selectedState5[idGetter5(row)], //선택된 데이터
                           })),
                           mainDataState5
@@ -5675,10 +5669,9 @@ const HU_A4000W: React.FC = () => {
                           data={process(
                             mainDataResult6.data.map((row) => ({
                               ...row,
-                              recdt:
-                                row.recdt == ""
-                                  ? new Date()
-                                  : toDate(row.recdt),
+                              recdt: row.recdt
+                                ? new Date(dateformat(row.recdt))
+                                : new Date(dateformat("19000101")),
                               [SELECTED_FIELD]: selectedState6[idGetter6(row)], //선택된 데이터
                             })),
                             mainDataState6
@@ -5805,10 +5798,9 @@ const HU_A4000W: React.FC = () => {
                           data={process(
                             mainDataResult7.data.map((row) => ({
                               ...row,
-                              reqdt:
-                                row.reqdt == ""
-                                  ? new Date()
-                                  : toDate(row.reqdt),
+                              reqdt: row.reqdt
+                                ? new Date(dateformat(row.reqdt))
+                                : new Date(dateformat("19000101")),
                               [SELECTED_FIELD]: selectedState7[idGetter7(row)], //선택된 데이터
                             })),
                             mainDataState7

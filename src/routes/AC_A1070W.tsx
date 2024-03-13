@@ -1310,7 +1310,7 @@ const AC_A1070W: React.FC = () => {
           <GridTitle>기본정보</GridTitle>
           <ButtonContainer>
             <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
-              매출전표생성
+              매입전표생성
             </Button>
             <Button
               onClick={onDeleteClick}
@@ -1318,7 +1318,7 @@ const AC_A1070W: React.FC = () => {
               fillMode="outline"
               themeColor={"primary"}
             >
-              매출전표해제
+              매입전표해제
             </Button>
           </ButtonContainer>
         </GridTitleContainer>

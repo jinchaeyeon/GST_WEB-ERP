@@ -522,12 +522,7 @@ const PS_A0060_301W: React.FC = () => {
 
     try {
       dataItem.map((item: any) => {
-        if (
-          item.date.substring(0, 4) < "1997" ||
-          item.date.substring(6, 8) > "31" ||
-          item.date.substring(6, 8) < "01" ||
-          item.date.substring(4, 6).length != 2
-        ) {
+        if (item.date == "") {
           throw findMessage(messagesData, "PS_A0060_301W_001");
         }
       });
@@ -1064,7 +1059,9 @@ const PS_A0060_301W: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                date: row.date ? new Date(dateformat(row.date)) : new Date(),
+                date: row.date
+                  ? new Date(dateformat(row.date))
+                  : new Date(dateformat("19000101")),
                 rowstatus:
                   row.rowstatus == null ||
                   row.rowstatus == "" ||

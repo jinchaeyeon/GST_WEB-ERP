@@ -832,9 +832,7 @@ const CM_A8250W: React.FC = () => {
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.recdt_s.push(
-        typeof recdt == "string" ? recdt : convertDateToStr(recdt)
-      );
+      dataArr.recdt_s.push(recdt);
       dataArr.gubun_s.push(gubun);
       dataArr.position_s.push(position);
       dataArr.remark3_s.push(remark3);
@@ -869,7 +867,7 @@ const CM_A8250W: React.FC = () => {
         const findRowIndex = mainDataResult.data.findIndex(
           (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
         );
-
+        resetAllGrid();
         if (isLastDataDeleted) {
           setPage({
             skip:
@@ -1108,7 +1106,7 @@ const CM_A8250W: React.FC = () => {
                   ...row,
                   recdt: row.recdt
                     ? new Date(dateformat(row.recdt))
-                    : new Date(),
+                    : new Date(dateformat("19000101")),
                   rowstatus:
                     row.rowstatus == null ||
                     row.rowstatus == "" ||

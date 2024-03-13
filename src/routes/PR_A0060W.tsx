@@ -3001,7 +3001,9 @@ const PR_A0060: React.FC = () => {
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
-                        fxdt: new Date(dateformat(row.fxdt)),
+                        fxdt: row.fxdt
+                          ? new Date(dateformat(row.fxdt))
+                          : new Date(dateformat("19000101")),
                         rowstatus:
                           row.rowstatus == null ||
                           row.rowstatus == "" ||

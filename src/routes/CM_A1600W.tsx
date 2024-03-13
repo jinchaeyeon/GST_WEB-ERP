@@ -121,7 +121,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 };
 
 const dateField = ["strtime", "endtime"];
-const requiredField = ["contents"];
+const requiredField = ["contents", "strtime"];
 const checkboxField = ["finyn"];
 const numberField = ["strhh", "strmm", "endhh", "endmm"];
 const comboField = ["colorID", "kind1"];
@@ -1996,7 +1996,14 @@ const CM_A1600: React.FC = () => {
           throw new Error(findMessage(messagesData, "CM_A1600W_006"));
           valid = false;
         }
-
+        if (item.strtime == "") {
+          throw new Error(findMessage(messagesData, "CM_A1600W_003"));
+          valid = false;
+        }
+        if (item.endtime == "") {
+          throw new Error(findMessage(messagesData, "CM_A1600W_003"));
+          valid = false;
+        }
         if (item.strhh < 0 || item.strhh > 23) {
           throw new Error(findMessage(messagesData, "CM_A1600W_007"));
           valid = false;
@@ -2339,7 +2346,7 @@ const CM_A1600: React.FC = () => {
                       ...row,
                       strtime: row.strtime
                         ? new Date(dateformat(row.strtime))
-                        : new Date(dateformat("19991231")),
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: todoSelectedState[idGetter(row)],
                     })),
                     todoDataState
@@ -2644,10 +2651,10 @@ const CM_A1600: React.FC = () => {
                     ...row,
                     strtime: row.strtime
                       ? new Date(dateformat(row.strtime))
-                      : new Date(dateformat("19991231")),
+                      : new Date(dateformat("19000101")),
                     endtime: row.endtime
                       ? new Date(dateformat(row.endtime))
-                      : new Date(dateformat("19991231")),
+                      : new Date(dateformat("19000101")),
                     [SELECTED_FIELD]: userselectedState[idGetter2(row)],
                   })),
                   userDataState

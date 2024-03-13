@@ -69,6 +69,7 @@ import {
   UseCustomOption,
   UseParaPc,
   convertDateToStr,
+  dateformat,
   getGridItemChangedData,
   getQueryFromBizComponent,
   toDate,
@@ -2357,7 +2358,7 @@ const CopyWindow = ({
       [DATA_ITEM_KEY2]: ++temp2,
       area: "",
       attdatnum: "",
-      enddate: "",
+      enddate: "19000101",
       files: "",
       form_id: "HU_A1000W",
       major: "",
@@ -2369,7 +2370,7 @@ const CopyWindow = ({
       schgrade: "",
       schnm: "",
       seq: 0,
-      startdate: "",
+      startdate: "19000101",
       rowstatus: "N",
     };
 
@@ -2396,7 +2397,7 @@ const CopyWindow = ({
 
     const newDataItem = {
       [DATA_ITEM_KEY3]: ++temp3,
-      acqdt: "",
+      acqdt: "19000101",
       attdatnum: "",
       files: "",
       finyn: "",
@@ -2407,9 +2408,9 @@ const CopyWindow = ({
       qualkind: "",
       qualmach: "",
       qualnum: "",
-      renewdt: "",
+      renewdt: "19000101",
       seq: 0,
-      validt: "",
+      validt: "19000101",
       rowstatus: "N",
     };
 
@@ -2441,7 +2442,7 @@ const CopyWindow = ({
       dptnm: "",
       files: "",
       form_id: "HU_A1000W",
-      frdt: "",
+      frdt: "19000101",
       jobnm: "",
       ocptnm: "",
       orgdiv: "01",
@@ -2449,7 +2450,7 @@ const CopyWindow = ({
       prsnnum: "",
       remark: "",
       seq: 0,
-      todt: "",
+      todt: "19000101",
       rowstatus: "N",
     };
 
@@ -2477,18 +2478,18 @@ const CopyWindow = ({
     const newDataItem = {
       [DATA_ITEM_KEY5]: ++temp5,
       appointcd: "",
-      appointdt: "",
+      appointdt: "19000101",
       appointrsn: "",
       attdatnum: "",
       dptcd: "",
-      enddt: "",
+      enddt: "19000101",
       files: "",
       form_id: "HU_A1000W",
       orgdiv: "01",
       prsnnum: "",
       remark: "",
       seq: 0,
-      startdt: "",
+      startdt: "19000101",
       rowstatus: "N",
     };
 
@@ -2523,7 +2524,7 @@ const CopyWindow = ({
       prsnnum: "",
       reloffice: "",
       remark: "",
-      reqdt: "",
+      reqdt: "19000101",
       rnpdiv: "",
       seq: 0,
       rowstatus: "N",
@@ -2559,7 +2560,7 @@ const CopyWindow = ({
       eduoffice: "",
       eduterm: 0,
       edutime: 0,
-      enddt: "",
+      enddt: "19000101",
       files: "",
       form_id: "HU_A1000",
       gubun: "",
@@ -2567,7 +2568,7 @@ const CopyWindow = ({
       prsnnum: "",
       remark: "",
       seq: 0,
-      startdt: "",
+      startdt: "19000101",
       rowstatus: "N",
     };
 
@@ -2597,7 +2598,7 @@ const CopyWindow = ({
       attdatnum: "",
       country: "",
       educd: "",
-      enddt: "",
+      enddt: "19000101",
       files: "",
       form_id: "HU_A1000",
       orgdiv: "01",
@@ -2605,8 +2606,8 @@ const CopyWindow = ({
       score: "",
       seq: 0,
       speaking: "",
-      startdt: "",
-      testdt: "",
+      startdt: "19000101",
+      testdt: "19000101",
       testnm: "",
       rowstatus: "N",
     };
@@ -9728,7 +9729,9 @@ const CopyWindow = ({
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
-                      birdt: row.birdt != "" ? toDate(row.birdt) : new Date(),
+                      birdt: row.birdt
+                        ? new Date(dateformat(row.birdt))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                     })),
                     mainDataState
@@ -9884,12 +9887,12 @@ const CopyWindow = ({
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
-                      startdate:
-                        row.startdate != ""
-                          ? toDate(row.startdate)
-                          : new Date(),
-                      enddate:
-                        row.enddate != "" ? toDate(row.enddate) : new Date(),
+                      startdate: row.startdate
+                        ? new Date(dateformat(row.startdate))
+                        : new Date(dateformat("19000101")),
+                      enddate: row.enddate
+                        ? new Date(dateformat(row.enddate))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
                     })),
                     mainDataState2
@@ -9994,11 +9997,15 @@ const CopyWindow = ({
                   data={process(
                     mainDataResult3.data.map((row) => ({
                       ...row,
-                      acqdt: row.acqdt != "" ? toDate(row.acqdt) : new Date(),
-                      validt:
-                        row.validt != "" ? toDate(row.validt) : new Date(),
-                      renewdt:
-                        row.renewdt != "" ? toDate(row.renewdt) : new Date(),
+                      acqdt: row.acqdt
+                        ? new Date(dateformat(row.acqdt))
+                        : new Date(dateformat("19000101")),
+                      validt: row.validt
+                        ? new Date(dateformat(row.validt))
+                        : new Date(dateformat("19000101")),
+                      renewdt: row.renewdt
+                        ? new Date(dateformat(row.renewdt))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
                     })),
                     mainDataState3
@@ -10108,8 +10115,12 @@ const CopyWindow = ({
                   data={process(
                     mainDataResult4.data.map((row) => ({
                       ...row,
-                      frdt: row.frdt != "" ? toDate(row.frdt) : new Date(),
-                      todt: row.todt != "" ? toDate(row.todt) : new Date(),
+                      frdt: row.frdt
+                        ? new Date(dateformat(row.frdt))
+                        : new Date(dateformat("19000101")),
+                      todt: row.todt
+                        ? new Date(dateformat(row.todt))
+                        : new Date(dateformat("19000101")),
                       orgdiv: orgdivListData.find(
                         (item: any) => item.sub_code == row.orgdiv
                       )?.code_name,
@@ -10223,13 +10234,15 @@ const CopyWindow = ({
                   data={process(
                     mainDataResult5.data.map((row) => ({
                       ...row,
-                      startdt:
-                        row.startdt != "" ? toDate(row.startdt) : new Date(),
-                      enddt: row.enddt != "" ? toDate(row.enddt) : new Date(),
-                      appointdt:
-                        row.appointdt != ""
-                          ? toDate(row.appointdt)
-                          : new Date(),
+                      startdt: row.startdt
+                        ? new Date(dateformat(row.startdt))
+                        : new Date(dateformat("19000101")),
+                      enddt: row.enddt
+                        ? new Date(dateformat(row.enddt))
+                        : new Date(dateformat("19000101")),
+                      appointdt: row.appointdt
+                        ? new Date(dateformat(row.appointdt))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: selectedState5[idGetter5(row)], //선택된 데이터
                     })),
                     mainDataState5
@@ -10350,7 +10363,9 @@ const CopyWindow = ({
                   data={process(
                     mainDataResult6.data.map((row) => ({
                       ...row,
-                      reqdt: row.reqdt != "" ? toDate(row.reqdt) : new Date(),
+                      reqdt: row.reqdt
+                        ? new Date(dateformat(row.reqdt))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: selectedState6[idGetter6(row)], //선택된 데이터
                     })),
                     mainDataState6
@@ -10449,9 +10464,12 @@ const CopyWindow = ({
                   data={process(
                     mainDataResult7.data.map((row) => ({
                       ...row,
-                      startdt:
-                        row.startdt != "" ? toDate(row.startdt) : new Date(),
-                      enddt: row.enddt != "" ? toDate(row.enddt) : new Date(),
+                      startdt: row.startdt
+                        ? new Date(dateformat(row.startdt))
+                        : new Date(dateformat("19000101")),
+                      enddt: row.enddt
+                        ? new Date(dateformat(row.enddt))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: selectedState7[idGetter7(row)], //선택된 데이터
                     })),
                     mainDataState7
@@ -10567,11 +10585,15 @@ const CopyWindow = ({
                   data={process(
                     mainDataResult8.data.map((row) => ({
                       ...row,
-                      startdt:
-                        row.startdt != "" ? toDate(row.startdt) : new Date(),
-                      enddt: row.enddt != "" ? toDate(row.enddt) : new Date(),
-                      testdt:
-                        row.testdt != "" ? toDate(row.testdt) : new Date(),
+                      startdt: row.startdt
+                        ? new Date(dateformat(row.startdt))
+                        : new Date(dateformat("19000101")),
+                      enddt: row.enddt
+                        ? new Date(dateformat(row.enddt))
+                        : new Date(dateformat("19000101")),
+                      testdt: row.testdt
+                        ? new Date(dateformat(row.testdt))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: selectedState8[idGetter8(row)], //선택된 데이터
                     })),
                     mainDataState8

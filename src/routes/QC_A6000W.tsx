@@ -49,13 +49,13 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
-  toDate,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -418,7 +418,6 @@ const QC_A6000: React.FC = () => {
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
-          qcdt: toDate(row.qcdt),
         };
       });
       if (filters.find_row_value !== "") {
@@ -959,6 +958,7 @@ const QC_A6000: React.FC = () => {
         title={"검사일자"}
         width="120px"
         cell={DateCell}
+        headerCell={RequiredHeader}
       />
     );
     array.push(
@@ -1000,6 +1000,20 @@ const QC_A6000: React.FC = () => {
       });
 
       if (dataItem.length === 0) return false;
+
+      let valid = true;
+
+      dataItem.map((item) => {
+        if (item.qcdt == "" && valid == true) {
+          alert("검사일자를 입력해주세요.");
+          valid = false;
+          return false;
+        }
+      });
+
+      if (valid != true) {
+        return false;
+      }
 
       if (dataItem.filter((item) => item.qcdecision == "").length > 0) {
         throw findMessage(messagesData, "QC_A6000W_002");
@@ -1048,7 +1062,7 @@ const QC_A6000: React.FC = () => {
           dataArr.badcd_s.push(badcd == undefined ? "" : badcd);
           dataArr.badqty_s.push(badqty);
           dataArr.qcdecision.push(qcdecision);
-          dataArr.qcdt_s.push(convertDateToStr(qcdt));
+          dataArr.qcdt_s.push(qcdt);
           dataArr.qcnum_s.push(qcnum);
           dataArr.eyeqc_s.push(eyeqc == undefined ? "" : eyeqc);
           dataArr.chkqty_s.push(chkqty == undefined ? "" : chkqty);
@@ -1195,6 +1209,9 @@ const QC_A6000: React.FC = () => {
                   prodemp: usersListData.find(
                     (item: any) => item.user_id === row.prodemp
                   )?.user_name,
+                  qcdt: row.qcdt
+                    ? new Date(dateformat(row.qcdt))
+                    : new Date(dateformat("19000101")),
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
                 mainDataState

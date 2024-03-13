@@ -60,13 +60,13 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
-  toDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -2096,8 +2096,9 @@ const AC_A6000W: React.FC = () => {
                       finperson: userListData.find(
                         (items: any) => items.user_id == row.finperson
                       )?.user_name,
-                      acntdt:
-                        row.acntdt == "" ? new Date() : toDate(row.acntdt),
+                      acntdt: row.acntdt
+                        ? new Date(dateformat(row.acntdt))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: selectedState[idGetter(row)],
                     })),
                     mainDataState
@@ -2229,8 +2230,9 @@ const AC_A6000W: React.FC = () => {
                       finperson: userListData.find(
                         (items: any) => items.user_id == row.finperson
                       )?.user_name,
-                      acntdt:
-                        row.acntdt == "" ? new Date() : toDate(row.acntdt),
+                      acntdt: row.acntdt
+                        ? new Date(dateformat(row.acntdt))
+                        : new Date(dateformat("19000101")),
                       [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                     })),
                     mainDataState2

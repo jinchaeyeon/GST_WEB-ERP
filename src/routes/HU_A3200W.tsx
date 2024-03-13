@@ -47,12 +47,12 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
-  toDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -797,11 +797,7 @@ const HU_A3200W: React.FC = () => {
         safetyamt = "",
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.dptcd_s.push(dptcd);
       dataArr.location_s.push(location);
@@ -825,11 +821,7 @@ const HU_A3200W: React.FC = () => {
         safetyamt = "",
       } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.dptcd_s.push(dptcd);
       dataArr.location_s.push(location);
@@ -1056,7 +1048,9 @@ const HU_A3200W: React.FC = () => {
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
-                  payyrmm: toDate(row.payyrmm + "01"),
+                  payyrmm: row.payyrmm
+                    ? new Date(dateformat(row.payyrmm))
+                    : new Date(dateformat("19000101")),
                   [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                 })),
                 mainDataState

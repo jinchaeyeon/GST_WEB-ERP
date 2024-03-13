@@ -1029,9 +1029,9 @@ const SY_A0120: React.FC = () => {
     const newDataItem = {
       [DATA_ITEM_KEY]: ++temp,
       apply_start_date: convertDateToStr(new Date()),
-      apply_end_date: "19991231",
+      apply_end_date: "19000101",
       bircd: "Y",
-      birdt: "19991231",
+      birdt: "19000101",
       custcd: "",
       dptcd: "",
       email: "",
@@ -1546,13 +1546,13 @@ const SY_A0120: React.FC = () => {
                       ...row,
                       birdt: row.birdt
                         ? new Date(dateformat(row.birdt))
-                        : new Date(dateformat("19991231")),
+                        : new Date(dateformat("19000101")),
                       apply_start_date: row.apply_start_date
                         ? new Date(dateformat(row.apply_start_date))
-                        : new Date(dateformat("19991231")),
+                        : new Date(dateformat("19000101")),
                       apply_end_date: row.apply_end_date
                         ? new Date(dateformat(row.apply_end_date))
-                        : new Date(dateformat("19991231")),
+                        : new Date(dateformat("19000101")),
                       home_menu_id_web: menuListData.find(
                         (item: any) => item.sub_code == row.home_menu_id_web
                       )?.code_name,

@@ -598,7 +598,8 @@ const CopyWindow = ({
               location: "01",
               orgdiv: "01",
               person: filters.person,
-              purdt: filters.purdt,
+              purdt:
+                filters.purdt == null ? "" : convertDateToStr(filters.purdt),
               purnum: filters.purnum,
               purqty: filters.purqty,
               pursts: filters.pursts,
@@ -793,7 +794,8 @@ const CopyWindow = ({
               location: "01",
               orgdiv: "01",
               person: filters.person,
-              purdt: filters.purdt,
+              purdt:
+                filters.purdt == null ? "" : convertDateToStr(filters.purdt),
               purnum: filters.purnum,
               purqty: filters.purqty,
               pursts: filters.pursts,
@@ -857,7 +859,7 @@ const CopyWindow = ({
     recdt: new Date(),
     seq1: 0,
     indt: new Date(),
-    purdt: new Date(),
+    purdt: "",
     custcd: "",
     custnm: "",
     person: "admin",
@@ -913,7 +915,7 @@ const CopyWindow = ({
       "@p_recdt": convertDateToStr(ParaData.recdt),
       "@p_seq1": ParaData.seq1,
       "@p_indt": convertDateToStr(ParaData.indt),
-      "@p_purdt": convertDateToStr(ParaData.purdt),
+      "@p_purdt": ParaData.purdt,
       "@p_custcd": ParaData.custcd,
       "@p_custnm": ParaData.custnm,
       "@p_person": ParaData.person,
@@ -992,7 +994,7 @@ const CopyWindow = ({
         recdt: new Date(),
         seq1: 0,
         indt: new Date(),
-        purdt: new Date(),
+        purdt: "",
         custcd: "",
         custnm: "",
         person: "admin",
@@ -1492,10 +1494,6 @@ const CopyWindow = ({
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                enddt:
-                  workType == "U" && isValidDate(row.enddt)
-                    ? new Date(dateformat(row.enddt))
-                    : new Date(),
                 rowstatus:
                   row.rowstatus == null ||
                   row.rowstatus == "" ||

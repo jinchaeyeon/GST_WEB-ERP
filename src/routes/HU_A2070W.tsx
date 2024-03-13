@@ -877,7 +877,7 @@ const HU_A2070W: React.FC = () => {
         if (
           !item.rowstatus ||
           item.rowstatus != "N" ||
-          item.dutydt != "19991231"
+          item.dutydt != "19000101"
         ) {
           const newData2 = {
             ...item,
@@ -1175,7 +1175,7 @@ const HU_A2070W: React.FC = () => {
                 )?.code_name,
                 dutydt: row.dutydt
                   ? new Date(dateformat(row.dutydt))
-                  : new Date(dateformat("19991231")),
+                  : new Date(dateformat("19000101")),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
