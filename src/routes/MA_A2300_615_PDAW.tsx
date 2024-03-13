@@ -18,6 +18,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import {
   AdminQuestionBox,
   ButtonContainer,
+  FilterBox,
+  FilterBoxWrap,
   FormBox,
   FormBoxWrap,
   GridContainer,
@@ -36,8 +38,9 @@ import { isLoading } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 var barcode = "";
+var index = 0;
 const DATA_ITEM_KEY = "custcd";
-const DATA_ITEM_KEY2 = "group_name";
+const DATA_ITEM_KEY2 = "group_code";
 
 const MA_A2300_615_PDAW: React.FC = () => {
   const processApi = useApi();
@@ -82,6 +85,8 @@ const MA_A2300_615_PDAW: React.FC = () => {
   let isMobile = deviceWidth <= 1200;
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
+  const [isVisibleDetail, setIsVisableDetail] = useState(true);
+  const [isVisibleDetail2, setIsVisableDetail2] = useState(true);
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -118,15 +123,33 @@ const MA_A2300_615_PDAW: React.FC = () => {
     isSearch: false,
   });
   const [filters, setFilters] = useState({
+    custnm: "",
     pgNum: 1,
     isSearch: true,
     pgSize: PAGE_SIZE,
   });
   const [filters2, setFilters2] = useState({
+    group_name: "",
     pgNum: 1,
     isSearch: true,
     pgSize: PAGE_SIZE,
   });
+  const filterInputChange = (e: any) => {
+    const { value, name } = e.target;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+  const filterInputChange2 = (e: any) => {
+    const { value, name } = e.target;
+
+    setFilters2((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
   //요약정보 조회
   const fetchMainGrid = async (filters: any) => {
     let data: any;
@@ -142,7 +165,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
         "&pageSize=" +
         filters.pgSize,
       custcd: "",
-      custnm: "",
+      custnm: filters.custnm,
       custdiv: "",
       useyn: "사용",
     };
@@ -195,7 +218,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
         filters2.pgNum +
         "&pageSize=" +
         filters2.pgSize,
-      group_name: "",
+      group_name: filters2.group_name,
     };
 
     try {
@@ -384,11 +407,15 @@ const MA_A2300_615_PDAW: React.FC = () => {
     document.addEventListener("keydown", function (evt) {
       if (evt.code == "Enter") {
         if (barcode != "") {
-          setInformation((prev) => ({
-            ...prev,
-            str: barcode,
-            isSearch: true,
-          }));
+          if (index == 0) {
+            setInformation((prev) => ({
+              ...prev,
+              str: barcode,
+              isSearch: true,
+            }));
+          } else {
+            barcode = "";
+          }
         }
       } else if (
         evt.code != "ShiftLeft" &&
@@ -563,6 +590,24 @@ const MA_A2300_615_PDAW: React.FC = () => {
     });
   };
 
+  const search = () => {
+    setPage(initialPageState);
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: true,
+      pgNum: 1,
+    }));
+  };
+
+  const search2 = () => {
+    setPage2(initialPageState);
+    setFilters2((prev) => ({
+      ...prev,
+      isSearch: true,
+      pgNum: 1,
+    }));
+  };
+
   return (
     <>
       {isMobile ? (
@@ -570,6 +615,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
           className="leading_PDA_Swiper"
           onSwiper={(swiper) => {
             setSwiper(swiper);
+          }}
+          onActiveIndexChange={(swiper) => {
+            index = swiper.activeIndex;
           }}
         >
           <SwiperSlide key={0} className="leading_PDA">
@@ -766,105 +814,193 @@ const MA_A2300_615_PDAW: React.FC = () => {
                 </ButtonContainer>
               </TitleContainer>
               <GridContainer
-                className="leading_PDA_container"
-                style={{ marginBottom: "15px" }}
+                style={{
+                  height: "80vh",
+                  overflowY: "scroll",
+                  width: "100%",
+                }}
               >
-                <GridTitleContainer>
-                  <GridTitle>거래처선택</GridTitle>
-                </GridTitleContainer>
-                <GridKendo
-                  style={{ height: "50vh" }}
-                  data={process(
-                    mainDataResult2.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                    })),
-                    mainDataState2
-                  )}
-                  onDataStateChange={onMainDataStateChange}
-                  {...mainDataState2}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onMainSelectionChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult2.total}
-                  skip={page.skip}
-                  take={page.take}
-                  pageable={true}
-                  onPageChange={pageChange}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                  //더블클릭
+                <GridContainer
+                  className="leading_PDA_container"
+                  style={{ marginBottom: "15px" }}
                 >
-                  <GridColumn
-                    field="custcd"
-                    title="업체코드"
-                    width="140px"
-                    footerCell={mainTotalFooterCell}
-                  />
-                  <GridColumn field="custnm" title="업체명" width="200px" />
-                </GridKendo>
-              </GridContainer>
-              <GridContainer
-                className="leading_PDA_container"
-                style={{ marginBottom: "15px" }}
-              >
-                <GridTitleContainer>
-                  <GridTitle>바코드종류</GridTitle>
-                </GridTitleContainer>
-                <GridKendo
-                  style={{ height: "50vh" }}
-                  data={process(
-                    mainDataResult3.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
-                    })),
-                    mainDataState3
+                  <GridTitleContainer>
+                    <GridTitle>
+                      <ButtonContainer style={{ justifyContent: "flex-start" }}>
+                        <Button
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                          icon={isVisibleDetail ? "chevron-up" : "chevron-down"}
+                          onClick={() => setIsVisableDetail((prev) => !prev)}
+                          style={{}}
+                        ></Button>
+                        거래처선택
+                      </ButtonContainer>
+                    </GridTitle>
+                  </GridTitleContainer>
+                  <FilterBoxWrap>
+                    <FilterBox>
+                      <tbody>
+                        <tr style={{ flexDirection: "row" }}>
+                          <th>업체명</th>
+                          <td>
+                            <Input
+                              name="custnm"
+                              type="text"
+                              value={filters.custnm}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                          <td>
+                            <Button
+                              onClick={search}
+                              icon="search"
+                              themeColor={"primary"}
+                            >
+                              조회
+                            </Button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FilterBox>
+                  </FilterBoxWrap>
+                  {isVisibleDetail && (
+                    <GridKendo
+                      style={{ height: "50vh" }}
+                      data={process(
+                        mainDataResult2.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                        })),
+                        mainDataState2
+                      )}
+                      onDataStateChange={onMainDataStateChange}
+                      {...mainDataState2}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onMainSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult2.total}
+                      skip={page.skip}
+                      take={page.take}
+                      pageable={true}
+                      onPageChange={pageChange}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      //더블클릭
+                    >
+                      <GridColumn
+                        field="custcd"
+                        title="업체코드"
+                        width="140px"
+                        footerCell={mainTotalFooterCell}
+                      />
+                      <GridColumn field="custnm" title="업체명" width="200px" />
+                    </GridKendo>
                   )}
-                  onDataStateChange={onMainDataStateChange2}
-                  {...mainDataState3}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY2}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onMainSelectionChange2}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult3.total}
-                  skip={page2.skip}
-                  take={page2.take}
-                  pageable={true}
-                  onPageChange={pageChange2}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange2}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                  //더블클릭
+                </GridContainer>
+                <GridContainer
+                  className="leading_PDA_container"
+                  style={{ marginBottom: "15px" }}
                 >
-                  <GridColumn
-                    field="group_name"
-                    title="바코드"
-                    width="140px"
-                    footerCell={mainTotalFooterCell2}
-                  />
-                </GridKendo>
+                  <GridTitleContainer>
+                    <GridTitle>
+                      <ButtonContainer style={{ justifyContent: "flex-start" }}>
+                        <Button
+                          themeColor={"primary"}
+                          fillMode={"flat"}
+                          icon={
+                            isVisibleDetail2 ? "chevron-up" : "chevron-down"
+                          }
+                          onClick={() => setIsVisableDetail2((prev) => !prev)}
+                          style={{}}
+                        ></Button>
+                        바코드종류
+                      </ButtonContainer>
+                    </GridTitle>
+                  </GridTitleContainer>
+                  <FilterBoxWrap>
+                    <FilterBox>
+                      <tbody>
+                        <tr style={{ flexDirection: "row" }}>
+                          <th>바코드</th>
+                          <td>
+                            <Input
+                              name="group_name"
+                              type="text"
+                              value={filters2.group_name}
+                              onChange={filterInputChange2}
+                            />
+                          </td>
+                          <td>
+                            <Button
+                              onClick={search2}
+                              icon="search"
+                              themeColor={"primary"}
+                            >
+                              조회
+                            </Button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FilterBox>
+                  </FilterBoxWrap>
+                  {isVisibleDetail2 && (
+                    <GridKendo
+                      style={{ height: "50vh" }}
+                      data={process(
+                        mainDataResult3.data.map((row) => ({
+                          ...row,
+                          [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                        })),
+                        mainDataState3
+                      )}
+                      onDataStateChange={onMainDataStateChange2}
+                      {...mainDataState3}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY2}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onMainSelectionChange2}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult3.total}
+                      skip={page2.skip}
+                      take={page2.take}
+                      pageable={true}
+                      onPageChange={pageChange2}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange2}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                      //더블클릭
+                    >
+                      <GridColumn
+                        field="group_name"
+                        title="바코드"
+                        width="140px"
+                        footerCell={mainTotalFooterCell2}
+                      />
+                    </GridKendo>
+                  )}
+                </GridContainer>
               </GridContainer>
             </SwiperSlide>
           ) : (
