@@ -1,0 +1,212 @@
+import { TGrid } from "../types";
+
+export const gridList: Array<TGrid> = [
+  {
+    gridName: "grdList",
+    columns: [
+      {
+        id: "col_dutydt",
+        field: "dutydt",
+        caption: "근태일자",
+        width: 120,
+      },
+      {
+        id: "col_prsnnum",
+        field: "prsnnum",
+        caption: "사번",
+        width: 150,
+      },
+      {
+        id: "col_prsnnm",
+        field: "prsnnm",
+        caption: "성명",
+        width: 150,
+      },
+      {
+        id: "col_dptcd",
+        field: "dptcd",
+        caption: "부서명",
+        width: 120,
+      },
+      {
+        id: "col_postcd",
+        field: "postcd",
+        caption: "직급",
+        width: 120,
+      },
+      {
+        id: "col_startdate",
+        field: "startdate",
+        caption: "시작일자",
+        width: 120,
+      },
+      {
+        id: "col_enddate",
+        field: "enddate",
+        caption: "종료일자",
+        width: 120,
+      },
+      {
+        id: "col_shh",
+        field: "shh",
+        caption: "출근시",
+        width: 100,
+      },
+      {
+        id: "col_data1",
+        field: "data1",
+        caption: ":",
+        width: 50,
+      },
+      {
+        id: "col_smm",
+        field: "smm",
+        caption: "출근분",
+        width: 100,
+      },
+      {
+        id: "col_data2",
+        field: "data2",
+        caption: "~",
+        width: 50,
+      },
+      {
+        id: "col_ehh",
+        field: "ehh",
+        caption: "퇴근시",
+        width: 100,
+      },
+      {
+        id: "col_data3",
+        field: "data3",
+        caption: ":",
+        width: 50,
+      },
+      {
+        id: "col_emm",
+        field: "emm",
+        caption: "퇴근분",
+        width: 100,
+      },
+      {
+        id: "col_daydutydiv",
+        field: "daydutydiv",
+        caption: "근태구분",
+        width: 120,
+      },
+      {
+        id: "col_wrkday",
+        field: "wrkday",
+        caption: "일수",
+        width: 100,
+      },
+      {
+        id: "col_wrktime",
+        field: "wrktime",
+        caption: "근무시간",
+        width: 100,
+      },
+      {
+        id: "col_dutytime1",
+        field: "dutytime1",
+        caption: "연장시간",
+        width: 100,
+      },
+      {
+        id: "col_worklate",
+        field: "worklate",
+        caption: "지각",
+        width: 100,
+      },
+      {
+        id: "col_workend",
+        field: "workend",
+        caption: "조퇴",
+        width: 100,
+      },
+      {
+        id: "col_workout",
+        field: "workout",
+        caption: "외출",
+        width: 100,
+      },
+      {
+        id: "col_monpay",
+        field: "monpay",
+        caption: "지급액",
+        width: 100,
+      },
+      {
+        id: "col_overtimepay",
+        field: "overtimepay",
+        caption: "연장근로",
+        width: 100,
+      },
+      {
+        id: "col_notaxpay1",
+        field: "notaxpay1",
+        caption: "기타비과세",
+        width: 100,
+      },
+      {
+        id: "col_taxstd",
+        field: "taxstd",
+        caption: "과세표준",
+        width: 100,
+      },
+      {
+        id: "col_inctax",
+        field: "inctax",
+        caption: "소득세",
+        width: 100,
+      },
+      {
+        id: "col_locatax",
+        field: "locatax",
+        caption: "주민세",
+        width: 100,
+      },
+      {
+        id: "col_hirinsu",
+        field: "hirinsu",
+        caption: "고용보험",
+        width: 100,
+      },
+      {
+        id: "col_pnsamt",
+        field: "pnsamt",
+        caption: "국민연금",
+        width: 100,
+      },
+      {
+        id: "col_medamt",
+        field: "medamt",
+        caption: "건강보혐",
+        width: 100,
+      },
+      {
+        id: "col_agamt",
+        field: "agamt",
+        caption: "요양보험",
+        width: 100,
+      },
+    ],
+  },
+  {
+    gridName: "grdList3",
+    columns: [
+      {
+        id: "col_prsnnum3",
+        field: "prsnnum",
+        caption: "사번",
+        width: 150,
+      },
+      {
+        id: "col_prsnnm3",
+        field: "prsnnm",
+        caption: "성명",
+        width: 150,
+      },
+    ],
+  },
+];

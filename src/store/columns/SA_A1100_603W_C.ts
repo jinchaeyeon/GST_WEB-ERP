@@ -65,6 +65,30 @@ export const gridList: Array<TGrid> = [
         caption: "물질입고예상일",
         width: 120,
       },
+      {
+        id: "col_amt",
+        field: "amt",
+        caption: "금액",
+        width: 100,
+      },
+      {
+        id: "col_wonamt",
+        field: "wonamt",
+        caption: "원화금액",
+        width: 100,
+      },
+      {
+        id: "col_taxamt",
+        field: "taxamt",
+        caption: "세액",
+        width: 100,
+      },
+      {
+        id: "col_totamt",
+        field: "totamt",
+        caption: "합계금액",
+        width: 100,
+      },
     ],
   },
   {
@@ -123,6 +147,12 @@ export const gridList: Array<TGrid> = [
         id: "col_taxamt_detail",
         field: "taxamt",
         caption: "세액",
+        width: 100,
+      },
+      {
+        id: "col_totamt_detail",
+        field: "totamt",
+        caption: "합계금액",
         width: 100,
       },
       {

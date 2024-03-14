@@ -106,7 +106,7 @@ const NumberField = [
 
 const NumberCommaField = ["amt"];
 
-const NumberField2 = ["wonamt", "taxamt", "amt"];
+const NumberField2 = ["wonamt", "taxamt", "amt", "totamt"];
 
 const customField = ["insert_userid"];
 let temp = 0;
@@ -489,6 +489,9 @@ const SA_A1100_603W: React.FC = () => {
           ...item,
           wonamt: ThreeNumberceil(item.amt * value),
           taxamt: ThreeNumberceil(ThreeNumberceil(item.amt * value) * 0.1),
+          totamt:
+            ThreeNumberceil(item.amt * value) +
+            ThreeNumberceil(ThreeNumberceil(item.amt * value) * 0.1),
           rowstatus: item.rowstatus == "N" ? "N" : "U",
         }));
 
@@ -529,6 +532,11 @@ const SA_A1100_603W: React.FC = () => {
         taxamt: ThreeNumberceil(
           ThreeNumberceil(item.amt * Information.wonchgrat) * 0.1
         ),
+        totamt:
+          ThreeNumberceil(item.amt * Information.wonchgrat) +
+          ThreeNumberceil(
+            ThreeNumberceil(item.amt * Information.wonchgrat) * 0.1
+          ),
         rowstatus: item.rowstatus == "N" ? "N" : "U",
       }));
 
@@ -1411,6 +1419,23 @@ const SA_A1100_603W: React.FC = () => {
     );
   };
 
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+    let sum = "";
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+
+    var parts = parseFloat(sum).toString().split(".");
+    return parts[0] != "NaN" ? (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+      </td>
+    ) : (
+      <td></td>
+    );
+  };
+
   //엑셀 내보내기
   let _export: any;
   let _export2: any;
@@ -1560,6 +1585,19 @@ const SA_A1100_603W: React.FC = () => {
                     : item.amt * Information.wonchgrat
                 ) * 0.1
               ),
+              totamt:
+                ThreeNumberceil(
+                  Information.amtunit == "KRW"
+                    ? item.amt
+                    : item.amt * Information.wonchgrat
+                ) +
+                ThreeNumberceil(
+                  ThreeNumberceil(
+                    Information.amtunit == "KRW"
+                      ? item.amt
+                      : item.amt * Information.wonchgrat
+                  ) * 0.1
+                ),
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -2139,6 +2177,7 @@ const SA_A1100_603W: React.FC = () => {
         seq1: 0,
         seq2: 0,
         taxamt: selectRow.taxamt,
+        totamt: selectRow.totamt,
         testnum: selectRow.testnum,
         wonamt: selectRow.wonamt,
         rowstatus: "N",
@@ -2342,6 +2381,8 @@ const SA_A1100_603W: React.FC = () => {
                           footerCell={
                             item.sortOrder === 0
                               ? mainTotalFooterCell
+                              : NumberField.includes(item.fieldName)
+                              ? gridSumQtyFooterCell
                               : undefined
                           }
                         />

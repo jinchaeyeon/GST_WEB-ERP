@@ -128,6 +128,7 @@ import HU_A3200W from "./routes/HU_A3200W";
 import HU_A4000W from "./routes/HU_A4000W";
 import HU_A4100W from "./routes/HU_A4100W";
 import HU_A5020W from "./routes/HU_A5020W";
+import HU_A6020W from "./routes/HU_A6020W";
 import HU_B1020W from "./routes/HU_B1020W";
 import HU_B1040W from "./routes/HU_B1040W";
 import HU_B2100W from "./routes/HU_B2100W";
@@ -823,6 +824,8 @@ const AppInner: React.FC = () => {
       return HU_A4100W;
     } else if (str == "HU_A5020W") {
       return HU_A5020W;
+    } else if (str == "HU_A6020W") {
+      return HU_A6020W;
     } else if (str == "HU_B1020W") {
       return HU_B1020W;
     } else if (str == "HU_B1040W") {
@@ -1187,6 +1190,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/HU_A4000W" component={HU_A4000W} exact />
                   <AuthRoute path="/HU_A4100W" component={HU_A4100W} exact />
                   <AuthRoute path="/HU_A5020W" component={HU_A5020W} exact />
+                  <AuthRoute path="/HU_A6020W" component={HU_A6020W} exact />
                   <AuthRoute path="/HU_B1020W" component={HU_B1020W} exact />
                   <AuthRoute path="/HU_B1040W" component={HU_B1040W} exact />
                   <AuthRoute path="/HU_B2100W" component={HU_B2100W} exact />
