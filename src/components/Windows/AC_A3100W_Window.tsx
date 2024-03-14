@@ -166,7 +166,7 @@ const CopyWindow = ({
   const idGetter3 = getter(DATA_ITEM_KEY3);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("AC_A3100W", setCustomOptionData);
+  UseCustomOption(pathname, setCustomOptionData);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {

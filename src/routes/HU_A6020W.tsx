@@ -47,7 +47,9 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
   UseMessages,
+  UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
@@ -66,13 +68,54 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import FileViewers from "../components/Viewer/FileViewers";
+import LaborerMultiWindow from "../components/Windows/CommonWindows/LaborerMultiWindow";
 import LaborerWindow from "../components/Windows/CommonWindows/LaborerWindow";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A6020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+
+type TdataArr = {
+  rowstatus_s: string[];
+  dutydt_s: string[];
+  prsnnum_s: string[];
+  wrkday_s: string[];
+  wrktime_s: string[];
+  dedtime_s: string[];
+  dutytime1_s: string[];
+  dutytime2_s: string[];
+  dutytime3_s: string[];
+  dutytime4_s: string[];
+  dutytime5_s: string[];
+  monpay_s: string[];
+  overtimepay_s: string[];
+  notaxpay1_s: string[];
+  notaxpay2_s: string[];
+  totpayamt_s: string[];
+  hirinsu_s: string[];
+  pnsamt_s: string[];
+  medamt_s: string[];
+  agamt_s: string[];
+  taxstd_s: string[];
+  inctax_s: string[];
+  locatax_s: string[];
+  totded_s: string[];
+  rlpayamt_s: string[];
+  startdate_s: string[];
+  enddate_s: string[];
+  shh_s: string[];
+  smm_s: string[];
+  ehh_s: string[];
+  emm_s: string[];
+  daydutydiv_s: string[];
+  worklate_s: string[];
+  workend_s: string[];
+  workout_s: string[];
+  dutycd_s: string[];
+};
 
 interface IPrsnnum {
   prsnnum: string;
@@ -86,6 +129,7 @@ const DATA_ITEM_KEY3 = "num";
 let temp = 0;
 let deletedMainRows: object[] = [];
 let targetRowIndex: null | number = null;
+const requiredField = ["dutydt", "prsnnum", "shh", "smm", "ehh", "emm"];
 
 const CommandField = ["prsnnum"];
 const numberField = [
@@ -325,7 +369,12 @@ const HU_A6020W: React.FC = () => {
   const idGetter3 = getter(DATA_ITEM_KEY3);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [editIndex, setEditIndex] = useState<number | undefined>();
+  const [editedField, setEditedField] = useState("");
   const [tabSelected, setTabSelected] = useState(0);
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+  const userId = UseGetValueFromSessionItem("user_id");
   const handleSelectTab = (e: any) => {
     if (e.selected == 0) {
       setFilters((prev) => ({
@@ -601,12 +650,17 @@ const HU_A6020W: React.FC = () => {
     useState<boolean>(false);
   const [laborerWindowVisible2, setlaborerWindowVisible2] =
     useState<boolean>(false);
+  const [laborerWindowMultiVisible, setlaborerWindowMultiVisible] =
+    useState<boolean>(false);
 
   const onlaborerWndClick = () => {
     setlaborerWindowVisible(true);
   };
   const onlaborerWndClick2 = () => {
     setlaborerWindowVisible2(true);
+  };
+  const onlaborerWndMultiClick = () => {
+    setlaborerWindowMultiVisible(true);
   };
   const setlaborerData = (data: IPrsnnum) => {
     setFilters((prev) => ({
@@ -1224,6 +1278,10 @@ const HU_A6020W: React.FC = () => {
               [EDIT_FIELD]: undefined,
             }
       );
+      setEditIndex(dataItem[DATA_ITEM_KEY]);
+      if (field) {
+        setEditedField(field);
+      }
       setTempResult((prev: { total: any }) => {
         return {
           data: newData,
@@ -1248,31 +1306,408 @@ const HU_A6020W: React.FC = () => {
 
   const exitEdit = () => {
     if (tempResult.data != mainDataResult.data) {
-      const newData = mainDataResult.data.map(
-        (item: { [x: string]: string; rowstatus: string }) =>
+      if (editedField == "wrktime") {
+        const newData = mainDataResult.data.map((item: any) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
             ? {
                 ...item,
                 rowstatus: item.rowstatus == "N" ? "N" : "U",
+                monpay:
+                  item.paycd == "2"
+                    ? item.wrktime * item.anlslry
+                    : item.paycd == "3"
+                    ? item.anlslry
+                    : item.monpay,
+                taxstd:
+                  (item.paycd == "2"
+                    ? item.wrktime * item.anlslry
+                    : item.paycd == "3"
+                    ? item.anlslry
+                    : item.monpay) +
+                    item.overtimepay -
+                    item.daytaxstd >
+                  0
+                    ? (item.paycd == "2"
+                        ? item.wrktime * item.anlslry
+                        : item.paycd == "3"
+                        ? item.anlslry
+                        : item.monpay) +
+                      item.overtimepay -
+                      item.daytaxstd
+                    : 0,
+                hirinsu:
+                  item.hirinsuyn == "Y"
+                    ? Math.floor(
+                        (((item.paycd == "2"
+                          ? item.wrktime * item.anlslry
+                          : item.paycd == "3"
+                          ? item.anlslry
+                          : item.monpay) +
+                          item.overtimepay) *
+                          item.dayhirinsurat) /
+                          100 /
+                          10
+                      ) * 10
+                    : item.hirinsu,
+                inctax:
+                  Math.floor(
+                    (((item.paycd == "2"
+                      ? item.wrktime * item.anlslry
+                      : item.paycd == "3"
+                      ? item.anlslry
+                      : item.monpay) +
+                      item.overtimepay -
+                      item.daytaxstd >
+                    0
+                      ? (item.paycd == "2"
+                          ? item.wrktime * item.anlslry
+                          : item.paycd == "3"
+                          ? item.anlslry
+                          : item.monpay) +
+                        item.overtimepay -
+                        item.daytaxstd
+                      : 0) *
+                      (item.dayinctax / 100)) /
+                      10
+                  ) * 10,
+                locatax:
+                  Math.floor(
+                    (Math.floor(
+                      (((item.paycd == "2"
+                        ? item.wrktime * item.anlslry
+                        : item.paycd == "3"
+                        ? item.anlslry
+                        : item.monpay) +
+                        item.overtimepay -
+                        item.daytaxstd >
+                      0
+                        ? (item.paycd == "2"
+                            ? item.wrktime * item.anlslry
+                            : item.paycd == "3"
+                            ? item.anlslry
+                            : item.monpay) +
+                          item.overtimepay -
+                          item.daytaxstd
+                        : 0) *
+                        (item.dayinctax / 100)) /
+                        10
+                    ) *
+                      10 *
+                      (item.daylocatax / 100)) /
+                      100
+                  ) * 10,
                 [EDIT_FIELD]: undefined,
               }
             : {
                 ...item,
                 [EDIT_FIELD]: undefined,
               }
-      );
-      setTempResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+        );
+        setTempResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else if (editedField == "monpay") {
+        const newData = mainDataResult.data.map((item: any) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                taxstd:
+                  item.monpay + item.overtimepay - item.daytaxstd > 0
+                    ? item.monpay + item.overtimepay - item.daytaxstd
+                    : 0,
+                hirinsu:
+                  item.hirinsuyn == "Y"
+                    ? Math.floor(
+                        ((item.monpay + item.overtimepay) *
+                          item.dayhirinsurat) /
+                          100 /
+                          10
+                      ) * 10
+                    : item.hirinsu,
+                inctax:
+                  Math.floor(
+                    ((item.monpay + item.overtimepay - item.daytaxstd > 0
+                      ? item.monpay + item.overtimepay - item.daytaxstd
+                      : 0) *
+                      (item.dayinctax / 100)) /
+                      10
+                  ) * 10,
+                locatax:
+                  Math.floor(
+                    (Math.floor(
+                      ((item.monpay + item.overtimepay - item.daytaxstd > 0
+                        ? item.monpay + item.overtimepay - item.daytaxstd
+                        : 0) *
+                        (item.dayinctax / 100)) /
+                        10
+                    ) *
+                      10 *
+                      (item.daylocatax / 100)) /
+                      100
+                  ) * 10,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+        setTempResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else if (editedField == "taxstd") {
+        const newData = mainDataResult.data.map((item: any) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                inctax:
+                  Math.floor((item.taxstd * (item.dayinctax / 100)) / 10) * 10,
+                locatax:
+                  Math.floor(
+                    (Math.floor((item.taxstd * (item.dayinctax / 100)) / 10) *
+                      10 *
+                      (item.daylocatax / 100)) /
+                      100
+                  ) * 10,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+        setTempResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else if (editedField == "inctax") {
+        const newData = mainDataResult.data.map((item: any) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                locatax:
+                  Math.floor((item.inctax * (item.daylocatax / 100)) / 100) *
+                  10,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+        setTempResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else if (editedField == "dutytime1") {
+        const newData = mainDataResult.data.map((item: any) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                overtimepay:
+                  item.payprovyn == "1"
+                    ? item.dutytime1 * item.overtimepay_1
+                    : item.payprovyn == "2"
+                    ? item.overtimepay_1
+                    : item.overtimepay,
+                taxstd:
+                  item.monpay +
+                    (item.payprovyn == "1"
+                      ? item.dutytime1 * item.overtimepay_1
+                      : item.payprovyn == "2"
+                      ? item.overtimepay_1
+                      : item.overtimepay) -
+                    item.daytaxstd >
+                  0
+                    ? item.monpay +
+                      (item.payprovyn == "1"
+                        ? item.dutytime1 * item.overtimepay_1
+                        : item.payprovyn == "2"
+                        ? item.overtimepay_1
+                        : item.overtimepay) -
+                      item.daytaxstd
+                    : 0,
+                inctax:
+                  Math.floor(
+                    ((item.monpay +
+                      (item.payprovyn == "1"
+                        ? item.dutytime1 * item.overtimepay_1
+                        : item.payprovyn == "2"
+                        ? item.overtimepay_1
+                        : item.overtimepay) -
+                      item.daytaxstd >
+                    0
+                      ? item.monpay +
+                        (item.payprovyn == "1"
+                          ? item.dutytime1 * item.overtimepay_1
+                          : item.payprovyn == "2"
+                          ? item.overtimepay_1
+                          : item.overtimepay) -
+                        item.daytaxstd
+                      : 0) *
+                      (item.dayinctax / 100)) /
+                      10
+                  ) * 10,
+                locatax:
+                  Math.floor(
+                    (Math.floor(
+                      ((item.monpay +
+                        (item.payprovyn == "1"
+                          ? item.dutytime1 * item.overtimepay_1
+                          : item.payprovyn == "2"
+                          ? item.overtimepay_1
+                          : item.overtimepay) -
+                        item.daytaxstd >
+                      0
+                        ? item.monpay +
+                          (item.payprovyn == "1"
+                            ? item.dutytime1 * item.overtimepay_1
+                            : item.payprovyn == "2"
+                            ? item.overtimepay_1
+                            : item.overtimepay) -
+                          item.daytaxstd
+                        : 0) *
+                        (item.dayinctax / 100)) /
+                        10
+                    ) *
+                      10 *
+                      (item.daylocatax / 100)) /
+                      100
+                  ) * 10,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+        setTempResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else if (editedField == "overtimepay") {
+        const newData = mainDataResult.data.map((item: any) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                taxstd:
+                  item.monpay + item.overtimepay - item.daytaxstd > 0
+                    ? item.monpay + item.overtimepay - item.daytaxstd
+                    : 0,
+                inctax:
+                  Math.floor(
+                    ((item.monpay + item.overtimepay - item.daytaxstd > 0
+                      ? item.monpay + item.overtimepay - item.daytaxstd
+                      : 0) *
+                      (item.dayinctax / 100)) /
+                      10
+                  ) * 10,
+                locatax:
+                  Math.floor(
+                    (Math.floor(
+                      ((item.monpay + item.overtimepay - item.daytaxstd > 0
+                        ? item.monpay + item.overtimepay - item.daytaxstd
+                        : 0) *
+                        (item.dayinctax / 100)) /
+                        10
+                    ) *
+                      10 *
+                      (item.daylocatax / 100)) /
+                      100
+                  ) * 10,
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+        setTempResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else {
+        const newData = mainDataResult.data.map(
+          (item: { [x: string]: string; rowstatus: string }) =>
+            item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+              ? {
+                  ...item,
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
+                  [EDIT_FIELD]: undefined,
+                }
+              : {
+                  ...item,
+                  [EDIT_FIELD]: undefined,
+                }
+        );
+        setTempResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult((prev: { total: any }) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     } else {
       const newData = mainDataResult.data.map((item: any) => ({
         ...item,
@@ -1517,6 +1952,756 @@ FROM HU072T WHERE paycd = '4'`;
     setLoading(false);
   };
 
+  const setLaborerMultiData = async (datas: any[]) => {
+    setLoading(true);
+    let data: any;
+
+    let queryStr = `SELECT LEFT(work_strtime,2) as shh,
+    RIGHT(work_strtime,2) as smm,
+    LEFT(work_endtime,2) as ehh,
+    RIGHT(work_endtime,2) as emm
+FROM HU072T WHERE paycd = '4'`;
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+
+      if (data.tables[0].RowCount > 0) {
+        datas.map((itemData: any) => {
+          mainDataResult.data.map((item) => {
+            if (item.num > temp) {
+              temp = item.num;
+            }
+          });
+          const newDataItem = {
+            [DATA_ITEM_KEY]: ++temp,
+            agamt: itemData.meddiv == "Y" ? itemData.medrat2 : 0,
+            anlslry: itemData.anlslry,
+            data1: ":",
+            data2: "~",
+            data3: ":",
+            daydutydiv: "",
+            dayhirinsurat: itemData.dayhirinsurat,
+            dayinctax: itemData.dayinctax,
+            daylocatax: itemData.daylocatax,
+            daytaxstd: itemData.daytaxstd,
+            dedtime: 0,
+            dptcd: itemData.dptcd,
+            dutycd: "",
+            dutydt: convertDateToStr(new Date()),
+            dutytime1: 0,
+            dutytime2: 0,
+            dutytime3: 0,
+            dutytime4: 0,
+            dutytime5: 0,
+            ehh: rows[0].ehh,
+            emm: rows[0].emm,
+            enddate: convertDateToStr(new Date()),
+            hirinsu:
+              itemData.hirinsuyn == "Y"
+                ? (itemData.paycd == "2"
+                    ? itemData.anlslry * 8
+                    : itemData.paycd == "3"
+                    ? itemData.anlslry
+                    : 0) *
+                  (itemData.dayhirinsurat / 100)
+                : 0,
+            hirinsuyn: itemData.hirinsuyn,
+            inctax:
+              ((itemData.paycd == "2"
+                ? itemData.anlslry * 8
+                : itemData.paycd == "3"
+                ? itemData.anlslry
+                : 0) -
+                itemData.daytaxstd) *
+              (itemData.dayinctax / 100),
+            inyrmm: convertDateToStr(filters.inyrmm).substring(0, 6),
+            locatax:
+              (((itemData.paycd == "2"
+                ? itemData.anlslry * 8
+                : itemData.paycd == "3"
+                ? itemData.anlslry
+                : 0) -
+                itemData.daytaxstd) *
+                (itemData.dayinctax / 100)) /
+              100,
+            medamt: itemData.meddiv == "Y" ? itemData.medamt : 0,
+            medamt_1: 0,
+            meddiv: itemData.meddiv,
+            medrat2_1: 0,
+            monpay:
+              itemData.paycd == "2"
+                ? itemData.anlslry * 8
+                : itemData.paycd == "3"
+                ? itemData.anlslry
+                : 0,
+            notaxpay1: 0,
+            notaxpay2: 0,
+            orgdiv: "01",
+            overtimepay: 0,
+            overtimepay_1: itemData.overtimepay,
+            paycd: itemData.paycd,
+            payprovyn: itemData.payprovyn,
+            payyrmm: convertDateToStr(filters.payyrmm).substring(0, 6),
+            pnsamt: itemData.pnsdiv == "Y" ? itemData.pnsamt : 0,
+            pnsamt_1: 0,
+            pnsdiv: itemData.pnsdiv,
+            postcd: itemData.postcd,
+            prsnnm: itemData.prsnnm,
+            prsnnum: itemData.prsnnum,
+            reyrmm: convertDateToStr(filters.reyrmm).substring(0, 6),
+            rlpayamt: 0,
+            shh: rows[0].shh,
+            smm: rows[0].smm,
+            startdate: convertDateToStr(new Date()),
+            taxstd:
+              (itemData.paycd == "2"
+                ? itemData.anlslry * 8
+                : itemData.paycd == "3"
+                ? itemData.anlslry
+                : 0) - itemData.daytaxstd,
+            totded: 0,
+            totpayamt: 0,
+            workend: 0,
+            worklate: 0,
+            workout: 0,
+            wrkday: 1,
+            wrktime: 8,
+            rowstatus: "N",
+          };
+          setMainDataResult((prev) => {
+            return {
+              data: [newDataItem, ...prev.data],
+              total: prev.total + 1,
+            };
+          });
+          setPage((prev) => ({
+            ...prev,
+            skip: 0,
+            take: prev.take + 1,
+          }));
+          setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+        });
+      } else {
+        datas.map((itemData: any) => {
+          mainDataResult.data.map((item) => {
+            if (item.num > temp) {
+              temp = item.num;
+            }
+          });
+          const newDataItem = {
+            [DATA_ITEM_KEY]: ++temp,
+            agamt: itemData.meddiv == "Y" ? itemData.medrat2 : 0,
+            anlslry: itemData.anlslry,
+            data1: ":",
+            data2: "~",
+            data3: ":",
+            daydutydiv: "",
+            dayhirinsurat: itemData.dayhirinsurat,
+            dayinctax: itemData.dayinctax,
+            daylocatax: itemData.daylocatax,
+            daytaxstd: itemData.daytaxstd,
+            dedtime: 0,
+            dptcd: itemData.dptcd,
+            dutycd: "",
+            dutydt: convertDateToStr(new Date()),
+            dutytime1: 0,
+            dutytime2: 0,
+            dutytime3: 0,
+            dutytime4: 0,
+            dutytime5: 0,
+            ehh: "17",
+            emm: "30",
+            enddate: convertDateToStr(new Date()),
+            hirinsu:
+              itemData.hirinsuyn == "Y"
+                ? (itemData.paycd == "2"
+                    ? itemData.anlslry * 8
+                    : itemData.paycd == "3"
+                    ? itemData.anlslry
+                    : 0) *
+                  (itemData.dayhirinsurat / 100)
+                : 0,
+            hirinsuyn: itemData.hirinsuyn,
+            inctax:
+              ((itemData.paycd == "2"
+                ? itemData.anlslry * 8
+                : itemData.paycd == "3"
+                ? itemData.anlslry
+                : 0) -
+                itemData.daytaxstd) *
+              (itemData.dayinctax / 100),
+            inyrmm: convertDateToStr(filters.inyrmm).substring(0, 6),
+            locatax:
+              (((itemData.paycd == "2"
+                ? itemData.anlslry * 8
+                : itemData.paycd == "3"
+                ? itemData.anlslry
+                : 0) -
+                itemData.daytaxstd) *
+                (itemData.dayinctax / 100)) /
+              100,
+            medamt: itemData.meddiv == "Y" ? itemData.medamt : 0,
+            medamt_1: 0,
+            meddiv: itemData.meddiv,
+            medrat2_1: 0,
+            monpay:
+              itemData.paycd == "2"
+                ? itemData.anlslry * 8
+                : itemData.paycd == "3"
+                ? itemData.anlslry
+                : 0,
+            notaxpay1: 0,
+            notaxpay2: 0,
+            orgdiv: "01",
+            overtimepay: 0,
+            overtimepay_1: itemData.overtimepay,
+            paycd: itemData.paycd,
+            payprovyn: itemData.payprovyn,
+            payyrmm: convertDateToStr(filters.payyrmm).substring(0, 6),
+            pnsamt: itemData.pnsdiv == "Y" ? itemData.pnsamt : 0,
+            pnsamt_1: 0,
+            pnsdiv: itemData.pnsdiv,
+            postcd: itemData.postcd,
+            prsnnm: itemData.prsnnm,
+            prsnnum: itemData.prsnnum,
+            reyrmm: convertDateToStr(filters.reyrmm).substring(0, 6),
+            rlpayamt: 0,
+            shh: "08",
+            smm: "30",
+            startdate: convertDateToStr(new Date()),
+            taxstd:
+              (itemData.paycd == "2"
+                ? itemData.anlslry * 8
+                : itemData.paycd == "3"
+                ? itemData.anlslry
+                : 0) - itemData.daytaxstd,
+            totded: 0,
+            totpayamt: 0,
+            workend: 0,
+            worklate: 0,
+            workout: 0,
+            wrkday: 1,
+            wrktime: 8,
+            rowstatus: "N",
+          };
+          setMainDataResult((prev) => {
+            return {
+              data: [newDataItem, ...prev.data],
+              total: prev.total + 1,
+            };
+          });
+          setPage((prev) => ({
+            ...prev,
+            skip: 0,
+            take: prev.take + 1,
+          }));
+          setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+        });
+      }
+    }
+    setLoading(false);
+  };
+
+  const onSaveClick = () => {
+    let valid = true;
+    let valid2 = true;
+    try {
+      const dataItem = mainDataResult.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+      dataItem.map((item) => {
+        if (
+          item.orgdiv == undefined ||
+          item.orgdiv == null ||
+          item.orgdiv == ""
+        ) {
+          valid = false;
+        }
+        if (
+          item.dutydt == undefined ||
+          item.dutydt == null ||
+          item.dutydt == ""
+        ) {
+          valid = false;
+        }
+        if (
+          item.prsnnum == undefined ||
+          item.prsnnum == null ||
+          item.prsnnum == ""
+        ) {
+          valid = false;
+        }
+        if (!isNaN(item.shh) == false || item.shh.length != 2) {
+          valid2 = false;
+        } else {
+          if (item.shh > 24 || item.shh < 0) {
+            valid2 = false;
+          }
+        }
+        if (!isNaN(item.smm) == false || item.smm.length != 2) {
+          valid2 = false;
+        } else {
+          if (item.smm > 60 || item.smm < 0) {
+            valid2 = false;
+          }
+        }
+        if (!isNaN(item.ehh) == false || item.ehh.length != 2) {
+          valid2 = false;
+        } else {
+          if (item.ehh > 24 || item.ehh < 0) {
+            valid2 = false;
+          }
+        }
+        if (!isNaN(item.emm) == false || item.emm.length != 2) {
+          valid2 = false;
+        } else {
+          if (item.emm > 60 || item.emm < 0) {
+            valid2 = false;
+          }
+        }
+      });
+
+      if (valid2 == true) {
+        if (valid == true) {
+          if (dataItem.length === 0 && deletedMainRows.length == 0)
+            return false;
+
+          let dataArr: TdataArr = {
+            rowstatus_s: [],
+            dutydt_s: [],
+            prsnnum_s: [],
+            wrkday_s: [],
+            wrktime_s: [],
+            dedtime_s: [],
+            dutytime1_s: [],
+            dutytime2_s: [],
+            dutytime3_s: [],
+            dutytime4_s: [],
+            dutytime5_s: [],
+            monpay_s: [],
+            overtimepay_s: [],
+            notaxpay1_s: [],
+            notaxpay2_s: [],
+            totpayamt_s: [],
+            hirinsu_s: [],
+            pnsamt_s: [],
+            medamt_s: [],
+            agamt_s: [],
+            taxstd_s: [],
+            inctax_s: [],
+            locatax_s: [],
+            totded_s: [],
+            rlpayamt_s: [],
+            startdate_s: [],
+            enddate_s: [],
+            shh_s: [],
+            smm_s: [],
+            ehh_s: [],
+            emm_s: [],
+            daydutydiv_s: [],
+            worklate_s: [],
+            workend_s: [],
+            workout_s: [],
+            dutycd_s: [],
+          };
+          dataItem.forEach((item: any, idx: number) => {
+            const {
+              rowstatus = "",
+              dutydt = "",
+              prsnnum = "",
+              wrkday = "",
+              wrktime = "",
+              dedtime = "",
+              dutytime1 = "",
+              dutytime2 = "",
+              dutytime3 = "",
+              dutytime4 = "",
+              dutytime5 = "",
+              monpay = "",
+              overtimepay = "",
+              notaxpay1 = "",
+              notaxpay2 = "",
+              totpayamt = "",
+              hirinsu = "",
+              pnsamt = "",
+              medamt = "",
+              agamt = "",
+              taxstd = "",
+              inctax = "",
+              locatax = "",
+              totded = "",
+              rlpayamt = "",
+              startdate = "",
+              enddate = "",
+              shh = "",
+              smm = "",
+              ehh = "",
+              emm = "",
+              daydutydiv = "",
+              worklate = "",
+              workend = "",
+              workout = "",
+              dutycd = "",
+            } = item;
+            dataArr.rowstatus_s.push(rowstatus);
+            dataArr.dutydt_s.push(dutydt);
+            dataArr.prsnnum_s.push(prsnnum);
+            dataArr.wrkday_s.push(wrkday);
+            dataArr.wrktime_s.push(wrktime);
+            dataArr.dedtime_s.push(dedtime);
+            dataArr.dutytime1_s.push(dutytime1);
+            dataArr.dutytime2_s.push(dutytime2);
+            dataArr.dutytime3_s.push(dutytime3);
+            dataArr.dutytime4_s.push(dutytime4);
+            dataArr.dutytime5_s.push(dutytime5);
+            dataArr.monpay_s.push(monpay);
+            dataArr.overtimepay_s.push(overtimepay);
+            dataArr.notaxpay1_s.push(notaxpay1);
+            dataArr.notaxpay2_s.push(notaxpay2);
+            dataArr.totpayamt_s.push(totpayamt);
+            dataArr.hirinsu_s.push(hirinsu);
+            dataArr.pnsamt_s.push(pnsamt);
+            dataArr.medamt_s.push(medamt);
+            dataArr.agamt_s.push(agamt);
+            dataArr.taxstd_s.push(taxstd);
+            dataArr.inctax_s.push(inctax);
+            dataArr.locatax_s.push(locatax);
+            dataArr.totded_s.push(totded);
+            dataArr.rlpayamt_s.push(rlpayamt);
+            dataArr.startdate_s.push(startdate);
+            dataArr.enddate_s.push(enddate);
+            dataArr.shh_s.push(shh);
+            dataArr.smm_s.push(smm);
+            dataArr.ehh_s.push(ehh);
+            dataArr.emm_s.push(emm);
+            dataArr.daydutydiv_s.push(daydutydiv);
+            dataArr.worklate_s.push(worklate);
+            dataArr.workend_s.push(workend);
+            dataArr.workout_s.push(workout);
+            dataArr.dutycd_s.push(dutycd);
+          });
+          deletedMainRows.forEach((item: any, idx: number) => {
+            const {
+              rowstatus = "",
+              dutydt = "",
+              prsnnum = "",
+              wrkday = "",
+              wrktime = "",
+              dedtime = "",
+              dutytime1 = "",
+              dutytime2 = "",
+              dutytime3 = "",
+              dutytime4 = "",
+              dutytime5 = "",
+              monpay = "",
+              overtimepay = "",
+              notaxpay1 = "",
+              notaxpay2 = "",
+              totpayamt = "",
+              hirinsu = "",
+              pnsamt = "",
+              medamt = "",
+              agamt = "",
+              taxstd = "",
+              inctax = "",
+              locatax = "",
+              totded = "",
+              rlpayamt = "",
+              startdate = "",
+              enddate = "",
+              shh = "",
+              smm = "",
+              ehh = "",
+              emm = "",
+              daydutydiv = "",
+              worklate = "",
+              workend = "",
+              workout = "",
+              dutycd = "",
+            } = item;
+            dataArr.rowstatus_s.push("D");
+            dataArr.dutydt_s.push(dutydt);
+            dataArr.prsnnum_s.push(prsnnum);
+            dataArr.wrkday_s.push(wrkday);
+            dataArr.wrktime_s.push(wrktime);
+            dataArr.dedtime_s.push(dedtime);
+            dataArr.dutytime1_s.push(dutytime1);
+            dataArr.dutytime2_s.push(dutytime2);
+            dataArr.dutytime3_s.push(dutytime3);
+            dataArr.dutytime4_s.push(dutytime4);
+            dataArr.dutytime5_s.push(dutytime5);
+            dataArr.monpay_s.push(monpay);
+            dataArr.overtimepay_s.push(overtimepay);
+            dataArr.notaxpay1_s.push(notaxpay1);
+            dataArr.notaxpay2_s.push(notaxpay2);
+            dataArr.totpayamt_s.push(totpayamt);
+            dataArr.hirinsu_s.push(hirinsu);
+            dataArr.pnsamt_s.push(pnsamt);
+            dataArr.medamt_s.push(medamt);
+            dataArr.agamt_s.push(agamt);
+            dataArr.taxstd_s.push(taxstd);
+            dataArr.inctax_s.push(inctax);
+            dataArr.locatax_s.push(locatax);
+            dataArr.totded_s.push(totded);
+            dataArr.rlpayamt_s.push(rlpayamt);
+            dataArr.startdate_s.push(startdate);
+            dataArr.enddate_s.push(enddate);
+            dataArr.shh_s.push(shh);
+            dataArr.smm_s.push(smm);
+            dataArr.ehh_s.push(ehh);
+            dataArr.emm_s.push(emm);
+            dataArr.daydutydiv_s.push(daydutydiv);
+            dataArr.worklate_s.push(worklate);
+            dataArr.workend_s.push(workend);
+            dataArr.workout_s.push(workout);
+            dataArr.dutycd_s.push(dutycd);
+          });
+          setParaData((prev) => ({
+            ...prev,
+            workType: "N",
+            inyrmm: convertDateToStr(filters.inyrmm),
+            payyrmm: convertDateToStr(filters.payyrmm),
+            reyrmm: convertDateToStr(filters.reyrmm),
+            rowstatus_s: dataArr.rowstatus_s.join("|"),
+            dutydt_s: dataArr.dutydt_s.join("|"),
+            prsnnum_s: dataArr.prsnnum_s.join("|"),
+            wrkday_s: dataArr.wrkday_s.join("|"),
+            wrktime_s: dataArr.wrktime_s.join("|"),
+            dedtime_s: dataArr.dedtime_s.join("|"),
+            dutytime1_s: dataArr.dutytime1_s.join("|"),
+            dutytime2_s: dataArr.dutytime2_s.join("|"),
+            dutytime3_s: dataArr.dutytime3_s.join("|"),
+            dutytime4_s: dataArr.dutytime4_s.join("|"),
+            dutytime5_s: dataArr.dutytime5_s.join("|"),
+            monpay_s: dataArr.monpay_s.join("|"),
+            overtimepay_s: dataArr.overtimepay_s.join("|"),
+            notaxpay1_s: dataArr.notaxpay1_s.join("|"),
+            notaxpay2_s: dataArr.notaxpay2_s.join("|"),
+            totpayamt_s: dataArr.totpayamt_s.join("|"),
+            hirinsu_s: dataArr.hirinsu_s.join("|"),
+            pnsamt_s: dataArr.pnsamt_s.join("|"),
+            medamt_s: dataArr.medamt_s.join("|"),
+            agamt_s: dataArr.agamt_s.join("|"),
+            taxstd_s: dataArr.taxstd_s.join("|"),
+            inctax_s: dataArr.inctax_s.join("|"),
+            locatax_s: dataArr.locatax_s.join("|"),
+            totded_s: dataArr.totded_s.join("|"),
+            rlpayamt_s: dataArr.rlpayamt_s.join("|"),
+            startdate_s: dataArr.startdate_s.join("|"),
+            enddate_s: dataArr.enddate_s.join("|"),
+            shh_s: dataArr.shh_s.join("|"),
+            smm_s: dataArr.smm_s.join("|"),
+            ehh_s: dataArr.ehh_s.join("|"),
+            emm_s: dataArr.emm_s.join("|"),
+            daydutydiv_s: dataArr.daydutydiv_s.join("|"),
+            worklate_s: dataArr.worklate_s.join("|"),
+            workend_s: dataArr.workend_s.join("|"),
+            workout_s: dataArr.workout_s.join("|"),
+            dutycd_s: dataArr.dutycd_s.join("|"),
+          }));
+        } else {
+          alert("필수항목을 채워주세요.");
+        }
+      } else {
+        alert("시간 형식을 맞춰주세요.(ex. 09 )");
+      }
+    } catch (e) {
+      alert(e);
+    }
+  };
+
+  const [ParaData, setParaData] = useState({
+    workType: "",
+    orgdiv: "01",
+    inyrmm: "",
+    payyrmm: "",
+    reyrmm: "",
+    rowstatus_s: "",
+    dutydt_s: "",
+    prsnnum_s: "",
+    wrkday_s: "",
+    wrktime_s: "",
+    dedtime_s: "",
+    dutytime1_s: "",
+    dutytime2_s: "",
+    dutytime3_s: "",
+    dutytime4_s: "",
+    dutytime5_s: "",
+    monpay_s: "",
+    overtimepay_s: "",
+    notaxpay1_s: "",
+    notaxpay2_s: "",
+    totpayamt_s: "",
+    hirinsu_s: "",
+    pnsamt_s: "",
+    medamt_s: "",
+    agamt_s: "",
+    taxstd_s: "",
+    inctax_s: "",
+    locatax_s: "",
+    totded_s: "",
+    rlpayamt_s: "",
+    startdate_s: "",
+    enddate_s: "",
+    shh_s: "",
+    smm_s: "",
+    ehh_s: "",
+    emm_s: "",
+    daydutydiv_s: "",
+    worklate_s: "",
+    workend_s: "",
+    workout_s: "",
+    dutycd_s: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_HU_A6020W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_inyrmm": ParaData.inyrmm,
+      "@p_payyrmm": ParaData.payyrmm,
+      "@p_reyrmm": ParaData.reyrmm,
+
+      "@p_rowstatus_s": ParaData.rowstatus_s,
+
+      "@p_dutydt_s": ParaData.dutydt_s,
+      "@p_prsnnum_s": ParaData.prsnnum_s,
+
+      "@p_wrkday_s": ParaData.wrkday_s,
+      "@p_wrktime_s": ParaData.wrktime_s,
+      "@p_dedtime_s": ParaData.dedtime_s,
+      "@p_dutytime1_s": ParaData.dutytime1_s,
+      "@p_dutytime2_s": ParaData.dutytime2_s,
+      "@p_dutytime3_s": ParaData.dutytime3_s,
+      "@p_dutytime4_s": ParaData.dutytime4_s,
+      "@p_dutytime5_s": ParaData.dutytime5_s,
+      "@p_monpay_s": ParaData.monpay_s,
+      "@p_overtimepay_s": ParaData.overtimepay_s,
+      "@p_notaxpay1_s": ParaData.notaxpay1_s,
+      "@p_notaxpay2_s": ParaData.notaxpay2_s,
+      "@p_totpayamt_s": ParaData.totpayamt_s,
+      "@p_hirinsu_s": ParaData.hirinsu_s,
+      "@p_pnsamt_s": ParaData.pnsamt_s,
+      "@p_medamt_s": ParaData.medamt_s,
+      "@p_agamt_s": ParaData.agamt_s,
+      "@p_taxstd_s": ParaData.taxstd_s,
+      "@p_inctax_s": ParaData.inctax_s,
+      "@p_locatax_s": ParaData.locatax_s,
+      "@p_totded_s": ParaData.totded_s,
+      "@p_rlpayamt_s": ParaData.rlpayamt_s,
+      "@p_startdate_s": ParaData.startdate_s,
+      "@p_enddate_s": ParaData.enddate_s,
+      "@p_shh_s": ParaData.shh_s,
+      "@p_smm_s": ParaData.smm_s,
+      "@p_ehh_s": ParaData.ehh_s,
+      "@p_emm_s": ParaData.emm_s,
+      "@p_daydutydiv_s ": ParaData.daydutydiv_s,
+      "@p_worklate_s": ParaData.worklate_s,
+      "@p_workend_s": ParaData.workend_s,
+      "@p_workout_s": ParaData.workout_s,
+      "@p_dutycd_s": ParaData.dutycd_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "HU_A6020W",
+    },
+  };
+
+  const resetAllGrid = () => {
+    setPage(initialPageState);
+    setMainDataResult(process([], mainDataState));
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      resetAllGrid();
+      setFilters((prev) => ({
+        ...prev,
+        find_row_value: data.returnString,
+        isSearch: true,
+      }));
+      setParaData({
+        workType: "",
+        orgdiv: "01",
+        inyrmm: "",
+        payyrmm: "",
+        reyrmm: "",
+        rowstatus_s: "",
+        dutydt_s: "",
+        prsnnum_s: "",
+        wrkday_s: "",
+        wrktime_s: "",
+        dedtime_s: "",
+        dutytime1_s: "",
+        dutytime2_s: "",
+        dutytime3_s: "",
+        dutytime4_s: "",
+        dutytime5_s: "",
+        monpay_s: "",
+        overtimepay_s: "",
+        notaxpay1_s: "",
+        notaxpay2_s: "",
+        totpayamt_s: "",
+        hirinsu_s: "",
+        pnsamt_s: "",
+        medamt_s: "",
+        agamt_s: "",
+        taxstd_s: "",
+        inctax_s: "",
+        locatax_s: "",
+        totded_s: "",
+        rlpayamt_s: "",
+        startdate_s: "",
+        enddate_s: "",
+        shh_s: "",
+        smm_s: "",
+        ehh_s: "",
+        emm_s: "",
+        daydutydiv_s: "",
+        worklate_s: "",
+        workend_s: "",
+        workout_s: "",
+        dutycd_s: "",
+      });
+      deletedMainRows = [];
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (ParaData.workType != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
+
   return (
     <>
       <TitleContainer>
@@ -1628,7 +2813,7 @@ FROM HU072T WHERE paycd = '4'`;
               <ButtonContainer>
                 <Button
                   themeColor={"primary"}
-                  //onClick={onUserMultiWndClick}
+                  onClick={onlaborerWndMultiClick}
                   icon="folder-open"
                 >
                   일괄등록
@@ -1647,7 +2832,7 @@ FROM HU072T WHERE paycd = '4'`;
                   title="행 삭제"
                 ></Button>
                 <Button
-                  // onClick={onSaveClick}
+                  onClick={onSaveClick}
                   fillMode="outline"
                   themeColor={"primary"}
                   icon="save"
@@ -1740,6 +2925,11 @@ FROM HU072T WHERE paycd = '4'`;
                                 ? ColumnCommandCell
                                 : comboField.includes(item.fieldName)
                                 ? CustomComboBoxCell
+                                : undefined
+                            }
+                            headerCell={
+                              requiredField.includes(item.fieldName)
+                                ? RequiredHeader
                                 : undefined
                             }
                             footerCell={
@@ -1947,6 +3137,14 @@ FROM HU072T WHERE paycd = '4'`;
           modal={true}
         />
       )}
+      {laborerWindowMultiVisible && (
+        <LaborerMultiWindow
+          setVisible={setlaborerWindowMultiVisible}
+          setData={setLaborerMultiData}
+          modal={true}
+        />
+      )}
+
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div

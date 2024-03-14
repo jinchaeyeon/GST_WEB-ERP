@@ -1218,7 +1218,7 @@ const CopyWindow = ({
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = useState<any>(null);
-  UseCustomOption("HU_A1000W", setCustomOptionData);
+  UseCustomOption(pathname, setCustomOptionData);
 
   const setLoading = useSetRecoilState(isLoading);
 
