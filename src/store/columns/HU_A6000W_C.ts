@@ -35,8 +35,8 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_telephone",
-        field: "telephone",
+        id: "col_telephon",
+        field: "telephon",
         caption: "휴대폰번호",
         width: 150,
       },

@@ -8,7 +8,8 @@ import {
   NumericTextBox,
   TextArea,
 } from "@progress/kendo-react-inputs";
-import { useEffect, useState } from "react";
+import { bytesToBase64 } from "byte-base64";
+import { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -32,6 +33,10 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseParaPc,
+  convertDateToStr,
+  getQueryFromBizComponent,
   toDate,
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
@@ -117,6 +122,10 @@ const CopyWindow = ({
     });
   };
 
+  const [pc, setPc] = useState("");
+  const userId = UseGetValueFromSessionItem("user_id");
+  UseParaPc(setPc);
+
   const setLoading = useSetRecoilState(isLoading);
 
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -146,9 +155,45 @@ const CopyWindow = ({
 
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
-    "R_GRADUTYPE, R_WORKERDIV, R_BIRCD,R_SEXCD",
+    "R_GRADUTYPE, R_WORKERDIV, R_BIRCD,R_SEXCD, L_dptcd_001",
     setBizComponentData
   );
+
+  const [dptcdListData, setdptcdListData] = useState([
+    { dptcd: "", dptnm: "" },
+  ]);
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const dptcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_dptcd_001"
+        )
+      );
+      fetchQuery(dptcdQueryStr, setdptcdListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
 
   const [information, setInformation] = useState<{ [name: string]: any }>({
     abilcd: "",
@@ -158,13 +203,13 @@ const CopyWindow = ({
     bankcd: "",
     banknm: "",
     bircd: "Y",
-    birdt: "",
+    birdt: null,
     dptcd: "",
     dptnm: "",
     emptype: "",
-    exprdt: "",
+    exprdt: null,
     files: "",
-    firredt: "",
+    firredt: null,
     gradutype: "A",
     hirinsuyn: "",
     hmzipcode: "",
@@ -193,10 +238,10 @@ const CopyWindow = ({
     prsnnm: "",
     prsnnum: "",
     regcd: "",
-    regorgdt: "",
+    regorgdt: null,
     remark: "",
     rlnm: "",
-    rtrdt: "",
+    rtrdt: null,
     rtrrsn: "",
     salaryclass: "",
     schcd: "",
@@ -392,13 +437,13 @@ const CopyWindow = ({
           bankcd: "",
           banknm: "",
           bircd: "Y",
-          birdt: "",
+          birdt: null,
           dptcd: "",
           dptnm: "",
           emptype: "",
-          exprdt: "",
+          exprdt: null,
           files: "",
-          firredt: "",
+          firredt: null,
           gradutype: "A",
           hirinsuyn: "",
           hmzipcode: "",
@@ -427,10 +472,10 @@ const CopyWindow = ({
           prsnnm: "",
           prsnnum: "",
           regcd: "",
-          regorgdt: "",
+          regorgdt: null,
           remark: "",
           rlnm: "",
-          rtrdt: "",
+          rtrdt: null,
           rtrrsn: "",
           salaryclass: "",
           schcd: "",
@@ -482,7 +527,294 @@ const CopyWindow = ({
     }
   }, []);
 
-  const selectData = (selectedData: any) => {};
+  function isResidentRegNoValid(residentRegNo: any) {
+    var re = /^[0-9]{6}[0-9]{7}$/;
+    if (!re.test(String(residentRegNo).toLowerCase())) {
+      return false;
+    }
+
+    var regNos = residentRegNo.replace("-", "").split("");
+    var checkNos = [2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5];
+    var sum = 0;
+    for (var i = 0; i < checkNos.length; i++) {
+      sum = sum + checkNos[i] * Number(regNos[i]);
+    }
+    return (11 - (sum % 11)) % 10 == Number(regNos[12]);
+  }
+
+  const selectData = (selectedData: any) => {
+    if (
+      information.prsnnum == "" ||
+      information.dptcd == "" ||
+      information.perregnum == ""
+    ) {
+      alert("필수값을 채워주세요.");
+    } else {
+      if (isResidentRegNoValid(information.perregnum) == true) {
+        const dptnm =
+          dptcdListData.find((item: any) => item.dptcd == information.dptcd) ==
+          undefined
+            ? ""
+            : dptcdListData.find((item: any) => item.dptcd == information.dptcd)
+                ?.dptnm;
+
+        setParaData((prev) => ({
+          ...prev,
+          work_type: workType,
+          orgdiv: "01",
+          prsnnum: information.prsnnum,
+          location: information.location,
+          prsnnm: information.prsnnm,
+          nationcd: information.nationcd,
+          dptcd: information.dptcd,
+          dptnm: dptnm == undefined ? "" : dptnm,
+          postcd: information.postcd,
+          abilcd: information.abilcd,
+          regcd: information.regcd,
+          perregnum: information.perregnum,
+          birdt:
+            information.birdt == null
+              ? ""
+              : convertDateToStr(information.birdt),
+          bircd: information.bircd,
+          sexcd: information.sexcd,
+          workerdiv: information.workerdiv,
+          gradutype: information.gradutype,
+          regorgdt:
+            information.regorgdt == null
+              ? ""
+              : convertDateToStr(information.regorgdt),
+          rtrdt:
+            information.rtrdt == null
+              ? ""
+              : convertDateToStr(information.rtrdt),
+          rtrrsn: information.rtrrsn,
+          emptype: information.emptype,
+          hmzipcode: information.hmzipcode,
+          koraddr: information.koraddr,
+          telephon: information.telephon,
+          phoneno: information.phoneno,
+          schcd: information.schcd,
+          paycd: information.paycd,
+          hirinsuyn:
+            information.hirinsuyn == true
+              ? "Y"
+              : information.hirinsuyn == false
+              ? "N"
+              : information.hirinsuyn,
+          payprovflg: information.payprovflg,
+          pnsdiv:
+            information.pnsdiv == true
+              ? "Y"
+              : information.pnsdiv == false
+              ? "N"
+              : information.pnsdiv,
+          pnsamt: information.pnsamt,
+          meddiv:
+            information.meddiv == true
+              ? "Y"
+              : information.meddiv == false
+              ? "N"
+              : information.meddiv,
+          medamt: information.medamt,
+          medrat2: information.medrat2,
+          bankcd: information.bankcd,
+          bankacnt: information.bankacnt,
+          rlnm: information.rlnm,
+          anlslry: information.anlslry,
+          bnsstd: information.overtimepay,
+          payprovyn: information.payprovyn,
+          mailid: information.mailid,
+          attdatnum: information.attdatnum,
+          remark: information.remark,
+        }));
+      } else {
+        alert("유효한 주민번호를 입력해주세요.");
+      }
+    }
+  };
+
+  const [ParaData, setParaData] = useState({
+    work_type: "",
+    orgdiv: "01",
+    prsnnum: "",
+    location: "",
+    prsnnm: "",
+    nationcd: "",
+    dptcd: "",
+    dptnm: "",
+    postcd: "",
+    abilcd: "",
+    regcd: "",
+    perregnum: "",
+    birdt: "",
+    bircd: "",
+    sexcd: "",
+    workerdiv: "",
+    gradutype: "",
+    regorgdt: "",
+    rtrdt: "",
+    rtrrsn: "",
+    emptype: "",
+    hmzipcode: "",
+    koraddr: "",
+    telephon: "",
+    phoneno: "",
+    schcd: "",
+    paycd: "",
+    hirinsuyn: "",
+    payprovflg: "",
+    pnsdiv: "",
+    pnsamt: 0,
+    meddiv: "",
+    medamt: 0,
+    medrat2: 0,
+    bankcd: "",
+    bankacnt: "",
+    rlnm: "",
+    anlslry: 0,
+    bnsstd: 0,
+    payprovyn: "",
+    mailid: "",
+    attdatnum: "",
+    remark: "",
+  });
+
+  //삭제 프로시저 파라미터
+  const para: Iparameters = {
+    procedureName: "P_HU_A6000W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.work_type,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_prsnnum": ParaData.prsnnum,
+      "@p_location": ParaData.location,
+      "@p_prsnnm": ParaData.prsnnm,
+      "@p_nationcd": ParaData.nationcd,
+      "@p_dptcd": ParaData.dptcd,
+      "@p_dptnm": ParaData.dptnm,
+      "@p_postcd": ParaData.postcd,
+      "@p_abilcd": ParaData.abilcd,
+      "@p_regcd": ParaData.regcd,
+      "@p_perregnum": ParaData.perregnum,
+      "@p_birdt": ParaData.birdt,
+      "@p_bircd": ParaData.bircd,
+      "@p_sexcd": ParaData.sexcd,
+      "@p_workerdiv": ParaData.workerdiv,
+      "@p_gradutype": ParaData.gradutype,
+      "@p_regorgdt": ParaData.regorgdt,
+      "@p_rtrdt": ParaData.rtrdt,
+      "@p_rtrrsn": ParaData.rtrrsn,
+      "@p_emptype": ParaData.emptype,
+      "@p_hmzipcode": ParaData.hmzipcode,
+      "@p_koraddr": ParaData.koraddr,
+      "@p_telephon": ParaData.telephon,
+      "@p_phoneno": ParaData.phoneno,
+      "@p_schcd": ParaData.schcd,
+      "@p_paycd": ParaData.paycd,
+      "@p_hirinsuyn": ParaData.hirinsuyn,
+      "@p_payprovflg": ParaData.payprovflg,
+      "@p_pnsdiv": ParaData.pnsdiv,
+      "@p_pnsamt": ParaData.pnsamt,
+      "@p_meddiv": ParaData.meddiv,
+      "@p_medamt": ParaData.medamt,
+      "@p_medrat2": ParaData.medrat2,
+      "@p_bankcd": ParaData.bankcd,
+      "@p_bankacnt": ParaData.bankacnt,
+      "@p_rlnm": ParaData.rlnm,
+      "@p_anlslry": ParaData.anlslry,
+      "@p_bnsstd": ParaData.bnsstd,
+      "@p_payprovyn": ParaData.payprovyn,
+      "@p_mailid": ParaData.mailid,
+      "@p_attdatnum": ParaData.attdatnum,
+      "@p_remark": ParaData.remark,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "HU_A6000W",
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      setUnsavedName([]);
+      setUnsavedAttadatnums([]);
+      reload(data.returnString);
+      if (workType == "N") {
+        setVisible(false);
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: true,
+          pgNum: 1,
+        }));
+      }
+      setParaData({
+        work_type: "",
+        orgdiv: "01",
+        prsnnum: "",
+        location: "",
+        prsnnm: "",
+        nationcd: "",
+        dptcd: "",
+        dptnm: "",
+        postcd: "",
+        abilcd: "",
+        regcd: "",
+        perregnum: "",
+        birdt: "",
+        bircd: "",
+        sexcd: "",
+        workerdiv: "",
+        gradutype: "",
+        regorgdt: "",
+        rtrdt: "",
+        rtrrsn: "",
+        emptype: "",
+        hmzipcode: "",
+        koraddr: "",
+        telephon: "",
+        phoneno: "",
+        schcd: "",
+        paycd: "",
+        hirinsuyn: "",
+        payprovflg: "",
+        pnsdiv: "",
+        pnsamt: 0,
+        meddiv: "",
+        medamt: 0,
+        medrat2: 0,
+        bankcd: "",
+        bankacnt: "",
+        rlnm: "",
+        anlslry: 0,
+        bnsstd: 0,
+        payprovyn: "",
+        mailid: "",
+        attdatnum: "",
+        remark: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (ParaData.work_type != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
 
   return (
     <>
