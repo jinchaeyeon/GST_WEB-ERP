@@ -40,6 +40,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "MA_A3400_606W" ||
       link == "MA_A7000W" ||
       link == "MA_A3300W" ||
+      link == "MA_A3300W_mihyeon" ||
       link == "MA_A3400W" ||
       link == "MA_A3500W" ||
       link == "MA_A8000W" ||
@@ -53,6 +54,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "MA_B3000W" ||
       link == "MA_B3100W" ||
       link == "MA_B7000W" ||
+      link == "MA_B7000W_mihyeon" ||
       link == "MA_B7000_606W" ||
       link == "MA_B7200W" ||
       link == "MA_B7201W" ||
