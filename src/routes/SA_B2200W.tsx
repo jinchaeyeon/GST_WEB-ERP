@@ -118,6 +118,7 @@ const SA_B2200: React.FC = () => {
         finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
         itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
           .valueCode,
+        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -241,6 +242,7 @@ const SA_B2200: React.FC = () => {
     custnm: "",
     project: "",
     ordnum: "",
+    dtgb: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -273,6 +275,7 @@ const SA_B2200: React.FC = () => {
         "@p_ordnum": filters.ordnum,
         "@p_poregnum": filters.poregnum,
         "@p_project": filters.project,
+        "@p_dtgb": filters.dtgb,
         "@p_company_code": companyCode,
       },
     };
@@ -382,10 +385,12 @@ const SA_B2200: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -525,6 +530,12 @@ const SA_B2200: React.FC = () => {
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "SA_B2200W_001");
+      } else if (
+        filters.dtgb == "" ||
+        filters.dtgb == undefined ||
+        filters.dtgb == null
+      ) {
+        throw findMessage(messagesData, "SA_B2200W_001");
       } else {
         resetAllGrid();
         setPage(initialPageState); // 페이지 초기화
@@ -560,8 +571,20 @@ const SA_B2200: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th>수주일자</th>
-              <td>
+              <th colSpan={2}>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="dtgb"
+                    value={filters.dtgb}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    valueField="code"
+                    textField="name"
+                    className="required"
+                  />
+                )}
+              </th>
+              <td colSpan={2}>
                 <CommonDateRangePicker
                   value={{
                     start: filters.frdt,
@@ -622,15 +645,6 @@ const SA_B2200: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>수주번호</th>
-              <td>
-                <Input
-                  name="ordnum"
-                  type="text"
-                  value={filters.ordnum}
-                  onChange={filterInputChange}
-                />
-              </td>
             </tr>
             <tr>
               <th>완료여부</th>
@@ -688,6 +702,15 @@ const SA_B2200: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
+              <th>수주번호</th>
+              <td>
+                <Input
+                  name="ordnum"
+                  type="text"
+                  value={filters.ordnum}
+                  onChange={filterInputChange}
+                />
+              </td>
             </tr>
           </tbody>
         </FilterBox>
@@ -699,6 +722,7 @@ const SA_B2200: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="수주현황조회"
         >
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
@@ -766,7 +790,7 @@ const SA_B2200: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.fieldName == "ordkey"
+                        item.sortOrder === 0
                           ? mainTotalFooterCell
                           : numberField2.includes(item.fieldName)
                           ? gridSumQtyFooterCell

@@ -128,6 +128,8 @@ import HU_A3200W from "./routes/HU_A3200W";
 import HU_A4000W from "./routes/HU_A4000W";
 import HU_A4100W from "./routes/HU_A4100W";
 import HU_A5020W from "./routes/HU_A5020W";
+import HU_A6000W from "./routes/HU_A6000W";
+import HU_A6020W from "./routes/HU_A6020W";
 import HU_B1020W from "./routes/HU_B1020W";
 import HU_B1040W from "./routes/HU_B1040W";
 import HU_B2100W from "./routes/HU_B2100W";
@@ -144,6 +146,7 @@ import MA_A0010W from "./routes/MA_A0010W";
 import MA_A1000W from "./routes/MA_A1000W";
 import MA_A2000W from "./routes/MA_A2000W";
 import MA_A2300W from "./routes/MA_A2300W";
+import MA_A2300_615_PDAW from "./routes/MA_A2300_615_PDAW";
 import MA_A2310_606W from "./routes/MA_A2310_606W";
 import MA_A2400W from "./routes/MA_A2400W";
 import MA_A2410W from "./routes/MA_A2410W";
@@ -173,6 +176,7 @@ import MA_B7200W from "./routes/MA_B7200W";
 import MA_B7201W from "./routes/MA_B7201W";
 import MainBIO from "./routes/MainBIO";
 import NotFound from "./routes/NotFound";
+import PR_A0000W from "./routes/PR_A0000W";
 import PR_A0030W from "./routes/PR_A0030W";
 import PR_A0040W from "./routes/PR_A0040W";
 import PR_A0060W from "./routes/PR_A0060W";
@@ -256,6 +260,7 @@ import {
 import { Iparameters } from "./store/types";
 const Login = lazy(() => import("./routes/Login"));
 const Main = lazy(() => import("./routes/Main"));
+const MainNotApproval = lazy(() => import("./routes/MainNotApproval"));
 
 load(
   likelySubtags,
@@ -549,8 +554,13 @@ const AppInner: React.FC = () => {
     if (str == "Home" || str == "") {
       if (loginResult.companyCode == "2302BA03") {
         return MainBIO;
-      } else {
+      } else if (
+        loginResult.companyCode == "2301A110" ||
+        loginResult.companyCode == "2207A046"
+      ) {
         return Main;
+      } else {
+        return MainNotApproval;
       }
     } else if (str == "AC_A0000W") {
       return AC_A0000W;
@@ -594,6 +604,8 @@ const AppInner: React.FC = () => {
       return MA_A2300W;
     } else if (str == "MA_A2310_606W") {
       return MA_A2310_606W;
+    } else if (str == "MA_A2300_615_PDAW") {
+      return MA_A2300_615_PDAW;
     } else if (str == "MA_A2400W") {
       return MA_A2400W;
     } else if (str == "MA_A2410W") {
@@ -684,6 +696,8 @@ const AppInner: React.FC = () => {
       return SA_B3100W;
     } else if (str == "SA_B3101W") {
       return SA_B3101W;
+    } else if (str == "PR_A0000W") {
+      return PR_A0000W;
     } else if (str == "PR_A0030W") {
       return PR_A0030W;
     } else if (str == "PR_A0040W") {
@@ -820,6 +834,10 @@ const AppInner: React.FC = () => {
       return HU_A4100W;
     } else if (str == "HU_A5020W") {
       return HU_A5020W;
+    } else if (str == "HU_A6000W") {
+      return HU_A6000W;
+    } else if (str == "HU_A6020W") {
+      return HU_A6020W;
     } else if (str == "HU_B1020W") {
       return HU_B1020W;
     } else if (str == "HU_B1040W") {
@@ -979,8 +997,10 @@ const AppInner: React.FC = () => {
     } else {
       if (loginResult.companyCode == "2302BA03") {
         return MainBIO;
-      } else {
+      } else if (loginResult.companyCode == "2301A110") {
         return Main;
+      } else {
+        return MainNotApproval;
       }
     }
   }
@@ -1039,6 +1059,11 @@ const AppInner: React.FC = () => {
                   <AuthRoute
                     path="/MA_A2310_606W"
                     component={MA_A2310_606W}
+                    exact
+                  />
+                  <AuthRoute
+                    path="/MA_A2300_615_PDAW"
+                    component={MA_A2300_615_PDAW}
                     exact
                   />
                   <AuthRoute path="/MA_A2400W" component={MA_A2400W} exact />
@@ -1101,6 +1126,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/SA_B3100W" component={SA_B3100W} exact />
                   <AuthRoute path="/SA_B3101W" component={SA_B3101W} exact />
                   {/* 생산관리 */}
+                  <AuthRoute path="/PR_A0000W" component={PR_A0000W} exact />
                   <AuthRoute path="/PR_A0030W" component={PR_A0030W} exact />
                   <AuthRoute path="/PR_A0040W" component={PR_A0040W} exact />
                   <AuthRoute path="/PR_A0060W" component={PR_A0060W} exact />
@@ -1179,6 +1205,8 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/HU_A4000W" component={HU_A4000W} exact />
                   <AuthRoute path="/HU_A4100W" component={HU_A4100W} exact />
                   <AuthRoute path="/HU_A5020W" component={HU_A5020W} exact />
+                  <AuthRoute path="/HU_A6000W" component={HU_A6000W} exact />
+                  <AuthRoute path="/HU_A6020W" component={HU_A6020W} exact />
                   <AuthRoute path="/HU_B1020W" component={HU_B1020W} exact />
                   <AuthRoute path="/HU_B1040W" component={HU_B1040W} exact />
                   <AuthRoute path="/HU_B2100W" component={HU_B2100W} exact />

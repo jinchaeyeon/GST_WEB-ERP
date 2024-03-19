@@ -162,10 +162,12 @@ const Page: React.FC = () => {
   }, [filters]);
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "등원 스케줄";
+      _export.save(optionsGridOne);
     }
   };
   const [mainDataState, setMainDataState] = useState<State>({
@@ -579,65 +581,73 @@ const Page: React.FC = () => {
             ></Button>
           </ButtonContainer>
         </GridTitleContainer>
-        <Grid
-          style={{ height: "100%" }}
-          data={process(
-            mainDataResult.data.map((row) => ({
-              ...row,
-              class: classListData.find(
-                (item: any) => item.sub_code == row.class
-              )?.code_name,
-              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-            })),
-            mainDataState
-          )}
-          onDataStateChange={onMainDataStateChange}
-          {...mainDataState}
-          //선택 subDataState
-          dataItemKey={DATA_ITEM_KEY}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
+        <ExcelExport
+          data={mainDataResult.data}
+          ref={(exporter) => {
+            _export = exporter;
           }}
-          onSelectionChange={onSelectionChange}
-          //스크롤 조회기능
-          fixedScroll={true}
-          total={mainDataResult.total}
-          //정렬기능
-          sortable={true}
-          onSortChange={onMainSortChange}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
-          onItemChange={onMainItemChange}
-          cellRender={customCellRender}
-          rowRender={customRowRender}
-          editField={EDIT_FIELD}
+          fileName="일별 출석 및 부가서비스 관리"
         >
-          {customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["grdList"].map(
-              (item: any, idx: number) =>
-                item.sortOrder !== -1 && (
-                  <GridColumn
-                    key={idx}
-                    id={item.id}
-                    field={item.fieldName}
-                    title={item.caption}
-                    width={item.width}
-                    cell={
-                      CheckField.includes(item.fieldName)
-                        ? CheckBoxCell
-                        : undefined
-                    }
-                    footerCell={
-                      item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                    }
-                  />
-                )
+          <Grid
+            style={{ height: "100%" }}
+            data={process(
+              mainDataResult.data.map((row) => ({
+                ...row,
+                class: classListData.find(
+                  (item: any) => item.sub_code == row.class
+                )?.code_name,
+                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+              })),
+              mainDataState
             )}
-        </Grid>
+            onDataStateChange={onMainDataStateChange}
+            {...mainDataState}
+            //선택 subDataState
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onSelectionChange}
+            //스크롤 조회기능
+            fixedScroll={true}
+            total={mainDataResult.total}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+            onItemChange={onMainItemChange}
+            cellRender={customCellRender}
+            rowRender={customRowRender}
+            editField={EDIT_FIELD}
+          >
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        CheckField.includes(item.fieldName)
+                          ? CheckBoxCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
+                      }
+                    />
+                  )
+              )}
+          </Grid>
+        </ExcelExport>
       </GridContainer>
       {/* 컨트롤 네임 불러오기 용 */}
       {gridList.map((grid: TGrid) =>

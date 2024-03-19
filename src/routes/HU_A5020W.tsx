@@ -50,6 +50,7 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
@@ -578,10 +579,12 @@ const HU_A5020W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -819,11 +822,7 @@ const HU_A5020W: React.FC = () => {
             attdatnum = "",
           } = item;
           dataArr.rowstatus_s.push(rowstatus);
-          if (typeof payyrmm == "string") {
-            dataArr.payyrmm_s.push(payyrmm);
-          } else {
-            dataArr.payyrmm_s.push(convertDateToStr(payyrmm));
-          }
+          dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
           dataArr.prsnnum_s.push(prsnnum);
           dataArr.dptcd_s.push(dptcd);
           dataArr.amt_s.push(amt);
@@ -841,11 +840,7 @@ const HU_A5020W: React.FC = () => {
             attdatnum = "",
           } = item;
           dataArr.rowstatus_s.push(rowstatus);
-          if (typeof payyrmm == "string") {
-            dataArr.payyrmm_s.push(payyrmm);
-          } else {
-            dataArr.payyrmm_s.push(convertDateToStr(payyrmm));
-          }
+          dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
           dataArr.prsnnum_s.push(prsnnum);
           dataArr.dptcd_s.push(dptcd);
           dataArr.amt_s.push(amt);
@@ -1012,7 +1007,7 @@ const HU_A5020W: React.FC = () => {
       files: "",
       location: "",
       orgdiv: "01",
-      payyrmm: new Date(),
+      payyrmm: convertDateToStr(new Date()),
       prsnnm: "",
       prsnnum: "",
       remark: "",
@@ -1064,7 +1059,7 @@ const HU_A5020W: React.FC = () => {
         files: "",
         location: "",
         orgdiv: "01",
-        payyrmm: new Date(),
+        payyrmm: convertDateToStr(new Date()),
         prsnnm: item.prsnnm,
         prsnnum: item.prsnnum,
         remark: "",
@@ -1269,51 +1264,52 @@ const HU_A5020W: React.FC = () => {
               // fetchGrid,
             }}
           >
+            <GridTitleContainer>
+              <GridTitle>기본정보</GridTitle>
+              <ButtonContainer>
+                <Button
+                  themeColor={"primary"}
+                  onClick={onUserMultiWndClick}
+                  icon="folder-open"
+                >
+                  일괄등록
+                </Button>
+                <Button
+                  themeColor={"primary"}
+                  onClick={onCopyClick}
+                  icon="copy"
+                >
+                  전월복사
+                </Button>
+                <Button
+                  onClick={onAddClick}
+                  themeColor={"primary"}
+                  icon="plus"
+                  title="행 추가"
+                ></Button>
+                <Button
+                  onClick={onDeleteClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                  title="행 삭제"
+                ></Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  title="저장"
+                ></Button>
+              </ButtonContainer>
+            </GridTitleContainer>
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
                 _export = exporter;
               }}
+              fileName="퇴직연금"
             >
-              <GridTitleContainer>
-                <GridTitle>기본정보</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    themeColor={"primary"}
-                    onClick={onUserMultiWndClick}
-                    icon="folder-open"
-                  >
-                    일괄등록
-                  </Button>
-                  <Button
-                    themeColor={"primary"}
-                    onClick={onCopyClick}
-                    icon="copy"
-                  >
-                    전월복사
-                  </Button>
-                  <Button
-                    onClick={onAddClick}
-                    themeColor={"primary"}
-                    icon="plus"
-                    title="행 추가"
-                  ></Button>
-                  <Button
-                    onClick={onDeleteClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                    title="행 삭제"
-                  ></Button>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                    title="저장"
-                  ></Button>
-                </ButtonContainer>
-              </GridTitleContainer>
               <Grid
                 style={{ height: "78vh" }}
                 data={process(
@@ -1328,6 +1324,9 @@ const HU_A5020W: React.FC = () => {
                     dptcd: dptcdListData.find(
                       (item: any) => item.dptcd === row.dptcd
                     )?.dptnm,
+                    payyrmm: row.payyrmm
+                      ? new Date(dateformat(row.payyrmm))
+                      : new Date(dateformat("19000101")),
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
                   mainDataState

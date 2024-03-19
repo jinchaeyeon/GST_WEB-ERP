@@ -508,10 +508,39 @@ const SA_B3100W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  //엑셀 내보내기
+  let _export: any;
+  let _export2: any;
+  let _export3: any;
+  let _export4: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        optionsGridOne.sheets[0].title = "전체";
+        _export.save(optionsGridOne);
+      }
+    }
+    if (_export2 !== null && _export2 !== undefined) {
+      if (tabSelected == 1) {
+        const optionsGridOne = _export2.workbookOptions();
+        optionsGridOne.sheets[0].title = "월별";
+        _export2.save(optionsGridOne);
+      }
+    }
+    if (_export3 !== null && _export3 !== undefined) {
+      if (tabSelected == 2) {
+        const optionsGridOne = _export3.workbookOptions();
+        optionsGridOne.sheets[0].title = "분기별";
+        _export3.save(optionsGridOne);
+      }
+    }
+    if (_export4 !== null && _export4 !== undefined) {
+      if (tabSelected == 3) {
+        const optionsGridOne = _export4.workbookOptions();
+        optionsGridOne.sheets[0].title = "5년분석";
+        _export4.save(optionsGridOne);
+      }
     }
   };
 
@@ -761,6 +790,7 @@ const SA_B3100W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
+                fileName="매출집계(풀목)"
               >
                 <Grid
                   style={{ height: "33.5vh" }}
@@ -839,8 +869,9 @@ const SA_B3100W: React.FC = () => {
               <ExcelExport
                 data={gridDataResult.data}
                 ref={(exporter) => {
-                  _export = exporter;
+                  _export2 = exporter;
                 }}
+                fileName="매출집계(풀목)"
               >
                 <Grid
                   style={{ height: "33.5vh" }}
@@ -1004,8 +1035,9 @@ const SA_B3100W: React.FC = () => {
               <ExcelExport
                 data={gridDataResult.data}
                 ref={(exporter) => {
-                  _export = exporter;
+                  _export3 = exporter;
                 }}
+                fileName="매출집계(풀목)"
               >
                 <Grid
                   style={{ height: "33.5vh" }}
@@ -1282,258 +1314,277 @@ const SA_B3100W: React.FC = () => {
         <TabStripTab title="5년분석">
           <GridContainerWrap flexDirection="column">
             <GridContainer width={"100%"}>
-              <Grid
-                style={{ height: "33.5vh" }}
-                data={process(
-                  gridDataResult.data.map((row) => ({
-                    ...row,
-                    // person: personListData.find(
-                    //   (item: any) => item.code === row.person
-                    // )?.name,
-                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                  })),
-                  gridDataState
-                )}
-                {...gridDataState}
-                onDataStateChange={onGridDataStateChange}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+              <ExcelExport
+                data={gridDataResult.data}
+                ref={(exporter) => {
+                  _export4 = exporter;
                 }}
-                onSelectionChange={onMonthGridSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={gridDataResult.total}
-                skip={page4.skip}
-                take={page4.take}
-                pageable={true}
-                onPageChange={pageChange4}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef4}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onGridSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
+                fileName="매출집계(풀목)"
               >
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grd5YearList"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 &&
-                      (item.fieldName !== "itemcd" &&
-                      item.fieldName !== "itemnm" ? (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          //title={item.caption}
-                          title={
-                            yearTitle[
-                              Number(item.id.replace("col_5year", "")) - 1
-                            ]
-                          }
-                          footerCell={
-                            item.sortOrder === 0
-                              ? gridTotalFooterCell
-                              : undefined
-                          }
-                          width={item.width}
-                        >
-                          <GridColumn
-                            title={"(1-6)분기"}
-                            cell={NumberCell}
-                            field={
-                              "amt" +
-                              (item.caption ==
-                              parseInt(yearTitle[0]) +
-                                (2023 -
-                                  parseInt(
-                                    convertDateToStr(filters.yyyy).substr(0, 4)
-                                  ))
-                                ? "01"
-                                : item.caption ==
-                                  parseInt(yearTitle[1]) +
-                                    (2023 -
-                                      parseInt(
-                                        convertDateToStr(filters.yyyy).substr(
-                                          0,
-                                          4
-                                        )
-                                      ))
-                                ? "21"
-                                : item.caption ==
-                                  parseInt(yearTitle[2]) +
-                                    (2023 -
-                                      parseInt(
-                                        convertDateToStr(filters.yyyy).substr(
-                                          0,
-                                          4
-                                        )
-                                      ))
-                                ? "31"
-                                : item.caption ==
-                                  parseInt(yearTitle[3]) +
-                                    (2023 -
-                                      parseInt(
-                                        convertDateToStr(filters.yyyy).substr(
-                                          0,
-                                          4
-                                        )
-                                      ))
-                                ? "41"
-                                : item.caption ==
-                                  parseInt(yearTitle[4]) +
-                                    (2023 -
-                                      parseInt(
-                                        convertDateToStr(filters.yyyy).substr(
-                                          0,
-                                          4
-                                        )
-                                      ))
-                                ? "51"
-                                : "")
-                            }
-                            footerCell={gridSumQtyFooterCell}
-                            width={item.width}
-                          />
-                          <GridColumn
-                            title={"(7-12)분기"}
-                            cell={NumberCell}
-                            field={
-                              "amt" +
-                              (item.caption ==
-                              parseInt(yearTitle[0]) +
-                                (2023 -
-                                  parseInt(
-                                    convertDateToStr(filters.yyyy).substr(0, 4)
-                                  ))
-                                ? "02"
-                                : item.caption ==
-                                  parseInt(yearTitle[1]) +
-                                    (2023 -
-                                      parseInt(
-                                        convertDateToStr(filters.yyyy).substr(
-                                          0,
-                                          4
-                                        )
-                                      ))
-                                ? "22"
-                                : item.caption ==
-                                  parseInt(yearTitle[2]) +
-                                    (2023 -
-                                      parseInt(
-                                        convertDateToStr(filters.yyyy).substr(
-                                          0,
-                                          4
-                                        )
-                                      ))
-                                ? "32"
-                                : item.caption ==
-                                  parseInt(yearTitle[3]) +
-                                    (2023 -
-                                      parseInt(
-                                        convertDateToStr(filters.yyyy).substr(
-                                          0,
-                                          4
-                                        )
-                                      ))
-                                ? "42"
-                                : item.caption ==
-                                  parseInt(yearTitle[4]) +
-                                    (2023 -
-                                      parseInt(
-                                        convertDateToStr(filters.yyyy).substr(
-                                          0,
-                                          4
-                                        )
-                                      ))
-                                ? "52"
-                                : "")
-                            }
-                            footerCell={gridSumQtyFooterCell}
-                            width={item.width}
-                          />
-
-                          <GridColumn
-                            title={"합계"}
-                            cell={NumberCell}
-                            field={
-                              "tamt" +
-                              (item.caption ==
-                              parseInt(yearTitle[0]) +
-                                (2023 -
-                                  parseInt(
-                                    convertDateToStr(filters.yyyy).substr(0, 4)
-                                  ))
-                                ? "01"
-                                : item.caption ==
-                                  parseInt(yearTitle[1]) +
-                                    (2023 -
-                                      parseInt(
-                                        convertDateToStr(filters.yyyy).substr(
-                                          0,
-                                          4
-                                        )
-                                      ))
-                                ? "02"
-                                : item.caption ==
-                                  parseInt(yearTitle[2]) +
-                                    (2023 -
-                                      parseInt(
-                                        convertDateToStr(filters.yyyy).substr(
-                                          0,
-                                          4
-                                        )
-                                      ))
-                                ? "03"
-                                : item.caption ==
-                                  parseInt(yearTitle[3]) +
-                                    (2023 -
-                                      parseInt(
-                                        convertDateToStr(filters.yyyy).substr(
-                                          0,
-                                          4
-                                        )
-                                      ))
-                                ? "04"
-                                : item.caption ==
-                                  parseInt(yearTitle[4]) +
-                                    (2023 -
-                                      parseInt(
-                                        convertDateToStr(filters.yyyy).substr(
-                                          0,
-                                          4
-                                        )
-                                      ))
-                                ? "05"
-                                : "")
-                            }
-                            footerCell={gridSumQtyFooterCell}
-                            width={item.width}
-                          />
-                        </GridColumn>
-                      ) : (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          footerCell={
-                            item.sortOrder === 0
-                              ? gridTotalFooterCell
-                              : numberField.includes(item.fieldName)
-                              ? gridSumQtyFooterCell
-                              : undefined
-                          }
-                          width={item.width}
-                        />
-                      ))
+                <Grid
+                  style={{ height: "33.5vh" }}
+                  data={process(
+                    gridDataResult.data.map((row) => ({
+                      ...row,
+                      // person: personListData.find(
+                      //   (item: any) => item.code === row.person
+                      // )?.name,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                    })),
+                    gridDataState
                   )}
-              </Grid>
+                  {...gridDataState}
+                  onDataStateChange={onGridDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onMonthGridSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={gridDataResult.total}
+                  skip={page4.skip}
+                  take={page4.take}
+                  pageable={true}
+                  onPageChange={pageChange4}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef4}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onGridSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions[
+                      "grd5YearList"
+                    ].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 &&
+                        (item.fieldName !== "itemcd" &&
+                        item.fieldName !== "itemnm" ? (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            //title={item.caption}
+                            title={
+                              yearTitle[
+                                Number(item.id.replace("col_5year", "")) - 1
+                              ]
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? gridTotalFooterCell
+                                : undefined
+                            }
+                            width={item.width}
+                          >
+                            <GridColumn
+                              title={"(1-6)분기"}
+                              cell={NumberCell}
+                              field={
+                                "amt" +
+                                (item.caption ==
+                                parseInt(yearTitle[0]) +
+                                  (2023 -
+                                    parseInt(
+                                      convertDateToStr(filters.yyyy).substr(
+                                        0,
+                                        4
+                                      )
+                                    ))
+                                  ? "01"
+                                  : item.caption ==
+                                    parseInt(yearTitle[1]) +
+                                      (2023 -
+                                        parseInt(
+                                          convertDateToStr(filters.yyyy).substr(
+                                            0,
+                                            4
+                                          )
+                                        ))
+                                  ? "21"
+                                  : item.caption ==
+                                    parseInt(yearTitle[2]) +
+                                      (2023 -
+                                        parseInt(
+                                          convertDateToStr(filters.yyyy).substr(
+                                            0,
+                                            4
+                                          )
+                                        ))
+                                  ? "31"
+                                  : item.caption ==
+                                    parseInt(yearTitle[3]) +
+                                      (2023 -
+                                        parseInt(
+                                          convertDateToStr(filters.yyyy).substr(
+                                            0,
+                                            4
+                                          )
+                                        ))
+                                  ? "41"
+                                  : item.caption ==
+                                    parseInt(yearTitle[4]) +
+                                      (2023 -
+                                        parseInt(
+                                          convertDateToStr(filters.yyyy).substr(
+                                            0,
+                                            4
+                                          )
+                                        ))
+                                  ? "51"
+                                  : "")
+                              }
+                              footerCell={gridSumQtyFooterCell}
+                              width={item.width}
+                            />
+                            <GridColumn
+                              title={"(7-12)분기"}
+                              cell={NumberCell}
+                              field={
+                                "amt" +
+                                (item.caption ==
+                                parseInt(yearTitle[0]) +
+                                  (2023 -
+                                    parseInt(
+                                      convertDateToStr(filters.yyyy).substr(
+                                        0,
+                                        4
+                                      )
+                                    ))
+                                  ? "02"
+                                  : item.caption ==
+                                    parseInt(yearTitle[1]) +
+                                      (2023 -
+                                        parseInt(
+                                          convertDateToStr(filters.yyyy).substr(
+                                            0,
+                                            4
+                                          )
+                                        ))
+                                  ? "22"
+                                  : item.caption ==
+                                    parseInt(yearTitle[2]) +
+                                      (2023 -
+                                        parseInt(
+                                          convertDateToStr(filters.yyyy).substr(
+                                            0,
+                                            4
+                                          )
+                                        ))
+                                  ? "32"
+                                  : item.caption ==
+                                    parseInt(yearTitle[3]) +
+                                      (2023 -
+                                        parseInt(
+                                          convertDateToStr(filters.yyyy).substr(
+                                            0,
+                                            4
+                                          )
+                                        ))
+                                  ? "42"
+                                  : item.caption ==
+                                    parseInt(yearTitle[4]) +
+                                      (2023 -
+                                        parseInt(
+                                          convertDateToStr(filters.yyyy).substr(
+                                            0,
+                                            4
+                                          )
+                                        ))
+                                  ? "52"
+                                  : "")
+                              }
+                              footerCell={gridSumQtyFooterCell}
+                              width={item.width}
+                            />
+
+                            <GridColumn
+                              title={"합계"}
+                              cell={NumberCell}
+                              field={
+                                "tamt" +
+                                (item.caption ==
+                                parseInt(yearTitle[0]) +
+                                  (2023 -
+                                    parseInt(
+                                      convertDateToStr(filters.yyyy).substr(
+                                        0,
+                                        4
+                                      )
+                                    ))
+                                  ? "01"
+                                  : item.caption ==
+                                    parseInt(yearTitle[1]) +
+                                      (2023 -
+                                        parseInt(
+                                          convertDateToStr(filters.yyyy).substr(
+                                            0,
+                                            4
+                                          )
+                                        ))
+                                  ? "02"
+                                  : item.caption ==
+                                    parseInt(yearTitle[2]) +
+                                      (2023 -
+                                        parseInt(
+                                          convertDateToStr(filters.yyyy).substr(
+                                            0,
+                                            4
+                                          )
+                                        ))
+                                  ? "03"
+                                  : item.caption ==
+                                    parseInt(yearTitle[3]) +
+                                      (2023 -
+                                        parseInt(
+                                          convertDateToStr(filters.yyyy).substr(
+                                            0,
+                                            4
+                                          )
+                                        ))
+                                  ? "04"
+                                  : item.caption ==
+                                    parseInt(yearTitle[4]) +
+                                      (2023 -
+                                        parseInt(
+                                          convertDateToStr(filters.yyyy).substr(
+                                            0,
+                                            4
+                                          )
+                                        ))
+                                  ? "05"
+                                  : "")
+                              }
+                              footerCell={gridSumQtyFooterCell}
+                              width={item.width}
+                            />
+                          </GridColumn>
+                        ) : (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            footerCell={
+                              item.sortOrder === 0
+                                ? gridTotalFooterCell
+                                : numberField.includes(item.fieldName)
+                                ? gridSumQtyFooterCell
+                                : undefined
+                            }
+                            width={item.width}
+                          />
+                        ))
+                    )}
+                </Grid>
+              </ExcelExport>
             </GridContainer>
             <GridContainerWrap style={{ height: isMobile ? "" : "36.5vh" }}>
               <GridContainer width={"60%"}>

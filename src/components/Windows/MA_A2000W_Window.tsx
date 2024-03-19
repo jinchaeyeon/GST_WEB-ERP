@@ -513,7 +513,6 @@ const CopyWindow = ({
         amtunit: defaultOption.find((item: any) => item.id === "amtunit")
           .valueCode,
         purdt: setDefaultDate(customOptionData, "purdt"),
-        inexpdt: setDefaultDate(customOptionData, "inexpdt"),
         custprsncd: defaultOption.find((item: any) => item.id === "custprsncd")
           .valueCode,
       }));
@@ -882,7 +881,7 @@ const CopyWindow = ({
   };
   const processApi = useApi();
 
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{ [name: string]: any }>({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
     itemcd: "",
@@ -897,7 +896,7 @@ const CopyWindow = ({
     doexdiv: "A",
     amtunit: "KRW",
     purdt: new Date(),
-    inexpdt: new Date(),
+    inexpdt: null,
     taxdiv: "",
     wonchgrat: 0,
     uschgrat: 0,
@@ -1006,7 +1005,7 @@ const CopyWindow = ({
         doexdiv: data.doexdiv,
         amtunit: data.amtunit,
         purdt: toDate(data.purdt),
-        inexpdt: toDate(data.inexpdt),
+        inexpdt: data.inexpdt == "" ? null : toDate(data.inexpdt),
         taxdiv: data.taxdiv,
         wonchgrat: data.wonchgrat,
         uschgrat: data.uschgrat,
@@ -1216,7 +1215,10 @@ const CopyWindow = ({
                 custprsncd: filters.custprsncd,
                 doexdiv: filters.doexdiv,
                 files: filters.files,
-                inexpdt: filters.inexpdt,
+                inexpdt:
+                  filters.inexpdt == null
+                    ? ""
+                    : convertDateToStr(filters.inexpdt),
                 location: filters.location,
                 orgdiv: "01",
                 person: filters.person,
@@ -1369,7 +1371,10 @@ const CopyWindow = ({
                 custprsncd: filters.custprsncd,
                 doexdiv: filters.doexdiv,
                 files: filters.files,
-                inexpdt: filters.inexpdt,
+                inexpdt:
+                  filters.inexpdt == null
+                    ? ""
+                    : convertDateToStr(filters.inexpdt),
                 location: filters.location,
                 orgdiv: "01",
                 person: filters.person,
@@ -1421,7 +1426,7 @@ const CopyWindow = ({
     purnum: "",
     doexdiv: "",
     purdt: new Date(),
-    inexpdt: new Date(),
+    inexpdt: "",
     custcd: "",
     custnm: "",
     custprsncd: "",
@@ -1476,7 +1481,7 @@ const CopyWindow = ({
       "@p_purnum": ParaData.purnum,
       "@p_doexdiv": ParaData.doexdiv,
       "@p_purdt": convertDateToStr(ParaData.purdt),
-      "@p_inexpdt": convertDateToStr(ParaData.inexpdt),
+      "@p_inexpdt": ParaData.inexpdt,
       "@p_custcd": ParaData.custcd,
       "@p_custnm": ParaData.custnm,
       "@p_custprsncd": ParaData.custprsncd,
@@ -1552,7 +1557,7 @@ const CopyWindow = ({
         purnum: "",
         doexdiv: "",
         purdt: new Date(),
-        inexpdt: new Date(),
+        inexpdt: "",
         custcd: "",
         custnm: "",
         custprsncd: "",
@@ -1821,7 +1826,7 @@ const CopyWindow = ({
       doexdiv: "",
       finyn: "",
       indt: "",
-      inexpdt: "",
+      inexpdt: filters.inexpdt == null ? "" : convertDateToStr(filters.inexpdt),
       inqty: 0,
       insiz: "",
       itemacnt: "",

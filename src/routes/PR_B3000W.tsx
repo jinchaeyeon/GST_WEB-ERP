@@ -374,10 +374,12 @@ const PR_B3000W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "작업리스트";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -591,28 +593,29 @@ const PR_B3000W: React.FC = () => {
       </FilterContainer>
 
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>작업 리스트</GridTitle>{" "}
+          {permissions && (
+            <ButtonContainer>
+              <Button
+                onClick={onPrintWndClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="print"
+                disabled={permissions.print ? false : true}
+              >
+                작업일보 출력
+              </Button>
+            </ButtonContainer>
+          )}
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="작업일보"
         >
-          <GridTitleContainer>
-            <GridTitle>작업 리스트</GridTitle>{" "}
-            {permissions && (
-              <ButtonContainer>
-                <Button
-                  onClick={onPrintWndClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="print"
-                  disabled={permissions.print ? false : true}
-                >
-                  작업일보 출력
-                </Button>
-              </ButtonContainer>
-            )}
-          </GridTitleContainer>
           <Grid
             style={{ height: "74.5vh" }}
             data={process(

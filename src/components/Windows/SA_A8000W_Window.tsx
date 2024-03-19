@@ -1005,12 +1005,8 @@ const CopyWindow = ({
         dataArr.ratedt_s.push(ratedt == undefined ? "" : ratedt);
         dataArr.notediv_s.push(notediv == undefined ? "" : notediv);
         dataArr.notenum_s.push(notenum == undefined ? "" : notenum);
-        dataArr.pubdt_s.push(
-          typeof pubdt == "string" ? pubdt : convertDateToStr(pubdt)
-        );
-        dataArr.enddt_s.push(
-          typeof enddt == "string" ? enddt : convertDateToStr(enddt)
-        );
+        dataArr.pubdt_s.push(pubdt);
+        dataArr.enddt_s.push(enddt);
         dataArr.pubbank_s.push(pubbank == undefined ? "" : pubbank);
         dataArr.pubperson_s.push(pubperson == undefined ? "" : pubperson);
         dataArr.bankcd_s.push(bankcd == undefined ? "" : bankcd);
@@ -1067,12 +1063,8 @@ const CopyWindow = ({
         dataArr.ratedt_s.push(ratedt == undefined ? "" : ratedt);
         dataArr.notediv_s.push(notediv == undefined ? "" : notediv);
         dataArr.notenum_s.push(notenum == undefined ? "" : notenum);
-        dataArr.pubdt_s.push(
-          typeof pubdt == "string" ? pubdt : convertDateToStr(pubdt)
-        );
-        dataArr.enddt_s.push(
-          typeof enddt == "string" ? enddt : convertDateToStr(enddt)
-        );
+        dataArr.pubdt_s.push(pubdt);
+        dataArr.enddt_s.push(enddt);
         dataArr.pubbank_s.push(pubbank == undefined ? "" : pubbank);
         dataArr.pubperson_s.push(pubperson == undefined ? "" : pubperson);
         dataArr.bankcd_s.push(bankcd == undefined ? "" : bankcd);

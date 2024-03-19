@@ -17,7 +17,7 @@ import { IAttachmentData, IWindowPosition } from "../../hooks/interfaces";
 import {
   deletedNameState,
   isLoading,
-  unsavedNameState
+  unsavedNameState,
 } from "../../store/atoms";
 import { Iparameters } from "../../store/types";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
@@ -28,10 +28,8 @@ import {
   UseMessages,
   UseParaPc,
   convertDateToStr,
-  dateformat,
   findMessage,
-  isValidDate,
-  toDate,
+  toDate
 } from "../CommonFunction";
 import { PAGE_SIZE } from "../CommonString";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
@@ -264,7 +262,7 @@ const CopyWindow = ({
     location: "01",
     datnum: "",
     attdatnum: "",
-    baddt: new Date(),
+    baddt: null,
     badnum: "",
     badseq: 0,
     causedcd: "",
@@ -280,7 +278,7 @@ const CopyWindow = ({
     person: "admin",
     proccd: "",
     protext: "",
-    qcdt: null,
+    qcdt: new Date(),
     qty: 0,
     recdt: new Date(),
     renum: "",
@@ -297,9 +295,7 @@ const CopyWindow = ({
         location: "01",
         datnum: data.datnum,
         attdatnum: data.attdatnum,
-        baddt: isValidDate(data.baddt)
-          ? new Date(dateformat(data.baddt))
-          : data.baddt,
+        baddt: data.baddt == "" ? null : toDate(data.baddt),
         badnum: data.badnum,
         badseq: data.badseq,
         causedcd: data.causedcd,
@@ -315,7 +311,7 @@ const CopyWindow = ({
         person: data.person,
         proccd: data.proccd,
         protext: data.protext,
-        qcdt: isValidDate(data.qcdt) ? new Date(dateformat(data.qcdt)) : null,
+        qcdt: toDate(data.qcdt),
         qty: data.qty,
         recdt: toDate(data.recdt),
         renum: data.renum,
@@ -334,9 +330,6 @@ const CopyWindow = ({
         badseq: basicdata.badseq,
         renum: basicdata.renum,
         reseq: basicdata.reseq,
-        baddt: isValidDate(basicdata.baddt)
-          ? new Date(dateformat(basicdata.baddt))
-          : basicdata.baddt,
       }));
     }
   }, []);
@@ -377,7 +370,7 @@ const CopyWindow = ({
           location: "01",
           datnum: filters.datnum,
           attdatnum: filters.attdatnum,
-          baddt: convertDateToStr(filters.baddt),
+          baddt: filters.baddt == null ? "" : convertDateToStr(filters.baddt),
           badnum: filters.badnum,
           badseq: filters.badseq,
           causedcd: filters.causedcd,
@@ -566,6 +559,7 @@ const CopyWindow = ({
                       format="yyyy-MM-dd"
                       onChange={filterInputChange}
                       placeholder=""
+                      className="required"
                     />
                   </div>
                 </td>

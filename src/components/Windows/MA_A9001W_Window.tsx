@@ -48,10 +48,10 @@ import {
   UseMessages,
   UseParaPc,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
-  getQueryFromBizComponent,
-  toDate,
+  getQueryFromBizComponent
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -902,18 +902,12 @@ const CopyWindow = ({
                       row.rowstatus == undefined
                         ? ""
                         : row.rowstatus,
-                    enddt:
-                      row.enddt == null ||
-                      row.enddt == "" ||
-                      row.enddt == undefined
-                        ? new Date()
-                        : toDate(row.enddt),
-                    pubdt:
-                      row.pubdt == null ||
-                      row.pubdt == "" ||
-                      row.pubdt == undefined
-                        ? new Date()
-                        : toDate(row.pubdt),
+                    enddt: row.enddt
+                      ? new Date(dateformat(row.enddt))
+                      : new Date(dateformat("19000101")),
+                    pubdt: row.pubdt
+                      ? new Date(dateformat(row.pubdt))
+                      : new Date(dateformat("19000101")),
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
                   mainDataState

@@ -59,9 +59,7 @@ const DateCell = (props: CustomCellProps) => {
       {isInEdit ? (
         <DatePicker
           name={field}
-          defaultValue={
-            typeof value === "string" && value !== "" ? new Date() : value
-          }
+          defaultValue={typeof value === "string" ? new Date() : value}
           format={"yyyy-MM-dd"}
           onChange={onDateChange}
           calendar={Calendars}
@@ -69,7 +67,11 @@ const DateCell = (props: CustomCellProps) => {
           show={true}
         />
       ) : typeof value === "object" ? (
-        dateformat2(convertDateToStr(value))
+        convertDateToStr(value) == "19000101" ? (
+          ""
+        ) : (
+          dateformat2(convertDateToStr(value))
+        )
       ) : typeof value === "string" && value !== "" ? (
         dateformat2(value)
       ) : (

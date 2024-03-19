@@ -68,6 +68,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ApprovalWindow from "../components/Windows/CommonWindows/ApprovalWindow";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
@@ -93,6 +94,7 @@ let targetRowIndex: null | number = null;
 const DateField = ["recdt", "startdate", "enddate", "stddt"];
 const CustomComboField = ["stddiv"];
 const commandField = ["files"];
+const requiredField = ["stddt", "stddiv"];
 
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
@@ -584,10 +586,12 @@ const HU_A2140W: React.FC = () => {
     }
   };
 
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -918,16 +922,16 @@ const HU_A2140W: React.FC = () => {
           postcd: item.postcd,
           prsnnm: item.prsnnm,
           prsnnum: item.prsnnum,
-          recdt: item.recdt,
+          recdt: convertDateToStr(new Date()),
           remark: item.remark,
-          resdt: item.resdt,
+          resdt: "19000101",
           restime: item.restime,
           seq: item.seq,
           shh: item.shh,
           smm: item.smm,
           startdate: item.startdate,
           stddiv: item.stddiv,
-          stddt: item.stddt,
+          stddt: convertDateToStr(new Date()),
           rowstatus: "N",
         };
         setMainDataResult((prev) => {
@@ -1114,6 +1118,9 @@ const HU_A2140W: React.FC = () => {
       if (item.prsnnum != userId) {
         valid = false;
       }
+      if (item.stddt == "") {
+        valid3 = false;
+      }
       if (item.stddiv == "") {
         valid3 = false;
       }
@@ -1158,7 +1165,7 @@ const HU_A2140W: React.FC = () => {
       return false;
     }
     if (valid3 != true) {
-      alert("근태구분은 필수값입니다.");
+      alert("필수값을 채워주세요.");
       return false;
     }
     let dataArr: TdataArr = {
@@ -1442,51 +1449,52 @@ const HU_A2140W: React.FC = () => {
         }}
       >
         <GridContainer width={`100%`}>
+          <GridTitleContainer>
+            <GridTitle>요약정보</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onCheckClick}
+                themeColor={"primary"}
+                icon="track-changes-accept"
+              >
+                결재
+              </Button>
+              <Button
+                onClick={onAddClick}
+                themeColor={"primary"}
+                icon="plus"
+                title="행 추가"
+              ></Button>
+              <Button
+                onClick={onDeleteClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="minus"
+                title="행 삭제"
+              ></Button>
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onCopyClick}
+                icon="copy"
+                title="행 복사"
+              />
+              <Button
+                onClick={onSaveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+                title="저장"
+              ></Button>
+            </ButtonContainer>
+          </GridTitleContainer>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
               _export = exporter;
             }}
+            fileName="근태허가신청"
           >
-            <GridTitleContainer>
-              <GridTitle>요약정보</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onCheckClick}
-                  themeColor={"primary"}
-                  icon="track-changes-accept"
-                >
-                  결재
-                </Button>
-                <Button
-                  onClick={onAddClick}
-                  themeColor={"primary"}
-                  icon="plus"
-                  title="행 추가"
-                ></Button>
-                <Button
-                  onClick={onDeleteClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="minus"
-                  title="행 삭제"
-                ></Button>
-                <Button
-                  themeColor={"primary"}
-                  fillMode="outline"
-                  onClick={onCopyClick}
-                  icon="copy"
-                  title="행 복사"
-                />
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                  title="저장"
-                ></Button>
-              </ButtonContainer>
-            </GridTitleContainer>
             <Grid
               style={{ height: "74vh" }}
               data={process(
@@ -1509,16 +1517,16 @@ const HU_A2140W: React.FC = () => {
                   )?.name,
                   enddate: row.enddate
                     ? new Date(dateformat(row.enddate))
-                    : new Date(),
+                    : new Date(dateformat("19000101")),
                   recdt: row.recdt
                     ? new Date(dateformat(row.recdt))
-                    : new Date(),
+                    : new Date(dateformat("19000101")),
                   startdate: row.startdate
                     ? new Date(dateformat(row.startdate))
-                    : new Date(),
+                    : new Date(dateformat("19000101")),
                   stddt: row.stddt
                     ? new Date(dateformat(row.stddt))
-                    : new Date(),
+                    : new Date(dateformat("19000101")),
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
                 mainDataState
@@ -1580,6 +1588,11 @@ const HU_A2140W: React.FC = () => {
                             ? CustomComboBoxCell
                             : commandField.includes(item.fieldName)
                             ? ColumnCommandCell //추후 작업
+                            : undefined
+                        }
+                        headerCell={
+                          requiredField.includes(item.fieldName)
+                            ? RequiredHeader
                             : undefined
                         }
                         footerCell={

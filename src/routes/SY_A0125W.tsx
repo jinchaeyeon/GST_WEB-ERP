@@ -26,6 +26,7 @@ import {
   createDataTree,
   extendDataItem,
   mapTree,
+  treeToFlat,
 } from "@progress/kendo-react-treelist";
 import { bytesToBase64 } from "byte-base64";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -734,10 +735,32 @@ const SY_A0125W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
+  let _export2: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions(
+        treeToFlat(
+          mapTree(data, SUB_ITEMS_FIELD, (item) =>
+            extendDataItem(item, SUB_ITEMS_FIELD, {
+              [EXPANDED_FIELD]: true,
+              [EDIT_FIELD]:
+                item[ALL_MENU_DATA_ITEM_KEY] === editItemId
+                  ? editItemField
+                  : undefined,
+              [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
+            })
+          ),
+          EXPANDED_FIELD,
+          SUB_ITEMS_FIELD
+        ),
+        allMenuColumns
+      );
+      const optionsGridTwo = _export2.workbookOptions();
+      optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+      optionsGridOne.sheets[0].title = "부서리스트";
+      optionsGridOne.sheets[1].title = "부서인원정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -1301,13 +1324,14 @@ const SY_A0125W: React.FC = () => {
       </FilterContainer>
       <GridContainerWrap>
         <GridContainer width="46%">
+          <GridTitleContainer>
+            <GridTitle>부서리스트</GridTitle>
+          </GridTitleContainer>
           <ExcelExport
             ref={(exporter) => (_export = exporter)}
             hierarchy={true}
+            fileName="부서관리"
           >
-            <GridTitleContainer>
-              <GridTitle>부서리스트</GridTitle>
-            </GridTitleContainer>
             <TreeList
               style={{ height: "80.7vh", overflow: "auto" }}
               data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
@@ -1466,73 +1490,79 @@ const SY_A0125W: React.FC = () => {
               ></Button>
             </ButtonContainer>
           </GridTitleContainer>
-          <Grid
-            style={{ height: "58vh" }}
-            data={process(
-              subDataResult.data.map((row) => ({
-                ...row,
-                postcd: postcdListData.find(
-                  (item: any) => item.sub_code === row.postcd
-                )?.code_name,
-                [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
-              })),
-              subDataState
-            )}
-            {...subDataState}
-            onDataStateChange={onSubDataStateChange}
-            //선택 기능
-            dataItemKey={SUB_DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onSubDataSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={subDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onSubDataSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onSubItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
+          <ExcelExport
+            ref={(exporter) => (_export2 = exporter)}
+            data={subDataResult.data}
+            fileName="부서관리"
           >
-            <GridColumn
-              field="rowstatus"
-              title=" "
-              width="50px"
-              editable={false}
-            />
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdAllList"].map(
-                (item: any, idx: number) =>
-                  item.sortOrder !== -1 && (
-                    <GridColumn
-                      key={idx}
-                      id={item.id}
-                      field={item.fieldName}
-                      title={item.caption}
-                      width={item.width}
-                      footerCell={
-                        item.sortOrder === 0 ? subTotalFooterCell : undefined
-                      }
-                    />
-                  )
+            <Grid
+              style={{ height: "58vh" }}
+              data={process(
+                subDataResult.data.map((row) => ({
+                  ...row,
+                  postcd: postcdListData.find(
+                    (item: any) => item.sub_code === row.postcd
+                  )?.code_name,
+                  [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
+                })),
+                subDataState
               )}
-          </Grid>
+              {...subDataState}
+              onDataStateChange={onSubDataStateChange}
+              //선택 기능
+              dataItemKey={SUB_DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSubDataSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={subDataResult.total}
+              skip={page.skip}
+              take={page.take}
+              pageable={true}
+              onPageChange={pageChange}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onSubDataSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onItemChange={onSubItemChange}
+              cellRender={customCellRender}
+              rowRender={customRowRender}
+              editField={EDIT_FIELD}
+            >
+              <GridColumn
+                field="rowstatus"
+                title=" "
+                width="50px"
+                editable={false}
+              />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdAllList"].map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        id={item.id}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        footerCell={
+                          item.sortOrder === 0 ? subTotalFooterCell : undefined
+                        }
+                      />
+                    )
+                )}
+            </Grid>
+          </ExcelExport>
         </GridContainer>
       </GridContainerWrap>
       {departmentWindowVisible && (

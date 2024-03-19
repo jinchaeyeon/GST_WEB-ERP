@@ -295,22 +295,6 @@ const Main: React.FC = () => {
     },
   };
 
-  const UpContentParameters: Iparameters = {
-    procedureName: "sys_sel_default_home_web",
-    pageNumber: 0,
-    pageSize: 0,
-    parameters: {
-      "@p_work_type": "VISIBLE",
-      "@p_orgdiv": sessionOrgdiv,
-      "@p_location": sessionLocation,
-      "@p_user_id": userId,
-      "@p_frdt": "",
-      "@p_todt": "",
-      "@p_ref_date": "",
-      "@p_ref_key": "N",
-    },
-  };
-
   const fetchWorkTime = async () => {
     let data: any;
 
@@ -330,24 +314,6 @@ const Main: React.FC = () => {
           endtime: row.end_time,
         });
       }
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
-  };
-
-  const fetchUpContent = async () => {
-    let data: any;
-
-    try {
-      data = await processApi<any>("procedure", UpContentParameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const row = data.tables[0].Rows[0].use_yn == "Y" ? false : true;
-      setVisible(row);
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -558,7 +524,6 @@ const Main: React.FC = () => {
       fetchApproaval();
       fetchNoticeGrid();
       fetchWorkOrderGrid();
-      fetchUpContent();
     }
   }, []);
 
@@ -839,51 +804,42 @@ const Main: React.FC = () => {
           <Button icon={"home"} fillMode={"flat"} themeColor={"primary"}>
             HOMEPAGE
           </Button>
-          <Button icon={"email"} fillMode={"flat"} themeColor={"primary"}>
-            E-MAIL
-          </Button>
         </ButtonContainer>
-        {!visible ? (
-          <>
-            <MainWorkStartEndContainer>
-              <TextContainer theme={"#2289c3"}>
-                {workTimeDataResult.strtime} - {workTimeDataResult.endtime}
-              </TextContainer>
-              <Button
-                themeColor={"primary"}
-                onClick={() => {
-                  fetchWorkTimeSaved("start");
-                }}
-              >
-                출근
-              </Button>
-              <Button
-                themeColor={"primary"}
-                onClick={() => {
-                  fetchWorkTimeSaved("end");
-                }}
-              >
-                퇴근
-              </Button>
-            </MainWorkStartEndContainer>
-            <ApprovalBox>
-              <ApprovalInner>
-                <div>미결</div>
-                <div>{approvalValueState.app}</div>
-              </ApprovalInner>
-              <ApprovalInner>
-                <div>참조</div>
-                <div>{approvalValueState.ref}</div>
-              </ApprovalInner>
-              <ApprovalInner>
-                <div>반려</div>
-                <div>{approvalValueState.rtr}</div>
-              </ApprovalInner>
-            </ApprovalBox>
-          </>
-        ) : (
-          ""
-        )}
+        <MainWorkStartEndContainer>
+          <TextContainer theme={"#2289c3"}>
+            {workTimeDataResult.strtime} - {workTimeDataResult.endtime}
+          </TextContainer>
+          <Button
+            themeColor={"primary"}
+            onClick={() => {
+              fetchWorkTimeSaved("start");
+            }}
+          >
+            출근
+          </Button>
+          <Button
+            themeColor={"primary"}
+            onClick={() => {
+              fetchWorkTimeSaved("end");
+            }}
+          >
+            퇴근
+          </Button>
+        </MainWorkStartEndContainer>
+        <ApprovalBox>
+          <ApprovalInner>
+            <div>미결</div>
+            <div>{approvalValueState.app}</div>
+          </ApprovalInner>
+          <ApprovalInner>
+            <div>참조</div>
+            <div>{approvalValueState.ref}</div>
+          </ApprovalInner>
+          <ApprovalInner>
+            <div>반려</div>
+            <div>{approvalValueState.rtr}</div>
+          </ApprovalInner>
+        </ApprovalBox>
       </MainTopContainer>
       <GridContainerWrap>
         <GridContainer width="65%">

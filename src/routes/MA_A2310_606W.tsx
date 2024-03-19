@@ -583,10 +583,14 @@ const MA_A2310_606W: React.FC = () => {
     }
   };
 
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (isVisibleDetail == true) {
+        const optionsGridOne = _export.workbookOptions();
+        optionsGridOne.sheets[0].title = "요약정보";
+        _export.save(optionsGridOne);
+      }
     }
   };
 
@@ -1186,31 +1190,32 @@ const MA_A2310_606W: React.FC = () => {
       </FilterContainer>
       {isVisibleDetail && (
         <GridContainer>
+          <GridTitleContainer>
+            <GridTitle>요약정보</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onDeleteClick}
+                icon="close-circle"
+                fillMode="outline"
+                themeColor={"primary"}
+              >
+                삭제
+              </Button>
+              <Button
+                onClick={onAddClick2}
+                themeColor={"primary"}
+                icon="plus"
+                title="행 추가"
+              ></Button>
+            </ButtonContainer>
+          </GridTitleContainer>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
               _export = exporter;
             }}
+            fileName="입고확정"
           >
-            <GridTitleContainer>
-              <GridTitle>요약정보</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onDeleteClick}
-                  icon="close-circle"
-                  fillMode="outline"
-                  themeColor={"primary"}
-                >
-                  삭제
-                </Button>
-                <Button
-                  onClick={onAddClick2}
-                  themeColor={"primary"}
-                  icon="plus"
-                  title="행 추가"
-                ></Button>
-              </ButtonContainer>
-            </GridTitleContainer>
             <Grid
               style={{ height: "40vh" }}
               data={process(

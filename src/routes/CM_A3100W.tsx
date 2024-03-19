@@ -319,14 +319,6 @@ const CM_A3100W: React.FC = () => {
     if (paraData.work_type !== "") fetchTodoGridSaved();
   }, [paraData]);
 
-  //엑셀 내보내기
-  let _export: any;
-  const exportExcel = () => {
-    if (_export !== null && _export !== undefined) {
-      _export.save();
-    }
-  };
-
   const search = () => {
     setFilters((prev) => ({
       ...prev,
@@ -631,7 +623,7 @@ const CM_A3100W: React.FC = () => {
           {permissions && (
             <TopButtons
               search={search}
-              exportExcel={exportExcel}
+              disable={true}
               permissions={permissions}
               pathname="CM_A3100W"
             />

@@ -445,10 +445,12 @@ const HU_A2070W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "출퇴근 조회";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -875,7 +877,7 @@ const HU_A2070W: React.FC = () => {
         if (
           !item.rowstatus ||
           item.rowstatus != "N" ||
-          item.dutydt != "19991231"
+          item.dutydt != "19000101"
         ) {
           const newData2 = {
             ...item,
@@ -1115,44 +1117,45 @@ const HU_A2070W: React.FC = () => {
       </FilterContainer>
 
       <GridContainer>
+        <GridTitleContainer>
+          {companyCode == "2309DA41" ? (
+            <GridTitle>출퇴근 조회</GridTitle>
+          ) : (
+            <GridTitle>
+              출퇴근 조회(8시반 출근자: 검은색/ 9시 출근자: 파란색 / 주말:
+              빨간색)
+            </GridTitle>
+          )}
+          <ButtonContainer>
+            <Button
+              onClick={onAddClick}
+              themeColor={"primary"}
+              icon="plus"
+              title="행 추가"
+            ></Button>
+            <Button
+              onClick={onDeleteClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="minus"
+              title="행 삭제"
+            ></Button>
+            <Button
+              onClick={onSaveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="save"
+              title="저장"
+            ></Button>
+          </ButtonContainer>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="출퇴근관리"
         >
-          <GridTitleContainer>
-            {companyCode == "2309DA41" ? (
-              <GridTitle>출퇴근 조회</GridTitle>
-            ) : (
-              <GridTitle>
-                출퇴근 조회(8시반 출근자: 검은색/ 9시 출근자: 파란색 / 주말:
-                빨간색)
-              </GridTitle>
-            )}
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="plus"
-                title="행 추가"
-              ></Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-                title="저장"
-              ></Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
             style={{ height: "75vh" }}
             data={process(
@@ -1172,7 +1175,7 @@ const HU_A2070W: React.FC = () => {
                 )?.code_name,
                 dutydt: row.dutydt
                   ? new Date(dateformat(row.dutydt))
-                  : new Date(dateformat("19991231")),
+                  : new Date(dateformat("19000101")),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState

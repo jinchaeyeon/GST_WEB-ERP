@@ -93,10 +93,12 @@ const QC_B9020_615W: React.FC = () => {
     });
   };
 
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "상세정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -327,15 +329,16 @@ const QC_B9020_615W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>상세정보</GridTitle>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="온습도 모니터링"
         >
-          <GridTitleContainer>
-            <GridTitle>상세정보</GridTitle>
-          </GridTitleContainer>
           <Grid
             style={{ height: "80vh" }}
             data={process(

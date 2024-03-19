@@ -33,11 +33,12 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
+  findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
-  toDate,
   useSysMessage,
 } from "../components/CommonFunction";
 import {
@@ -54,7 +55,7 @@ import {
   deletedNameState,
   isLoading,
   unsavedAttadatnumsState,
-  unsavedNameState
+  unsavedNameState,
 } from "../store/atoms";
 
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
@@ -77,6 +78,7 @@ import NumberCell from "../components/Cells/NumberCell";
 import YearDateCell from "../components/Cells/YearDateCell";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import { IAttachmentData } from "../hooks/interfaces";
@@ -95,6 +97,7 @@ let deletedMainRows2: object[] = [];
 let deletedMainRows3: object[] = [];
 let deletedMainRows4: object[] = [];
 
+const requiredField = ["prsnnm", "yyyy"];
 const numberField = [
   "num",
   "dedt_ratio",
@@ -446,7 +449,7 @@ const BA_A0020W_603: React.FC = () => {
   UseCustomOption("BA_A0020W_603", setCustomOptionData);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA026, L_LISTRING, L_BA075, L_BA076, L_BA077, L_BA008, L_BA027, L_BA025",
+    "L_BA057, L_CR007, L_BA026, L_LISTRING, L_BA075, L_BA076, L_BA077, L_BA008, L_BA027, L_BA025",
     setBizComponentData
   );
 
@@ -592,6 +595,7 @@ const BA_A0020W_603: React.FC = () => {
     setMainDataResult3(process([], mainDataState3));
     setMainDataResult4(process([], mainDataState4));
     setInformation({
+      area: "",
       custabbr: "",
       custdiv: "",
       listringyn: true,
@@ -605,6 +609,7 @@ const BA_A0020W_603: React.FC = () => {
       repreregno: "",
       compclass: "",
       comptype: "",
+      countrycd: "",
       groupnm: "",
       itemlvl1: "",
       ceonm: "",
@@ -722,6 +727,7 @@ const BA_A0020W_603: React.FC = () => {
   });
 
   const [information, setInformation] = useState<any>({
+    area: "",
     custabbr: "",
     custdiv: "",
     listringyn: true,
@@ -735,6 +741,7 @@ const BA_A0020W_603: React.FC = () => {
     repreregno: "",
     compclass: "",
     comptype: "",
+    countrycd: "",
     groupnm: "",
     itemlvl1: "",
     ceonm: "",
@@ -841,6 +848,7 @@ const BA_A0020W_603: React.FC = () => {
             pgNum: 1,
           }));
           setInformation({
+            area: selectedRow.area,
             custabbr: selectedRow.custabbr,
             custdiv: selectedRow.custdiv,
             listringyn: selectedRow.listringyn,
@@ -854,6 +862,7 @@ const BA_A0020W_603: React.FC = () => {
             repreregno: selectedRow.repreregno,
             compclass: selectedRow.compclass,
             comptype: selectedRow.comptype,
+            countrycd: selectedRow.countrycd,
             groupnm: selectedRow.groupnm,
             itemlvl1: selectedRow.itemlvl1,
             ceonm: selectedRow.ceonm,
@@ -893,6 +902,7 @@ const BA_A0020W_603: React.FC = () => {
             pgNum: 1,
           }));
           setInformation({
+            area: rows[0].area,
             custabbr: rows[0].custabbr,
             custdiv: rows[0].custdiv,
             listringyn: rows[0].listringyn,
@@ -906,6 +916,7 @@ const BA_A0020W_603: React.FC = () => {
             repreregno: rows[0].repreregno,
             compclass: rows[0].compclass,
             comptype: rows[0].comptype,
+            countrycd: rows[0].countrycd,
             groupnm: rows[0].groupnm,
             itemlvl1: rows[0].itemlvl1,
             ceonm: rows[0].ceonm,
@@ -1182,10 +1193,39 @@ const BA_A0020W_603: React.FC = () => {
   }, [filters4, permissions, customOptionData]);
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  //엑셀 내보내기
+  let _export: any;
+  let _export2: any;
+  let _export3: any;
+  let _export4: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        optionsGridOne.sheets[0].title = "요약정보";
+        _export.save(optionsGridOne);
+      } else if (tabSelected == 1) {
+        const optionsGridOne = _export.workbookOptions();
+        const optionsGridTwo = _export2.workbookOptions();
+        optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+        optionsGridOne.sheets[0].title = "요약정보";
+        optionsGridOne.sheets[1].title = "재무";
+        _export.save(optionsGridOne);
+      } else if (tabSelected == 2) {
+        const optionsGridOne = _export.workbookOptions();
+        const optionsGridThree = _export3.workbookOptions();
+        optionsGridOne.sheets[1] = optionsGridThree.sheets[0];
+        optionsGridOne.sheets[0].title = "요약정보";
+        optionsGridOne.sheets[1].title = "투자";
+        _export.save(optionsGridOne);
+      } else if (tabSelected == 3) {
+        const optionsGridOne = _export.workbookOptions();
+        const optionsGridFour = _export4.workbookOptions();
+        optionsGridOne.sheets[1] = optionsGridFour.sheets[0];
+        optionsGridOne.sheets[0].title = "요약정보";
+        optionsGridOne.sheets[1].title = "담당자";
+        _export.save(optionsGridOne);
+      }
     }
   };
 
@@ -1289,6 +1329,7 @@ const BA_A0020W_603: React.FC = () => {
     }));
     setWorkType("U");
     setInformation({
+      area: selectedRowData.area,
       custabbr: selectedRowData.custabbr,
       custdiv:
         custdivListData.find(
@@ -1309,6 +1350,7 @@ const BA_A0020W_603: React.FC = () => {
       repreregno: selectedRowData.repreregno,
       compclass: selectedRowData.compclass,
       comptype: selectedRowData.comptype,
+      countrycd: selectedRowData.countrycd,
       groupnm: selectedRowData.groupnm,
       itemlvl1: selectedRowData.itemlvl1,
       ceonm: selectedRowData.ceonm,
@@ -1845,6 +1887,7 @@ const BA_A0020W_603: React.FC = () => {
     setMainDataResult3(process([], mainDataState3));
     setMainDataResult4(process([], mainDataState4));
     setInformation({
+      area: "",
       custabbr: "",
       custdiv: "",
       listringyn: true,
@@ -1858,6 +1901,7 @@ const BA_A0020W_603: React.FC = () => {
       repreregno: "",
       compclass: "",
       comptype: "",
+      countrycd: "",
       groupnm: "",
       itemlvl1: "",
       ceonm: "",
@@ -2104,6 +2148,7 @@ const BA_A0020W_603: React.FC = () => {
       setParaData((prev) => ({
         ...prev,
         workType: workType,
+        area: information.area,
         custcd: information.custcd,
         custnm: information.custnm,
         custabbr: information.custabbr,
@@ -2120,6 +2165,7 @@ const BA_A0020W_603: React.FC = () => {
         unpitem: information.unpitem,
         compclass: information.compclass,
         comptype: information.comptype,
+        countrycd: information.countrycd,
         groupnm: information.groupnm,
         itemlvl1: information.itemlvl1,
         itemlvl2: information.itemlvl2,
@@ -2134,6 +2180,7 @@ const BA_A0020W_603: React.FC = () => {
 
   const [paraData, setParaData] = useState({
     workType: "",
+    area: "",
     custcd: "",
     custnm: "",
     custabbr: "",
@@ -2150,6 +2197,7 @@ const BA_A0020W_603: React.FC = () => {
     unpitem: "",
     compclass: "",
     comptype: "",
+    countrycd: "",
     groupnm: "",
     itemlvl1: "",
     itemlvl2: "",
@@ -2193,6 +2241,7 @@ const BA_A0020W_603: React.FC = () => {
     parameters: {
       "@p_work_type": paraData.workType,
 
+      "@p_area": paraData.area,
       "@p_custcd": paraData.custcd,
       "@p_custnm": paraData.custnm,
       "@p_custabbr": paraData.custabbr,
@@ -2209,6 +2258,7 @@ const BA_A0020W_603: React.FC = () => {
       "@p_unpitem": paraData.unpitem,
       "@p_compclass": paraData.compclass,
       "@p_comptype": paraData.comptype,
+      "@p_countrycd": paraData.countrycd,
       "@p_groupnm": paraData.groupnm,
       "@p_itemlvl1": paraData.itemlvl1,
       "@p_itemlvl2": paraData.itemlvl2,
@@ -2324,6 +2374,7 @@ const BA_A0020W_603: React.FC = () => {
       });
       setParaData({
         workType: "",
+        area: "",
         custcd: "",
         custnm: "",
         custabbr: "",
@@ -2340,6 +2391,7 @@ const BA_A0020W_603: React.FC = () => {
         unpitem: "",
         compclass: "",
         comptype: "",
+        countrycd: "",
         groupnm: "",
         itemlvl1: "",
         itemlvl2: "",
@@ -2404,12 +2456,24 @@ const BA_A0020W_603: React.FC = () => {
   };
 
   const onSaveClick2 = () => {
+    let valid = true;
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
         item.rowstatus !== undefined
       );
     });
+    try {
+      dataItem.map((item: any) => {
+        if (item.yyyy == "") {
+          throw findMessage(messagesData, "BA_A0020W_603_001");
+        }
+      });
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+    if (!valid) return false;
     if (dataItem.length === 0 && deletedMainRows2.length === 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -2450,11 +2514,7 @@ const BA_A0020W_603: React.FC = () => {
 
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(
-        typeof yyyy == "string"
-          ? yyyy.substring(0, 4)
-          : convertDateToStr(yyyy).substring(0, 4)
-      );
+      dataArr.yyyy_s.push(yyyy.substring(0, 4));
       dataArr.dedt_rati_s.push(dedt_ratio);
       dataArr.totasset_s.push(totasset);
       dataArr.salesmoney_s.push(salesmoney);
@@ -2477,11 +2537,7 @@ const BA_A0020W_603: React.FC = () => {
 
       dataArr.rowstatus_s.push("D");
       dataArr.seq_s.push(seq);
-      dataArr.yyyy_s.push(
-        typeof yyyy == "string"
-          ? yyyy.substring(0, 4)
-          : convertDateToStr(yyyy).substring(0, 4)
-      );
+      dataArr.yyyy_s.push(yyyy.substring(0, 4));
       dataArr.dedt_rati_s.push(dedt_ratio);
       dataArr.totasset_s.push(totasset);
       dataArr.salesmoney_s.push(salesmoney);
@@ -2512,12 +2568,24 @@ const BA_A0020W_603: React.FC = () => {
   };
 
   const onSaveClick3 = () => {
+    let valid = true;
     const dataItem = mainDataResult3.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
         item.rowstatus !== undefined
       );
     });
+    try {
+      dataItem.map((item: any) => {
+        if (item.yyyy == "") {
+          throw findMessage(messagesData, "BA_A0020W_603_001");
+        }
+      });
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+    if (!valid) return false;
     if (dataItem.length === 0 && deletedMainRows3.length === 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -2554,11 +2622,7 @@ const BA_A0020W_603: React.FC = () => {
 
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.paid_up_capital_s.push(paid_up_capital);
-      dataArr.yyyy_s.push(
-        typeof yyyy == "string"
-          ? yyyy.substring(0, 4)
-          : convertDateToStr(yyyy).substring(0, 4)
-      );
+      dataArr.yyyy_s.push(yyyy.substring(0, 4));
       dataArr.seq_s.push(seq);
       dataArr.remark_s.push(remark);
     });
@@ -2573,11 +2637,7 @@ const BA_A0020W_603: React.FC = () => {
 
       dataArr.rowstatus_s.push("D");
       dataArr.paid_up_capital_s.push(paid_up_capital);
-      dataArr.yyyy_s.push(
-        typeof yyyy == "string"
-          ? yyyy.substring(0, 4)
-          : convertDateToStr(yyyy).substring(0, 4)
-      );
+      dataArr.yyyy_s.push(yyyy.substring(0, 4));
       dataArr.seq_s.push(seq);
       dataArr.remark_s.push(remark);
     });
@@ -2606,6 +2666,18 @@ const BA_A0020W_603: React.FC = () => {
         item.rowstatus !== undefined
       );
     });
+    let valid = true;
+    try {
+      dataItem.map((item: any) => {
+        if (item.prsnnm == "") {
+          throw findMessage(messagesData, "BA_A0020W_603_001");
+        }
+      });
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+    if (!valid) return false;
     if (dataItem.length === 0 && deletedMainRows4.length === 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -2774,34 +2846,31 @@ const BA_A0020W_603: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>요약정보</GridTitle>
+          <ButtonContainer>
+            <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
+              신규
+            </Button>
+            <Button
+              onClick={onDeleteClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="delete"
+            >
+              삭제
+            </Button>
+          </ButtonContainer>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="고객정보관리"
         >
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="file-add"
-              >
-                신규
-              </Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="delete"
-              >
-                삭제
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
-            style={{ height: "40vh" }}
+            style={{ height: "35vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -3179,8 +3248,34 @@ const BA_A0020W_603: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>첨부파일</th>
+                  <th>지역</th>
                   <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="area"
+                        value={information.area}
+                        bizComponentId="L_CR007"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>국가</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="countrycd"
+                        value={information.countrycd}
+                        bizComponentId="L_BA057"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>첨부파일</th>
+                  <td colSpan={3}>
                     <Input
                       name="files"
                       type="text"
@@ -3248,75 +3343,90 @@ const BA_A0020W_603: React.FC = () => {
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "25vh" }}
-                data={process(
-                  mainDataResult2.data.map((row) => ({
-                    ...row,
-                    yyyy: toDate(row.yyyy + "0101"),
-                    [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
-                  })),
-                  mainDataState2
-                )}
-                {...mainDataState2}
-                onDataStateChange={onMainDataStateChange2}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY2}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+              <ExcelExport
+                data={mainDataResult2.data}
+                ref={(exporter) => {
+                  _export2 = exporter;
                 }}
-                onSelectionChange={onSelectionChange2}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult2.total}
-                skip={page2.skip}
-                take={page2.take}
-                pageable={true}
-                onPageChange={pageChange2}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange2}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange2}
-                cellRender={customCellRender2}
-                rowRender={customRowRender2}
-                editField={EDIT_FIELD}
+                fileName="고객정보관리"
               >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : dateField.includes(item.fieldName)
-                              ? YearDateCell
-                              : commandField.includes(item.fieldName)
-                              ? ColumnCommandCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder === 0
-                              ? mainTotalFooterCell2
-                              : numberField.includes(item.fieldName)
-                              ? editNumberFooterCell2
-                              : undefined
-                          }
-                        />
-                      )
+                <Grid
+                  style={{ height: "25vh" }}
+                  data={process(
+                    mainDataResult2.data.map((row) => ({
+                      ...row,
+                      yyyy: row.yyyy
+                        ? new Date(dateformat(row.yyyy))
+                        : new Date(dateformat("19000101")),
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                    })),
+                    mainDataState2
                   )}
-              </Grid>
+                  {...mainDataState2}
+                  onDataStateChange={onMainDataStateChange2}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange2}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult2.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange2}
+                  cellRender={customCellRender2}
+                  rowRender={customRowRender2}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : dateField.includes(item.fieldName)
+                                ? YearDateCell
+                                : commandField.includes(item.fieldName)
+                                ? ColumnCommandCell
+                                : undefined
+                            }
+                            headerCell={
+                              requiredField.includes(item.fieldName)
+                                ? RequiredHeader
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? mainTotalFooterCell2
+                                : numberField.includes(item.fieldName)
+                                ? editNumberFooterCell2
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
             </GridContainer>
           </FormContext.Provider>
         </TabStripTab>
@@ -3347,73 +3457,88 @@ const BA_A0020W_603: React.FC = () => {
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
-            <Grid
-              style={{ height: "25vh" }}
-              data={process(
-                mainDataResult3.data.map((row) => ({
-                  ...row,
-                  yyyy: toDate(row.yyyy + "0101"),
-                  [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
-                })),
-                mainDataState3
-              )}
-              {...mainDataState3}
-              onDataStateChange={onMainDataStateChange3}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY3}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
+            <ExcelExport
+              data={mainDataResult3.data}
+              ref={(exporter) => {
+                _export3 = exporter;
               }}
-              onSelectionChange={onSelectionChange3}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult3.total}
-              skip={page3.skip}
-              take={page3.take}
-              pageable={true}
-              onPageChange={pageChange3}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange3}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              onItemChange={onMainItemChange3}
-              cellRender={customCellRender3}
-              rowRender={customRowRender3}
-              editField={EDIT_FIELD}
+              fileName="고객정보관리"
             >
-              <GridColumn field="rowstatus" title=" " width="50px" />
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList3"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : dateField.includes(item.fieldName)
-                            ? YearDateCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder === 0
-                            ? mainTotalFooterCell3
-                            : numberField.includes(item.fieldName)
-                            ? editNumberFooterCell3
-                            : undefined
-                        }
-                      />
-                    )
+              <Grid
+                style={{ height: "25vh" }}
+                data={process(
+                  mainDataResult3.data.map((row) => ({
+                    ...row,
+                    yyyy: row.yyyy
+                      ? new Date(dateformat(row.yyyy))
+                      : new Date(dateformat("19000101")),
+                    [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
+                  })),
+                  mainDataState3
                 )}
-            </Grid>
+                {...mainDataState3}
+                onDataStateChange={onMainDataStateChange3}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY3}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange3}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult3.total}
+                skip={page3.skip}
+                take={page3.take}
+                pageable={true}
+                onPageChange={pageChange3}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange3}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange3}
+                cellRender={customCellRender3}
+                rowRender={customRowRender3}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList3"].map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            numberField.includes(item.fieldName)
+                              ? NumberCell
+                              : dateField.includes(item.fieldName)
+                              ? YearDateCell
+                              : undefined
+                          }
+                          headerCell={
+                            requiredField.includes(item.fieldName)
+                              ? RequiredHeader
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder === 0
+                              ? mainTotalFooterCell3
+                              : numberField.includes(item.fieldName)
+                              ? editNumberFooterCell3
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
           </GridContainer>
         </TabStripTab>
         <TabStripTab title="담당자" disabled={workType == "N" ? true : false}>
@@ -3443,68 +3568,81 @@ const BA_A0020W_603: React.FC = () => {
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
-            <Grid
-              style={{ height: "25vh" }}
-              data={process(
-                mainDataResult4.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
-                })),
-                mainDataState4
-              )}
-              {...mainDataState4}
-              onDataStateChange={onMainDataStateChange4}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY4}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
+            <ExcelExport
+              data={mainDataResult4.data}
+              ref={(exporter) => {
+                _export4 = exporter;
               }}
-              onSelectionChange={onSelectionChange4}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult4.total}
-              skip={page4.skip}
-              take={page4.take}
-              pageable={true}
-              onPageChange={pageChange4}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange4}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              onItemChange={onMainItemChange4}
-              cellRender={customCellRender4}
-              rowRender={customRowRender4}
-              editField={EDIT_FIELD}
+              fileName="고객정보관리"
             >
-              <GridColumn field="rowstatus" title=" " width="50px" />
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList4"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          comboField.includes(item.fieldName)
-                            ? CustomComboBoxCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder === 0
-                            ? mainTotalFooterCell4
-                            : undefined
-                        }
-                      />
-                    )
+              <Grid
+                style={{ height: "25vh" }}
+                data={process(
+                  mainDataResult4.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
+                  })),
+                  mainDataState4
                 )}
-            </Grid>
+                {...mainDataState4}
+                onDataStateChange={onMainDataStateChange4}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY4}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange4}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult4.total}
+                skip={page4.skip}
+                take={page4.take}
+                pageable={true}
+                onPageChange={pageChange4}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange4}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange4}
+                cellRender={customCellRender4}
+                rowRender={customRowRender4}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList4"].map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            comboField.includes(item.fieldName)
+                              ? CustomComboBoxCell
+                              : undefined
+                          }
+                          headerCell={
+                            requiredField.includes(item.fieldName)
+                              ? RequiredHeader
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder === 0
+                              ? mainTotalFooterCell4
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
           </GridContainer>
         </TabStripTab>
       </TabStrip>

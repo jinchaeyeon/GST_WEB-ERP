@@ -36,9 +36,12 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseMessages,
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
+  findMessage,
   getGridItemChangedData,
   handleKeyPressSearch,
   setDefaultDate,
@@ -49,6 +52,7 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
@@ -56,7 +60,7 @@ import { gridList } from "../store/columns/SA_A6000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
-
+const requiredField = ["yyyy"];
 const numberField = ["amt"];
 const CustomComboField = ["orgdiv", "position", "dptcd", "person"];
 const YearDateField = ["yyyy"];
@@ -160,7 +164,9 @@ const SA_A6000W: React.FC = () => {
       take: initialPageState.take,
     });
   };
-
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages("SA_A6000W", setMessagesData);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SA_A6000W", setCustomOptionData);
@@ -260,8 +266,6 @@ const SA_A6000W: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
-        yyyy: new Date(item.yyyy, item.mm - 1, 1),
-        mm: new Date(item.yyyy, item.mm - 1, 1),
       }));
 
       if (filters.find_row_value !== "") {
@@ -356,10 +360,12 @@ const SA_A6000W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -407,12 +413,12 @@ const SA_A6000W: React.FC = () => {
       [DATA_ITEM_KEY]: ++temp,
       amt: 0,
       dptcd: dptcd,
-      mm: new Date(),
+      mm: convertDateToStr(new Date()),
       orgdiv: "01",
       person: userId,
       position: position,
       tragetnum: "",
-      yyyy: new Date(),
+      yyyy: convertDateToStr(new Date()),
       rowstatus: "N",
     };
 
@@ -582,13 +588,25 @@ const SA_A6000W: React.FC = () => {
   };
 
   const onSaveClick = async () => {
+    let valid = true;
+
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
         (item.rowstatus === "N" || item.rowstatus === "U") &&
         item.rowstatus !== undefined
       );
     });
-
+    try {
+      dataItem.map((item: any) => {
+        if (item.yyyy == "") {
+          throw findMessage(messagesData, "SA_A6000W_001");
+        }
+      });
+    } catch (e) {
+      alert(e);
+      valid = false;
+    }
+    if (!valid) return false;
     if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
     let dataArr: TdataArr = {
       rowstatus: [],
@@ -614,16 +632,8 @@ const SA_A6000W: React.FC = () => {
 
       dataArr.rowstatus.push(rowstatus);
       dataArr.tragetnum.push(tragetnum);
-      dataArr.yyyy.push(
-        typeof yyyy == "string"
-          ? yyyy.substring(0, 4)
-          : convertDateToStr(yyyy).substring(0, 4)
-      );
-      dataArr.mm.push(
-        typeof mm == "string"
-          ? mm.substring(4, 6)
-          : convertDateToStr(mm).substring(4, 6)
-      );
+      dataArr.yyyy.push(yyyy.substring(0, 4));
+      dataArr.mm.push(mm.substring(4, 6));
       dataArr.position.push(position);
       dataArr.dptcd.push(dptcd);
       dataArr.person.push(person);
@@ -644,16 +654,8 @@ const SA_A6000W: React.FC = () => {
 
       dataArr.rowstatus.push(rowstatus);
       dataArr.tragetnum.push(tragetnum);
-      dataArr.yyyy.push(
-        typeof yyyy == "string"
-          ? yyyy.substring(0, 4)
-          : convertDateToStr(yyyy).substring(0, 4)
-      );
-      dataArr.mm.push(
-        typeof mm == "string"
-          ? mm.substring(4, 6)
-          : convertDateToStr(mm).substring(4, 6)
-      );
+      dataArr.yyyy.push(yyyy.substring(0, 4));
+      dataArr.mm.push(mm.substring(4, 6));
       dataArr.position.push(position);
       dataArr.dptcd.push(dptcd);
       dataArr.person.push(person);
@@ -840,42 +842,49 @@ const SA_A6000W: React.FC = () => {
       </FilterContainer>
 
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>요약정보</GridTitle>
+          <ButtonContainer>
+            <Button
+              onClick={onAddClick}
+              themeColor={"primary"}
+              icon="plus"
+              title="행 추가"
+            ></Button>
+            <Button
+              onClick={onDeleteClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="minus"
+              title="행 삭제"
+            ></Button>
+            <Button
+              onClick={onSaveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="save"
+              title="저장"
+            ></Button>
+          </ButtonContainer>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="판매계획관리"
         >
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="plus"
-                title="행 추가"
-              ></Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-                title="저장"
-              ></Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
             style={{ height: "78vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
+                yyyy: row.yyyy
+                  ? new Date(dateformat(row.yyyy))
+                  : new Date(dateformat("19000101")),
+                mm: row.mm
+                  ? new Date(dateformat(row.mm))
+                  : new Date(dateformat("19000101")),
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -931,6 +940,11 @@ const SA_A6000W: React.FC = () => {
                           ? YearDateCell
                           : MonthDateField.includes(item.fieldName)
                           ? MonthOnlyDateCell
+                          : undefined
+                      }
+                      headerCell={
+                        requiredField.includes(item.fieldName)
+                          ? RequiredHeader
                           : undefined
                       }
                       footerCell={

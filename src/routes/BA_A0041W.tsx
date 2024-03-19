@@ -481,10 +481,12 @@ const BA_A0041W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -1892,61 +1894,62 @@ const BA_A0041W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer width={`100%`}>
+        <GridTitleContainer>
+          <GridTitle>요약정보</GridTitle>
+          <ButtonContainer>
+            {permissions && (
+              <ExcelUploadButtons
+                saveExcel={() => saveExcel}
+                permissions={permissions}
+                style={{ marginLeft: "15px" }}
+              />
+            )}
+            <Button
+              title="Export Excel"
+              onClick={onAttachmentsWndClick}
+              icon="file"
+              fillMode="outline"
+              themeColor={"primary"}
+            >
+              엑셀양식
+            </Button>
+            <Button
+              onClick={onDeleteClick2}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="delete"
+            >
+              즉시 삭제
+            </Button>
+            <Button
+              onClick={onAddClick}
+              themeColor={"primary"}
+              icon="plus"
+              title="행 추가"
+            ></Button>
+            <Button
+              onClick={onDeleteClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="minus"
+              title="행 삭제"
+            ></Button>
+            <Button
+              onClick={onSaveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="save"
+              title="저장"
+            ></Button>
+          </ButtonContainer>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="품목관리(멀티)"
         >
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-            <ButtonContainer>
-              {permissions && (
-                <ExcelUploadButtons
-                  saveExcel={() => saveExcel}
-                  permissions={permissions}
-                  style={{ marginLeft: "15px" }}
-                />
-              )}
-              <Button
-                title="Export Excel"
-                onClick={onAttachmentsWndClick}
-                icon="file"
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                엑셀양식
-              </Button>
-              <Button
-                onClick={onDeleteClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="delete"
-              >
-                즉시 삭제
-              </Button>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="plus"
-                title="행 추가"
-              ></Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-                title="저장"
-              ></Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
             style={{ height: "67vh" }}
             data={process(

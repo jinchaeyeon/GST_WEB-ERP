@@ -348,10 +348,12 @@ const PS_A0060_301W: React.FC = () => {
   };
 
   // 엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "휴일리스트";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -520,12 +522,7 @@ const PS_A0060_301W: React.FC = () => {
 
     try {
       dataItem.map((item: any) => {
-        if (
-          item.date.substring(0, 4) < "1997" ||
-          item.date.substring(6, 8) > "31" ||
-          item.date.substring(6, 8) < "01" ||
-          item.date.substring(4, 6).length != 2
-        ) {
+        if (item.date == "") {
           throw findMessage(messagesData, "PS_A0060_301W_001");
         }
       });
@@ -1004,64 +1001,67 @@ const PS_A0060_301W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>휴일 리스트</GridTitle>
+          <ButtonContainer>
+            <Button
+              onClick={onSetSaturdayClick}
+              themeColor={"primary"}
+              icon="calendar"
+            >
+              토요일 자동 생성
+            </Button>
+            <Button
+              onClick={onSetSundayClick}
+              themeColor={"primary"}
+              icon="calendar"
+            >
+              일요일 자동 생성
+            </Button>
+            <Button
+              onClick={onHolidayClick}
+              themeColor={"primary"}
+              icon="calendar"
+            >
+              공휴일 자동 생성
+            </Button>
+            <Button
+              onClick={onAddClick}
+              themeColor={"primary"}
+              icon="plus"
+              title="행 추가"
+            ></Button>
+            <Button
+              onClick={onRemoveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="minus"
+              title="행 삭제"
+            ></Button>
+            <Button
+              onClick={onSaveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="save"
+              title="저장"
+            ></Button>
+          </ButtonContainer>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="휴일관리"
         >
-          <GridTitleContainer>
-            <GridTitle>휴일 리스트</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onSetSaturdayClick}
-                themeColor={"primary"}
-                icon="calendar"
-              >
-                토요일 자동 생성
-              </Button>
-              <Button
-                onClick={onSetSundayClick}
-                themeColor={"primary"}
-                icon="calendar"
-              >
-                일요일 자동 생성
-              </Button>
-              <Button
-                onClick={onHolidayClick}
-                themeColor={"primary"}
-                icon="calendar"
-              >
-                공휴일 자동 생성
-              </Button>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="plus"
-                title="행 추가"
-              ></Button>
-              <Button
-                onClick={onRemoveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-                title="저장"
-              ></Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
             style={{ height: "78vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                date: row.date ? new Date(dateformat(row.date)) : new Date(),
+                date: row.date
+                  ? new Date(dateformat(row.date))
+                  : new Date(dateformat("19000101")),
                 rowstatus:
                   row.rowstatus == null ||
                   row.rowstatus == "" ||

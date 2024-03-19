@@ -457,10 +457,12 @@ const CR_A0040W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "회원권 리스트";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -840,56 +842,57 @@ const CR_A0040W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer width="100%">
+        <GridTitleContainer>
+          <GridTitle>회원권 리스트</GridTitle>
+          {permissions && (
+            <ButtonContainer>
+              <ExcelUploadButton
+                saveExcel={saveExcel}
+                permissions={permissions}
+                style={{ marginLeft: "15px" }}
+              />
+              <Button
+                title="Export Excel"
+                onClick={onAttachmentsWndClick}
+                icon="file"
+                fillMode="outline"
+                themeColor={"primary"}
+              >
+                엑셀양식
+              </Button>
+              <Button
+                onClick={onClickNew}
+                icon="file-add"
+                themeColor={"primary"}
+              >
+                신규
+              </Button>
+              <Button
+                onClick={onClickDelete}
+                icon="delete"
+                themeColor={"primary"}
+                fillMode={"outline"}
+              >
+                삭제
+              </Button>
+              <Button
+                onClick={onClickCopy}
+                icon="copy"
+                themeColor={"primary"}
+                fillMode={"outline"}
+              >
+                복사
+              </Button>
+            </ButtonContainer>
+          )}
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="회원권 리스트"
         >
-          <GridTitleContainer>
-            <GridTitle>회원권 리스트</GridTitle>
-            {permissions && (
-              <ButtonContainer>
-                <ExcelUploadButton
-                  saveExcel={saveExcel}
-                  permissions={permissions}
-                  style={{ marginLeft: "15px" }}
-                />
-                <Button
-                  title="Export Excel"
-                  onClick={onAttachmentsWndClick}
-                  icon="file"
-                  fillMode="outline"
-                  themeColor={"primary"}
-                >
-                  엑셀양식
-                </Button>
-                <Button
-                  onClick={onClickNew}
-                  icon="file-add"
-                  themeColor={"primary"}
-                >
-                  신규
-                </Button>
-                <Button
-                  onClick={onClickDelete}
-                  icon="delete"
-                  themeColor={"primary"}
-                  fillMode={"outline"}
-                >
-                  삭제
-                </Button>
-                <Button
-                  onClick={onClickCopy}
-                  icon="copy"
-                  themeColor={"primary"}
-                  fillMode={"outline"}
-                >
-                  복사
-                </Button>
-              </ButtonContainer>
-            )}
-          </GridTitleContainer>
           <Grid
             style={{ height: "80.5vh" }}
             data={process(

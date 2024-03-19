@@ -62,6 +62,7 @@ import {
   UseMessages,
   UseParaPc,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   getItemQuery,
@@ -1102,6 +1103,11 @@ const CopyWindow = ({
         valid = false;
         return false;
       }
+      if (item.inexpdt == "" && valid == true) {
+        alert("입고예정일을 입력해주세요");
+        valid = false;
+        return false;
+      }
     });
 
     if (valid == true) {
@@ -1195,11 +1201,7 @@ const CopyWindow = ({
                 dataArr.reqseq_s.push(
                   reqseq == undefined || reqseq == "" ? 0 : reqseq
                 );
-                dataArr.inexpdt_s.push(
-                  inexpdt == undefined || inexpdt == ""
-                    ? convertDateToStr(new Date())
-                    : inexpdt
-                );
+                dataArr.inexpdt_s.push(inexpdt == undefined ? "" : inexpdt);
                 dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
                 dataArr.itemnm_s.push(itemnm == undefined ? "" : itemnm);
                 dataArr.qty_s.push(qty == undefined ? 0 : qty);
@@ -1941,12 +1943,9 @@ const CopyWindow = ({
                   itemacnt: itemacntListData.find(
                     (item: any) => item.sub_code === row.itemacnt
                   )?.code_name,
-                  inexpdt:
-                    row.inexpdt == null ||
-                    row.inexpdt == "" ||
-                    row.inexpdt == undefined
-                      ? new Date()
-                      : toDate(row.inexpdt),
+                  inexpdt: row.inexpdt
+                    ? new Date(dateformat(row.inexpdt))
+                    : new Date(dateformat("19000101")),
                   [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                 })),
                 mainDataState
@@ -1989,6 +1988,7 @@ const CopyWindow = ({
                 title="입고예정일"
                 width="120px"
                 cell={DateCell}
+                headerCell={RequiredHeader}
                 footerCell={mainTotalFooterCell}
               />
               <GridColumn

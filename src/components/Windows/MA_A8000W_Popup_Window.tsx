@@ -635,10 +635,6 @@ const CopyWindow = ({
                   row.rowstatus == undefined
                     ? ""
                     : row.rowstatus,
-                enddt:
-                  typeof row.enddt === "object" && row.enddt instanceof Date
-                    ? row.enddt
-                    : toDate(row.enddt),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState

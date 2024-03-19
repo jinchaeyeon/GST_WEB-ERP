@@ -47,12 +47,12 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
-  toDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -279,10 +279,12 @@ const HU_A3200W: React.FC = () => {
   }, [customOptionData]);
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "기본정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -795,11 +797,7 @@ const HU_A3200W: React.FC = () => {
         safetyamt = "",
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.dptcd_s.push(dptcd);
       dataArr.location_s.push(location);
@@ -823,11 +821,7 @@ const HU_A3200W: React.FC = () => {
         safetyamt = "",
       } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.dptcd_s.push(dptcd);
       dataArr.location_s.push(location);
@@ -1017,43 +1011,46 @@ const HU_A3200W: React.FC = () => {
         }}
       >
         <GridContainer>
+          <GridTitleContainer>
+            <GridTitle>기본정보</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onAddClick}
+                themeColor={"primary"}
+                icon="plus"
+                title="행 추가"
+              ></Button>
+              <Button
+                onClick={onDeleteClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="minus"
+                title="행 삭제"
+              ></Button>
+              <Button
+                onClick={onSaveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+                title="저장"
+              ></Button>
+            </ButtonContainer>
+          </GridTitleContainer>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
               _export = exporter;
             }}
+            fileName="사회보험고지내역"
           >
-            <GridTitleContainer>
-              <GridTitle>기본정보</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onAddClick}
-                  themeColor={"primary"}
-                  icon="plus"
-                  title="행 추가"
-                ></Button>
-                <Button
-                  onClick={onDeleteClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="minus"
-                  title="행 삭제"
-                ></Button>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                  title="저장"
-                ></Button>
-              </ButtonContainer>
-            </GridTitleContainer>
             <Grid
               style={{ height: "80vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
-                  payyrmm: toDate(row.payyrmm + "01"),
+                  payyrmm: row.payyrmm
+                    ? new Date(dateformat(row.payyrmm))
+                    : new Date(dateformat("19000101")),
                   [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                 })),
                 mainDataState

@@ -62,7 +62,11 @@ const MonthDateCell = (props: GridCellProps) => {
           placeholder=""
         />
       ) : typeof value === "object" ? (
-        dateformat5(convertDateToStr(value))
+        convertDateToStr(value) == "19000101" ? (
+          ""
+        ) : (
+          dateformat5(convertDateToStr(value))
+        )
       ) : typeof value === "string" && value !== "" ? (
         dateformat5(value)
       ) : (

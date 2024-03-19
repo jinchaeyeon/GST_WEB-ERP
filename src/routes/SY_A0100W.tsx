@@ -392,10 +392,19 @@ const App: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      if (tabSelected == 0) {
+        optionsGridOne.sheets[0].title = "데이터 등록 현황";
+      } else if (tabSelected == 1) {
+        optionsGridOne.sheets[0].title = "프로그램 접속 현황";
+      } else {
+        optionsGridOne.sheets[0].title = "사용자별 프로그램 접속현황";
+      }
+
+      _export.save(optionsGridOne);
     }
   };
 
@@ -503,10 +512,12 @@ const App: React.FC = () => {
     return (
       <GridContainer width="100%" inTab={true}>
         <ExcelExport
-          data={mainDataResult.data}
+          data={newData}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="데이터등록현황"
+          group={group}
         >
           <Grid
             style={{ height: "75vh" }}

@@ -1359,10 +1359,20 @@ const BA_A0050: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
+  let _export2: any;
+  let _export3: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      const optionsGridTwo = _export2.workbookOptions();
+      const optionsGridThree = _export3.workbookOptions();
+      optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+      optionsGridOne.sheets[2] = optionsGridThree.sheets[0];
+      optionsGridOne.sheets[0].title = "BOM구성정보";
+      optionsGridOne.sheets[1].title = "공정리스트";
+      optionsGridOne.sheets[2].title = "BOM 상세";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -2153,60 +2163,68 @@ const BA_A0050: React.FC = () => {
             <GridTitleContainer>
               <GridTitle>BOM구성정보</GridTitle>
             </GridTitleContainer>
-            <Grid
-              style={{ height: "28.4vh" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)],
-                })),
-                mainDataState
-              )}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
+            <ExcelExport
+              ref={(exporter) => (_export = exporter)}
+              data={mainDataResult.data}
+              fileName="BOM관리"
             >
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
-                        }
-                      />
-                    )
+              <Grid
+                style={{ height: "28.4vh" }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  mainDataState
                 )}
-            </Grid>
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          footerCell={
+                            item.sortOrder === 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
           </GridContainer>
           <GridContainer>
             <GridTitleContainer>
@@ -2234,61 +2252,69 @@ const BA_A0050: React.FC = () => {
                 </tbody>
               </FormBox>
             </FormBoxWrap>
-            <Grid
-              style={{ height: "36.5vh" }}
-              data={process(
-                subDataResult.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
-                })),
-                subDataState
-              )}
-              {...subDataState}
-              onDataStateChange={onSubDataStateChange}
-              //선택 기능
-              dataItemKey={SUB_DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSubDataSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={subDataResult.total}
-              skip={page2.skip}
-              take={page2.take}
-              pageable={true}
-              onPageChange={pageChange2}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef2}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onSubDataSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              onRowDoubleClick={onRowDoubleCliCK}
+            <ExcelExport
+              ref={(exporter) => (_export2 = exporter)}
+              data={subDataResult.data}
+              fileName="BOM관리"
             >
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        footerCell={
-                          item.sortOrder === 0 ? subTotalFooterCell : undefined
-                        }
-                      />
-                    )
+              <Grid
+                style={{ height: "36.5vh" }}
+                data={process(
+                  subDataResult.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
+                  })),
+                  subDataState
                 )}
-            </Grid>
+                {...subDataState}
+                onDataStateChange={onSubDataStateChange}
+                //선택 기능
+                dataItemKey={SUB_DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSubDataSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={subDataResult.total}
+                skip={page2.skip}
+                take={page2.take}
+                pageable={true}
+                onPageChange={pageChange2}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef2}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onSubDataSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onRowDoubleClick={onRowDoubleCliCK}
+              >
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          footerCell={
+                            item.sortOrder === 0
+                              ? subTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
           </GridContainer>
         </GridContainer>
         <FormContext.Provider
@@ -2298,46 +2324,45 @@ const BA_A0050: React.FC = () => {
           }}
         >
           <GridContainer width={`calc(57% - ${GAP}px)`}>
+            <GridTitleContainer>
+              <GridTitle>BOM 상세</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onCopyEditClick2}
+                  themeColor={"primary"}
+                  icon="save"
+                >
+                  패턴공정도 참조
+                </Button>
+                <Button
+                  onClick={onCopyEditClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                >
+                  BOM복사
+                </Button>
+                <Button
+                  onClick={onDeleteClick2}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                  title="행 삭제"
+                />
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  title="행 저장"
+                />
+              </ButtonContainer>
+            </GridTitleContainer>
             <ExcelExport
+              ref={(exporter) => (_export3 = exporter)}
               data={subData2Result.data}
-              ref={(exporter) => {
-                _export = exporter;
-              }}
+              fileName="BOM관리"
             >
-              <GridTitleContainer>
-                <GridTitle>BOM 상세</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onCopyEditClick2}
-                    themeColor={"primary"}
-                    icon="save"
-                  >
-                    패턴공정도 참조
-                  </Button>
-                  <Button
-                    onClick={onCopyEditClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                  >
-                    BOM복사
-                  </Button>
-                  <Button
-                    onClick={onDeleteClick2}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                    title="행 삭제"
-                  />
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                    title="행 저장"
-                  />
-                </ButtonContainer>
-              </GridTitleContainer>
               <Grid
                 style={{ height: "76vh" }}
                 data={process(

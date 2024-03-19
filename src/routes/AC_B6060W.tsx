@@ -621,10 +621,38 @@ const AC_B6060W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
+  let _export2: any;
+  let _export3: any;
+  let _export4: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        optionsGridOne.sheets[0].title = "기간별";
+        _export.save(optionsGridOne);
+      }
+    }
+    if (_export2 !== null && _export2 !== undefined) {
+      if (tabSelected == 1) {
+        const optionsGridTwo = _export2.workbookOptions();
+        optionsGridTwo.sheets[0].title = "분기별";
+        _export2.save(optionsGridTwo);
+      }
+    }
+    if (_export3 !== null && _export3 !== undefined) {
+      if (tabSelected == 2) {
+        const optionsGridThree = _export3.workbookOptions();
+        optionsGridThree.sheets[0].title = "반기별";
+        _export3.save(optionsGridThree);
+      }
+    }
+    if (_export4 !== null && _export4 !== undefined) {
+      if (tabSelected == 3) {
+        const optionsGridFour = _export4.workbookOptions();
+        optionsGridFour.sheets[0].title = "연간";
+        _export4.save(optionsGridFour);
+      }
     }
   };
 
@@ -1820,6 +1848,7 @@ const AC_B6060W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
+              fileName="집행현황"
             >
               <Grid
                 style={{ height: "76vh" }}
@@ -1880,170 +1909,194 @@ const AC_B6060W: React.FC = () => {
         </TabStripTab>
         <TabStripTab title="분기별">
           <GridContainer width="100%">
-            <Grid
-              style={{ height: "76vh" }}
-              data={process(
-                mainDataResult2.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedState2[idGetter(row)],
-                })),
-                mainDataState2
-              )}
-              {...mainDataState2}
-              onDataStateChange={onMainDataStateChange2}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
+            <ExcelExport
+              data={mainDataResult2.data}
+              ref={(exporter) => {
+                _export2 = exporter;
               }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult2.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange2}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
+              fileName="집행현황"
             >
-              <GridColumn
-                field="dd"
-                title="일자"
-                width="120px"
-                locked={true}
-                footerCell={mainTotalFooterCell2}
-              />
-              <GridColumn title={dates}>{createColumn7()}</GridColumn>
-              <GridColumn title={dates2}>{createColumn8()}</GridColumn>
-              <GridColumn title={dates3}>{createColumn9()}</GridColumn>
-            </Grid>
+              <Grid
+                style={{ height: "76vh" }}
+                data={process(
+                  mainDataResult2.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedState2[idGetter(row)],
+                  })),
+                  mainDataState2
+                )}
+                {...mainDataState2}
+                onDataStateChange={onMainDataStateChange2}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult2.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange2}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                <GridColumn
+                  field="dd"
+                  title="일자"
+                  width="120px"
+                  locked={true}
+                  footerCell={mainTotalFooterCell2}
+                />
+                <GridColumn title={dates}>{createColumn7()}</GridColumn>
+                <GridColumn title={dates2}>{createColumn8()}</GridColumn>
+                <GridColumn title={dates3}>{createColumn9()}</GridColumn>
+              </Grid>
+            </ExcelExport>
           </GridContainer>
         </TabStripTab>
         <TabStripTab title="반기별">
           <GridContainer width="100%">
-            <Grid
-              style={{ height: "76vh" }}
-              data={process(
-                mainDataResult3.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedState3[idGetter(row)],
-                })),
-                mainDataState3
-              )}
-              {...mainDataState3}
-              onDataStateChange={onMainDataStateChange3}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
+            <ExcelExport
+              data={mainDataResult3.data}
+              ref={(exporter) => {
+                _export3 = exporter;
               }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult3.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange3}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
+              fileName="집행현황"
             >
-              <GridColumn
-                field="dd"
-                title="일자"
-                width="120px"
-                locked={true}
-                footerCell={mainTotalFooterCell3}
-              />
-              <GridColumn title={dates}>{createColumn10()}</GridColumn>
-              <GridColumn title={dates2}>{createColumn11()}</GridColumn>
-              <GridColumn title={dates3}>{createColumn12()}</GridColumn>
-              <GridColumn title={dates4}>{createColumn13()}</GridColumn>
-              <GridColumn title={dates5}>{createColumn14()}</GridColumn>
-              <GridColumn title={dates6}>{createColumn15()}</GridColumn>
-            </Grid>
+              <Grid
+                style={{ height: "76vh" }}
+                data={process(
+                  mainDataResult3.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedState3[idGetter(row)],
+                  })),
+                  mainDataState3
+                )}
+                {...mainDataState3}
+                onDataStateChange={onMainDataStateChange3}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult3.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange3}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                <GridColumn
+                  field="dd"
+                  title="일자"
+                  width="120px"
+                  locked={true}
+                  footerCell={mainTotalFooterCell3}
+                />
+                <GridColumn title={dates}>{createColumn10()}</GridColumn>
+                <GridColumn title={dates2}>{createColumn11()}</GridColumn>
+                <GridColumn title={dates3}>{createColumn12()}</GridColumn>
+                <GridColumn title={dates4}>{createColumn13()}</GridColumn>
+                <GridColumn title={dates5}>{createColumn14()}</GridColumn>
+                <GridColumn title={dates6}>{createColumn15()}</GridColumn>
+              </Grid>
+            </ExcelExport>
           </GridContainer>
         </TabStripTab>
         <TabStripTab title="연간">
           <GridContainer width="100%">
-            <Grid
-              style={{ height: "76vh" }}
-              data={process(
-                mainDataResult4.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedState4[idGetter(row)],
-                })),
-                mainDataState4
-              )}
-              {...mainDataState4}
-              onDataStateChange={onMainDataStateChange4}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
+            <ExcelExport
+              data={mainDataResult4.data}
+              ref={(exporter) => {
+                _export4 = exporter;
               }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult4.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange4}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
+              fileName="집행현황"
             >
-              <GridColumn
-                field="dd"
-                title="일자"
-                width="120px"
-                locked={true}
-                footerCell={mainTotalFooterCell4}
-              />
-              <GridColumn title={dates7}>{createColumn16()}</GridColumn>
-              <GridColumn title={dates8}>{createColumn17()}</GridColumn>
-              <GridColumn title={dates9}>{createColumn18()}</GridColumn>
-              <GridColumn title={dates10}>{createColumn19()}</GridColumn>
-              <GridColumn title={dates11}>{createColumn20()}</GridColumn>
-              <GridColumn title={dates12}>{createColumn21()}</GridColumn>
-              <GridColumn title={dates13}>{createColumn22()}</GridColumn>
-              <GridColumn title={dates14}>{createColumn23()}</GridColumn>
-              <GridColumn title={dates15}>{createColumn24()}</GridColumn>
-              <GridColumn title={dates16}>{createColumn25()}</GridColumn>
-              <GridColumn title={dates17}>{createColumn26()}</GridColumn>
-              <GridColumn title={dates18}>{createColumn27()}</GridColumn>
-            </Grid>
+              <Grid
+                style={{ height: "76vh" }}
+                data={process(
+                  mainDataResult4.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: selectedState4[idGetter(row)],
+                  })),
+                  mainDataState4
+                )}
+                {...mainDataState4}
+                onDataStateChange={onMainDataStateChange4}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult4.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange4}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                <GridColumn
+                  field="dd"
+                  title="일자"
+                  width="120px"
+                  locked={true}
+                  footerCell={mainTotalFooterCell4}
+                />
+                <GridColumn title={dates7}>{createColumn16()}</GridColumn>
+                <GridColumn title={dates8}>{createColumn17()}</GridColumn>
+                <GridColumn title={dates9}>{createColumn18()}</GridColumn>
+                <GridColumn title={dates10}>{createColumn19()}</GridColumn>
+                <GridColumn title={dates11}>{createColumn20()}</GridColumn>
+                <GridColumn title={dates12}>{createColumn21()}</GridColumn>
+                <GridColumn title={dates13}>{createColumn22()}</GridColumn>
+                <GridColumn title={dates14}>{createColumn23()}</GridColumn>
+                <GridColumn title={dates15}>{createColumn24()}</GridColumn>
+                <GridColumn title={dates16}>{createColumn25()}</GridColumn>
+                <GridColumn title={dates17}>{createColumn26()}</GridColumn>
+                <GridColumn title={dates18}>{createColumn27()}</GridColumn>
+              </Grid>
+            </ExcelExport>
           </GridContainer>
         </TabStripTab>
       </TabStrip>

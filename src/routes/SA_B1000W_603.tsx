@@ -189,7 +189,7 @@ const SA_B1000W_603: React.FC = () => {
     setLoading(true);
     const status =
       filters.status.length == 0
-        ? "1|2|3|4|5"
+        ? "1|2|3|4"
         : filters.status.length == 1
         ? filters.status[0].sub_code
         : getName(filters.status);
@@ -499,10 +499,12 @@ const SA_B1000W_603: React.FC = () => {
     }
   }, [subfilters3]);
 
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
@@ -843,15 +845,16 @@ const SA_B1000W_603: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           <GridContainer width={"100%"}>
+            <GridTitleContainer>
+              <GridTitle>요약정보</GridTitle>
+            </GridTitleContainer>
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
                 _export = exporter;
               }}
+              fileName="영업진행관리"
             >
-              <GridTitleContainer>
-                <GridTitle>요약정보</GridTitle>
-              </GridTitleContainer>
               <GridKendo
                 style={{ height: "76.5vh" }}
                 data={process(

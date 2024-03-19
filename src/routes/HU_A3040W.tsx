@@ -416,10 +416,42 @@ const HU_A3040W: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("HU_A3040W", setCustomOptionData);
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
+  let _export2: any;
+  let _export3: any;
+  let _export4: any;
+  let _export5: any;
+  let _export6: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        const optionsGridTwo = _export2.workbookOptions();
+        optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+        optionsGridOne.sheets[0].title = "기준일자";
+        optionsGridOne.sheets[1].title = "국민연금";
+        _export.save(optionsGridOne);
+      }
+    }
+    if (_export3 !== null && _export3 !== undefined) {
+      if (tabSelected == 1) {
+        const optionsGridThree = _export3.workbookOptions();
+        const optionsGridFour = _export4.workbookOptions();
+        optionsGridThree.sheets[1] = optionsGridFour.sheets[0];
+        optionsGridThree.sheets[0].title = "기준일자";
+        optionsGridThree.sheets[1].title = "건강보험";
+        _export3.save(optionsGridThree);
+      }
+    }
+    if (_export5 !== null && _export5 !== undefined) {
+      if (tabSelected == 2) {
+        const optionsGridFive = _export5.workbookOptions();
+        const optionsGridSix = _export6.workbookOptions();
+        optionsGridFive.sheets[1] = optionsGridSix.sheets[0];
+        optionsGridFive.sheets[0].title = "기준일자";
+        optionsGridFive.sheets[1].title = "고용보험";
+        _export5.save(optionsGridFive);
+      }
     }
   };
 
@@ -3808,6 +3840,7 @@ const HU_A3040W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
+                fileName="연금보험료"
               >
                 <Grid
                   style={{ height: "70vh" }}
@@ -3895,79 +3928,87 @@ const HU_A3040W: React.FC = () => {
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
-                <Grid
-                  style={{ height: "70vh" }}
-                  data={process(
-                    mainDataResult2.data.map((row) => ({
-                      ...row,
-                      dptcd: dptcdListData.find(
-                        (item: any) => item.dptcd == row.dptcd
-                      )?.dptnm,
-                      [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-                    })),
-                    mainDataState2
-                  )}
-                  {...mainDataState2}
-                  onDataStateChange={onMainDataStateChange2}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY2}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
+                <ExcelExport
+                  data={mainDataResult2.data}
+                  ref={(exporter) => {
+                    _export2 = exporter;
                   }}
-                  onSelectionChange={onSelectionChange2}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult2.total}
-                  skip={page2.skip}
-                  take={page2.take}
-                  pageable={true}
-                  onPageChange={pageChange2}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef2}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange2}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                  onItemChange={onMainItemChange2}
-                  cellRender={customCellRender2}
-                  rowRender={customRowRender2}
-                  editField={EDIT_FIELD}
+                  fileName="연금보험료"
                 >
-                  <GridColumn field="rowstatus" title=" " width="50px" />
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"].map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : commendField.includes(item.fieldName)
-                                ? ColumnCommandCell2
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder === 0
-                                ? mainTotalFooterCell2
-                                : numberField2.includes(item.fieldName)
-                                ? editNumberFooterCell2
-                                : undefined
-                            }
-                          />
-                        )
+                  <Grid
+                    style={{ height: "70vh" }}
+                    data={process(
+                      mainDataResult2.data.map((row) => ({
+                        ...row,
+                        dptcd: dptcdListData.find(
+                          (item: any) => item.dptcd == row.dptcd
+                        )?.dptnm,
+                        [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                      })),
+                      mainDataState2
                     )}
-                </Grid>
+                    {...mainDataState2}
+                    onDataStateChange={onMainDataStateChange2}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY2}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange2}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult2.total}
+                    skip={page2.skip}
+                    take={page2.take}
+                    pageable={true}
+                    onPageChange={pageChange2}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef2}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange2}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange2}
+                    cellRender={customCellRender2}
+                    rowRender={customRowRender2}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : commendField.includes(item.fieldName)
+                                  ? ColumnCommandCell2
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder === 0
+                                  ? mainTotalFooterCell2
+                                  : numberField2.includes(item.fieldName)
+                                  ? editNumberFooterCell2
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                  </Grid>
+                </ExcelExport>
               </GridContainer>
             </FormContext2.Provider>
           </GridContainerWrap>
@@ -3995,51 +4036,59 @@ const HU_A3040W: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "70vh" }}
-                data={process(
-                  mainDataResult3.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState3[idGetter3(row)],
-                  })),
-                  mainDataState3
-                )}
-                {...mainDataState3}
-                onDataStateChange={onMainDataStateChange3}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY3}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+              <ExcelExport
+                data={mainDataResult3.data}
+                ref={(exporter) => {
+                  _export3 = exporter;
                 }}
-                onSelectionChange={onSelectionChange3}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult3.total}
-                skip={page3.skip}
-                take={page3.take}
-                pageable={true}
-                onPageChange={pageChange3}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef3}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange3}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
+                fileName="연금보험료"
               >
-                <GridColumn
-                  field="insudt"
-                  cell={DateCell}
-                  title="기준일자"
-                  width="120px"
-                  footerCell={mainTotalFooterCell3}
-                />
-              </Grid>
+                <Grid
+                  style={{ height: "70vh" }}
+                  data={process(
+                    mainDataResult3.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                    })),
+                    mainDataState3
+                  )}
+                  {...mainDataState3}
+                  onDataStateChange={onMainDataStateChange3}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY3}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange3}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult3.total}
+                  skip={page3.skip}
+                  take={page3.take}
+                  pageable={true}
+                  onPageChange={pageChange3}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef3}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange3}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="insudt"
+                    cell={DateCell}
+                    title="기준일자"
+                    width="120px"
+                    footerCell={mainTotalFooterCell3}
+                  />
+                </Grid>
+              </ExcelExport>
             </GridContainer>
             <FormContext4.Provider
               value={{
@@ -4080,79 +4129,87 @@ const HU_A3040W: React.FC = () => {
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
-                <Grid
-                  style={{ height: "70vh" }}
-                  data={process(
-                    mainDataResult4.data.map((row) => ({
-                      ...row,
-                      dptcd: dptcdListData.find(
-                        (item: any) => item.dptcd == row.dptcd
-                      )?.dptnm,
-                      [SELECTED_FIELD]: selectedState4[idGetter4(row)],
-                    })),
-                    mainDataState4
-                  )}
-                  {...mainDataState4}
-                  onDataStateChange={onMainDataStateChange4}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY4}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
+                <ExcelExport
+                  data={mainDataResult4.data}
+                  ref={(exporter) => {
+                    _export4 = exporter;
                   }}
-                  onSelectionChange={onSelectionChange4}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult4.total}
-                  skip={page4.skip}
-                  take={page4.take}
-                  pageable={true}
-                  onPageChange={pageChange4}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef4}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange4}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                  onItemChange={onMainItemChange4}
-                  cellRender={customCellRender4}
-                  rowRender={customRowRender4}
-                  editField={EDIT_FIELD}
+                  fileName="연금보험료"
                 >
-                  <GridColumn field="rowstatus" title=" " width="50px" />
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList4"].map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : commendField.includes(item.fieldName)
-                                ? ColumnCommandCell4
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder === 0
-                                ? mainTotalFooterCell4
-                                : numberField2.includes(item.fieldName)
-                                ? editNumberFooterCell4
-                                : undefined
-                            }
-                          />
-                        )
+                  <Grid
+                    style={{ height: "70vh" }}
+                    data={process(
+                      mainDataResult4.data.map((row) => ({
+                        ...row,
+                        dptcd: dptcdListData.find(
+                          (item: any) => item.dptcd == row.dptcd
+                        )?.dptnm,
+                        [SELECTED_FIELD]: selectedState4[idGetter4(row)],
+                      })),
+                      mainDataState4
                     )}
-                </Grid>
+                    {...mainDataState4}
+                    onDataStateChange={onMainDataStateChange4}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY4}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange4}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult4.total}
+                    skip={page4.skip}
+                    take={page4.take}
+                    pageable={true}
+                    onPageChange={pageChange4}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef4}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange4}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange4}
+                    cellRender={customCellRender4}
+                    rowRender={customRowRender4}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList4"].map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : commendField.includes(item.fieldName)
+                                  ? ColumnCommandCell4
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder === 0
+                                  ? mainTotalFooterCell4
+                                  : numberField2.includes(item.fieldName)
+                                  ? editNumberFooterCell4
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                  </Grid>
+                </ExcelExport>
               </GridContainer>
             </FormContext4.Provider>
           </GridContainerWrap>
@@ -4180,51 +4237,59 @@ const HU_A3040W: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "70vh" }}
-                data={process(
-                  mainDataResult5.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState5[idGetter5(row)],
-                  })),
-                  mainDataState5
-                )}
-                {...mainDataState5}
-                onDataStateChange={onMainDataStateChange5}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY5}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+              <ExcelExport
+                data={mainDataResult5.data}
+                ref={(exporter) => {
+                  _export5 = exporter;
                 }}
-                onSelectionChange={onSelectionChange5}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult5.total}
-                skip={page5.skip}
-                take={page5.take}
-                pageable={true}
-                onPageChange={pageChange5}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef5}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange5}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
+                fileName="연금보험료"
               >
-                <GridColumn
-                  field="insudt"
-                  cell={DateCell}
-                  title="기준일자"
-                  width="120px"
-                  footerCell={mainTotalFooterCell5}
-                />
-              </Grid>
+                <Grid
+                  style={{ height: "70vh" }}
+                  data={process(
+                    mainDataResult5.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState5[idGetter5(row)],
+                    })),
+                    mainDataState5
+                  )}
+                  {...mainDataState5}
+                  onDataStateChange={onMainDataStateChange5}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY5}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange5}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult5.total}
+                  skip={page5.skip}
+                  take={page5.take}
+                  pageable={true}
+                  onPageChange={pageChange5}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef5}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange5}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="insudt"
+                    cell={DateCell}
+                    title="기준일자"
+                    width="120px"
+                    footerCell={mainTotalFooterCell5}
+                  />
+                </Grid>
+              </ExcelExport>
             </GridContainer>
             <FormContext6.Provider
               value={{
@@ -4265,79 +4330,87 @@ const HU_A3040W: React.FC = () => {
                     ></Button>
                   </ButtonContainer>
                 </GridTitleContainer>
-                <Grid
-                  style={{ height: "70vh" }}
-                  data={process(
-                    mainDataResult6.data.map((row) => ({
-                      ...row,
-                      dptcd: dptcdListData.find(
-                        (item: any) => item.dptcd == row.dptcd
-                      )?.dptnm,
-                      [SELECTED_FIELD]: selectedState6[idGetter6(row)],
-                    })),
-                    mainDataState6
-                  )}
-                  {...mainDataState6}
-                  onDataStateChange={onMainDataStateChange6}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY6}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
+                <ExcelExport
+                  data={mainDataResult6.data}
+                  ref={(exporter) => {
+                    _export6 = exporter;
                   }}
-                  onSelectionChange={onSelectionChange6}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult6.total}
-                  skip={page6.skip}
-                  take={page6.take}
-                  pageable={true}
-                  onPageChange={pageChange6}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef6}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange6}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                  onItemChange={onMainItemChange6}
-                  cellRender={customCellRender6}
-                  rowRender={customRowRender6}
-                  editField={EDIT_FIELD}
+                  fileName="연금보험료"
                 >
-                  <GridColumn field="rowstatus" title=" " width="50px" />
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList6"].map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              numberField.includes(item.fieldName)
-                                ? NumberCell
-                                : commendField.includes(item.fieldName)
-                                ? ColumnCommandCell6
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder === 0
-                                ? mainTotalFooterCell6
-                                : numberField2.includes(item.fieldName)
-                                ? editNumberFooterCell6
-                                : undefined
-                            }
-                          />
-                        )
+                  <Grid
+                    style={{ height: "70vh" }}
+                    data={process(
+                      mainDataResult6.data.map((row) => ({
+                        ...row,
+                        dptcd: dptcdListData.find(
+                          (item: any) => item.dptcd == row.dptcd
+                        )?.dptnm,
+                        [SELECTED_FIELD]: selectedState6[idGetter6(row)],
+                      })),
+                      mainDataState6
                     )}
-                </Grid>
+                    {...mainDataState6}
+                    onDataStateChange={onMainDataStateChange6}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY6}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange6}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult6.total}
+                    skip={page6.skip}
+                    take={page6.take}
+                    pageable={true}
+                    onPageChange={pageChange6}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef6}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange6}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={onMainItemChange6}
+                    cellRender={customCellRender6}
+                    rowRender={customRowRender6}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList6"].map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                numberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : commendField.includes(item.fieldName)
+                                  ? ColumnCommandCell6
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder === 0
+                                  ? mainTotalFooterCell6
+                                  : numberField2.includes(item.fieldName)
+                                  ? editNumberFooterCell6
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                  </Grid>
+                </ExcelExport>
               </GridContainer>
             </FormContext6.Provider>
           </GridContainerWrap>

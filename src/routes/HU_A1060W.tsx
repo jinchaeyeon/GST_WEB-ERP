@@ -47,10 +47,10 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   getGridItemChangedData,
   handleKeyPressSearch,
-  setDefaultDate,
-  toDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -302,10 +302,12 @@ const HU_A1060W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "문서 리스트";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -1134,50 +1136,53 @@ const HU_A1060W: React.FC = () => {
               // fetchGrid,
             }}
           >
+            <GridTitleContainer>
+              <GridTitle>문서 리스트</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                >
+                  결재문서접기/펼치기
+                </Button>
+                <Button
+                  onClick={onAddClick}
+                  themeColor={"primary"}
+                  icon="plus"
+                  title="행 추가"
+                ></Button>
+                <Button
+                  onClick={onDeleteClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                  title="행 삭제"
+                ></Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                  title="저장"
+                ></Button>
+              </ButtonContainer>
+            </GridTitleContainer>
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
                 _export = exporter;
               }}
+              fileName="증명서발급"
             >
-              <GridTitleContainer>
-                <GridTitle>문서 리스트</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                  >
-                    결재문서접기/펼치기
-                  </Button>
-                  <Button
-                    onClick={onAddClick}
-                    themeColor={"primary"}
-                    icon="plus"
-                    title="행 추가"
-                  ></Button>
-                  <Button
-                    onClick={onDeleteClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                    title="행 삭제"
-                  ></Button>
-                  <Button
-                    onClick={onSaveClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="save"
-                    title="저장"
-                  ></Button>
-                </ButtonContainer>
-              </GridTitleContainer>
               <Grid
                 style={{ height: "80vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
-                    pubdt: row.pubdt == "" ? new Date() : toDate(row.pubdt),
+                    pubdt: row.pubdt
+                      ? new Date(dateformat(row.pubdt))
+                      : new Date(dateformat("19000101")),
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
                   mainDataState

@@ -41,11 +41,11 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   handleKeyPressSearch,
   setDefaultDate,
-  toDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -190,10 +190,16 @@ const AC_A0090W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
+  let _export2: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      const optionsGridTwo = _export2.workbookOptions();
+      optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+      optionsGridOne.sheets[0].title = "기본정보";
+      optionsGridOne.sheets[1].title = "상세정보";
+      _export.save(optionsGridOne);
     }
   };
   //메시지 조회
@@ -500,9 +506,6 @@ const AC_A0090W: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
-        inputdt: item.inputdt == "" ? new Date() : toDate(item.inputdt),
-        taxdt1: item.taxdt1 == "" ? new Date() : toDate(item.taxdt1),
-        taxdt2: item.taxdt2 == "" ? new Date() : toDate(item.taxdt2),
       }));
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
@@ -603,8 +606,6 @@ const AC_A0090W: React.FC = () => {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
-        indate: item.indate == "" ? new Date() : toDate(item.indate),
-        shipdt: item.shipdt == "" ? new Date() : toDate(item.shipdt),
       }));
 
       setMainDataResult2({
@@ -672,12 +673,12 @@ const AC_A0090W: React.FC = () => {
       chr1: "",
       gckey: "",
       gisu: "",
-      inputdt: new Date(),
+      inputdt: convertDateToStr(new Date()),
       location: filters.location,
       orgdiv: "01",
       remark: "",
-      taxdt1: new Date(),
-      taxdt2: new Date(),
+      taxdt1: convertDateToStr(new Date()),
+      taxdt2: convertDateToStr(new Date()),
       taxyy: convertDateToStr(filters.taxyy).substring(0, 4),
       rowstatus: "N",
     };
@@ -694,6 +695,8 @@ const AC_A0090W: React.FC = () => {
       skip: 0,
       take: prev.take + 1,
     }));
+    setPage2(initialPageState);
+    setMainDataResult2(process([], mainDataState2));
   };
 
   const onAddClick2 = () => {
@@ -718,7 +721,7 @@ const AC_A0090W: React.FC = () => {
         docunm: "",
         docuno: "",
         gisu: selectRow.gisu,
-        indate: new Date(),
+        indate: convertDateToStr(new Date()),
         inname: "",
         jwpay: 0,
         jypay: 0,
@@ -727,7 +730,7 @@ const AC_A0090W: React.FC = () => {
         paycd: "",
         payrate: 0,
         seq: 0,
-        shipdt: new Date(),
+        shipdt: convertDateToStr(new Date()),
         swpay: 0,
         sypay: 0,
         taxyy: selectRow.taxyy,
@@ -753,7 +756,7 @@ const AC_A0090W: React.FC = () => {
     let newData: any[] = [];
     let Object: any[] = [];
     let Object2: any[] = [];
-    let data;
+    let data: any;
 
     mainDataResult.data.forEach((item: any, index: number) => {
       if (!selectedState[item[DATA_ITEM_KEY]]) {
@@ -783,6 +786,16 @@ const AC_A0090W: React.FC = () => {
     setSelectedState({
       [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
     });
+
+    if(data != undefined) {
+      setFilters2((prev) => ({
+        ...prev,
+        gisu: data.gisu,
+        chasu: data.chasu,
+        isSearch: true,
+        pgNum: 1,
+      }));
+    }
   };
 
   const onDeleteClick2 = (e: any) => {
@@ -1114,15 +1127,9 @@ const AC_A0090W: React.FC = () => {
       dataArr.row_status_s.push(rowstatus);
       dataArr.gisu_s.push(gisu);
       dataArr.chasu_s.push(chasu);
-      dataArr.taxdt1_s.push(
-        typeof taxdt1 == "string" ? taxdt1 : convertDateToStr(taxdt1)
-      );
-      dataArr.taxdt2_s.push(
-        typeof taxdt2 == "string" ? taxdt2 : convertDateToStr(taxdt2)
-      );
-      dataArr.inputdt_s.push(
-        typeof inputdt == "string" ? inputdt : convertDateToStr(inputdt)
-      );
+      dataArr.taxdt1_s.push(taxdt1);
+      dataArr.taxdt2_s.push(taxdt2);
+      dataArr.inputdt_s.push(inputdt);
       dataArr.remark_s.push(remark);
       dataArr.chr1_s.push(chr1);
     });
@@ -1140,15 +1147,9 @@ const AC_A0090W: React.FC = () => {
       dataArr.row_status_s.push(rowstatus);
       dataArr.gisu_s.push(gisu);
       dataArr.chasu_s.push(chasu);
-      dataArr.taxdt1_s.push(
-        typeof taxdt1 == "string" ? taxdt1 : convertDateToStr(taxdt1)
-      );
-      dataArr.taxdt2_s.push(
-        typeof taxdt2 == "string" ? taxdt2 : convertDateToStr(taxdt2)
-      );
-      dataArr.inputdt_s.push(
-        typeof inputdt == "string" ? inputdt : convertDateToStr(inputdt)
-      );
+      dataArr.taxdt1_s.push(taxdt1);
+      dataArr.taxdt2_s.push(taxdt2);
+      dataArr.inputdt_s.push(inputdt);
       dataArr.remark_s.push(remark);
       dataArr.chr1_s.push(chr1);
     });
@@ -1409,12 +1410,8 @@ const AC_A0090W: React.FC = () => {
       dataArr.seq_s.push(seq);
       dataArr.docunm_s.push(docunm);
       dataArr.inname_s.push(inname);
-      dataArr.indate_s.push(
-        typeof indate == "string" ? indate : convertDateToStr(indate)
-      );
-      dataArr.shipdt_s.push(
-        typeof shipdt == "string" ? shipdt : convertDateToStr(shipdt)
-      );
+      dataArr.indate_s.push(indate);
+      dataArr.shipdt_s.push(shipdt);
       dataArr.paycd_s.push(paycd);
       dataArr.payrate_s.push(payrate);
       dataArr.jypay_s.push(jypay);
@@ -1445,12 +1442,8 @@ const AC_A0090W: React.FC = () => {
       dataArr.seq_s.push(seq);
       dataArr.docunm_s.push(docunm);
       dataArr.inname_s.push(inname);
-      dataArr.indate_s.push(
-        typeof indate == "string" ? indate : convertDateToStr(indate)
-      );
-      dataArr.shipdt_s.push(
-        typeof shipdt == "string" ? shipdt : convertDateToStr(shipdt)
-      );
+      dataArr.indate_s.push(indate);
+      dataArr.shipdt_s.push(shipdt);
       dataArr.paycd_s.push(paycd);
       dataArr.payrate_s.push(payrate);
       dataArr.jypay_s.push(jypay);
@@ -1541,50 +1534,60 @@ const AC_A0090W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>기본정보</GridTitle>
+          <ButtonContainer>
+            <Button
+              onClick={onCopyClick}
+              icon="copy"
+              fillMode="outline"
+              themeColor={"primary"}
+            >
+              이전년도 복사
+            </Button>
+            <Button
+              onClick={onAddClick}
+              themeColor={"primary"}
+              icon="plus"
+              title="행 추가"
+            ></Button>
+            <Button
+              onClick={onDeleteClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="minus"
+              title="행 삭제"
+            ></Button>
+            <Button
+              onClick={onSaveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="save"
+              title="저장"
+            ></Button>
+          </ButtonContainer>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="영세율표제"
         >
-          <GridTitleContainer>
-            <GridTitle>기본정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onCopyClick}
-                icon="copy"
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                이전년도 복사
-              </Button>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="plus"
-                title="행 추가"
-              ></Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-                title="저장"
-              ></Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
             style={{ height: "45vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
+                taxdt1: row.taxdt1
+                  ? new Date(dateformat(row.taxdt1))
+                  : new Date(dateformat("19000101")),
+                taxdt2: row.taxdt2
+                  ? new Date(dateformat(row.taxdt2))
+                  : new Date(dateformat("19000101")),
+                inputdt: row.inputdt
+                  ? new Date(dateformat(row.inputdt))
+                  : new Date(dateformat("19000101")),
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -1664,6 +1667,21 @@ const AC_A0090W: React.FC = () => {
               themeColor={"primary"}
               icon="plus"
               title="행 추가"
+              disabled={
+                mainDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0] == undefined
+                  ? true
+                  : mainDataResult.data.filter(
+                      (item) =>
+                        item[DATA_ITEM_KEY] ==
+                        Object.getOwnPropertyNames(selectedState)[0]
+                    )[0].rowstatus == "N"
+                  ? true
+                  : false
+              }
             ></Button>
             <Button
               onClick={onDeleteClick2}
@@ -1671,6 +1689,21 @@ const AC_A0090W: React.FC = () => {
               themeColor={"primary"}
               icon="minus"
               title="행 삭제"
+              disabled={
+                mainDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0] == undefined
+                  ? true
+                  : mainDataResult.data.filter(
+                      (item) =>
+                        item[DATA_ITEM_KEY] ==
+                        Object.getOwnPropertyNames(selectedState)[0]
+                    )[0].rowstatus == "N"
+                  ? true
+                  : false
+              }
             ></Button>
             <Button
               onClick={onSaveClick2}
@@ -1678,86 +1711,115 @@ const AC_A0090W: React.FC = () => {
               themeColor={"primary"}
               icon="save"
               title="저장"
+              disabled={
+                mainDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0] == undefined
+                  ? true
+                  : mainDataResult.data.filter(
+                      (item) =>
+                        item[DATA_ITEM_KEY] ==
+                        Object.getOwnPropertyNames(selectedState)[0]
+                    )[0].rowstatus == "N"
+                  ? true
+                  : false
+              }
             ></Button>
           </ButtonContainer>
         </GridTitleContainer>
-        <Grid
-          style={{ height: "30vh" }}
-          data={process(
-            mainDataResult2.data.map((row) => ({
-              ...row,
-              [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-            })),
-            mainDataState2
-          )}
-          {...mainDataState2}
-          onDataStateChange={onMainDataStateChange2}
-          //선택 기능
-          dataItemKey={DATA_ITEM_KEY2}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
+        <ExcelExport
+          data={mainDataResult2.data}
+          ref={(exporter) => {
+            _export2 = exporter;
           }}
-          onSelectionChange={onSelectionChange2}
-          //스크롤 조회 기능
-          fixedScroll={true}
-          total={mainDataResult2.total}
-          skip={page2.skip}
-          take={page2.take}
-          pageable={true}
-          onPageChange={pageChange2}
-          //원하는 행 위치로 스크롤 기능
-          ref={gridRef2}
-          rowHeight={30}
-          //정렬기능
-          sortable={true}
-          onSortChange={onMainSortChange2}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
-          onItemChange={onItemChange2}
-          cellRender={customCellRender2}
-          rowRender={customRowRender2}
-          editField={EDIT_FIELD}
+          fileName="영세율표제"
         >
-          <GridColumn field="rowstatus" title=" " width="50px" />
-          {customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["grdList2"].map(
-              (item: any, idx: number) =>
-                item.sortOrder !== -1 && (
-                  <GridColumn
-                    key={idx}
-                    id={item.id}
-                    field={item.fieldName}
-                    title={item.caption}
-                    width={item.width}
-                    cell={
-                      numberField.includes(item.fieldName)
-                        ? NumberCell
-                        : dateField.includes(item.fieldName)
-                        ? DateCell
-                        : CustomComboField.includes(item.fieldName)
-                        ? CustomComboBoxCell2
-                        : undefined
-                    }
-                    headerCell={
-                      RequiredField.includes(item.fieldName)
-                        ? RequiredHeader
-                        : undefined
-                    }
-                    footerCell={
-                      item.sortOrder === 0
-                        ? mainTotalFooterCell2
-                        : numberField2.includes(item.fieldName)
-                        ? gridSumQtyFooterCell2
-                        : undefined
-                    }
-                  />
-                )
+          <Grid
+            style={{ height: "30vh" }}
+            data={process(
+              mainDataResult2.data.map((row) => ({
+                ...row,
+                indate: row.indate
+                  ? new Date(dateformat(row.indate))
+                  : new Date(dateformat("19000101")),
+                shipdt: row.shipdt
+                  ? new Date(dateformat(row.shipdt))
+                  : new Date(dateformat("19000101")),
+                [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+              })),
+              mainDataState2
             )}
-        </Grid>
+            {...mainDataState2}
+            onDataStateChange={onMainDataStateChange2}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY2}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onSelectionChange2}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={mainDataResult2.total}
+            skip={page2.skip}
+            take={page2.take}
+            pageable={true}
+            onPageChange={pageChange2}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef2}
+            rowHeight={30}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange2}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+            onItemChange={onItemChange2}
+            cellRender={customCellRender2}
+            rowRender={customRowRender2}
+            editField={EDIT_FIELD}
+          >
+            <GridColumn field="rowstatus" title=" " width="50px" />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList2"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        numberField.includes(item.fieldName)
+                          ? NumberCell
+                          : dateField.includes(item.fieldName)
+                          ? DateCell
+                          : CustomComboField.includes(item.fieldName)
+                          ? CustomComboBoxCell2
+                          : undefined
+                      }
+                      headerCell={
+                        RequiredField.includes(item.fieldName)
+                          ? RequiredHeader
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder === 0
+                          ? mainTotalFooterCell2
+                          : numberField2.includes(item.fieldName)
+                          ? gridSumQtyFooterCell2
+                          : undefined
+                      }
+                    />
+                  )
+              )}
+          </Grid>
+        </ExcelExport>
       </GridContainer>
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (

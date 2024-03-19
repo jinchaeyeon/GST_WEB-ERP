@@ -772,48 +772,51 @@ const CopyWindow = ({
     const selectRow = mainDataResult.data.filter(
       (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
-    const newDataItem = {
-      [DATA_ITEM_KEY]: ++temp,
-      chk: selectRow.chk,
-      doqty: selectRow.doqty,
-      dwgno: selectRow.dwgno,
-      insiz: selectRow.insiz,
-      itemcd: selectRow.itemcd,
-      itemnm: selectRow.itemnm,
-      jangqty: selectRow.jangqty,
-      ordkey: selectRow.ordkey,
-      ordnum: selectRow.ordnum,
-      ordseq: selectRow.ordseq,
-      orgdiv: "01",
-      plandt: selectRow.plandt,
-      plankey: selectRow.plankey,
-      planno: selectRow.planno,
-      planqty: selectRow.planqty,
-      planseq: selectRow.planseq,
-      proccd: selectRow.proccd,
-      procseq: selectRow.procseq,
-      purqty: selectRow.purqty,
-      rowstatus: "N",
-      remark: selectRow.remark,
-      qty: selectRow.qty,
-      qtyunit: selectRow.qtyunit,
-      unitwgt: selectRow.unitwgt,
-      wgt: selectRow.wgt,
-      wgtunit: selectRow.wgtunit,
-      unpcalmeth: selectRow.unpcalmeth,
-      amt: selectRow.amt,
-      unp: selectRow.unp,
-      wonamt: selectRow.wonamt,
-      taxamt: selectRow.taxamt,
-      totamt: selectRow.totamt,
-    };
-    setSubDataResult((prev) => {
-      return {
-        data: [newDataItem, ...prev.data],
-        total: prev.total + 1,
+
+    if (selectRow != undefined) {
+      const newDataItem = {
+        [DATA_ITEM_KEY]: ++temp,
+        chk: selectRow.chk,
+        doqty: selectRow.doqty,
+        dwgno: selectRow.dwgno,
+        insiz: selectRow.insiz,
+        itemcd: selectRow.itemcd,
+        itemnm: selectRow.itemnm,
+        jangqty: selectRow.jangqty,
+        ordkey: selectRow.ordkey,
+        ordnum: selectRow.ordnum,
+        ordseq: selectRow.ordseq,
+        orgdiv: "01",
+        plandt: selectRow.plandt,
+        plankey: selectRow.plankey,
+        planno: selectRow.planno,
+        planqty: selectRow.planqty,
+        planseq: selectRow.planseq,
+        proccd: selectRow.proccd,
+        procseq: selectRow.procseq,
+        purqty: selectRow.purqty,
+        rowstatus: "N",
+        remark: selectRow.remark,
+        qty: selectRow.qty,
+        qtyunit: selectRow.qtyunit,
+        unitwgt: selectRow.unitwgt,
+        wgt: selectRow.wgt,
+        wgtunit: selectRow.wgtunit,
+        unpcalmeth: selectRow.unpcalmeth,
+        amt: selectRow.amt,
+        unp: selectRow.unp,
+        wonamt: selectRow.wonamt,
+        taxamt: selectRow.taxamt,
+        totamt: selectRow.totamt,
       };
-    });
-    setSubSelectedState({ [newDataItem[DATA_ITEM_KEY3]]: true });
+      setSubDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+      setSubSelectedState({ [newDataItem[DATA_ITEM_KEY3]]: true });
+    }
   };
 
   const onDeleteClick = (e: any) => {

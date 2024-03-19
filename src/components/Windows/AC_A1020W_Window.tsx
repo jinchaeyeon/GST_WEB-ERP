@@ -57,10 +57,12 @@ import {
   UseGetValueFromSessionItem,
   UseParaPc,
   convertDateToStr,
+  dateformat,
   getGridItemChangedData,
   toDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
+import RequiredHeader from "../HeaderCells/RequiredHeader";
 import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 import PrsnnumWindow from "../Windows/CommonWindows/PrsnnumWindow";
@@ -986,7 +988,8 @@ const KendoWindow = ({
           item.location == "" ||
           item.prsnnum == "" ||
           item.usekind == "" ||
-          item.itemcd == ""
+          item.itemcd == "" ||
+          item.carddt == ""
         ) {
           valid = false;
         }
@@ -1451,7 +1454,9 @@ const KendoWindow = ({
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                carddt: row.carddt != "" ? toDate(row.carddt) : new Date(),
+                carddt: row.carddt
+                  ? new Date(dateformat(row.carddt))
+                  : new Date(dateformat("19000101")),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState
@@ -1494,6 +1499,7 @@ const KendoWindow = ({
               title="사용일"
               width="120px"
               cell={DateCell}
+              headerCell={RequiredHeader}
               footerCell={mainTotalFooterCell}
             />
             <GridColumn

@@ -52,12 +52,12 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   handleKeyPressSearch,
   numberWithCommas,
   setDefaultDate,
-  toDate,
 } from "../components/CommonFunction";
 import {
   EDIT_FIELD,
@@ -910,10 +910,46 @@ const HU_A3080W: React.FC = () => {
   }, [prsnnm5, prsnnum5, dptcd5]);
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
+  let _export2: any;
+  let _export3: any;
+  let _export4: any;
+  let _export5: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        optionsGridOne.sheets[0].title = "고정지급공제";
+        _export.save(optionsGridOne);
+      }
+    }
+    if (_export2 !== null && _export2 !== undefined) {
+      if (tabSelected == 1) {
+        const optionsGridTwo = _export2.workbookOptions();
+        optionsGridTwo.sheets[0].title = "일시지급공제";
+        _export2.save(optionsGridTwo);
+      }
+    }
+    if (_export3 !== null && _export3 !== undefined) {
+      if (tabSelected == 2) {
+        const optionsGridThree = _export3.workbookOptions();
+        optionsGridThree.sheets[0].title = "예외지급공제";
+        _export3.save(optionsGridThree);
+      }
+    }
+    if (_export4 !== null && _export4 !== undefined) {
+      if (tabSelected == 3) {
+        const optionsGridFour = _export4.workbookOptions();
+        optionsGridFour.sheets[0].title = "추가지급공제";
+        _export4.save(optionsGridFour);
+      }
+    }
+    if (_export5 !== null && _export5 !== undefined) {
+      if (tabSelected == 4) {
+        const optionsGridFive = _export5.workbookOptions();
+        optionsGridFive.sheets[0].title = "상여예외지급공제";
+        _export5.save(optionsGridFive);
+      }
     }
   };
 
@@ -3395,11 +3431,7 @@ const HU_A3080W: React.FC = () => {
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.paytype_s.push(paytype);
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
@@ -3417,11 +3449,7 @@ const HU_A3080W: React.FC = () => {
         remark = "",
       } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.paytype_s.push(paytype);
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
@@ -3497,11 +3525,7 @@ const HU_A3080W: React.FC = () => {
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.paytype_s.push(paytype);
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
@@ -3519,11 +3543,7 @@ const HU_A3080W: React.FC = () => {
         remark = "",
       } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.paytype_s.push(paytype);
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
@@ -3597,11 +3617,7 @@ const HU_A3080W: React.FC = () => {
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
       dataArr.amt_s.push(amt);
@@ -3617,11 +3633,7 @@ const HU_A3080W: React.FC = () => {
         remark = "",
       } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.prsnnum_s.push(prsnnum);
       dataArr.payitemcd_s.push(payitemcd);
       dataArr.amt_s.push(amt);
@@ -3693,11 +3705,7 @@ const HU_A3080W: React.FC = () => {
       } = item;
 
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.payitemcd_s.push(
         filters5.paydeductdiv == "1" ? "" : filters5.payitemcd
       );
@@ -3718,11 +3726,7 @@ const HU_A3080W: React.FC = () => {
         bnsrat = "",
       } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.payyrmm_s.push(
-        typeof payyrmm == "string"
-          ? payyrmm.substring(0, 6)
-          : convertDateToStr(payyrmm).substr(0, 6)
-      );
+      dataArr.payyrmm_s.push(payyrmm.substring(0, 6));
       dataArr.payitemcd_s.push(
         filters5.paydeductdiv == "1" ? "" : filters5.payitemcd
       );
@@ -4548,44 +4552,45 @@ const HU_A3080W: React.FC = () => {
             }}
           >
             <GridContainer>
+              <GridTitleContainer>
+                <GridTitle>기본정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    themeColor={"primary"}
+                    onClick={onUserMultiWndClick}
+                    icon="folder-open"
+                  >
+                    일괄등록
+                  </Button>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="plus"
+                    title="행 추가"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                  ></Button>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    title="저장"
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
               <ExcelExport
                 data={mainDataResult.data}
                 ref={(exporter) => {
                   _export = exporter;
                 }}
+                fileName="지급공제처리"
               >
-                <GridTitleContainer>
-                  <GridTitle>기본정보</GridTitle>
-                  <ButtonContainer>
-                    <Button
-                      themeColor={"primary"}
-                      onClick={onUserMultiWndClick}
-                      icon="folder-open"
-                    >
-                      일괄등록
-                    </Button>
-                    <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="plus"
-                      title="행 추가"
-                    ></Button>
-                    <Button
-                      onClick={onDeleteClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                      title="행 삭제"
-                    ></Button>
-                    <Button
-                      onClick={onSaveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      title="저장"
-                    ></Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
                 <Grid
                   style={{ height: "70vh" }}
                   data={process(
@@ -4729,94 +4734,104 @@ const HU_A3080W: React.FC = () => {
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "70vh" }}
-                data={process(
-                  mainDataResult2.data.map((row) => ({
-                    ...row,
-                    payyrmm: toDate(row.payyrmm + "01"),
-                    [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
-                  })),
-                  mainDataState2
-                )}
-                {...mainDataState2}
-                onDataStateChange={onMainDataStateChange2}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY2}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+              <ExcelExport
+                data={mainDataResult2.data}
+                ref={(exporter) => {
+                  _export2 = exporter;
                 }}
-                onSelectionChange={onSelectionChange2}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult2.total}
-                skip={page2.skip}
-                take={page2.take}
-                pageable={true}
-                onPageChange={pageChange2}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef2}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange2}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange2}
-                cellRender={customCellRender2}
-                rowRender={customRowRender2}
-                editField={EDIT_FIELD}
+                fileName="지급공제처리"
               >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                <GridColumn
-                  field="chk"
-                  title=" "
-                  width="45px"
-                  headerCell={CustomCheckBoxCell2}
-                  cell={CheckBoxCell}
-                />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : comboField.includes(item.fieldName)
-                              ? CustomComboBoxCell
-                              : radioField.includes(item.fieldName)
-                              ? CustomRadioCell
-                              : commendField.includes(item.fieldName)
-                              ? ColumnCommandCell2
-                              : dateField.includes(item.fieldName)
-                              ? MonthDateCell
-                              : undefined
-                          }
-                          headerCell={
-                            requiredField2.includes(item.fieldName)
-                              ? RequiredHeader
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder === 0
-                              ? mainTotalFooterCell2
-                              : numberField.includes(item.fieldName)
-                              ? editNumberFooterCell2
-                              : undefined
-                          }
-                        />
-                      )
+                <Grid
+                  style={{ height: "70vh" }}
+                  data={process(
+                    mainDataResult2.data.map((row) => ({
+                      ...row,
+                      payyrmm: row.payyrmm
+                        ? new Date(dateformat(row.payyrmm))
+                        : new Date(dateformat("19000101")),
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                    })),
+                    mainDataState2
                   )}
-              </Grid>
+                  {...mainDataState2}
+                  onDataStateChange={onMainDataStateChange2}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange2}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult2.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef2}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange2}
+                  cellRender={customCellRender2}
+                  rowRender={customRowRender2}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="chk"
+                    title=" "
+                    width="45px"
+                    headerCell={CustomCheckBoxCell2}
+                    cell={CheckBoxCell}
+                  />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : comboField.includes(item.fieldName)
+                                ? CustomComboBoxCell
+                                : radioField.includes(item.fieldName)
+                                ? CustomRadioCell
+                                : commendField.includes(item.fieldName)
+                                ? ColumnCommandCell2
+                                : dateField.includes(item.fieldName)
+                                ? MonthDateCell
+                                : undefined
+                            }
+                            headerCell={
+                              requiredField2.includes(item.fieldName)
+                                ? RequiredHeader
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? mainTotalFooterCell2
+                                : numberField.includes(item.fieldName)
+                                ? editNumberFooterCell2
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
             </GridContainer>
           </FormContext2.Provider>
         </TabStripTab>
@@ -4874,94 +4889,104 @@ const HU_A3080W: React.FC = () => {
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "70vh" }}
-                data={process(
-                  mainDataResult3.data.map((row) => ({
-                    ...row,
-                    payyrmm: toDate(row.payyrmm + "01"),
-                    [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
-                  })),
-                  mainDataState3
-                )}
-                {...mainDataState3}
-                onDataStateChange={onMainDataStateChange3}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY3}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+              <ExcelExport
+                data={mainDataResult3.data}
+                ref={(exporter) => {
+                  _export3 = exporter;
                 }}
-                onSelectionChange={onSelectionChange3}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult3.total}
-                skip={page3.skip}
-                take={page3.take}
-                pageable={true}
-                onPageChange={pageChange3}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef3}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange3}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange3}
-                cellRender={customCellRender3}
-                rowRender={customRowRender3}
-                editField={EDIT_FIELD}
+                fileName="지급공제처리"
               >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                <GridColumn
-                  field="chk"
-                  title=" "
-                  width="45px"
-                  headerCell={CustomCheckBoxCell3}
-                  cell={CheckBoxCell}
-                />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList3"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : comboField.includes(item.fieldName)
-                              ? CustomComboBoxCell
-                              : radioField.includes(item.fieldName)
-                              ? CustomRadioCell
-                              : commendField.includes(item.fieldName)
-                              ? ColumnCommandCell3
-                              : dateField.includes(item.fieldName)
-                              ? MonthDateCell
-                              : undefined
-                          }
-                          headerCell={
-                            requiredField2.includes(item.fieldName)
-                              ? RequiredHeader
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder === 0
-                              ? mainTotalFooterCell3
-                              : numberField.includes(item.fieldName)
-                              ? editNumberFooterCell3
-                              : undefined
-                          }
-                        />
-                      )
+                <Grid
+                  style={{ height: "70vh" }}
+                  data={process(
+                    mainDataResult3.data.map((row) => ({
+                      ...row,
+                      payyrmm: row.payyrmm
+                        ? new Date(dateformat(row.payyrmm))
+                        : new Date(dateformat("19000101")),
+                      [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
+                    })),
+                    mainDataState3
                   )}
-              </Grid>
+                  {...mainDataState3}
+                  onDataStateChange={onMainDataStateChange3}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY3}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange3}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult3.total}
+                  skip={page3.skip}
+                  take={page3.take}
+                  pageable={true}
+                  onPageChange={pageChange3}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef3}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange3}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange3}
+                  cellRender={customCellRender3}
+                  rowRender={customRowRender3}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="chk"
+                    title=" "
+                    width="45px"
+                    headerCell={CustomCheckBoxCell3}
+                    cell={CheckBoxCell}
+                  />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList3"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : comboField.includes(item.fieldName)
+                                ? CustomComboBoxCell
+                                : radioField.includes(item.fieldName)
+                                ? CustomRadioCell
+                                : commendField.includes(item.fieldName)
+                                ? ColumnCommandCell3
+                                : dateField.includes(item.fieldName)
+                                ? MonthDateCell
+                                : undefined
+                            }
+                            headerCell={
+                              requiredField2.includes(item.fieldName)
+                                ? RequiredHeader
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? mainTotalFooterCell3
+                                : numberField.includes(item.fieldName)
+                                ? editNumberFooterCell3
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
             </GridContainer>
           </FormContext3.Provider>
         </TabStripTab>
@@ -5012,94 +5037,104 @@ const HU_A3080W: React.FC = () => {
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "70vh" }}
-                data={process(
-                  mainDataResult4.data.map((row) => ({
-                    ...row,
-                    payyrmm: toDate(row.payyrmm + "01"),
-                    [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
-                  })),
-                  mainDataState4
-                )}
-                {...mainDataState4}
-                onDataStateChange={onMainDataStateChange4}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY4}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+              <ExcelExport
+                data={mainDataResult4.data}
+                ref={(exporter) => {
+                  _export4 = exporter;
                 }}
-                onSelectionChange={onSelectionChange4}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult4.total}
-                skip={page4.skip}
-                take={page4.take}
-                pageable={true}
-                onPageChange={pageChange4}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef4}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange4}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange4}
-                cellRender={customCellRender4}
-                rowRender={customRowRender4}
-                editField={EDIT_FIELD}
+                fileName="지급공제처리"
               >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                <GridColumn
-                  field="chk"
-                  title=" "
-                  width="45px"
-                  headerCell={CustomCheckBoxCell4}
-                  cell={CheckBoxCell}
-                />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList4"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : comboField.includes(item.fieldName)
-                              ? CustomComboBoxCell
-                              : radioField.includes(item.fieldName)
-                              ? CustomRadioCell
-                              : commendField.includes(item.fieldName)
-                              ? ColumnCommandCell4
-                              : dateField.includes(item.fieldName)
-                              ? MonthDateCell
-                              : undefined
-                          }
-                          headerCell={
-                            requiredField2.includes(item.fieldName)
-                              ? RequiredHeader
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder === 0
-                              ? mainTotalFooterCell4
-                              : numberField.includes(item.fieldName)
-                              ? editNumberFooterCell4
-                              : undefined
-                          }
-                        />
-                      )
+                <Grid
+                  style={{ height: "70vh" }}
+                  data={process(
+                    mainDataResult4.data.map((row) => ({
+                      ...row,
+                      payyrmm: row.payyrmm
+                        ? new Date(dateformat(row.payyrmm))
+                        : new Date(dateformat("19000101")),
+                      [SELECTED_FIELD]: selectedState4[idGetter4(row)], //선택된 데이터
+                    })),
+                    mainDataState4
                   )}
-              </Grid>
+                  {...mainDataState4}
+                  onDataStateChange={onMainDataStateChange4}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY4}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange4}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult4.total}
+                  skip={page4.skip}
+                  take={page4.take}
+                  pageable={true}
+                  onPageChange={pageChange4}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef4}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange4}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange4}
+                  cellRender={customCellRender4}
+                  rowRender={customRowRender4}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="chk"
+                    title=" "
+                    width="45px"
+                    headerCell={CustomCheckBoxCell4}
+                    cell={CheckBoxCell}
+                  />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList4"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : comboField.includes(item.fieldName)
+                                ? CustomComboBoxCell
+                                : radioField.includes(item.fieldName)
+                                ? CustomRadioCell
+                                : commendField.includes(item.fieldName)
+                                ? ColumnCommandCell4
+                                : dateField.includes(item.fieldName)
+                                ? MonthDateCell
+                                : undefined
+                            }
+                            headerCell={
+                              requiredField2.includes(item.fieldName)
+                                ? RequiredHeader
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? mainTotalFooterCell4
+                                : numberField.includes(item.fieldName)
+                                ? editNumberFooterCell4
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
             </GridContainer>
           </FormContext4.Provider>
         </TabStripTab>
@@ -5150,94 +5185,104 @@ const HU_A3080W: React.FC = () => {
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "70vh" }}
-                data={process(
-                  mainDataResult5.data.map((row) => ({
-                    ...row,
-                    payyrmm: toDate(row.payyrmm + "01"),
-                    [SELECTED_FIELD]: selectedState5[idGetter5(row)], //선택된 데이터
-                  })),
-                  mainDataState5
-                )}
-                {...mainDataState5}
-                onDataStateChange={onMainDataStateChange5}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY5}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+              <ExcelExport
+                data={mainDataResult5.data}
+                ref={(exporter) => {
+                  _export5 = exporter;
                 }}
-                onSelectionChange={onSelectionChange5}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult5.total}
-                skip={page5.skip}
-                take={page5.take}
-                pageable={true}
-                onPageChange={pageChange5}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef5}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange5}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange5}
-                cellRender={customCellRender5}
-                rowRender={customRowRender5}
-                editField={EDIT_FIELD}
+                fileName="지급공제처리"
               >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                <GridColumn
-                  field="chk"
-                  title=" "
-                  width="45px"
-                  headerCell={CustomCheckBoxCell5}
-                  cell={CheckBoxCell}
-                />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList5"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : comboField.includes(item.fieldName)
-                              ? CustomComboBoxCell
-                              : radioField.includes(item.fieldName)
-                              ? CustomRadioCell
-                              : commendField.includes(item.fieldName)
-                              ? ColumnCommandCell5
-                              : dateField.includes(item.fieldName)
-                              ? MonthDateCell
-                              : undefined
-                          }
-                          headerCell={
-                            requiredField2.includes(item.fieldName)
-                              ? RequiredHeader
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder === 0
-                              ? mainTotalFooterCell5
-                              : numberField.includes(item.fieldName)
-                              ? editNumberFooterCell5
-                              : undefined
-                          }
-                        />
-                      )
+                <Grid
+                  style={{ height: "70vh" }}
+                  data={process(
+                    mainDataResult5.data.map((row) => ({
+                      ...row,
+                      payyrmm: row.payyrmm
+                        ? new Date(dateformat(row.payyrmm))
+                        : new Date(dateformat("19000101")),
+                      [SELECTED_FIELD]: selectedState5[idGetter5(row)], //선택된 데이터
+                    })),
+                    mainDataState5
                   )}
-              </Grid>
+                  {...mainDataState5}
+                  onDataStateChange={onMainDataStateChange5}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY5}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange5}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult5.total}
+                  skip={page5.skip}
+                  take={page5.take}
+                  pageable={true}
+                  onPageChange={pageChange5}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef5}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange5}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange5}
+                  cellRender={customCellRender5}
+                  rowRender={customRowRender5}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  <GridColumn
+                    field="chk"
+                    title=" "
+                    width="45px"
+                    headerCell={CustomCheckBoxCell5}
+                    cell={CheckBoxCell}
+                  />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList5"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : comboField.includes(item.fieldName)
+                                ? CustomComboBoxCell
+                                : radioField.includes(item.fieldName)
+                                ? CustomRadioCell
+                                : commendField.includes(item.fieldName)
+                                ? ColumnCommandCell5
+                                : dateField.includes(item.fieldName)
+                                ? MonthDateCell
+                                : undefined
+                            }
+                            headerCell={
+                              requiredField2.includes(item.fieldName)
+                                ? RequiredHeader
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? mainTotalFooterCell5
+                                : numberField.includes(item.fieldName)
+                                ? editNumberFooterCell5
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
             </GridContainer>
           </FormContext5.Provider>
         </TabStripTab>

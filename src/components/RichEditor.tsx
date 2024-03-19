@@ -3,7 +3,7 @@ import {
   EditorMountEvent,
   EditorTools,
   EditorUtils,
-  ProseMirror
+  ProseMirror,
 } from "@progress/kendo-react-editor";
 import React, { useEffect } from "react";
 import { insertImagePlugin } from "../components/UploadImgFunction/insertImagePlugin";
@@ -69,7 +69,6 @@ const RichEditor = React.forwardRef(
     const [styles, setStyles] = React.useState<null | string>(null);
     const editableRef = React.useRef<boolean>(true);
     const [editable, setEditable] = React.useState<boolean>(true);
-
     const view = React.useRef<any>(null);
 
     const onMount = (event: EditorMountEvent) => {
@@ -96,7 +95,6 @@ const RichEditor = React.forwardRef(
 
     useEffect(() => {
       if (view.current && editable) {
-        console.log(view.current.state);
         view.current.updateState(view.current.state);
       }
     }, [editable]);
@@ -223,7 +221,6 @@ const RichEditor = React.forwardRef(
       // HTML 문자열을 가상의 DOM 요소로 변환
       const parser = new DOMParser();
       const htmlDoc = parser.parseFromString(htmlString, "text/html");
-
       // 모든 요소를 선
       const allElements = htmlDoc.getElementsByTagName("*");
 
@@ -241,7 +238,6 @@ const RichEditor = React.forwardRef(
             element.setAttribute("cellpadding", "0");
           }
         }
-
         // css 기본 설정
         const css = `
         p, span{
@@ -261,6 +257,14 @@ const RichEditor = React.forwardRef(
         table td p {            
           margin: 0;
           padding: 0;
+        }
+        #parent {
+          width: 200px;
+          float: right;
+        }
+        #title {
+          background-color: #2289C3;
+          color: white;
         }
         `;
 
@@ -333,7 +337,7 @@ const RichEditor = React.forwardRef(
                   // FontName,
                   // FormatBlock,
                   [Undo, Redo],
-                  [Link, Unlink, InsertImage, ViewHtml],
+                  [Link, Unlink, InsertImage],
                   [InsertTable],
                   [AddRowBefore, AddRowAfter, AddColumnBefore, AddColumnAfter],
                   [DeleteRow, DeleteColumn, DeleteTable],

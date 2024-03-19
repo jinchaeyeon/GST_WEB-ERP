@@ -264,6 +264,7 @@ const SA_B3000W: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       [name]: value,
+      isSearch: name == "yyyy" ? true : false,
     }));
   };
 
@@ -495,10 +496,38 @@ const SA_B3000W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
+  let _export2: any;
+  let _export3: any;
+  let _export4: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        optionsGridOne.sheets[0].title = "전체";
+        _export.save(optionsGridOne);
+      }
+    }
+    if (_export2 !== null && _export2 !== undefined) {
+      if (tabSelected == 1) {
+        const optionsGridOne = _export2.workbookOptions();
+        optionsGridOne.sheets[0].title = "월별";
+        _export2.save(optionsGridOne);
+      }
+    }
+    if (_export3 !== null && _export3 !== undefined) {
+      if (tabSelected == 2) {
+        const optionsGridOne = _export3.workbookOptions();
+        optionsGridOne.sheets[0].title = "분기별";
+        _export3.save(optionsGridOne);
+      }
+    }
+    if (_export4 !== null && _export4 !== undefined) {
+      if (tabSelected == 3) {
+        const optionsGridOne = _export4.workbookOptions();
+        optionsGridOne.sheets[0].title = "5년분석";
+        _export4.save(optionsGridOne);
+      }
     }
   };
 
@@ -775,6 +804,7 @@ const SA_B3000W: React.FC = () => {
                 ref={(exporter) => {
                   _export = exporter;
                 }}
+                fileName="매출집계(업체)"
               >
                 <Grid
                   style={{ height: "34.5vh" }}
@@ -853,8 +883,9 @@ const SA_B3000W: React.FC = () => {
               <ExcelExport
                 data={gridDataResult.data}
                 ref={(exporter) => {
-                  _export = exporter;
+                  _export2 = exporter;
                 }}
+                fileName="매출집계(업체)"
               >
                 <Grid
                   style={{ height: "34.5vh" }}
@@ -1019,8 +1050,9 @@ const SA_B3000W: React.FC = () => {
               <ExcelExport
                 data={gridDataResult.data}
                 ref={(exporter) => {
-                  _export = exporter;
+                  _export3 = exporter;
                 }}
+                fileName="매출집계(업체)"
               >
                 <Grid
                   style={{ height: "34.5vh" }}
@@ -1297,8 +1329,9 @@ const SA_B3000W: React.FC = () => {
               <ExcelExport
                 data={gridDataResult.data}
                 ref={(exporter) => {
-                  _export = exporter;
+                  _export4 = exporter;
                 }}
+                fileName="매출집계(업체)"
               >
                 <Grid
                   style={{ height: "34.5vh" }}

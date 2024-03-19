@@ -347,10 +347,16 @@ const AC_A1040W: React.FC = () => {
   UseParaPc(setPc);
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
+  let _export2: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      const optionsGridTwo = _export2.workbookOptions();
+      optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+      optionsGridOne.sheets[0].title = "요약정보";
+      optionsGridOne.sheets[1].title = "기본정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -1549,32 +1555,29 @@ const AC_A1040W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
+        <GridTitleContainer>
+          <GridTitle>요약정보</GridTitle>
+          <ButtonContainer>
+            <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
+              확정
+            </Button>
+            <Button
+              onClick={onDeleteClick}
+              icon="delete"
+              fillMode="outline"
+              themeColor={"primary"}
+            >
+              해제
+            </Button>
+          </ButtonContainer>
+        </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="지출결의서-자동전표"
         >
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="file-add"
-              >
-                확정
-              </Button>
-              <Button
-                onClick={onDeleteClick}
-                icon="delete"
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                해제
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
             style={{ height: "38vh" }}
             data={process(
@@ -1702,74 +1705,82 @@ const AC_A1040W: React.FC = () => {
             </tbody>
           </FormBox>
         </FormBoxWrap>
-        <Grid
-          style={{ height: "25vh" }}
-          data={process(
-            mainDataResult2.data.map((row) => ({
-              ...row,
-              [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-            })),
-            mainDataState2
-          )}
-          {...mainDataState2}
-          onDataStateChange={onMainDataStateChange2}
-          //선택 기능
-          dataItemKey={DATA_ITEM_KEY2}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
+        <ExcelExport
+          data={mainDataResult2.data}
+          ref={(exporter) => {
+            _export2 = exporter;
           }}
-          onSelectionChange={onSelectionChange2}
-          //스크롤 조회 기능
-          fixedScroll={true}
-          total={mainDataResult2.total}
-          //정렬기능
-          sortable={true}
-          onSortChange={onMainSortChange2}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
-          onItemChange={onMainItemChange2}
-          cellRender={customCellRender2}
-          rowRender={customRowRender2}
-          editField={EDIT_FIELD}
+          fileName="지출결의서-자동전표"
         >
-          <GridColumn
-            field="chk"
-            title="반영유무"
-            width="45px"
-            cell={CheckBoxCell}
-          />
-          {customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["grdList2"].map(
-              (item: any, idx: number) =>
-                item.sortOrder !== -1 && (
-                  <GridColumn
-                    key={idx}
-                    id={item.id}
-                    field={item.fieldName}
-                    title={item.caption}
-                    width={item.width}
-                    cell={
-                      numberField.includes(item.fieldName)
-                        ? NumberCell
-                        : item.fieldName == "mngdata1"
-                        ? ColumnCommandCell
-                        : undefined
-                    }
-                    footerCell={
-                      item.sortOrder == 0
-                        ? mainTotalFooterCell2
-                        : numberField.includes(item.fieldName)
-                        ? gridSumQtyFooterCell2
-                        : undefined
-                    }
-                  ></GridColumn>
-                )
+          <Grid
+            style={{ height: "25vh" }}
+            data={process(
+              mainDataResult2.data.map((row) => ({
+                ...row,
+                [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+              })),
+              mainDataState2
             )}
-        </Grid>
+            {...mainDataState2}
+            onDataStateChange={onMainDataStateChange2}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY2}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onSelectionChange2}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={mainDataResult2.total}
+            //정렬기능
+            sortable={true}
+            onSortChange={onMainSortChange2}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+            onItemChange={onMainItemChange2}
+            cellRender={customCellRender2}
+            rowRender={customRowRender2}
+            editField={EDIT_FIELD}
+          >
+            <GridColumn
+              field="chk"
+              title="반영유무"
+              width="45px"
+              cell={CheckBoxCell}
+            />
+            {customOptionData !== null &&
+              customOptionData.menuCustomColumnOptions["grdList2"].map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      id={item.id}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        numberField.includes(item.fieldName)
+                          ? NumberCell
+                          : item.fieldName == "mngdata1"
+                          ? ColumnCommandCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder == 0
+                          ? mainTotalFooterCell2
+                          : numberField.includes(item.fieldName)
+                          ? gridSumQtyFooterCell2
+                          : undefined
+                      }
+                    ></GridColumn>
+                  )
+              )}
+          </Grid>
+        </ExcelExport>
       </GridContainer>
       {prsnnumWindowVisible && (
         <PrsnnumWindow

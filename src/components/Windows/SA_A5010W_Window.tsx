@@ -16,8 +16,7 @@ import {
 import {
   Checkbox,
   Input,
-  InputChangeEvent,
-  TextArea,
+  TextArea
 } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
@@ -241,17 +240,6 @@ const ColumnCommandCell = (props: GridCellProps) => {
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
-  const handleChange = (e: InputChangeEvent) => {
-    if (onChange) {
-      onChange({
-        dataIndex: 0,
-        dataItem: dataItem,
-        field: field,
-        syntheticEvent: e.syntheticEvent,
-        value: e.target.value ?? "",
-      });
-    }
-  };
   const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
   const onItemWndClick2 = () => {
     if (dataItem["rowstatus"] == "N") {
@@ -344,11 +332,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {isInEdit ? (
-        <Input value={value} onChange={handleChange} type="text" />
-      ) : (
-        value
-      )}
+      {value}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -543,62 +527,204 @@ const CopyWindow = ({
 
   useEffect(() => {
     (async () => {
-      var unp = await fetchUnpItem(filters.custcd, itemInfo.itemcd);
-      const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] ==
-        parseInt(Object.getOwnPropertyNames(selectedState)[0])
-          ? {
-              ...item,
-              itemcd: itemInfo.itemcd,
-              itemno: itemInfo.itemno,
-              itemnm: itemInfo.itemnm,
-              insiz: itemInfo.insiz,
-              model: itemInfo.model,
-              bnatur: itemInfo.bnatur,
-              spec: itemInfo.spec,
-              //invunit
-              qtyunit: itemInfo.invunit,
-              invunitnm: itemInfo.invunitnm,
-              unitwgt: itemInfo.unitwgt,
-              wgtunit: itemInfo.wgtunit,
-              wgtunitnm: itemInfo.wgtunitnm,
-              maker: itemInfo.maker,
-              dwgno: itemInfo.dwgno,
-              remark: itemInfo.remark,
-              itemlvl1: itemInfo.itemlvl1,
-              itemlvl2: itemInfo.itemlvl2,
-              itemlvl3: itemInfo.itemlvl3,
-              extra_field1: itemInfo.extra_field1,
-              extra_field2: itemInfo.extra_field2,
-              extra_field7: itemInfo.extra_field7,
-              extra_field6: itemInfo.extra_field6,
-              extra_field8: itemInfo.extra_field8,
-              packingsiz: itemInfo.packingsiz,
-              unitqty: itemInfo.unitqty,
-              color: itemInfo.color,
-              gubun: itemInfo.gubun,
-              qcyn: itemInfo.qcyn,
-              outside: itemInfo.outside,
-              itemthick: itemInfo.itemthick,
-              itemlvl4: itemInfo.itemlvl4,
-              itemlvl5: itemInfo.itemlvl5,
-              custitemnm: itemInfo.custitemnm,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
-              unp: unp,
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
+      if (itemInfo.itemcd == "") {
+        const newData = mainDataResult.data.map((item) =>
+          item[DATA_ITEM_KEY] ==
+          parseInt(Object.getOwnPropertyNames(selectedState)[0])
+            ? {
+                ...item,
+                itemcd: "",
+                itemnm: "",
+                itemacnt: "",
+                insiz: "",
+                qty: 0,
+                qtyunit: "",
+                unp: 0,
+                unpcalmeth: "Q",
+                amt: 0,
+                wonamt: 0,
+                taxamt: 0,
+                totamt: 0,
+                totwgt: 0,
+                dlramt: 0,
+                chk: "",
+                unitwgt: 0,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
 
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else {
+        var unp = await fetchUnpItem(filters.custcd, itemInfo.itemcd);
+        const newData = mainDataResult.data.map((item) =>
+          item[DATA_ITEM_KEY] ==
+          parseInt(Object.getOwnPropertyNames(selectedState)[0])
+            ? {
+                ...item,
+                itemcd: itemInfo.itemcd,
+                itemno: itemInfo.itemno,
+                itemnm: itemInfo.itemnm,
+                insiz: itemInfo.insiz,
+                model: itemInfo.model,
+                bnatur: itemInfo.bnatur,
+                spec: itemInfo.spec,
+                //invunit
+                qtyunit: itemInfo.invunit,
+                invunitnm: itemInfo.invunitnm,
+                unitwgt: itemInfo.unitwgt,
+                wgtunit: itemInfo.wgtunit,
+                wgtunitnm: itemInfo.wgtunitnm,
+                maker: itemInfo.maker,
+                dwgno: itemInfo.dwgno,
+                remark: itemInfo.remark,
+                itemlvl1: itemInfo.itemlvl1,
+                itemlvl2: itemInfo.itemlvl2,
+                itemlvl3: itemInfo.itemlvl3,
+                extra_field1: itemInfo.extra_field1,
+                extra_field2: itemInfo.extra_field2,
+                extra_field7: itemInfo.extra_field7,
+                extra_field6: itemInfo.extra_field6,
+                extra_field8: itemInfo.extra_field8,
+                packingsiz: itemInfo.packingsiz,
+                unitqty: itemInfo.unitqty,
+                color: itemInfo.color,
+                gubun: itemInfo.gubun,
+                qcyn: itemInfo.qcyn,
+                outside: itemInfo.outside,
+                itemthick: itemInfo.itemthick,
+                itemlvl4: itemInfo.itemlvl4,
+                itemlvl5: itemInfo.itemlvl5,
+                custitemnm: itemInfo.custitemnm,
+                rowstatus: item.rowstatus === "N" ? "N" : "U",
+                unp: unp,
+                amt:
+                  item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                    ? filters.amtunit == "KRW"
+                      ? item.qty * unp
+                      : item.qty * unp * filters.wonchgrat
+                    : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                    ? filters.amtunit == "KRW"
+                      ? (item.len == undefined ? 0 : item.len) * unp
+                      : (item.len == undefined ? 0 : item.len) *
+                        unp *
+                        filters.wonchgrat
+                    : item.unpcalmeth == "W"
+                    ? filters.amtunit == "KRW"
+                      ? item.totwgt * unp
+                      : item.totwgt * unp * filters.wonchgrat
+                    : filters.amtunit == "KRW"
+                    ? item.amt
+                    : item.amt * filters.wonchgrat,
+                wonamt:
+                  item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                    ? filters.amtunit == "KRW"
+                      ? item.qty * unp
+                      : item.qty * unp * filters.wonchgrat
+                    : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                    ? filters.amtunit == "KRW"
+                      ? (item.len == undefined ? 0 : item.len) * unp
+                      : (item.len == undefined ? 0 : item.len) *
+                        unp *
+                        filters.wonchgrat
+                    : item.unpcalmeth == "W"
+                    ? filters.amtunit == "KRW"
+                      ? item.totwgt * unp
+                      : item.totwgt * unp * filters.wonchgrat
+                    : filters.amtunit == "KRW"
+                    ? item.amt
+                    : item.amt * filters.wonchgrat,
+                taxamt: Math.round(
+                  filters.taxdiv == "A"
+                    ? item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                      ? filters.amtunit == "KRW"
+                        ? item.qty * unp * 0.1
+                        : item.qty * unp * filters.wonchgrat * 0.1
+                      : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                      ? filters.amtunit == "KRW"
+                        ? (item.len == undefined ? 0 : item.len) * unp * 0.1
+                        : (item.len == undefined ? 0 : item.len) *
+                          unp *
+                          filters.wonchgrat *
+                          0.1
+                      : item.unpcalmeth == "W"
+                      ? filters.amtunit == "KRW"
+                        ? item.totwgt * unp * 0.1
+                        : item.totwgt * unp * filters.wonchgrat * 0.1
+                      : filters.amtunit == "KRW"
+                      ? item.amt * 0.1
+                      : item.amt * filters.wonchgrat * 0.1
+                    : 0
+                ),
+                totamt: Math.round(
+                  (item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                    ? filters.amtunit == "KRW"
+                      ? item.qty * unp
+                      : item.qty * unp * filters.wonchgrat
+                    : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                    ? filters.amtunit == "KRW"
+                      ? (item.len == undefined ? 0 : item.len) * unp
+                      : (item.len == undefined ? 0 : item.len) *
+                        unp *
+                        filters.wonchgrat
+                    : item.unpcalmeth == "W"
+                    ? filters.amtunit == "KRW"
+                      ? item.totwgt * unp
+                      : item.totwgt * unp * filters.wonchgrat
+                    : filters.amtunit == "KRW"
+                    ? item.amt
+                    : item.amt * filters.wonchgrat) +
+                    Math.round(
+                      filters.taxdiv == "A"
+                        ? filters.amtunit == "KRW"
+                          ? (item.qty * unp) / 10
+                          : (item.qty * unp * filters.wonchgrat) / 10
+                        : 0
+                    )
+                ),
+                dlramt: Math.round(
+                  filters.uschgrat != 0
+                    ? (item.unpcalmeth == "Q" || item.unpcalmeth == ""
+                        ? filters.amtunit == "KRW"
+                          ? item.qty * unp
+                          : item.qty * unp * filters.wonchgrat
+                        : item.unpcalmeth == "F" || item.unpcalmeth == "L"
+                        ? filters.amtunit == "KRW"
+                          ? (item.len == undefined ? 0 : item.len) * unp
+                          : (item.len == undefined ? 0 : item.len) *
+                            unp *
+                            filters.wonchgrat
+                        : item.unpcalmeth == "W"
+                        ? filters.amtunit == "KRW"
+                          ? item.totwgt * unp
+                          : item.totwgt * unp * filters.wonchgrat
+                        : filters.amtunit == "KRW"
+                        ? item.amt
+                        : item.amt * filters.wonchgrat) * filters.uschgrat
+                    : 0
+                ),
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+        );
+
+        setMainDataResult((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
     })();
   }, [itemInfo]);
 
@@ -1228,7 +1354,7 @@ const CopyWindow = ({
     }
   };
   const fetchUnpItem = async (custcd: string, itemcd: string) => {
-    if (custcd == "") return;
+    if (custcd == "") return 0;
     let data: any;
 
     const queryStr = getUnpQuery(custcd);
@@ -2464,47 +2590,53 @@ const CopyWindow = ({
     [mainDataResult]
   );
 
-  const exitEdit = () => {
+  const exitEdit = async () => {
     if (tempResult.data != mainDataResult.data) {
       if (editedField !== "itemcd") {
+        const itemcd = mainDataResult.data.filter(
+          (item) =>
+            item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        )[0];
+        var unp = await fetchUnpItem(filters.custcd, itemcd.itemcd);
         const newData = mainDataResult.data.map((item) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
             ? {
                 ...item,
                 rowstatus: item.rowstatus == "N" ? "N" : "U",
+                unp: unp,
                 amt:
                   item.unpcalmeth == "Q" || item.unpcalmeth == ""
                     ? filters.amtunit == "KRW"
-                      ? item.qty * item.unp
-                      : item.qty * item.unp * filters.wonchgrat
+                      ? item.qty * unp
+                      : item.qty * unp * filters.wonchgrat
                     : item.unpcalmeth == "F" || item.unpcalmeth == "L"
                     ? filters.amtunit == "KRW"
-                      ? (item.len == undefined ? 0 : item.len) * item.unp
+                      ? (item.len == undefined ? 0 : item.len) * unp
                       : (item.len == undefined ? 0 : item.len) *
-                        item.unp *
+                        unp *
                         filters.wonchgrat
                     : item.unpcalmeth == "W"
                     ? filters.amtunit == "KRW"
-                      ? item.totwgt * item.unp
-                      : item.totwgt * item.unp * filters.wonchgrat
+                      ? item.totwgt * unp
+                      : item.totwgt * unp * filters.wonchgrat
                     : filters.amtunit == "KRW"
                     ? item.amt
                     : item.amt * filters.wonchgrat,
                 wonamt:
                   item.unpcalmeth == "Q" || item.unpcalmeth == ""
                     ? filters.amtunit == "KRW"
-                      ? item.qty * item.unp
-                      : item.qty * item.unp * filters.wonchgrat
+                      ? item.qty * unp
+                      : item.qty * unp * filters.wonchgrat
                     : item.unpcalmeth == "F" || item.unpcalmeth == "L"
                     ? filters.amtunit == "KRW"
-                      ? (item.len == undefined ? 0 : item.len) * item.unp
+                      ? (item.len == undefined ? 0 : item.len) * unp
                       : (item.len == undefined ? 0 : item.len) *
-                        item.unp *
+                        unp *
                         filters.wonchgrat
                     : item.unpcalmeth == "W"
                     ? filters.amtunit == "KRW"
-                      ? item.totwgt * item.unp
-                      : item.totwgt * item.unp * filters.wonchgrat
+                      ? item.totwgt * unp
+                      : item.totwgt * unp * filters.wonchgrat
                     : filters.amtunit == "KRW"
                     ? item.amt
                     : item.amt * filters.wonchgrat,
@@ -2512,21 +2644,19 @@ const CopyWindow = ({
                   filters.taxdiv == "A"
                     ? item.unpcalmeth == "Q" || item.unpcalmeth == ""
                       ? filters.amtunit == "KRW"
-                        ? item.qty * item.unp * 0.1
-                        : item.qty * item.unp * filters.wonchgrat * 0.1
+                        ? item.qty * unp * 0.1
+                        : item.qty * unp * filters.wonchgrat * 0.1
                       : item.unpcalmeth == "F" || item.unpcalmeth == "L"
                       ? filters.amtunit == "KRW"
-                        ? (item.len == undefined ? 0 : item.len) *
-                          item.unp *
-                          0.1
+                        ? (item.len == undefined ? 0 : item.len) * unp * 0.1
                         : (item.len == undefined ? 0 : item.len) *
-                          item.unp *
+                          unp *
                           filters.wonchgrat *
                           0.1
                       : item.unpcalmeth == "W"
                       ? filters.amtunit == "KRW"
-                        ? item.totwgt * item.unp * 0.1
-                        : item.totwgt * item.unp * filters.wonchgrat * 0.1
+                        ? item.totwgt * unp * 0.1
+                        : item.totwgt * unp * filters.wonchgrat * 0.1
                       : filters.amtunit == "KRW"
                       ? item.amt * 0.1
                       : item.amt * filters.wonchgrat * 0.1
@@ -2535,26 +2665,26 @@ const CopyWindow = ({
                 totamt: Math.round(
                   (item.unpcalmeth == "Q" || item.unpcalmeth == ""
                     ? filters.amtunit == "KRW"
-                      ? item.qty * item.unp
-                      : item.qty * item.unp * filters.wonchgrat
+                      ? item.qty * unp
+                      : item.qty * unp * filters.wonchgrat
                     : item.unpcalmeth == "F" || item.unpcalmeth == "L"
                     ? filters.amtunit == "KRW"
-                      ? (item.len == undefined ? 0 : item.len) * item.unp
+                      ? (item.len == undefined ? 0 : item.len) * unp
                       : (item.len == undefined ? 0 : item.len) *
-                        item.unp *
+                        unp *
                         filters.wonchgrat
                     : item.unpcalmeth == "W"
                     ? filters.amtunit == "KRW"
-                      ? item.totwgt * item.unp
-                      : item.totwgt * item.unp * filters.wonchgrat
+                      ? item.totwgt * unp
+                      : item.totwgt * unp * filters.wonchgrat
                     : filters.amtunit == "KRW"
                     ? item.amt
                     : item.amt * filters.wonchgrat) +
                     Math.round(
                       filters.taxdiv == "A"
                         ? filters.amtunit == "KRW"
-                          ? (item.qty * item.unp) / 10
-                          : (item.qty * item.unp * filters.wonchgrat) / 10
+                          ? (item.qty * unp) / 10
+                          : (item.qty * unp * filters.wonchgrat) / 10
                         : 0
                     )
                 ),
@@ -2562,18 +2692,18 @@ const CopyWindow = ({
                   filters.uschgrat != 0
                     ? (item.unpcalmeth == "Q" || item.unpcalmeth == ""
                         ? filters.amtunit == "KRW"
-                          ? item.qty * item.unp
-                          : item.qty * item.unp * filters.wonchgrat
+                          ? item.qty * unp
+                          : item.qty * unp * filters.wonchgrat
                         : item.unpcalmeth == "F" || item.unpcalmeth == "L"
                         ? filters.amtunit == "KRW"
-                          ? (item.len == undefined ? 0 : item.len) * item.unp
+                          ? (item.len == undefined ? 0 : item.len) * unp
                           : (item.len == undefined ? 0 : item.len) *
-                            item.unp *
+                            unp *
                             filters.wonchgrat
                         : item.unpcalmeth == "W"
                         ? filters.amtunit == "KRW"
-                          ? item.totwgt * item.unp
-                          : item.totwgt * item.unp * filters.wonchgrat
+                          ? item.totwgt * unp
+                          : item.totwgt * unp * filters.wonchgrat
                         : filters.amtunit == "KRW"
                         ? item.amt
                         : item.amt * filters.wonchgrat) * filters.uschgrat

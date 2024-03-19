@@ -359,10 +359,19 @@ const QC_A0120: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      if (tabSelected == 0) {
+        optionsGridOne.sheets[0].title = "공정불량";
+      } else if (tabSelected == 1) {
+        optionsGridOne.sheets[0].title = "소재불량";
+      } else {
+        optionsGridOne.sheets[0].title = "검사불량";
+      }
+
+      _export.save(optionsGridOne);
     }
   };
 
@@ -496,99 +505,107 @@ const QC_A0120: React.FC = () => {
             />
           </ButtonContainer>
         </GridTitleContainer>
-        <Grid
-          style={{ height: "78.5vh" }}
-          data={process(
-            detail1DataResult.data.map((row) => ({
-              ...row,
-              proccd: proccdListData.find(
-                (item: any) => item.sub_code === row.proccd
-              )?.code_name,
-              prodmac: prodmacListData.find(
-                (item: any) => item.fxcode === row.prodmac
-              )?.fxfull,
-              prodemp: prodempListData.find(
-                (item: any) => item.user_id === row.prodemp
-              )?.user_name,
-              badpct: Math.round(row.badpct),
-              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-            })),
-            detail1DataState
-          )}
-          {...detail1DataState}
-          onDataStateChange={onDetail1DataStateChange}
-          //선택 기능
-          dataItemKey={DATA_ITEM_KEY}
-          selectedField={SELECTED_FIELD}
-          selectable={{
-            enabled: true,
-            mode: "single",
+        <ExcelExport
+          data={detail1DataResult.data}
+          ref={(exporter) => {
+            _export = exporter;
           }}
-          onSelectionChange={onDetailSelectionChange}
-          //스크롤 조회 기능
-          fixedScroll={true}
-          total={detail1DataResult.total}
-          skip={page.skip}
-          take={page.take}
-          pageable={true}
-          onPageChange={pageChange}
-          //원하는 행 위치로 스크롤 기능
-          ref={gridRef}
-          rowHeight={30}
-          //정렬기능
-          sortable={true}
-          onSortChange={onDetail1SortChange}
-          //컬럼순서조정
-          reorderable={true}
-          //컬럼너비조정
-          resizable={true}
+          fileName="불량내역조회"
         >
-          <GridColumn
-            field="baddt"
-            title="불량일자"
-            width="120px"
-            cell={DateCell}
-          />
-          <GridColumn
-            field="lotnum"
-            title="LOT NO"
-            footerCell={detail1TotalFooterCell}
-            width="150px"
-          />
-          <GridColumn
-            field="prodqty"
-            title="생산량"
-            cell={NumberCell}
-            width="120px"
-          />
-          <GridColumn
-            field="goodqty"
-            title="양품수량"
-            cell={NumberCell}
-            width="120px"
-          />
-          <GridColumn
-            field="totbadqty"
-            title="불량수량"
-            cell={NumberCell}
-            width="120px"
-          />
-          <GridColumn
-            field="badpct"
-            title="불량률(%)"
-            cell={NumberCell}
-            width="120px"
-          />
-          <GridColumn field="proccd" title="공정" width="120px" />
-          <GridColumn field="prodmac" title="설비" width="120px" />
-          <GridColumn field="prodemp" title="작업자" width="120px" />
-          <GridColumn field="orglot" title="제조번호" width="120px" />
-          <GridColumn field="itemcd" title="품목코드" width="120px" />
-          <GridColumn field="itemnm" title="품목명" width="120px" />
-          <GridColumn field="bnatur" title="재질" width="120px" />
-          <GridColumn field="insiz" title="규격" width="120px" />
-          <GridColumn field="rekey" title="실적번호" width="150px" />
-        </Grid>
+          <Grid
+            style={{ height: "78.5vh" }}
+            data={process(
+              detail1DataResult.data.map((row) => ({
+                ...row,
+                proccd: proccdListData.find(
+                  (item: any) => item.sub_code === row.proccd
+                )?.code_name,
+                prodmac: prodmacListData.find(
+                  (item: any) => item.fxcode === row.prodmac
+                )?.fxfull,
+                prodemp: prodempListData.find(
+                  (item: any) => item.user_id === row.prodemp
+                )?.user_name,
+                badpct: Math.round(row.badpct),
+                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+              })),
+              detail1DataState
+            )}
+            {...detail1DataState}
+            onDataStateChange={onDetail1DataStateChange}
+            //선택 기능
+            dataItemKey={DATA_ITEM_KEY}
+            selectedField={SELECTED_FIELD}
+            selectable={{
+              enabled: true,
+              mode: "single",
+            }}
+            onSelectionChange={onDetailSelectionChange}
+            //스크롤 조회 기능
+            fixedScroll={true}
+            total={detail1DataResult.total}
+            skip={page.skip}
+            take={page.take}
+            pageable={true}
+            onPageChange={pageChange}
+            //원하는 행 위치로 스크롤 기능
+            ref={gridRef}
+            rowHeight={30}
+            //정렬기능
+            sortable={true}
+            onSortChange={onDetail1SortChange}
+            //컬럼순서조정
+            reorderable={true}
+            //컬럼너비조정
+            resizable={true}
+          >
+            <GridColumn
+              field="baddt"
+              title="불량일자"
+              width="120px"
+              cell={DateCell}
+            />
+            <GridColumn
+              field="lotnum"
+              title="LOT NO"
+              footerCell={detail1TotalFooterCell}
+              width="150px"
+            />
+            <GridColumn
+              field="prodqty"
+              title="생산량"
+              cell={NumberCell}
+              width="120px"
+            />
+            <GridColumn
+              field="goodqty"
+              title="양품수량"
+              cell={NumberCell}
+              width="120px"
+            />
+            <GridColumn
+              field="totbadqty"
+              title="불량수량"
+              cell={NumberCell}
+              width="120px"
+            />
+            <GridColumn
+              field="badpct"
+              title="불량률(%)"
+              cell={NumberCell}
+              width="120px"
+            />
+            <GridColumn field="proccd" title="공정" width="120px" />
+            <GridColumn field="prodmac" title="설비" width="120px" />
+            <GridColumn field="prodemp" title="작업자" width="120px" />
+            <GridColumn field="orglot" title="제조번호" width="120px" />
+            <GridColumn field="itemcd" title="품목코드" width="120px" />
+            <GridColumn field="itemnm" title="품목명" width="120px" />
+            <GridColumn field="bnatur" title="재질" width="120px" />
+            <GridColumn field="insiz" title="규격" width="120px" />
+            <GridColumn field="rekey" title="실적번호" width="150px" />
+          </Grid>
+        </ExcelExport>
       </GridContainer>
     );
   };

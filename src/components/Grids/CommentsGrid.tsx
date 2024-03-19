@@ -24,11 +24,11 @@ import { Iparameters, TPermissions } from "../../store/types";
 import CenterCell from "../Cells/CenterCell";
 import {
   convertDateToStr,
-  dateformat2,
+  dateformat,
   getGridItemChangedData,
   UseGetValueFromSessionItem,
   UseParaPc,
-  UsePermissions,
+  UsePermissions
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import { CellRender, RowRender } from "../Renderers/Renderers";
@@ -599,7 +599,9 @@ const CommentsGrid = (props: {
         data={process(
           dataResult.data.map((row) => ({
             ...row,
-            recdt: dateformat2(row.recdt),
+            recdt: row.recdt
+              ? new Date(dateformat(row.recdt))
+              : new Date(dateformat("19000101")),
             [SELECTED_FIELD]: selectedState[idGetter(row)],
           })),
           dataState

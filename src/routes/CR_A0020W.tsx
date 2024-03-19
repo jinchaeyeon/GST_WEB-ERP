@@ -330,10 +330,12 @@ const CR_A0020W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "반려견 리스트";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -698,6 +700,7 @@ const CR_A0020W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
+          fileName="반려견 정보"
         >
           <GridTitleContainer>
             <GridTitle>반려견 리스트</GridTitle>
@@ -740,7 +743,9 @@ const CR_A0020W: React.FC = () => {
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                birdt: row.birdt ? new Date(dateformat(row.birdt)) : null, //new Date(dateformat("19991231")),
+                birdt: row.birdt
+                  ? new Date(dateformat(row.birdt))
+                  : new Date(dateformat("19000101")), //new Date(dateformat("19000101")),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState

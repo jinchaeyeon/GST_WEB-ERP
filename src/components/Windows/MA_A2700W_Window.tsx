@@ -12,11 +12,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import {
-  Input,
-  InputChangeEvent,
-  TextArea,
-} from "@progress/kendo-react-inputs";
+import { Input, TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import * as React from "react";
 import {
@@ -58,6 +54,7 @@ import {
   UseMessages,
   UseParaPc,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   getItemQuery,
@@ -306,18 +303,6 @@ const ColumnCommandCell = (props: GridCellProps) => {
   let isInEdit = field === dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
-  const handleChange = (e: InputChangeEvent) => {
-    if (onChange) {
-      onChange({
-        dataIndex: 0,
-        dataItem: dataItem,
-        field: field,
-        syntheticEvent: e.syntheticEvent,
-        value: e.target.value ?? "",
-      });
-    }
-  };
-
   const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
 
   const onItemWndClick2 = () => {
@@ -408,11 +393,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
       data-grid-col-index={columnIndex}
       style={{ position: "relative" }}
     >
-      {isInEdit ? (
-        <Input value={value} onChange={handleChange} type="text" />
-      ) : (
-        value
-      )}
+      {value}
       <ButtonInGridInput>
         <Button
           name="itemcd"
@@ -1167,7 +1148,7 @@ const CopyWindow = ({
       load_place: "",
       pac: "A",
       itemlvl1: "",
-      enddt: new Date(),
+      enddt: "19000101",
       extra_field1: "",
       rowstatus: "N",
     };
@@ -1317,7 +1298,7 @@ const CopyWindow = ({
           itemlvl3: item.itemlvl3,
           itemnm: item.itemnm,
           itemno: item.itemno,
-          enddt: new Date(),
+          enddt: "19000101",
           itemthick: item.itemthick,
           len: item.len,
           load_place: item.load_place,
@@ -1422,7 +1403,7 @@ const CopyWindow = ({
           itemno: item.itemno,
           itemthick: 0,
           len: 0,
-          enddt: new Date(),
+          enddt: "19000101",
           lotnum: item.lotnum,
           nowqty: 0,
           ordkey: item.ordkey,
@@ -1497,7 +1478,7 @@ const CopyWindow = ({
           itemlvl3: item.itemlvl3,
           itemnm: item.itemnm,
           itemno: item.itemno,
-          enddt: new Date(),
+          enddt: "19000101",
           itemthick: item.itemthick,
           len: item.len,
           load_place: item.load_place,
@@ -1805,9 +1786,7 @@ const CopyWindow = ({
         dataArr.load_place_s.push(load_place);
         dataArr.pac_s.push(pac);
         dataArr.itemlvl1_s.push(itemlvl1);
-        dataArr.enddt_s.push(
-          enddt.length == undefined ? convertDateToStr(enddt) : enddt
-        );
+        dataArr.enddt_s.push(enddt);
         dataArr.extra_field1_s.push(extra_field1 == "" ? 0 : extra_field1);
       });
       deletedMainRows.forEach((item: any, idx: number) => {
@@ -1911,9 +1890,7 @@ const CopyWindow = ({
         dataArr.load_place_s.push(load_place);
         dataArr.pac_s.push(pac);
         dataArr.itemlvl1_s.push(itemlvl1);
-        dataArr.enddt_s.push(
-          enddt.length == undefined ? convertDateToStr(enddt) : enddt
-        );
+        dataArr.enddt_s.push(enddt);
         dataArr.extra_field1_s.push(extra_field1 == "" ? 0 : extra_field1);
       });
       setParaData((prev) => ({
@@ -2744,10 +2721,9 @@ const CopyWindow = ({
                     row.rowstatus == undefined
                       ? ""
                       : row.rowstatus,
-                  enddt:
-                    typeof row.enddt === "object" && row.enddt instanceof Date
-                      ? row.enddt
-                      : toDate(row.enddt),
+                  enddt: row.enddt
+                    ? new Date(dateformat(row.enddt))
+                    : new Date(dateformat("19000101")),
                   [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                 })),
                 mainDataState

@@ -4,6 +4,7 @@ import { getter } from "@progress/kendo-react-common";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
@@ -26,7 +27,6 @@ import {
   FormBox,
   FormBoxWrap,
   GridContainer,
-  GridContainerWrap,
   GridTitle,
   GridTitleContainer,
   Title,
@@ -59,7 +59,6 @@ import {
 import {
   COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
-  GAP,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
@@ -70,6 +69,10 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import EmailWindow from "../components/Windows/CommonWindows/EmailWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import SA_A1000_603W_Design2_Window from "../components/Windows/SA_A1000_603W_Design2_Window";
+import SA_A1000_603W_Design3_Window from "../components/Windows/SA_A1000_603W_Design3_Window";
+import SA_A1000_603W_Design4_Window from "../components/Windows/SA_A1000_603W_Design4_Window";
+import SA_A1000_603W_Design_Window from "../components/Windows/SA_A1000_603W_Design_Window";
 import SA_A1001_603W_Window from "../components/Windows/SA_A1001_603W_Window";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
@@ -90,6 +93,8 @@ const numberField = [
   "finalquowonamt",
 ];
 
+const iconField = ["confinyn"];
+
 const centerField = ["designyn"];
 
 const numberField2 = ["quounp", "finalquowonamt"];
@@ -104,6 +109,25 @@ type TdataArr = {
   margin_s: string[];
   discount_s: string[];
   amt_s: string[];
+};
+
+const iconCell = (props: GridCellProps) => {
+  const data = props.dataItem;
+
+  return data ? (
+    data.confinyn == "Y" ? (
+      <td style={{ textAlign: "center" }}>
+        <span
+          className="k-icon k-i-checkmark-circle k-icon-md"
+          style={{ color: "green" }}
+        ></span>
+      </td>
+    ) : (
+      <td />
+    )
+  ) : (
+    <td />
+  );
 };
 
 const SA_A1001_603W: React.FC = () => {
@@ -178,6 +202,10 @@ const SA_A1001_603W: React.FC = () => {
             (item: any) => item.id === "materialtype"
           ).valueCode,
           rev: defaultOption.find((item: any) => item.id === "rev").valueCode,
+          designyn: defaultOption.find((item: any) => item.id === "designyn")
+            .valueCode,
+          quocalyn: defaultOption.find((item: any) => item.id === "quocalyn")
+            .valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
           isSearch: true,
@@ -189,6 +217,10 @@ const SA_A1001_603W: React.FC = () => {
           materialtype: defaultOption.find(
             (item: any) => item.id === "materialtype"
           ).valueCode,
+          designyn: defaultOption.find((item: any) => item.id === "designyn")
+            .valueCode,
+          quocalyn: defaultOption.find((item: any) => item.id === "quocalyn")
+            .valueCode,
           rev: defaultOption.find((item: any) => item.id === "rev").valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
@@ -352,6 +384,13 @@ const SA_A1001_603W: React.FC = () => {
     custnm: "",
     custprsnnm: "",
     materialtype: "",
+    designyn: "",
+    quocalyn: "",
+    quofinyn: "",
+    //quodt fetchMainGrid에서 셋팅해야함
+    quodt: new Date(),
+    quoamt_str: 0,
+    quoamt_end: 0,
     person: "",
     personnm: "",
     remark: "",
@@ -373,10 +412,40 @@ const SA_A1001_603W: React.FC = () => {
   });
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const [designWindowVisible, setDesignWindowVisible] =
+    useState<boolean>(false);
+  const [designWindowVisible2, setDesignWindowVisible2] =
+    useState<boolean>(false);
+  const [designWindowVisible3, setDesignWindowVisible3] =
+    useState<boolean>(false);
+  const [designWindowVisible4, setDesignWindowVisible4] =
+    useState<boolean>(false);
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
 
+  const onDesignWndClick = () => {
+    const data = mainDataResult2.data.filter(
+      (item) =>
+        item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
+    )[0];
+
+    if (data != undefined) {
+      if (data.type == "Basic") {
+        setDesignWindowVisible(true);
+      } else if (data.type == "Cheomdan") {
+        setDesignWindowVisible2(true);
+      } else if (data.type == "Invitro") {
+        setDesignWindowVisible3(true);
+      } else if (data.type == "Analyze") {
+        setDesignWindowVisible4(true);
+      } else {
+        alert("미정");
+      }
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
   interface ICustData {
     address: string;
     custcd: string;
@@ -459,6 +528,12 @@ const SA_A1001_603W: React.FC = () => {
         "@p_custnm": filters.custnm,
         "@p_custprsnnm": filters.custprsnnm,
         "@p_materialtype": filters.materialtype,
+        "@p_designyn": filters.designyn,
+        "@p_quocalyn": filters.quocalyn,
+        "@p_quofinyn": filters.quofinyn,
+        "@p_quodt": "",
+        "@p_quoamt_str": filters.quoamt_str,
+        "@p_quoamt_end": filters.quoamt_end,
         "@p_person": filters.personnm == "" ? "" : filters.person,
         "@p_personnm": filters.personnm,
         "@p_remark": filters.remark,
@@ -581,6 +656,12 @@ const SA_A1001_603W: React.FC = () => {
         "@p_custnm": "",
         "@p_custprsnnm": "",
         "@p_materialtype": "",
+        "@p_designyn": filters.designyn,
+        "@p_quocalyn": filters.quocalyn,
+        "@p_quofinyn": filters.quofinyn,
+        "@p_quodt": "",
+        "@p_quoamt_str": filters.quoamt_str,
+        "@p_quoamt_end": filters.quoamt_end,
         "@p_person": "",
         "@p_personnm": "",
         "@p_remark": "",
@@ -645,10 +726,22 @@ const SA_A1001_603W: React.FC = () => {
     }
   }, [filters2, permissions]);
 
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
+  let _export2: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        optionsGridOne.sheets[0].title = "요약정보";
+        _export.save(optionsGridOne);
+      }
+    }
+    if (_export2 !== null && _export2 !== undefined) {
+      if (tabSelected == 1) {
+        const optionsGridTwo = _export2.workbookOptions();
+        optionsGridTwo.sheets[0].title = "견적리스트";
+        _export2.save(optionsGridTwo);
+      }
     }
   };
 
@@ -772,6 +865,15 @@ const SA_A1001_603W: React.FC = () => {
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "SA_A1001_603W_001");
+      } else if (
+        filters.quoamt_str == null ||
+        filters.quoamt_str == undefined ||
+        filters.quoamt_end == null ||
+        filters.quoamt_end == undefined
+      ) {
+        throw findMessage(messagesData, "SA_A1001_603W_002");
+      } else if (filters.quoamt_str > filters.quoamt_end) {
+        throw findMessage(messagesData, "SA_A1001_603W_003");
       } else {
         setValues2(false);
         setPage(initialPageState); // 페이지 초기화
@@ -1131,7 +1233,12 @@ const SA_A1001_603W: React.FC = () => {
   );
 
   const enterEdit = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "itemcd" && field != "testitem") {
+    if (
+      field != "rowstatus" &&
+      field != "itemcd" &&
+      field != "testitem" &&
+      field != "confinyn"
+    ) {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
@@ -1363,22 +1470,69 @@ const SA_A1001_603W: React.FC = () => {
                       />
                     )}
                   </td>
+                  <th>디자인 입력 여부</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="designyn"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>견적산출여부</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="quocalyn"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                  <th>견적확정여부</th>
+                  <td></td>
+                  <th>견적발행일</th>
+                  <td></td>
+                  <th>견적금액</th>
+                  <td>
+                    <div className="filter-item-wrap">
+                      <Input
+                        name="quoamt_str"
+                        type="number"
+                        value={filters.quoamt_str}
+                        onChange={filterInputChange}
+                        className="required"
+                      />
+                      ~
+                      <Input
+                        name="quoamt_end"
+                        type="number"
+                        value={filters.quoamt_end}
+                        onChange={filterInputChange}
+                        className="required"
+                      />
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </FilterBox>
           </FilterContainer>
           <GridContainer>
+            <GridTitleContainer>
+              <GridTitle>요약정보</GridTitle>
+            </GridTitleContainer>
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
                 _export = exporter;
               }}
+              fileName="견적관리"
             >
-              <GridTitleContainer>
-                <GridTitle>요약정보</GridTitle>
-              </GridTitleContainer>
               <Grid
-                style={{ height: "72vh" }}
+                style={{ height: "65vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1466,6 +1620,14 @@ const SA_A1001_603W: React.FC = () => {
               </Button>
               <Button themeColor={"primary"} onClick={onSendEmail} icon="email">
                 이메일 전송
+              </Button>
+              <Button
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="palette"
+                onClick={onDesignWndClick}
+              >
+                디자인상세
               </Button>
               <Button
                 themeColor={"primary"}
@@ -1595,13 +1757,19 @@ const SA_A1001_603W: React.FC = () => {
               </tbody>
             </FormBox>
           </FormBoxWrap>
-          <GridContainerWrap>
-            <GridContainer width="55%">
-              <GridTitleContainer>
-                <GridTitle>견적리스트</GridTitle>
-              </GridTitleContainer>
+          <GridContainer>
+            <GridTitleContainer>
+              <GridTitle>견적리스트</GridTitle>
+            </GridTitleContainer>
+            <ExcelExport
+              data={mainDataResult2.data}
+              ref={(exporter) => {
+                _export2 = exporter;
+              }}
+              fileName="견적관리"
+            >
               <Grid
-                style={{ height: "65vh" }}
+                style={{ height: "60vh" }}
                 data={process(
                   mainDataResult2.data.map((row) => ({
                     ...row,
@@ -1662,6 +1830,8 @@ const SA_A1001_603W: React.FC = () => {
                           cell={
                             numberField.includes(item.fieldName)
                               ? NumberCell
+                              : iconField.includes(item.fieldName)
+                              ? iconCell
                               : undefined
                           }
                           footerCell={
@@ -1675,19 +1845,8 @@ const SA_A1001_603W: React.FC = () => {
                       )
                   )}
               </Grid>
-            </GridContainer>
-            <GridContainer width={`calc(45% - ${GAP}px)`}>
-              <GridTitleContainer>
-                <GridTitle>시험상세디자인</GridTitle>
-              </GridTitleContainer>
-              <div
-                style={{
-                  border: "solid 1px rgba(0, 0, 0, 0.08)",
-                  height: "65.5vh",
-                }}
-              ></div>
-            </GridContainer>
-          </GridContainerWrap>
+            </ExcelExport>
+          </GridContainer>
         </TabStripTab>
       </TabStrip>
       {custWindowVisible && (
@@ -1767,6 +1926,86 @@ const SA_A1001_603W: React.FC = () => {
           setVisible={setPrsnnumWindowVisible}
           workType="N"
           setData={setPrsnnumData}
+          modal={true}
+        />
+      )}
+      {designWindowVisible && (
+        <SA_A1000_603W_Design_Window
+          setVisible={setDesignWindowVisible}
+          filters={filters}
+          item={
+            mainDataResult2.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+            )[0] != undefined
+              ? mainDataResult2.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(selectedState2)[0]
+                )[0]
+              : ""
+          }
+          modal={true}
+        />
+      )}
+      {designWindowVisible2 && (
+        <SA_A1000_603W_Design2_Window
+          setVisible={setDesignWindowVisible2}
+          filters={filters}
+          item={
+            mainDataResult2.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+            )[0] != undefined
+              ? mainDataResult2.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(selectedState2)[0]
+                )[0]
+              : ""
+          }
+          modal={true}
+        />
+      )}
+      {designWindowVisible3 && (
+        <SA_A1000_603W_Design3_Window
+          setVisible={setDesignWindowVisible3}
+          filters={filters}
+          item={
+            mainDataResult2.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+            )[0] != undefined
+              ? mainDataResult2.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(selectedState2)[0]
+                )[0]
+              : ""
+          }
+          modal={true}
+        />
+      )}
+      {designWindowVisible4 && (
+        <SA_A1000_603W_Design4_Window
+          setVisible={setDesignWindowVisible4}
+          filters={filters}
+          item={
+            mainDataResult2.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY2] ==
+                Object.getOwnPropertyNames(selectedState2)[0]
+            )[0] != undefined
+              ? mainDataResult2.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY2] ==
+                    Object.getOwnPropertyNames(selectedState2)[0]
+                )[0]
+              : ""
+          }
           modal={true}
         />
       )}

@@ -24,7 +24,7 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input } from "@progress/kendo-react-inputs";
 import {
@@ -298,10 +298,12 @@ const PR_B0020W: React.FC = () => {
   });
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "코드내역";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -674,25 +676,27 @@ const PR_B0020W: React.FC = () => {
 
       <GridContainerWrap>
         <GridContainer width="30%">
+          <GridTitleContainer>
+            <GridTitle>코드내역</GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onAddCard}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="image-export"
+              >
+                바코드 추가
+              </Button>
+            </ButtonContainer>
+          </GridTitleContainer>
           <ExcelExport
-            data={mainDataResult.data}
+            data={newData}
             ref={(exporter) => {
               _export = exporter;
             }}
+            group={group}
+            fileName="바코드 출력"
           >
-            <GridTitleContainer>
-              <GridTitle>코드내역</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onAddCard}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="image-export"
-                >
-                  바코드 추가
-                </Button>
-              </ButtonContainer>
-            </GridTitleContainer>
             <Grid
               style={{ height: "79vh" }}
               data={newData.map((item: { items: any[] }) => ({

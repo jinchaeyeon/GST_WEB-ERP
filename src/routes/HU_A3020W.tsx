@@ -469,10 +469,22 @@ const HU_A3020W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
+  let _export2: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        optionsGridOne.sheets[0].title = "지급항목";
+        _export.save(optionsGridOne);
+      }
+    }
+    if (_export2 !== null && _export2 !== undefined) {
+      if (tabSelected == 1) {
+        const optionsGridTwo = _export2.workbookOptions();
+        optionsGridTwo.sheets[0].title = "공제항목";
+        _export2.save(optionsGridTwo);
+      }
     }
   };
 
@@ -1448,6 +1460,7 @@ const HU_A3020W: React.FC = () => {
               ref={(exporter) => {
                 _export = exporter;
               }}
+              fileName="지급항목"
             >
               <Grid
                 style={{ height: "77.5vh" }}
@@ -1557,84 +1570,92 @@ const HU_A3020W: React.FC = () => {
                 ></Button>
               </ButtonContainer>
             </GridTitleContainer>
-            <Grid
-              style={{ height: "77.5vh" }}
-              data={process(
-                mainDataResult2.data.map((row) => ({
-                  ...row,
-                  fraction: row.fraction == "" ? "4" : row.fraction,
-                  [SELECTED_FIELD]: selectedState2[idGetter(row)],
-                })),
-                mainDataState2
-              )}
-              {...mainDataState2}
-              onDataStateChange={onMainDataStateChange2}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
+            <ExcelExport
+              data={mainDataResult2.data}
+              ref={(exporter) => {
+                _export2 = exporter;
               }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult2.total}
-              skip={page2.skip}
-              take={page2.take}
-              pageable={true}
-              onPageChange={pageChange2}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef2}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange2}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              onItemChange={onMainItemChange2}
-              cellRender={customCellRender2}
-              rowRender={customRowRender2}
-              editField={EDIT_FIELD}
+              fileName="지급항목"
             >
-              <GridColumn field="rowstatus" title=" " width="50px" />
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          NumberField.includes(item.fieldName)
-                            ? NumberCell
-                            : customField.includes(item.fieldName)
-                            ? CustomComboBoxCell
-                            : checkField.includes(item.fieldName)
-                            ? CheckBoxCell
-                            : radioField.includes(item.fieldName)
-                            ? CustomRadioCell
-                            : NameCell
-                        }
-                        headerCell={
-                          requiredField.includes(item.fieldName)
-                            ? RequiredHeader
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder === 0
-                            ? mainTotalFooterCell2
-                            : undefined
-                        }
-                      />
-                    )
+              <Grid
+                style={{ height: "77.5vh" }}
+                data={process(
+                  mainDataResult2.data.map((row) => ({
+                    ...row,
+                    fraction: row.fraction == "" ? "4" : row.fraction,
+                    [SELECTED_FIELD]: selectedState2[idGetter(row)],
+                  })),
+                  mainDataState2
                 )}
-            </Grid>
+                {...mainDataState2}
+                onDataStateChange={onMainDataStateChange2}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult2.total}
+                skip={page2.skip}
+                take={page2.take}
+                pageable={true}
+                onPageChange={pageChange2}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef2}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange2}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange2}
+                cellRender={customCellRender2}
+                rowRender={customRowRender2}
+                editField={EDIT_FIELD}
+              >
+                <GridColumn field="rowstatus" title=" " width="50px" />
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            NumberField.includes(item.fieldName)
+                              ? NumberCell
+                              : customField.includes(item.fieldName)
+                              ? CustomComboBoxCell
+                              : checkField.includes(item.fieldName)
+                              ? CheckBoxCell
+                              : radioField.includes(item.fieldName)
+                              ? CustomRadioCell
+                              : NameCell
+                          }
+                          headerCell={
+                            requiredField.includes(item.fieldName)
+                              ? RequiredHeader
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder === 0
+                              ? mainTotalFooterCell2
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
           </GridContainer>
         </TabStripTab>
       </TabStrip>

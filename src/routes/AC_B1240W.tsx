@@ -673,11 +673,19 @@ const AC_B1240W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
+  let _export2: any;
+  let _export3: any;
   const exportExcel = () => {
-    if (_export !== null && _export !== undefined) {
-      _export.save();
-    }
+    const optionsGridOne = _export.workbookOptions();
+    const optionsGridTwo = _export2.workbookOptions();
+    const optionsGridThree = _export3.workbookOptions();
+    optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+    optionsGridOne.sheets[2] = optionsGridThree.sheets[0];
+    optionsGridOne.sheets[0].title = "계정목록";
+    optionsGridOne.sheets[1].title = "전표내역";
+    optionsGridOne.sheets[2].title = "전표상세";
+    _export.save(optionsGridOne);
   };
 
   const onMainSortChange = (e: any) => {
@@ -803,6 +811,7 @@ const AC_B1240W: React.FC = () => {
             ref={(exporter) => {
               _export = exporter;
             }}
+            fileName="계정과목별보조부"
           >
             <Grid
               style={{ height: "80vh" }}
@@ -872,111 +881,51 @@ const AC_B1240W: React.FC = () => {
         </GridContainer>
         <GridContainer width={`calc(50% - ${GAP}px)`}>
           <GridContainer>
-            <Grid
-              style={{ height: "39.5vh" }}
-              data={process(
-                mainDataResult2.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: selectedState2[idGetter2(row)],
-                })),
-                mainDataState2
-              )}
-              {...mainDataState2}
-              onDataStateChange={onMainDataStateChange2}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY2}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
+            <ExcelExport
+              data={mainDataResult2.data}
+              ref={(exporter) => {
+                _export2 = exporter;
               }}
-              onSelectionChange={onSelectionChange2}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult2.total}
-              skip={page2.skip}
-              take={page2.take}
-              pageable={true}
-              onPageChange={pageChange2}
-              ref={gridRef2}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange2}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
+              fileName="계정과목별보조부"
             >
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder === 0
-                            ? mainTotalFooterCell2
-                            : undefined
-                        }
-                      />
-                    )
-                )}
-            </Grid>
-          </GridContainer>
-          <GridContainer>
-            <GridContainer>
               <Grid
                 style={{ height: "39.5vh" }}
                 data={process(
-                  mainDataResult3.data.map((row) => ({
+                  mainDataResult2.data.map((row) => ({
                     ...row,
-                    [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                    [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                   })),
-                  mainDataState3
+                  mainDataState2
                 )}
-                {...mainDataState3}
-                onDataStateChange={onMainDataStateChange3}
+                {...mainDataState2}
+                onDataStateChange={onMainDataStateChange2}
                 //선택 기능
-                dataItemKey={DATA_ITEM_KEY3}
+                dataItemKey={DATA_ITEM_KEY2}
                 selectedField={SELECTED_FIELD}
                 selectable={{
                   enabled: true,
                   mode: "single",
                 }}
-                onSelectionChange={onSelectionChange3}
+                onSelectionChange={onSelectionChange2}
                 //스크롤 조회 기능
                 fixedScroll={true}
-                total={mainDataResult3.total}
-                skip={page3.skip}
-                take={page3.take}
+                total={mainDataResult2.total}
+                skip={page2.skip}
+                take={page2.take}
                 pageable={true}
-                onPageChange={pageChange3}
-                ref={gridRef3}
+                onPageChange={pageChange2}
+                ref={gridRef2}
                 rowHeight={30}
                 //정렬기능
                 sortable={true}
-                onSortChange={onMainSortChange3}
+                onSortChange={onMainSortChange2}
                 //컬럼순서조정
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
-                onItemChange={onMainItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList3"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"].map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -988,21 +937,97 @@ const AC_B1240W: React.FC = () => {
                           cell={
                             numberField.includes(item.fieldName)
                               ? NumberCell
-                              : CustomRadioField.includes(item.fieldName)
-                              ? CustomRadioCell
                               : undefined
                           }
                           footerCell={
                             item.sortOrder === 0
-                              ? mainTotalFooterCell3
-                              : numberField.includes(item.fieldName)
-                              ? gridSumQtyFooterCell3
+                              ? mainTotalFooterCell2
                               : undefined
                           }
                         />
                       )
                   )}
               </Grid>
+            </ExcelExport>
+          </GridContainer>
+          <GridContainer>
+            <GridContainer>
+              <ExcelExport
+                data={mainDataResult3.data}
+                ref={(exporter) => {
+                  _export3 = exporter;
+                }}
+                fileName="계정과목별보조부"
+              >
+                <Grid
+                  style={{ height: "39.5vh" }}
+                  data={process(
+                    mainDataResult3.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                    })),
+                    mainDataState3
+                  )}
+                  {...mainDataState3}
+                  onDataStateChange={onMainDataStateChange3}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY3}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange3}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult3.total}
+                  skip={page3.skip}
+                  take={page3.take}
+                  pageable={true}
+                  onPageChange={pageChange3}
+                  ref={gridRef3}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange3}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList3"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : CustomRadioField.includes(item.fieldName)
+                                ? CustomRadioCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? mainTotalFooterCell3
+                                : numberField.includes(item.fieldName)
+                                ? gridSumQtyFooterCell3
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
             </GridContainer>
           </GridContainer>
         </GridContainer>

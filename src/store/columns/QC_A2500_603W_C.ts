@@ -99,12 +99,6 @@ export const gridList: Array<TGrid> = [
         caption: "완료",
         width: 120,
       },
-      {
-        id: "col_update_time",
-        field: "update_time",
-        caption: "수정일시",
-        width: 120,
-      },
     ],
   },
   {

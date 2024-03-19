@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
   GridColumn,
@@ -22,7 +21,7 @@ import {
   GridContainer,
   LandscapePrint,
   Title,
-  TitleContainer
+  TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CenterCell from "../components/Cells/CenterCell";
@@ -33,7 +32,7 @@ import {
   convertDateToStr,
   dateformat2,
   handleKeyPressSearch,
-  numberWithCommas
+  numberWithCommas,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -185,14 +184,6 @@ const CT_A0111W: React.FC = () => {
     setSelectedState(newSelectedState);
   };
 
-  //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
-  const exportExcel = () => {
-    if (_export !== null && _export !== undefined) {
-      _export.save();
-    }
-  };
-
   //스크롤 핸들러
   const onMainScrollHandler = (event: GridEvent) => {
     if (chkScrollHandler(event, mainPgNum, PAGE_SIZE))
@@ -246,7 +237,7 @@ const CT_A0111W: React.FC = () => {
           {permissions && (
             <TopButtons
               search={search}
-              exportExcel={exportExcel}
+              disable={true}
               permissions={permissions}
               pathname="CT_A0111W"
             />
@@ -308,100 +299,93 @@ const CT_A0111W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
       <GridContainer>
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
+        <Grid
+          style={{ height: "800px", display: "none" }}
+          data={process(
+            mainDataResult.data.map((row) => ({
+              ...row,
+              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+            })),
+            mainDataState
+          )}
+          {...mainDataState}
+          onDataStateChange={onMainDataStateChange}
+          //선택 기능
+          dataItemKey={DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
           }}
+          onSelectionChange={onMainSelectionChange}
+          //스크롤 조회 기능
+          fixedScroll={true}
+          total={mainDataResult.total}
+          onScroll={onMainScrollHandler}
+          //정렬기능
+          sortable={true}
+          onSortChange={onMainSortChange}
+          //컬럼순서조정
+          reorderable={true}
+          //컬럼너비조정
+          resizable={true}
         >
-          <Grid
-            style={{ height: "800px", display: "none" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onMainSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            onScroll={onMainScrollHandler}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-          >
-            <GridColumn
-              field="num"
-              title="NO"
-              width="80"
-              cell={CenterCell}
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn field="itemcd" title="품목코드" width="120" />
-            <GridColumn field="itemnm" title="품목명" width="160" />
+          <GridColumn
+            field="num"
+            title="NO"
+            width="80"
+            cell={CenterCell}
+            footerCell={mainTotalFooterCell}
+          />
+          <GridColumn field="itemcd" title="품목코드" width="120" />
+          <GridColumn field="itemnm" title="품목명" width="160" />
 
-            <GridColumn title={"제조원가"}>
-              <GridColumn
-                field="puramt"
-                title="재료비(B)"
-                width="120"
-                cell={NumberCell}
-              />
-              <GridColumn
-                field="pramt"
-                title="노무비(C)"
-                width="120"
-                cell={NumberCell}
-              />
-              <GridColumn
-                field="mfamt"
-                title="제조경비(E)"
-                width="120"
-                cell={NumberCell}
-              />
-              <GridColumn
-                field="totamt"
-                title="계(F)(B+D+E)"
-                width="125"
-                cell={NumberCell}
-              />
-            </GridColumn>
-
+          <GridColumn title={"제조원가"}>
             <GridColumn
-              field="sacamt"
-              title="판매비와 일반관리비(G)"
-              width="180"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="inamt"
-              title="이자비용(H)"
+              field="puramt"
+              title="재료비(B)"
               width="120"
               cell={NumberCell}
             />
             <GridColumn
-              field="totcost"
-              title="총 원가(I)(F+G+H)"
-              width="150"
+              field="pramt"
+              title="노무비(C)"
+              width="120"
               cell={NumberCell}
             />
-          </Grid>
-        </ExcelExport>
+            <GridColumn
+              field="mfamt"
+              title="제조경비(E)"
+              width="120"
+              cell={NumberCell}
+            />
+            <GridColumn
+              field="totamt"
+              title="계(F)(B+D+E)"
+              width="125"
+              cell={NumberCell}
+            />
+          </GridColumn>
+
+          <GridColumn
+            field="sacamt"
+            title="판매비와 일반관리비(G)"
+            width="180"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="inamt"
+            title="이자비용(H)"
+            width="120"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="totcost"
+            title="총 원가(I)(F+G+H)"
+            width="150"
+            cell={NumberCell}
+          />
+        </Grid>
       </GridContainer>
       <LandscapePrint>
         <div

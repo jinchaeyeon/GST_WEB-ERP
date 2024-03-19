@@ -688,6 +688,32 @@ const CopyWindow = ({
                 )[0] == undefined
                   ? {}
                   : setData(
+                      mainDataResult.data
+                        .filter(
+                          (item) =>
+                            item[DATA_ITEM_KEY] ==
+                            Object.getOwnPropertyNames(selectedState)[0]
+                        )
+                        .map((item) => ({
+                          orgdiv: item.orgdiv,
+                          quokey: item.project_ref,
+                          ordnum: item.ordnum,
+                        }))[0]
+                    )
+              }
+            >
+              프로젝트만 참조
+            </Button>
+            <Button
+              themeColor={"primary"}
+              onClick={() =>
+                mainDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0] == undefined
+                  ? {}
+                  : setData(
                       mainDataResult.data.filter(
                         (item) =>
                           item[DATA_ITEM_KEY] ==

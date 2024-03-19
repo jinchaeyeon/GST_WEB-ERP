@@ -51,14 +51,14 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   getItemQuery,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
-  setDefaultDate,
-  toDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -1468,10 +1468,22 @@ const PR_A9000W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
+  let _export2: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        optionsGridOne.sheets[0].title = "재공기타입출고내역";
+        _export.save(optionsGridOne);
+      }
+    }
+    if (_export2 !== null && _export2 !== undefined) {
+      if (tabSelected == 1) {
+        const optionsGridTwo = _export2.workbookOptions();
+        optionsGridTwo.sheets[0].title = "재공기타입출고내역";
+        _export2.save(optionsGridTwo);
+      }
     }
   };
 
@@ -1957,7 +1969,7 @@ const PR_A9000W: React.FC = () => {
       planseq: 0,
       proccd: "",
       procseq: "",
-      proddt: new Date(),
+      proddt: convertDateToStr(new Date()),
       prodemp: "",
       prodmac: "",
       qty: 0,
@@ -2010,7 +2022,7 @@ const PR_A9000W: React.FC = () => {
       planseq: 0,
       proccd: "",
       procseq: "",
-      proddt: new Date(),
+      proddt: convertDateToStr(new Date()),
       qty: 0,
       qtyunit: "",
       remark: "",
@@ -2123,6 +2135,8 @@ const PR_A9000W: React.FC = () => {
         valid = false;
       } else if (item.qtyunit == "") {
         valid = false;
+      } else if (item.proddt == "") {
+        valid = false;
       }
     });
 
@@ -2173,9 +2187,7 @@ const PR_A9000W: React.FC = () => {
         dataArr.renum_s.push(renum);
         dataArr.reseq_s.push(reseq);
         dataArr.seq_s.push(seq);
-        dataArr.proddt_s.push(
-          proddt.length == 8 ? proddt : convertDateToStr(proddt)
-        );
+        dataArr.proddt_s.push(proddt);
         dataArr.proccd_s.push(proccd);
         dataArr.itemcd_s.push(itemcd);
         dataArr.qty_s.push(qty);
@@ -2212,9 +2224,7 @@ const PR_A9000W: React.FC = () => {
         dataArr.renum_s.push(renum);
         dataArr.reseq_s.push(reseq);
         dataArr.seq_s.push(seq);
-        dataArr.proddt_s.push(
-          proddt.length == 8 ? proddt : convertDateToStr(proddt)
-        );
+        dataArr.proddt_s.push(proddt);
         dataArr.proccd_s.push(proccd);
         dataArr.itemcd_s.push(itemcd);
         dataArr.qty_s.push(qty);
@@ -2300,6 +2310,8 @@ const PR_A9000W: React.FC = () => {
         valid = false;
       } else if (item.qty == 0) {
         valid = false;
+      } else if (item.proddt == "") {
+        valid = false;
       }
     });
 
@@ -2351,9 +2363,7 @@ const PR_A9000W: React.FC = () => {
         dataArr.renum_s.push(renum);
         dataArr.reseq_s.push(reseq == "" ? 0 : reseq);
         dataArr.seq_s.push(keyseq);
-        dataArr.proddt_s.push(
-          proddt.length == 8 ? proddt : convertDateToStr(proddt)
-        );
+        dataArr.proddt_s.push(proddt);
         dataArr.proccd_s.push(proccd);
         dataArr.itemcd_s.push(itemcd);
         dataArr.qty_s.push(qty);
@@ -2391,9 +2401,7 @@ const PR_A9000W: React.FC = () => {
         dataArr.renum_s.push(renum);
         dataArr.reseq_s.push(reseq == "" ? 0 : reseq);
         dataArr.seq_s.push(keyseq);
-        dataArr.proddt_s.push(
-          proddt.length == 8 ? proddt : convertDateToStr(proddt)
-        );
+        dataArr.proddt_s.push(proddt);
         dataArr.proccd_s.push(proccd);
         dataArr.itemcd_s.push(itemcd);
         dataArr.qty_s.push(qty);
@@ -2500,7 +2508,7 @@ const PR_A9000W: React.FC = () => {
         planseq: item.planseq,
         proccd: item.proccd,
         procseq: "",
-        proddt: new Date(),
+        proddt: convertDateToStr(new Date()),
         qty: item.stockqty,
         qtyunit: item.qtyunit,
         remark: "",
@@ -2552,7 +2560,7 @@ const PR_A9000W: React.FC = () => {
         planseq: 0,
         proccd: "",
         procseq: "",
-        proddt: new Date(),
+        proddt: convertDateToStr(new Date()),
         prodemp: "",
         prodmac: "",
         qty: 0,
@@ -2739,16 +2747,16 @@ const PR_A9000W: React.FC = () => {
                   ref={(exporter) => {
                     _export = exporter;
                   }}
+                  fileName="재공품 기타입출고"
                 >
                   <Grid
                     style={{ height: "66vh" }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
-                        proddt:
-                          row.proddt.length == 8
-                            ? toDate(row.proddt)
-                            : row.proddt,
+                        proddt: row.proddt
+                          ? new Date(dateformat(row.proddt))
+                          : new Date(dateformat("19000101")),
                         [SELECTED_FIELD]: selectedState[idGetter(row)],
                       })),
                       mainDataState
@@ -2867,85 +2875,94 @@ const PR_A9000W: React.FC = () => {
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "66vh" }}
-                data={process(
-                  detailDataResult.data.map((row) => ({
-                    ...row,
-                    proddt:
-                      row.proddt.length == 8 ? toDate(row.proddt) : row.proddt,
-                    [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
-                  })),
-                  detailDataState
-                )}
-                {...detailDataState}
-                onDataStateChange={onDetailDataStateChange}
-                dataItemKey={DATA_ITEM_KEY2}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+              <ExcelExport
+                data={detailDataResult.data}
+                ref={(exporter) => {
+                  _export2 = exporter;
                 }}
-                onSelectionChange={ondetailSelectionChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={detailDataResult.total}
-                skip={page2.skip}
-                take={page2.take}
-                pageable={true}
-                onPageChange={pageChange2}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef2}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onDetailSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onDetailItemChange}
-                cellRender={customCellRender2}
-                rowRender={customRowRender2}
-                editField={EDIT_FIELD}
+                fileName="재공품 기타입출고"
               >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : dateField.includes(item.fieldName)
-                              ? DateCell
-                              : customField.includes(item.fieldName)
-                              ? CustomComboBoxCell
-                              : itemcdField.includes(item.fieldName)
-                              ? ColumnCommandCell2
-                              : undefined
-                          }
-                          headerCell={
-                            customHeaderField2.includes(item.fieldName)
-                              ? RequiredHeader
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder === 0
-                              ? detailTotalFooterCell
-                              : numberField2.includes(item.fieldName)
-                              ? editNumberFooterCell2
-                              : undefined
-                          }
-                        />
-                      )
+                <Grid
+                  style={{ height: "66vh" }}
+                  data={process(
+                    detailDataResult.data.map((row) => ({
+                      ...row,
+                      proddt: row.proddt
+                        ? new Date(dateformat(row.proddt))
+                        : new Date(dateformat("19000101")),
+                      [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
+                    })),
+                    detailDataState
                   )}
-              </Grid>
+                  {...detailDataState}
+                  onDataStateChange={onDetailDataStateChange}
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={ondetailSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={detailDataResult.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef2}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onDetailSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onDetailItemChange}
+                  cellRender={customCellRender2}
+                  rowRender={customRowRender2}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : dateField.includes(item.fieldName)
+                                ? DateCell
+                                : customField.includes(item.fieldName)
+                                ? CustomComboBoxCell
+                                : itemcdField.includes(item.fieldName)
+                                ? ColumnCommandCell2
+                                : undefined
+                            }
+                            headerCell={
+                              customHeaderField2.includes(item.fieldName)
+                                ? RequiredHeader
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? detailTotalFooterCell
+                                : numberField2.includes(item.fieldName)
+                                ? editNumberFooterCell2
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
             </GridContainer>
           </FormContext2.Provider>
         </TabStripTab>

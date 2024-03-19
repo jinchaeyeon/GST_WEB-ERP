@@ -775,10 +775,24 @@ const CM_A8000W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
+  let _export2: any;
+  let _export3: any;
+  let _export4: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      const optionsGridTwo = _export2.workbookOptions();
+      const optionsGridThree = _export3.workbookOptions();
+      const optionsGridFour = _export4.workbookOptions();
+      optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+      optionsGridOne.sheets[2] = optionsGridThree.sheets[0];
+      optionsGridOne.sheets[3] = optionsGridFour.sheets[0];
+      optionsGridOne.sheets[0].title = "대분류";
+      optionsGridOne.sheets[1].title = "중분류";
+      optionsGridOne.sheets[2].title = "소분류";
+      optionsGridOne.sheets[3].title = "상세정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -1686,198 +1700,223 @@ const CM_A8000W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>대분류</GridTitle>
           </GridTitleContainer>
-          <Grid
-            style={{ height: "74.5vh" }}
-            data={process(
-              detailDataResult.data.map((row) => ({
-                ...row,
-                [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
-              })),
-              detailDataState
-            )}
-            {...detailDataState}
-            onDataStateChange={onDetailDataStateChange}
-            //선택 기능
-            dataItemKey={DETAIL_DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+          <ExcelExport
+            data={detailDataResult.data}
+            ref={(exporter) => {
+              _export = exporter;
             }}
-            onSelectionChange={ondetailSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={detailDataResult.total}
-            skip={page2.skip}
-            take={page2.take}
-            pageable={true}
-            onPageChange={pageChange2}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef2}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onDetailSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onRowDoubleClick={onItemlvl1Click}
+            fileName="ValueBox"
           >
-            <GridColumn
-              field="code_name"
-              title="대분류"
-              width="150px"
-              footerCell={detailTotalFooterCell}
-            />
-          </Grid>
+            <Grid
+              style={{ height: "74.5vh" }}
+              data={process(
+                detailDataResult.data.map((row) => ({
+                  ...row,
+                  [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
+                })),
+                detailDataState
+              )}
+              {...detailDataState}
+              onDataStateChange={onDetailDataStateChange}
+              //선택 기능
+              dataItemKey={DETAIL_DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={ondetailSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={detailDataResult.total}
+              skip={page2.skip}
+              take={page2.take}
+              pageable={true}
+              onPageChange={pageChange2}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef2}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onDetailSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onRowDoubleClick={onItemlvl1Click}
+            >
+              <GridColumn
+                field="code_name"
+                title="대분류"
+                width="150px"
+                footerCell={detailTotalFooterCell}
+              />
+            </Grid>
+          </ExcelExport>
         </GridContainer>
         <GridContainer width={`13%`}>
           <GridTitleContainer>
             <GridTitle>중분류</GridTitle>
           </GridTitleContainer>
-          <Grid
-            style={{ height: "74.5vh" }}
-            data={process(
-              detailDataResult2.data.map((row) => ({
-                ...row,
-                [SELECTED_FIELD]: detailSelectedState2[idGetter3(row)],
-              })),
-              detailDataState2
-            )}
-            {...detailDataState2}
-            onDataStateChange={onDetailDataStateChange2}
-            dataItemKey={DETAIL_DATA_ITEM_KEY2}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+          <ExcelExport
+            data={detailDataResult2.data}
+            ref={(exporter) => {
+              _export2 = exporter;
             }}
-            onSelectionChange={ondetailSelectionChange2}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={detailDataResult2.total}
-            skip={page3.skip}
-            take={page3.take}
-            pageable={true}
-            onPageChange={pageChange3}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef3}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onDetailSortChange2}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onRowDoubleClick={onItemlvl2Click}
+            fileName="ValueBox"
           >
-            <GridColumn
-              field="code_name"
-              title="중분류"
-              width="150px"
-              footerCell={detailTotalFooterCell2}
-            />
-          </Grid>
+            <Grid
+              style={{ height: "74.5vh" }}
+              data={process(
+                detailDataResult2.data.map((row) => ({
+                  ...row,
+                  [SELECTED_FIELD]: detailSelectedState2[idGetter3(row)],
+                })),
+                detailDataState2
+              )}
+              {...detailDataState2}
+              onDataStateChange={onDetailDataStateChange2}
+              dataItemKey={DETAIL_DATA_ITEM_KEY2}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={ondetailSelectionChange2}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={detailDataResult2.total}
+              skip={page3.skip}
+              take={page3.take}
+              pageable={true}
+              onPageChange={pageChange3}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef3}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onDetailSortChange2}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onRowDoubleClick={onItemlvl2Click}
+            >
+              <GridColumn
+                field="code_name"
+                title="중분류"
+                width="150px"
+                footerCell={detailTotalFooterCell2}
+              />
+            </Grid>
+          </ExcelExport>
         </GridContainer>
         <GridContainer width={`13%`}>
           <GridTitleContainer>
             <GridTitle>소분류</GridTitle>
           </GridTitleContainer>
-          <Grid
-            style={{ height: "74.5vh" }}
-            data={process(
-              detailDataResult3.data.map((row) => ({
-                ...row,
-                [SELECTED_FIELD]: detailSelectedState3[idGetter4(row)],
-              })),
-              detailDataState3
-            )}
-            {...detailDataState3}
-            onDataStateChange={onDetailDataStateChange3}
-            dataItemKey={DETAIL_DATA_ITEM_KEY3}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+          <ExcelExport
+            data={detailDataResult3.data}
+            ref={(exporter) => {
+              _export3 = exporter;
             }}
-            onSelectionChange={ondetailSelectionChange3}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={detailDataResult3.total}
-            skip={page4.skip}
-            take={page4.take}
-            pageable={true}
-            onPageChange={pageChange4}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef4}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onDetailSortChange3}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onRowDoubleClick={onItemlvl3Click}
+            fileName="ValueBox"
           >
-            <GridColumn
-              field="code_name"
-              title="소분류"
-              width="150px"
-              footerCell={detailTotalFooterCell3}
-            />
-          </Grid>
+            <Grid
+              style={{ height: "74.5vh" }}
+              data={process(
+                detailDataResult3.data.map((row) => ({
+                  ...row,
+                  [SELECTED_FIELD]: detailSelectedState3[idGetter4(row)],
+                })),
+                detailDataState3
+              )}
+              {...detailDataState3}
+              onDataStateChange={onDetailDataStateChange3}
+              dataItemKey={DETAIL_DATA_ITEM_KEY3}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={ondetailSelectionChange3}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={detailDataResult3.total}
+              skip={page4.skip}
+              take={page4.take}
+              pageable={true}
+              onPageChange={pageChange4}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef4}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onDetailSortChange3}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+              onRowDoubleClick={onItemlvl3Click}
+            >
+              <GridColumn
+                field="code_name"
+                title="소분류"
+                width="150px"
+                footerCell={detailTotalFooterCell3}
+              />
+            </Grid>
+          </ExcelExport>
         </GridContainer>
         <GridContainer width={`calc(61% - ${GAP * 3}px)`}>
+          <GridTitleContainer>
+            <GridTitle>
+              상세정보
+              <Button
+                style={{ marginLeft: "10px" }}
+                onClick={onPlusClick}
+                themeColor={"primary"}
+              >
+                [추가]
+              </Button>
+            </GridTitle>
+            <ButtonContainer>
+              <Button
+                onClick={onAddClick}
+                themeColor={"primary"}
+                icon="plus"
+                title="행 추가"
+              ></Button>
+              <Button
+                onClick={onDeleteClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="minus"
+                title="행 삭제"
+              ></Button>
+              <Button
+                onClick={onCopyClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="copy"
+                title="행 복사"
+              ></Button>
+              <Button
+                onClick={onSaveClick}
+                fillMode="outline"
+                themeColor={"primary"}
+                icon="save"
+                title="저장"
+              ></Button>
+            </ButtonContainer>
+          </GridTitleContainer>
           <ExcelExport
             data={mainDataResult.data}
             ref={(exporter) => {
-              _export = exporter;
+              _export4 = exporter;
             }}
+            fileName="ValueBox"
           >
-            <GridTitleContainer>
-              <GridTitle>
-                상세정보
-                <Button
-                  style={{ marginLeft: "10px" }}
-                  onClick={onPlusClick}
-                  themeColor={"primary"}
-                >
-                  [추가]
-                </Button>
-              </GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onAddClick}
-                  themeColor={"primary"}
-                  icon="plus"
-                  title="행 추가"
-                ></Button>
-                <Button
-                  onClick={onDeleteClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="minus"
-                  title="행 삭제"
-                ></Button>
-                <Button
-                  onClick={onCopyClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="copy"
-                  title="행 복사"
-                ></Button>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                  title="저장"
-                ></Button>
-              </ButtonContainer>
-            </GridTitleContainer>
             <Grid
               style={{ height: "73vh" }}
               data={process(

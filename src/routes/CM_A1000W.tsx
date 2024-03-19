@@ -736,10 +736,12 @@ const CM_A1000W: React.FC = () => {
   };
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      const optionsGridOne = _export.workbookOptions();
+      optionsGridOne.sheets[0].title = "요약정보";
+      _export.save(optionsGridOne);
     }
   };
 
@@ -1089,7 +1091,7 @@ const CM_A1000W: React.FC = () => {
       setUnsavedAttadatnums([]);
       setUnsavedName([]);
       setParaData({
-        workType: "N",
+        workType: "",
         orgdiv: "01",
         datnum: "",
         strdt: "",
@@ -1501,48 +1503,49 @@ const CM_A1000W: React.FC = () => {
           </FilterContainer>
 
           <GridContainer>
+            <GridTitleContainer>
+              <GridTitle>요약정보</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onPrintWndClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="print"
+                >
+                  미리보기
+                </Button>
+                <Button
+                  onClick={onAddClick}
+                  themeColor={"primary"}
+                  icon="file-add"
+                >
+                  신규
+                </Button>
+                <Button
+                  onClick={onDeleteClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="delete"
+                >
+                  삭제
+                </Button>
+                <Button
+                  onClick={onSaveClick}
+                  themeColor={"primary"}
+                  fillMode="outline"
+                  icon="save"
+                >
+                  저장
+                </Button>
+              </ButtonContainer>
+            </GridTitleContainer>
             <ExcelExport
               data={mainDataResult.data}
               ref={(exporter) => {
                 _export = exporter;
               }}
+              fileName="업무일지"
             >
-              <GridTitleContainer>
-                <GridTitle>요약정보</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onPrintWndClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="print"
-                  >
-                    미리보기
-                  </Button>
-                  <Button
-                    onClick={onAddClick}
-                    themeColor={"primary"}
-                    icon="file-add"
-                  >
-                    신규
-                  </Button>
-                  <Button
-                    onClick={onDeleteClick}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="delete"
-                  >
-                    삭제
-                  </Button>
-                  <Button
-                    onClick={onSaveClick}
-                    themeColor={"primary"}
-                    fillMode="outline"
-                    icon="save"
-                  >
-                    저장
-                  </Button>
-                </ButtonContainer>
-              </GridTitleContainer>
               <Grid
                 style={{ height: "32.7vh" }}
                 data={process(

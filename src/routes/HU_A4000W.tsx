@@ -62,6 +62,7 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
@@ -70,12 +71,14 @@ import {
   useSysMessage,
 } from "../components/CommonFunction";
 import {
+  COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
   GAP,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import { useApi } from "../hooks/api";
@@ -97,24 +100,38 @@ let temp2 = 0;
 let temp5 = 0;
 let temp6 = 0;
 let temp7 = 0;
+let temp8 = 0;
+let temp9 = 0;
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY3 = "num";
 const DATA_ITEM_KEY5 = "num";
 const DATA_ITEM_KEY6 = "num";
 const DATA_ITEM_KEY7 = "num";
+const DATA_ITEM_KEY8 = "num";
+const DATA_ITEM_KEY9 = "num";
 let deletedMainRows: object[] = [];
 let deletedMainRows2: object[] = [];
 let deletedMainRows5: object[] = [];
 let deletedMainRows6: object[] = [];
 let deletedMainRows7: object[] = [];
+let deletedMainRows8: object[] = [];
 
-const comboField = ["reviewlvl1", "dptcd", "badcd", "person", "rnpdiv"];
+const comboField = [
+  "reviewlvl1",
+  "dptcd",
+  "badcd",
+  "person",
+  "rnpdiv",
+  "title",
+];
+const requiredField = ["reviewlvl1", "title"];
 const checkField = ["commyn"];
 const dateField = ["interviewdt", "baddt", "recdt", "reqdt"];
 const monthField = ["yyyymm"];
 const numberField = ["difficulty"];
 const attdatnumField = ["files"];
+const lockField = ["reviewlvl1", "title", "contents"];
 const today = new Date();
 const monthAgo = new Date(today);
 monthAgo.setMonth(today.getMonth() - 1);
@@ -309,7 +326,7 @@ const ColumnCommandCell7 = (props: GridCellProps) => {
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
-    "L_HU110, L_dptcd_001, L_QC002, L_HU017",
+    "L_sysUserMaster_001, L_HU115, L_HU110, L_dptcd_001, L_QC002, L_HU017",
     setBizComponentData
   );
   //보고서구분, 그룹구분, 그룹특성, 품목계정, 내수구분
@@ -323,22 +340,45 @@ const CustomComboBoxCell = (props: GridCellProps) => {
       : field === "badcd"
       ? "L_QC002"
       : field === "person"
-      ? "L_HU110"
+      ? "L_sysUserMaster_001"
       : field === "rnpdiv"
       ? "L_HU017"
+      : field === "title"
+      ? "L_HU115"
       : "";
 
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId === bizComponentIdVal
   );
-  const textField = field == "dptcd" ? "dptnm" : "code_name";
-  const valueField = field == "dptcd" ? "dptcd" : "sub_code";
+  const textField =
+    field == "dptcd"
+      ? "dptnm"
+      : field == "title"
+      ? "title"
+      : field == "person"
+      ? "user_name"
+      : "code_name";
+  const valueField =
+    field == "dptcd"
+      ? "dptcd"
+      : field == "title"
+      ? "hrreviewnum"
+      : field == "person"
+      ? "user_id"
+      : "sub_code";
 
   return bizComponent ? (
     <ComboBoxCell
       bizComponent={bizComponent}
       textField={textField}
       valueField={valueField}
+      page={
+        field == "reviewlvl1"
+          ? "reviewlvl1"
+          : field == "title"
+          ? "title"
+          : undefined
+      }
       {...props}
     />
   ) : (
@@ -385,11 +425,13 @@ const HU_A4000W: React.FC = () => {
   const idGetter5 = getter(DATA_ITEM_KEY5);
   const idGetter6 = getter(DATA_ITEM_KEY6);
   const idGetter7 = getter(DATA_ITEM_KEY7);
+  const idGetter8 = getter(DATA_ITEM_KEY8);
+  const idGetter9 = getter(DATA_ITEM_KEY9);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("HU_A4000W", setCustomOptionData);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("HU_A4000W", setMessagesData);
-  const [wortkType, setWorkType] = useState("N");
+  const [workType, setWorkType] = useState("N");
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
@@ -459,16 +501,21 @@ const HU_A4000W: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const location = UseGetValueFromSessionItem("location");
   const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_dptcd_001, L_HU250T", setBizComponentData);
+  UseBizComponent("L_HU110, L_dptcd_001, L_HU250T", setBizComponentData);
   const [dptcdListData, setdptcdListData] = useState([
     { dptcd: "", dptnm: "" },
   ]);
   const [UserListData, setUserListData] = useState([
     { prsnnum: "", prsnnm: "" },
   ]);
-
+  const [reviewlvl1ListData, setReviewlvl1ListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
+      const reviewlvl1QueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_HU110")
+      );
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_dptcd_001"
@@ -477,6 +524,7 @@ const HU_A4000W: React.FC = () => {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_HU250T")
       );
+      fetchQuery(reviewlvl1QueryStr, setReviewlvl1ListData);
       fetchQuery(userQueryStr, setUserListData);
       fetchQuery(dptcdQueryStr, setdptcdListData);
     }
@@ -505,10 +553,54 @@ const HU_A4000W: React.FC = () => {
   }, []);
 
   //엑셀 내보내기
-  let _export: ExcelExport | null | undefined;
+  let _export: any;
+  let _export2: any;
+  let _export3: any;
+  let _export4: any;
+  let _export5: any;
+  let _export6: any;
+  let _export7: any;
+  let _export8: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
-      _export.save();
+      if (tabSelected == 0) {
+        const optionsGridOne = _export.workbookOptions();
+        const optionsGridTwo = _export2.workbookOptions();
+        optionsGridOne.sheets[1] = optionsGridTwo.sheets[0];
+        optionsGridOne.sheets[0].title = "인사고과기준";
+        optionsGridOne.sheets[1].title = "인사고과셋팅기준";
+        _export.save(optionsGridOne);
+      }
+    }
+    if (_export3 !== null && _export3 !== undefined) {
+      if (tabSelected == 1) {
+        const optionsGridThree = _export3.workbookOptions();
+        optionsGridThree.sheets[0].title = "월말인사평가요약";
+        if (tabSelected2 == 0) {
+          const optionsGridFour = _export4.workbookOptions();
+          optionsGridThree.sheets[1] = optionsGridFour.sheets[0];
+          optionsGridThree.sheets[1].title = "불량내역";
+        } else if (tabSelected2 == 1) {
+          const optionsGridFive = _export5.workbookOptions();
+          optionsGridThree.sheets[1] = optionsGridFive.sheets[0];
+          optionsGridThree.sheets[1].title = "교육내역";
+        } else if (tabSelected2 == 2) {
+          const optionsGridSix = _export6.workbookOptions();
+          optionsGridThree.sheets[1] = optionsGridSix.sheets[0];
+          optionsGridThree.sheets[1].title = "상벌사항";
+        }
+
+        if (tabSelected3 == 0) {
+          const optionsGridSeven = _export7.workbookOptions();
+          optionsGridThree.sheets[2] = optionsGridSeven.sheets[0];
+          optionsGridThree.sheets[2].title = "분류1";
+        } else if (tabSelected3 == 1) {
+          const optionsGridEight = _export8.workbookOptions();
+          optionsGridThree.sheets[2] = optionsGridEight.sheets[0];
+          optionsGridThree.sheets[2].title = "분류2";
+        }
+        _export3.save(optionsGridThree);
+      }
     }
   };
 
@@ -555,12 +647,16 @@ const HU_A4000W: React.FC = () => {
     setPage5(initialPageState);
     setPage6(initialPageState);
     setPage7(initialPageState);
+    setPage8(initialPageState);
+    setPage9(initialPageState);
     setMainDataResult(process([], mainDataState));
     setMainDataResult2(process([], mainDataState2));
     setMainDataResult3(process([], mainDataState3));
     setMainDataResult5(process([], mainDataState5));
     setMainDataResult6(process([], mainDataState6));
     setMainDataResult7(process([], mainDataState7));
+    setMainDataResult8(process([], mainDataState8));
+    setMainDataResult9(process([], mainDataState9));
     setWorkType("N");
     const today = new Date();
     const monthAgo = new Date(today);
@@ -596,6 +692,7 @@ const HU_A4000W: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const [tabSelected2, setTabSelected2] = React.useState(0);
+  const [tabSelected3, setTabSelected3] = React.useState(0);
 
   const handleSelectTab = (e: any) => {
     setTabSelected(e.selected);
@@ -614,7 +711,7 @@ const HU_A4000W: React.FC = () => {
     if (unsavedAttadatnums.length > 0) {
       setDeletedAttadatnums(unsavedAttadatnums);
     }
-    if (mainDataResult3.total > 0) {
+    if (mainDataResult3.total > 0 && workType != "N") {
       if (e.selected == 0) {
         setFilters5((prev) => ({
           ...prev,
@@ -643,7 +740,9 @@ const HU_A4000W: React.FC = () => {
       setMainDataResult7(process([], mainDataState7));
     }
   };
-
+  const handleSelectTab3 = (e: any) => {
+    setTabSelected3(e.selected);
+  };
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "LIST1",
@@ -734,6 +833,30 @@ const HU_A4000W: React.FC = () => {
     isSearch: false,
   });
 
+  const [filters8, setFilters8] = useState({
+    pgSize: PAGE_SIZE,
+    work_type: "DETAIL2",
+    orgdiv: "01",
+    userid: "",
+    yyyymm: "",
+    ref_key: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: false,
+  });
+
+  const [filters9, setFilters9] = useState({
+    pgSize: PAGE_SIZE,
+    work_type: "DETAIL3",
+    orgdiv: "01",
+    userid: "",
+    yyyymm: "",
+    ref_key: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: false,
+  });
+
   const [information, setInformation] = useState<any>({
     orgdiv: "01",
     monthlyhrreview: "",
@@ -799,12 +922,20 @@ const HU_A4000W: React.FC = () => {
   };
 
   const ComboBoxChange = (e: any) => {
-    const { name, value } = e;
+    const { name, value, values } = e;
 
-    setInformation((prev: any) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (name == "interviewee") {
+      setInformation((prev: any) => ({
+        ...prev,
+        [name]: values.prsnnum,
+        dptcd: values.dptcd,
+      }));
+    } else {
+      setInformation((prev: any) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   let gridRef: any = useRef(null);
@@ -816,6 +947,8 @@ const HU_A4000W: React.FC = () => {
   const [page5, setPage5] = useState(initialPageState);
   const [page6, setPage6] = useState(initialPageState);
   const [page7, setPage7] = useState(initialPageState);
+  const [page8, setPage8] = useState(initialPageState);
+  const [page9, setPage9] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -854,6 +987,33 @@ const HU_A4000W: React.FC = () => {
 
   const pageChange3 = (event: GridPageChangeEvent) => {
     const { page } = event;
+
+    setPage5(initialPageState);
+    setPage6(initialPageState);
+    setPage7(initialPageState);
+    setPage8(initialPageState);
+    setPage9(initialPageState);
+
+    setFilters5((prev) => ({
+      ...prev,
+      pgNum: 1,
+    }));
+    setFilters6((prev) => ({
+      ...prev,
+      pgNum: 1,
+    }));
+    setFilters7((prev) => ({
+      ...prev,
+      pgNum: 1,
+    }));
+    setFilters8((prev) => ({
+      ...prev,
+      pgNum: 1,
+    }));
+    setFilters9((prev) => ({
+      ...prev,
+      pgNum: 1,
+    }));
 
     setFilters3((prev) => ({
       ...prev,
@@ -907,6 +1067,36 @@ const HU_A4000W: React.FC = () => {
     }));
 
     setPage7({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange8 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters8((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage8({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange9 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters9((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage9({
       skip: page.skip,
       take: initialPageState.take,
     });
@@ -1101,7 +1291,7 @@ const HU_A4000W: React.FC = () => {
         "@p_orgdiv": filters3.orgdiv,
         "@p_frdt": convertDateToStr(filters3.frdt).substring(0, 6),
         "@p_todt": convertDateToStr(filters3.todt).substring(0, 6),
-        "@p_Interviewer": userId,
+        "@p_Interviewer": filters3.Interviewer,
         "@p_Interviewee": filters3.Interviewee,
         "@p_dptcd": filters3.dptcd,
         "@p_hrreviewnum": filters3.hrreviewnum,
@@ -1176,7 +1366,9 @@ const HU_A4000W: React.FC = () => {
             difficulty: selectedRow.difficulty,
             remark1: selectedRow.remark1,
             yyyymm:
-              selectedRow.yyyymm == "" ? monthAgo : toDate(selectedRow.yyyymm),
+              selectedRow.yyyymm == ""
+                ? monthAgo
+                : toDate(selectedRow.yyyymm + "01"),
           });
           setFilters4((prev) => ({
             ...prev,
@@ -1203,6 +1395,22 @@ const HU_A4000W: React.FC = () => {
             pgNum: 1,
           }));
           setFilters7((prev) => ({
+            ...prev,
+            userid: selectedRow.interviewee,
+            yyyymm: selectedRow.yyyymm,
+            ref_key: selectedRow.monthlyhrreview,
+            isSearch: true,
+            pgNum: 1,
+          }));
+          setFilters8((prev) => ({
+            ...prev,
+            userid: selectedRow.interviewee,
+            yyyymm: selectedRow.yyyymm,
+            ref_key: selectedRow.monthlyhrreview,
+            isSearch: true,
+            pgNum: 1,
+          }));
+          setFilters9((prev) => ({
             ...prev,
             userid: selectedRow.interviewee,
             yyyymm: selectedRow.yyyymm,
@@ -1221,15 +1429,17 @@ const HU_A4000W: React.FC = () => {
                 ? new Date()
                 : toDate(rows[0].interviewdt),
             interviewer: rows[0].interviewer,
-            interviewee: rows[0].interviewee,
+            interviewee:
+              rows[0].interviewee == undefined ? "" : rows[0].interviewee,
             dptcd: rows[0].dptcd,
             difficulty: rows[0].difficulty,
             remark1: rows[0].remark1,
-            yyyymm: rows[0].yyyymm == "" ? monthAgo : toDate(rows[0].yyyymm),
+            yyyymm:
+              rows[0].yyyymm == "" ? monthAgo : toDate(rows[0].yyyymm + "01"),
           });
           setFilters4((prev) => ({
             ...prev,
-            userid: rows[0].interviewee,
+            userid: rows[0].interviewee == undefined ? "" : rows[0].interviewee,
             yyyymm: rows[0].yyyymm,
             ref_key: rows[0].monthlyhrreview,
             isSearch: true,
@@ -1237,25 +1447,41 @@ const HU_A4000W: React.FC = () => {
           }));
           setFilters5((prev) => ({
             ...prev,
-            userid: selectedRow.interviewee,
-            yyyymm: selectedRow.yyyymm,
-            ref_key: selectedRow.monthlyhrreview,
+            userid: rows[0].interviewee == undefined ? "" : rows[0].interviewee,
+            yyyymm: rows[0].yyyymm,
+            ref_key: rows[0].monthlyhrreview,
             isSearch: true,
             pgNum: 1,
           }));
           setFilters6((prev) => ({
             ...prev,
-            userid: selectedRow.interviewee,
-            yyyymm: selectedRow.yyyymm,
-            ref_key: selectedRow.monthlyhrreview,
+            userid: rows[0].interviewee == undefined ? "" : rows[0].interviewee,
+            yyyymm: rows[0].yyyymm,
+            ref_key: rows[0].monthlyhrreview,
             isSearch: true,
             pgNum: 1,
           }));
           setFilters7((prev) => ({
             ...prev,
-            userid: selectedRow.interviewee,
-            yyyymm: selectedRow.yyyymm,
-            ref_key: selectedRow.monthlyhrreview,
+            userid: rows[0].interviewee == undefined ? "" : rows[0].interviewee,
+            yyyymm: rows[0].yyyymm,
+            ref_key: rows[0].monthlyhrreview,
+            isSearch: true,
+            pgNum: 1,
+          }));
+          setFilters8((prev) => ({
+            ...prev,
+            userid: rows[0].interviewee == undefined ? "" : rows[0].interviewee,
+            yyyymm: rows[0].yyyymm,
+            ref_key: rows[0].monthlyhrreview,
+            isSearch: true,
+            pgNum: 1,
+          }));
+          setFilters9((prev) => ({
+            ...prev,
+            userid: rows[0].interviewee == undefined ? "" : rows[0].interviewee,
+            yyyymm: rows[0].yyyymm,
+            ref_key: rows[0].monthlyhrreview,
             isSearch: true,
             pgNum: 1,
           }));
@@ -1291,9 +1517,13 @@ const HU_A4000W: React.FC = () => {
         setPage5(initialPageState);
         setPage6(initialPageState);
         setPage7(initialPageState);
+        setPage8(initialPageState);
+        setPage9(initialPageState);
         setMainDataResult5(process([], mainDataState5));
         setMainDataResult6(process([], mainDataState6));
         setMainDataResult7(process([], mainDataState7));
+        setMainDataResult8(process([], mainDataState8));
+        setMainDataResult9(process([], mainDataState9));
       }
     } else {
       console.log("[오류 발생]");
@@ -1324,13 +1554,13 @@ const HU_A4000W: React.FC = () => {
       parameters: {
         "@p_work_type": filters4.work_type,
         "@p_orgdiv": filters.orgdiv,
-        "@p_frdt": convertDateToStr(filters.frdt).substring(0, 6),
-        "@p_todt": convertDateToStr(filters.todt).substring(0, 6),
-        "@p_Interviewer": userId,
-        "@p_Interviewee": filters.Interviewee,
-        "@p_dptcd": filters.dptcd,
+        "@p_frdt": convertDateToStr(filters3.frdt).substring(0, 6),
+        "@p_todt": convertDateToStr(filters3.todt).substring(0, 6),
+        "@p_Interviewer": filters3.Interviewer,
+        "@p_Interviewee": filters3.Interviewee,
+        "@p_dptcd": filters3.dptcd,
         "@p_hrreviewnum": filters2.hrreviewnum,
-        "@p_Monthly_hrreview": filters.Monthly_hrreview,
+        "@p_Monthly_hrreview": filters3.Monthly_hrreview,
         "@p_userid": filters4.userid,
         "@p_yyyymm": filters4.yyyymm,
         "@p_ref_key": filters4.ref_key,
@@ -1413,13 +1643,13 @@ const HU_A4000W: React.FC = () => {
       parameters: {
         "@p_work_type": filters5.work_type,
         "@p_orgdiv": filters.orgdiv,
-        "@p_frdt": convertDateToStr(filters.frdt).substring(0, 6),
-        "@p_todt": convertDateToStr(filters.todt).substring(0, 6),
-        "@p_Interviewer": userId,
-        "@p_Interviewee": filters.Interviewee,
-        "@p_dptcd": filters.dptcd,
+        "@p_frdt": convertDateToStr(filters3.frdt).substring(0, 6),
+        "@p_todt": convertDateToStr(filters3.todt).substring(0, 6),
+        "@p_Interviewer": filters3.Interviewer,
+        "@p_Interviewee": filters3.Interviewee,
+        "@p_dptcd": filters3.dptcd,
         "@p_hrreviewnum": filters2.hrreviewnum,
-        "@p_Monthly_hrreview": filters.Monthly_hrreview,
+        "@p_Monthly_hrreview": filters3.Monthly_hrreview,
         "@p_userid": filters5.userid,
         "@p_yyyymm": filters5.yyyymm,
         "@p_ref_key": filters5.ref_key,
@@ -1477,13 +1707,13 @@ const HU_A4000W: React.FC = () => {
       parameters: {
         "@p_work_type": filters6.work_type,
         "@p_orgdiv": filters.orgdiv,
-        "@p_frdt": convertDateToStr(filters.frdt).substring(0, 6),
-        "@p_todt": convertDateToStr(filters.todt).substring(0, 6),
-        "@p_Interviewer": userId,
-        "@p_Interviewee": filters.Interviewee,
-        "@p_dptcd": filters.dptcd,
+        "@p_frdt": convertDateToStr(filters3.frdt).substring(0, 6),
+        "@p_todt": convertDateToStr(filters3.todt).substring(0, 6),
+        "@p_Interviewer": filters3.Interviewer,
+        "@p_Interviewee": filters3.Interviewee,
+        "@p_dptcd": filters3.dptcd,
         "@p_hrreviewnum": filters2.hrreviewnum,
-        "@p_Monthly_hrreview": filters.Monthly_hrreview,
+        "@p_Monthly_hrreview": filters3.Monthly_hrreview,
         "@p_userid": filters6.userid,
         "@p_yyyymm": filters6.yyyymm,
         "@p_ref_key": filters6.ref_key,
@@ -1541,13 +1771,13 @@ const HU_A4000W: React.FC = () => {
       parameters: {
         "@p_work_type": filters7.work_type,
         "@p_orgdiv": filters.orgdiv,
-        "@p_frdt": convertDateToStr(filters.frdt).substring(0, 6),
-        "@p_todt": convertDateToStr(filters.todt).substring(0, 6),
-        "@p_Interviewer": userId,
-        "@p_Interviewee": filters.Interviewee,
-        "@p_dptcd": filters.dptcd,
+        "@p_frdt": convertDateToStr(filters3.frdt).substring(0, 6),
+        "@p_todt": convertDateToStr(filters3.todt).substring(0, 6),
+        "@p_Interviewer": filters3.Interviewer,
+        "@p_Interviewee": filters3.Interviewee,
+        "@p_dptcd": filters3.dptcd,
         "@p_hrreviewnum": filters2.hrreviewnum,
-        "@p_Monthly_hrreview": filters.Monthly_hrreview,
+        "@p_Monthly_hrreview": filters3.Monthly_hrreview,
         "@p_userid": filters7.userid,
         "@p_yyyymm": filters7.yyyymm,
         "@p_ref_key": filters7.ref_key,
@@ -1592,6 +1822,132 @@ const HU_A4000W: React.FC = () => {
     setLoading(false);
   };
 
+  //그리드 데이터 조회
+  const fetchMainGrid8 = async (filters8: any) => {
+    //if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_HU_A4000W_Q",
+      pageNumber: filters8.pgNum,
+      pageSize: filters8.pgSize,
+      parameters: {
+        "@p_work_type": filters8.work_type,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_frdt": convertDateToStr(filters3.frdt).substring(0, 6),
+        "@p_todt": convertDateToStr(filters3.todt).substring(0, 6),
+        "@p_Interviewer": filters3.Interviewer,
+        "@p_Interviewee": filters3.Interviewee,
+        "@p_dptcd": filters3.dptcd,
+        "@p_hrreviewnum": filters2.hrreviewnum,
+        "@p_Monthly_hrreview": filters8.ref_key,
+        "@p_userid": filters8.userid,
+        "@p_yyyymm": filters8.yyyymm,
+        "@p_ref_key": filters8.ref_key,
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
+        ...row,
+      }));
+
+      setMainDataResult8((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        setSelectedState8({ [rows[0][DATA_ITEM_KEY8]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters8((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid9 = async (filters9: any) => {
+    //if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_HU_A4000W_Q",
+      pageNumber: filters9.pgNum,
+      pageSize: filters9.pgSize,
+      parameters: {
+        "@p_work_type": filters9.work_type,
+        "@p_orgdiv": filters9.orgdiv,
+        "@p_frdt": convertDateToStr(filters3.frdt).substring(0, 6),
+        "@p_todt": convertDateToStr(filters3.todt).substring(0, 6),
+        "@p_Interviewer": filters3.Interviewer,
+        "@p_Interviewee": filters3.Interviewee,
+        "@p_dptcd": filters3.dptcd,
+        "@p_hrreviewnum": filters2.hrreviewnum,
+        "@p_Monthly_hrreview": filters9.ref_key,
+        "@p_userid": filters9.userid,
+        "@p_yyyymm": filters9.yyyymm,
+        "@p_ref_key": filters9.ref_key,
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
+        ...row,
+      }));
+
+      setMainDataResult9((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        setSelectedState9({ [rows[0][DATA_ITEM_KEY9]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters9((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -1610,6 +1966,12 @@ const HU_A4000W: React.FC = () => {
   const [mainDataState7, setMainDataState7] = useState<State>({
     sort: [],
   });
+  const [mainDataState8, setMainDataState8] = useState<State>({
+    sort: [],
+  });
+  const [mainDataState9, setMainDataState9] = useState<State>({
+    sort: [],
+  });
   const [tempState, setTempState] = useState<State>({
     sort: [],
   });
@@ -1623,6 +1985,9 @@ const HU_A4000W: React.FC = () => {
     sort: [],
   });
   const [tempState7, setTempState7] = useState<State>({
+    sort: [],
+  });
+  const [tempState8, setTempState8] = useState<State>({
     sort: [],
   });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
@@ -1643,6 +2008,12 @@ const HU_A4000W: React.FC = () => {
   const [mainDataResult7, setMainDataResult7] = useState<DataResult>(
     process([], mainDataState7)
   );
+  const [mainDataResult8, setMainDataResult8] = useState<DataResult>(
+    process([], mainDataState8)
+  );
+  const [mainDataResult9, setMainDataResult9] = useState<DataResult>(
+    process([], mainDataState9)
+  );
   const [tempResult, setTempResult] = useState<DataResult>(
     process([], tempState)
   );
@@ -1657,6 +2028,9 @@ const HU_A4000W: React.FC = () => {
   );
   const [tempResult7, setTempResult7] = useState<DataResult>(
     process([], tempState7)
+  );
+  const [tempResult8, setTempResult8] = useState<DataResult>(
+    process([], tempState8)
   );
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -1674,6 +2048,12 @@ const HU_A4000W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
   const [selectedState7, setSelectedState7] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState8, setSelectedState8] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState9, setSelectedState9] = useState<{
     [id: string]: boolean | number[];
   }>({});
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
@@ -1767,6 +2147,34 @@ const HU_A4000W: React.FC = () => {
     }
   }, [filters7, customOptionData, permissions]);
 
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (
+      filters8.isSearch &&
+      customOptionData !== null &&
+      permissions !== null
+    ) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters8);
+      setFilters8((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
+      fetchMainGrid8(deepCopiedFilters);
+    }
+  }, [filters8, customOptionData, permissions]);
+
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (
+      filters9.isSearch &&
+      customOptionData !== null &&
+      permissions !== null
+    ) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters9);
+      setFilters9((prev) => ({ ...prev, find_row_value: "", isSearch: false }));
+      fetchMainGrid9(deepCopiedFilters);
+    }
+  }, [filters9, customOptionData, permissions]);
+
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
     if (targetRowIndex !== null && gridRef.current) {
@@ -1827,6 +2235,21 @@ const HU_A4000W: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
+    const interviewee: any =
+      UserListData.find(
+        (item: any) => item.prsnnm == selectedRowData.interviewee
+      ) == undefined
+        ? ""
+        : UserListData.find(
+            (item: any) => item.prsnnm == selectedRowData.interviewee
+          );
+    const dptcd: any =
+      dptcdListData.find((item: any) => item.dptnm == selectedRowData.dptcd) ==
+      undefined
+        ? ""
+        : dptcdListData.find(
+            (item: any) => item.dptnm == selectedRowData.dptcd
+          );
     setWorkType("U");
     setInformation({
       orgdiv: selectedRowData.orgdiv,
@@ -1836,18 +2259,18 @@ const HU_A4000W: React.FC = () => {
           ? new Date()
           : toDate(selectedRowData.interviewdt),
       interviewer: selectedRowData.interviewer,
-      interviewee: selectedRowData.interviewee,
-      dptcd: selectedRowData.dptcd,
+      interviewee: interviewee.prsnnum == undefined ? "" : interviewee.prsnnum,
+      dptcd: dptcd.dptcd == undefined ? "" : dptcd.dptcd,
       difficulty: selectedRowData.difficulty,
       remark1: selectedRowData.remark1,
       yyyymm:
         selectedRowData.yyyymm == ""
           ? monthAgo
-          : toDate(selectedRowData.yyyymm),
+          : toDate(selectedRowData.yyyymm + "01"),
     });
     setFilters4((prev) => ({
       ...prev,
-      userid: selectedRowData.interviewee,
+      userid: interviewee.prsnnum == undefined ? "" : interviewee.prsnnum,
       yyyymm: selectedRowData.yyyymm,
       ref_key: selectedRowData.monthlyhrreview,
       isSearch: true,
@@ -1861,7 +2284,7 @@ const HU_A4000W: React.FC = () => {
     }
     setFilters5((prev) => ({
       ...prev,
-      userid: selectedRowData.interviewee,
+      userid: interviewee.prsnnum == undefined ? "" : interviewee.prsnnum,
       yyyymm: selectedRowData.yyyymm,
       ref_key: selectedRowData.monthlyhrreview,
       isSearch: true,
@@ -1869,7 +2292,7 @@ const HU_A4000W: React.FC = () => {
     }));
     setFilters6((prev) => ({
       ...prev,
-      userid: selectedRowData.interviewee,
+      userid: interviewee.prsnnum == undefined ? "" : interviewee.prsnnum,
       yyyymm: selectedRowData.yyyymm,
       ref_key: selectedRowData.monthlyhrreview,
       isSearch: true,
@@ -1877,7 +2300,23 @@ const HU_A4000W: React.FC = () => {
     }));
     setFilters7((prev) => ({
       ...prev,
-      userid: selectedRowData.interviewee,
+      userid: interviewee.prsnnum == undefined ? "" : interviewee.prsnnum,
+      yyyymm: selectedRowData.yyyymm,
+      ref_key: selectedRowData.monthlyhrreview,
+      isSearch: true,
+      pgNum: 1,
+    }));
+    setFilters8((prev) => ({
+      ...prev,
+      userid: interviewee.prsnnum == undefined ? "" : interviewee.prsnnum,
+      yyyymm: selectedRowData.yyyymm,
+      ref_key: selectedRowData.monthlyhrreview,
+      isSearch: true,
+      pgNum: 1,
+    }));
+    setFilters9((prev) => ({
+      ...prev,
+      userid: interviewee.prsnnum == undefined ? "" : interviewee.prsnnum,
       yyyymm: selectedRowData.yyyymm,
       ref_key: selectedRowData.monthlyhrreview,
       isSearch: true,
@@ -1915,6 +2354,26 @@ const HU_A4000W: React.FC = () => {
     setSelectedState7(newSelectedState);
   };
 
+  const onSelectionChange8 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState8,
+      dataItemKey: DATA_ITEM_KEY8,
+    });
+
+    setSelectedState8(newSelectedState);
+  };
+
+  const onSelectionChange9 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState9,
+      dataItemKey: DATA_ITEM_KEY9,
+    });
+
+    setSelectedState9(newSelectedState);
+  };
+
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
@@ -1933,6 +2392,12 @@ const HU_A4000W: React.FC = () => {
   };
   const onMainDataStateChange7 = (event: GridDataStateChangeEvent) => {
     setMainDataState7(event.dataState);
+  };
+  const onMainDataStateChange8 = (event: GridDataStateChangeEvent) => {
+    setMainDataState(event.dataState);
+  };
+  const onMainDataStateChange9 = (event: GridDataStateChangeEvent) => {
+    setMainDataState(event.dataState);
   };
 
   //그리드 푸터
@@ -2019,6 +2484,33 @@ const HU_A4000W: React.FC = () => {
       </td>
     );
   };
+  const mainTotalFooterCell8 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult8.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {mainDataResult8.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
+
+  const mainTotalFooterCell9 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult9.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총
+        {mainDataResult9.total == -1
+          ? 0
+          : parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
 
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
@@ -2037,6 +2529,12 @@ const HU_A4000W: React.FC = () => {
   };
   const onMainSortChange7 = (e: any) => {
     setMainDataState7((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onMainSortChange8 = (e: any) => {
+    setMainDataState8((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onMainSortChange9 = (e: any) => {
+    setMainDataState9((prev) => ({ ...prev, sort: e.sort }));
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
@@ -2084,6 +2582,15 @@ const HU_A4000W: React.FC = () => {
       DATA_ITEM_KEY7
     );
   };
+  const onMainItemChange8 = (event: GridItemChangeEvent) => {
+    setMainDataState8((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult8,
+      setMainDataResult8,
+      DATA_ITEM_KEY8
+    );
+  };
   const customCellRender = (td: any, props: any) => (
     <CellRender
       originalProps={props}
@@ -2122,6 +2629,14 @@ const HU_A4000W: React.FC = () => {
       originalProps={props}
       td={td}
       enterEdit={enterEdit7}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customCellRender8 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit8}
       editField={EDIT_FIELD}
     />
   );
@@ -2164,6 +2679,14 @@ const HU_A4000W: React.FC = () => {
       originalProps={props}
       tr={tr}
       exitEdit={exitEdit7}
+      editField={EDIT_FIELD}
+    />
+  );
+  const customRowRender8 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit8}
       editField={EDIT_FIELD}
     />
   );
@@ -2342,6 +2865,46 @@ const HU_A4000W: React.FC = () => {
       setTempResult7((prev: { total: any }) => {
         return {
           data: mainDataResult7.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const enterEdit8 = (dataItem: any, field: string) => {
+    if (
+      field != "rowstatus" &&
+      field != "contents" &&
+      field != "bf_quantitative_evalution" &&
+      field != "bf_qualitative_evalution"
+    ) {
+      const newData = mainDataResult8.data.map((item) =>
+        item[DATA_ITEM_KEY8] === dataItem[DATA_ITEM_KEY8]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+      setTempResult8((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult8((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult8((prev: { total: any }) => {
+        return {
+          data: mainDataResult8.data,
           total: prev.total,
         };
       });
@@ -2583,6 +3146,53 @@ const HU_A4000W: React.FC = () => {
     }
   };
 
+  const exitEdit8 = () => {
+    if (tempResult8.data != mainDataResult8.data) {
+      const newData = mainDataResult8.data.map(
+        (item: { [x: string]: string; rowstatus: string }) =>
+          item[DATA_ITEM_KEY8] == Object.getOwnPropertyNames(selectedState8)[0]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
+                [EDIT_FIELD]: undefined,
+              }
+            : {
+                ...item,
+                [EDIT_FIELD]: undefined,
+              }
+      );
+      setTempResult8((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult8((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult8.data.map((item: any) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult8((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult8((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
   const onAddClick = () => {
     mainDataResult.data.map((item) => {
       if (item.num > temp) {
@@ -2758,6 +3368,221 @@ const HU_A4000W: React.FC = () => {
         total: prev.total + 1,
       };
     });
+  };
+
+  const onAddClick8 = () => {
+    mainDataResult8.data.map((item) => {
+      if (item.num > temp8) {
+        temp8 = item.num;
+      }
+    });
+
+    const datas = mainDataResult3.data.filter(
+      (item) =>
+        item[DATA_ITEM_KEY3] == Object.getOwnPropertyNames(selectedState3)[0]
+    )[0];
+
+    const newDataItem = {
+      [DATA_ITEM_KEY8]: ++temp8,
+      bf_qualitative_evalution: "",
+      bf_quantitative_evalution: 0,
+      contents: "",
+      hrreviewnum: "",
+      monthlyhrreview: datas.monthlyhrreview,
+      monthlyhrreviewseq: datas.monthlyhrreviewseq,
+      orgdiv: "01",
+      qualitative_evalution: "",
+      quantitative_evalution: 0,
+      reviewlvl1: "",
+      title: "",
+      rowstatus: "N",
+    };
+
+    setSelectedState8({ [newDataItem[DATA_ITEM_KEY8]]: true });
+    setPage8((prev) => ({
+      ...prev,
+      skip: 0,
+      take: prev.take + 1,
+    }));
+    setMainDataResult8((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onreviewlvl1AddClick = async () => {
+    if (information.dptcd == "") {
+      alert("면접자 부서를 입력해주세요.");
+    } else {
+      let data: any;
+      setLoading(true);
+
+      //조회조건 파라미터
+      const parameters: Iparameters = {
+        procedureName: "P_HU_A4000W_Q",
+        pageNumber: filters9.pgNum,
+        pageSize: filters9.pgSize,
+        parameters: {
+          "@p_work_type": "DETAIL2_N",
+          "@p_orgdiv": filters9.orgdiv,
+          "@p_frdt": convertDateToStr(filters.frdt).substring(0, 6),
+          "@p_todt": convertDateToStr(filters.todt).substring(0, 6),
+          "@p_Interviewer": userId,
+          "@p_Interviewee": filters.Interviewee,
+          "@p_dptcd": information.dptcd,
+          "@p_hrreviewnum": filters2.hrreviewnum,
+          "@p_Monthly_hrreview": filters9.ref_key,
+          "@p_userid": filters9.userid,
+          "@p_yyyymm": filters9.yyyymm,
+          "@p_ref_key": filters9.ref_key,
+          "@p_find_row_value": filters.find_row_value,
+        },
+      };
+      try {
+        data = await processApi<any>("procedure", parameters);
+      } catch (error) {
+        data = null;
+      }
+      if (data.isSuccess === true) {
+        const totalRowCnt = data.tables[0].TotalRowCount;
+        const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
+          ...row,
+        }));
+
+        rows.map((item: any) => {
+          mainDataResult8.data.map((item) => {
+            if (item.num > temp8) {
+              temp8 = item.num;
+            }
+          });
+
+          const datas = mainDataResult3.data.filter(
+            (item) =>
+              item[DATA_ITEM_KEY3] ==
+              Object.getOwnPropertyNames(selectedState3)[0]
+          )[0];
+
+          const newDataItem = {
+            [DATA_ITEM_KEY8]: ++temp8,
+            bf_qualitative_evalution: item.bf_qualitative_evalution,
+            bf_quantitative_evalution: item.bf_quantitative_evalution,
+            contents: item.contents,
+            hrreviewnum: item.hrreviewnum,
+            monthlyhrreview: datas.monthlyhrreview,
+            monthlyhrreviewseq: datas.monthlyhrreviewseq,
+            orgdiv: "01",
+            qualitative_evalution: item.qualitative_evalution,
+            quantitative_evalution: item.quantitative_evalution,
+            reviewlvl1: item.reviewlvl1,
+            title: item.title,
+            rowstatus: "N",
+          };
+
+          setSelectedState8({ [newDataItem[DATA_ITEM_KEY8]]: true });
+          setPage8((prev) => ({
+            ...prev,
+            skip: 0,
+            take: prev.take + 1,
+          }));
+          setMainDataResult8((prev) => {
+            return {
+              data: [newDataItem, ...prev.data],
+              total: prev.total + 1,
+            };
+          });
+        });
+      } else {
+        console.log("[오류 발생]");
+        console.log(data);
+      }
+      setLoading(false);
+    }
+  };
+
+  const onreviewlvl1AddClick2 = async () => {
+    if (information.dptcd == "") {
+      alert("면접자 부서를 입력해주세요.");
+    } else {
+      let data: any;
+      setLoading(true);
+      //조회조건 파라미터
+      const parameters: Iparameters = {
+        procedureName: "P_HU_A4000W_Q",
+        pageNumber: filters9.pgNum,
+        pageSize: filters9.pgSize,
+        parameters: {
+          "@p_work_type": "DETAIL3_N",
+          "@p_orgdiv": filters9.orgdiv,
+          "@p_frdt": convertDateToStr(filters.frdt).substring(0, 6),
+          "@p_todt": convertDateToStr(filters.todt).substring(0, 6),
+          "@p_Interviewer": userId,
+          "@p_Interviewee": filters.Interviewee,
+          "@p_dptcd": information.dptcd,
+          "@p_hrreviewnum": filters2.hrreviewnum,
+          "@p_Monthly_hrreview": filters9.ref_key,
+          "@p_userid": filters9.userid,
+          "@p_yyyymm": filters9.yyyymm,
+          "@p_ref_key": filters9.ref_key,
+          "@p_find_row_value": filters.find_row_value,
+        },
+      };
+      try {
+        data = await processApi<any>("procedure", parameters);
+      } catch (error) {
+        data = null;
+      }
+      if (data.isSuccess === true) {
+        const totalRowCnt = data.tables[0].TotalRowCount;
+        const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
+          ...row,
+        }));
+        rows.map((item: any) => {
+          mainDataResult9.data.map((item) => {
+            if (item.num > temp9) {
+              temp9 = item.num;
+            }
+          });
+          const datas = mainDataResult3.data.filter(
+            (item) =>
+              item[DATA_ITEM_KEY3] ==
+              Object.getOwnPropertyNames(selectedState3)[0]
+          )[0];
+          const newDataItem = {
+            [DATA_ITEM_KEY9]: ++temp9,
+            bf_qualitative_evalution: item.bf_qualitative_evalution,
+            bf_quantitative_evalution: item.bf_quantitative_evalution,
+            contents: item.contents,
+            hrreviewnum: item.hrreviewnum,
+            monthlyhrreview: datas.monthlyhrreview,
+            monthlyhrreviewseq: datas.monthlyhrreviewseq,
+            orgdiv: "01",
+            qualitative_evalution: item.qualitative_evalution,
+            quantitative_evalution: item.quantitative_evalution,
+            reviewlvl1: item.reviewlvl1,
+            title: item.title,
+            rowstatus: "N",
+          };
+          setSelectedState9({ [newDataItem[DATA_ITEM_KEY9]]: true });
+          setPage9((prev) => ({
+            ...prev,
+            skip: 0,
+            take: prev.take + 1,
+          }));
+          setMainDataResult9((prev) => {
+            return {
+              data: [newDataItem, ...prev.data],
+              total: prev.total + 1,
+            };
+          });
+        });
+      } else {
+        console.log("[오류 발생]");
+        console.log(data);
+      }
+      setLoading(false);
+    }
   };
 
   const onDeleteClick = (e: any) => {
@@ -2961,6 +3786,44 @@ const HU_A4000W: React.FC = () => {
     }
   };
 
+  const onDeleteClick8 = (e: any) => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
+    mainDataResult8.data.forEach((item: any, index: number) => {
+      if (!selectedState8[item[DATA_ITEM_KEY8]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows8.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult8.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult8.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult8((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    if (Object.length > 0) {
+      setSelectedState8({
+        [data != undefined ? data[DATA_ITEM_KEY8] : newData[0]]: true,
+      });
+    }
+  };
+
   const onSaveClick = () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
@@ -3124,6 +3987,163 @@ const HU_A4000W: React.FC = () => {
     }));
   };
 
+  const onSaveClick3 = () => {
+    if (information.interviewee == "") {
+      alert("필수값을 채워주세요");
+    } else {
+      let dataArr: TdataArr = {
+        rowstatus_s: [],
+        hrreviewnum_s: [],
+        reviewlvl1_s: [],
+        title_s: [],
+        contents_s: [],
+        commyn_s: [],
+
+        hrreview_stnum_s: [],
+        dptcd_s: [],
+        remark1_s: [],
+
+        monthlyhrreview_s: [],
+        monthlyhrreviewseq_s: [],
+        quantitative_evalution_s: [],
+        qualitative_evalution_s: [],
+
+        badnum_s: [],
+        badseq_s: [],
+        baddt_s: [],
+        badcd_s: [],
+        remark_s: [],
+
+        seq_s: [],
+        rnpdiv_s: [],
+        reqdt_s: [],
+        attdatnum_s: [],
+        reloffice_s: [],
+      };
+
+      let valid = true;
+
+      const dataItem = mainDataResult8.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+      const dataItem2 = mainDataResult9.data.filter((item: any) => {
+        return (
+          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          item.rowstatus !== undefined
+        );
+      });
+
+      dataItem.map((item) => {
+        if (item.reviewlvl1 == "" || item.title == "") {
+          valid = false;
+        }
+      });
+
+      if (valid != true) {
+        alert("필수값을 입력해주세요.");
+        return false;
+      }
+
+      dataItem.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          reviewlvl1 = "",
+          title = "",
+          contents = "",
+          monthlyhrreview = "",
+          monthlyhrreviewseq = "",
+          quantitative_evalution = "",
+          qualitative_evalution = "",
+          hrreviewnum = "",
+        } = item;
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.reviewlvl1_s.push(reviewlvl1);
+        dataArr.title_s.push(title);
+        dataArr.contents_s.push(contents);
+        dataArr.monthlyhrreview_s.push(monthlyhrreview);
+        dataArr.monthlyhrreviewseq_s.push(
+          monthlyhrreviewseq == undefined ? 0 : monthlyhrreviewseq
+        );
+        dataArr.quantitative_evalution_s.push(quantitative_evalution);
+        dataArr.qualitative_evalution_s.push(qualitative_evalution);
+        dataArr.hrreviewnum_s.push(hrreviewnum);
+      });
+      dataItem2.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          reviewlvl1 = "",
+          title = "",
+          contents = "",
+          monthlyhrreview = "",
+          monthlyhrreviewseq = "",
+          quantitative_evalution = "",
+          qualitative_evalution = "",
+          hrreviewnum = "",
+        } = item;
+        dataArr.rowstatus_s.push(rowstatus);
+        dataArr.reviewlvl1_s.push(reviewlvl1);
+        dataArr.title_s.push(title);
+        dataArr.contents_s.push(contents);
+        dataArr.monthlyhrreview_s.push(monthlyhrreview);
+        dataArr.monthlyhrreviewseq_s.push(
+          monthlyhrreviewseq == undefined ? 0 : monthlyhrreviewseq
+        );
+        dataArr.quantitative_evalution_s.push(quantitative_evalution);
+        dataArr.qualitative_evalution_s.push(qualitative_evalution);
+        dataArr.hrreviewnum_s.push(hrreviewnum);
+      });
+      deletedMainRows8.forEach((item: any, idx: number) => {
+        const {
+          rowstatus = "",
+          reviewlvl1 = "",
+          title = "",
+          contents = "",
+          monthlyhrreview = "",
+          monthlyhrreviewseq = "",
+          quantitative_evalution = "",
+          qualitative_evalution = "",
+          hrreviewnum = "",
+        } = item;
+        dataArr.rowstatus_s.push("D");
+        dataArr.reviewlvl1_s.push(reviewlvl1);
+        dataArr.title_s.push(title);
+        dataArr.contents_s.push(contents);
+        dataArr.monthlyhrreview_s.push(monthlyhrreview);
+        dataArr.monthlyhrreviewseq_s.push(monthlyhrreviewseq);
+        dataArr.quantitative_evalution_s.push(quantitative_evalution);
+        dataArr.qualitative_evalution_s.push(qualitative_evalution);
+        dataArr.hrreviewnum_s.push(hrreviewnum);
+      });
+      setParaData((prev) => ({
+        ...prev,
+        workType: workType,
+        orgdiv: "01",
+        location: location,
+
+        hrreviewnum_s: dataArr.hrreviewnum_s.join("|"),
+        monthlyhrreview: information.monthlyhrreview,
+        interviewdt: convertDateToStr(information.interviewdt),
+        yyyymm: convertDateToStr(information.yyyymm).substring(0, 6),
+        interviewer: information.interviewer,
+        interviewee: information.interviewee,
+        difficulty: information.difficulty,
+        remark: information.remark1,
+
+        rowstatus_s: dataArr.rowstatus_s.join("|"),
+        reviewlvl1_s: dataArr.reviewlvl1_s.join("|"),
+        title_s: dataArr.title_s.join("|"),
+        contents_s: dataArr.contents_s.join("|"),
+        monthlyhrreview_s: dataArr.monthlyhrreview_s.join("|"),
+        monthlyhrreviewseq_s: dataArr.monthlyhrreviewseq_s.join("|"),
+        quantitative_evalution_s: dataArr.quantitative_evalution_s.join("|"),
+        qualitative_evalution_s: dataArr.qualitative_evalution_s.join("|"),
+      }));
+    }
+  };
+
   const onSaveClick5 = () => {
     const dataItem = mainDataResult5.data.filter((item: any) => {
       return (
@@ -3175,9 +4195,7 @@ const HU_A4000W: React.FC = () => {
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.badnum_s.push(badnum);
       dataArr.badseq_s.push(badseq);
-      dataArr.baddt_s.push(
-        typeof baddt == "string" ? baddt : convertDateToStr(baddt)
-      );
+      dataArr.baddt_s.push(baddt);
       dataArr.badcd_s.push(badcd);
       dataArr.remark_s.push(remark);
     });
@@ -3193,9 +4211,7 @@ const HU_A4000W: React.FC = () => {
       dataArr.rowstatus_s.push("D");
       dataArr.badnum_s.push(badnum);
       dataArr.badseq_s.push(badseq);
-      dataArr.baddt_s.push(
-        typeof baddt == "string" ? baddt : convertDateToStr(baddt)
-      );
+      dataArr.baddt_s.push(baddt);
       dataArr.badcd_s.push(badcd);
       dataArr.remark_s.push(remark);
     });
@@ -3267,9 +4283,7 @@ const HU_A4000W: React.FC = () => {
       } = item;
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.rnpdiv_s.push(rnpdiv);
-      dataArr.reqdt_s.push(
-        typeof reqdt == "string" ? reqdt : convertDateToStr(reqdt)
-      );
+      dataArr.reqdt_s.push(reqdt);
       dataArr.contents_s.push(contents);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
@@ -3289,9 +4303,7 @@ const HU_A4000W: React.FC = () => {
       } = item;
       dataArr.rowstatus_s.push("D");
       dataArr.rnpdiv_s.push(rnpdiv);
-      dataArr.reqdt_s.push(
-        typeof reqdt == "string" ? reqdt : convertDateToStr(reqdt)
-      );
+      dataArr.reqdt_s.push(reqdt);
       dataArr.contents_s.push(contents);
       dataArr.remark_s.push(remark);
       dataArr.seq_s.push(seq);
@@ -3443,6 +4455,7 @@ const HU_A4000W: React.FC = () => {
       deletedMainRows5 = [];
       deletedMainRows6 = [];
       deletedMainRows7 = [];
+      deletedMainRows8 = [];
       setUnsavedName([]);
       setUnsavedAttadatnums([]);
       resetAllGrid();
@@ -3486,7 +4499,7 @@ const HU_A4000W: React.FC = () => {
         }));
         setFilters3((prev) => ({
           ...prev,
-          find_row_value: "",
+          find_row_value: data.returnString,
           pgNum: 1,
           isSearch: true,
         }));
@@ -3639,12 +4652,17 @@ const HU_A4000W: React.FC = () => {
     deletedMainRows5 = [];
     deletedMainRows6 = [];
     deletedMainRows7 = [];
+    deletedMainRows8 = [];
     setPage5(initialPageState);
     setPage6(initialPageState);
     setPage7(initialPageState);
+    setPage8(initialPageState);
+    setPage9(initialPageState);
     setMainDataResult5(process([], mainDataState5));
     setMainDataResult6(process([], mainDataState6));
     setMainDataResult7(process([], mainDataState7));
+    setMainDataResult8(process([], mainDataState8));
+    setMainDataResult9(process([], mainDataState9));
   };
 
   const questionToDelete = useSysMessage("QuestionToDelete");
@@ -3691,37 +4709,38 @@ const HU_A4000W: React.FC = () => {
         <TabStripTab title="인사고과기준">
           <GridContainerWrap>
             <GridContainer width="60%">
+              <GridTitleContainer>
+                <GridTitle>인사고과기준</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="plus"
+                    title="행 추가"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                  ></Button>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    title="저장"
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
               <ExcelExport
                 data={mainDataResult.data}
                 ref={(exporter) => {
                   _export = exporter;
                 }}
+                fileName="인사고과관리"
               >
-                <GridTitleContainer>
-                  <GridTitle>인사고과기준</GridTitle>
-                  <ButtonContainer>
-                    <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="plus"
-                      title="행 추가"
-                    ></Button>
-                    <Button
-                      onClick={onDeleteClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                      title="행 삭제"
-                    ></Button>
-                    <Button
-                      onClick={onSaveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      title="저장"
-                    ></Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
                 <Grid
                   style={{ height: "80vh" }}
                   data={process(
@@ -3877,70 +4896,78 @@ const HU_A4000W: React.FC = () => {
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "80vh" }}
-                data={process(
-                  mainDataResult2.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
-                  })),
-                  mainDataState2
-                )}
-                {...mainDataState2}
-                onDataStateChange={onMainDataStateChange2}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY2}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+              <ExcelExport
+                data={mainDataResult2.data}
+                ref={(exporter) => {
+                  _export2 = exporter;
                 }}
-                onSelectionChange={onSelectionChange2}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult2.total}
-                skip={page2.skip}
-                take={page2.take}
-                pageable={true}
-                onPageChange={pageChange2}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange2}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                onItemChange={onMainItemChange2}
-                cellRender={customCellRender2}
-                rowRender={customRowRender2}
-                editField={EDIT_FIELD}
+                fileName="인사고과관리"
               >
-                <GridColumn field="rowstatus" title=" " width="50px" />
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            comboField.includes(item.fieldName)
-                              ? CustomComboBoxCell
-                              : checkField.includes(item.fieldName)
-                              ? CheckBoxCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder === 0
-                              ? mainTotalFooterCell2
-                              : undefined
-                          }
-                        />
-                      )
+                <Grid
+                  style={{ height: "80vh" }}
+                  data={process(
+                    mainDataResult2.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                    })),
+                    mainDataState2
                   )}
-              </Grid>
+                  {...mainDataState2}
+                  onDataStateChange={onMainDataStateChange2}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange2}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult2.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={onMainItemChange2}
+                  cellRender={customCellRender2}
+                  rowRender={customRowRender2}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn field="rowstatus" title=" " width="50px" />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              comboField.includes(item.fieldName)
+                                ? CustomComboBoxCell
+                                : checkField.includes(item.fieldName)
+                                ? CheckBoxCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? mainTotalFooterCell2
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
             </GridContainer>
           </GridContainerWrap>
         </TabStripTab>
@@ -4028,7 +5055,7 @@ const HU_A4000W: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           <GridContainerWrap>
-            <GridContainer width="30%">
+            <GridContainer width="25%">
               <GridTitleContainer>
                 <GridTitle>월별인사평가요약</GridTitle>
                 <ButtonContainer>
@@ -4048,7 +5075,7 @@ const HU_A4000W: React.FC = () => {
                     삭제
                   </Button>
                   <Button
-                    //onClick={onSaveClick}
+                    onClick={onSaveClick3}
                     icon="save"
                     fillMode="outline"
                     themeColor={"primary"}
@@ -4057,76 +5084,84 @@ const HU_A4000W: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "85vh" }}
-                data={process(
-                  mainDataResult3.data.map((row) => ({
-                    ...row,
-                    dptcd: dptcdListData.find(
-                      (item: any) => item.dptcd == row.dptcd
-                    )?.dptnm,
-                    interviewee: UserListData.find(
-                      (item: any) => item.prsnnum == row.interviewee
-                    )?.prsnnm,
-                    [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
-                  })),
-                  mainDataState3
-                )}
-                {...mainDataState3}
-                onDataStateChange={onMainDataStateChange3}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY3}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
+              <ExcelExport
+                data={mainDataResult3.data}
+                ref={(exporter) => {
+                  _export3 = exporter;
                 }}
-                onSelectionChange={onSelectionChange3}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult3.total}
-                skip={page3.skip}
-                take={page3.take}
-                pageable={true}
-                onPageChange={pageChange3}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef3}
-                rowHeight={30}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange3}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
+                fileName="인사고과관리"
               >
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList3"].map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            dateField.includes(item.fieldName)
-                              ? DateCell
-                              : monthField.includes(item.fieldName)
-                              ? MonthDateCell
-                              : numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder === 0
-                              ? mainTotalFooterCell3
-                              : undefined
-                          }
-                        />
-                      )
+                <Grid
+                  style={{ height: "92vh" }}
+                  data={process(
+                    mainDataResult3.data.map((row) => ({
+                      ...row,
+                      dptcd: dptcdListData.find(
+                        (item: any) => item.dptcd == row.dptcd
+                      )?.dptnm,
+                      interviewee: UserListData.find(
+                        (item: any) => item.prsnnum == row.interviewee
+                      )?.prsnnm,
+                      [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
+                    })),
+                    mainDataState3
                   )}
-              </Grid>
+                  {...mainDataState3}
+                  onDataStateChange={onMainDataStateChange3}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY3}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange3}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult3.total}
+                  skip={page3.skip}
+                  take={page3.take}
+                  pageable={true}
+                  onPageChange={pageChange3}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef3}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange3}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList3"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              dateField.includes(item.fieldName)
+                                ? DateCell
+                                : monthField.includes(item.fieldName)
+                                ? MonthDateCell
+                                : numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? mainTotalFooterCell3
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
             </GridContainer>
             <GridContainer width={`calc(35% - ${GAP}px)`}>
               <FormBoxWrap border={true}>
@@ -4230,6 +5265,8 @@ const HU_A4000W: React.FC = () => {
                             valueField="dptcd"
                             textField="dptnm"
                             para="HU_A4000W"
+                            disabled={true}
+                            className="readonly"
                           />
                         )}
                       </td>
@@ -4480,7 +5517,7 @@ const HU_A4000W: React.FC = () => {
                           themeColor={"primary"}
                           icon="plus"
                           title="행 추가"
-                          disabled={wortkType == "N" ? true : false}
+                          disabled={workType == "N" ? true : false}
                         ></Button>
                         <Button
                           onClick={onDeleteClick5}
@@ -4488,7 +5525,7 @@ const HU_A4000W: React.FC = () => {
                           themeColor={"primary"}
                           icon="minus"
                           title="행 삭제"
-                          disabled={wortkType == "N" ? true : false}
+                          disabled={workType == "N" ? true : false}
                         ></Button>
                         <Button
                           onClick={onSaveClick5}
@@ -4496,78 +5533,87 @@ const HU_A4000W: React.FC = () => {
                           themeColor={"primary"}
                           icon="save"
                           title="저장"
-                          disabled={wortkType == "N" ? true : false}
+                          disabled={workType == "N" ? true : false}
                         ></Button>
                       </ButtonContainer>
                     </GridTitleContainer>
-                    <Grid
-                      style={{ height: "25vh" }}
-                      data={process(
-                        mainDataResult5.data.map((row) => ({
-                          ...row,
-                          baddt:
-                            row.baddt == "" ? new Date() : toDate(row.baddt),
-                          [SELECTED_FIELD]: selectedState5[idGetter5(row)], //선택된 데이터
-                        })),
-                        mainDataState5
-                      )}
-                      {...mainDataState5}
-                      onDataStateChange={onMainDataStateChange5}
-                      //선택 기능
-                      dataItemKey={DATA_ITEM_KEY5}
-                      selectedField={SELECTED_FIELD}
-                      selectable={{
-                        enabled: true,
-                        mode: "single",
+                    <ExcelExport
+                      data={mainDataResult5.data}
+                      ref={(exporter) => {
+                        _export4 = exporter;
                       }}
-                      onSelectionChange={onSelectionChange5}
-                      //스크롤 조회 기능
-                      fixedScroll={true}
-                      total={mainDataResult5.total}
-                      skip={page5.skip}
-                      take={page5.take}
-                      pageable={true}
-                      onPageChange={pageChange5}
-                      //정렬기능
-                      sortable={true}
-                      onSortChange={onMainSortChange5}
-                      //컬럼순서조정
-                      reorderable={true}
-                      //컬럼너비조정
-                      resizable={true}
-                      onItemChange={onMainItemChange5}
-                      cellRender={customCellRender5}
-                      rowRender={customRowRender5}
-                      editField={EDIT_FIELD}
+                      fileName="인사고과관리"
                     >
-                      <GridColumn field="rowstatus" title=" " width="50px" />
-                      {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions[
-                          "grdList5"
-                        ].map(
-                          (item: any, idx: number) =>
-                            item.sortOrder !== -1 && (
-                              <GridColumn
-                                key={idx}
-                                field={item.fieldName}
-                                title={item.caption}
-                                width={item.width}
-                                cell={
-                                  comboField.includes(item.fieldName)
-                                    ? CustomComboBoxCell
-                                    : dateField.includes(item.fieldName)
-                                    ? DateCell
-                                    : undefined
-                                }
-                                footerCell={
-                                  item.sortOrder === 0
-                                    ? mainTotalFooterCell5
-                                    : undefined
-                                }
-                              />
-                            )
+                      <Grid
+                        style={{ height: "25vh" }}
+                        data={process(
+                          mainDataResult5.data.map((row) => ({
+                            ...row,
+                            baddt: row.baddt
+                              ? new Date(dateformat(row.baddt))
+                              : new Date(dateformat("19000101")),
+                            [SELECTED_FIELD]: selectedState5[idGetter5(row)], //선택된 데이터
+                          })),
+                          mainDataState5
                         )}
-                    </Grid>
+                        {...mainDataState5}
+                        onDataStateChange={onMainDataStateChange5}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY5}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange5}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult5.total}
+                        skip={page5.skip}
+                        take={page5.take}
+                        pageable={true}
+                        onPageChange={pageChange5}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange5}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                        onItemChange={onMainItemChange5}
+                        cellRender={customCellRender5}
+                        rowRender={customRowRender5}
+                        editField={EDIT_FIELD}
+                      >
+                        <GridColumn field="rowstatus" title=" " width="50px" />
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions[
+                            "grdList5"
+                          ].map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  cell={
+                                    comboField.includes(item.fieldName)
+                                      ? CustomComboBoxCell
+                                      : dateField.includes(item.fieldName)
+                                      ? DateCell
+                                      : undefined
+                                  }
+                                  footerCell={
+                                    item.sortOrder === 0
+                                      ? mainTotalFooterCell5
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                      </Grid>
+                    </ExcelExport>
                   </GridContainer>
                 </TabStripTab>
                 <TabStripTab title="교육내역">
@@ -4591,7 +5637,7 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="plus"
                             title="행 추가"
-                            disabled={wortkType == "N" ? true : false}
+                            disabled={workType == "N" ? true : false}
                           ></Button>
                           <Button
                             onClick={onDeleteClick6}
@@ -4599,7 +5645,7 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="minus"
                             title="행 삭제"
-                            disabled={wortkType == "N" ? true : false}
+                            disabled={workType == "N" ? true : false}
                           ></Button>
                           <Button
                             //onClick={onSaveClick6}
@@ -4607,80 +5653,95 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="save"
                             title="저장"
-                            disabled={wortkType == "N" ? true : false}
+                            disabled={workType == "N" ? true : false}
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
-                      <Grid
-                        style={{ height: "25vh" }}
-                        data={process(
-                          mainDataResult6.data.map((row) => ({
-                            ...row,
-                            recdt:
-                              row.recdt == "" ? new Date() : toDate(row.recdt),
-                            [SELECTED_FIELD]: selectedState6[idGetter6(row)], //선택된 데이터
-                          })),
-                          mainDataState6
-                        )}
-                        {...mainDataState6}
-                        onDataStateChange={onMainDataStateChange6}
-                        //선택 기능
-                        dataItemKey={DATA_ITEM_KEY6}
-                        selectedField={SELECTED_FIELD}
-                        selectable={{
-                          enabled: true,
-                          mode: "single",
+                      <ExcelExport
+                        data={mainDataResult6.data}
+                        ref={(exporter) => {
+                          _export5 = exporter;
                         }}
-                        onSelectionChange={onSelectionChange6}
-                        //스크롤 조회 기능
-                        fixedScroll={true}
-                        total={mainDataResult6.total}
-                        skip={page6.skip}
-                        take={page6.take}
-                        pageable={true}
-                        onPageChange={pageChange6}
-                        //정렬기능
-                        sortable={true}
-                        onSortChange={onMainSortChange6}
-                        //컬럼순서조정
-                        reorderable={true}
-                        //컬럼너비조정
-                        resizable={true}
-                        onItemChange={onMainItemChange6}
-                        cellRender={customCellRender6}
-                        rowRender={customRowRender6}
-                        editField={EDIT_FIELD}
+                        fileName="인사고과관리"
                       >
-                        <GridColumn field="rowstatus" title=" " width="50px" />
-                        {customOptionData !== null &&
-                          customOptionData.menuCustomColumnOptions[
-                            "grdList6"
-                          ].map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    comboField.includes(item.fieldName)
-                                      ? CustomComboBoxCell
-                                      : dateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : attdatnumField.includes(item.fieldName)
-                                      ? ColumnCommandCell6
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder === 0
-                                      ? mainTotalFooterCell6
-                                      : undefined
-                                  }
-                                />
-                              )
+                        <Grid
+                          style={{ height: "25vh" }}
+                          data={process(
+                            mainDataResult6.data.map((row) => ({
+                              ...row,
+                              recdt: row.recdt
+                                ? new Date(dateformat(row.recdt))
+                                : new Date(dateformat("19000101")),
+                              [SELECTED_FIELD]: selectedState6[idGetter6(row)], //선택된 데이터
+                            })),
+                            mainDataState6
                           )}
-                      </Grid>
+                          {...mainDataState6}
+                          onDataStateChange={onMainDataStateChange6}
+                          //선택 기능
+                          dataItemKey={DATA_ITEM_KEY6}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onSelectionChange6}
+                          //스크롤 조회 기능
+                          fixedScroll={true}
+                          total={mainDataResult6.total}
+                          skip={page6.skip}
+                          take={page6.take}
+                          pageable={true}
+                          onPageChange={pageChange6}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onMainSortChange6}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                          onItemChange={onMainItemChange6}
+                          cellRender={customCellRender6}
+                          rowRender={customRowRender6}
+                          editField={EDIT_FIELD}
+                        >
+                          <GridColumn
+                            field="rowstatus"
+                            title=" "
+                            width="50px"
+                          />
+                          {customOptionData !== null &&
+                            customOptionData.menuCustomColumnOptions[
+                              "grdList6"
+                            ].map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      comboField.includes(item.fieldName)
+                                        ? CustomComboBoxCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : attdatnumField.includes(
+                                            item.fieldName
+                                          )
+                                        ? ColumnCommandCell6
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder === 0
+                                        ? mainTotalFooterCell6
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                        </Grid>
+                      </ExcelExport>
                     </GridContainer>
                   </FormContext6.Provider>
                 </TabStripTab>
@@ -4705,7 +5766,7 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="plus"
                             title="행 추가"
-                            disabled={wortkType == "N" ? true : false}
+                            disabled={workType == "N" ? true : false}
                           ></Button>
                           <Button
                             onClick={onDeleteClick7}
@@ -4713,7 +5774,7 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="minus"
                             title="행 삭제"
-                            disabled={wortkType == "N" ? true : false}
+                            disabled={workType == "N" ? true : false}
                           ></Button>
                           <Button
                             onClick={onSaveClick7}
@@ -4721,54 +5782,203 @@ const HU_A4000W: React.FC = () => {
                             themeColor={"primary"}
                             icon="save"
                             title="저장"
-                            disabled={wortkType == "N" ? true : false}
+                            disabled={workType == "N" ? true : false}
                           ></Button>
                         </ButtonContainer>
                       </GridTitleContainer>
+                      <ExcelExport
+                        data={mainDataResult7.data}
+                        ref={(exporter) => {
+                          _export6 = exporter;
+                        }}
+                        fileName="인사고과관리"
+                      >
+                        <Grid
+                          style={{ height: "25vh" }}
+                          data={process(
+                            mainDataResult7.data.map((row) => ({
+                              ...row,
+                              reqdt: row.reqdt
+                                ? new Date(dateformat(row.reqdt))
+                                : new Date(dateformat("19000101")),
+                              [SELECTED_FIELD]: selectedState7[idGetter7(row)], //선택된 데이터
+                            })),
+                            mainDataState7
+                          )}
+                          {...mainDataState7}
+                          onDataStateChange={onMainDataStateChange7}
+                          //선택 기능
+                          dataItemKey={DATA_ITEM_KEY7}
+                          selectedField={SELECTED_FIELD}
+                          selectable={{
+                            enabled: true,
+                            mode: "single",
+                          }}
+                          onSelectionChange={onSelectionChange7}
+                          //스크롤 조회 기능
+                          fixedScroll={true}
+                          total={mainDataResult7.total}
+                          skip={page7.skip}
+                          take={page7.take}
+                          pageable={true}
+                          onPageChange={pageChange7}
+                          //정렬기능
+                          sortable={true}
+                          onSortChange={onMainSortChange7}
+                          //컬럼순서조정
+                          reorderable={true}
+                          //컬럼너비조정
+                          resizable={true}
+                          onItemChange={onMainItemChange7}
+                          cellRender={customCellRender7}
+                          rowRender={customRowRender7}
+                          editField={EDIT_FIELD}
+                        >
+                          <GridColumn
+                            field="rowstatus"
+                            title=" "
+                            width="50px"
+                          />
+                          {customOptionData !== null &&
+                            customOptionData.menuCustomColumnOptions[
+                              "grdList7"
+                            ].map(
+                              (item: any, idx: number) =>
+                                item.sortOrder !== -1 && (
+                                  <GridColumn
+                                    key={idx}
+                                    field={item.fieldName}
+                                    title={item.caption}
+                                    width={item.width}
+                                    cell={
+                                      comboField.includes(item.fieldName)
+                                        ? CustomComboBoxCell
+                                        : dateField.includes(item.fieldName)
+                                        ? DateCell
+                                        : attdatnumField.includes(
+                                            item.fieldName
+                                          )
+                                        ? ColumnCommandCell7
+                                        : undefined
+                                    }
+                                    footerCell={
+                                      item.sortOrder === 0
+                                        ? mainTotalFooterCell7
+                                        : undefined
+                                    }
+                                  />
+                                )
+                            )}
+                        </Grid>
+                      </ExcelExport>
+                    </GridContainer>
+                  </FormContext7.Provider>
+                </TabStripTab>
+              </TabStrip>
+            </GridContainer>
+            <GridContainer width={`calc(40% - ${GAP}px)`}>
+              <TabStrip
+                style={{ width: "100%" }}
+                selected={tabSelected3}
+                onSelect={handleSelectTab3}
+              >
+                <TabStripTab title="분류1">
+                  <GridContainer>
+                    <GridTitleContainer>
+                      <GridTitle>월별인사평가상세</GridTitle>
+                      <ButtonContainer>
+                        <Button
+                          themeColor={"primary"}
+                          onClick={onreviewlvl1AddClick}
+                          icon="folder-open"
+                          disabled={
+                            workType == "N"
+                              ? true
+                              : mainDataResult3.total > 0
+                              ? false
+                              : true
+                          }
+                        >
+                          고과기준셋팅
+                        </Button>
+                        <Button
+                          onClick={onAddClick8}
+                          themeColor={"primary"}
+                          icon="plus"
+                          title="행 추가"
+                          disabled={
+                            workType == "N"
+                              ? true
+                              : mainDataResult3.total > 0
+                              ? false
+                              : true
+                          }
+                        ></Button>
+                        <Button
+                          onClick={onDeleteClick8}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="minus"
+                          title="행 삭제"
+                          disabled={
+                            workType == "N"
+                              ? true
+                              : mainDataResult3.total > 0
+                              ? false
+                              : true
+                          }
+                        ></Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult8.data}
+                      ref={(exporter) => {
+                        _export7 = exporter;
+                      }}
+                      fileName="인사고과관리"
+                    >
                       <Grid
-                        style={{ height: "25vh" }}
+                        style={{ height: "85vh" }}
                         data={process(
-                          mainDataResult7.data.map((row) => ({
+                          mainDataResult8.data.map((row) => ({
                             ...row,
-                            reqdt:
-                              row.reqdt == "" ? new Date() : toDate(row.reqdt),
-                            [SELECTED_FIELD]: selectedState7[idGetter7(row)], //선택된 데이터
+                            [SELECTED_FIELD]: selectedState8[idGetter8(row)], //선택된 데이터
                           })),
-                          mainDataState7
+                          mainDataState8
                         )}
-                        {...mainDataState7}
-                        onDataStateChange={onMainDataStateChange7}
+                        {...mainDataState8}
+                        onDataStateChange={onMainDataStateChange8}
                         //선택 기능
-                        dataItemKey={DATA_ITEM_KEY7}
+                        dataItemKey={DATA_ITEM_KEY8}
                         selectedField={SELECTED_FIELD}
                         selectable={{
                           enabled: true,
                           mode: "single",
                         }}
-                        onSelectionChange={onSelectionChange7}
+                        onSelectionChange={onSelectionChange8}
                         //스크롤 조회 기능
                         fixedScroll={true}
-                        total={mainDataResult7.total}
-                        skip={page7.skip}
-                        take={page7.take}
+                        total={mainDataResult8.total}
+                        skip={page8.skip}
+                        take={page8.take}
                         pageable={true}
-                        onPageChange={pageChange7}
+                        onPageChange={pageChange8}
                         //정렬기능
                         sortable={true}
-                        onSortChange={onMainSortChange7}
+                        onSortChange={onMainSortChange8}
                         //컬럼순서조정
                         reorderable={true}
                         //컬럼너비조정
                         resizable={true}
-                        onItemChange={onMainItemChange7}
-                        cellRender={customCellRender7}
-                        rowRender={customRowRender7}
+                        onItemChange={onMainItemChange8}
+                        cellRender={customCellRender8}
+                        rowRender={customRowRender8}
                         editField={EDIT_FIELD}
                       >
                         <GridColumn field="rowstatus" title=" " width="50px" />
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
-                            "grdList7"
+                            "grdList8"
                           ].map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
@@ -4780,27 +5990,121 @@ const HU_A4000W: React.FC = () => {
                                   cell={
                                     comboField.includes(item.fieldName)
                                       ? CustomComboBoxCell
-                                      : dateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : attdatnumField.includes(item.fieldName)
-                                      ? ColumnCommandCell7
+                                      : undefined
+                                  }
+                                  headerCell={
+                                    requiredField.includes(item.fieldName)
+                                      ? RequiredHeader
                                       : undefined
                                   }
                                   footerCell={
                                     item.sortOrder === 0
-                                      ? mainTotalFooterCell7
+                                      ? mainTotalFooterCell8
                                       : undefined
                                   }
                                 />
                               )
                           )}
                       </Grid>
-                    </GridContainer>
-                  </FormContext7.Provider>
+                    </ExcelExport>
+                  </GridContainer>
+                </TabStripTab>
+                <TabStripTab title="분류2">
+                  <GridContainer>
+                    <GridTitleContainer>
+                      <GridTitle>월별인사평가상세</GridTitle>
+                      <ButtonContainer>
+                        <Button
+                          themeColor={"primary"}
+                          onClick={onreviewlvl1AddClick2}
+                          icon="folder-open"
+                          disabled={
+                            workType == "N"
+                              ? true
+                              : mainDataResult3.total > 0
+                              ? false
+                              : true
+                          }
+                        >
+                          고과기준셋팅
+                        </Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <ExcelExport
+                      data={mainDataResult9.data}
+                      ref={(exporter) => {
+                        _export8 = exporter;
+                      }}
+                      fileName="인사고과관리"
+                    >
+                      <Grid
+                        style={{ height: "84vh" }}
+                        data={process(
+                          mainDataResult9.data.map((row) => ({
+                            ...row,
+                            reviewlvl1: reviewlvl1ListData.find(
+                              (item: any) => item.sub_code == row.reviewlvl1
+                            )?.code_name,
+                            [SELECTED_FIELD]: selectedState9[idGetter9(row)], //선택된 데이터
+                          })),
+                          mainDataState9
+                        )}
+                        {...mainDataState9}
+                        onDataStateChange={onMainDataStateChange9}
+                        //선택 기능
+                        dataItemKey={DATA_ITEM_KEY9}
+                        selectedField={SELECTED_FIELD}
+                        selectable={{
+                          enabled: true,
+                          mode: "single",
+                        }}
+                        onSelectionChange={onSelectionChange9}
+                        //스크롤 조회 기능
+                        fixedScroll={true}
+                        total={mainDataResult9.total}
+                        skip={page9.skip}
+                        take={page9.take}
+                        pageable={true}
+                        onPageChange={pageChange9}
+                        //정렬기능
+                        sortable={true}
+                        onSortChange={onMainSortChange9}
+                        //컬럼순서조정
+                        reorderable={true}
+                        //컬럼너비조정
+                        resizable={true}
+                      >
+                        <GridColumn field="rowstatus" title=" " width="50px" />
+                        {customOptionData !== null &&
+                          customOptionData.menuCustomColumnOptions[
+                            "grdList9"
+                          ].map(
+                            (item: any, idx: number) =>
+                              item.sortOrder !== -1 && (
+                                <GridColumn
+                                  key={idx}
+                                  field={item.fieldName}
+                                  title={item.caption}
+                                  width={item.width}
+                                  locked={
+                                    lockField.includes(item.fieldName)
+                                      ? true
+                                      : false
+                                  }
+                                  footerCell={
+                                    item.sortOrder === 0
+                                      ? mainTotalFooterCell9
+                                      : undefined
+                                  }
+                                />
+                              )
+                          )}
+                      </Grid>
+                    </ExcelExport>
+                  </GridContainer>
                 </TabStripTab>
               </TabStrip>
             </GridContainer>
-            <GridContainer width={`calc(35% - ${GAP}px)`}></GridContainer>
           </GridContainerWrap>
         </TabStripTab>
       </TabStrip>
