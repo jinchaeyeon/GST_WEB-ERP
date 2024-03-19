@@ -1,8 +1,8 @@
 import { Card, CardContent, Grid, Typography } from "@mui/material";
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { TextArea } from "@progress/kendo-react-inputs";
-import React, { useEffect, useState } from "react";
+import { Switch, TextArea } from "@progress/kendo-react-inputs";
+import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import Carousel from "react-material-ui-carousel";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -21,6 +21,8 @@ import TopButtons from "../components/Buttons/TopButtons";
 import { UsePermissions } from "../components/CommonFunction";
 import { TPermissions } from "../store/types";
 
+var index = 0;
+
 const PR_A0000W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -33,6 +35,22 @@ const PR_A0000W: React.FC = () => {
       resetInformation();
     }
   };
+
+  const search2 = () => {
+    if (isMobile) {
+      setInformation((prev) => ({
+        ...prev,
+        fxnm: "",
+        description: "",
+        chk: false,
+      }));
+    }
+  };
+
+  const [isCaptured, setIsCaptured] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(
+    null
+  ) as MutableRefObject<HTMLVideoElement>;
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -57,6 +75,7 @@ const PR_A0000W: React.FC = () => {
     title: "",
     fxnm: "",
     description: "",
+    chk: false,
   });
 
   const filterInputChange = (e: any) => {
@@ -74,6 +93,7 @@ const PR_A0000W: React.FC = () => {
       title: "",
       fxnm: "",
       description: "",
+      chk: false,
     });
   };
   const onCheckClick = (datas: any) => {
@@ -95,11 +115,15 @@ const PR_A0000W: React.FC = () => {
       ...prev,
       fxnm: datas.fxnm,
     }));
-
-    if (swiper) {
-      swiper.slideTo(2);
-    }
   };
+
+  useEffect(() => {
+    if (information.fxnm != "" && index == 1) {
+      if (swiper) {
+        swiper.slideTo(2);
+      }
+    }
+  }, [information.fxnm]);
 
   const excelInput: any = React.useRef();
   const upload = () => {
@@ -107,38 +131,113 @@ const PR_A0000W: React.FC = () => {
     uploadInput!.click();
   };
 
-  const [arr, setArr] = useState([]);
   const handleFileUpload = async (files: FileList | null) => {
     if (files != null) {
       for (const file of files) {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        return new Promise((resolve) => {
-          reader.onload = () => {
-            if (reader.result != null) {
-              setMainDataResult3((prev) => ({
-                data: [
-                  {
-                    ...prev.data[0].description,
-                    image: [
-                      {
-                        url:
-                          reader.result != null ? reader.result.toString() : "",
-                      },
-                      ...prev.data[0].image,
-                    ],
-                  },
-                ],
-                total: prev.total + 1,
-              }));
-            }
-          };
-        });
+        let image = window.URL.createObjectURL(file);
+        setMainDataResult3((prev) => ({
+          data: [
+            {
+              ...prev.data[0].description,
+              image: [
+                {
+                  url: image != null ? image : "",
+                },
+                ...prev.data[0].image,
+              ],
+            },
+          ],
+          total: prev.total + 1,
+        }));
       }
     } else {
       alert("새로고침 후 다시 업로드해주세요.");
     }
   };
+
+  // 카메라 장치 가져오기
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: false })
+      .then((stream) => {
+        if (videoRef && videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      })
+      .catch((error) => {
+        console.error("error 발생", error);
+      });
+  }, []);
+
+  const onCapture = () => {
+    videoRef.current.pause();
+    const canvas = document.createElement("canvas");
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+
+    // 2. canvas에 video 이미지 그리기
+    const context = canvas.getContext("2d");
+    if (context != null) {
+      context.drawImage(videoRef.current, 0, 0);
+    }
+
+    // 3. canvas 를 Data URL로 변경
+    const url = canvas.toDataURL("image/png");
+
+    const ae = document.createElement("a");
+
+    // 3. 다운로드 url 넣기
+    ae.href = url;
+    setMainDataResult3((prev) => ({
+      data: [
+        {
+          ...prev.data[0].description,
+          image: [
+            {
+              url: url != null ? url : "",
+            },
+            ...prev.data[0].image,
+          ],
+        },
+      ],
+      total: prev.total + 1,
+    }));
+    setIsCaptured(false);
+  };
+
+  const getPromise = () => {
+    videoRef.current.pause();
+    setIsCaptured(false);
+  };
+
+  const getPromise2 = async () => {
+    setIsCaptured(true);
+  };
+
+  useEffect(() => {
+    const initCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { exact: isMobile ? "environment" : "user"} },
+          //video: { facingMode: isMobile ? "environment" : "user" },
+        });
+        if (videoRef.current) {
+          videoRef.current.srcObject = isCaptured ? stream : null;
+        }
+      } catch (error) {
+        console.error("Error accessing camera:", error);
+      }
+    };
+    initCamera();
+
+    return () => {
+      // 컴포넌트가 언마운트되면 미디어 스트림 해제
+      if (videoRef.current && videoRef.current.srcObject) {
+        const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
+        tracks.forEach((track) => track.stop());
+      }
+    };
+  }, [isCaptured]);
 
   useEffect(() => {
     const data = [
@@ -222,6 +321,9 @@ const PR_A0000W: React.FC = () => {
           onSwiper={(swiper) => {
             setSwiper(swiper);
           }}
+          onActiveIndexChange={(swiper) => {
+            index = swiper.activeIndex;
+          }}
         >
           <SwiperSlide key={0} className="leading_PDA">
             <TitleContainer style={{ marginBottom: "15px" }}>
@@ -239,9 +341,8 @@ const PR_A0000W: React.FC = () => {
             </TitleContainer>
             <GridContainer
               style={{
-                height: "80vh",
+                height: "100%",
                 overflowY: "scroll",
-                marginBottom: "10px",
                 width: "100%",
               }}
             >
@@ -297,7 +398,7 @@ const PR_A0000W: React.FC = () => {
                 <Button
                   themeColor={"primary"}
                   fillMode={"solid"}
-                  onClick={() => search()}
+                  onClick={() => search2()}
                   icon="search"
                 >
                   조회
@@ -306,9 +407,8 @@ const PR_A0000W: React.FC = () => {
             </TitleContainer>
             <GridContainer
               style={{
-                height: "80vh",
+                height: "100%",
                 overflowY: "scroll",
-                marginBottom: "10px",
                 width: "100%",
               }}
             >
@@ -335,120 +435,171 @@ const PR_A0000W: React.FC = () => {
               ))}
             </GridContainer>
           </SwiperSlide>
-          <SwiperSlide key={2} className="leading_PDA">
-            <TitleContainer style={{ marginBottom: "15px" }}>
-              <Title>사진 및 코멘트</Title>
-            </TitleContainer>
-            <GridContainer
-              style={{
-                height: "80vh",
-                marginBottom: "10px",
-                overflowY: "scroll",
-                width: "100%",
-              }}
-            >
-              <Carousel
-                cycleNavigation={true}
-                navButtonsAlwaysVisible={true}
-                autoPlay={false}
+          {information.fxnm == "" ? (
+            ""
+          ) : (
+            <SwiperSlide key={2} className="leading_PDA">
+              <TitleContainer style={{ marginBottom: "15px" }}>
+                <Title>사진 및 코멘트</Title>
+                <ButtonContainer>
+                  <Switch
+                    onChange={(event: any) => {
+                      setInformation((prev) => ({
+                        ...prev,
+                        chk: event.target.value,
+                      }));
+                    }}
+                    onLabel={"작업완료"}
+                    offLabel={"작업중"}
+                    checked={information.chk}
+                    className="PDA_Switch"
+                  />
+                </ButtonContainer>
+              </TitleContainer>
+              <GridContainer
+                style={{
+                  height: "100%",
+                  overflowY: "auto",
+                  width: "100%",
+                }}
               >
-                {mainDataResult3.total > 0
-                  ? mainDataResult3.data[0].image.map((content: any) => (
-                      <>
-                        <div style={{ width: "100%", height: "40vh" }}>
-                          <img
-                            src={content.url}
-                            style={{
-                              objectFit: "contain",
-                              height: "100%",
-                              width: "100%",
-                            }}
-                          />
-                        </div>
-                      </>
-                    ))
-                  : ""}
-              </Carousel>
-              <FormBoxWrap>
-                <FormBox>
-                  <tbody>
-                    <tr style={{ display: "flex", flexDirection: "row" }}>
-                      <td>
-                        <Button
-                          id={"button1"}
-                          themeColor={"primary"}
-                          fillMode={"outline"}
-                          onClick={upload}
-                          style={{ width: "100%" }}
-                        >
-                          첨부파일
-                        </Button>
-                        <input
-                          id="uploadAttachment"
-                          style={{ display: "none" }}
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          ref={excelInput}
-                          onChange={(
-                            event: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            handleFileUpload(event.target.files);
-                          }}
-                        />
-                      </td>
-                      <td>
-                        <Button
-                          id={"button2"}
-                          themeColor={"primary"}
-                          fillMode={"outline"}
-                          //onClick={() => onClick2()}
-                          style={{ width: "100%" }}
-                        >
-                          촬영
-                        </Button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colSpan={2}>
-                        <TextArea
-                          value={information.description}
-                          name="description"
-                          rows={50}
-                          style={{ maxHeight: "22vh", overflowY: "auto" }}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr style={{ display: "flex", flexDirection: "row" }}>
-                      <td>
-                        <Button
-                          id={"button1"}
-                          themeColor={"primary"}
-                          fillMode={"outline"}
-                          //onClick={() => onClick1()}
-                          style={{ width: "100%" }}
-                        >
-                          작업완료
-                        </Button>
-                      </td>
-                      <td>
-                        <Button
-                          id={"button2"}
-                          themeColor={"primary"}
-                          fillMode={"outline"}
-                          //onClick={() => onClick2()}
-                          style={{ width: "100%" }}
-                        >
-                          저장
-                        </Button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </FormBox>
-              </FormBoxWrap>
-            </GridContainer>
-          </SwiperSlide>
+                {isCaptured ? (
+                  <>
+                    <video
+                      ref={videoRef}
+                      autoPlay
+                      style={{ height: "88%", width: "100%" }}
+                    ></video>
+                    <FormBoxWrap>
+                      <FormBox>
+                        <tbody>
+                          <tr style={{ display: "flex", flexDirection: "row" }}>
+                            <td>
+                              <Button
+                                id={"button"}
+                                themeColor={"primary"}
+                                fillMode={"outline"}
+                                onClick={() => getPromise()}
+                                style={{ width: "100%" }}
+                              >
+                                사진모드
+                              </Button>
+                            </td>
+                            <td>
+                              <Button
+                                id={"button2"}
+                                themeColor={"primary"}
+                                fillMode={"outline"}
+                                onClick={() => onCapture()}
+                                style={{ width: "100%" }}
+                              >
+                                촬영
+                              </Button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </FormBoxWrap>
+                  </>
+                ) : (
+                  <Carousel
+                    cycleNavigation={true}
+                    navButtonsAlwaysVisible={true}
+                    autoPlay={false}
+                  >
+                    {mainDataResult3.total > 0
+                      ? mainDataResult3.data[0].image.map((content: any) => (
+                          <>
+                            <div style={{ width: "100%", height: "40vh" }}>
+                              <img
+                                src={content.url}
+                                style={{
+                                  objectFit: "contain",
+                                  height: "100%",
+                                  width: "100%",
+                                }}
+                              />
+                            </div>
+                          </>
+                        ))
+                      : ""}
+                  </Carousel>
+                )}
+
+                {isCaptured ? (
+                  ""
+                ) : (
+                  <FormBoxWrap>
+                    <FormBox>
+                      <tbody>
+                        <tr style={{ display: "flex", flexDirection: "row" }}>
+                          <td>
+                            <Button
+                              id={"button1"}
+                              themeColor={"primary"}
+                              fillMode={"outline"}
+                              onClick={upload}
+                              style={{ width: "100%" }}
+                            >
+                              첨부파일
+                            </Button>
+                            <input
+                              id="uploadAttachment"
+                              style={{ display: "none" }}
+                              type="file"
+                              accept="image/*"
+                              multiple
+                              ref={excelInput}
+                              onChange={(
+                                event: React.ChangeEvent<HTMLInputElement>
+                              ) => {
+                                handleFileUpload(event.target.files);
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <Button
+                              id={"button3"}
+                              themeColor={"primary"}
+                              fillMode={"outline"}
+                              onClick={() => getPromise2()}
+                              style={{ width: "100%" }}
+                            >
+                              촬영모드
+                            </Button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colSpan={2}>
+                            <TextArea
+                              value={information.description}
+                              name="description"
+                              rows={50}
+                              style={{ maxHeight: "20vh", overflowY: "auto" }}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                        </tr>
+                        <tr style={{ display: "flex", flexDirection: "row" }}>
+                          <td>
+                            <Button
+                              id={"button5"}
+                              themeColor={"primary"}
+                              fillMode={"outline"}
+                              //onClick={() => onClick2()}
+                              style={{ width: "100%" }}
+                            >
+                              저장
+                            </Button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                )}
+              </GridContainer>
+            </SwiperSlide>
+          )}
         </Swiper>
       ) : (
         <TitleContainer>
