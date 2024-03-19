@@ -25,7 +25,7 @@ code {
   width: 80px !important;
 }
 
-.k-numerictextbox >.k-input-inner {
+.k-numerictextbox>.k-input-inner {
   text-align: right;
 }
 
