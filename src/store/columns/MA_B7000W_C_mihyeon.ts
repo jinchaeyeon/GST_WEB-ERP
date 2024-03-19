@@ -47,8 +47,8 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_bnatur_insiz",
-        field: "bnatur_insiz",
+        id: "col_bnatur",
+        field: "bnatur",
         caption: "소재규격",
         width: 120,
       },

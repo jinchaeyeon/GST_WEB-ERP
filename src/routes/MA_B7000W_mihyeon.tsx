@@ -1008,6 +1008,17 @@ const MA_B7000_mihyeon: React.FC = () => {
                   />
                 )}
               </td>
+              <th>품목등급</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="itemgrade"
+                    value={filters.itemgrade}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
             </tr>
 
             <tr>
@@ -1021,7 +1032,6 @@ const MA_B7000_mihyeon: React.FC = () => {
                   />
                 )}
               </td>
-
               <th>재고수량</th>
               <td colSpan={3}>
                 <div className="radio_form_box">
@@ -1079,17 +1089,7 @@ const MA_B7000_mihyeon: React.FC = () => {
                   />
                 )}
               </td>
-              <th>품목등급</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="itemgrade"
-                    value={filters.itemgrade}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
+
             </tr>
           </tbody>
         </FilterBox>
