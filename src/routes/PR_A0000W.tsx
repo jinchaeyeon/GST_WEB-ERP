@@ -14,10 +14,11 @@ import {
   FormBox,
   FormBoxWrap,
   GridContainer,
+  GridTitle,
+  GridTitleContainer,
   Title,
   TitleContainer,
 } from "../CommonStyled";
-import TopButtons from "../components/Buttons/TopButtons";
 import { UsePermissions } from "../components/CommonFunction";
 import { TPermissions } from "../store/types";
 
@@ -29,22 +30,19 @@ const PR_A0000W: React.FC = () => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [swiper, setSwiper] = useState<SwiperCore>();
+  const [step, setStep] = useState(0);
 
   const search = () => {
-    if (isMobile) {
-      resetInformation();
-    }
+    resetInformation();
   };
 
   const search2 = () => {
-    if (isMobile) {
-      setInformation((prev) => ({
-        ...prev,
-        fxnm: "",
-        description: "",
-        chk: false,
-      }));
-    }
+    setInformation((prev) => ({
+      ...prev,
+      fxnm: "",
+      description: "",
+      chk: false,
+    }));
   };
 
   const [isCaptured, setIsCaptured] = useState(false);
@@ -105,7 +103,7 @@ const PR_A0000W: React.FC = () => {
       title: datas.title,
     }));
 
-    if (swiper) {
+    if (swiper && isMobile) {
       swiper.slideTo(1);
     }
   };
@@ -118,7 +116,7 @@ const PR_A0000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (information.fxnm != "" && index == 1) {
+    if (information.fxnm != "" && index == 1 && isMobile) {
       if (swiper) {
         swiper.slideTo(2);
       }
@@ -218,8 +216,8 @@ const PR_A0000W: React.FC = () => {
     const initCamera = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { exact: isMobile ? "environment" : "user"} },
-          //video: { facingMode: isMobile ? "environment" : "user" },
+          //video: { facingMode: { exact: isMobile ? "environment" : "user"} },
+          video: { facingMode: isMobile ? "environment" : "user" },
         });
         if (videoRef.current) {
           videoRef.current.srcObject = isCaptured ? stream : null;
@@ -467,6 +465,8 @@ const PR_A0000W: React.FC = () => {
                   <>
                     <video
                       ref={videoRef}
+                      playsInline
+                      muted
                       autoPlay
                       style={{ height: "88%", width: "100%" }}
                     ></video>
@@ -575,7 +575,11 @@ const PR_A0000W: React.FC = () => {
                               value={information.description}
                               name="description"
                               rows={50}
-                              style={{ maxHeight: "20vh", overflowY: "auto" }}
+                              style={{
+                                maxHeight: "20vh",
+                                overflowY: "auto",
+                                background: "#d6d8f9",
+                              }}
                               onChange={filterInputChange}
                             />
                           </td>
@@ -602,20 +606,278 @@ const PR_A0000W: React.FC = () => {
           )}
         </Swiper>
       ) : (
-        <TitleContainer>
-          <Title>현장관리</Title>
-
-          <ButtonContainer>
-            {permissions && (
-              <TopButtons
-                search={search}
-                disable={true}
-                permissions={permissions}
-                pathname="PR_A0000W"
-              />
-            )}
-          </ButtonContainer>
-        </TitleContainer>
+        <>
+          {step == 0 ? (
+            <GridContainer>
+              <TitleContainer>
+                <Title>프로젝트 선택</Title>
+                <ButtonContainer>
+                  <Button
+                    themeColor={"primary"}
+                    fillMode={"solid"}
+                    onClick={() => {
+                      resetInformation();
+                      setStep(1);
+                    }}
+                  >
+                    프로젝트 미선택
+                  </Button>
+                  <Button
+                    themeColor={"primary"}
+                    fillMode={"solid"}
+                    onClick={() => search2()}
+                    icon="search"
+                  >
+                    조회
+                  </Button>
+                  <Button onClick={() => setStep(1)} icon="arrow-right">
+                    다음
+                  </Button>
+                </ButtonContainer>
+              </TitleContainer>
+              <GridContainer
+                style={{
+                  height: "85vh",
+                  overflowY: "auto",
+                  width: "100%",
+                }}
+              >
+                <Grid container spacing={2}>
+                  {mainDataResult.data.map((item, idx) => (
+                    <Grid item xs={12} sm={12} md={6} lg={6} xl={4}>
+                      <AdminQuestionBox key={idx}>
+                        <Card
+                          style={{
+                            width: "100%",
+                            cursor: "pointer",
+                            backgroundColor:
+                              item.custnm == information.custnm
+                                ? "#d6d8f9"
+                                : "white",
+                          }}
+                        >
+                          <CardContent
+                            onClick={() => onCheckClick(item)}
+                            style={{ textAlign: "left", padding: "8px" }}
+                          >
+                            <Typography variant="h6">{item.custnm}</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {item.title}
+                            </Typography>
+                          </CardContent>
+                        </Card>
+                      </AdminQuestionBox>
+                    </Grid>
+                  ))}
+                </Grid>
+              </GridContainer>
+            </GridContainer>
+          ) : step == 1 ? (
+            <GridContainer>
+              <TitleContainer>
+                <Title>장비 선택</Title>
+                <ButtonContainer>
+                  <Button
+                    themeColor={"primary"}
+                    fillMode={"solid"}
+                    onClick={() => search2()}
+                    icon="search"
+                  >
+                    조회
+                  </Button>
+                  <Button onClick={() => setStep(0)} icon="arrow-left">
+                    이전
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (information.fxnm != "") {
+                        setStep(2);
+                      } else {
+                        alert("장비를 선택해주세요");
+                      }
+                    }}
+                    icon="arrow-right"
+                  >
+                    다음
+                  </Button>
+                </ButtonContainer>
+              </TitleContainer>
+              <GridContainer
+                style={{
+                  height: "85vh",
+                  overflowY: "auto",
+                  width: "100%",
+                }}
+              >
+                <Grid container spacing={2}>
+                  {mainDataResult2.data.map((item, idx) => (
+                    <Grid item xs={12} sm={12} md={6} lg={6} xl={4}>
+                      <AdminQuestionBox key={idx}>
+                        <Card
+                          style={{
+                            width: "100%",
+                            cursor: "pointer",
+                            backgroundColor:
+                              item.fxnm == information.fxnm
+                                ? "#d6d8f9"
+                                : "white",
+                          }}
+                        >
+                          <CardContent
+                            onClick={() => onCheckClick2(item)}
+                            style={{ textAlign: "left", padding: "8px" }}
+                          >
+                            <Typography variant="h6">{item.fxnm}</Typography>
+                          </CardContent>
+                        </Card>
+                      </AdminQuestionBox>
+                    </Grid>
+                  ))}
+                </Grid>
+              </GridContainer>
+            </GridContainer>
+          ) : (
+            <GridContainer>
+              <TitleContainer>
+                <Title>사진 및 코멘트</Title>
+                <ButtonContainer>
+                  {isCaptured ? (
+                    <>
+                      <Button
+                        id={"button"}
+                        themeColor={"primary"}
+                        fillMode={"solid"}
+                        onClick={() => getPromise()}
+                      >
+                        사진모드
+                      </Button>{" "}
+                      <Button
+                        id={"button2"}
+                        themeColor={"primary"}
+                        fillMode={"solid"}
+                        onClick={() => onCapture()}
+                      >
+                        촬영
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button onClick={() => setStep(1)} icon="arrow-left">
+                        이전
+                      </Button>
+                      <Button
+                        id={"button1"}
+                        themeColor={"primary"}
+                        fillMode={"solid"}
+                        onClick={upload}
+                      >
+                        첨부파일
+                      </Button>
+                      <input
+                        id="uploadAttachment"
+                        style={{ display: "none" }}
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        ref={excelInput}
+                        onChange={(
+                          event: React.ChangeEvent<HTMLInputElement>
+                        ) => {
+                          handleFileUpload(event.target.files);
+                        }}
+                      />
+                      <Button
+                        id={"button3"}
+                        themeColor={"primary"}
+                        fillMode={"solid"}
+                        onClick={() => getPromise2()}
+                      >
+                        촬영모드
+                      </Button>
+                      <Button icon="save">저장</Button>
+                    </>
+                  )}
+                </ButtonContainer>
+              </TitleContainer>
+              {isCaptured ? (
+                <video
+                  ref={videoRef}
+                  playsInline
+                  muted
+                  autoPlay
+                  style={{ height: "85vh", width: "100%" }}
+                ></video>
+              ) : (
+                <>
+                  <Carousel
+                    cycleNavigation={true}
+                    navButtonsAlwaysVisible={true}
+                    autoPlay={false}
+                  >
+                    {mainDataResult3.total > 0
+                      ? mainDataResult3.data[0].image.map((content: any) => (
+                          <>
+                            <div style={{ width: "100%", height: "60vh" }}>
+                              <img
+                                src={content.url}
+                                style={{
+                                  objectFit: "contain",
+                                  height: "100%",
+                                  width: "100%",
+                                }}
+                              />
+                            </div>
+                          </>
+                        ))
+                      : ""}
+                  </Carousel>
+                  <FormBoxWrap>
+                    <GridTitleContainer>
+                      <GridTitle>
+                        <ButtonContainer>
+                          코멘트
+                          <div style={{ marginLeft: "10px" }}>
+                            <Switch
+                              onChange={(event: any) => {
+                                setInformation((prev) => ({
+                                  ...prev,
+                                  chk: event.target.value,
+                                }));
+                              }}
+                              onLabel={"작업완료"}
+                              offLabel={"작업중"}
+                              checked={information.chk}
+                              className="PDA_Switch"
+                            />
+                          </div>
+                        </ButtonContainer>
+                      </GridTitle>
+                    </GridTitleContainer>
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <TextArea
+                              value={information.description}
+                              name="description"
+                              rows={50}
+                              style={{
+                                maxHeight: "20vh",
+                                overflowY: "auto",
+                                background: "#d6d8f9",
+                              }}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                </>
+              )}
+            </GridContainer>
+          )}
+        </>
       )}
     </>
   );

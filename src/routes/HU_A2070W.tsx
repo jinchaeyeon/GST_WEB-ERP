@@ -48,11 +48,10 @@ import {
   setDefaultDate,
 } from "../components/CommonFunction";
 import {
-  COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
   GAP,
   PAGE_SIZE,
-  SELECTED_FIELD,
+  SELECTED_FIELD
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
@@ -223,39 +222,22 @@ const HU_A2070W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_dptcd_001, L_BA002, L_HU250T",
+    "L_HU250T",
     //부서, 사업장
     setBizComponentData
   );
 
   //공통코드 리스트 조회 ()
-  const [locationListData, setLocationListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [dptcdListData, setDptcdListData] = React.useState([
-    { dptcd: "", dptnm: "" },
-  ]);
   const [prsnnumListData, setPrsnnumListData] = React.useState([
     { prsnnum: "", prsnnm: "" },
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const prsnnumQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_HU250T"
-        )
+        bizComponentData.find((item: any) => item.bizComponentId === "L_HU250T")
       );
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
-        )
-      );
-      const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
-      );
+
       fetchQuery(prsnnumQueryStr, setPrsnnumListData);
-      fetchQuery(dptcdQueryStr, setDptcdListData);
-      fetchQuery(locationQueryStr, setLocationListData);
     }
   }, [bizComponentData]);
 
@@ -331,7 +313,7 @@ const HU_A2070W: React.FC = () => {
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    work_type: "Q",
+    work_type: "LIST",
     orgdiv: "",
     location: "",
     rtrchk: "",
@@ -347,7 +329,7 @@ const HU_A2070W: React.FC = () => {
 
   const [filters2, setFilters2] = useState({
     pgSize: PAGE_SIZE,
-    work_type: "Q",
+    work_type: "DETAIL",
     prsnnum: "",
     pgNum: 1,
     isSearch: true,
@@ -467,7 +449,7 @@ const HU_A2070W: React.FC = () => {
       pageNumber: filters2.pgNum,
       pageSize: filters2.pgSize,
       parameters: {
-        "@p_work_type": filters.work_type,
+        "@p_work_type": filters2.work_type,
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
         "@p_rtrchk": filters.rtrchk,
@@ -571,13 +553,15 @@ const HU_A2070W: React.FC = () => {
     setSelectedState(newSelectedState);
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-
+    const prsnnum = prsnnumListData.find(
+      (item: any) => item.prsnnm === selectedRowData.prsnnum
+    )?.prsnnum;
     setPage2(initialPageState);
     setFilters2((prev) => ({
       ...prev,
       isSearch: true,
       pgNum: 1,
-      prsnnum: selectedRowData.prsnnum,
+      prsnnum: prsnnum != undefined ? prsnnum : "",
     }));
   };
 
@@ -718,12 +702,12 @@ const HU_A2070W: React.FC = () => {
 
   const enterEdit2 = (dataItem: any, field: string) => {
     if (
-      field == "dutydt" ||
       field == "shh" ||
       field == "smm" ||
       field == "ehh" ||
       field == "emm" ||
-      field == "remark"
+      field == "remark" ||
+      (field == "dutydt" && dataItem.rowstatus == "N")
     ) {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] === dataItem[DATA_ITEM_KEY2]
@@ -934,12 +918,18 @@ const HU_A2070W: React.FC = () => {
             dataArr.emm.push(emm);
             dataArr.remark.push(remark);
           });
+          const datas = mainDataResult.data.filter(
+            (item) =>
+              item[DATA_ITEM_KEY] ==
+              Object.getOwnPropertyNames(selectedState)[0]
+          )[0];
+
           setParaData((prev) => ({
             ...prev,
             rowstatus: dataArr.rowstatus.join("|"),
-            orgdiv: dataArr.orgdiv.join("|"),
+            orgdiv: datas.orgdiv,
             dutydt: dataArr.dutydt.join("|"),
-            prsnnum: dataArr.prsnnum.join("|"),
+            prsnnum: datas.prsnnum,
             shh: dataArr.shh.join("|"),
             smm: dataArr.smm.join("|"),
             ehh: dataArr.ehh.join("|"),
@@ -1048,9 +1038,7 @@ const HU_A2070W: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-        if (
-          item.rowstatus != "N" 
-        ) {
+        if (item.rowstatus != "N") {
           const newData2 = {
             ...item,
             rowstatus: "D",
@@ -1157,19 +1145,17 @@ const HU_A2070W: React.FC = () => {
       [DATA_ITEM_KEY2]: ++temp2,
       b_time: "",
       dayofweek: 0,
-      dptcd: "",
       dutydt: convertDateToStr(new Date()),
       ehh: "",
       emm: "",
       lateyn: "",
-      location: filters.location,
-      orgdiv: filters.orgdiv,
+      orgdiv: datas.orgdiv,
       prsnnum: datas.prsnnum,
       remark: "",
       s_time: "",
       shh: "",
       smm: "",
-      workcls: "",
+      workcls: datas.workcls,
       rowstatus: "N",
     };
 
@@ -1408,12 +1394,6 @@ const HU_A2070W: React.FC = () => {
               data={process(
                 mainDataResult2.data.map((row) => ({
                   ...row,
-                  dptcd: dptcdListData.find(
-                    (item: any) => item.dptcd === row.dptcd
-                  )?.dptnm,
-                  location: locationListData.find(
-                    (item: any) => item.sub_code === row.location
-                  )?.code_name,
                   dutydt: row.dutydt
                     ? new Date(dateformat(row.dutydt))
                     : new Date(dateformat("19000101")),

@@ -23,18 +23,6 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_location",
-        field: "location",
-        caption: "사업장",
-        width: 120,
-      },
-      {
-        id: "col_dptcd",
-        field: "dptcd",
-        caption: "부서",
-        width: 120,
-      },
-      {
         id: "col_shh",
         field: "shh",
         caption: "출근시",
