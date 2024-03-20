@@ -414,12 +414,12 @@ const MA_B7000_mihyeon: React.FC = () => {
       if (totalRowCnt > 0) {
         // 첫번째 데이터를 선택된 상태처럼 보이게 처리
         setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-        // 세부 조회 필터 초기화 (??)
+        // 세부 조회 데이터 키값 설정
         setDetailFilters1((prev) => ({
           ...prev,
           itemcd: rows[0].itemcd,
           itemgrade: rows[0].itemgrade,
-          // 조회중이니까 조회버튼 막기(??)
+          // 세부조회 필터설정 후 그 값으로 조회
           isSearch: true,
           pgNum: 1,
         }));

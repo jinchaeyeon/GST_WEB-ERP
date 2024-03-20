@@ -56,7 +56,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import DetailWindow from "../components/Windows/MA_A3300W_Window";
+import DetailWindow from "../components/Windows/MA_A3300W_Window_mihyeon";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
@@ -160,7 +160,7 @@ const MA_A3300W_mihyeon: React.FC = () => {
         customOptionData.menuCustomDefaultOptions,
         "query"
       );
-      // 검색시 드롭다운 or 라디오 or date폼으로 입력받는 값들 필터
+      // 검색시 드롭다운 or 라디오 or date폼에서 사용할 공통코드
       setFilters((prev) => ({
         ...prev,
         // 입고일자
@@ -261,7 +261,7 @@ const MA_A3300W_mihyeon: React.FC = () => {
     };
 
     try {
-      data = await processApi<any>("query", query);
+      data = await processApi<any>("query", query);      
     } catch (error) {
       data = null;
     }
@@ -280,12 +280,14 @@ const MA_A3300W_mihyeon: React.FC = () => {
     sort: [],
   });
 
+  // 연필.. 편집하는곳
   const CommandCell = (props: GridCellProps) => {
     const onEditClick = () => {
       //요약정보 행 클릭, 디테일 팝업 창 오픈 (수정용)
       const rowData = props.dataItem;
       setSelectedState({ [rowData.num]: true });
 
+      // 수정
       setWorkType("U");
       setDetailWindowVisible(true);
     };
@@ -515,6 +517,7 @@ const MA_A3300W_mihyeon: React.FC = () => {
     };
     try {
       data = await processApi<any>("procedure", parameters);
+      console.log("data", data);
     } catch (error) {
       data = null;
     }
@@ -699,7 +702,8 @@ const MA_A3300W_mihyeon: React.FC = () => {
   }, [detailFilters]);
 
   useEffect(() => {
-    if (paraDataDeleted.seq1 !== 0) fetchToDelete();
+    // work_type 이 D이면 삭제
+    if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   let gridRef: any = useRef(null);
@@ -845,16 +849,18 @@ const MA_A3300W_mihyeon: React.FC = () => {
   };
 
   const onAddClick = () => {
+    // 새로 만들기
     setWorkType("N");
     setDetailWindowVisible(true);
   };
 
+  // 상태값을 반대로
   const onCustWndClick = () => {
-    setCustWindowVisible(true);
+    setCustWindowVisible(!custWindowVisible);
   };
-
+ // 상태값을 반대로
   const onItemWndClick = () => {
-    setItemWindowVisible(true);
+    setItemWindowVisible(!itemWindowVisible);
   };
 
   const questionToDelete = useSysMessage("QuestionToDelete");
@@ -880,26 +886,36 @@ const MA_A3300W_mihyeon: React.FC = () => {
     }
   };
 
+  // 삭제 함수
   const fetchToDelete = async () => {
     let data: any;
 
     try {
+      // 삭제 프로시저에 paraDeleted 담아서 호출
       data = await processApi<any>("procedure", paraDeleted);
     } catch (error) {
       data = null;
     }
-
+    // 데이터가 성공적으로 삭제되면
     if (data.isSuccess === true) {
+      // 현재 페이지의 데이터가 1개이고, 페이지번호가 0보다 클때, 마지막 데이터가 삭제됬는지 판단
       const isLastDataDeleted =
         mainDataResult.data.length === 1 && filters.pgNum > 0;
+        // 현재 선택된 데이터의 인덱스 찾기
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       );
+      // 삭제 대상 데이터의 attdatnum이 존재하면, 삭제된 첨부파일 번호를 상태에 저장
       if (paraDataDeleted.attdatnum)
         setDeletedAttadatnums([paraDataDeleted.attdatnum]);
+
+      // 그리드를 리셋하여 화면을 초기 상태로 돌립니다.
       resetAllGrid();
+
+      // 마지막 데이터가 삭제된경우 로직
       if (isLastDataDeleted) {
+        // 페이지를 조정하여 마지막 페이지가 삭제되면 이전 페이지로 이동
         setPage({
           skip:
             filters.pgNum == 1 || filters.pgNum == 0
@@ -908,6 +924,7 @@ const MA_A3300W_mihyeon: React.FC = () => {
           take: PAGE_SIZE,
         });
 
+        // 조회 조건을 업데이트하여, 현재 페이지 번호를 조정하고 검색을 다시 실행합니다. 
         setFilters((prev) => ({
           ...prev,
           find_row_value: "",
@@ -919,6 +936,8 @@ const MA_A3300W_mihyeon: React.FC = () => {
           isSearch: true,
         }));
       } else {
+        // 마지막 데이터가 아닌 경우, 
+        // 다음에 조회할 때 특정 행으로 스크롤할 수 있도록 find_row_value를 설정(??)
         setFilters((prev) => ({
           ...prev,
           find_row_value:
@@ -930,12 +949,13 @@ const MA_A3300W_mihyeon: React.FC = () => {
         }));
       }
     } else {
+      // 삭제 실패한경우
       console.log("[오류 발생]");
       console.log(data);
       alert(data.resultMessage);
     }
 
-    //초기화
+    //삭제 후 paraDataDeleted  상태 초기화
     setParaDataDeleted((prev) => ({
       work_type: "",
       recdt: "",
@@ -1065,7 +1085,7 @@ const MA_A3300W_mihyeon: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="MA_A3300W"
+              pathname="MA_A3300W_mihyeon"
             />
           )}
         </ButtonContainer>
@@ -1435,29 +1455,37 @@ const MA_A3300W_mihyeon: React.FC = () => {
             )}
         </Grid>
       </GridContainer>
+      {/* 데이터 수정, 추가 하는 모달 */}
       {detailWindowVisible && (
         <DetailWindow
           setVisible={setDetailWindowVisible}
           workType={workType} //신규 : N, 수정 : U
+
+          // 모달에서 데이터를 추가하거나 수정한 후, 호출할 콜백 함수
+          // 변경된 데이터를 기반으로 메인 그리드를 다시 로드하기 위해 사용
           reload={(str) => {
+            // 조회 조건을 업데이트
             setFilters((prev) => ({
               ...prev,
+              // 데이터가 성공적으로 추가되거나 수정된 후 해당 항목으로 스크롤할 때 사용됨(??)
               find_row_value: str,
               isSearch: true,
             }));
           }}
+          // 모달에 전달할 데이터
           data={
             mainDataResult.data.filter(
               (item) => item.num == Object.getOwnPropertyNames(selectedState)[0]
             )[0] == undefined
-              ? ""
+              ? ""// 선택된 데이터 항목이 없는 경우, 빈 문자열을 전달
               : mainDataResult.data.filter(
                   (item) =>
                     item.num == Object.getOwnPropertyNames(selectedState)[0]
-                )[0]
+                )[0]// 선택된 데이터 항목이 있는 경우, 해당 항목의 데이터를 전달
           }
           modal={true}
-          pathname="MA_A3300W_mihyeon"
+          // 모달에서 커스텀 옵션은 어떻게 정하는지..Rows 에러나서 일단 기존 커스텀 옵션으로...(??)
+          pathname="MA_A3300W"
         />
       )}
       {custWindowVisible && (
