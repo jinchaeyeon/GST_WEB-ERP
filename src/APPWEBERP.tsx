@@ -135,6 +135,7 @@ import HU_B1040W from "./routes/HU_B1040W";
 import HU_B2100W from "./routes/HU_B2100W";
 import HU_B2120W from "./routes/HU_B2120W";
 import HU_B2140W from "./routes/HU_B2140W";
+import HU_B3120W from "./routes/HU_B3120W";
 import HU_B3140W from "./routes/HU_B3140W";
 import HU_B3160W from "./routes/HU_B3160W";
 import HU_B3180W from "./routes/HU_B3180W";
@@ -652,7 +653,7 @@ const AppInner: React.FC = () => {
       return MA_B7000W;
     } else if (str == "MA_B7000W_mihyeon") {
       return MA_B7000W_mihyeon;
-    }else if (str == "MA_B7000_606W") {
+    } else if (str == "MA_B7000_606W") {
       return MA_B7000_606W;
     } else if (str == "MA_B7200W") {
       return MA_B7200W;
@@ -848,12 +849,14 @@ const AppInner: React.FC = () => {
       return HU_B2120W;
     } else if (str == "HU_B2140W") {
       return HU_B2140W;
+    } else if (str == "HU_B3120W") {
+      return HU_B3120W;
     } else if (str == "HU_B3140W") {
       return HU_B3140W;
     } else if (str == "HU_B3160W") {
-      return HU_B3140W;
+      return HU_B3160W;
     } else if (str == "HU_B3180W") {
-      return HU_B3140W;
+      return HU_B3180W;
     } else if (str == "HU_B3220W") {
       return HU_B3220W;
     } else if (str == "HU_B4001W") {
@@ -1079,7 +1082,11 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/MA_A7000W" component={MA_A7000W} exact />
                   <AuthRoute path="/MA_A8000W" component={MA_A8000W} exact />
                   <AuthRoute path="/MA_A3300W" component={MA_A3300W} exact />
-                  <AuthRoute path="/MA_A3300W_mihyeon" component={MA_A3300W_mihyeon} exact />
+                  <AuthRoute
+                    path="/MA_A3300W_mihyeon"
+                    component={MA_A3300W_mihyeon}
+                    exact
+                  />
                   <AuthRoute path="/MA_A3400W" component={MA_A3400W} exact />
                   <AuthRoute path="/MA_A3500W" component={MA_A3500W} exact />
                   <AuthRoute path="/MA_A9001W" component={MA_A9001W} exact />
@@ -1091,7 +1098,11 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/MA_B3000W" component={MA_B3000W} exact />
                   <AuthRoute path="/MA_B3100W" component={MA_B3100W} exact />
                   <AuthRoute path="/MA_B7000W" component={MA_B7000W} exact />
-                  <AuthRoute path="/MA_B7000W_mihyeon" component={MA_B7000W_mihyeon} exact />
+                  <AuthRoute
+                    path="/MA_B7000W_mihyeon"
+                    component={MA_B7000W_mihyeon}
+                    exact
+                  />
                   <AuthRoute
                     path="/MA_B7000_606W"
                     component={MA_B7000_606W}
@@ -1212,6 +1223,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/HU_B2100W" component={HU_B2100W} exact />
                   <AuthRoute path="/HU_B2120W" component={HU_B2120W} exact />
                   <AuthRoute path="/HU_B2140W" component={HU_B2140W} exact />
+                  <AuthRoute path="/HU_B3120W" component={HU_B3120W} exact />
                   <AuthRoute path="/HU_B3140W" component={HU_B3140W} exact />
                   <AuthRoute path="/HU_B3160W" component={HU_B3160W} exact />
                   <AuthRoute path="/HU_B3180W" component={HU_B3180W} exact />
