@@ -73,7 +73,10 @@ const domain: any = {
   "manual-list": { action: "get", url: "api/files/manual-json/:para" },
   "manual-upload": { action: "post", url: "api/files/manual/:para" },
   "manual-delete": { action: "delete", url: "api/files/manual/:para" },
-
+  "send-email": {
+    action: "post",
+    url: "api/data/emm-printout/:para",
+  },
   "excel-view2": {
     action: "post",
     url: "api/data/emm-printout/send-mail?id=S2023744A53",
@@ -145,7 +148,8 @@ export const useApi = () => {
       if (
         name === "file-upload" ||
         name === "file-download" ||
-        name === "excel-view2"
+        name === "excel-view2" ||
+        name === "send-email"
       )
         headers = {
           "Content-Type": "multipart/form-data",
