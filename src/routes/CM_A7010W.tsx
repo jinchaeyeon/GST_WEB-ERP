@@ -318,8 +318,14 @@ const CM_A7010W: React.FC = () => {
       const usegbQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId == "L_CM700")
       );
+      const personQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
+        )
+      );
 
       fetchQueryData(usegbQueryStr, setUsegbListData);
+      fetchQueryData(personQueryStr, setPersonListData);
     }
   }, [bizComponentData]);
 
@@ -1333,9 +1339,14 @@ const CM_A7010W: React.FC = () => {
                       <th>작성자</th>
                       <td>
                         <Input
-                          name="personnm"
+                          name="person"
                           type="text"
-                          value={information.personnm}
+                          value={
+                            personListData.find(
+                              (items: any) =>
+                                items.user_id == information.person
+                            )?.user_name
+                          }
                           className="readonly"
                         />
                       </td>
@@ -1447,26 +1458,12 @@ const CM_A7010W: React.FC = () => {
                       </td>
                       <th>의뢰기관명</th>
                       <td>
-                        {information.ref_key == "" ? (
-                          customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="custcd"
-                              value={information.custcd}
-                              type="new"
-                              customOptionData={customOptionData}
-                              changeData={ComboBoxChange}
-                              valueField="custcd"
-                              textField="custnm"
-                            />
-                          )
-                        ) : (
-                          <Input
-                            name="custnm"
-                            type="text"
-                            value={information.custnm}
-                            className="readonly"
-                          />
-                        )}
+                        <Input
+                          name="custnm"
+                          type="text"
+                          value={information.custnm}
+                          className="readonly"
+                        />
                       </td>
                     </tr>
                     <tr>
