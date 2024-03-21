@@ -115,6 +115,7 @@
     "react-office-viewer": "^1.0.4",
     "react-pdf": "^7.7.0",
     "react-public-ip": "^1.0.0",
+    "react-redux": "^9.1.0",
     "react-refresh": "^0.14.0",
     "react-router-dom": "^5.3.0",
     "react-scripts": "5.0.1",
