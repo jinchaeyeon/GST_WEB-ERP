@@ -304,7 +304,7 @@ axiosInstance.interceptors.response.use(
         }).catch((err: any) => {
           // access token을 받아오지 못하는 오류 발생시 logout 처리
           resetLocalStorage();
-          window.location.href = "/";
+          //window.location.href = "/";
 
           return false;
         });
