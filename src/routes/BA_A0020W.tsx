@@ -96,6 +96,18 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0020W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import { log } from "console";
+
+// kakao.maps.d.ts
+declare global {
+  interface Window {
+    kakao: any;
+  }
+}
+interface DataItem {
+  address: string;
+}
+
 
 const DATA_ITEM_KEY = "custcd";
 const SUB_DATA_ITEM_KEY = "num";
@@ -596,6 +608,7 @@ const BA_A0020: React.FC = () => {
     };
     try {
       data = await processApi<any>("procedure", parameters);
+      console.log("data", data);
     } catch (error) {
       data = null;
     }
@@ -3103,6 +3116,209 @@ const BA_A0020: React.FC = () => {
     });
   }, [attdatnum, files]);
 
+  // 유저 정보 로그찍는것
+  useEffect(() => {
+    console.log("userId : ");
+  }, []);
+
+  // 지도
+
+  const [showMap, setShowMap] = useState(false);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [map, setMap] = useState<any>(null);
+
+  // 카카오 지도 스크립트 로드 함수
+  const loadKakaoMapScript = () => {
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=aea9b34baa4e0c15204135788fc582b1&autoload=false&libraries=services`;
+    document.head.appendChild(script);
+
+    script.onload = () => {
+      setMapLoaded(true); // 스크립트 로드 완료 상태 설정
+    };
+  };
+
+  // 지도 초기화 함수
+  const initializeMap = () => {
+    if (window.kakao && window.kakao.maps) {
+      window.kakao.maps.load(() => {
+        const container = document.getElementById("map");
+        const options = {
+          center: new window.kakao.maps.LatLng(35.25608, 129.0129),
+          level: 12,
+        };
+        const newMap = new window.kakao.maps.Map(container, options);
+        setMap(newMap);
+        addMarkers(newMap);
+      });
+    }
+  };
+
+  // showMap 상태가 변경될 때마다 처리
+  useEffect(() => {
+    if (showMap && !mapLoaded) {
+      loadKakaoMapScript(); // 지도 스크립트 로드
+    }
+  }, [showMap, mapLoaded]);
+
+  // 지도 스크립트 로드 완료 시 지도 초기화
+  useEffect(() => {
+    if (showMap && mapLoaded) {
+      initializeMap();
+    }
+  }, [showMap, mapLoaded]);
+
+  const addMarkers = (map: any) => {
+    const geocoder = new window.kakao.maps.services.Geocoder();
+    mainDataResult.data.forEach((item) => {
+      if (item.address && item.address.trim() !== "") {
+        geocoder.addressSearch(
+          item.address,
+          function (result: any, status: any) {
+            if (status === window.kakao.maps.services.Status.OK) {
+              const coords = new window.kakao.maps.LatLng(
+                result[0].y,
+                result[0].x
+              );
+
+              const imageSrc =
+                  "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png", // 마커이미지의 주소입니다
+                imageSize = new window.kakao.maps.Size(34, 37); // 마커이미지의 크기입니다
+              // imageOption = {offset: new window.kakao.maps.Point(27, 69)};
+
+              const markerImage = new window.kakao.maps.MarkerImage(
+                imageSrc,
+                imageSize
+              );
+              const marker = new window.kakao.maps.Marker({
+                map: map,
+                position: coords,
+                image: markerImage,
+              });
+
+              // 마커 위에 회사이름 나타내기
+              var infowindow = new window.kakao.maps.InfoWindow({
+                content: `<div style=" width:"150px: text-align:center; padding:6px; font-size:12px; ">${item.custnm}</div>`,
+              });
+              infowindow.open(map, marker);
+
+              window.kakao.maps.event.addListener(marker, "click",() => {
+                // 마커 클릭 시 호출될 함수
+                console.log(" 클릭한 데이터", item);
+              
+
+                // 선택된 행의 상태를 업데이트하는 로직
+                const newSelectedState = {
+                  ...selectedState,
+                  [item.custcd]: true,
+                };
+                setSelectedState(newSelectedState); // 새로운 선택 상태를 설정합니다.
+
+
+                // 마커에 해당하는 그리드 행의 상세 정보를 설정
+                setInfomation({
+                  workType: "U",
+                  custcd: item.custcd,
+                  custnm: item.custnm,
+                  custdiv:
+                    custdivListData.find(
+                      (items: any) => items.code_name === item.custdiv
+                    )?.sub_code == undefined
+                      ? item.custdiv
+                      : custdivListData.find(
+                          (items: any) => items.code_name === item.custdiv
+                        )?.sub_code,
+                  custabbr: item.custabbr,
+                  compnm_eng: item.compnm_eng,
+                  inunpitem: item.inunpitem,
+                  bizregnum: item.bizregnum,
+                  zipcode: item.zipcode,
+                  area: item.area,
+                  unpitem: item.unpitem,
+                  ceonm: item.ceonm,
+                  address: item.address,
+                  bizdiv:
+                    bizdivListData.find(
+                      (items: any) => items.code_name === item.bizdiv
+                    )?.sub_code == undefined
+                      ? item.bizdiv
+                      : bizdivListData.find(
+                          (items: any) => items.code_name === item.bizdiv
+                        )?.sub_code,
+                  repreregno: item.repreregno,
+                  address_eng: item.address_eng,
+                  estbdt: isValidDate(item.estbdt)
+                    ? new Date(dateformat(item.estbdt))
+                    : null,
+                  phonenum: item.phonenum,
+                  bnkinfo: item.bnkinfo,
+                  bankacntuser: item.bankacntuser,
+                  compclass: item.compclass,
+                  etelnum: item.etelnum,
+                  bankacnt: item.bankacnt,
+                  comptype: item.comptype,
+                  faxnum: item.faxnum,
+                  bnkinfo2: item.bnkinfo2,
+                  bankacnt2: item.bankacnt2,
+                  taxorg: item.taxorg,
+                  efaxnum: item.efaxnum,
+                  email: item.email,
+                  taxortnm: item.taxortnm,
+                  useyn: item.useyn == "Y" ? "Y" : "N",
+                  scmyn: item.scmyn == "Y" ? "Y" : "N",
+                  pariodyn: item.pariodyn == "Y" ? "Y" : "N",
+                  attdatnum: item.attdatnum,
+                  itemlvl1: item.itemlvl1,
+                  itemlvl2: item.itemlvl2,
+                  itemlvl3: item.itemlvl3,
+                  etax: item.etax,
+                  remark: item.remark,
+                  etxprs: item.etxprs,
+                  phonenum_og: item.phonenum_og,
+                  emailaddr_og: item.emailaddr_og,
+                  bill_type: item.bill_type,
+                  recvid: item.recvid,
+                  rtxisuyn: item.rtxisuyn,
+                  files: item.files,
+                  auto: item.auto,
+                });
+                setsubFilters((prev) => ({
+                  ...prev,
+                  workType: "CustPerson",
+                  useyn: item.useyn,
+                  custcd: item.custcd,
+                  custnm: item.custnm,
+                  custdiv: item.custdiv,
+                  bizregnum: item.bizregnum,
+                  ceonm: item.ceonm,
+                  isSearch: true,
+                  pgNum: 1,
+                  find_row_value: "",
+                }));
+
+                setsubFilters2((prev) => ({
+                  ...prev,
+                  workType: "MONEY",
+                  useyn: item.useyn,
+                  custcd: item.custcd,
+                  custnm: item.custnm,
+                  custdiv: item.custdiv,
+                  bizregnum: item.bizregnum,
+                  ceonm: item.ceonm,
+                  isSearch: true,
+                  pgNum: 1,
+                  find_row_value: "",
+                }));
+                setTabSelected(0);
+              });
+            }
+          }
+        );
+      }
+    });
+  };
+
   return (
     <>
       <TitleContainer>
@@ -3197,6 +3413,13 @@ const BA_A0020: React.FC = () => {
         <GridContainer width={`30%`}>
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
+            <Button
+              onClick={() => setShowMap(!showMap)}
+              style={{ marginBottom: "5px" }}
+            >
+              {" "}
+              {showMap ? "테이블 보기" : "지도로 보기"}
+            </Button>
           </GridTitleContainer>
           <ExcelExport
             data={mainDataResult.data}
@@ -3205,71 +3428,80 @@ const BA_A0020: React.FC = () => {
             }}
             fileName="업체관리"
           >
-            <Grid
-              style={{ height: "76.5vh" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  custdiv: custdivListData.find(
-                    (item: any) => item.sub_code === row.custdiv
-                  )?.code_name,
-                  bizdiv: bizdivListData.find(
-                    (item: any) => item.sub_code === row.bizdiv
-                  )?.code_name,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)],
-                })),
-                mainDataState
-              )}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-            >
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          checkboxField.includes(item.fieldName)
-                            ? CheckBoxCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
-                        }
-                      />
-                    )
+            {showMap ? (
+              <div
+                style={{ height: "76.5vh", marginTop: "5px" }}
+                id="map"
+              ></div>
+            ) : (
+              <Grid
+                style={{ height: "76.5vh" }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    custdiv: custdivListData.find(
+                      (item: any) => item.sub_code === row.custdiv
+                    )?.code_name,
+                    bizdiv: bizdivListData.find(
+                      (item: any) => item.sub_code === row.bizdiv
+                    )?.code_name,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)],
+                  })),
+                  mainDataState
                 )}
-            </Grid>
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            checkboxField.includes(item.fieldName)
+                              ? CheckBoxCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder === 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            )}
           </ExcelExport>
         </GridContainer>
         <GridContainer width={`calc(70% - ${GAP}px)`}>
