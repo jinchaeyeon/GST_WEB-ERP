@@ -1023,7 +1023,7 @@ const MA_B7000_mihyeon: React.FC = () => {
 
             <tr>
               <th>사용여부</th>
-              <td style={{ minWidth: "220px" }}>
+              <td colSpan={3}>
                 {customOptionData !== null && (
                   <CommonRadioGroup
                     name="radUseyn"
@@ -1033,7 +1033,7 @@ const MA_B7000_mihyeon: React.FC = () => {
                 )}
               </td>
               <th>재고수량</th>
-              <td colSpan={3}>
+              <td colSpan={3} style={{ minWidth: "250px" }}>
                 <div className="radio_form_box">
                   <div className="radio_inner">
                     {customOptionData !== null && (

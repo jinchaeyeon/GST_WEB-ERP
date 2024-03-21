@@ -145,9 +145,9 @@ const MA_A3300W_mihyeon: React.FC = () => {
     });
   };
 
-  //메시지 조회(폼정보에서 추가입력 안해서 기존꺼 그대로 사용)
+  //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("MA_A3300W", setMessagesData);
+  UseMessages("MA_A3300W_mihyeon", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -396,7 +396,7 @@ const MA_A3300W_mihyeon: React.FC = () => {
 
   //삭제 프로시저 초기값
   const [paraDataDeleted, setParaDataDeleted] = useState({
-    work_type: "D",
+    work_type: "",
     recdt: "",
     seq1: 0,
     attdatnum: "",
