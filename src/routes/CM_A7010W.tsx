@@ -72,11 +72,10 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import RichEditor from "../components/RichEditor";
-import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersPersonWindow from "../components/Windows/CommonWindows/CustomersPersonWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import SignWindow from "../components/Windows/CommonWindows/SignWindow";
 import { useApi } from "../hooks/api";
 import { IAttachmentData, ICustData } from "../hooks/interfaces";
 import {
@@ -87,7 +86,7 @@ import {
   unsavedAttadatnumsState,
   unsavedNameState,
 } from "../store/atoms";
-import { gridList } from "../store/columns/CM_A7000W_C";
+import { gridList } from "../store/columns/CM_A7010W_C";
 import {
   Iparameters,
   TColumn,
@@ -184,7 +183,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
 };
 
-const CM_A7000W: React.FC = () => {
+const CM_A7010W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
 
   let gridRef: any = useRef(null);
@@ -199,36 +198,7 @@ const CM_A7000W: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const refEditorRef = useRef<TEditorHandle>(null);
-  const content = `
-  <head><style>
-        p, span{
-          font-family: Arial, sans-serif; 
-        }
-        table {
-          margin: 0;
-          border-collapse: collapse;
-          table-layout: fixed;
-          width: 100%;
-          overflow: hidden;
-        }
-        table td {          
-          padding: 0pt 5.4pt 0pt 5.4pt;
-          border: 1pt #000000 solid;
-        }
-        table td p {            
-          margin: 0;
-          padding: 0;
-        }
-        #parent {
-          width: 200px;
-          float: right;
-        }
-        #title {
-          background-color: #2289C3;
-          color: white;
-        }
-        null</style></head><body><table id="parent"><tbody><tr><td id="title"><p style="text-align: center;"><strong>참석자</strong></p></td></tr></tbody></table></body>
-  `;
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const [mainDataState, setMainDataState] = useState<State>({
@@ -251,15 +221,9 @@ const CM_A7000W: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
 
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const [custpersonWindowVisible, setCustPersonWindowVisible] =
-    useState<boolean>(false);
-
-  const [projectWindowVisible, setProjectWindowVisible] =
-    useState<boolean>(false);
-
   const [attachmentsWindowVisiblePb, setAttachmentsWindowVisiblePb] =
     useState<boolean>(false);
+  const [signWindowVisible, setSignWindowVisible] = useState<boolean>(false);
 
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
@@ -272,6 +236,48 @@ const CM_A7000W: React.FC = () => {
     unsavedAttadatnumsState
   );
 
+  const onSignWndClick = () => {
+    setSignWindowVisible(true);
+  };
+  const setCustPersonData = (data: any) => {
+    setInformation((prev: any) => {
+      return {
+        ...prev,
+        custprsncd: data.custprsncd,
+        custprsnnm: data.prsnnm,
+        postnm: data.postnm,
+        dptnm: data.dptnm,
+        address: data.address,
+        telno: data.telno,
+        phoneno: data.phoneno,
+        email: data.email,
+        testtype: "",
+        requestgb: "",
+        materialtype: "",
+      };
+    });
+  };
+
+  const setCustData = (data: ICustData) => {
+    setInformation((prev: any) => {
+      return {
+        ...prev,
+        custcd: data.custcd,
+        custnm: data.custnm,
+        custprsncd: "",
+        custprsnnm: "",
+        postnm: "",
+        dptnm: "",
+        address: data.address,
+        telno: "",
+        phoneno: "",
+        email: "",
+        testtype: "",
+        requestgb: "",
+        materialtype: "",
+      };
+    });
+  };
   const getAttachmentsDataPb = (data: IAttachmentData) => {
     setInformation((prev) => {
       return {
@@ -283,78 +289,37 @@ const CM_A7000W: React.FC = () => {
       };
     });
   };
+  const [custpersonWindowVisible, setCustPersonWindowVisible] =
+    useState<boolean>(false);
 
+  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const onAttachPbWndClick = () => {
+    setAttachmentsWindowVisiblePb(true);
+  };
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
-
   const onCustPersonWndClick = () => {
     setCustPersonWindowVisible(true);
   };
 
-  const onAttachPbWndClick = () => {
-    setAttachmentsWindowVisiblePb(true);
-  };
-
-  const onProjectWndClick = () => {
-    setProjectWindowVisible(true);
-  };
-
   //비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
-  UseBizComponent(
-    "L_SA019_603, L_Requestgb, L_SA001_603, L_sysUserMaster_001, L_CM700",
-    setBizComponentData
-  );
+  UseBizComponent("L_sysUserMaster_001, L_CM700", setBizComponentData);
+
+  const [usegbListData, setUsegbListData] = useState([COM_CODE_DEFAULT_VALUE]);
 
   const [personListData, setPersonListData] = useState([
     { user_id: "", user_name: "" },
   ]);
 
-  const [usegbListData, setUsegbListData] = useState([COM_CODE_DEFAULT_VALUE]);
-
-  const [testtypeListData, setTestTypeListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [requestgbListData, setrequestgbListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-  const [materialtypeListData, setmaterialtypeListData] = useState([
-    COM_CODE_DEFAULT_VALUE,
-  ]);
-
   useEffect(() => {
     if (bizComponentData.length > 0) {
-      const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
-        )
-      );
-
       const usegbQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId == "L_CM700")
       );
-      const testtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA019_603"
-        )
-      );
-      const requestgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_Requestgb"
-        )
-      );
-      const materialtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA001_603"
-        )
-      );
 
-      fetchQueryData(personQueryStr, setPersonListData);
       fetchQueryData(usegbQueryStr, setUsegbListData);
-      fetchQueryData(testtypeQueryStr, setTestTypeListData);
-      fetchQueryData(requestgbQueryStr, setrequestgbListData);
-      fetchQueryData(materialtypeQueryStr, setmaterialtypeListData);
     }
   }, [bizComponentData]);
 
@@ -382,93 +347,6 @@ const CM_A7000W: React.FC = () => {
     },
     []
   );
-
-  const setCustPersonData = (data: any) => {
-    setInformation((prev: any) => {
-      return {
-        ...prev,
-        custprsncd: data.custprsncd,
-        custprsnnm: data.prsnnm,
-        postnm: data.postnm,
-        dptnm: data.dptnm,
-        address: data.address,
-        telno: data.telno,
-        phoneno: data.phoneno,
-        email: data.email,
-        testtype: "",
-        requestgb: "",
-        materialtype: "",
-      };
-    });
-  };
-
-  interface IPrsnnum {
-    user_id: string;
-    user_name: string;
-  }
-
-  const setCustData = (data: ICustData) => {
-    setInformation((prev: any) => {
-      return {
-        ...prev,
-        custcd: data.custcd,
-        custnm: data.custnm,
-        custprsncd: "",
-        custprsnnm: "",
-        postnm: "",
-        dptnm: "",
-        address: data.address,
-        telno: "",
-        phoneno: "",
-        email: "",
-        testtype: "",
-        requestgb: "",
-        materialtype: "",
-      };
-    });
-  };
-
-  const setProjectData = (data: any) => {
-    setInformation((prev: any) => {
-      return {
-        ...prev,
-        ref_key: data.quokey,
-        custcd: data.custcd,
-        custnm: data.custnm,
-        custprsncd: data.custprsncd,
-        custprsnnm: data.custprsnnm,
-        postnm: data.postnm,
-        dptnm: data.dptnm,
-        address: data.address,
-        telno: data.telno,
-        phoneno: data.phoneno,
-        email: data.email,
-        testtype:
-          testtypeListData.find((item: any) => item.code_name == data.testtype)
-            ?.sub_code == undefined
-            ? ""
-            : testtypeListData.find(
-                (item: any) => item.code_name == data.testtype
-              )?.sub_code,
-        requestgb:
-          requestgbListData.find(
-            (item: any) => item.code_name == data.requestgb
-          )?.sub_code == undefined
-            ? ""
-            : requestgbListData.find(
-                (item: any) => item.code_name == data.requestgb
-              )?.sub_code,
-        materialtype:
-          materialtypeListData.find(
-            (item: any) => item.code_name == data.materialtype
-          )?.sub_code == undefined
-            ? ""
-            : materialtypeListData.find(
-                (item: any) => item.code_name == data.materialtype
-              )?.sub_code,
-      };
-    });
-  };
 
   const handleSelectTab = (e: any) => {
     if (unsavedName.length > 0) {
@@ -521,11 +399,11 @@ const CM_A7000W: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("CM_A7000W", setMessagesData);
+  UseMessages("CM_A7010W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("CM_A7000W", setCustomOptionData);
+  UseCustomOption("CM_A7010W", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -604,28 +482,10 @@ const CM_A7000W: React.FC = () => {
   const ComboBoxChange = (e: any) => {
     const { name, value } = e;
 
-    if (name == "custcd") {
-      setInformation((prev) => ({
-        ...prev,
-        [name]: value,
-        custprsncd: "",
-        custprsnnm: "",
-        postnm: "",
-        dptnm: "",
-        address: "",
-        telno: "",
-        phoneno: "",
-        email: "",
-        testtype: "",
-        requestgb: "",
-        materialtype: "",
-      }));
-    } else {
-      setInformation((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+    setInformation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const history = useHistory();
@@ -684,7 +544,7 @@ const CM_A7000W: React.FC = () => {
 
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_CM_A7000W_Q",
+      procedureName: "P_CM_A7010W_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -795,7 +655,7 @@ const CM_A7000W: React.FC = () => {
     const id = "01" + "_" + selectedRowData["meetingnum"];
 
     const para = {
-      folder: "CM_A7000W",
+      folder: "CM_A7010W",
       id: id,
     };
 
@@ -813,7 +673,7 @@ const CM_A7000W: React.FC = () => {
       }
     } else {
       if (refEditorRef.current) {
-        refEditorRef.current.setHtml(content);
+        refEditorRef.current.setHtml("");
       }
     }
     setLoading(false);
@@ -853,14 +713,14 @@ const CM_A7000W: React.FC = () => {
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "CM_A7000W_001");
+        throw findMessage(messagesData, "CM_A7010W_001");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "CM_A7000W_001");
+        throw findMessage(messagesData, "CM_A7010W_001");
       } else {
         setTabSelected(0);
         resetAllGrid();
@@ -966,7 +826,7 @@ const CM_A7000W: React.FC = () => {
     contents: "",
     userid: userId,
     pc: pc,
-    formid: "CM_A7000W",
+    formid: "CM_A7010W",
   });
 
   const onSaveClick = () => {
@@ -978,9 +838,9 @@ const CM_A7000W: React.FC = () => {
         convertDateToStr(information.recdt).substring(6, 8) < "01" ||
         convertDateToStr(information.recdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "CM_A7000W_001");
+        throw findMessage(messagesData, "CM_A7010W_001");
       } else if (information.title == "") {
-        throw findMessage(messagesData, "CM_A7000W_003");
+        throw findMessage(messagesData, "CM_A7010W_003");
       }
     } catch (e) {
       alert(e);
@@ -1008,7 +868,7 @@ const CM_A7000W: React.FC = () => {
       contents: "",
       userid: userId,
       pc: pc,
-      formid: "CM_A7000W",
+      formid: "CM_A7010W",
     });
   };
 
@@ -1039,8 +899,8 @@ const CM_A7000W: React.FC = () => {
         : bytesToBase64(bytes(editorContent));
 
     const parameters = {
-      folder: "html-doc?folder=" + "CM_A7000W",
-      procedureName: "P_CM_A7000W_S",
+      folder: "html-doc?folder=" + "CM_A7010W",
+      procedureName: "P_CM_A7010W_S",
       pageNumber: 0,
       pageSize: 0,
       parameters: {
@@ -1062,7 +922,7 @@ const CM_A7000W: React.FC = () => {
         "@p_contents": paraDataSaved.contents,
         "@p_userid": userId,
         "@p_pc": pc,
-        "@p_form_id": "CM_A7000W",
+        "@p_form_id": "CM_A7010W",
       },
       fileBytes: convertedEditorContent,
     };
@@ -1106,7 +966,7 @@ const CM_A7000W: React.FC = () => {
         contents: "",
         userid: userId,
         pc: pc,
-        formid: "CM_A7000W",
+        formid: "CM_A7010W",
       });
       resetAllGrid();
       setFilters((prev) => ({
@@ -1160,7 +1020,7 @@ const CM_A7000W: React.FC = () => {
   useEffect(() => {
     if (tabSelected == 1 && workType == "N") {
       if (refEditorRef.current) {
-        refEditorRef.current.setHtml(content);
+        refEditorRef.current.setHtml("");
       }
     }
   }, [tabSelected]);
@@ -1224,74 +1084,6 @@ const CM_A7000W: React.FC = () => {
 
   const exitEdit = () => {};
 
-  const [PrsnnumWindowVisible, setPrsnnumWindowVisible] =
-    useState<boolean>(false);
-
-  interface IPrsnnum {
-    user_id: string;
-    user_name: string;
-  }
-
-  const onPrsnnumWndClick = () => {
-    setPrsnnumWindowVisible(true);
-  };
-
-  const setPrsnnumData = (data: IPrsnnum) => {
-    let editorContent: any = "";
-    if (refEditorRef.current) {
-      editorContent = refEditorRef.current.getContent();
-    }
-    const parser = new DOMParser();
-    const htmlDoc = parser.parseFromString(editorContent, "text/html");
-    let table = htmlDoc.getElementById("parent");
-    if (table != null) {
-      let tbody = table.querySelector("tbody");
-      let tr = htmlDoc.createElement("tr");
-      let td = htmlDoc.createElement("td");
-      td.style.textAlign = "center";
-      let p = htmlDoc.createElement("p");
-      p.append(data.user_name);
-      td.appendChild(p);
-      tr.appendChild(td);
-      tbody?.insertBefore(tr, null);
-      if (refEditorRef.current) {
-        refEditorRef.current.setHtml(htmlDoc.documentElement.outerHTML);
-      }
-    } else {
-      //해더만들기
-      let table = htmlDoc.createElement("table");
-      table.id = "parent";
-      let tbody = htmlDoc.createElement("tbody");
-      let tr = htmlDoc.createElement("tr");
-      let td = htmlDoc.createElement("td");
-      td.id = "title";
-      let p = htmlDoc.createElement("p");
-      p.style.textAlign = "center";
-      let strong = htmlDoc.createElement("strong");
-      strong.append("참석자");
-      p.append(strong);
-      td.appendChild(p);
-      tr.appendChild(td);
-      tbody.appendChild(tr);
-      table.appendChild(tbody);
-
-      //컬럼 추가
-      let tbody2 = table.querySelector("tbody");
-      let tr2 = htmlDoc.createElement("tr");
-      let td2 = htmlDoc.createElement("td");
-      td2.style.textAlign = "center";
-      let p2 = htmlDoc.createElement("p");
-      p2.append(data.user_name);
-      td2.appendChild(p2);
-      tr2.appendChild(td2);
-      tbody2?.insertBefore(tr2, null);
-      htmlDoc.body.prepend(table);
-      if (refEditorRef.current) {
-        refEditorRef.current.setHtml(htmlDoc.documentElement.outerHTML);
-      }
-    }
-  };
-
   return (
     <>
       <TitleContainer>
@@ -1304,7 +1096,7 @@ const CM_A7000W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="CM_A7000W"
+              pathname="CM_A7010W"
             />
           )}
         </ButtonContainer>
@@ -1577,7 +1369,18 @@ const CM_A7000W: React.FC = () => {
                         <Button
                           themeColor={"primary"}
                           style={{ width: "100%" }}
-                          onClick={() => onPrsnnumWndClick()}
+                          onClick={() => {
+                            if (workType == "N") {
+                              alert("회의록 저장 후 등록할 수 있습니다.");
+                            } else if (
+                              Object.getOwnPropertyNames(selectedState)[0] !=
+                              undefined
+                            ) {
+                              onSignWndClick();
+                            } else {
+                              alert("선택된 데이터가 없습니다.");
+                            }
+                          }}
                         >
                           등록
                         </Button>
@@ -1620,24 +1423,6 @@ const CM_A7000W: React.FC = () => {
               <FormBoxWrap border={true}>
                 <FormBox>
                   <tbody>
-                    <tr>
-                      <th>프로젝트</th>
-                      <td colSpan={3}>
-                        <Input
-                          name="ref_key"
-                          type="text"
-                          value={information.ref_key}
-                          className="readonly"
-                        />
-                        <ButtonInInput>
-                          <Button
-                            icon="more-horizontal"
-                            fillMode="flat"
-                            onClick={onProjectWndClick}
-                          />
-                        </ButtonInInput>
-                      </td>
-                    </tr>
                     <tr>
                       <th>의뢰기관코드</th>
                       <td>
@@ -1783,58 +1568,12 @@ const CM_A7000W: React.FC = () => {
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
-              <FormBoxWrap border={true}>
-                <FormBox>
-                  <tbody>
-                    <tr>
-                      <th>시험분야</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="testtype"
-                            value={information.testtype}
-                            type="new"
-                            customOptionData={customOptionData}
-                            changeData={ComboBoxChange}
-                          />
-                        )}
-                      </td>
-                      <th>의뢰목적</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="requestgb"
-                            value={information.requestgb}
-                            type="new"
-                            customOptionData={customOptionData}
-                            changeData={ComboBoxChange}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>물질분야</th>
-                      <td colSpan={3}>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="materialtype"
-                            value={information.materialtype}
-                            type="new"
-                            customOptionData={customOptionData}
-                            changeData={ComboBoxChange}
-                          />
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </FormBox>
-              </FormBoxWrap>
             </GridContainer>
             <GridContainer width={`calc(60% - ${GAP}px)`}>
               <GridTitleContainer>
                 <GridTitle>참고자료</GridTitle>
               </GridTitleContainer>
-              <GridContainer style={{ height: "76vh" }}>
+              <GridContainer style={{ height: "75vh" }}>
                 <RichEditor id="refEditor" ref={refEditorRef} />
               </GridContainer>
             </GridContainer>
@@ -1857,14 +1596,6 @@ const CM_A7000W: React.FC = () => {
           modal={true}
         />
       )}
-      {projectWindowVisible && (
-        <ProjectsWindow
-          setVisible={setProjectWindowVisible}
-          setData={setProjectData}
-          modal={true}
-          pathname="CM_A7000W"
-        />
-      )}
       {custpersonWindowVisible && (
         <CustomersPersonWindow
           setVisible={setCustPersonWindowVisible}
@@ -1873,11 +1604,10 @@ const CM_A7000W: React.FC = () => {
           modal={true}
         />
       )}
-      {PrsnnumWindowVisible && (
-        <PrsnnumWindow
-          setVisible={setPrsnnumWindowVisible}
-          workType="N"
-          setData={setPrsnnumData}
+      {signWindowVisible && (
+        <SignWindow
+          setVisible={setSignWindowVisible}
+          reference_key={filters.orgdiv + "_" + information.meetingnum}
           modal={true}
         />
       )}
@@ -1898,4 +1628,4 @@ const CM_A7000W: React.FC = () => {
   );
 };
 
-export default CM_A7000W;
+export default CM_A7010W;

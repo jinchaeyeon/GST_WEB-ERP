@@ -126,6 +126,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "CM_A4100W" ||
       link == "CM_A5000W" ||
       link == "CM_A7000W" ||
+      link == "CM_A7010W" ||
       link == "CM_A8000W" ||
       link == "CM_A8210W" ||
       link == "CM_A8250W" ||
@@ -232,8 +233,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "SA_B2220W" ||
       link == "SA_B2226W" ||
       link == "SA_B2229W" ||
-      link == "CR_A0000W" ||
-      link == "Error"
+      link == "CR_A0000W"
     ) {
       return false;
     } else {

@@ -138,6 +138,10 @@ const PanelBarNavContainer = (props: any) => {
   const userName = loginResult ? loginResult.userName : "";
   const loginKey = loginResult ? loginResult.loginKey : "";
   const role = loginResult ? loginResult.role : "";
+  const avatar = loginResult ? loginResult.profileImage : "";
+  const name = loginResult ? loginResult.userName : "";
+  const position = loginResult ? loginResult.dptnm : "";
+  const webTitle = loginResult ? loginResult.webTitle : "";
   const isAdmin = role === "ADMIN";
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
@@ -658,9 +662,9 @@ const PanelBarNavContainer = (props: any) => {
 
   const contact = [
     {
-      avatar: loginResult.profileImage,
-      name: loginResult.userName,
-      position: loginResult.dptnm,
+      avatar: avatar,
+      name: name,
+      position: position,
     },
   ];
 
@@ -861,7 +865,7 @@ const PanelBarNavContainer = (props: any) => {
           <Gnv isMobileMenuOpend={isMobileMenuOpend} theme={"#2289c3"}>
             <AppName theme={"#2289c3"} onClick={() => setIsMenuOpend(false)}>
               <Logo size="32px" name={"GST WEB"} />
-              {loginResult.webTitle}
+              {webTitle}
             </AppName>
             <GridContainerWrap height={"120px"} style={{ gap: "0px" }}>
               <GridContainer
