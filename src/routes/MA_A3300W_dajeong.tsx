@@ -56,7 +56,7 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
-import DetailWindow from "../components/Windows/MA_A3300W_Window";
+import DetailWindow from "../components/Windows/MA_A3300W_Window_dajeong";
 import { useApi } from "../hooks/api";
 import {
   deletedAttadatnumsState,
@@ -142,11 +142,11 @@ const MA_A3300W_dajeong: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("MA_A3300W", setMessagesData);
+  UseMessages("MA_A3300W_dajeong", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("MA_A3300W", setCustomOptionData);
+  UseCustomOption("MA_A3300W_dajeong", setCustomOptionData);
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -306,6 +306,7 @@ const MA_A3300W_dajeong: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
 
+  // ButtonInInput 클릭 시
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
@@ -314,6 +315,7 @@ const MA_A3300W_dajeong: React.FC = () => {
   const [workType, setWorkType] = useState<"N" | "U">("N");
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
+  // Text, CheckBox, TextArea, DatePicker, NumberText 에서 값이 변할때 셋팅함수
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -381,7 +383,7 @@ const MA_A3300W_dajeong: React.FC = () => {
 
   //삭제 프로시저 초기값
   const [paraDataDeleted, setParaDataDeleted] = useState({
-    work_type: "D",
+    work_type: "",
     recdt: "",
     seq1: 0,
     attdatnum: "",
@@ -460,7 +462,7 @@ const MA_A3300W_dajeong: React.FC = () => {
       "@p_remark_s": "",
       "@p_load_place_s": "",
       "@p_serialno_s": "",
-      "@p_form_id": "MA_A3300W",
+      "@p_form_id": "MA_A3300W_dajeong",
       "@p_userid": userId,
       "@p_pc": pc,
     },
@@ -686,7 +688,7 @@ const MA_A3300W_dajeong: React.FC = () => {
   }, [detailFilters]);
 
   useEffect(() => {
-    if (paraDataDeleted.seq1 !== 0) fetchToDelete();
+    if (paraDataDeleted.work_type === "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   let gridRef: any = useRef(null);
@@ -837,11 +839,11 @@ const MA_A3300W_dajeong: React.FC = () => {
     );
   };
 
+  // ButtonInInput 버튼 클릭 시 
   const onAddClick = () => {
     setWorkType("N");
     setDetailWindowVisible(true);
   };
-
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
@@ -1024,13 +1026,13 @@ const MA_A3300W_dajeong: React.FC = () => {
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "MA_A3300W_001");
+        throw findMessage(messagesData, "MA_A3300W_dajeong_001");
       } else if (
         filters.location == null ||
         filters.location == undefined ||
         filters.location == ""
       ) {
-        throw findMessage(messagesData, "MA_A3300W_002");
+        throw findMessage(messagesData, "MA_A3300W_dajeong_002");
       } else {
         resetAllGrid();
         setPage(initialPageState); // 페이지 초기화
@@ -1058,7 +1060,7 @@ const MA_A3300W_dajeong: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="MA_A3300W"
+              pathname="MA_A3300W_dajeong"
             />
           )}
         </ButtonContainer>
@@ -1093,6 +1095,7 @@ const MA_A3300W_dajeong: React.FC = () => {
                     value={filters.custcd}
                     onChange={filterInputChange}
                   />
+                  {/* 참조 팝업 연동 */}
                   <ButtonInInput>
                     <Button
                       onClick={onCustWndClick}
@@ -1452,7 +1455,7 @@ const MA_A3300W_dajeong: React.FC = () => {
                 )[0]
           }
           modal={true}
-          pathname="MA_A3300W"
+          pathname="MA_A3300W_dajeong"
         />
       )}
       {custWindowVisible && (

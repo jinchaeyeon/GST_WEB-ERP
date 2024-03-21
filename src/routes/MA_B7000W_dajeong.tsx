@@ -42,7 +42,7 @@ const numberField = [
   "bnatur_insiz",
 ];
 
-const dateField = ["yyyymm"];
+const dateField = ["indt"];
 
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
@@ -67,7 +67,7 @@ const MA_B7000W_dajeong: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("MA_B7000W", setCustomOptionData);
+  UseCustomOption("MA_B7000W_dajeong", setCustomOptionData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -287,7 +287,7 @@ const MA_B7000W_dajeong: React.FC = () => {
     itemcd: "",
     itemnm: "",
     insiz: "",
-    yyyymm: new Date(),
+    ymdyyyy: new Date(),
     cboItemacnt: "", //filterData.find((item: any) => item.name === "itemacnt").value,
     radzeroyn: "",
     lotnum: "",
@@ -337,7 +337,7 @@ const MA_B7000W_dajeong: React.FC = () => {
         "@p_work_type": "LIST",
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.cboLocation,
-        "@p_yyyymm": convertDateToStr(filters.yyyymm).slice(0, 4),
+        "@p_yyyymm": convertDateToStr(filters.ymdyyyy).slice(0, 4),
         "@p_itemcd": filters.itemcd,
         "@p_itemnm": filters.itemnm,
         "@p_insiz": filters.insiz,
@@ -356,8 +356,6 @@ const MA_B7000W_dajeong: React.FC = () => {
     };
     try {
       data = await processApi<any>("procedure", parameters);
-      console.log(convertDateToStr(filters.yyyymm).slice(0, 4));
-      console.log();
     } catch (error) {
       data = null;
     }
@@ -412,7 +410,7 @@ const MA_B7000W_dajeong: React.FC = () => {
         "@p_work_type": "DETAIL1",
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.cboLocation,
-        "@p_yyyymm": convertDateToStr(filters.yyyymm).slice(0, 4),
+        "@p_yyyymm": convertDateToStr(filters.ymdyyyy).slice(0, 4),
         "@p_itemcd": detailFilters1.itemcd,
         "@p_itemnm": filters.itemnm,
         "@p_insiz": filters.insiz,
@@ -481,7 +479,7 @@ const MA_B7000W_dajeong: React.FC = () => {
         "@p_work_type": "DETAIL2",
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.cboLocation,
-        "@p_yyyymm": convertDateToStr(filters.yyyymm).slice(0, 4),
+        "@p_yyyymm": convertDateToStr(filters.ymdyyyy).slice(0, 4),
         "@p_itemcd": detailFilters1.itemcd,
         "@p_itemnm": filters.itemnm,
         "@p_insiz": filters.insiz,
@@ -601,7 +599,7 @@ const MA_B7000W_dajeong: React.FC = () => {
   }, [detail2DataResult]);
 
   const [messagesData, setMessagesData] = useState<any>(null);
-  UseMessages("MA_B7000W", setMessagesData);
+  UseMessages("MA_B7000W_dajeong", setMessagesData);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -841,15 +839,15 @@ const MA_B7000W_dajeong: React.FC = () => {
       // Date
       setFilters((prev) => ({
         ...prev,
-        yyyymm: setDefaultDate(customOptionData, "yyyymm"),
+        ymdyyyy: setDefaultDate(customOptionData, "ymdyyyy"),
       }));
     }
   }, [customOptionData]);
 
   const search = () => {
     try {
-      if (filters.yyyymm == null || filters.yyyymm == undefined) {
-        throw findMessage(messagesData, "MA_B7000W_001");
+      if (filters.ymdyyyy == null || filters.ymdyyyy == undefined) {
+        throw findMessage(messagesData, "MA_B7000W_dajeong_001");
       } else {
         resetAllGrid();
         setPage(initialPageState); // 페이지 초기화
@@ -886,8 +884,8 @@ const MA_B7000W_dajeong: React.FC = () => {
             <tr>
               <th>재고년도</th>
               <td><DatePicker
-                    name="yyyymm"
-                    value={filters.yyyymm}
+                    name="ymdyyyy"
+                    value={filters.ymdyyyy}
                     format="yyyy"
                     onChange={filterInputChange}
                     calendar={YearCalendar}
@@ -920,6 +918,7 @@ const MA_B7000W_dajeong: React.FC = () => {
               </td>
               <th>품목계정</th>
               <td>{customOptionData !== null && (
+                // 커스텀옵션으로 비즈니스컴포넌트 가져와서 셋팅
                     <CustomOptionComboBox
                       name="cboItemacnt"
                       value={filters.cboItemacnt}
@@ -1009,6 +1008,7 @@ const MA_B7000W_dajeong: React.FC = () => {
                     value={filters.cboLocation}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
+                    className="required"
                   />
                 )}
               </td>
@@ -1040,7 +1040,13 @@ const MA_B7000W_dajeong: React.FC = () => {
 
       <GridContainer>
         <GridTitle>요약정보</GridTitle>
-        <ExcelExport>
+        <ExcelExport
+          data={mainDataResult.data}
+          ref={(exporter) => {
+            _export = exporter;
+          }}
+          fileName="재고조회"
+        >
           <Grid
             style={{ height: "37vh" }} // 그리드 높이 설정
             data={process(
@@ -1211,14 +1217,14 @@ const MA_B7000W_dajeong: React.FC = () => {
         <GridContainer width={`calc(80% - ${GAP}px)`}>
           <GridTitleContainer>
             <GridTitle>LOT별 상세이력</GridTitle>
-          </GridTitleContainer>
+          </GridTitleContainer>  
           <ExcelExport
             data={detail2DataResult.data}
             ref={(exporter) => {
               _export3 = exporter;
             }}
             fileName="재고조회"
-          >
+          >        
             <Grid
               style={{ height: "35vh" }}
               data={process(
@@ -1284,19 +1290,10 @@ const MA_B7000W_dajeong: React.FC = () => {
                         ></GridColumn>
                       )
                   )}
-            </Grid>
-          </ExcelExport>
+            </Grid>     
+          </ExcelExport>  
         </GridContainer>
-      </GridContainerWrap>
-      {itemWindowVisible && (
-        <ItemsWindow
-          setVisible={setItemWindowVisible}
-          workType={"FILTER"}
-          setData={setItemData}
-          modal={true}
-        />
-      )}
-                        
+      </GridContainerWrap>                        
       {/* 품목코드 팝업 */}
       {itemWindowVisible && ( 
         <ItemsWindow
