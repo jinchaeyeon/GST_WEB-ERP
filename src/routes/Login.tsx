@@ -1,13 +1,9 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Field, Form, FormElement } from "@progress/kendo-react-form";
 import { KeyboardEvent, useCallback, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
-import {
-  LoginAppName,
-  LoginBox,
-  LoginImg
-} from "../CommonStyled";
+import { LoginAppName, LoginBox, LoginImg } from "../CommonStyled";
 import { FormComboBox, FormInput } from "../components/Editors";
 import { useApi } from "../hooks/api";
 import { IComboBoxColumns } from "../hooks/interfaces";
@@ -70,18 +66,26 @@ const companyCodesColumns: IComboBoxColumns[] = [
 
 const Login: React.FC = () => {
   const processApi = useApi();
+  const location = useLocation();
   const history = useHistory();
   const setLoginResult = useSetRecoilState(loginResultState);
   const setPwExpInfo = useSetRecoilState(passwordExpirationInfoState);
   const setLoading = useSetRecoilState(isLoading);
   const setAccessToken = useSetRecoilState(accessTokenState);
   const [ifShowCompanyList, setIfShowCompanyList] = useState(false);
+  const [information, setInformation] = useState({
+    companyCode: new URLSearchParams(location.search).has("cust") ? new URLSearchParams(location.search).get("cust") as string : "",
+    langCode: "ko-KR",
+    userId: "",
+    password: "",
+  });
 
   useEffect(() => {
     fetchCultureCodes();
     fetchCompanyCodes();
+    history.replace({}, "");
   }, []);
-
+  
   const handleSubmit = (data: { [name: string]: any }) => {
     processLogin(data);
   };
@@ -224,6 +228,7 @@ const Login: React.FC = () => {
     <div style={{ backgroundColor: "#2289c3" }}>
       <LoginBox theme={"2289c3"}>
         <Form
+          initialValues={information}
           onSubmit={handleSubmit}
           render={() => (
             <FormElement>
