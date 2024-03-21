@@ -608,7 +608,6 @@ const BA_A0020: React.FC = () => {
     };
     try {
       data = await processApi<any>("procedure", parameters);
-      console.log("data", data);
     } catch (error) {
       data = null;
     }
@@ -3116,11 +3115,6 @@ const BA_A0020: React.FC = () => {
     });
   }, [attdatnum, files]);
 
-  // 유저 정보 로그찍는것
-  useEffect(() => {
-    console.log("userId : ");
-  }, []);
-
   // 지도
 
   const [showMap, setShowMap] = useState(false);
@@ -3199,21 +3193,18 @@ const BA_A0020: React.FC = () => {
 
               // 마커 위에 회사이름 나타내기
               var infowindow = new window.kakao.maps.InfoWindow({
-                content: `<div style=" width:"150px: text-align:center; padding:6px; font-size:12px; ">${item.custnm}</div>`,
+                content: `<div style=" width:150px; text-align:center; padding:6px 10px; font-size:14px; font-weight:700;">${item.custnm}</div>`,
               });
               infowindow.open(map, marker);
 
               window.kakao.maps.event.addListener(marker, "click",() => {
-                // 마커 클릭 시 호출될 함수
-                console.log(" 클릭한 데이터", item);
-              
-
+             
                 // 선택된 행의 상태를 업데이트하는 로직
                 const newSelectedState = {
                   ...selectedState,
                   [item.custcd]: true,
                 };
-                setSelectedState(newSelectedState); // 새로운 선택 상태를 설정합니다.
+                setSelectedState({ [item[DATA_ITEM_KEY]]: true }); 
 
 
                 // 마커에 해당하는 그리드 행의 상세 정보를 설정
