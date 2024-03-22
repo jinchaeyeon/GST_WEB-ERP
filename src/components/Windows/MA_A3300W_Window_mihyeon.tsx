@@ -572,56 +572,6 @@ const CopyWindow = ({
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-      const newData = mainDataResult.data.map((item) => {
-        return {
-          ...item,
-          rowstatus: item.rowstatus == "N" ? "N" : "U",
-          amt:
-            filters.amtunit == "KRW"
-              ? item.qty * item.unp
-              : item.qty * item.unp * filters.wonchgrat,
-          wonamt:
-            filters.amtunit == "KRW"
-              ? item.qty * item.unp
-              : item.qty * item.unp * filters.wonchgrat,
-          taxamt:
-            filters.amtunit == "KRW"
-              ? (item.qty * item.unp) / 10
-              : (item.qty * item.unp * filters.wonchgrat) / 10,
-          totamt:
-            filters.amtunit == "KRW"
-              ? Math.round(item.qty * item.unp + (item.qty * item.unp) / 10)
-              : Math.round(
-                  item.qty * item.unp * filters.wonchgrat +
-                    (item.qty * item.unp * filters.wonchgrat) / 10
-                ),
-          dlramt: filters.amtunit == "KRW" ? item.amt
-                            : item.amt * filters.wonchgrat,
-        };
-      });
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total, // 전체 행의 수는 유지
-        };
-      });
-      setTempResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    
-  };
-
-  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
-  const filterComboBoxChange = (e: any) => {
-    const { name, value } = e;
-
     setFilters((prev) => ({
       ...prev,
       [name]: value,
@@ -638,10 +588,10 @@ const CopyWindow = ({
           filters.amtunit == "KRW"
             ? item.qty * item.unp
             : item.qty * item.unp * filters.wonchgrat,
-        taxamt:
+        taxamt:Math.round(
           filters.amtunit == "KRW"
             ? (item.qty * item.unp) / 10
-            : (item.qty * item.unp * filters.wonchgrat) / 10,
+            : (item.qty * item.unp * filters.wonchgrat) / 10),
         totamt:
           filters.amtunit == "KRW"
             ? Math.round(item.qty * item.unp + (item.qty * item.unp) / 10)
@@ -649,10 +599,63 @@ const CopyWindow = ({
                 item.qty * item.unp * filters.wonchgrat +
                   (item.qty * item.unp * filters.wonchgrat) / 10
               ),
-        dlramt: filters.amtunit == "KRW" ? item.amt
-                          : item.amt * filters.wonchgrat,
+        dlramt:
+          filters.amtunit == "KRW" ? item.amt : item.amt * filters.wonchgrat,
       };
     });
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total, // 전체 행의 수는 유지
+      };
+    });
+    setTempResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+  };
+
+  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
+  const filterComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+
+    const newData = mainDataResult.data.map((item) => {
+      return {
+        ...item,
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
+        amt:
+          filters.amtunit == "KRW"
+            ? item.qty * item.unp
+            : item.qty * item.unp * filters.wonchgrat,
+        wonamt:
+          filters.amtunit == "KRW"
+            ? item.qty * item.unp
+            : item.qty * item.unp * filters.wonchgrat,
+        taxamt:
+        Math.round(
+        value === "A"?
+        filters.amtunit == "KRW"
+                    ? (item.qty * item.unp) / 10
+                    : (item.qty * item.unp * filters.wonchgrat) / 10 :
+           0),
+        totamt:
+          filters.amtunit == "KRW"
+            ? Math.round(item.qty * item.unp + (item.qty * item.unp) / 10)
+            : Math.round(
+                item.qty * item.unp * filters.wonchgrat +
+                  (item.qty * item.unp * filters.wonchgrat) / 10
+              ),
+        dlramt:
+          filters.amtunit == "KRW" ? item.amt : item.amt * filters.wonchgrat,
+      };
+    });
+        setFilters((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
     setMainDataResult((prev) => {
       return {
         data: newData,
@@ -2197,16 +2200,22 @@ const CopyWindow = ({
                 rowstatus: item.rowstatus == "N" ? "N" : "U",
                 amt:
                   filters.amtunit == "KRW"
-                    ? item.qty * item.unp
+                    ? item.amt !== item.qty * item.unp
+                      ? item.amt
+                      : item.qty * item.unp
+                    : item.amt !== item.qty * item.unp * filters.wonchgrat
+                    ? item.amt
                     : item.qty * item.unp * filters.wonchgrat,
+
                 wonamt:
                   filters.amtunit == "KRW"
-                    ? item.qty * item.unp
-                    : item.qty * item.unp * filters.wonchgrat,
+                    ? item.amt
+                    : item.amt* filters.wonchgrat,
                 taxamt:
+                Math.round(
                   filters.amtunit == "KRW"
-                    ? (item.qty * item.unp) / 10
-                    : (item.qty * item.unp * filters.wonchgrat) / 10,
+                    ? item.amt / 10
+                    : (item.amt * filters.wonchgrat) / 10),
                 totamt:
                   filters.amtunit == "KRW"
                     ? Math.round(
@@ -2217,8 +2226,9 @@ const CopyWindow = ({
                           (item.qty * item.unp * filters.wonchgrat) / 10
                       ),
                 dlramt:
-                  filters.amtunit == "KRW" ? item.amt
-                                    : item.amt * filters.wonchgrat,
+                  filters.amtunit == "KRW"
+                    ? item.amt
+                    : item.amt * filters.wonchgrat,
                 [EDIT_FIELD]: undefined,
               }
             : {
