@@ -1037,8 +1037,13 @@ const AppInner: React.FC = () => {
             <GlobalStyle isMobileMenuOpend={isMobileMenuOpend} />
             <Router>
               <Switch>
-                <Route path="/" component={Login} exact />
-                <Route path="/Error" component={NotFound} exact />
+                <Route sensitive={false} path="/" component={Login} exact />
+                <Route
+                  sensitive={false}
+                  path="/Error"
+                  component={NotFound}
+                  exact
+                />
                 <PanelBarNavContainerWEBERP>
                   {/* 메인 홈 */}
                   {loginResult ? (

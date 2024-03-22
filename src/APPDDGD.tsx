@@ -811,8 +811,8 @@ const AppInner: React.FC = () => {
             <GlobalStyle isMobileMenuOpend={isMobileMenuOpend} />
             <Router>
               <Switch>
-                <Route path="/" component={LoginCRM} exact />
-                <Route path="/Error" component={NotFound} exact />
+                <Route sensitive={false} path="/" component={LoginCRM} exact />
+                <Route sensitive={false} path="/Error" component={NotFound} exact />
                 <PanelBarNavContainerDDGD>
                   {/* 메인 홈 */}
                   {loginResult ? (
