@@ -215,12 +215,12 @@ const MA_B7000W_dajeong: React.FC = () => {
     }));
   };
 
-  //페이지네이션 세팅
-  const initialPageState = { skip: 0, take: PAGE_SIZE };
-  const [page, setPage] = useState(initialPageState);
+  //페이지네이션 세팅  
+  const initialPageState = { skip: 0, take: PAGE_SIZE }; // 초기 페이지 상태 변수 
+  const [page, setPage] = useState(initialPageState);  // 현재 페이지 값 상태 함수
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
-
+  // 페이지를 클릭(변경)되었을 때 해당 그리드 검색 로직 실행
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -230,12 +230,14 @@ const MA_B7000W_dajeong: React.FC = () => {
     }));
 
     setPage2(initialPageState);
+    setPage3(initialPageState);
+    
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
-
+    
     setPage({
       skip: page.skip,
       take: initialPageState.take,
