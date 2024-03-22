@@ -1,6 +1,6 @@
 import { Button } from "@progress/kendo-react-buttons";
 import { Field, Form, FormElement } from "@progress/kendo-react-form";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { LoginAppName, LoginBox, LoginImg } from "../CommonStyled";
@@ -9,6 +9,7 @@ import { useApi } from "../hooks/api";
 import { loginResultState, passwordExpirationInfoState } from "../store/atoms";
 
 import { DEFAULT_LANG_CODE } from "../components/CommonString";
+import Loader from "../components/Loader";
 import Loading from "../components/Loading";
 import { isLoading } from "../store/atoms";
 
@@ -27,7 +28,14 @@ const Login: React.FC = () => {
   const setPwExpInfo = useSetRecoilState(passwordExpirationInfoState);
   const setLoading = useSetRecoilState(isLoading);
   const accessToken = localStorage.getItem("accessToken");
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(accessToken ? false : true);
+
+  useEffect(() => {
+    if (accessToken) {
+      window.location.href = "/Home";
+    }
+  }, []);
+
   const path = window.location.href;
   const processLogin = useCallback(
     async (formData: { [name: string]: any }) => {
@@ -148,6 +156,10 @@ const Login: React.FC = () => {
   const handleSubmit = (data: { [name: string]: any }) => {
     processLogin(data);
   };
+
+  if (!isLoaded) {
+    return <Loader />;
+  }
 
   return (
     <div style={{ backgroundColor: "#f5b901" }}>

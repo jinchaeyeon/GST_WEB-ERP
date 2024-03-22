@@ -228,6 +228,10 @@ const MA_B7000W_dajeong: React.FC = () => {
       ...prev,
       pgNum: 1,
     }));
+    setDetailFilters2((prev) => ({
+      ...prev,
+      pgNum: 1,
+    }));
 
     setPage2(initialPageState);
     setPage3(initialPageState); 

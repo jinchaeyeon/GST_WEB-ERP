@@ -1037,8 +1037,13 @@ const AppInner: React.FC = () => {
             <GlobalStyle isMobileMenuOpend={isMobileMenuOpend} />
             <Router>
               <Switch>
-                <Route path="/" component={Login} exact />
-
+                <Route sensitive={false} path="/" component={Login} exact />
+                <Route
+                  sensitive={false}
+                  path="/Error"
+                  component={NotFound}
+                  exact
+                />
                 <PanelBarNavContainerWEBERP>
                   {/* 메인 홈 */}
                   {loginResult ? (
@@ -1394,9 +1399,6 @@ const AppInner: React.FC = () => {
                     component={SA_A2300W_PDA}
                     exact
                   />
-
-                  {/* 에러페이지 */}
-                  <AuthRoute path="/Error" component={NotFound} exact />
                 </PanelBarNavContainerWEBERP>
               </Switch>
             </Router>

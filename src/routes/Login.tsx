@@ -15,6 +15,7 @@ import {
 
 import { resetLocalStorage } from "../components/CommonFunction";
 import { DEFAULT_LANG_CODE } from "../components/CommonString";
+import Loader from "../components/Loader";
 import Loading from "../components/Loading";
 import { isLoading } from "../store/atoms";
 
@@ -75,6 +76,13 @@ const Login: React.FC = () => {
   const setAccessToken = useSetRecoilState(accessTokenState);
   const accessToken = localStorage.getItem("accessToken");
   const [ifShowCompanyList, setIfShowCompanyList] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(
+    new URLSearchParams(location.search).has("cust")
+      ? true
+      : accessToken
+      ? false
+      : true
+  );
   const [information, setInformation] = useState({
     companyCode: new URLSearchParams(location.search).has("cust")
       ? (new URLSearchParams(location.search).get("cust") as string)
@@ -89,9 +97,9 @@ const Login: React.FC = () => {
     fetchCompanyCodes();
     if (new URLSearchParams(location.search).has("cust")) {
       resetLocalStorage();
-      history.replace({}, "");
+      history.replace({}, "/");
     } else if (accessToken) {
-      history.replace("/Home");
+      window.location.href = "/Home";
     }
   }, []);
 
@@ -232,6 +240,10 @@ const Login: React.FC = () => {
       setCompanyCodesData(rows);
     }
   }, []);
+
+  if (!isLoaded) {
+    return <Loader />;
+  }
 
   return (
     <div style={{ backgroundColor: "#2289c3" }}>

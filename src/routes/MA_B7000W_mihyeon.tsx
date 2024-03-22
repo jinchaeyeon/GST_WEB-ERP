@@ -106,7 +106,7 @@ const MA_B7000_mihyeon: React.FC = () => {
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA171,L_BA172,L_BA173,L_BA042, L_LOADPLACE",
-    //대분류,중분류,소분류,품목등급 , 적재장소 
+    //대분류,중분류,소분류,품목등급 , 적재장소
     setBizComponentData
   );
 
@@ -141,7 +141,9 @@ const MA_B7000_mihyeon: React.FC = () => {
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA042")
       );
       const itemplaceQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_LOADPLACE")
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_LOADPLACE"
+        )
       );
 
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
@@ -150,8 +152,7 @@ const MA_B7000_mihyeon: React.FC = () => {
       fetchQuery(itemgradeQueryStr, setItemgradeListData);
       fetchQuery(itemplaceQueryStr, setItemplaceQueryStr);
     }
-    console.log("bizComponentData",bizComponentData);
-    
+    console.log("bizComponentData", bizComponentData);
   }, [bizComponentData]);
 
   const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
@@ -255,22 +256,22 @@ const MA_B7000_mihyeon: React.FC = () => {
     setDetailFilters1((prev) => ({
       ...prev,
       pgNum: 1,
+      isSearch: true,
+    }));
+    setDetailFilters2((prev) => ({
+      ...prev,
+      pgNum: 1,
     }));
 
     setPage2(initialPageState);
+    setPage3(initialPageState);
+
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
 
-    setPage3(initialPageState);
-    setDetailFilters1((prev) => ({
-      ...prev,
-      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
-      isSearch: true,
-    }));
-    
     setPage({
       skip: page.skip,
       take: initialPageState.take,
@@ -397,8 +398,7 @@ const MA_B7000_mihyeon: React.FC = () => {
     try {
       // parameters 담아서 api 호출
       data = await processApi<any>("procedure", parameters);
-      console.log("data : ",data);
-      
+      console.log("data : ", data);
     } catch (error) {
       // 호출 실패
       data = null;
@@ -550,8 +550,7 @@ const MA_B7000_mihyeon: React.FC = () => {
 
     try {
       data = await processApi<any>("procedure", detailParameters);
-      console.log("data3" , data);
-      
+      console.log("data3", data);
     } catch (error) {
       data = null;
     }
@@ -1096,7 +1095,6 @@ const MA_B7000_mihyeon: React.FC = () => {
                   />
                 )}
               </td>
-
             </tr>
           </tbody>
         </FilterBox>
@@ -1290,7 +1288,7 @@ const MA_B7000_mihyeon: React.FC = () => {
             selectedField={SELECTED_FIELD}
             selectable={{
               enabled: true,
-              mode: "single", 
+              mode: "single",
             }}
             onSelectionChange={onDetailSelectionChange3}
             //스크롤 조회 기능
