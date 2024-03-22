@@ -230,7 +230,7 @@ const MA_B7000W_dajeong: React.FC = () => {
     }));
 
     setPage2(initialPageState);
-    setPage3(initialPageState);
+    setPage3(initialPageState); 
     
     setFilters((prev) => ({
       ...prev,
