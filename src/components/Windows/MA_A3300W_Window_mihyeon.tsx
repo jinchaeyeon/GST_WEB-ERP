@@ -250,6 +250,10 @@ type Idata = {
   pac: string;
   recnum: string;
   files: string;
+  // 원화환율
+  wonchgrat: number;
+  // 미화환율
+  uschgrat: number;
 };
 
 interface IItemData {
@@ -568,11 +572,50 @@ const CopyWindow = ({
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      const newData = mainDataResult.data.map((item) => {
+        return {
+          ...item,
+          rowstatus: item.rowstatus == "N" ? "N" : "U",
+          amt:
+            filters.amtunit == "KRW"
+              ? item.qty * item.unp
+              : item.qty * item.unp * filters.wonchgrat,
+          wonamt:
+            filters.amtunit == "KRW"
+              ? item.qty * item.unp
+              : item.qty * item.unp * filters.wonchgrat,
+          taxamt:
+            filters.amtunit == "KRW"
+              ? (item.qty * item.unp) / 10
+              : (item.qty * item.unp * filters.wonchgrat) / 10,
+          totamt:
+            filters.amtunit == "KRW"
+              ? Math.round(item.qty * item.unp + (item.qty * item.unp) / 10)
+              : Math.round(
+                  item.qty * item.unp * filters.wonchgrat +
+                    (item.qty * item.unp * filters.wonchgrat) / 10
+                ),
+          dlramt: filters.amtunit == "KRW" ? item.amt
+                            : item.amt * filters.wonchgrat,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total, // 전체 행의 수는 유지
+        };
+      });
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
@@ -583,6 +626,45 @@ const CopyWindow = ({
       ...prev,
       [name]: value,
     }));
+    const newData = mainDataResult.data.map((item) => {
+      return {
+        ...item,
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
+        amt:
+          filters.amtunit == "KRW"
+            ? item.qty * item.unp
+            : item.qty * item.unp * filters.wonchgrat,
+        wonamt:
+          filters.amtunit == "KRW"
+            ? item.qty * item.unp
+            : item.qty * item.unp * filters.wonchgrat,
+        taxamt:
+          filters.amtunit == "KRW"
+            ? (item.qty * item.unp) / 10
+            : (item.qty * item.unp * filters.wonchgrat) / 10,
+        totamt:
+          filters.amtunit == "KRW"
+            ? Math.round(item.qty * item.unp + (item.qty * item.unp) / 10)
+            : Math.round(
+                item.qty * item.unp * filters.wonchgrat +
+                  (item.qty * item.unp * filters.wonchgrat) / 10
+              ),
+        dlramt: filters.amtunit == "KRW" ? item.amt
+                          : item.amt * filters.wonchgrat,
+      };
+    });
+    setMainDataResult((prev) => {
+      return {
+        data: newData,
+        total: prev.total, // 전체 행의 수는 유지
+      };
+    });
+    setTempResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
   };
 
   const handleMove = (event: WindowMoveEvent) => {
@@ -674,7 +756,6 @@ const CopyWindow = ({
     }
   }, []);
 
-
   useEffect(() => {
     const newData = mainDataResult.data.map((item) =>
       // 수정시 초기 받아온데이터가 있으면 받아온 값으로 셋팅
@@ -723,7 +804,7 @@ const CopyWindow = ({
             [EDIT_FIELD]: undefined,
           }
         : {
-          // 넘겨준 값이 없으면 빈값으로
+            // 넘겨준 값이 없으면 빈값으로
             ...item,
             [EDIT_FIELD]: undefined,
           }
@@ -924,6 +1005,8 @@ const CopyWindow = ({
     attdatnum: "",
     remark: "",
     baseamt: 0,
+    wonchgrat: 0,
+    uschgrat: 0,
     importnum: "",
     auto_transfer: "A",
     pac: "",
@@ -1165,6 +1248,8 @@ const CopyWindow = ({
         attdatnum: data.attdatnum,
         remark: data.remark,
         baseamt: data.baseamt,
+        uschgrat: data.uschgrat,
+        wonchgrat: data.wonchgrat,
         importnum: data.importnum,
         auto_transfer: data.auto_transfer,
         pac: data.pac,
@@ -1238,7 +1323,7 @@ const CopyWindow = ({
     for (var i = 0; i < data.length; i++) {
       data[i].num = ++temp;
     }
-// 변경된 데이터를 메인 데이터 상태에 추가하고, 총 항목 수를 업데이트
+    // 변경된 데이터를 메인 데이터 상태에 추가하고, 총 항목 수를 업데이트
     try {
       data.map((item: any) => {
         setMainDataResult((prev) => {
@@ -1378,6 +1463,8 @@ const CopyWindow = ({
             attdatnum: filters.attdatnum,
             remark: filters.remark,
             baseamt: filters.baseamt,
+            uschgrat: filters.uschgrat,
+            wonchgrat: filters.wonchgrat,
             importnum: filters.importnum,
             auto_transfer: filters.auto_transfer,
             pac: filters.pac,
@@ -1650,6 +1737,8 @@ const CopyWindow = ({
             attdatnum: filters.attdatnum,
             remark: filters.remark,
             baseamt: filters.baseamt,
+            uschgrat: filters.uschgrat,
+            wonchgrat: filters.wonchgrat,
             importnum: filters.importnum,
             auto_transfer: filters.auto_transfer,
             pac: filters.pac,
@@ -1734,6 +1823,8 @@ const CopyWindow = ({
     attdatnum: "",
     remark: "",
     baseamt: 0,
+    uschgrat: 0,
+    wonchgrat: 0,
     importnum: "",
     auto_transfer: "A",
     pac: "",
@@ -1814,6 +1905,8 @@ const CopyWindow = ({
       "@p_attdatnum": ParaData.attdatnum,
       "@p_remark": ParaData.remark,
       "@p_baseamt": ParaData.baseamt,
+      "@p_uschgrat": ParaData.uschgrat,
+      "@p_wonchgrat": ParaData.wonchgrat,
       "@p_importnum": ParaData.importnum,
       "@p_auto_transfer": ParaData.auto_transfer,
       "@p_pac": ParaData.pac,
@@ -1916,6 +2009,8 @@ const CopyWindow = ({
         attdatnum: "",
         remark: "",
         baseamt: 0,
+        uschgrat: 0,
+        wonchgrat: 0,
         importnum: "",
         auto_transfer: "A",
         pac: "",
@@ -2052,7 +2147,7 @@ const CopyWindow = ({
     if (field != "rowstatus" && field != "itemnm") {
       // 전체 데이터 돌면서
       const newData = mainDataResult.data.map((item) =>
-      //  클릭한 키값이 같은경우
+        //  클릭한 키값이 같은경우
         item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
@@ -2095,6 +2190,7 @@ const CopyWindow = ({
     if (tempResult.data != mainDataResult.data) {
       if (editedField !== "itemcd") {
         const newData = mainDataResult.data.map((item: any) =>
+          // 금액, 환율, 대미환율 계산 로직
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
             ? {
                 ...item,
@@ -2102,26 +2198,27 @@ const CopyWindow = ({
                 amt:
                   filters.amtunit == "KRW"
                     ? item.qty * item.unp
-                    : item.qty * item.unp * filters.baseamt,
+                    : item.qty * item.unp * filters.wonchgrat,
                 wonamt:
                   filters.amtunit == "KRW"
                     ? item.qty * item.unp
-                    : item.qty * item.unp * filters.baseamt,
+                    : item.qty * item.unp * filters.wonchgrat,
                 taxamt:
                   filters.amtunit == "KRW"
                     ? (item.qty * item.unp) / 10
-                    : (item.qty * item.unp * filters.baseamt) / 10,
+                    : (item.qty * item.unp * filters.wonchgrat) / 10,
                 totamt:
                   filters.amtunit == "KRW"
                     ? Math.round(
                         item.qty * item.unp + (item.qty * item.unp) / 10
                       )
                     : Math.round(
-                        item.qty * item.unp * filters.baseamt +
-                          (item.qty * item.unp * filters.baseamt) / 10
+                        item.qty * item.unp * filters.wonchgrat +
+                          (item.qty * item.unp * filters.wonchgrat) / 10
                       ),
                 dlramt:
-                  filters.amtunit == "KRW" ? item.qty / filters.baseamt : 0,
+                  filters.amtunit == "KRW" ? item.amt
+                                    : item.amt * filters.wonchgrat,
                 [EDIT_FIELD]: undefined,
               }
             : {
@@ -2365,18 +2462,18 @@ const CopyWindow = ({
                 <th>원화환율</th>
                 <td>
                   <Input
-                    name="baseamt"
+                    name="wonchgrat"
                     type="number"
-                    value={filters.baseamt}
+                    value={filters.wonchgrat}
                     onChange={filterInputChange}
                   />
                 </td>
                 <th>대미환율</th>
                 <td>
                   <Input
-                    name="baseamt"
+                    name="uschgrat"
                     type="number"
-                    value={filters.baseamt}
+                    value={filters.uschgrat}
                     onChange={filterInputChange}
                   />
                 </td>

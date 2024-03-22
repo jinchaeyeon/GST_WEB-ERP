@@ -568,7 +568,7 @@ const CopyWindow = ({
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
 
-  
+      
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -577,6 +577,45 @@ const CopyWindow = ({
       ...prev,
       [name]: value,
     }));
+    if (name === "wonchgrat") {
+      const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        ? {
+            ...item,
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
+            amt:
+                  filters.amtunit == "KRW"
+                    ? item.qty * item.unp
+                    : item.qty * item.unp,
+            wonamt:
+                  filters.amtunit == "KRW"
+                    ? item.qty * item.unp
+                    : item.qty * item.unp * value,
+          }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+            );
+            setTempResult((prev: { total: any }) => {
+              return {
+                data: newData,
+                total: prev.total,
+              };
+            });
+            setMainDataResult((prev: { total: any }) => {
+              return {
+                data: newData,
+                total: prev.total,
+              };
+            });
+          } else {
+            mainDataResult.data.map((item: { [x: string]: any; itemcd: any }) => {
+              if (editIndex === item[DATA_ITEM_KEY]) {
+                fetchItemData(item.itemcd);
+              }
+            });        
+    }
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
@@ -587,6 +626,33 @@ const CopyWindow = ({
       ...prev,
       [name]: value,
     }));
+    if (name === "amtunit") {
+      const newData = mainDataResult.data.map((item) =>
+      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+        ? {
+            ...item,
+              wonamt: 
+                value == "KRW"
+                  ? item.qty * item.unp 
+                  : item.qty * item.unp * filters.wonchgrat,
+          }
+        : {
+            ...item,
+                [EDIT_FIELD]: undefined,
+      });
+      setTempResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev: { total: any }) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });                      
+    }
   };
 
   const handleMove = (event: WindowMoveEvent) => {
@@ -1869,7 +1935,7 @@ const CopyWindow = ({
       "@p_serialno_s": ParaData.serialno_s,
       "@p_form_id": "MA_A3300W",
       "@p_userid": userId,
-      "@p_pc": pc,
+      "@p_pc": pc, 
     },
   };
 
@@ -2109,7 +2175,7 @@ const CopyWindow = ({
                     : item.qty * item.unp,
                 wonamt:
                   filters.amtunit == "KRW"
-                    ? item.qty * item.unp * filters.wonchgrat
+                    ? item.qty * item.unp
                     : item.qty * item.unp * filters.wonchgrat,
                 taxamt:
                   filters.amtunit == "KRW"
@@ -2171,6 +2237,7 @@ const CopyWindow = ({
       });
     }
   };
+ 
 
   const [values2, setValues2] = React.useState<boolean>(false);
   const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
