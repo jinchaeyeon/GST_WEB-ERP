@@ -812,7 +812,7 @@ const AppInner: React.FC = () => {
             <Router>
               <Switch>
                 <Route path="/" component={LoginCRM} exact />
-
+                <Route path="/Error" component={NotFound} exact />
                 <PanelBarNavContainerDDGD>
                   {/* 메인 홈 */}
                   {loginResult ? (
@@ -1076,9 +1076,6 @@ const AppInner: React.FC = () => {
                     component={SA_A2300W_PDA}
                     exact
                   />
-
-                  {/* 에러페이지 */}
-                  <AuthRoute path="/Error" component={NotFound} exact />
                 </PanelBarNavContainerDDGD>
               </Switch>
             </Router>

@@ -7,7 +7,7 @@ const NotFound: React.FC = () => {
   // },[])
   return (
     <>
-      <div style={{ display: "flex", height: "100%" }}>
+      <div style={{ height: "100vh" }}>
         <link
           href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
           rel="stylesheet"
