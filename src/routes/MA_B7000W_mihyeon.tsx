@@ -264,6 +264,13 @@ const MA_B7000_mihyeon: React.FC = () => {
       isSearch: true,
     }));
 
+    setPage3(initialPageState);
+    setDetailFilters1((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+    
     setPage({
       skip: page.skip,
       take: initialPageState.take,
