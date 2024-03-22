@@ -416,6 +416,8 @@ const MA_A3300W_dajeong: React.FC = () => {
       "@p_attdatnum": "",
       "@p_remark": "",
       "@p_baseamt": 0,
+      "@p_wonchgrat": 0, 
+      "@p_uschgrat": 0,
       "@p_importnum": "",
       "@p_auto_transfer": "",
       "@p_pac": "",

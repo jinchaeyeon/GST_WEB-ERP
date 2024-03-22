@@ -243,7 +243,9 @@ type Idata = {
   person: string;
   attdatnum: string;
   remark: string;
+  wonchgrat: number;
   baseamt: number;
+  uschgrat: number;
   importnum: string;
   auto_transfer: string;
   pac: string;
@@ -917,6 +919,8 @@ const CopyWindow = ({
     attdatnum: "",
     remark: "",
     baseamt: 0,
+    wonchgrat: 0,
+    uschgrat: 0,
     importnum: "",
     auto_transfer: "A",
     pac: "",
@@ -1157,7 +1161,9 @@ const CopyWindow = ({
         person: data.person,
         attdatnum: data.attdatnum,
         remark: data.remark,
+        wonchgrat: data.wonchgrat,
         baseamt: data.baseamt,
+        uschgrat: data.uschgrat,
         importnum: data.importnum,
         auto_transfer: data.auto_transfer,
         pac: data.pac,
@@ -1366,7 +1372,9 @@ const CopyWindow = ({
             person: filters.person,
             attdatnum: filters.attdatnum,
             remark: filters.remark,
+            wonchgrat: filters.wonchgrat,
             baseamt: filters.baseamt,
+            uschgrat: filters.uschgrat,
             importnum: filters.importnum,
             auto_transfer: filters.auto_transfer,
             pac: filters.pac,
@@ -1638,7 +1646,9 @@ const CopyWindow = ({
             person: filters.person,
             attdatnum: filters.attdatnum,
             remark: filters.remark,
+            wonchgrat: filters.wonchgrat,
             baseamt: filters.baseamt,
+            uschgrat: filters.uschgrat,
             importnum: filters.importnum,
             auto_transfer: filters.auto_transfer,
             pac: filters.pac,
@@ -1722,7 +1732,9 @@ const CopyWindow = ({
     person: "admin",
     attdatnum: "",
     remark: "",
+    wonchgrat: 0,
     baseamt: 0,
+    uschgrat: 0,
     importnum: "",
     auto_transfer: "A",
     pac: "",
@@ -1802,7 +1814,9 @@ const CopyWindow = ({
       "@p_person": ParaData.person,
       "@p_attdatnum": ParaData.attdatnum,
       "@p_remark": ParaData.remark,
+      "@p_wonchgrat": ParaData.wonchgrat,
       "@p_baseamt": ParaData.baseamt,
+      "@p_uschgrat": ParaData.uschgrat,
       "@p_importnum": ParaData.importnum,
       "@p_auto_transfer": ParaData.auto_transfer,
       "@p_pac": ParaData.pac,
@@ -1904,7 +1918,9 @@ const CopyWindow = ({
         person: "admin",
         attdatnum: "",
         remark: "",
+        wonchgrat: 0,
         baseamt: 0,
+        uschgrat: 0,
         importnum: "",
         auto_transfer: "A",
         pac: "",
@@ -2350,18 +2366,18 @@ const CopyWindow = ({
                 <th>원화환율</th>
                 <td>
                   <Input
-                    name="baseamt"
+                    name="wonchgrat"
                     type="number"
-                    value={filters.baseamt}
+                    value={filters.wonchgrat}
                     onChange={filterInputChange}
                   />
                 </td>
                 <th>대미환율</th>
                 <td>
                   <Input
-                    name="baseamt"
+                    name="uschgrat"
                     type="number"
-                    value={filters.baseamt}
+                    value={filters.uschgrat}
                     onChange={filterInputChange}
                   />
                 </td>
