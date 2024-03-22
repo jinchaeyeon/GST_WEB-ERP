@@ -13,6 +13,7 @@ import {
   passwordExpirationInfoState,
 } from "../store/atoms";
 
+import { resetLocalStorage } from "../components/CommonFunction";
 import { DEFAULT_LANG_CODE } from "../components/CommonString";
 import Loading from "../components/Loading";
 import { isLoading } from "../store/atoms";
@@ -72,9 +73,12 @@ const Login: React.FC = () => {
   const setPwExpInfo = useSetRecoilState(passwordExpirationInfoState);
   const setLoading = useSetRecoilState(isLoading);
   const setAccessToken = useSetRecoilState(accessTokenState);
+  const accessToken = localStorage.getItem("accessToken");
   const [ifShowCompanyList, setIfShowCompanyList] = useState(false);
   const [information, setInformation] = useState({
-    companyCode: new URLSearchParams(location.search).has("cust") ? new URLSearchParams(location.search).get("cust") as string : "",
+    companyCode: new URLSearchParams(location.search).has("cust")
+      ? (new URLSearchParams(location.search).get("cust") as string)
+      : "",
     langCode: "ko-KR",
     userId: "",
     password: "",
@@ -83,9 +87,14 @@ const Login: React.FC = () => {
   useEffect(() => {
     fetchCultureCodes();
     fetchCompanyCodes();
-    history.replace({}, "");
+    if (new URLSearchParams(location.search).has("cust")) {
+      resetLocalStorage();
+      history.replace({}, "");
+    } else if (accessToken) {
+      history.replace("/Home");
+    }
   }, []);
-  
+
   const handleSubmit = (data: { [name: string]: any }) => {
     processLogin(data);
   };
