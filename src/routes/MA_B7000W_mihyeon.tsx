@@ -256,7 +256,6 @@ const MA_B7000_mihyeon: React.FC = () => {
     setDetailFilters1((prev) => ({
       ...prev,
       pgNum: 1,
-      isSearch: true,
     }));
     setDetailFilters2((prev) => ({
       ...prev,

@@ -265,6 +265,7 @@ const BA_A0020_603: React.FC = () => {
   const [commentselectedState3, setCommentSelectedState3] = useState<any>();
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [detailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
   const [projectWindowVisible, setProjectWindowVisible] =
@@ -273,7 +274,9 @@ const BA_A0020_603: React.FC = () => {
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
-
+  const onCustWndClick2 = () => {
+    setCustWindowVisible2(true);
+  };
   const onDetailWndClick = () => {
     setDetailWindowVisible(true);
   };
@@ -352,6 +355,16 @@ const BA_A0020_603: React.FC = () => {
 
   const setCustData = (data: ICustData) => {
     setFilters((prev: any) => {
+      return {
+        ...prev,
+        custcd: data.custcd,
+        custnm: data.custnm,
+      };
+    });
+  };
+
+  const setCustData2 = (data: ICustData) => {
+    setInformation((prev: any) => {
       return {
         ...prev,
         custcd: data.custcd,
@@ -839,7 +852,6 @@ const BA_A0020_603: React.FC = () => {
     const chkperson = UserListData2.find(
       (items: any) => items.prsnnm == data.chkperson
     );
-
     setInformation({
       orgdiv: data.orgdiv == undefined ? "01" : data.orgdiv,
       ref_key: data.quokey == undefined ? "" : data.quokey,
@@ -872,8 +884,8 @@ const BA_A0020_603: React.FC = () => {
       requiretext: "",
       protext: "",
       errtext: "",
-      custcd: "",
-      custnm: "",
+      custcd: data.custcd,
+      custnm: data.custnm,
       datnum: "",
       ordnum: data.ordnum == undefined ? "" : data.ordnum,
       ordseq: data.ordseq == undefined ? 0 : data.ordseq,
@@ -1193,8 +1205,6 @@ const BA_A0020_603: React.FC = () => {
         location: "01",
         datnum: Information.datnum,
         quokey: workType == "N" ? Information.ref_key : "",
-        // ordnum: workType == "N" ? Information.ordnum : "",
-        // ordseq: workType == "N" ? Information.ordseq : 0,
         status: Information.status,
         ncrdiv: Information.ncrdiv,
         combytype: Information.combytype,
@@ -1205,6 +1215,7 @@ const BA_A0020_603: React.FC = () => {
         devperson: Information.devperson,
         chkperson: Information.chkperson2,
         apperson: Information.apperson,
+        custcd: Information.custcd,
         row_status_cause_s: dataArr.row_status_cause_s.join("|"),
         id_cause_s: dataArr.id_cause_s.join("|"),
         seq_cause_s: dataArr.seq_cause_s.join("|"),
@@ -1242,6 +1253,7 @@ const BA_A0020_603: React.FC = () => {
     devperson: "",
     chkperson: "",
     apperson: "",
+    custcd: "",
     row_status_cause_s: "",
     id_cause_s: "",
     seq_cause_s: "",
@@ -1281,6 +1293,7 @@ const BA_A0020_603: React.FC = () => {
       "@p_devperson": paraData.devperson,
       "@p_chkperson": paraData.chkperson,
       "@p_apperson": paraData.apperson,
+      "@p_custcd": paraData.custcd,
       "@p_row_status_cause_s": paraData.row_status_cause_s,
       "@p_id_cause_s": paraData.id_cause_s,
       "@p_seq_cause_s": paraData.seq_cause_s,
@@ -1343,6 +1356,7 @@ const BA_A0020_603: React.FC = () => {
         devperson: "",
         chkperson: "",
         apperson: "",
+        custcd: "",
         row_status_cause_s: "",
         id_cause_s: "",
         seq_cause_s: "",
@@ -1551,6 +1565,7 @@ const BA_A0020_603: React.FC = () => {
         devperson: "",
         chkperson: "",
         apperson: "",
+        custcd: "",
         row_status_cause_s: "",
         id_cause_s: "",
         seq_cause_s: "",
@@ -1904,6 +1919,36 @@ const BA_A0020_603: React.FC = () => {
                           value={Information.testnum}
                           className="readonly"
                         />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>고객사명</th>
+                      <td>
+                        {Information.ref_key == "" ? (
+                          <>
+                            <Input
+                              name="custnm"
+                              type="text"
+                              value={Information.custnm}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                type={"button"}
+                                onClick={onCustWndClick2}
+                                icon="more-horizontal"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </>
+                        ) : (
+                          <Input
+                            name="custnm"
+                            type="text"
+                            value={Information.custnm}
+                            className="readonly"
+                          />
+                        )}
                       </td>
                     </tr>
                     <tr>
@@ -2386,6 +2431,14 @@ const BA_A0020_603: React.FC = () => {
           setVisible={setCustWindowVisible}
           workType={"N"}
           setData={setCustData}
+          modal={true}
+        />
+      )}
+      {custWindowVisible2 && (
+        <CustomersWindow
+          setVisible={setCustWindowVisible2}
+          workType={"N"}
+          setData={setCustData2}
           modal={true}
         />
       )}
