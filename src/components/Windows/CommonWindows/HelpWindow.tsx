@@ -802,7 +802,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   const excelInput: any = useRef();
 
   const upload = () => {
-    const uploadInput = document.getElementById("uploadAttachment");
+    const uploadInput = document.getElementById("uploadAttachmentManual");
     uploadInput!.click();
   };
 
@@ -1000,7 +1000,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
             >
               업로드
               <input
-                id="uploadAttachment"
+                id="uploadAttachmentManual"
                 style={{ display: "none" }}
                 type="file"
                 accept="application/pdf"
