@@ -1,0 +1,473 @@
+import { Grid } from "@mui/material";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import "hammerjs";
+import { Button } from "primereact/button";
+import { Calendar } from "primereact/calendar";
+import { Divider } from "primereact/divider";
+import { Toolbar } from "primereact/toolbar";
+import React, { useEffect, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  ButtonContainer,
+  GridTitle,
+  Title,
+  TitleContainer,
+} from "../CommonStyled";
+import { UsePermissions, convertDateToStr } from "../components/CommonFunction";
+import { PAGE_SIZE } from "../components/CommonString";
+import LineBarChart from "../components/KPIcomponents/Chart/LineBarChart";
+import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutChart";
+import SpecialDial from "../components/KPIcomponents/SpecialDial/SpecialDial";
+import { useApi } from "../hooks/api";
+import { colors, colorsName, isLoading } from "../store/atoms";
+import { TPermissions } from "../store/types";
+
+const SA_B2211_603W: React.FC = () => {
+  const [permissions, setPermissions] = useState<TPermissions | null>(null);
+  UsePermissions(setPermissions);
+  const [color, setColor] = useRecoilState(colors);
+  const [colorName, setColorName] = useRecoilState(colorsName);
+  useEffect(() => {}, [color]);
+  const processApi = useApi();
+  const setLoading = useSetRecoilState(isLoading);
+  const search = () => {};
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: `${color[0]}`,
+        dark: `${color[1]}`,
+        light: `${color[2]}`,
+      },
+      secondary: {
+        main: `${color[3]}`,
+      },
+    },
+  });
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
+  //조회조건 초기값
+  const [filters, setFilters] = useState({
+    pgSize: PAGE_SIZE,
+    orgdiv: "01",
+    frdt: new Date(),
+    isSearch: true,
+  });
+
+  const startContent = (
+    <React.Fragment>
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={12} md={12} xl={12}>
+          <label htmlFor="calendar-12h" className="font-bold block mb-2">
+            년도
+          </label>
+          <Calendar
+            value={filters.frdt}
+            onChange={(e: any) =>
+              setFilters((prev) => ({
+                ...prev,
+                frdt: e.value,
+              }))
+            }
+            dateFormat={"yy"}
+            view={"year"}
+            showIcon
+          />
+        </Grid>
+      </Grid>
+    </React.Fragment>
+  );
+
+  const endContent = (
+    <React.Fragment>
+      {isMobile ? (
+        ""
+      ) : (
+        <ButtonContainer>
+          <Button
+            icon="pi pi-search"
+            onClick={() =>
+              setFilters((prev) => ({
+                ...prev,
+                isSearch: true,
+              }))
+            }
+            className="mr-2"
+          />
+        </ButtonContainer>
+      )}
+    </React.Fragment>
+  );
+  const [ChartList, setChartList] = useState([]);
+  const [ChartList2, setChartList2] = useState([]);
+  const [ChartList3, setChartList3] = useState([]);
+
+  const [stackChartLabel, setStackChartLabel] = useState<any[]>([]);
+  const [stackChartLabel2, setStackChartLabel2] = useState<any[]>([]);
+  const [stackChartLabel3, setStackChartLabel3] = useState<any[]>([]);
+
+  const [stackChartAllLabel, setStackChartAllLabel] = useState<any[]>([]);
+  const [stackChartAllLabel2, setStackChartAllLabel2] = useState<any[]>([]);
+  const [stackChartAllLabel3, setStackChartAllLabel3] = useState<any[]>([]);
+
+  const [ItemList, setItemList] = useState<any>([]);
+  const [ItemList2, setItemList2] = useState<any>([]);
+  const [ItemList3, setItemList3] = useState<any>([]);
+
+  const [stackItemLabel, setStackItemLabel] = useState<any[]>([]);
+  const [stackItemLabel2, setStackItemLabel2] = useState<any[]>([]);
+  const [stackItemLabel3, setStackItemLabel3] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (filters.isSearch) {
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: false,
+      }));
+      fetchMainGrid();
+    }
+  }, [filters]);
+
+  //조회조건 파라미터
+  const parameters = {
+    procedureName: "P_SA_B2211_603W_Q",
+    pageNumber: 1,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "Q",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_yyyy": convertDateToStr(filters.frdt).substring(0, 4),
+    },
+  };
+
+  //조회조건 파라미터
+  const parameters2 = {
+    procedureName: "P_SA_B2211_603W_Q",
+    pageNumber: 1,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "Q2",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_yyyy": convertDateToStr(filters.frdt).substring(0, 4),
+    },
+  };
+  //조회조건 파라미터
+  const parameters3 = {
+    procedureName: "P_SA_B2211_603W_Q",
+    pageNumber: 1,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "Q3",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_yyyy": convertDateToStr(filters.frdt).substring(0, 4),
+    },
+  };
+  //조회조건 파라미터
+  const parameters4 = {
+    procedureName: "P_SA_B2211_603W_Q",
+    pageNumber: 1,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "Q4",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_yyyy": convertDateToStr(filters.frdt).substring(0, 4),
+    },
+  };
+  //조회조건 파라미터
+  const parameters5 = {
+    procedureName: "P_SA_B2211_603W_Q",
+    pageNumber: 1,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "Q5",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_yyyy": convertDateToStr(filters.frdt).substring(0, 4),
+    },
+  };
+  //조회조건 파라미터
+  const parameters6 = {
+    procedureName: "P_SA_B2211_603W_Q",
+    pageNumber: 1,
+    pageSize: filters.pgSize,
+    parameters: {
+      "@p_work_type": "Q6",
+      "@p_orgdiv": filters.orgdiv,
+      "@p_yyyy": convertDateToStr(filters.frdt).substring(0, 4),
+    },
+  };
+
+  const fetchMainGrid = async () => {
+    setLoading(true);
+    let data: any;
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setChartList(rows);
+      let array = rows
+        .filter(
+          (item: { series: any }) =>
+            item.series ==
+            rows.filter(
+              (arr: { series: any }, index: any, callback: any[]) =>
+                index === callback.findIndex((t) => t.series === arr.series)
+            )[0].series
+        )
+        .map((items: { argument: any }) => {
+          return items.argument;
+        });
+
+      let array2 = rows
+        .filter(
+          (arr: { series: any }, index: any, callback: any[]) =>
+            index === callback.findIndex((t) => t.series === arr.series)
+        )
+        .map((item: { series: any }) => {
+          return item.series;
+        });
+      setStackChartLabel(array2);
+      setStackChartAllLabel(array);
+    }
+
+    let data2: any;
+    try {
+      data2 = await processApi<any>("procedure", parameters2);
+    } catch (error) {
+      data2 = null;
+    }
+    if (data2.isSuccess === true) {
+      const rows2 = data2.tables[0].Rows;
+      setChartList2(rows2);
+      let array = rows2
+        .filter(
+          (item: { series: any }) =>
+            item.series ==
+            rows2.filter(
+              (arr: { series: any }, index: any, callback: any[]) =>
+                index === callback.findIndex((t) => t.series === arr.series)
+            )[0].series
+        )
+        .map((items: { argument: any }) => {
+          return items.argument;
+        });
+
+      let array2 = rows2
+        .filter(
+          (arr: { series: any }, index: any, callback: any[]) =>
+            index === callback.findIndex((t) => t.series === arr.series)
+        )
+        .map((item: { series: any }) => {
+          return item.series;
+        });
+      setStackChartLabel2(array2);
+      setStackChartAllLabel2(array);
+    }
+
+    let data3: any;
+    try {
+      data3 = await processApi<any>("procedure", parameters3);
+    } catch (error) {
+      data3 = null;
+    }
+    if (data3.isSuccess === true) {
+      const rows3 = data3.tables[0].Rows;
+      setChartList2(rows3);
+      let array = rows3
+        .filter(
+          (item: { series: any }) =>
+            item.series ==
+            rows3.filter(
+              (arr: { series: any }, index: any, callback: any[]) =>
+                index === callback.findIndex((t) => t.series === arr.series)
+            )[0].series
+        )
+        .map((items: { argument: any }) => {
+          return items.argument;
+        });
+
+      let array2 = rows3
+        .filter(
+          (arr: { series: any }, index: any, callback: any[]) =>
+            index === callback.findIndex((t) => t.series === arr.series)
+        )
+        .map((item: { series: any }) => {
+          return item.series;
+        });
+      setStackChartLabel3(array2);
+      setStackChartAllLabel3(array);
+    }
+
+    let data4: any;
+    try {
+      data4 = await processApi<any>("procedure", parameters4);
+    } catch (error) {
+      data4 = null;
+    }
+
+    if (data4.isSuccess === true) {
+      const rows4 = data4.tables[0].Rows;
+
+      setItemList(rows4);
+      let array3 = rows4.map(
+        (item: { testpart: string; teststs: string }) => item.testpart
+      );
+      setStackItemLabel(array3);
+    }
+
+    let data5: any;
+    try {
+      data5 = await processApi<any>("procedure", parameters5);
+    } catch (error) {
+      data5 = null;
+    }
+
+    if (data5.isSuccess === true) {
+      const rows5 = data5.tables[0].Rows;
+
+      setItemList2(rows5);
+      let array3 = rows5.map(
+        (item: { testpart: string; teststs: string }) => item.testpart
+      );
+      setStackItemLabel2(array3);
+    }
+
+    let data6: any;
+    try {
+      data6 = await processApi<any>("procedure", parameters6);
+    } catch (error) {
+      data6 = null;
+    }
+
+    if (data6.isSuccess === true) {
+      const rows6 = data6.tables[0].Rows;
+
+      setItemList3(rows6);
+      let array3 = rows6.map(
+        (item: { testpart: string; teststs: string }) => item.testpart
+      );
+      setStackItemLabel3(array3);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <>
+      <div style={{ fontFamily: "TheJamsil5Bold" }}>
+        <ThemeProvider theme={theme}>
+          <TitleContainer style={{ paddingTop: "25px", paddingBottom: "25px" }}>
+            <Title>고객사별 실적 집계</Title>
+            {isMobile ? (
+              <ButtonContainer>
+                <Button
+                  icon="pi pi-search"
+                  onClick={() =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      isSearch: true,
+                    }))
+                  }
+                  className="mr-2"
+                />
+              </ButtonContainer>
+            ) : (
+              ""
+            )}
+          </TitleContainer>
+          <Toolbar start={startContent} end={endContent} />
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={12} md={12} lg={6} xl={4}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <GridTitle title={"고객분류별 실적집계"} />
+                  <LineBarChart
+                    props={ChartList}
+                    value="value"
+                    name="series"
+                    color={[
+                      theme.palette.primary.dark,
+                      theme.palette.primary.light,
+                    ]}
+                    alllabel={stackChartAllLabel}
+                    label={stackChartLabel}
+                    random={false}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <MultiDoughnutChart
+                    data={ItemList}
+                    option={"current_year"}
+                    label={stackItemLabel}
+                    random={true}
+                    colorName={colorName}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={6} xl={4}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <GridTitle title={"물질분야별 실적집계"} />
+                  <LineBarChart
+                    props={ChartList2}
+                    value="value"
+                    name="series"
+                    color={[
+                      theme.palette.primary.dark,
+                      theme.palette.primary.light,
+                    ]}
+                    alllabel={stackChartAllLabel2}
+                    label={stackChartLabel2}
+                    random={false}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <MultiDoughnutChart
+                    data={ItemList2}
+                    option={"current_year"}
+                    label={stackItemLabel2}
+                    random={true}
+                    colorName={colorName}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={6} xl={4}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <GridTitle title={"국내·외 실적집계"} />
+                  <LineBarChart
+                    props={ChartList3}
+                    value="value"
+                    name="series"
+                    color={[
+                      theme.palette.primary.dark,
+                      theme.palette.primary.light,
+                    ]}
+                    alllabel={stackChartAllLabel3}
+                    label={stackChartLabel3}
+                    random={false}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <MultiDoughnutChart
+                    data={ItemList3}
+                    option={"current_year"}
+                    label={stackItemLabel3}
+                    random={true}
+                    colorName={colorName}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+          <SpecialDial />
+        </ThemeProvider>
+      </div>
+    </>
+  );
+};
+
+export default SA_B2211_603W;

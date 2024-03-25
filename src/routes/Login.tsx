@@ -4,7 +4,7 @@ import { KeyboardEvent, useCallback, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { LoginAppName, LoginBox, LoginImg } from "../CommonStyled";
-import { FormComboBox, FormInput } from "../components/Editors";
+import { FormCheckBox2, FormComboBox, FormInput } from "../components/Editors";
 import { useApi } from "../hooks/api";
 import { IComboBoxColumns } from "../hooks/interfaces";
 import {
@@ -88,8 +88,11 @@ const Login: React.FC = () => {
       ? (new URLSearchParams(location.search).get("cust") as string)
       : "",
     langCode: "ko-KR",
-    userId: "",
+    userId: localStorage.getItem("userId")
+      ? localStorage.getItem("userId")
+      : "",
     password: "",
+    chk: "Y",
   });
 
   useEffect(() => {
@@ -154,6 +157,13 @@ const Login: React.FC = () => {
           defaultCulture,
         } = response;
 
+        if (formData.chk == "Y") {
+          localStorage.setItem("userId", userId);
+        } else {
+          if (localStorage.getItem("userId")) {
+            localStorage.removeItem("userId");
+          }
+        }
         localStorage.setItem("accessToken", token);
         localStorage.setItem("refreshToken", refreshToken);
         // AccessToken : Recoil 저장 / RefreshToken(만료기한 짧음) : Cash 저장
@@ -289,6 +299,11 @@ const Login: React.FC = () => {
                   label={"Password"}
                   type={"password"}
                   component={FormInput}
+                />
+                <Field
+                  name={"chk"}
+                  label={"아이디 저장"}
+                  component={FormCheckBox2}
                 />
               </fieldset>
               <Button className="login-btn" themeColor={"primary"} size="large">

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { LoginAppName, LoginBox, LoginImg } from "../CommonStyled";
-import { FormInput } from "../components/Editors";
+import { FormCheckBox2, FormInput } from "../components/Editors";
 import { useApi } from "../hooks/api";
 import { loginResultState, passwordExpirationInfoState } from "../store/atoms";
 
@@ -29,7 +29,13 @@ const Login: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const accessToken = localStorage.getItem("accessToken");
   const [isLoaded, setIsLoaded] = useState(accessToken ? false : true);
-
+  const [information, setInformation] = useState({
+    userId: localStorage.getItem("userId")
+      ? localStorage.getItem("userId")
+      : "",
+    password: "",
+    chk: "Y",
+  });
   useEffect(() => {
     if (accessToken) {
       window.location.href = "/Home";
@@ -104,7 +110,13 @@ const Login: React.FC = () => {
           serviceCategory,
           defaultCulture,
         } = response;
-
+        if (formData.chk == "Y") {
+          localStorage.setItem("userId", userId);
+        } else {
+          if (localStorage.getItem("userId")) {
+            localStorage.removeItem("userId");
+          }
+        }
         localStorage.setItem("accessToken", token);
         localStorage.setItem("refreshToken", refreshToken);
         // AccessToken : Recoil 저장 / RefreshToken(만료기한 짧음) : Cash 저장
@@ -165,6 +177,7 @@ const Login: React.FC = () => {
     <div style={{ backgroundColor: "#f5b901" }}>
       <LoginBox theme={"#f5b901"}>
         <Form
+          initialValues={information}
           onSubmit={handleSubmit}
           render={() => (
             <FormElement>
@@ -175,6 +188,11 @@ const Login: React.FC = () => {
                   label={"Password"}
                   type={"password"}
                   component={FormInput}
+                />
+                <Field
+                  name={"chk"}
+                  label={"아이디 저장"}
+                  component={FormCheckBox2}
                 />
               </fieldset>
               <Button className="login-btn" themeColor={"primary"} size="large">

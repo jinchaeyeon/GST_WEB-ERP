@@ -23,6 +23,7 @@ import {
   GridDataStateChangeEvent,
   GridFooterCellProps,
   GridPageChangeEvent,
+  GridRowDoubleClickEvent,
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
@@ -62,6 +63,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import SA_B2221W_Window from "../components/Windows/SA_B2221W_Window";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
 import { isLoading, loginResultState } from "../store/atoms";
@@ -593,6 +595,13 @@ const SA_B2221: React.FC = () => {
     }
   };
 
+  const [DetailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
+
+  const onRowDoubleClick = (event: GridRowDoubleClickEvent) => {
+    setDetailWindowVisible(true);
+  };
+
   return (
     <>
       <TitleContainer>
@@ -772,6 +781,7 @@ const SA_B2221: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
+                  onRowDoubleClick={onRowDoubleClick}
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdAllList"].map(
@@ -850,6 +860,7 @@ const SA_B2221: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
+                  onRowDoubleClick={onRowDoubleClick}
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions[
@@ -994,6 +1005,7 @@ const SA_B2221: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
+                  onRowDoubleClick={onRowDoubleClick}
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions[
@@ -1190,6 +1202,39 @@ const SA_B2221: React.FC = () => {
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
+          modal={true}
+        />
+      )}
+      {DetailWindowVisible && (
+        <SA_B2221W_Window
+          setVisible={setDetailWindowVisible}
+          itemcd={
+            gridDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0] != undefined
+              ? gridDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0].itemcd
+              : ""
+          }
+          itemnm={
+            gridDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0] != undefined
+              ? gridDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0].itemnm
+              : ""
+          }
+          yyyy={filters.yyyy}
           modal={true}
         />
       )}
