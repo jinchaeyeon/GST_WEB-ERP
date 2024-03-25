@@ -8,7 +8,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_reckey_list",
         field: "reckey",
-        caption: "청구번호",
+        caption: "계약번호",
         width: 120,
       },
       {

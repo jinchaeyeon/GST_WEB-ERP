@@ -490,7 +490,7 @@ const BA_A0020W_603: React.FC = () => {
     };
 
     try {
-      data = await processApi<any>("query", query);
+      data = await processApi<any>("query", query);      
     } catch (error) {
       data = null;
     }
@@ -510,8 +510,7 @@ const BA_A0020W_603: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        custdiv: defaultOption.find((item: any) => item.id === "custdiv")
-          .valueCode,
+        custdiv: "B",
       }));
     }
   }, [customOptionData]);
@@ -670,18 +669,19 @@ const BA_A0020W_603: React.FC = () => {
     setInformation((prev: any) => ({
       ...prev,
       [name]: value,
+      custdiv:"B",
     }));
   };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const filterComboBoxChange = (e: any) => {
-    const { name, value } = e;
+  // const filterComboBoxChange = (e: any) => {
+  //   const { name, value } = e;
 
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  //   setFilters((prev) => ({
+  //     ...prev,
+  //     [name]: value,
+  //   }));
+  // };
 
   //조회조건 초기값
   const [filters, setFilters] = useState({
@@ -689,7 +689,7 @@ const BA_A0020W_603: React.FC = () => {
     workType: "LIST",
     custcd: "",
     custnm: "",
-    custdiv: "",
+    custdiv: "B",
     ceonm: "",
     find_row_value: "",
     pgNum: 1,
@@ -729,7 +729,7 @@ const BA_A0020W_603: React.FC = () => {
   const [information, setInformation] = useState<any>({
     area: "",
     custabbr: "",
-    custdiv: "",
+    custdiv: "B",
     listringyn: true,
     listringdiv: "",
     inunpitem: "",
@@ -1889,7 +1889,7 @@ const BA_A0020W_603: React.FC = () => {
     setInformation({
       area: "",
       custabbr: "",
-      custdiv: "",
+      custdiv: "B",
       listringyn: true,
       listringdiv: "",
       inunpitem: "",
@@ -2796,7 +2796,7 @@ const BA_A0020W_603: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th>회사코드</th>
+              <th>업체코드</th>
               <td>
                 <Input
                   name="custcd"
@@ -2812,7 +2812,7 @@ const BA_A0020W_603: React.FC = () => {
                   />
                 </ButtonInInput>
               </td>
-              <th>회사명</th>
+              <th>업체명</th>
               <td>
                 <Input
                   name="custnm"
@@ -2821,7 +2821,7 @@ const BA_A0020W_603: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              <th>구분</th>
+              {/* <th>구분</th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
@@ -2831,7 +2831,7 @@ const BA_A0020W_603: React.FC = () => {
                     changeData={filterComboBoxChange}
                   />
                 )}
-              </td>
+              </td> */}
               <th>대표자명</th>
               <td>
                 <Input
@@ -2962,7 +2962,7 @@ const BA_A0020W_603: React.FC = () => {
             <FormBox>
               <tbody>
                 <tr>
-                  <th>회사명(가칭)</th>
+                  <th>업체명</th>
                   <td>
                     <Input
                       name="custabbr"
@@ -2976,6 +2976,7 @@ const BA_A0020W_603: React.FC = () => {
                     {bizComponentData !== null && (
                       <BizComponentComboBox
                         name="custdiv"
+                        disabled
                         value={information.custdiv}
                         bizComponentId="L_BA026"
                         bizComponentData={bizComponentData}
@@ -3032,7 +3033,7 @@ const BA_A0020W_603: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>회사코드</th>
+                  <th>업체코드</th>
                   <td>
                     {information.custcd != "자동생성" &&
                     information.auto == true ? (
@@ -3193,7 +3194,7 @@ const BA_A0020W_603: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>대표자</th>
+                  <th>대표자명</th>
                   <td>
                     <Input
                       name="ceonm"
