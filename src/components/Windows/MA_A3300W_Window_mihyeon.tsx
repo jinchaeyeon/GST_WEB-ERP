@@ -2119,14 +2119,38 @@ const CopyWindow = ({
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
     setMainDataState((prev) => ({ ...prev, sort: [] }));
-    getGridItemChangedData(
-      event,
-      mainDataResult,
-      setMainDataResult,
-      DATA_ITEM_KEY
-    );
-  };
 
+    let newData = mainDataResult.data.map((item) => {
+      // 해당 항목이 변경된 행과 일치하는지 확인
+      if (item[DATA_ITEM_KEY] === event.dataItem[DATA_ITEM_KEY]) {
+        // 기본값 업데이트
+        let updatedItem = { ...item, [event.field!]: event.value };
+
+        // 변경된 필드에 따라 특정 플래그를 설정
+        switch (event.field) {
+          case 'amt':
+            // 'amt' 필드가 변경된 경우 사용자가 직접 변경했다는 플래그 설정
+            updatedItem.userChangedAmt = true;
+            break;
+          case 'wonamt':
+            // 'wonamt' 필드가 변경된 경우 사용자가 직접 변경했다는 플래그 설정
+            updatedItem.userChangedWonAmt = true;
+            break;
+          case 'taxamt':
+            // 'taxamt' 필드가 변경된 경우 사용자가 직접 변경했다는 플래그 설정
+            updatedItem.userChangedTaxAmt = true;
+            break;
+          // 추가적으로 처리해야 할 필드가 있다면 여기에 케이스를 추가
+        }
+
+        return updatedItem;
+      } else {
+        return item;
+      }
+    });
+
+    setMainDataResult({ ...mainDataResult, data: newData });
+};
   const customCellRender = (td: any, props: any) => (
     <CellRender
       originalProps={props}
@@ -2188,115 +2212,92 @@ const CopyWindow = ({
       });
     }
   };
-
-  const exitEdit = () => {
-    if (tempResult.data != mainDataResult.data) {
-      if (editedField !== "itemcd") {
-        const newData = mainDataResult.data.map((item: any) =>
-          
-          // 금액, 환율, 대미환율 계산 로직
-          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "U",
-                amt:
-                // 원화일때
-                  filters.amtunit == "KRW"
-                   // 사용자 입력 금액이랑 수량*단가랑 다르면
-                    ? item.amt !== item.qty * item.unp
-                    // 사용자 가 입력한값 사용
-                      ? item.amt
-                    // 수량*단가 사용
-                      : item.qty * item.unp
-                  // 원화 아닐때
-                    : item.amt !== item.qty * item.unp * filters.wonchgrat
-                    // 사용자 가 입력한값 사용
-                      ? item.amt
-                    // 수량*단가 * 원화환율 사용
-                      : item.qty * item.unp * filters.wonchgrat,
-
-                wonamt:
-                  // 원화일때
-                  filters.amtunit == "KRW"
-                  ? item.wonamt !== (item.amt || item.qty * item.unp)
-                    ? item.wonamt
-                    // 금액 그대로 사용
-                    : item.amt
-
-                  // 원화 아닐때
-                  : item.wonamt !== (item.amt || filters.wonchgrat)
-                    ? item.wonamt
-                    // 금액*원화환율 사용
-                    : item.amt* filters.wonchgrat,
-                taxamt:
-                  Math.round(
-                    // 원화일때
-                    filters.amtunit == "KRW"
-                      ? Math.round(item.taxamt) !== Math.round(item.wonamt / 10)
-                        ? item.taxamt 
-                        :item.wonamt / 10
-                    // 원화 아닐떄
-                      : Math.round(item.taxamt) !== Math.round((item.wonamt * filters.wonchgrat) / 10)
-                        ?item.taxamt
-                        :(item.wonamt * filters.wonchgrat) / 10),
-                totamt:
-                  filters.amtunit == "KRW"
-                    ? Math.round(
-                        item.qty * item.unp + (item.qty * item.unp) / 10
-                      )
-                    : Math.round(
-                        item.qty * item.unp * filters.wonchgrat +
-                          (item.qty * item.unp * filters.wonchgrat) / 10
-                      ),
-                dlramt:
-                  filters.amtunit == "KRW"
-                    ? item.amt
-                    : item.amt * filters.wonchgrat,
-                [EDIT_FIELD]: undefined,
-              }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-        );
-        setTempResult((prev: { total: any }) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-        setMainDataResult((prev: { total: any }) => {
-          return {
-            data: newData,
-            total: prev.total,
-          };
-        });
-      } else {
-        mainDataResult.data.map((item: { [x: string]: any; itemcd: any }) => {
-          if (editIndex === item[DATA_ITEM_KEY]) {
-            fetchItemData(item.itemcd);
+  const onItemChange = (e: any) => {
+    // field 값이 정의되어 있는지 확인
+    if (e.field) {
+      let newData = mainDataResult.data.map((item) => {
+        if (item[DATA_ITEM_KEY] === e.dataItem[DATA_ITEM_KEY]) {
+          // 값 변경 시 특정 플래그를 true로 설정하여 사용자가 값을 변경했음을 표시
+          let updatedItem = { ...item, [e.field]: e.value }; // 기본 업데이트
+          switch (e.field) {
+            case 'amt':
+              updatedItem.userChangedAmt = true;
+              break;
+            case 'wonamt':
+              updatedItem.userChangedWonAmt = true;
+              break;
+            case 'taxamt':
+              updatedItem.userChangedTaxAmt = true;
+              break;
+            // 기타 필드에 대한 처리가 필요한 경우 여기에 추가
           }
-        });
-      }
+          return updatedItem;
+        } else {
+          return item;
+        }
+      });
+  
+      setMainDataResult({ ...mainDataResult, data: newData });
+    }
+  };
+  
+  
+  const exitEdit = (): void => {
+    if (tempResult.data !== mainDataResult.data) {
+      const newData = mainDataResult.data.map((item: any) => {
+        // 기본 금액, 원화금액, 세액 계산
+        let calculatedAmt = item.qty * item.unp;
+        let calculatedWonAmt = filters.amtunit === "KRW" ? calculatedAmt : calculatedAmt * filters.wonchgrat;
+        
+        // 사용자 변경 여부에 따라 최종 금액 결정
+        let finalAmt = item.userChangedAmt ? item.amt : calculatedAmt;
+        let finalWonAmt = item.userChangedWonAmt ? item.wonamt : (filters.amtunit === "KRW" ? finalAmt : finalAmt * filters.wonchgrat);
+        let finalTaxAmt = item.userChangedTaxAmt ? item.taxamt : Math.round(finalWonAmt * 0.1);
+
+        // 금액 변경 시 원화금액과 세액도 사용자 변경으로 처리하여 재계산
+        if (item.userChangedAmt && !item.userChangedWonAmt) {
+            finalWonAmt = filters.amtunit === "KRW" ? finalAmt : finalAmt * filters.wonchgrat;
+        }
+        if (item.userChangedAmt && !item.userChangedTaxAmt) {
+            finalTaxAmt = Math.round(finalWonAmt * 0.1);
+        }
+
+        return {
+            ...item,
+            amt: finalAmt,
+            wonamt: finalWonAmt,
+            taxamt: finalTaxAmt,
+            [EDIT_FIELD]: undefined, // 편집 상태 해제
+        };
+    });
+      setTempResult(prev => ({
+        data: newData,
+        total: prev.total,
+      }));
+  
+      setMainDataResult(prev => ({
+        data: newData,
+        total: prev.total,
+      }));
     } else {
-      const newData = mainDataResult.data.map((item: any) => ({
+      const newData = mainDataResult.data.map(item => ({
         ...item,
         [EDIT_FIELD]: undefined,
       }));
-      setTempResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
+  
+      setTempResult(prev => ({
+        data: newData,
+        total: prev.total,
+      }));
+  
+      setMainDataResult(prev => ({
+        data: newData,
+        total: prev.total,
+      }));
     }
   };
+  
+  
 
   const [values2, setValues2] = React.useState<boolean>(false);
   const CustomCheckBoxCell2 = (props: GridHeaderCellProps) => {
