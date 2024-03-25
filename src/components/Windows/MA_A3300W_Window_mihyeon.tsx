@@ -2193,29 +2193,52 @@ const CopyWindow = ({
     if (tempResult.data != mainDataResult.data) {
       if (editedField !== "itemcd") {
         const newData = mainDataResult.data.map((item: any) =>
+          
           // 금액, 환율, 대미환율 계산 로직
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
             ? {
                 ...item,
                 rowstatus: item.rowstatus == "N" ? "N" : "U",
                 amt:
+                // 원화일때
                   filters.amtunit == "KRW"
+                   // 사용자 입력 금액이랑 수량*단가랑 다르면
                     ? item.amt !== item.qty * item.unp
+                    // 사용자 가 입력한값 사용
                       ? item.amt
+                    // 수량*단가 사용
                       : item.qty * item.unp
+                  // 원화 아닐때
                     : item.amt !== item.qty * item.unp * filters.wonchgrat
-                    ? item.amt
-                    : item.qty * item.unp * filters.wonchgrat,
+                    // 사용자 가 입력한값 사용
+                      ? item.amt
+                    // 수량*단가 * 원화환율 사용
+                      : item.qty * item.unp * filters.wonchgrat,
 
                 wonamt:
+                  // 원화일때
                   filters.amtunit == "KRW"
-                    ? item.amt
+                  ? item.wonamt !== (item.amt || item.qty * item.unp)
+                    ? item.wonamt
+                    // 금액 그대로 사용
+                    : item.amt
+
+                  // 원화 아닐때
+                  : item.wonamt !== (item.amt || filters.wonchgrat)
+                    ? item.wonamt
+                    // 금액*원화환율 사용
                     : item.amt* filters.wonchgrat,
                 taxamt:
-                Math.round(
-                  filters.amtunit == "KRW"
-                    ? item.amt / 10
-                    : (item.amt * filters.wonchgrat) / 10),
+                  Math.round(
+                    // 원화일때
+                    filters.amtunit == "KRW"
+                      ? Math.round(item.taxamt) !== Math.round(item.wonamt / 10)
+                        ? item.taxamt 
+                        :item.wonamt / 10
+                    // 원화 아닐떄
+                      : Math.round(item.taxamt) !== Math.round((item.wonamt * filters.wonchgrat) / 10)
+                        ?item.taxamt
+                        :(item.wonamt * filters.wonchgrat) / 10),
                 totamt:
                   filters.amtunit == "KRW"
                     ? Math.round(
