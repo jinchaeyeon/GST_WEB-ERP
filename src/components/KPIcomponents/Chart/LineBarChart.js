@@ -98,6 +98,9 @@ export default function DoubleChart(props) {
             grid: {
               color: surfaceBorder,
             },
+            afterDataLimits: scale => {
+              scale.max = scale.max * 1.2;
+            },
           },
           y1: {
             type: "linear",
@@ -105,6 +108,9 @@ export default function DoubleChart(props) {
             position: "right",
             ticks: {
               color: textColorSecondary,
+            },
+            afterDataLimits: scale => {
+              scale.max = scale.max * 1.2;
             },
             grid: {
               drawOnChartArea: false,

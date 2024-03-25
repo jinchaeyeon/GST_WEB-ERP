@@ -227,6 +227,7 @@ import SA_A6000W from "./routes/SA_A6000W";
 import SA_A8000W from "./routes/SA_A8000W";
 import SA_B1000W_603 from "./routes/SA_B1000W_603";
 import SA_B2200W from "./routes/SA_B2200W";
+import SA_B2200W_603 from "./routes/SA_B2200W_603";
 import SA_B2211W from "./routes/SA_B2211W";
 import SA_B2211_603W from "./routes/SA_B2211_603W";
 import SA_B2216W from "./routes/SA_B2216W";
@@ -689,6 +690,8 @@ const AppInner: React.FC = () => {
       return SA_A8000W;
     } else if (str == "SA_B2200W") {
       return SA_B2200W;
+    } else if (str == "SA_B2200W_603") {
+      return SA_B2200W_603;
     } else if (str == "SA_B2211W") {
       return SA_B2211W;
     } else if (str == "SA_B2211_603W") {
@@ -1153,6 +1156,11 @@ const AppInner: React.FC = () => {
                     exact
                   />
                   <AuthRoute path="/SA_B2200W" component={SA_B2200W} exact />
+                  <AuthRoute
+                    path="/SA_B2200W_603"
+                    component={SA_B2200W_603}
+                    exact
+                  />
                   <AuthRoute path="/SA_B2211W" component={SA_B2211W} exact />
                   <AuthRoute
                     path="/SA_B2211_603W"

@@ -86,6 +86,9 @@ export default function StackedChart(props) {
             ticks: {
               color: textColorSecondary,
             },
+            afterDataLimits: scale => {
+              scale.max = scale.max * 1.2;
+            },
             grid: {
               color: surfaceBorder,
             },

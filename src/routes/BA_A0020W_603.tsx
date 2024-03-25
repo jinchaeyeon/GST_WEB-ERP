@@ -3352,7 +3352,7 @@ const BA_A0020W_603: React.FC = () => {
                 fileName="고객정보관리"
               >
                 <Grid
-                  style={{ height: "25vh" }}
+                  style={{ height: "33vh" }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -3466,7 +3466,7 @@ const BA_A0020W_603: React.FC = () => {
               fileName="고객정보관리"
             >
               <Grid
-                style={{ height: "25vh" }}
+                style={{ height: "33vh" }}
                 data={process(
                   mainDataResult3.data.map((row) => ({
                     ...row,
@@ -3577,7 +3577,7 @@ const BA_A0020W_603: React.FC = () => {
               fileName="고객정보관리"
             >
               <Grid
-                style={{ height: "25vh" }}
+                style={{ height: "33vh" }}
                 data={process(
                   mainDataResult4.data.map((row) => ({
                     ...row,

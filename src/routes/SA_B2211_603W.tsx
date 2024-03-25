@@ -448,7 +448,6 @@ const SA_B2211_603W: React.FC = () => {
 
   function getWidth(arr: any) {
     let array = [];
-    console.log(arr);
     if (arr.length != 0) {
       for (var i = 0; i < arr.length; i++) {
         array.push(100);
@@ -511,6 +510,7 @@ const SA_B2211_603W: React.FC = () => {
                     value={GridList1}
                     column={Column1}
                     width={getWidth(Column1)}
+                    numberCell={Column1.filter((item: any) => item != "구분")}
                   />
                 </Grid>
                 <Grid
@@ -553,6 +553,7 @@ const SA_B2211_603W: React.FC = () => {
                     value={GridList2}
                     column={Column2.length == 0 ? [] : Column2}
                     width={getWidth(Column2)}
+                    numberCell={Column2.filter((item: any) => item != "구분")}
                   />
                 </Grid>
                 <Grid
@@ -595,6 +596,7 @@ const SA_B2211_603W: React.FC = () => {
                     value={GridList3}
                     column={Column3.length == 0 ? [] : Column3}
                     width={getWidth(Column3)}
+                    numberCell={Column3.filter((item: any) => item != "구분")}
                   />
                 </Grid>
                 <Grid

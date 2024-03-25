@@ -138,7 +138,7 @@ const CM_A5000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");
-  const [workType, setWorkType] = useState("N");
+  const [workType, setWorkType] = useState("");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -439,6 +439,7 @@ const CM_A5000W: React.FC = () => {
         ...prev,
         isSearch: true,
       }));
+      setWorkType("");
     } else if (e.selected == 1) {
       const selectedRowData = mainDataResult.data.filter(
         (item) =>
@@ -1410,6 +1411,7 @@ const CM_A5000W: React.FC = () => {
     if (data.isSuccess === true) {
       if (workType == "N" || workType == "D") {
         setTabSelected(0);
+        setWorkType("");
       } else {
         setTabSelected(1);
       }

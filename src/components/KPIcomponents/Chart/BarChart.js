@@ -78,7 +78,7 @@ export default function BarChart(props) {
               return items[props.value];
             }),
             datalabels: {
-              align: "center",
+              align: "end",
               anchor: "end",
             },
           },
@@ -123,6 +123,9 @@ export default function BarChart(props) {
           y: {
             ticks: {
               color: textColorSecondary,
+            },
+            afterDataLimits: scale => {
+              scale.max = scale.max * 1.2;
             },
             grid: {
               color: surfaceBorder,

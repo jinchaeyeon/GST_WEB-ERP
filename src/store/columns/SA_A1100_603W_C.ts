@@ -282,6 +282,12 @@ export const gridList: Array<TGrid> = [
         caption: "금액",
         width: 100,
       },
+      {
+        id: "col_remark_detail2",
+        field: "remark",
+        caption: "비고",
+        width: 200,
+      },
     ],
   },
 ];
