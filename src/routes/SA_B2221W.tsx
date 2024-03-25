@@ -23,7 +23,6 @@ import {
   GridDataStateChangeEvent,
   GridFooterCellProps,
   GridPageChangeEvent,
-  GridRowDoubleClickEvent,
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
@@ -38,6 +37,8 @@ import {
   FilterBox,
   GridContainer,
   GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
   Title,
   TitleContainer,
 } from "../CommonStyled";
@@ -598,7 +599,7 @@ const SA_B2221: React.FC = () => {
   const [DetailWindowVisible, setDetailWindowVisible] =
     useState<boolean>(false);
 
-  const onRowDoubleClick = (event: GridRowDoubleClickEvent) => {
+  const onDetailClick = () => {
     setDetailWindowVisible(true);
   };
 
@@ -699,11 +700,18 @@ const SA_B2221: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-
+      <GridTitleContainer>
+        <GridTitle></GridTitle>
+        <ButtonContainer>
+          <Button onClick={onDetailClick} themeColor={"primary"} icon="file">
+            상세내역 조회
+          </Button>
+        </ButtonContainer>
+      </GridTitleContainer>
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ height: "79.5vh", width: "100%" }}
+        style={{ height: "77vh", width: "100%" }}
       >
         <TabStripTab title="전체">
           <GridContainerWrap flexDirection="column">
@@ -746,7 +754,7 @@ const SA_B2221: React.FC = () => {
                 fileName="수주집계(품목)"
               >
                 <Grid
-                  style={{ height: "33.5vh" }}
+                  style={{ height: "32vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -781,7 +789,6 @@ const SA_B2221: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
-                  onRowDoubleClick={onRowDoubleClick}
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions["grdAllList"].map(
@@ -825,7 +832,7 @@ const SA_B2221: React.FC = () => {
                 fileName="수주집계(품목)"
               >
                 <Grid
-                  style={{ height: "33.5vh" }}
+                  style={{ height: "32vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -860,7 +867,6 @@ const SA_B2221: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
-                  onRowDoubleClick={onRowDoubleClick}
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions[
@@ -970,7 +976,7 @@ const SA_B2221: React.FC = () => {
                 fileName="수주집계(품목)"
               >
                 <Grid
-                  style={{ height: "33.5vh" }}
+                  style={{ height: "32vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -1005,7 +1011,6 @@ const SA_B2221: React.FC = () => {
                   reorderable={true}
                   //컬럼너비조정
                   resizable={true}
-                  onRowDoubleClick={onRowDoubleClick}
                 >
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions[

@@ -623,17 +623,13 @@ export const FormCheckBox2 = (fieldRenderProps: FieldRenderProps) => {
   if (required) DDLvalid = checkIsDDLValid(value);
 
   return (
-    <FieldWrapper style={{ display: "flex" }}>
-      <Label
-        style={{ marginRight: "30%" }}
-        editorId={id}
-        editorValid={DDLvalid}
-      >
-        {label}
-      </Label>
-      <div className={"k-form-field-wrap"}>
+    <FieldWrapper style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div className={"k-form-field-wrap"} style={{ marginRight: "2%" }}>
         <FieldCheckBox fieldRenderProps={fieldRenderProps} />
       </div>
+      <Label editorId={id} editorValid={DDLvalid}>
+        {label}
+      </Label>
     </FieldWrapper>
   );
 };
