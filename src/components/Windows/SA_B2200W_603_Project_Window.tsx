@@ -131,7 +131,7 @@ const CopyWindow = ({
   const [quotypeListData, setQuotypeListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+ 
   const [quostsListData, setQuostsListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);

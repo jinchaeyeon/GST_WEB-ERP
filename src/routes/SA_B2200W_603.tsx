@@ -67,7 +67,7 @@ const numberField = [
   "amt",
   "wonamt",
   "taxamt",
-];
+]; 
 const numberField2 = ["qty", "outqty", "saleqty", "amt", "wonamt", "taxamt"];
 
 let targetRowIndex: null | number = null;

@@ -76,6 +76,6 @@ export const gridList: Array<TGrid> = [
         caption: "비고",
         width: 200,
       }
-    ],
+    ], 
   },
 ];
