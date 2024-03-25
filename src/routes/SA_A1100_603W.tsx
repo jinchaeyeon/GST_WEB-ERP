@@ -86,6 +86,7 @@ const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY3 = "num";
 const DATA_ITEM_KEY4 = "num";
 const DATA_ITEM_KEY5 = "num";
+const DATA_ITEM_KEY6 = "num";
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
@@ -144,6 +145,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
 let deletedMainRows: any[] = [];
 let deletedMainRows2: any[] = [];
+let deletedMainRows6: any[] = [];
 const SA_A1100_603W: React.FC = () => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -153,6 +155,7 @@ const SA_A1100_603W: React.FC = () => {
   const idGetter3 = getter(DATA_ITEM_KEY3);
   const idGetter4 = getter(DATA_ITEM_KEY4);
   const idGetter5 = getter(DATA_ITEM_KEY5);
+  const idGetter6 = getter(DATA_ITEM_KEY6);
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");
 
@@ -166,6 +169,7 @@ const SA_A1100_603W: React.FC = () => {
   const [page3, setPage3] = useState(initialPageState);
   const [page4, setPage4] = useState(initialPageState);
   const [page5, setPage5] = useState(initialPageState);
+  const [page6, setPage6] = useState(initialPageState);
   const [checked, setChecked] = useState(false);
 
   interface ICustData {
@@ -327,9 +331,20 @@ const SA_A1100_603W: React.FC = () => {
     isSearch: true,
     pgSize: PAGE_SIZE,
   });
+  const [subFilters6, setSubFilters6] = useState<{ [name: string]: any }>({
+    workType: "",
+    orgdiv: "01",
+    location: "01",
+    quokey: "",
+    recdt: "",
+    seq1: 0,
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+    pgSize: PAGE_SIZE,
+  });
   const [Information, setInformation] = useState<{ [name: string]: any }>({
     project: "",
-    paymeth: "",
     materialnm: "",
     totamt: 0,
     ordamt: 0,
@@ -355,10 +370,16 @@ const SA_A1100_603W: React.FC = () => {
   const [selectedState5, setSelectedState5] = useState<{
     [id: string]: boolean | number[];
   }>({});
+  const [selectedState6, setSelectedState6] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
   const [tempState, setTempState] = useState<State>({
     sort: [],
   });
   const [tempState2, setTempState2] = useState<State>({
+    sort: [],
+  });
+  const [tempState6, setTempState6] = useState<State>({
     sort: [],
   });
   const [tempResult, setTempResult] = useState<DataResult>(
@@ -366,6 +387,9 @@ const SA_A1100_603W: React.FC = () => {
   );
   const [tempResult2, setTempResult2] = useState<DataResult>(
     process([], tempState2)
+  );
+  const [tempResult6, setTempResult6] = useState<DataResult>(
+    process([], tempState6)
   );
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -382,6 +406,9 @@ const SA_A1100_603W: React.FC = () => {
   const [mainDataState5, setMainDataState5] = useState<State>({
     sort: [],
   });
+  const [mainDataState6, setMainDataState6] = useState<State>({
+    sort: [],
+  });
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], mainDataState)
   );
@@ -396,6 +423,9 @@ const SA_A1100_603W: React.FC = () => {
   );
   const [mainDataResult5, setMainDataResult5] = useState<DataResult>(
     process([], mainDataState5)
+  );
+  const [mainDataResult6, setMainDataResult6] = useState<DataResult>(
+    process([], mainDataState6)
   );
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
 
@@ -689,16 +719,19 @@ const SA_A1100_603W: React.FC = () => {
   const resetAllGrid = () => {
     deletedMainRows = [];
     deletedMainRows2 = [];
+    deletedMainRows6 = [];
     setPage(initialPageState);
     setPage2(initialPageState);
     setPage3(initialPageState);
     setPage4(initialPageState);
     setPage5(initialPageState);
+    setPage6(initialPageState);
     setMainDataResult(process([], mainDataState));
     setMainDataResult2(process([], mainDataState2));
     setMainDataResult3(process([], mainDataState3));
     setMainDataResult4(process([], mainDataState4));
     setMainDataResult5(process([], mainDataState5));
+    setMainDataResult6(process([], mainDataState6));
   };
 
   //그리드 데이터 조회
@@ -851,7 +884,6 @@ const SA_A1100_603W: React.FC = () => {
         setInformation((prev) => ({
           ...prev,
           project: data.tables[0].Rows[0].project,
-          paymeth: data.tables[0].Rows[0].paymeth,
           materialnm: data.tables[0].Rows[0].materialnm,
           totamt: data.tables[0].Rows[0].totamt,
           wonchgrat: data.tables[0].Rows[0].wonchgrat,
@@ -861,7 +893,6 @@ const SA_A1100_603W: React.FC = () => {
         setInformation((prev) => ({
           ...prev,
           project: "",
-          paymeth: "",
           materialnm: "",
           totamt: 0,
           wonchgrat: 0,
@@ -1245,6 +1276,20 @@ const SA_A1100_603W: React.FC = () => {
     });
   };
 
+  const pageChange6 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setSubFilters6((prev) => ({
+      ...prev,
+      pgNum: page.skip / page.take + 1,
+      isSearch: true,
+    }));
+
+    setPage6({
+      ...event.page,
+    });
+  };
+
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -1295,7 +1340,15 @@ const SA_A1100_603W: React.FC = () => {
 
     setSelectedState5(newSelectedState);
   };
+  const onSelectionChange6 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState6,
+      dataItemKey: DATA_ITEM_KEY6,
+    });
 
+    setSelectedState6(newSelectedState);
+  };
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
     if (e.selected == 0) {
@@ -1334,7 +1387,9 @@ const SA_A1100_603W: React.FC = () => {
   const onMainDataStateChange5 = (event: GridDataStateChangeEvent) => {
     setMainDataState5(event.dataState);
   };
-
+  const onMainDataStateChange6 = (event: GridDataStateChangeEvent) => {
+    setMainDataState6(event.dataState);
+  };
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
@@ -1399,10 +1454,40 @@ const SA_A1100_603W: React.FC = () => {
       </td>
     );
   };
+  const mainTotalFooterCell6 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult6.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
 
   const editNumberFooterCell = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult2.data.forEach((item) =>
+      props.field !== undefined
+        ? (sum += parseFloat(
+            item[props.field] == "" || item[props.field] == undefined
+              ? 0
+              : item[props.field]
+          ))
+        : 0
+    );
+
+    return (
+      <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+        {numberWithCommas(sum)}
+      </td>
+    );
+  };
+
+  const editNumberFooterCell6 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult6.data.forEach((item) =>
       props.field !== undefined
         ? (sum += parseFloat(
             item[props.field] == "" || item[props.field] == undefined
@@ -1442,6 +1527,7 @@ const SA_A1100_603W: React.FC = () => {
   let _export3: any;
   let _export4: any;
   let _export5: any;
+  let _export6: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
       if (tabSelected == 0) {
@@ -1454,9 +1540,12 @@ const SA_A1100_603W: React.FC = () => {
       if (tabSelected == 1) {
         const optionsGridTwo = _export2.workbookOptions();
         const optionsGridThree = _export3.workbookOptions();
+        const optionsGridSix = _export6.workbookOptions();
         optionsGridTwo.sheets[1] = optionsGridThree.sheets[0];
+        optionsGridTwo.sheets[2] = optionsGridSix.sheets[0];
         optionsGridTwo.sheets[0].title = "계약에 대한 코멘트";
         optionsGridTwo.sheets[1].title = "시험리스트";
+        optionsGridTwo.sheets[2].title = "지급조건";
         _export2.save(optionsGridTwo);
       }
     }
@@ -1482,6 +1571,16 @@ const SA_A1100_603W: React.FC = () => {
     );
   };
 
+  const ongrdDetailItemChange6 = (event: GridItemChangeEvent) => {
+    setMainDataState6((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult6,
+      setMainDataResult6,
+      DATA_ITEM_KEY6
+    );
+  };
+
   const customCellRender = (td: any, props: any) => (
     <CellRender
       originalProps={props}
@@ -1490,7 +1589,14 @@ const SA_A1100_603W: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
-
+  const customCellRender6 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit6}
+      editField={EDIT_FIELD}
+    />
+  );
   const customRowRender = (tr: any, props: any) => (
     <RowRender
       originalProps={props}
@@ -1499,7 +1605,14 @@ const SA_A1100_603W: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
-
+  const customRowRender6 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit6}
+      editField={EDIT_FIELD}
+    />
+  );
   const ongrdDetailItemChange2 = (event: GridItemChangeEvent) => {
     setMainDataState3((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
@@ -1560,6 +1673,38 @@ const SA_A1100_603W: React.FC = () => {
       setTempResult((prev) => {
         return {
           data: mainDataResult2.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+  const enterEdit6 = (dataItem: any, field: string) => {
+    if (field == "rowstatus") {
+      const newData = mainDataResult6.data.map((item) =>
+        item[DATA_ITEM_KEY6] == dataItem[DATA_ITEM_KEY6]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
+
+      setTempResult6((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult6((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult6((prev) => {
+        return {
+          data: mainDataResult6.data,
           total: prev.total,
         };
       });
@@ -1630,6 +1775,53 @@ const SA_A1100_603W: React.FC = () => {
         };
       });
       setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit6 = () => {
+    if (tempResult6.data != mainDataResult6.data) {
+      const newData = mainDataResult6.data.map((item) =>
+        item[DATA_ITEM_KEY6] == Object.getOwnPropertyNames(selectedState6)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setTempResult6((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult6((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult6.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult6((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult6((prev) => {
         return {
           data: newData,
           total: prev.total,
@@ -1738,6 +1930,10 @@ const SA_A1100_603W: React.FC = () => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
+  const onMainSortChange6 = (e: any) => {
+    setMainDataState6((prev) => ({ ...prev, sort: e.sort }));
+  };
+
   const onLinkChange = (event: GridRowDoubleClickEvent) => {
     const selectedRowData = event.dataItem;
     const origin = window.location.origin;
@@ -1837,7 +2033,6 @@ const SA_A1100_603W: React.FC = () => {
       "@p_seq1": subFilters.seq1,
       "@p_location": "01",
       "@p_project": Information.project,
-      "@p_paymeth": Information.paymeth,
       "@p_wonchgrat": Information.wonchgrat,
       "@p_amtunit": Information.amtunit,
       "@p_rowstatus_s": ParaData.rowstatus_s,
@@ -2414,17 +2609,6 @@ const SA_A1100_603W: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th style={{ textAlign: "right" }}> 지급조건 </th>
-                      <td>
-                        <Input
-                          name="paymeth"
-                          type="text"
-                          value={Information.paymeth}
-                          onChange={InfoInputChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
                       <th style={{ textAlign: "right" }}> 시험물질명 </th>
                       <td>
                         <Input
@@ -2483,6 +2667,95 @@ const SA_A1100_603W: React.FC = () => {
               </FormBoxWrap>
               <GridContainer>
                 <GridTitleContainer>
+                  <GridTitle>지급조건</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                    <Button
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="저장"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  data={mainDataResult6.data}
+                  ref={(exporter) => {
+                    _export6 = exporter;
+                  }}
+                  fileName="계약관리"
+                >
+                  <Grid
+                    style={{ height: `calc((120vh - 300px)/2)` }}
+                    data={process(
+                      mainDataResult6.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState6[idGetter6(row)],
+                      })),
+                      mainDataState6
+                    )}
+                    {...mainDataState6}
+                    onDataStateChange={onMainDataStateChange6}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY6}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange6}
+                    fixedScroll={true}
+                    total={mainDataResult6.total}
+                    skip={page6.skip}
+                    take={page6.take}
+                    pageable={true}
+                    onPageChange={pageChange6}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange6}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={ongrdDetailItemChange6}
+                    cellRender={customCellRender6}
+                    rowRender={customRowRender6}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn field="rowstatus" title=" " width="50px" />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList6"].map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              footerCell={
+                                item.sortOrder === 0
+                                  ? mainTotalFooterCell6
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+              <GridContainer>
+                <GridTitleContainer>
                   <GridTitle>계약에 대한 코멘트</GridTitle>
                   <ButtonContainer>
                     <Button
@@ -2515,7 +2788,7 @@ const SA_A1100_603W: React.FC = () => {
                   fileName="계약관리"
                 >
                   <Grid
-                    style={{ height: `calc(79vh - 300px)` }}
+                    style={{ height: `calc((120vh - 300px)/2)` }}
                     data={process(
                       mainDataResult3.data.map((row) => ({
                         ...row,
@@ -2620,7 +2893,7 @@ const SA_A1100_603W: React.FC = () => {
                 fileName="계약관리"
               >
                 <Grid
-                  style={{ height: "79vh" }}
+                  style={{ height: "120vh" }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,

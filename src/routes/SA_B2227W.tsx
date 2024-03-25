@@ -119,8 +119,6 @@ const SA_B2227W: React.FC = () => {
       if (obj[0].length != 0) {
         for (let key in obj[0]) {
           /* 키/값 출력 */
-          console.log(key);
-          console.log(obj[0][key]);
           if (obj[0][key] == null) {
             delete obj[0][key];
           }

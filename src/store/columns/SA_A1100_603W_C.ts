@@ -254,4 +254,34 @@ export const gridList: Array<TGrid> = [
       },
     ],
   },
+  {
+    // 요약정보
+    gridName: "grdList6",
+    columns: [
+      {
+        id: "col_paymeth",
+        field: "paymeth",
+        caption: "지급항목",
+        width: 120,
+      },
+      {
+        id: "col_contents",
+        field: "contents",
+        caption: "내용",
+        width: 150,
+      },
+      {
+        id: "col_payyrmm",
+        field: "payyrmm",
+        caption: "청구년월일",
+        width: 120,
+      },
+      {
+        id: "col_amt_detail2",
+        field: "amt",
+        caption: "금액",
+        width: 100,
+      },
+    ],
+  },
 ];

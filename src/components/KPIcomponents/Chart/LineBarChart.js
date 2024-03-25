@@ -21,19 +21,6 @@ export default function DoubleChart(props) {
         labels: props.alllabel,
         datasets: [
           {
-            type: "bar",
-            label: props.label[0],
-            backgroundColor: props.color[0],
-            data: propsData
-              .filter((item) => props.label[0] == item.series)
-              .map((items) => items[props.value]),
-            yAxisID: "y",
-            datalabels: {
-              align: "end",
-              anchor: "end",
-            },
-          },
-          {
             type: "line",
             label: props.label[1],
             backgroundColor: props.color[1],
@@ -44,6 +31,19 @@ export default function DoubleChart(props) {
             data: propsData
               .filter((item) => props.label[1] == item.series)
               .map((items) => items[props.value]),
+            datalabels: {
+              align: "end",
+              anchor: "end",
+            },
+          },
+          {
+            type: "bar",
+            label: props.label[0],
+            backgroundColor: props.color[0],
+            data: propsData
+              .filter((item) => props.label[0] == item.series)
+              .map((items) => items[props.value]),
+            yAxisID: "y",
             datalabels: {
               align: "end",
               anchor: "end",
