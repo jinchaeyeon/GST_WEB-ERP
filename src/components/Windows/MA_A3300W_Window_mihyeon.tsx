@@ -2212,43 +2212,12 @@ const CopyWindow = ({
       });
     }
   };
-  const onItemChange = (e: any) => {
-    // field 값이 정의되어 있는지 확인
-    if (e.field) {
-      let newData = mainDataResult.data.map((item) => {
-        if (item[DATA_ITEM_KEY] === e.dataItem[DATA_ITEM_KEY]) {
-          // 값 변경 시 특정 플래그를 true로 설정하여 사용자가 값을 변경했음을 표시
-          let updatedItem = { ...item, [e.field]: e.value }; // 기본 업데이트
-          switch (e.field) {
-            case 'amt':
-              updatedItem.userChangedAmt = true;
-              break;
-            case 'wonamt':
-              updatedItem.userChangedWonAmt = true;
-              break;
-            case 'taxamt':
-              updatedItem.userChangedTaxAmt = true;
-              break;
-            // 기타 필드에 대한 처리가 필요한 경우 여기에 추가
-          }
-          return updatedItem;
-        } else {
-          return item;
-        }
-      });
-  
-      setMainDataResult({ ...mainDataResult, data: newData });
-    }
-  };
-  
-  
   const exitEdit = (): void => {
     if (tempResult.data !== mainDataResult.data) {
       const newData = mainDataResult.data.map((item: any) => {
         // 기본 금액, 원화금액, 세액 계산
-        let calculatedAmt = item.qty * item.unp;
-        let calculatedWonAmt = filters.amtunit === "KRW" ? calculatedAmt : calculatedAmt * filters.wonchgrat;
-        
+        let calculatedAmt =(filters.amtunit === "KRW" ?  item.qty * item.unp :  item.qty * item.unp * filters.wonchgrat)
+
         // 사용자 변경 여부에 따라 최종 금액 결정
         let finalAmt = item.userChangedAmt ? item.amt : calculatedAmt;
         let finalWonAmt = item.userChangedWonAmt ? item.wonamt : (filters.amtunit === "KRW" ? finalAmt : finalAmt * filters.wonchgrat);
