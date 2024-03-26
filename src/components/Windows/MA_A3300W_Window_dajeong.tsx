@@ -583,14 +583,18 @@ const CopyWindow = ({
         ? {
             ...item,
             rowstatus: item.rowstatus == "N" ? "N" : "U",
-            amt:
-                  filters.amtunit == "KRW"
-                    ? item.qty * item.unp
-                    : item.qty * item.unp,
+            // amt:
+            //       filters.amtunit == "KRW"
+            //         ? item.qty * item.unp
+            //         : item.qty * item.unp,
             wonamt:
-                  filters.amtunit == "KRW"
-                    ? item.qty * item.unp
-                    : item.qty * item.unp * value,
+              filters.amtunit == "KRW"
+              ? item.amt
+              : item.amt * value,
+            taxamt:
+              filters.amtunit == "KRW"
+              ? Math.floor(item.amt / 10)
+              : Math.floor(item.amt * value / 10),
           }
           : {
               ...item,
@@ -633,8 +637,12 @@ const CopyWindow = ({
             ...item,
               wonamt: 
                 value == "KRW"
-                  ? item.qty * item.unp 
-                  : item.qty * item.unp * filters.wonchgrat,
+                  ? item.amt
+                  : item.amt * filters.wonchgrat,
+              taxamt:
+                value == "KRW"
+                  ? Math.floor(item.amt / 10)
+                  : Math.floor(item.amt * filters.wonchgrat / 10),
           }
         : {
             ...item,
@@ -2164,41 +2172,53 @@ const CopyWindow = ({
   const exitEdit = () => {    
     if (tempResult.data != mainDataResult.data) {
       if (editedField !== "itemcd") {
-        const newData = mainDataResult.data.map((item: any) =>
-          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-            ? {
-                ...item,
-                rowstatus: item.rowstatus == "N" ? "N" : "U",
-                amt:
+        const newData = mainDataResult.data.map((item: any) => {
+          if (item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]) {
+            let updatedItem = {
+              ...item,
+              rowstatus: item.rowstatus === "N" ? "N" : "U", // rowstatus 업데이트
+              wonamt:
+                    filters.amtunit == "KRW"
+                      ? item.qty * item.unp
+                      : item.qty * item.unp * filters.wonchgrat,
+              taxamt:
                   filters.amtunit == "KRW"
-                    ? item.qty * item.unp
-                    : item.qty * item.unp,
-                wonamt:
+                    ? Math.floor(item.qty * item.unp / 10)
+                    : Math.floor(item.qty * item.unp * filters.wonchgrat / 10),
+              totamt:
                   filters.amtunit == "KRW"
-                    ? item.qty * item.unp
-                    : item.qty * item.unp * filters.wonchgrat,
-                taxamt:
-                  filters.amtunit == "KRW"
-                    ? (item.qty * item.unp) / 10
-                    : (item.qty * item.unp * filters.wonchgrat) / 10,
-                totamt:
-                  filters.amtunit == "KRW"
-                    ? Math.round(
+                    ? Math.floor(
                         item.qty * item.unp + (item.qty * item.unp) / 10
                       )
-                    : Math.round(
+                    : Math.floor(
                         item.qty * item.unp * filters.wonchgrat +
                           (item.qty * item.unp * filters.wonchgrat) / 10
                       ),
                 dlramt:
                   filters.amtunit == "KRW" ? item.qty / filters.uschgrat : 0,
                 [EDIT_FIELD]: undefined,
-              }
-            : {
-                ...item,
-                [EDIT_FIELD]: undefined,
-              }
-        );
+            };    
+
+            if(editedField == 'unp' || 'qty') {
+              updatedItem.amt = item.qty * item.unp;      
+            }
+
+            if (editedField == 'amt') {
+              updatedItem.amt = item.amt;
+              updatedItem.wonamt=
+                    filters.amtunit == "KRW"
+                      ? item.amt
+                      : item.amt * filters.wonchgrat;
+              updatedItem.taxamt = filters.amtunit == "KRW"
+                    ? Math.floor(updatedItem.wonamt / 10)
+                    : Math.floor(updatedItem.wonamt * filters.wonchgrat / 10);
+            }  
+
+            return updatedItem;            
+          } else {
+              return item;
+          }
+        });   
         setTempResult((prev: { total: any }) => {
           return {
             data: newData,
