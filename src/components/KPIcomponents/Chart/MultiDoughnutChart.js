@@ -73,7 +73,7 @@ export default function MultiDoughnutChart(props) {
       };
 
       const options = {
-        cutout: "50%",
+        cutout: "60%",
         plugins: {
           datalabels: {
             color: "black",

@@ -87,6 +87,9 @@ export default function DoubleChart(props) {
             ticks: {
               color: textColorSecondary,
             },
+            afterDataLimits: scale => {
+              scale.max = scale.max * 1.2;
+            },
             grid: {
               color: surfaceBorder,
             },

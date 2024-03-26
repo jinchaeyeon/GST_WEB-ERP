@@ -614,6 +614,26 @@ export const FormCheckBox = (fieldRenderProps: FieldRenderProps) => {
     </FieldWrapper>
   );
 };
+
+export const FormCheckBox2 = (fieldRenderProps: FieldRenderProps) => {
+  const { value, label, id, valid, className } = fieldRenderProps;
+
+  const required = className?.includes("required");
+  let DDLvalid = valid;
+  if (required) DDLvalid = checkIsDDLValid(value);
+
+  return (
+    <FieldWrapper style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div className={"k-form-field-wrap"} style={{ marginRight: "2%" }}>
+        <FieldCheckBox fieldRenderProps={fieldRenderProps} />
+      </div>
+      <Label editorId={id} editorValid={DDLvalid}>
+        {label}
+      </Label>
+    </FieldWrapper>
+  );
+};
+
 //Form Field에서 사용되는 DatePicker
 export const FormDatePicker = (fieldRenderProps: FieldRenderProps) => {
   const {

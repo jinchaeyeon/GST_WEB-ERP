@@ -37,6 +37,8 @@ import {
   FilterBox,
   GridContainer,
   GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
   Title,
   TitleContainer,
 } from "../CommonStyled";
@@ -62,6 +64,7 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import SA_B2221W_Window from "../components/Windows/SA_B2221W_Window";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
 import { isLoading, loginResultState } from "../store/atoms";
@@ -593,6 +596,13 @@ const SA_B2221: React.FC = () => {
     }
   };
 
+  const [DetailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
+
+  const onDetailClick = () => {
+    setDetailWindowVisible(true);
+  };
+
   return (
     <>
       <TitleContainer>
@@ -690,11 +700,18 @@ const SA_B2221: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
-
+      <GridTitleContainer>
+        <GridTitle></GridTitle>
+        <ButtonContainer>
+          <Button onClick={onDetailClick} themeColor={"primary"} icon="file">
+            상세내역 조회
+          </Button>
+        </ButtonContainer>
+      </GridTitleContainer>
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ height: "79.5vh", width: "100%" }}
+        style={{ height: "77vh", width: "100%" }}
       >
         <TabStripTab title="전체">
           <GridContainerWrap flexDirection="column">
@@ -737,7 +754,7 @@ const SA_B2221: React.FC = () => {
                 fileName="수주집계(품목)"
               >
                 <Grid
-                  style={{ height: "33.5vh" }}
+                  style={{ height: "32vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -815,7 +832,7 @@ const SA_B2221: React.FC = () => {
                 fileName="수주집계(품목)"
               >
                 <Grid
-                  style={{ height: "33.5vh" }}
+                  style={{ height: "32vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -959,7 +976,7 @@ const SA_B2221: React.FC = () => {
                 fileName="수주집계(품목)"
               >
                 <Grid
-                  style={{ height: "33.5vh" }}
+                  style={{ height: "32vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -1190,6 +1207,39 @@ const SA_B2221: React.FC = () => {
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
+          modal={true}
+        />
+      )}
+      {DetailWindowVisible && (
+        <SA_B2221W_Window
+          setVisible={setDetailWindowVisible}
+          itemcd={
+            gridDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0] != undefined
+              ? gridDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0].itemcd
+              : ""
+          }
+          itemnm={
+            gridDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0] != undefined
+              ? gridDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0].itemnm
+              : ""
+          }
+          yyyy={filters.yyyy}
           modal={true}
         />
       )}

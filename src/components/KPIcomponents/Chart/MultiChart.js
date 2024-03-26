@@ -71,6 +71,7 @@ export default function MultiChart(props) {
             },
           },
         },
+        
         scales: {
           x: {
             ticks: {
@@ -83,6 +84,9 @@ export default function MultiChart(props) {
           y: {
             ticks: {
               color: textColorSecondary,
+            },
+            afterDataLimits: scale => {
+              scale.max = scale.max * 1.2;
             },
             grid: {
               color: surfaceBorder,
