@@ -588,10 +588,9 @@ const CopyWindow = ({
               : item.qty * item.unp * filters.wonchgrat,
           taxamt: Math.floor(
             filters.taxdiv == "A"
-              ? filters.amtunit == "KRW"
-                ? item.qty * item.unp * 0.1
-                : item.qty * item.unp * filters.wonchgrat * 0.1
-              : 0)
+              ?  item.wonamt * 0.1
+              : 0
+          ),
         };
       });
 
@@ -624,10 +623,9 @@ const CopyWindow = ({
               : item.qty * item.unp * filters.wonchgrat,
           taxamt: Math.floor(
             filters.taxdiv == "A"
-              ? value == "KRW"
-                ? item.qty * item.unp * 0.1
-                : item.qty * item.unp * filters.wonchgrat * 0.1
-              : 0)
+              ?  item.wonamt * 0.1
+              : 0
+          ),
         };
       });
 
@@ -661,10 +659,9 @@ const CopyWindow = ({
               : item.qty * item.unp * value,
           taxamt: Math.floor(
             filters.taxdiv == "A"
-              ? filters.amtunit == "KRW"
-                ? item.qty * item.unp * 0.1
-                : item.qty * item.unp * value * 0.1
-              : 0)
+              ?  item.wonamt * 0.1
+              : 0
+          ),
         };
       });
 
@@ -716,9 +713,7 @@ const CopyWindow = ({
                 : item.qty * item.unp * filters.wonchgrat,
           taxamt: Math.floor(
             value == "A"
-              ? filters.amtunit == "KRW"
-                  ? item.qty * item.unp * 0.1
-                  : item.qty * item.unp * filters.wonchgrat * 0.1
+              ?  item.wonamt * 0.1
               : 0
           ),
         };
@@ -753,9 +748,7 @@ const CopyWindow = ({
                 : item.qty * item.unp * filters.wonchgrat,
           taxamt: Math.floor(
             filters.taxdiv == "A"
-              ?  value == "KRW"
-                  ? item.qty * item.unp * 0.1
-                  : item.qty * item.unp * filters.wonchgrat * 0.1
+              ?  item.wonamt * 0.1
               : 0
           ),
         };
@@ -2324,25 +2317,22 @@ const CopyWindow = ({
               const amt = item.qty * item.unp;
               updatedItem.amt = applyExchangeRate(amt); // 금액(amt) 업데이트
               updatedItem.wonamt = updatedItem.amt; // 원화금액(wonamt)를 amt와 동일하게 설정
-              updatedItem.taxamt = Math.floor(updatedItem.wonamt * 0.1); // 세액(taxamt) 계산
+              updatedItem.taxamt =  filters.taxdiv !== "A" ? 0 : Math.floor(updatedItem.wonamt * 0.1); // 세액(taxamt) 계산
             }
   
             // 금액(amt)이 직접 수정되었을 경우
             if (editedField === 'amt') {
               const amt = item.amt;
               updatedItem.wonamt = applyExchangeRate(amt); // 원화금액(wonamt) 업데이트
-              updatedItem.taxamt = Math.floor(updatedItem.wonamt * 0.1); // 세액(taxamt) 계산
+              updatedItem.taxamt =  filters.taxdiv !== "A" ? 0 : Math.floor(updatedItem.wonamt * 0.1); // 세액(taxamt) 계산
             }
   
             // 원화금액(wonamt)이 직접 수정되었을 경우
             if (editedField === 'wonamt') {
               const wonamt = item.wonamt;
-              updatedItem.taxamt = Math.floor(applyExchangeRate(wonamt) * 0.1); // 세액(taxamt) 업데이트
+              updatedItem.taxamt =  filters.taxdiv !== "A" ? 0 : Math.floor(updatedItem.wonamt * 0.1); // 세액(taxamt) 업데이트
             }
-            
-            if(updatedItem.taxdiv !== "A"){
-              updatedItem.taxamt = 0
-            }
+
             return updatedItem;
           } else {
             return {
