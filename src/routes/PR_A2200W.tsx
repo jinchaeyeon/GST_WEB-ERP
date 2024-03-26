@@ -27,6 +27,7 @@ import { isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 var index = 0;
+let deletedMainRows: any[] = [];
 
 const PR_A2200W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -37,13 +38,14 @@ const PR_A2200W: React.FC = () => {
   let isMobile = deviceWidth <= 1200;
   const [swiper, setSwiper] = useState<SwiperCore>();
   const [step, setStep] = useState(0);
-
+  const [pictureindex, SetPicureindex] = useState(0);
   const search = () => {
     resetInformation();
     setFilters((prev) => ({
       ...prev,
       isSearch: true,
     }));
+    deletedMainRows = [];
   };
 
   const search2 = () => {
@@ -57,6 +59,7 @@ const PR_A2200W: React.FC = () => {
       setup_location: "",
       comment: "",
     }));
+    deletedMainRows = [];
   };
 
   const [isCaptured, setIsCaptured] = useState(false);
@@ -410,7 +413,7 @@ const PR_A2200W: React.FC = () => {
       devmngnum: datas.devmngnum,
       isSearch: true,
     }));
-
+    deletedMainRows = [];
     if (swiper && isMobile) {
       swiper.slideTo(1);
     }
@@ -427,7 +430,7 @@ const PR_A2200W: React.FC = () => {
       setup_location: datas.setup_location,
       comment: datas.comment,
     }));
-
+    deletedMainRows = [];
     setFilters3((prev) => ({
       ...prev,
       attdatnum: datas.attdatnum,
@@ -460,7 +463,7 @@ const PR_A2200W: React.FC = () => {
                 {
                   url: image != null ? image : "",
                   file: file,
-                  rowstatus: "N"
+                  rowstatus: "N",
                 },
                 ...prev.data[0].image,
               ],
@@ -469,6 +472,7 @@ const PR_A2200W: React.FC = () => {
           total: prev.total + 1,
         }));
       }
+      SetPicureindex(0);
     } else {
       alert("새로고침 후 다시 업로드해주세요.");
     }
@@ -537,7 +541,7 @@ const PR_A2200W: React.FC = () => {
             {
               url: url != null ? url : "",
               file: file,
-              rowstatus: "N"
+              rowstatus: "N",
             },
             ...prev.data[0].image,
           ],
@@ -545,6 +549,7 @@ const PR_A2200W: React.FC = () => {
       ],
       total: prev.total + 1,
     }));
+    SetPicureindex(0);
     setIsCaptured(false);
   };
 
@@ -582,8 +587,36 @@ const PR_A2200W: React.FC = () => {
     };
   }, [isCaptured]);
 
+  const onDeletePicture = () => {
+    let newData: any[] = [];
+    mainDataResult3.data[0].image.forEach((item: any, index: number) => {
+      if (index != pictureindex) {
+        newData.push(item);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows.push(newData2);
+        }
+      }
+    });
+    setMainDataResult3((prev) => ({
+      data: [
+        {
+          image: newData,
+        },
+      ],
+      total: prev.total - 1,
+    }));
+    SetPicureindex(pictureindex - 1 == -1 ? 0 : pictureindex - 1);
+  };
 
-  console.log(mainDataResult3)
+  const handleChange = (selectedIndex: any) => {
+    SetPicureindex(selectedIndex);
+  };
+
   return (
     <>
       {isMobile ? (
@@ -655,6 +688,7 @@ const PR_A2200W: React.FC = () => {
                   fillMode={"solid"}
                   onClick={() => {
                     resetInformation();
+                    deletedMainRows = [];
                     setFilters2((prev) => ({
                       ...prev,
                       devmngnum: "",
@@ -797,6 +831,8 @@ const PR_A2200W: React.FC = () => {
                     cycleNavigation={true}
                     navButtonsAlwaysVisible={true}
                     autoPlay={false}
+                    onChange={handleChange}
+                    index={pictureindex}
                   >
                     {mainDataResult3.data[0].image.map((content: any) => (
                       <>
@@ -878,9 +914,19 @@ const PR_A2200W: React.FC = () => {
                         <tr style={{ display: "flex", flexDirection: "row" }}>
                           <td>
                             <Button
+                              themeColor={"primary"}
+                              fillMode={"solid"}
+                              onClick={() => onDeletePicture()}
+                              style={{ width: "100%" }}
+                            >
+                              사진 삭제
+                            </Button>
+                          </td>
+                          <td>
+                            <Button
                               id={"button5"}
                               themeColor={"primary"}
-                              fillMode={"outline"}
+                              fillMode={"solid"}
                               //onClick={() => onClick2()}
                               style={{ width: "100%" }}
                             >
@@ -908,6 +954,7 @@ const PR_A2200W: React.FC = () => {
                     fillMode={"solid"}
                     onClick={() => {
                       resetInformation();
+                      deletedMainRows = [];
                       setFilters2((prev) => ({
                         ...prev,
                         devmngnum: "",
@@ -1111,6 +1158,13 @@ const PR_A2200W: React.FC = () => {
                       >
                         촬영모드
                       </Button>
+                      <Button
+                        themeColor={"primary"}
+                        fillMode={"solid"}
+                        onClick={() => onDeletePicture()}
+                      >
+                        사진 삭제
+                      </Button>
                       <Button icon="save">저장</Button>
                     </>
                   )}
@@ -1130,6 +1184,8 @@ const PR_A2200W: React.FC = () => {
                     cycleNavigation={true}
                     navButtonsAlwaysVisible={true}
                     autoPlay={false}
+                    onChange={handleChange}
+                    index={pictureindex}
                   >
                     {mainDataResult3.data[0].image.map((content: any) => (
                       <>
