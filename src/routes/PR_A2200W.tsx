@@ -4,6 +4,7 @@ import { Button } from "@progress/kendo-react-buttons";
 import { Switch, TextArea } from "@progress/kendo-react-inputs";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import Carousel from "react-material-ui-carousel";
+import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -19,14 +20,19 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
-import { UsePermissions } from "../components/CommonFunction";
-import { TPermissions } from "../store/types";
+import { UsePermissions, convertDateToStr } from "../components/CommonFunction";
+import { PAGE_SIZE } from "../components/CommonString";
+import { useApi } from "../hooks/api";
+import { isLoading } from "../store/atoms";
+import { Iparameters, TPermissions } from "../store/types";
 
 var index = 0;
 
-const PR_A0000W: React.FC = () => {
+const PR_A2200W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const processApi = useApi();
+  const setLoading = useSetRecoilState(isLoading);
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const [swiper, setSwiper] = useState<SwiperCore>();
@@ -34,14 +40,22 @@ const PR_A0000W: React.FC = () => {
 
   const search = () => {
     resetInformation();
+    setFilters((prev) => ({
+      ...prev,
+      isSearch: true,
+    }));
   };
 
   const search2 = () => {
     setInformation((prev) => ({
       ...prev,
-      fxnm: "",
-      description: "",
-      chk: false,
+      attdatnum: "",
+      finyn: false,
+      person: "",
+      setup_hw_num: "",
+      setup_hw_name: "",
+      setup_location: "",
+      comment: "",
     }));
   };
 
@@ -49,6 +63,289 @@ const PR_A0000W: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(
     null
   ) as MutableRefObject<HTMLVideoElement>;
+
+  const [filters, setFilters] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "LIST",
+    orgdiv: "01",
+    pgNum: 1,
+    isSearch: true,
+  });
+  const [filters2, setFilters2] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "DETAIL",
+    orgdiv: "01",
+    devmngnum: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+  const [filters3, setFilters3] = useState({
+    attdatnum: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+  //그리드 데이터 조회
+  const fetchMainGrid = async (filters: any) => {
+    //if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_PR_A2200_Q",
+      pageNumber: filters.pgNum,
+      pageSize: filters.pgSize,
+      parameters: {
+        "@p_work_type": filters.workType,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_dtgb": "",
+        "@p_frdt": "",
+        "@p_todt": "",
+
+        "@p_custcd": "",
+        "@p_custnm": "",
+        "@p_pjtmanager": "",
+        "@p_pjtperson": "",
+        "@p_project": "",
+
+        "@p_finyn": "",
+        "@p_attdatnum": "",
+        "@p_devmngnum": "",
+        "@p_pgmid": "",
+        "@p_pgmnm": "",
+
+        "@p_person": "",
+        "@p_finexpdt": "",
+        "@p_dptcd1": "",
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows;
+
+      setMainDataResult({
+        data: rows,
+        total: totalRowCnt == -1 ? 0 : totalRowCnt,
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid2 = async (filters2: any) => {
+    //if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_PR_A2200_Q",
+      pageNumber: filters2.pgNum,
+      pageSize: filters2.pgSize,
+      parameters: {
+        "@p_work_type": filters2.workType,
+        "@p_orgdiv": filters2.orgdiv,
+        "@p_dtgb": "",
+        "@p_frdt": "",
+        "@p_todt": "",
+
+        "@p_custcd": "",
+        "@p_custnm": "",
+        "@p_pjtmanager": "",
+        "@p_pjtperson": "",
+        "@p_project": "",
+
+        "@p_finyn": "",
+        "@p_attdatnum": "",
+        "@p_devmngnum": filters2.devmngnum,
+        "@p_pgmid": "",
+        "@p_pgmnm": "",
+
+        "@p_person": "",
+        "@p_finexpdt": "",
+        "@p_dptcd1": "",
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].RowCount;
+      const rows = data.tables[0].Rows;
+
+      setMainDataResult2({
+        data: rows,
+        total: totalRowCnt == -1 ? 0 : totalRowCnt,
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid3 = async (filters3: any) => {
+    //if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+    if (filters3.attdatnum === "") {
+      setMainDataResult3({
+        data: [
+          {
+            image: [],
+          },
+        ],
+        total: 0,
+      });
+      setLoading(false);
+      return false;
+    }
+
+    const parameters = {
+      attached: "list?attachmentNumber=" + filters3.attdatnum,
+    };
+
+    try {
+      data = await processApi<any>("file-list", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      const totalRowCnt = data.tables[0].RowCount;
+      if (totalRowCnt > 0) {
+        const rows = data.tables[0].Rows.map((item: any) => ({
+          ...item,
+        }));
+        let response: any;
+
+        let array: any[] = [];
+        const promises: any[] = [];
+        for (const parameter of rows) {
+          try {
+            response = await processApi<any>("file-download", {
+              attached: parameter.saved_name,
+            });
+            const promise = response;
+            promises.push(promise);
+          } catch (error) {
+            response = null;
+          }
+        }
+        const results = await Promise.all(promises);
+
+        results.map((response, index) => {
+          const blob = new Blob([response.data]);
+          const fileObjectUrl = window.URL.createObjectURL(blob);
+          array.push({
+            url: fileObjectUrl,
+            file: rows[index],
+            rowstatus: "",
+          });
+        });
+
+        const datas3 = [
+          {
+            image: array,
+          },
+        ];
+
+        setMainDataResult3((prev) => {
+          return {
+            data: datas3,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
+          };
+        });
+      } else {
+        setMainDataResult3({
+          data: [
+            {
+              image: [],
+            },
+          ],
+          total: 0,
+        });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters3((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (filters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters);
+
+      setFilters((prev) => ({ ...prev, isSearch: false }));
+
+      fetchMainGrid(deepCopiedFilters);
+    }
+  }, [filters]);
+
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (filters2.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters2);
+
+      setFilters2((prev) => ({ ...prev, isSearch: false }));
+
+      fetchMainGrid2(deepCopiedFilters);
+    }
+  }, [filters2]);
+
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (filters3.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters3);
+
+      setFilters3((prev) => ({ ...prev, isSearch: false }));
+
+      fetchMainGrid3(deepCopiedFilters);
+    }
+  }, [filters3]);
 
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
@@ -69,11 +366,14 @@ const PR_A0000W: React.FC = () => {
     process([], mainDataState3)
   );
   const [information, setInformation] = useState({
-    custnm: "",
-    title: "",
-    fxnm: "",
-    description: "",
-    chk: false,
+    devmngnum: "",
+    attdatnum: "",
+    finyn: false,
+    person: "",
+    setup_hw_num: "",
+    setup_hw_name: "",
+    setup_location: "",
+    comment: "",
   });
 
   const filterInputChange = (e: any) => {
@@ -87,11 +387,14 @@ const PR_A0000W: React.FC = () => {
 
   const resetInformation = () => {
     setInformation({
-      custnm: "",
-      title: "",
-      fxnm: "",
-      description: "",
-      chk: false,
+      devmngnum: "",
+      attdatnum: "",
+      finyn: false,
+      person: "",
+      setup_hw_num: "",
+      setup_hw_name: "",
+      setup_location: "",
+      comment: "",
     });
   };
   const onCheckClick = (datas: any) => {
@@ -99,8 +402,13 @@ const PR_A0000W: React.FC = () => {
 
     setInformation((prev) => ({
       ...prev,
-      custnm: datas.custnm,
-      title: datas.title,
+      devmngnum: datas.devmngnum,
+    }));
+
+    setFilters2((prev) => ({
+      ...prev,
+      devmngnum: datas.devmngnum,
+      isSearch: true,
     }));
 
     if (swiper && isMobile) {
@@ -111,17 +419,29 @@ const PR_A0000W: React.FC = () => {
   const onCheckClick2 = (datas: any) => {
     setInformation((prev) => ({
       ...prev,
-      fxnm: datas.fxnm,
+      setup_hw_name: datas.setup_hw_name,
+      setup_hw_num: datas.setup_hw_num,
+      attdatnum: datas.attdatnum,
+      finyn: datas.finyn == "Y" ? true : false,
+      person: datas.person,
+      setup_location: datas.setup_location,
+      comment: datas.comment,
+    }));
+
+    setFilters3((prev) => ({
+      ...prev,
+      attdatnum: datas.attdatnum,
+      isSearch: true,
     }));
   };
 
   useEffect(() => {
-    if (information.fxnm != "" && index == 1 && isMobile) {
+    if (information.setup_hw_num != "" && index == 1 && isMobile) {
       if (swiper) {
         swiper.slideTo(2);
       }
     }
-  }, [information.fxnm]);
+  }, [information.setup_hw_num]);
 
   const excelInput: any = React.useRef();
   const upload = () => {
@@ -136,10 +456,11 @@ const PR_A0000W: React.FC = () => {
         setMainDataResult3((prev) => ({
           data: [
             {
-              ...prev.data[0].description,
               image: [
                 {
                   url: image != null ? image : "",
+                  file: file,
+                  rowstatus: "N"
                 },
                 ...prev.data[0].image,
               ],
@@ -167,14 +488,30 @@ const PR_A0000W: React.FC = () => {
       });
   }, []);
 
+  const dataURLtoFile = (dataurl: any, fileName: any) => {
+    var arr = dataurl.split(","),
+      mime = arr[0].match(/:(.*?);/)[1],
+      bstr = atob(arr[1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n);
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new File([u8arr], fileName, { type: mime });
+  };
+
   const onCapture = () => {
     videoRef.current.pause();
     const canvas = document.createElement("canvas");
+
     canvas.width = videoRef.current.videoWidth;
     canvas.height = videoRef.current.videoHeight;
 
     // 2. canvas에 video 이미지 그리기
     const context = canvas.getContext("2d");
+
     if (context != null) {
       context.drawImage(videoRef.current, 0, 0);
     }
@@ -186,13 +523,21 @@ const PR_A0000W: React.FC = () => {
 
     // 3. 다운로드 url 넣기
     ae.href = url;
+    const file = dataURLtoFile(
+      url,
+      convertDateToStr(new Date()) +
+        "_" +
+        (mainDataResult3.data[0].image.length + 1)
+    );
+
     setMainDataResult3((prev) => ({
       data: [
         {
-          ...prev.data[0].description,
           image: [
             {
               url: url != null ? url : "",
+              file: file,
+              rowstatus: "N"
             },
             ...prev.data[0].image,
           ],
@@ -237,80 +582,8 @@ const PR_A0000W: React.FC = () => {
     };
   }, [isCaptured]);
 
-  useEffect(() => {
-    const data = [
-      {
-        custnm: "(주)휘앤비",
-        title: "2023 스마트공장 고도화1 사업",
-      },
-      {
-        custnm: "허스델리",
-        title: "2023 스마트공장 고도화1 사업",
-      },
-      {
-        custnm: "에드테크",
-        title: "2023 스마트공장 고도화1 사업",
-      },
-    ];
 
-    const data2 = [
-      {
-        fxnm: "라미 1호기",
-      },
-      {
-        fxnm: "라미 2호기",
-      },
-      {
-        fxnm: "라미 3호기",
-      },
-      {
-        fxnm: "CNC 1호기",
-      },
-      {
-        fxnm: "CNC 2호기",
-      },
-    ];
-
-    const data3 = [
-      {
-        image: [
-          {
-            url: "https://i.pinimg.com/736x/2a/fd/05/2afd0541bb003577c986a3ec535415eb.jpg",
-          },
-          {
-            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRnY6ML8-yTbLPw8qbp_aAMWlgB-4lQIb4_Jw&usqp=CAU",
-          },
-          {
-            url: "https://c4.wallpaperflare.com/wallpaper/39/346/426/digital-art-men-city-futuristic-night-hd-wallpaper-thumb.jpg",
-          },
-          {
-            url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI5jHxCN6SEQNWx_5FoNp5IsQIInPup2w4jA&usqp=CAU",
-          },
-        ],
-        description: "",
-      },
-    ];
-
-    setMainDataResult((prev) => {
-      return {
-        data: data,
-        total: data.length,
-      };
-    });
-    setMainDataResult2((prev) => {
-      return {
-        data: data2,
-        total: data2.length,
-      };
-    });
-    setMainDataResult3((prev) => {
-      return {
-        data: data3,
-        total: data3.length,
-      };
-    });
-  }, []);
-
+  console.log(mainDataResult3)
   return (
     <>
       {isMobile ? (
@@ -352,18 +625,22 @@ const PR_A0000W: React.FC = () => {
                         width: "100%",
                         cursor: "pointer",
                         backgroundColor:
-                          item.custnm == information.custnm
+                          item.devmngnum == information.devmngnum
                             ? "#d6d8f9"
                             : "white",
+                        height: "80px",
                       }}
                     >
                       <CardContent
                         onClick={() => onCheckClick(item)}
                         style={{ textAlign: "left", padding: "8px" }}
                       >
-                        <Typography variant="h6">{item.custnm}</Typography>
+                        <div style={{ height: "40px" }}>
+                          <Typography variant="h6">{item.custnm}</Typography>
+                        </div>
+
                         <Typography variant="body2" color="text.secondary">
-                          {item.title}
+                          {item.project}
                         </Typography>
                       </CardContent>
                     </Card>
@@ -378,6 +655,11 @@ const PR_A0000W: React.FC = () => {
                   fillMode={"solid"}
                   onClick={() => {
                     resetInformation();
+                    setFilters2((prev) => ({
+                      ...prev,
+                      devmngnum: "",
+                      isSearch: true,
+                    }));
                     if (swiper) {
                       swiper.slideTo(1);
                     }
@@ -418,14 +700,23 @@ const PR_A0000W: React.FC = () => {
                         width: "100%",
                         cursor: "pointer",
                         backgroundColor:
-                          item.fxnm == information.fxnm ? "#d6d8f9" : "white",
+                          item.setup_hw_num == information.setup_hw_num
+                            ? "#d6d8f9"
+                            : "white",
+                        height: "80px",
                       }}
                     >
                       <CardContent
                         onClick={() => onCheckClick2(item)}
-                        style={{ textAlign: "left", padding: "8px" }}
+                        style={{
+                          textAlign: "left",
+                          padding: "8px",
+                          height: "100%",
+                        }}
                       >
-                        <Typography variant="h6">{item.fxnm}</Typography>
+                        <Typography variant="h6">
+                          {item.setup_hw_name}
+                        </Typography>
                       </CardContent>
                     </Card>
                   </AdminQuestionBox>
@@ -433,7 +724,7 @@ const PR_A0000W: React.FC = () => {
               ))}
             </GridContainer>
           </SwiperSlide>
-          {information.fxnm == "" ? (
+          {information.setup_hw_num == "" ? (
             ""
           ) : (
             <SwiperSlide key={2} className="leading_PDA">
@@ -444,12 +735,12 @@ const PR_A0000W: React.FC = () => {
                     onChange={(event: any) => {
                       setInformation((prev) => ({
                         ...prev,
-                        chk: event.target.value,
+                        finyn: event.target.value,
                       }));
                     }}
                     onLabel={"작업완료"}
                     offLabel={"작업중"}
-                    checked={information.chk}
+                    checked={information.finyn}
                     className="PDA_Switch"
                   />
                 </ButtonContainer>
@@ -501,29 +792,29 @@ const PR_A0000W: React.FC = () => {
                       </FormBox>
                     </FormBoxWrap>
                   </>
-                ) : (
+                ) : mainDataResult3.total > 0 ? (
                   <Carousel
                     cycleNavigation={true}
                     navButtonsAlwaysVisible={true}
                     autoPlay={false}
                   >
-                    {mainDataResult3.total > 0
-                      ? mainDataResult3.data[0].image.map((content: any) => (
-                          <>
-                            <div style={{ width: "100%", height: "40vh" }}>
-                              <img
-                                src={content.url}
-                                style={{
-                                  objectFit: "contain",
-                                  height: "100%",
-                                  width: "100%",
-                                }}
-                              />
-                            </div>
-                          </>
-                        ))
-                      : ""}
+                    {mainDataResult3.data[0].image.map((content: any) => (
+                      <>
+                        <div style={{ width: "100%", height: "40vh" }}>
+                          <img
+                            src={content.url}
+                            style={{
+                              objectFit: "contain",
+                              height: "100%",
+                              width: "100%",
+                            }}
+                          />
+                        </div>
+                      </>
+                    ))}
                   </Carousel>
+                ) : (
+                  ""
                 )}
 
                 {isCaptured ? (
@@ -572,8 +863,8 @@ const PR_A0000W: React.FC = () => {
                         <tr>
                           <td colSpan={2}>
                             <TextArea
-                              value={information.description}
-                              name="description"
+                              value={information.comment}
+                              name="comment"
                               rows={50}
                               style={{
                                 maxHeight: "20vh",
@@ -617,6 +908,11 @@ const PR_A0000W: React.FC = () => {
                     fillMode={"solid"}
                     onClick={() => {
                       resetInformation();
+                      setFilters2((prev) => ({
+                        ...prev,
+                        devmngnum: "",
+                        isSearch: true,
+                      }));
                       setStep(1);
                     }}
                   >
@@ -625,12 +921,21 @@ const PR_A0000W: React.FC = () => {
                   <Button
                     themeColor={"primary"}
                     fillMode={"solid"}
-                    onClick={() => search2()}
+                    onClick={() => search()}
                     icon="search"
                   >
                     조회
                   </Button>
-                  <Button onClick={() => setStep(1)} icon="arrow-right">
+                  <Button
+                    onClick={() => {
+                      setFilters2((prev) => ({
+                        ...prev,
+                        isSearch: true,
+                      }));
+                      setStep(1);
+                    }}
+                    icon="arrow-right"
+                  >
                     다음
                   </Button>
                 </ButtonContainer>
@@ -651,18 +956,23 @@ const PR_A0000W: React.FC = () => {
                             width: "100%",
                             cursor: "pointer",
                             backgroundColor:
-                              item.custnm == information.custnm
+                              item.devmngnum == information.devmngnum
                                 ? "#d6d8f9"
                                 : "white",
+                            height: "80px",
                           }}
                         >
                           <CardContent
                             onClick={() => onCheckClick(item)}
                             style={{ textAlign: "left", padding: "8px" }}
                           >
-                            <Typography variant="h6">{item.custnm}</Typography>
+                            <div style={{ height: "40px" }}>
+                              <Typography variant="h6">
+                                {item.custnm}
+                              </Typography>
+                            </div>
                             <Typography variant="body2" color="text.secondary">
-                              {item.title}
+                              {item.project}
                             </Typography>
                           </CardContent>
                         </Card>
@@ -690,7 +1000,7 @@ const PR_A0000W: React.FC = () => {
                   </Button>
                   <Button
                     onClick={() => {
-                      if (information.fxnm != "") {
+                      if (information.setup_hw_num != "") {
                         setStep(2);
                       } else {
                         alert("장비를 선택해주세요");
@@ -718,16 +1028,23 @@ const PR_A0000W: React.FC = () => {
                             width: "100%",
                             cursor: "pointer",
                             backgroundColor:
-                              item.fxnm == information.fxnm
+                              item.setup_hw_num == information.setup_hw_num
                                 ? "#d6d8f9"
                                 : "white",
+                            height: "80px",
                           }}
                         >
                           <CardContent
                             onClick={() => onCheckClick2(item)}
-                            style={{ textAlign: "left", padding: "8px" }}
+                            style={{
+                              textAlign: "left",
+                              padding: "8px",
+                              height: "100%",
+                            }}
                           >
-                            <Typography variant="h6">{item.fxnm}</Typography>
+                            <Typography variant="h6">
+                              {item.setup_hw_name}
+                            </Typography>
                           </CardContent>
                         </Card>
                       </AdminQuestionBox>
@@ -807,29 +1124,27 @@ const PR_A0000W: React.FC = () => {
                   autoPlay
                   style={{ height: "85vh", width: "100%" }}
                 ></video>
-              ) : (
+              ) : mainDataResult3.total > 0 ? (
                 <>
                   <Carousel
                     cycleNavigation={true}
                     navButtonsAlwaysVisible={true}
                     autoPlay={false}
                   >
-                    {mainDataResult3.total > 0
-                      ? mainDataResult3.data[0].image.map((content: any) => (
-                          <>
-                            <div style={{ width: "100%", height: "60vh" }}>
-                              <img
-                                src={content.url}
-                                style={{
-                                  objectFit: "contain",
-                                  height: "100%",
-                                  width: "100%",
-                                }}
-                              />
-                            </div>
-                          </>
-                        ))
-                      : ""}
+                    {mainDataResult3.data[0].image.map((content: any) => (
+                      <>
+                        <div style={{ width: "100%", height: "60vh" }}>
+                          <img
+                            src={content.url}
+                            style={{
+                              objectFit: "contain",
+                              height: "100%",
+                              width: "100%",
+                            }}
+                          />
+                        </div>
+                      </>
+                    ))}
                   </Carousel>
                   <FormBoxWrap>
                     <GridTitleContainer>
@@ -841,12 +1156,12 @@ const PR_A0000W: React.FC = () => {
                               onChange={(event: any) => {
                                 setInformation((prev) => ({
                                   ...prev,
-                                  chk: event.target.value,
+                                  finyn: event.target.value,
                                 }));
                               }}
                               onLabel={"작업완료"}
                               offLabel={"작업중"}
-                              checked={information.chk}
+                              checked={information.finyn}
                               className="PDA_Switch"
                             />
                           </div>
@@ -858,8 +1173,54 @@ const PR_A0000W: React.FC = () => {
                         <tr>
                           <td>
                             <TextArea
-                              value={information.description}
-                              name="description"
+                              value={information.comment}
+                              name="comment"
+                              rows={50}
+                              style={{
+                                maxHeight: "20vh",
+                                overflowY: "auto",
+                                background: "#d6d8f9",
+                              }}
+                              onChange={filterInputChange}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
+                </>
+              ) : (
+                <>
+                  <div style={{ width: "100%", height: "60vh" }}></div>
+                  <FormBoxWrap>
+                    <GridTitleContainer>
+                      <GridTitle>
+                        <ButtonContainer>
+                          코멘트
+                          <div style={{ marginLeft: "10px" }}>
+                            <Switch
+                              onChange={(event: any) => {
+                                setInformation((prev) => ({
+                                  ...prev,
+                                  finyn: event.target.value,
+                                }));
+                              }}
+                              onLabel={"작업완료"}
+                              offLabel={"작업중"}
+                              checked={information.finyn}
+                              className="PDA_Switch"
+                            />
+                          </div>
+                        </ButtonContainer>
+                      </GridTitle>
+                    </GridTitleContainer>
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <TextArea
+                              value={information.comment}
+                              name="comment"
                               rows={50}
                               style={{
                                 maxHeight: "20vh",
@@ -883,4 +1244,4 @@ const PR_A0000W: React.FC = () => {
   );
 };
 
-export default PR_A0000W;
+export default PR_A2200W;
