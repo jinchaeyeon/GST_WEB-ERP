@@ -180,7 +180,7 @@ import MA_B7200W from "./routes/MA_B7200W";
 import MA_B7201W from "./routes/MA_B7201W";
 import MainBIO from "./routes/MainBIO";
 import NotFound from "./routes/NotFound";
-import PR_A0000W from "./routes/PR_A0000W";
+import PR_A2200W from "./routes/PR_A2200W";
 import PR_A0030W from "./routes/PR_A0030W";
 import PR_A0040W from "./routes/PR_A0040W";
 import PR_A0060W from "./routes/PR_A0060W";
@@ -710,8 +710,8 @@ const AppInner: React.FC = () => {
       return SA_B3100W;
     } else if (str == "SA_B3101W") {
       return SA_B3101W;
-    } else if (str == "PR_A0000W") {
-      return PR_A0000W;
+    } else if (str == "PR_A2200W") {
+      return PR_A2200W;
     } else if (str == "PR_A0030W") {
       return PR_A0030W;
     } else if (str == "PR_A0040W") {
@@ -1178,7 +1178,7 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/SA_B3100W" component={SA_B3100W} exact />
                   <AuthRoute path="/SA_B3101W" component={SA_B3101W} exact />
                   {/* 생산관리 */}
-                  <AuthRoute path="/PR_A0000W" component={PR_A0000W} exact />
+                  <AuthRoute path="/PR_A2200W" component={PR_A2200W} exact />
                   <AuthRoute path="/PR_A0030W" component={PR_A0030W} exact />
                   <AuthRoute path="/PR_A0040W" component={PR_A0040W} exact />
                   <AuthRoute path="/PR_A0060W" component={PR_A0060W} exact />

@@ -52,6 +52,12 @@ export const gridList: Array<TGrid> = [
         caption: "제목",
         width: 120,
       },
+      {
+        id: "col_project",
+        field: "project",
+        caption: "프로젝트",
+        width: 120,
+      },
     ],
   },
 ];
