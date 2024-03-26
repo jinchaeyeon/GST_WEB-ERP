@@ -138,7 +138,7 @@ const CM_A5000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");
-  const [workType, setWorkType] = useState("");
+  const [workType, setWorkType] = useState("N");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -368,6 +368,7 @@ const CM_A5000W: React.FC = () => {
       attdatnum: data.attdatnum,
       files: data.files,
       ref_document_id: "",
+      project: data.project,
     });
     setInformation2({
       document_id: "",
@@ -380,15 +381,18 @@ const CM_A5000W: React.FC = () => {
   };
 
   const setProjectData = (data: any) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        project: data.quokey,
+      };
+    });
     setInformation((prev: any) => {
       return {
         ...prev,
-        testnum: data.quotestnum,
-        user_name: data.smperson,
-        customer_code: data.custcd,
-        customernm: data.custnm,
-      };
-    });
+        project: data.quokey,
+      }
+    })
   };
 
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -439,7 +443,6 @@ const CM_A5000W: React.FC = () => {
         ...prev,
         isSearch: true,
       }));
-      setWorkType("");
     } else if (e.selected == 1) {
       const selectedRowData = mainDataResult.data.filter(
         (item) =>
@@ -465,6 +468,7 @@ const CM_A5000W: React.FC = () => {
         attdatnum: selectedRowData.attdatnum,
         files: selectedRowData.files,
         ref_document_id: selectedRowData.ref_document_id,
+        project: selectedRowData.project,
       });
 
       setInformation2({
@@ -512,12 +516,20 @@ const CM_A5000W: React.FC = () => {
         [name]: value,
         customer_code: value == "" ? "" : prev.customer_code,
       }));
-    } else {
+    } 
+
+    if (name == "project") {
       setFilters((prev) => ({
         ...prev,
         [name]: value,
+        project: value,
       }));
-    }
+    } 
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 ComboBox에 입력한 값을 조회 파라미터로 세팅
@@ -606,6 +618,7 @@ const CM_A5000W: React.FC = () => {
     custnm: "",
     user_id: "",
     user_name: "",
+    project: "",
     customer_code: "",
     find_row_value: "",
     pgNum: 1,
@@ -625,6 +638,7 @@ const CM_A5000W: React.FC = () => {
     cpmnum: "",
     user_id: "",
     user_name: "",
+    project: "",
     request_date: new Date(),
     finexpdt: new Date(),
     require_type: "",
@@ -691,6 +705,7 @@ const CM_A5000W: React.FC = () => {
         "@p_medicine_type": medicine_type,
         "@p_user_id": filters.user_id,
         "@p_user_name": filters.user_name,
+        "@p_project": filters.project,
         "@p_customer_code": filters.custnm == "" ? "" : filters.customer_code,
         "@p_customernm": filters.custnm,
         "@p_find_row_value": filters.find_row_value,
@@ -757,6 +772,7 @@ const CM_A5000W: React.FC = () => {
             cpmnum: selectedRow.cpmnum,
             user_id: selectedRow.user_id,
             user_name: selectedRow.user_name,
+            project: selectedRow.project,
             request_date: toDate(selectedRow.request_date),
             finexpdt: toDate(selectedRow.finexpdt),
             require_type: selectedRow.require_type,
@@ -787,6 +803,7 @@ const CM_A5000W: React.FC = () => {
             cpmnum: rows[0].cpmnum,
             user_id: rows[0].user_id,
             user_name: rows[0].user_name,
+            project: rows[0].project,
             request_date: toDate(rows[0].request_date),
             finexpdt: toDate(rows[0].finexpdt),
             require_type: rows[0].require_type,
@@ -843,6 +860,7 @@ const CM_A5000W: React.FC = () => {
         "@p_medicine_type": "",
         "@p_user_id": "",
         "@p_user_name": "",
+        "@p_project": "",
         "@p_customer_code": "",
         "@p_customernm": "",
         "@p_find_row_value": "",
@@ -1052,6 +1070,7 @@ const CM_A5000W: React.FC = () => {
       cpmnum: "",
       user_id: "",
       user_name: "",
+      project: "",
       request_date: new Date(),
       finexpdt: new Date(),
       require_type: "",
@@ -1184,6 +1203,7 @@ const CM_A5000W: React.FC = () => {
       cpmnum: selectedRowData.cpmnum,
       user_id: selectedRowData.user_id,
       user_name: selectedRowData.user_name,
+      project: selectedRowData.project,
       request_date: toDate(selectedRowData.request_date),
       finexpdt: toDate(selectedRowData.finexpdt),
       require_type: selectedRowData.require_type,
@@ -1232,6 +1252,7 @@ const CM_A5000W: React.FC = () => {
     recdt: "",
     userid: "",
     username: "",
+    project: "",
     pc: pc,
     formid: "CM_A5000W",
   });
@@ -1289,6 +1310,7 @@ const CM_A5000W: React.FC = () => {
       testnum: information.testnum,
       attdatnum: information.attdatnum,
       username: information.user_name,
+      project: information.project,
       userid: information.user_id,
       pc: pc,
       formid: "CM_A5000W",
@@ -1393,6 +1415,7 @@ const CM_A5000W: React.FC = () => {
         "@p_recdt": paraDataSaved.recdt,
         "@p_user_id_sm": paraDataSaved.userid,
         "@p_user_name": paraDataSaved.username,
+        "@p_project": paraDataSaved.project,
         "@p_userid": userId,
         "@p_pc": paraDataSaved.pc,
       },
@@ -1411,7 +1434,6 @@ const CM_A5000W: React.FC = () => {
     if (data.isSuccess === true) {
       if (workType == "N" || workType == "D") {
         setTabSelected(0);
-        setWorkType("");
       } else {
         setTabSelected(1);
       }
@@ -1447,6 +1469,7 @@ const CM_A5000W: React.FC = () => {
         recdt: "",
         userid: "",
         username: "",
+        project: "",
         pc: pc,
         formid: "CM_A5000W",
       });
@@ -1472,6 +1495,7 @@ const CM_A5000W: React.FC = () => {
       cpmnum: "",
       user_id: "",
       user_name: "",
+      project: "",
       request_date: setDefaultDate2(customOptionData, "request_date"),
       finexpdt: setDefaultDate2(customOptionData, "finexpdt"),
       require_type: "",
@@ -1682,6 +1706,24 @@ const CM_A5000W: React.FC = () => {
                             onClick={onCustWndClick}
                             icon="more-horizontal"
                             fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>프로젝트</th>
+                      <td>
+                        <Input
+                          name="project"
+                          type="text"
+                          value={filters.project}
+                          onChange={filterInputChange}
+                        />
+                        <ButtonInInput>
+                          <Button
+                            icon="more-horizontal"
+                            fillMode="flat"
+                            onClick={onProjectWndClick}
                           />
                         </ButtonInInput>
                       </td>
@@ -1960,6 +2002,24 @@ const CM_A5000W: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
+                      <th>프로젝트</th>
+                      <td colSpan={3}>
+                        <Input
+                          name="project"
+                          type="text"
+                          value={information.project}
+                          className="readonly"
+                        />
+                        <ButtonInInput>
+                          <Button
+                            icon="more-horizontal"
+                            fillMode="flat"
+                            onClick={onProjectWndClick}
+                          />
+                        </ButtonInInput>
+                      </td>
+                    </tr>   
+                        <tr>
                           <th>제목</th>
                           <td colSpan={6}>
                             <Input
@@ -2136,6 +2196,24 @@ const CM_A5000W: React.FC = () => {
                               />
                             </ButtonInInput>
                           </td>
+                        </tr>
+                        <tr>
+                          <th>프로젝트</th>
+                          <td>
+                        <Input
+                          name="project"
+                          type="text"
+                          value={information.project}
+                          onChange={filterInputChange}
+                        />
+                        <ButtonInInput>
+                          <Button
+                            icon="more-horizontal"
+                            fillMode="flat"
+                            onClick={onProjectWndClick}
+                          />
+                        </ButtonInInput>
+                      </td>
                         </tr>
                         <tr>
                           <th>제목</th>
