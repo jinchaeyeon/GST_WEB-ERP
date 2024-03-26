@@ -578,15 +578,10 @@ const CopyWindow = ({
       [name]: value,
     }));
     if (name === "wonchgrat") {
-      const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-        ? {
+      const newData = mainDataResult.data.map((item) => {
+       return {
             ...item,
             rowstatus: item.rowstatus == "N" ? "N" : "U",
-            // amt:
-            //       filters.amtunit == "KRW"
-            //         ? item.qty * item.unp
-            //         : item.qty * item.unp,
             wonamt:
               filters.amtunit == "KRW"
               ? item.amt
@@ -595,12 +590,8 @@ const CopyWindow = ({
               filters.amtunit == "KRW"
               ? Math.floor(item.amt / 10)
               : Math.floor(item.amt * value / 10),
-          }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-            );
+        };
+      });
             setTempResult((prev: { total: any }) => {
               return {
                 data: newData,
@@ -629,8 +620,7 @@ const CopyWindow = ({
       ...prev,
       [name]: value,
     }));
-    const newData = mainDataResult.data.map((item) => { 
-      if (item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]) {
+    const newData = mainDataResult.data.map((item) => {       
         let updatedItem = {
           ...item,
           rowstatus: item.rowstatus === "N" ? "N" : "U", // rowstatus 업데이트
@@ -645,17 +635,14 @@ const CopyWindow = ({
                         ? Math.floor(item.amt / 10)
                         : Math.floor(item.amt * filters.wonchgrat / 10);
         }
-        if (name === "taxdiv") {
+        if (name === "taxdiv") { 
           if (value !== "A") {
             updatedItem.taxamt = 0;
           } else {
             updatedItem.taxamt = Math.floor(item.wonamt / 10);
           }
         }
-        return updatedItem;
-      } else {
-        return item;
-      }
+        return updatedItem;      
     });
     setTempResult((prev: { total: any }) => {
       return {
