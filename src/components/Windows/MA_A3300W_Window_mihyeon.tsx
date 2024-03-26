@@ -571,103 +571,233 @@ const CopyWindow = ({
     
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
-    const { name, value } = e.target;
-  
-    // 환율(wonchgrat) 값이 변경된 경우를 위한 예외 처리
-    const updatedWonChgrat = name === "wonchgrat" ? parseFloat(value) : filters.wonchgrat;
-  
-    const newData = mainDataResult.data.map((item) => {
-      // wonchgrat 값이 변경된 경우를 고려하여 계산
-      const updatedAmt = filters.amtunit === "KRW" 
-        ? item.qty * item.unp 
-        : item.qty * item.unp * updatedWonChgrat;
-      const updatedWonAmt = updatedAmt; // 원화금액과 금액은 동일하게 처리
-      const updatedTaxAmt = Math.round(updatedWonAmt / 10);
-  
-      return {
-        ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
-        amt: updatedAmt,
-        wonamt: updatedWonAmt,
-        taxamt: updatedTaxAmt,
-        totamt: Math.round(updatedWonAmt + updatedTaxAmt),
-        dlramt: filters.amtunit === "KRW" ? item.amt : item.amt * updatedWonChgrat,
-      };
-    });
-  
-    // 상태를 업데이트하기 전에 필요한 모든 계산을 완료
-    setFilters((prev) => ({
-      ...prev,
-      [name]: name === "wonchgrat" ? updatedWonChgrat : value,
-    }));
-  
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  
-    setTempResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    const { value, name } = e.target;
+    if (name == "uschgrat" && value != filters.uschgrat) {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      const newData = mainDataResult.data.map((item) => {
+        return {
+          ...item,
+          rowstatus: item.rowstatus == "N" ? "N" : "U",
+          amt:
+            filters.amtunit == "KRW"
+              ? item.qty * item.unp
+              : item.qty * item.unp * filters.wonchgrat
+              ,
+          wonamt:
+            filters.amtunit == "KRW"
+              ? item.qty * item.unp
+              : item.qty * item.unp * filters.wonchgrat,
+          taxamt: Math.floor(
+            filters.taxdiv == "A"
+              ? filters.amtunit == "KRW"
+                ? item.qty * item.unp * 0.1
+                : item.qty * item.unp * filters.wonchgrat * 0.1
+              : 0)
+        };
+      });
+
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+    if (name == "amtunit" && value != filters.amtunit) {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      const newData = mainDataResult.data.map((item) => {
+        return {
+          ...item,
+          rowstatus: item.rowstatus == "N" ? "N" : "U",
+          amt:
+          value == "KRW"
+              ? item.qty * item.unp
+              : item.qty * item.unp * filters.wonchgrat
+              ,
+          wonamt:
+          value == "KRW"
+              ? item.qty * item.unp
+              : item.qty * item.unp * filters.wonchgrat,
+          taxamt: Math.floor(
+            filters.taxdiv == "A"
+              ? value == "KRW"
+                ? item.qty * item.unp * 0.1
+                : item.qty * item.unp * filters.wonchgrat * 0.1
+              : 0)
+        };
+      });
+
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+
+    if (name == "wonchgrat" && value != filters.wonchgrat) {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      const newData = mainDataResult.data.map((item) => {
+        return {
+          ...item,
+          rowstatus: item.rowstatus == "N" ? "N" : "U",
+          amt:
+            filters.amtunit == "KRW"
+              ? item.qty * item.unp
+              : item.qty * item.unp * value
+              ,
+          wonamt:
+            filters.amtunit == "KRW"
+              ? item.qty * item.unp
+              : item.qty * item.unp * value,
+          taxamt: Math.floor(
+            filters.taxdiv == "A"
+              ? filters.amtunit == "KRW"
+                ? item.qty * item.unp * 0.1
+                : item.qty * item.unp * value * 0.1
+              : 0)
+        };
+      });
+
+
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+
+    if (name == "custcd") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value
+      }));
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
-  
   
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
-    const { name, value } = e; // 이벤트로부터 name과 value 추출    
-    const newData = mainDataResult.data.map((item) => {
-      return {
-        ...item,
-        rowstatus: item.rowstatus == "N" ? "N" : "U",
+    const { name, value } = e;
 
-        amt: item.qty * item.unp  * (filters.amtunit === "KRW" ? 1 : filters.wonchgrat),
-        wonamt: item.qty * item.unp  * (filters.amtunit === "KRW" ? 1 : filters.wonchgrat),
-        
-        taxamt: Math.round(
-          value === "B" || value ==="C" 
-            ? 0
-            : (filters.amtunit === "KRW"
-              ? item.qty * item.unp  * 0.1
-              : (item.qty * item.unp  * filters.wonchgrat) * 0.1)
-        ),
-            
-        totamt:
-          filters.amtunit == "KRW"
-            ? Math.round(item.qty * item.unp + (item.qty * item.unp) / 10)
-            : Math.round(
-                item.qty * item.unp * filters.wonchgrat +
-                  (item.qty * item.unp * filters.wonchgrat) / 10
-              ),
-        dlramt:
-          filters.amtunit == "KRW" ? item.amt : item.amt * filters.wonchgrat,
-      };
-    });
-  
-    // 상태 업데이트
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value, // 콤보박스에서 선택된 새로운 값을 filters 상태에 반영
-    }));
-  
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  
-    setTempResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
+    if (name == "taxdiv" && value != filters.taxdiv) {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      const newData = mainDataResult.data.map((item) => {
+        return {
+          ...item,
+          rowstatus: item.rowstatus == "N" ? "N" : "U",
+          amt: filters.amtunit == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * filters.wonchgrat,
+
+          wonamt: filters.amtunit == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * filters.wonchgrat,
+          taxamt: Math.floor(
+            value == "A"
+              ? filters.amtunit == "KRW"
+                  ? item.qty * item.unp * 0.1
+                  : item.qty * item.unp * filters.wonchgrat * 0.1
+              : 0
+          ),
+        };
+      });
+
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
+
+    if (name == "amtunit" && value != filters.amtunit) {     
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      const newData = mainDataResult.data.map((item) => {
+        return {
+          ...item,
+          rowstatus: item.rowstatus == "N" ? "N" : "U",
+          amt: value == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * filters.wonchgrat,
+
+          wonamt: value == "KRW"
+                ? item.qty * item.unp
+                : item.qty * item.unp * filters.wonchgrat,
+          taxamt: Math.floor(
+            filters.taxdiv == "A"
+              ?  value == "KRW"
+                  ? item.qty * item.unp * 0.1
+                  : item.qty * item.unp * filters.wonchgrat * 0.1
+              : 0
+          ),
+        };
+      });
+
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
+
 
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
@@ -1061,7 +1191,7 @@ const CopyWindow = ({
     itemlvl1_s: "",
     enddt_s: "",
     extra_field1_s: "",
-    form_id: "MA_A2700W",
+    form_id: "MA_A3300W",
     serviceid: companyCode,
     reckey: "",
     files: "",
@@ -1382,59 +1512,59 @@ const CopyWindow = ({
     let valid = true;
 
     try {
-      if (mainDataResult.data.length == 0) {
-        throw findMessage(messagesData, "MA_A3300W_003");
-      } else if (
-        convertDateToStr(filters.indt).substring(0, 4) < "1997" ||
-        convertDateToStr(filters.indt).substring(6, 8) > "31" ||
-        convertDateToStr(filters.indt).substring(6, 8) < "01" ||
-        convertDateToStr(filters.indt).substring(6, 8).length != 2
-      ) {
-        throw findMessage(messagesData, "MA_A3300W_001");
-      } else if (
-        filters.person == "" ||
-        filters.person == null ||
-        filters.person == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A3300W_005");
-      } else if (
-        filters.inuse == "" ||
-        filters.inuse == null ||
-        filters.inuse == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A3300W_004");
-      } else if (
-        filters.amtunit == "" ||
-        filters.amtunit == null ||
-        filters.amtunit == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A3300W_006");
-      } else if (
-        filters.doexdiv == "" ||
-        filters.doexdiv == null ||
-        filters.doexdiv == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A3300W_007");
-      } else if (
-        filters.taxdiv == "" ||
-        filters.taxdiv == null ||
-        filters.taxdiv == undefined
-      ) {
-        throw findMessage(messagesData, "MA_A3300W_008");
-      }
-      for (var i = 0; i < mainDataResult.data.length; i++) {
-        if (mainDataResult.data[i].qty == 0 && valid == true) {
-          alert("수량은 필수입니다.");
-          valid = false;
-          return false;
+        if (mainDataResult.data.length == 0) {
+          throw findMessage(messagesData, "MA_A3300W_003");
+        } else if (
+          convertDateToStr(filters.indt).substring(0, 4) < "1997" ||
+          convertDateToStr(filters.indt).substring(6, 8) > "31" ||
+          convertDateToStr(filters.indt).substring(6, 8) < "01" ||
+          convertDateToStr(filters.indt).substring(6, 8).length != 2
+        ) {
+          throw findMessage(messagesData, "MA_A3300W_001");
+        } else if (
+          filters.person == "" ||
+          filters.person == null ||
+          filters.person == undefined
+        ) {
+          throw findMessage(messagesData, "MA_A3300W_005");
+        } else if (
+          filters.inuse == "" ||
+          filters.inuse == null ||
+          filters.inuse == undefined
+        ) {
+          throw findMessage(messagesData, "MA_A3300W_004");
+        } else if (
+          filters.amtunit == "" ||
+          filters.amtunit == null ||
+          filters.amtunit == undefined
+        ) {
+          throw findMessage(messagesData, "MA_A3300W_006");
+        } else if (
+          filters.doexdiv == "" ||
+          filters.doexdiv == null ||
+          filters.doexdiv == undefined
+        ) {
+          throw findMessage(messagesData, "MA_A3300W_007");
+        } else if (
+          filters.taxdiv == "" ||
+          filters.taxdiv == null ||
+          filters.taxdiv == undefined
+        ) {
+          throw findMessage(messagesData, "MA_A3300W_008");
         }
-        if (mainDataResult.data[i].itemcd == "" && valid == true) {
-          alert("품목코드를 채워주세요.");
-          valid = false;
-          return false;
+        for (var i = 0; i < mainDataResult.data.length; i++) {
+          if (mainDataResult.data[i].qty == 0 && valid == true) {
+            alert("수량은 필수입니다.");
+            valid = false;
+            return false;
+          }
+          if (mainDataResult.data[i].itemcd == "" && valid == true) {
+            alert("품목코드를 채워주세요.");
+            valid = false;
+            return false;
+          }
         }
-      }
-
+      
       if (valid == true) {
         const dataItem = mainDataResult.data.filter((item: any) => {
           return (
@@ -1995,7 +2125,7 @@ const CopyWindow = ({
         location: "01",
         position: "",
         doexdiv: "A",
-        amtunit: "KRW",
+        amtunit: "",
         inuse: "10",
         indt: new Date(),
         custcd: "",
@@ -2210,20 +2340,20 @@ const CopyWindow = ({
               const amt = item.qty * item.unp;
               updatedItem.amt = applyExchangeRate(amt); // 금액(amt) 업데이트
               updatedItem.wonamt = updatedItem.amt; // 원화금액(wonamt)를 amt와 동일하게 설정
-              updatedItem.taxamt = updatedItem.wonamt * 0.1; // 세액(taxamt) 계산
+              updatedItem.taxamt = Math.floor(updatedItem.wonamt * 0.1); // 세액(taxamt) 계산
             }
   
             // 금액(amt)이 직접 수정되었을 경우
             if (editedField === 'amt') {
               const amt = item.amt;
               updatedItem.wonamt = applyExchangeRate(amt); // 원화금액(wonamt) 업데이트
-              updatedItem.taxamt = updatedItem.wonamt * 0.1; // 세액(taxamt) 계산
+              updatedItem.taxamt = Math.floor(updatedItem.wonamt * 0.1); // 세액(taxamt) 계산
             }
   
             // 원화금액(wonamt)이 직접 수정되었을 경우
             if (editedField === 'wonamt') {
               const wonamt = item.wonamt;
-              updatedItem.taxamt = applyExchangeRate(wonamt) * 0.1; // 세액(taxamt) 업데이트
+              updatedItem.taxamt = Math.floor(applyExchangeRate(wonamt) * 0.1); // 세액(taxamt) 업데이트
             }
   
             return updatedItem;
