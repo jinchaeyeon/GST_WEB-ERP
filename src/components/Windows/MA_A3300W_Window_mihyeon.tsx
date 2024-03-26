@@ -581,11 +581,7 @@ const CopyWindow = ({
         return {
           ...item,
           rowstatus: item.rowstatus == "N" ? "N" : "U",
-          amt:
-            filters.amtunit == "KRW"
-              ? item.qty * item.unp
-              : item.qty * item.unp * filters.wonchgrat
-              ,
+          amt: item.qty * item.unp,
           wonamt:
             filters.amtunit == "KRW"
               ? item.qty * item.unp
@@ -621,11 +617,7 @@ const CopyWindow = ({
         return {
           ...item,
           rowstatus: item.rowstatus == "N" ? "N" : "U",
-          amt:
-          value == "KRW"
-              ? item.qty * item.unp
-              : item.qty * item.unp * filters.wonchgrat
-              ,
+          amt:item.qty * item.unp,
           wonamt:
           value == "KRW"
               ? item.qty * item.unp
@@ -662,11 +654,7 @@ const CopyWindow = ({
         return {
           ...item,
           rowstatus: item.rowstatus == "N" ? "N" : "U",
-          amt:
-            filters.amtunit == "KRW"
-              ? item.qty * item.unp
-              : item.qty * item.unp * value
-              ,
+          amt: item.qty * item.unp,
           wonamt:
             filters.amtunit == "KRW"
               ? item.qty * item.unp
@@ -721,9 +709,7 @@ const CopyWindow = ({
         return {
           ...item,
           rowstatus: item.rowstatus == "N" ? "N" : "U",
-          amt: filters.amtunit == "KRW"
-                ? item.qty * item.unp
-                : item.qty * item.unp * filters.wonchgrat,
+          amt: item.qty * item.unp,
 
           wonamt: filters.amtunit == "KRW"
                 ? item.qty * item.unp
@@ -761,10 +747,7 @@ const CopyWindow = ({
         return {
           ...item,
           rowstatus: item.rowstatus == "N" ? "N" : "U",
-          amt: value == "KRW"
-                ? item.qty * item.unp
-                : item.qty * item.unp * filters.wonchgrat,
-
+          amt: item.qty * item.unp,
           wonamt: value == "KRW"
                 ? item.qty * item.unp
                 : item.qty * item.unp * filters.wonchgrat,
@@ -2329,6 +2312,7 @@ const CopyWindow = ({
             let updatedItem = {
               ...item,
               rowstatus: item.rowstatus === "N" ? "N" : "U", // rowstatus 업데이트
+              [EDIT_FIELD]: undefined,
             };
   
             // 환율 적용 함수
@@ -2355,10 +2339,16 @@ const CopyWindow = ({
               const wonamt = item.wonamt;
               updatedItem.taxamt = Math.floor(applyExchangeRate(wonamt) * 0.1); // 세액(taxamt) 업데이트
             }
-  
+            
+            if(updatedItem.taxdiv !== "A"){
+              updatedItem.taxamt = 0
+            }
             return updatedItem;
           } else {
-            return item;
+            return {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
           }
         });
         // tempResult와 mainDataResult 업데이트
@@ -2390,13 +2380,11 @@ const CopyWindow = ({
       }));
   
       setTempResult((prev) => ({
-        ...prev,
         data: newData,
         total: prev.total,
       }));
   
       setMainDataResult((prev) => ({
-        ...prev,
         data: newData,
         total: prev.total,
       }));      
