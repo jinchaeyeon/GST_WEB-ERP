@@ -625,43 +625,52 @@ const CopyWindow = ({
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
-
     setFilters((prev) => ({
       ...prev,
       [name]: value,
     }));
-    if (name === "amtunit") {
-      const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-        ? {
-            ...item,
-              wonamt: 
-                value == "KRW"
-                  ? item.amt
-                  : item.amt * filters.wonchgrat,
-              taxamt:
-                value == "KRW"
-                  ? Math.floor(item.amt / 10)
-                  : Math.floor(item.amt * filters.wonchgrat / 10),
+    const newData = mainDataResult.data.map((item) => { 
+      if (item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]) {
+        let updatedItem = {
+          ...item,
+          rowstatus: item.rowstatus === "N" ? "N" : "U", // rowstatus 업데이트
+        }
+        if (name === "amtunit") {
+          updatedItem.wonamt = 
+                      value == "KRW"
+                        ? item.amt
+                        : item.amt * filters.wonchgrat;
+          updatedItem.taxamt =
+                      value == "KRW"
+                        ? Math.floor(item.amt / 10)
+                        : Math.floor(item.amt * filters.wonchgrat / 10);
+        }
+        if (name === "taxdiv") {
+          if (value !== "A") {
+            updatedItem.taxamt = 0;
+          } else {
+            updatedItem.taxamt = Math.floor(item.wonamt / 10);
           }
-        : {
-            ...item,
-                [EDIT_FIELD]: undefined,
-      });
-      setTempResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev: { total: any }) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });                      
-    }
-  };
+        }
+        return updatedItem;
+      } else {
+        return item;
+      }
+    });
+    setTempResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
+    setMainDataResult((prev: { total: any }) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };      
+    });                   
+  }
+
 
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
