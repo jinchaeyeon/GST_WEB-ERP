@@ -138,7 +138,7 @@ const CM_A5000W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");
-  const [workType, setWorkType] = useState("N");
+  const [workType, setWorkType] = useState("");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -271,6 +271,8 @@ const CM_A5000W: React.FC = () => {
     useState<boolean>(false);
   const [projectWindowVisible2, setProjectWindowVisible2] =
     useState<boolean>(false);
+  const [projectWindowVisible3, setProjectWindowVisible3] =
+    useState<boolean>(false);      
   const [attachmentsQWindowVisible, setAttachmentsQWindowVisible] =
     useState<boolean>(false);
   const [attachmentsAWindowVisible, setAttachmentsAWindowVisible] =
@@ -298,6 +300,10 @@ const CM_A5000W: React.FC = () => {
 
   const onProjectWndClick2 = () => {
     setProjectWindowVisible2(true);
+  };
+
+  const onProjectWndClick3 = () => {
+    setProjectWindowVisible3(true);
   };
 
   const onAttachQuestionWndClick = () => {
@@ -380,19 +386,52 @@ const CM_A5000W: React.FC = () => {
     });
   };
 
+  // 상세정보 프로젝트 데이터
   const setProjectData = (data: any) => {
-    setFilters((prev: any) => {
-      return {
-        ...prev,
-        project: data.quokey,
-      };
-    });
+    // setFilters((prev: any) => {
+    //   return {
+    //     ...prev,
+    //     testnum: data.quotestnum,
+    //     user_name: data.smperson,
+    //     customer_code: data.custcd,
+    //     customernm: data.custnm,
+    //     project: data.quokey,
+    //   };
+    // });
     setInformation((prev: any) => {
       return {
         ...prev,
+        testnum: data.quotestnum,
+        user_name: data.smperson,
+        customer_code: data.custcd,
+        customernm: data.custnm,
         project: data.quokey,
       }
     })
+  };
+
+  // 요약정보 프로젝트 데이터
+  const setProjectData2 = (data: any) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        testnum: data.quotestnum,
+        user_name: data.smperson,
+        customer_code: data.custcd,
+        customernm: data.custnm,
+        project: data.quokey,
+      };
+    });
+    // setInformation((prev: any) => {
+    //   return {
+    //     ...prev,
+    //     testnum: data.quotestnum,
+    //     user_name: data.smperson,
+    //     customer_code: data.custcd,
+    //     customernm: data.custnm,
+    //     project: data.quokey,
+    //   }
+    // })
   };
 
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -443,6 +482,7 @@ const CM_A5000W: React.FC = () => {
         ...prev,
         isSearch: true,
       }));
+      setWorkType("");
     } else if (e.selected == 1) {
       const selectedRowData = mainDataResult.data.filter(
         (item) =>
@@ -1434,6 +1474,7 @@ const CM_A5000W: React.FC = () => {
     if (data.isSuccess === true) {
       if (workType == "N" || workType == "D") {
         setTabSelected(0);
+        setWorkType("");
       } else {
         setTabSelected(1);
       }
@@ -1717,13 +1758,13 @@ const CM_A5000W: React.FC = () => {
                           name="project"
                           type="text"
                           value={filters.project}
-                          onChange={filterInputChange}
+                          onChange={filterInputChange}                         
                         />
                         <ButtonInInput>
                           <Button
                             icon="more-horizontal"
                             fillMode="flat"
-                            onClick={onProjectWndClick}
+                            onClick={onProjectWndClick3}
                           />
                         </ButtonInInput>
                       </td>
@@ -2180,6 +2221,7 @@ const CM_A5000W: React.FC = () => {
                               type="text"
                               value={information.testnum}
                               onChange={filterInputChange}
+                              className="readonly"
                             />
                             <ButtonInInput>
                               <Button
@@ -2204,7 +2246,7 @@ const CM_A5000W: React.FC = () => {
                           name="project"
                           type="text"
                           value={information.project}
-                          onChange={filterInputChange}
+                          className="readonly"
                         />
                         <ButtonInInput>
                           <Button
@@ -2524,6 +2566,14 @@ const CM_A5000W: React.FC = () => {
         <CM_A5000W_Project_Window_PoP
           setVisible={setProjectWindowVisible2}
           testnum={information.testnum}
+          modal={true}
+          pathname="CM_A5000W"
+        />
+      )}
+      {projectWindowVisible3 && (
+        <ProjectsWindow
+          setVisible={setProjectWindowVisible3}
+          setData={setProjectData2}
           modal={true}
           pathname="CM_A5000W"
         />
