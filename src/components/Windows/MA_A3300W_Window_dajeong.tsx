@@ -2189,25 +2189,43 @@ const CopyWindow = ({
             };    
 
             if(editedField == 'unp' || 'qty') {
-              updatedItem.amt = item.qty * item.unp;      
+              updatedItem.amt = item.qty * item.unp; 
+              updatedItem.wonamt = 
+                filters.amtunit == "KRW"
+                  ? item.qty * item.unp
+                  : item.qty * item.unp * filters.wonchgrat;
+              if (filters.taxdiv == "A") {
+                updatedItem.taxamt = filters.amtunit == "KRW"
+                  ? Math.floor(item.qty * item.unp / 10)
+                  : Math.floor(item.qty * item.unp * filters.wonchgrat / 10);
+              } else {
+                updatedItem.taxamt = 0;
+              }     
             }
 
             if (editedField == 'amt') {
               updatedItem.amt = item.amt;
               updatedItem.wonamt=
-                    filters.amtunit == "KRW"
-                      ? item.amt
-                      : item.amt * filters.wonchgrat;
-              updatedItem.taxamt = filters.amtunit == "KRW" && filters.taxdiv == "A"
-                    ? Math.floor(updatedItem.wonamt / 10)
-                    : Math.floor(updatedItem.wonamt * filters.wonchgrat / 10);
+                filters.amtunit == "KRW"
+                  ? item.amt
+                  : item.amt * filters.wonchgrat;
+              if (filters.taxdiv == "A") {
+                updatedItem.taxamt = filters.amtunit == "KRW"
+                  ? Math.floor(item.amt / 10)
+                  : Math.floor(item.amt * filters.wonchgrat / 10);
+              } else {
+                updatedItem.taxamt = 0;
+              }
             }  
 
             if (editedField == 'wonamt') {
+              updatedItem.amt = item.amt;
               updatedItem.wonamt = item.wonamt;
-              updatedItem.taxamt = filters.amtunit == "KRW" && filters.taxdiv == "A"
-                    ? Math.floor(updatedItem.wonamt / 10)
-                    : Math.floor(updatedItem.wonamt * filters.wonchgrat / 10);
+              if (filters.taxdiv == "A") {
+                updatedItem.taxamt = Math.floor(item.wonamt / 10);                     
+              } else {
+                updatedItem.taxamt = 0;
+              }
             }
 
             return updatedItem;            
