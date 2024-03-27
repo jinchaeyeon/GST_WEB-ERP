@@ -577,41 +577,30 @@ const CopyWindow = ({
       ...prev,
       [name]: value,
     }));
-    if (name === "wonchgrat") {
-      const newData = mainDataResult.data.map((item) => {
-       return {
-            ...item,
-            rowstatus: item.rowstatus == "N" ? "N" : "U",
-            wonamt:
-              filters.amtunit == "KRW"
-              ? item.amt
-              : item.amt * value,
-            taxamt:
-              filters.amtunit == "KRW"
-              ? Math.floor(item.amt / 10)
-              : Math.floor(item.amt * value / 10),
-        };
-      });
-            setTempResult((prev: { total: any }) => {
-              return {
-                data: newData,
-                total: prev.total,
-              };
-            });
-            setMainDataResult((prev: { total: any }) => {
-              return {
-                data: newData,
-                total: prev.total,
-              };
-            });
-          } else {
-            mainDataResult.data.map((item: { [x: string]: any; itemcd: any }) => {
+    const newData = mainDataResult.data.map((item) => {
+      let updatedItem = { ...item, rowstatus: item.rowstatus == "N" ? "N" : "U" };     
+
+      if (name === "wonchgrat") {
+          updatedItem.wonamt = filters.amtunit == "KRW" ? item.amt : item.amt * value;
+        if (filters.taxdiv === "A") {
+          updatedItem.taxamt = filters.amtunit == "KRW" ? Math.floor(item.amt / 10) : Math.floor(item.amt * value / 10);
+        } else {
+          updatedItem.taxamt = 0;
+        }
+      } else {
+          mainDataResult.data.map((item: { [x: string]: any; itemcd: any }) => {
               if (editIndex === item[DATA_ITEM_KEY]) {
-                fetchItemData(item.itemcd);
+                  fetchItemData(item.itemcd);
               }
-            });        
-    }
-  };
+          });
+      }
+
+      return updatedItem;
+  });
+
+  setTempResult((prev: { total: any }) => ({ data: newData, total: prev.total }));
+  setMainDataResult((prev: { total: any }) => ({ data: newData, total: prev.total }));
+};
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
@@ -630,10 +619,14 @@ const CopyWindow = ({
                       value == "KRW"
                         ? item.amt
                         : item.amt * filters.wonchgrat;
-          updatedItem.taxamt =
-                      value == "KRW"
-                        ? Math.floor(item.amt / 10)
-                        : Math.floor(item.amt * filters.wonchgrat / 10);
+          if (filters.taxdiv == "A") {
+            updatedItem.taxamt =
+                        value == "KRW"
+                          ? Math.floor(item.amt / 10)
+                          : Math.floor(item.amt * filters.wonchgrat / 10);
+          } else {
+            updatedItem.taxamt = 0;
+          }
         }
         if (name === "taxdiv") { 
           if (value !== "A") {
@@ -2178,7 +2171,7 @@ const CopyWindow = ({
                       ? item.qty * item.unp
                       : item.qty * item.unp * filters.wonchgrat,
               taxamt:
-                  filters.amtunit == "KRW"
+                  filters.amtunit == "KRW" && filters.taxdiv == "A"
                     ? Math.floor(item.qty * item.unp / 10)
                     : Math.floor(item.qty * item.unp * filters.wonchgrat / 10),
               totamt:
@@ -2196,19 +2189,44 @@ const CopyWindow = ({
             };    
 
             if(editedField == 'unp' || 'qty') {
-              updatedItem.amt = item.qty * item.unp;      
+              updatedItem.amt = item.qty * item.unp; 
+              updatedItem.wonamt = 
+                filters.amtunit == "KRW"
+                  ? item.qty * item.unp
+                  : item.qty * item.unp * filters.wonchgrat;
+              if (filters.taxdiv == "A") {
+                updatedItem.taxamt = filters.amtunit == "KRW"
+                  ? Math.floor(item.qty * item.unp / 10)
+                  : Math.floor(item.qty * item.unp * filters.wonchgrat / 10);
+              } else {
+                updatedItem.taxamt = 0;
+              }     
             }
 
             if (editedField == 'amt') {
               updatedItem.amt = item.amt;
               updatedItem.wonamt=
-                    filters.amtunit == "KRW"
-                      ? item.amt
-                      : item.amt * filters.wonchgrat;
-              updatedItem.taxamt = filters.amtunit == "KRW"
-                    ? Math.floor(updatedItem.wonamt / 10)
-                    : Math.floor(updatedItem.wonamt * filters.wonchgrat / 10);
+                filters.amtunit == "KRW"
+                  ? item.amt
+                  : item.amt * filters.wonchgrat;
+              if (filters.taxdiv == "A") {
+                updatedItem.taxamt = filters.amtunit == "KRW"
+                  ? Math.floor(item.amt / 10)
+                  : Math.floor(item.amt * filters.wonchgrat / 10);
+              } else {
+                updatedItem.taxamt = 0;
+              }
             }  
+
+            if (editedField == 'wonamt') {
+              updatedItem.amt = item.amt;
+              updatedItem.wonamt = item.wonamt;
+              if (filters.taxdiv == "A") {
+                updatedItem.taxamt = Math.floor(item.wonamt / 10);                     
+              } else {
+                updatedItem.taxamt = 0;
+              }
+            }
 
             return updatedItem;            
           } else {
