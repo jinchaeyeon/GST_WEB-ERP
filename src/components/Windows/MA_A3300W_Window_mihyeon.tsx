@@ -584,8 +584,8 @@ const CopyWindow = ({
           amt: item.qty * item.unp,
           wonamt:
             filters.amtunit == "KRW"
-              ? item.qty * item.unp
-              : item.qty * item.unp * filters.wonchgrat,
+              ? item.amt
+              : item.amt * filters.wonchgrat,
           taxamt: Math.floor(
             filters.taxdiv == "A"
               ?  item.wonamt * 0.1
@@ -619,8 +619,8 @@ const CopyWindow = ({
           amt:item.qty * item.unp,
           wonamt:
           value == "KRW"
-              ? item.qty * item.unp
-              : item.qty * item.unp * filters.wonchgrat,
+              ? item.amt
+              : item.amt * filters.wonchgrat,
           taxamt: Math.floor(
             filters.taxdiv == "A"
               ?  item.wonamt * 0.1
@@ -655,8 +655,8 @@ const CopyWindow = ({
           amt: item.qty * item.unp,
           wonamt:
             filters.amtunit == "KRW"
-              ? item.qty * item.unp
-              : item.qty * item.unp * value,
+              ? item.amt
+              : item.amt * value,
           taxamt: Math.floor(
             filters.taxdiv == "A"
               ?  item.wonamt * 0.1
@@ -709,8 +709,8 @@ const CopyWindow = ({
           amt: item.qty * item.unp,
 
           wonamt: filters.amtunit == "KRW"
-                ? item.qty * item.unp
-                : item.qty * item.unp * filters.wonchgrat,
+                ? item.amt
+                : item.amt * filters.wonchgrat,
           taxamt: Math.floor(
             value == "A"
               ?  item.wonamt * 0.1
@@ -744,8 +744,8 @@ const CopyWindow = ({
           rowstatus: item.rowstatus == "N" ? "N" : "U",
           amt: item.qty * item.unp,
           wonamt: value == "KRW"
-                ? item.qty * item.unp
-                : item.qty * item.unp * filters.wonchgrat,
+                ? item.amt
+                : item.amt * filters.wonchgrat,
           taxamt: Math.floor(
             filters.taxdiv == "A"
               ?  item.wonamt * 0.1
