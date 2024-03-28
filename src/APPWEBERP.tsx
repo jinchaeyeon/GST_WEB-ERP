@@ -161,6 +161,7 @@ import MA_A3300W_mihyeon from "./routes/MA_A3300W_mihyeon";
 import MA_A3400W from "./routes/MA_A3400W";
 import MA_A3400_606W from "./routes/MA_A3400_606W";
 import MA_A3500W from "./routes/MA_A3500W";
+import MA_A3500W_615 from "./routes/MA_A3500W_615";
 import MA_A7000W from "./routes/MA_A7000W";
 import MA_A8000W from "./routes/MA_A8000W";
 import MA_A9001W from "./routes/MA_A9001W";
@@ -180,12 +181,12 @@ import MA_B7200W from "./routes/MA_B7200W";
 import MA_B7201W from "./routes/MA_B7201W";
 import MainBIO from "./routes/MainBIO";
 import NotFound from "./routes/NotFound";
-import PR_A2200W from "./routes/PR_A2200W";
 import PR_A0030W from "./routes/PR_A0030W";
 import PR_A0040W from "./routes/PR_A0040W";
 import PR_A0060W from "./routes/PR_A0060W";
 import PR_A1100W from "./routes/PR_A1100W";
 import PR_A2000W from "./routes/PR_A2000W";
+import PR_A2200W from "./routes/PR_A2200W";
 import PR_A3000W from "./routes/PR_A3000W";
 import PR_A4000W from "./routes/PR_A4000W";
 import PR_A4100W from "./routes/PR_A4100W";
@@ -638,6 +639,8 @@ const AppInner: React.FC = () => {
       return MA_A3400W;
     } else if (str == "MA_A3500W") {
       return MA_A3500W;
+    } else if (str == "MA_A3500W_615") {
+      return MA_A3500W_615;
     } else if (str == "MA_A9001W") {
       return MA_A9001W;
     } else if (str == "MA_B1000W_603") {
@@ -1115,6 +1118,11 @@ const AppInner: React.FC = () => {
                   />
                   <AuthRoute path="/MA_A3400W" component={MA_A3400W} exact />
                   <AuthRoute path="/MA_A3500W" component={MA_A3500W} exact />
+                  <AuthRoute
+                    path="/MA_A3500W_615"
+                    component={MA_A3500W_615}
+                    exact
+                  />
                   <AuthRoute path="/MA_A9001W" component={MA_A9001W} exact />
                   <AuthRoute path="/MA_B2000W" component={MA_B2000W} exact />
                   <AuthRoute path="/MA_B2100W" component={MA_B2100W} exact />

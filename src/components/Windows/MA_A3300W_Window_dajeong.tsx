@@ -2171,7 +2171,7 @@ const CopyWindow = ({
                       ? item.qty * item.unp
                       : item.qty * item.unp * filters.wonchgrat,
               taxamt:
-                  filters.amtunit == "KRW" && filters.taxdiv == "A"
+                  filters.amtunit == "KRW"
                     ? Math.floor(item.qty * item.unp / 10)
                     : Math.floor(item.qty * item.unp * filters.wonchgrat / 10),
               totamt:

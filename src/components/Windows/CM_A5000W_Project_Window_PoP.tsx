@@ -47,20 +47,21 @@ import {
 } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
+import ProjectsWindow from "./CM_A5000W_Project_Window";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 
 type TKendoWindow = {
   setVisible(isVisible: boolean): void;
-  testnum: string;
+  quotestnum: string;
   modal?: boolean;
   pathname: string;
 };
 
 const KendoWindow = ({
   setVisible,
-  testnum,
+  quotestnum,
   modal = false,
   pathname,
 }: TKendoWindow) => {
@@ -232,6 +233,11 @@ const KendoWindow = ({
   );
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const [projectWindowVisible, setProjectWindowVisible] = useState<boolean>(false);
+
+  const onProjectWndClick = () => {
+    setProjectWindowVisible(true);
+  };
 
   const onCustWndClick = () => {
     setCustWindowVisible(true);
@@ -243,6 +249,16 @@ const KendoWindow = ({
         ...prev,
         //custcd: data.custcd,
         custnm: data.custnm,
+      };
+    });
+  };
+
+  // 예약시험번호 데이터
+  const setProjectData = (data: any) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        quotestnum: data.quotestnum,
       };
     });
   };
@@ -267,7 +283,7 @@ const KendoWindow = ({
     location: location,
     custcd: "",
     custnm: "",
-    testnum: testnum,
+    quotestnum: quotestnum,
     quonum: "",
     find_row_value: "",
     pgNum: 1,
@@ -290,7 +306,7 @@ const KendoWindow = ({
         "@p_location": filters.location,
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
-        "@p_testnum": filters.testnum,
+        "@p_quotestnum": filters.quotestnum,
         "@p_quonum": filters.quonum,
         "@p_find_row_value": filters.find_row_value,
       },
@@ -502,25 +518,33 @@ const KendoWindow = ({
                   />
                 </ButtonInInput>
               </td>
-              <th>시험번호</th>
+              <th>예약시험번호</th>
               <td>
                 <Input
-                  name="testnum"
+                  name="quotestnum"
                   type="text"
-                  value={filters.testnum}
+                  value={filters.quotestnum}
                   onChange={filterInputChange}
                 />
+                <ButtonInInput>
+                  <Button
+                    type={"button"}
+                    onClick={onProjectWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
               </td>
             </tr>
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer>
+      <GridContainer height="calc(100% - 200px)">
         <GridTitleContainer>
           <GridTitle>요약정보</GridTitle>
         </GridTitleContainer>
         <Grid
-          style={{ height: "63vh" }}
+          style={{ height: "100%" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -623,6 +647,14 @@ const KendoWindow = ({
           workType={"N"}
           setData={setCustData}
           modal={false}
+        />
+      )}
+      {projectWindowVisible && (
+        <ProjectsWindow
+          setVisible={setProjectWindowVisible}
+          setData={setProjectData}
+          modal={false}
+          pathname="CM_A5000W"
         />
       )}
     </Window>

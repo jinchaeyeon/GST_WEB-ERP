@@ -41,6 +41,7 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  dateformat,
   getGridItemChangedData,
   getQueryFromBizComponent,
   numberWithCommas,
@@ -81,6 +82,16 @@ type TdataArr = {
   quoseq_s: string[];
 };
 
+type TdataArr2 = {
+  rowstatus_s: string[];
+  seq_s: string[];
+  payment_s: string[];
+  content_s: string[];
+  amt_s: string[];
+  paydt_s: string[];
+  remark_s: string[];
+};
+
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY3 = "num";
@@ -92,7 +103,7 @@ let targetRowIndex2: null | number = null;
 let targetRowIndex3: null | number = null;
 let targetRowIndex4: null | number = null;
 let targetRowIndex5: null | number = null;
-const DateField = ["materialindt", "recdt"];
+const DateField = ["materialindt", "recdt", "paydt"];
 const NumberField = [
   "amt",
   "wonamt",
@@ -112,6 +123,7 @@ const NumberField2 = ["wonamt", "taxamt", "amt", "totamt"];
 const customField = ["insert_userid"];
 let temp = 0;
 let temp2 = 0;
+let temp6 = 0;
 const CustomComboBoxCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   UseBizComponent(
@@ -474,6 +486,15 @@ const SA_A1100_603W: React.FC = () => {
       pgNum: 1,
       isSearch: true,
     }));
+    setSubFilters6((prev) => ({
+      ...prev,
+      workType: "PAYMENT",
+      quokey: selectedRowData.quokey,
+      recdt: selectedRowData.recdt,
+      seq1: selectedRowData.seq1,
+      pgNum: 1,
+      isSearch: true,
+    }));
     setTabSelected(1);
   };
 
@@ -668,6 +689,17 @@ const SA_A1100_603W: React.FC = () => {
       fetchSubGrid4(deepCopiedFilters);
     }
   }, [subFilters4, permissions]);
+
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (subFilters6.isSearch && permissions !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(subFilters6);
+
+      setSubFilters6((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
+      fetchSubGrid6(deepCopiedFilters);
+    }
+  }, [subFilters6, permissions]);
 
   let gridRef: any = useRef(null);
   let gridRef2: any = useRef(null);
@@ -1206,6 +1238,64 @@ const SA_A1100_603W: React.FC = () => {
     setLoading(false);
   };
 
+  //그리드 데이터 조회
+  const fetchSubGrid6 = async (subFilters6: any) => {
+    let data: any;
+    setLoading(true);
+
+    //조회프로시저  파라미터
+    //조회프로시저  파라미터
+    const parameters2: Iparameters = {
+      procedureName: "P_SA_A1100_603W_Q",
+      pageNumber: subFilters6.pgNum,
+      pageSize: subFilters6.pgSize,
+      parameters: {
+        "@p_work_type": "PAYMENT",
+        "@p_orgdiv": subFilters6.orgdiv,
+        "@p_location": subFilters6.location,
+        "@p_quokey": subFilters6.quokey,
+        "@p_custcd": "",
+        "@p_custnm": "",
+        "@p_testnum": "",
+        "@p_finyn": "",
+        "@p_recdt": subFilters6.recdt,
+        "@p_seq1": subFilters6.seq1,
+        "@p_find_row_value": subFilters6.find_row_value,
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters2);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      setMainDataResult6({
+        data: rows,
+        total: totalRowCnt == -1 ? 0 : totalRowCnt,
+      });
+      if (totalRowCnt > 0) {
+        setSelectedState6({ [rows[0][DATA_ITEM_KEY6]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setSubFilters6((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -1679,7 +1769,7 @@ const SA_A1100_603W: React.FC = () => {
     }
   };
   const enterEdit6 = (dataItem: any, field: string) => {
-    if (field == "rowstatus") {
+    if (field != "rowstatus") {
       const newData = mainDataResult6.data.map((item) =>
         item[DATA_ITEM_KEY6] == dataItem[DATA_ITEM_KEY6]
           ? {
@@ -1971,6 +2061,32 @@ const SA_A1100_603W: React.FC = () => {
     });
   };
 
+  const onAddClick6 = () => {
+    mainDataResult6.data.map((item) => {
+      if (item[DATA_ITEM_KEY6] > temp6) {
+        temp6 = item[DATA_ITEM_KEY6];
+      }
+    });
+
+    const newDataItem = {
+      [DATA_ITEM_KEY6]: ++temp6,
+      orgdiv: "01",
+      payment: "",
+      content: "",
+      seq: 0,
+      paydt: convertDateToStr(new Date()),
+      amt: 0,
+      rowstatus: "N",
+    };
+    setSelectedState6({ [newDataItem[DATA_ITEM_KEY6]]: true });
+    setMainDataResult6((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
     let Object3: any[] = [];
@@ -2020,6 +2136,11 @@ const SA_A1100_603W: React.FC = () => {
     quonum_s: "",
     quorev_s: "",
     quoseq_s: "",
+    seq_s: "",
+    payment_s: "",
+    content_s: "",
+    paydt_s: "",
+    remark_s: "",
   });
 
   const infopara: Iparameters = {
@@ -2044,6 +2165,11 @@ const SA_A1100_603W: React.FC = () => {
       "@p_quonum_s": ParaData.quonum_s,
       "@p_quorev_s": ParaData.quorev_s,
       "@p_quoseq_s": ParaData.quoseq_s,
+      "@p_seq_s": ParaData.seq_s,
+      "@p_payment_s": ParaData.payment_s,
+      "@p_content_s": ParaData.content_s,
+      "@p_paydt_s": ParaData.paydt_s,
+      "@p_remark_s": ParaData.remark_s,
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "SA_A1100_603W",
@@ -2139,6 +2265,78 @@ const SA_A1100_603W: React.FC = () => {
     }
   };
 
+  const onSaveClick6 = () => {
+    const dataItem = mainDataResult6.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+    if (dataItem.length === 0 && deletedMainRows6.length === 0) return false;
+
+    let dataArr: TdataArr2 = {
+      rowstatus_s: [],
+      seq_s: [],
+      payment_s: [],
+      content_s: [],
+      amt_s: [],
+      paydt_s: [],
+      remark_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        seq = "",
+        payment = "",
+        content = "",
+        amt = "",
+        paydt = "",
+        remark = "",
+      } = item;
+
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.seq_s.push(seq);
+      dataArr.payment_s.push(payment);
+      dataArr.content_s.push(content);
+      dataArr.amt_s.push(amt);
+      dataArr.paydt_s.push(paydt);
+      dataArr.remark_s.push(remark);
+    });
+
+    deletedMainRows6.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        seq = "",
+        payment = "",
+        content = "",
+        amt = "",
+        paydt = "",
+        remark = "",
+      } = item;
+
+      dataArr.rowstatus_s.push("D");
+      dataArr.seq_s.push(seq);
+      dataArr.payment_s.push(payment);
+      dataArr.content_s.push(content);
+      dataArr.amt_s.push(amt);
+      dataArr.paydt_s.push(paydt);
+      dataArr.remark_s.push(remark);
+    });
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "PAYMENT",
+      rowstatus_s: dataArr.rowstatus_s.join("|"),
+      seq_s: dataArr.seq_s.join("|"),
+      payment_s: dataArr.payment_s.join("|"),
+      content_s: dataArr.content_s.join("|"),
+      amt_s: dataArr.amt_s.join("|"),
+      paydt_s: dataArr.paydt_s.join("|"),
+      remark_s: dataArr.remark_s.join("|"),
+    }));
+  };
+
   useEffect(() => {
     if (ParaData.workType != "") {
       fetchTodoGridSaved();
@@ -2180,6 +2378,12 @@ const SA_A1100_603W: React.FC = () => {
         pgNum: 1,
         isSearch: true,
       }));
+      setSubFilters6((prev) => ({
+        ...prev,
+        workType: "PAYMENT",
+        pgNum: 1,
+        isSearch: true,
+      }));
       setParaData({
         workType: "",
         rowstatus_s: "",
@@ -2191,6 +2395,11 @@ const SA_A1100_603W: React.FC = () => {
         quonum_s: "",
         quorev_s: "",
         quoseq_s: "",
+        seq_s: "",
+        payment_s: "",
+        content_s: "",
+        paydt_s: "",
+        remark_s: "",
       });
     } else {
       console.log("[오류 발생]");
@@ -2434,6 +2643,44 @@ const SA_A1100_603W: React.FC = () => {
     }
   };
 
+  const onDeleteClick6 = (e: any) => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
+    mainDataResult6.data.forEach((item: any, index: number) => {
+      if (!selectedState6[item[DATA_ITEM_KEY6]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = {
+            ...item,
+            rowstatus: "D",
+          };
+          deletedMainRows6.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = mainDataResult6.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult6.data[Math.min(...Object) - 1];
+    }
+
+    setMainDataResult6((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    if (Object.length > 0) {
+      setSelectedState6({
+        [data != undefined ? data[DATA_ITEM_KEY6] : newData[0]]: true,
+      });
+    }
+  };
+
   return (
     <>
       <TitleContainer>
@@ -2670,17 +2917,20 @@ const SA_A1100_603W: React.FC = () => {
                   <GridTitle>지급조건</GridTitle>
                   <ButtonContainer>
                     <Button
+                      onClick={onAddClick6}
                       themeColor={"primary"}
                       icon="plus"
                       title="행 추가"
                     ></Button>
                     <Button
+                      onClick={onDeleteClick6}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="minus"
                       title="행 삭제"
                     ></Button>
                     <Button
+                      onClick={onSaveClick6}
                       fillMode="outline"
                       themeColor={"primary"}
                       icon="save"
@@ -2700,6 +2950,9 @@ const SA_A1100_603W: React.FC = () => {
                     data={process(
                       mainDataResult6.data.map((row) => ({
                         ...row,
+                        paydt: row.paydt
+                          ? new Date(dateformat(row.paydt))
+                          : new Date(dateformat("19000101")),
                         [SELECTED_FIELD]: selectedState6[idGetter6(row)],
                       })),
                       mainDataState6
@@ -2743,9 +2996,18 @@ const SA_A1100_603W: React.FC = () => {
                               field={item.fieldName}
                               title={item.caption}
                               width={item.width}
+                              cell={
+                                DateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : NumberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : undefined
+                              }
                               footerCell={
                                 item.sortOrder === 0
                                   ? mainTotalFooterCell6
+                                  : NumberField.includes(item.fieldName)
+                                  ? editNumberFooterCell6
                                   : undefined
                               }
                             />
