@@ -47,6 +47,7 @@ import {
 } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
+import ProjectsWindow from "./CM_A5000W_Project_Window";
 
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
@@ -232,6 +233,11 @@ const KendoWindow = ({
   );
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
+  const [projectWindowVisible, setProjectWindowVisible] = useState<boolean>(false);
+
+  const onProjectWndClick = () => {
+    setProjectWindowVisible(true);
+  };
 
   const onCustWndClick = () => {
     setCustWindowVisible(true);
@@ -243,6 +249,16 @@ const KendoWindow = ({
         ...prev,
         //custcd: data.custcd,
         custnm: data.custnm,
+      };
+    });
+  };
+
+  // 예약시험번호 데이터
+  const setProjectData = (data: any) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        quotestnum: data.quotestnum,
       };
     });
   };
@@ -510,17 +526,25 @@ const KendoWindow = ({
                   value={filters.quotestnum}
                   onChange={filterInputChange}
                 />
+                <ButtonInInput>
+                  <Button
+                    type={"button"}
+                    onClick={onProjectWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
+                  />
+                </ButtonInInput>
               </td>
             </tr>
           </tbody>
         </FilterBox>
       </FilterContainer>
-      <GridContainer>
+      <GridContainer height="calc(100% - 200px)">
         <GridTitleContainer>
           <GridTitle>요약정보</GridTitle>
         </GridTitleContainer>
         <Grid
-          style={{ height: "63vh" }}
+          style={{ height: "100%" }}
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
@@ -623,6 +647,14 @@ const KendoWindow = ({
           workType={"N"}
           setData={setCustData}
           modal={false}
+        />
+      )}
+      {projectWindowVisible && (
+        <ProjectsWindow
+          setVisible={setProjectWindowVisible}
+          setData={setProjectData}
+          modal={false}
+          pathname="CM_A5000W"
         />
       )}
     </Window>
