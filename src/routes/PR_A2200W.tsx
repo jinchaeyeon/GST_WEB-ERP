@@ -20,7 +20,12 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
-import { UsePermissions, convertDateToStr } from "../components/CommonFunction";
+import {
+  UseGetValueFromSessionItem,
+  UseParaPc,
+  UsePermissions,
+  convertDateToStr,
+} from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
@@ -66,6 +71,9 @@ const PR_A2200W: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(
     null
   ) as MutableRefObject<HTMLVideoElement>;
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+  const userId = UseGetValueFromSessionItem("user_id");
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -94,7 +102,7 @@ const PR_A2200W: React.FC = () => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_PR_A2200_Q",
+      procedureName: "P_PR_A2200W_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -158,7 +166,7 @@ const PR_A2200W: React.FC = () => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_PR_A2200_Q",
+      procedureName: "P_PR_A2200W_Q",
       pageNumber: filters2.pgNum,
       pageSize: filters2.pgSize,
       parameters: {
@@ -617,6 +625,177 @@ const PR_A2200W: React.FC = () => {
     SetPicureindex(selectedIndex);
   };
 
+  const uploadFile = async (files: File, newAttachmentNumber?: string) => {
+    let data: any;
+
+    const filePara = {
+      attached: information.attdatnum
+        ? "attached?attachmentNumber=" + information.attdatnum
+        : newAttachmentNumber
+        ? "attached?attachmentNumber=" + newAttachmentNumber
+        : "attached",
+      files: files, //.FileList,
+    };
+
+    try {
+      data = await processApi<any>("file-upload", filePara);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data !== null) {
+      return data.attachmentNumber;
+    } else {
+      return data;
+    }
+  };
+
+  const onSaveClick = async () => {
+    const dataItem: any = mainDataResult3.data[0].image.filter((item: any) => {
+      return item.rowstatus === "N" && item.rowstatus !== undefined;
+    });
+    let newAttachmentNumber = "";
+    const promises = [];
+
+    for (const file of dataItem) {
+      // 최초 등록 시, 업로드 후 첨부번호를 가져옴 (다중 업로드 대응)
+      if (!information.attdatnum && !newAttachmentNumber) {
+        newAttachmentNumber = await uploadFile(file.file);
+        const promise = newAttachmentNumber;
+        promises.push(promise);
+        continue;
+      }
+
+      const promise = newAttachmentNumber
+        ? await uploadFile(file.file, newAttachmentNumber)
+        : await uploadFile(file.file);
+      promises.push(promise);
+    }
+
+    const results = await Promise.all(promises);
+
+    if (results.includes(null)) {
+      alert("파일 업로드에 실패했습니다.");
+    } else {
+      let data: any;
+
+      deletedMainRows.forEach(async (parameter) => {
+        try {
+          data = await processApi<any>("file-delete", {
+            attached: parameter.file.saved_name,
+          });
+        } catch (error) {
+          data = null;
+        }
+      });
+      setParaData({
+        workType: "SAVE",
+        orgdiv: "01",
+        rowstatus_s: "U",
+        setup_hw_num_s: information.setup_hw_num,
+        setup_hw_name_s: information.setup_hw_name,
+        setup_location_s: information.setup_location,
+        person_s: information.person,
+        comment_s: information.comment,
+        finyn_s:
+          information.finyn == true
+            ? "Y"
+            : information.finyn == false
+            ? "N"
+            : information.finyn,
+        devmngnum_s: information.devmngnum,
+        attdatnum_s:
+          information.attdatnum == ""
+            ? newAttachmentNumber
+            : information.attdatnum,
+      });
+    }
+  };
+
+  const [paraData, setParaData] = useState({
+    workType: "",
+    orgdiv: "",
+    rowstatus_s: "",
+    setup_hw_num_s: "",
+    setup_hw_name_s: "",
+    setup_location_s: "",
+    person_s: "",
+    comment_s: "",
+    finyn_s: "",
+    devmngnum_s: "",
+    attdatnum_s: "",
+  });
+
+  const infopara: Iparameters = {
+    procedureName: "P_PR_A2200W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraData.workType,
+      "@p_orgdiv": paraData.orgdiv,
+      "@p_rowstatus_s": paraData.rowstatus_s,
+      "@p_setup_hw_num_s": paraData.setup_hw_num_s,
+      "@p_setup_hw_name_s": paraData.setup_hw_name_s,
+      "@p_setup_location_s": paraData.setup_location_s,
+      "@p_person_s": paraData.person_s,
+      "@p_comment_s": paraData.comment_s,
+      "@p_finyn_s": paraData.finyn_s,
+      "@p_devmngnum_s": paraData.devmngnum_s,
+      "@p_attdatnum_s": paraData.attdatnum_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "PR_A2200W",
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+
+    setLoading(true);
+
+    try {
+      data = await processApi<any>("procedure", infopara);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess === true) {
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
+      setFilters3((prev) => ({
+        ...prev,
+        attdatnum: paraData.attdatnum_s,
+        isSearch: true,
+      }));
+      setParaData({
+        workType: "",
+        orgdiv: "",
+        rowstatus_s: "",
+        setup_hw_num_s: "",
+        setup_hw_name_s: "",
+        setup_location_s: "",
+        person_s: "",
+        comment_s: "",
+        finyn_s: "",
+        devmngnum_s: "",
+        attdatnum_s: "",
+      });
+      deletedMainRows = [];
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      if (data.resultMessage != undefined) {
+        alert(data.resultMessage);
+      }
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (paraData.workType !== "") fetchTodoGridSaved();
+  }, [paraData]);
+
   return (
     <>
       {isMobile ? (
@@ -927,7 +1106,7 @@ const PR_A2200W: React.FC = () => {
                               id={"button5"}
                               themeColor={"primary"}
                               fillMode={"solid"}
-                              //onClick={() => onClick2()}
+                              onClick={() => onSaveClick()}
                               style={{ width: "100%" }}
                             >
                               저장
@@ -1165,7 +1344,13 @@ const PR_A2200W: React.FC = () => {
                       >
                         사진 삭제
                       </Button>
-                      <Button icon="save">저장</Button>
+                      <Button
+                        themeColor={"primary"}
+                        fillMode={"solid"}
+                        onClick={() => onSaveClick()}
+                      >
+                        저장
+                      </Button>
                     </>
                   )}
                 </ButtonContainer>

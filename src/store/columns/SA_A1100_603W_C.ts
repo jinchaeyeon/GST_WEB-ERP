@@ -259,20 +259,20 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList6",
     columns: [
       {
-        id: "col_paymeth",
-        field: "paymeth",
+        id: "col_payment",
+        field: "payment",
         caption: "지급항목",
         width: 120,
       },
       {
-        id: "col_contents",
-        field: "contents",
+        id: "col_content",
+        field: "content",
         caption: "내용",
         width: 150,
       },
       {
-        id: "col_payyrmm",
-        field: "payyrmm",
+        id: "col_paydt",
+        field: "paydt",
         caption: "청구년월일",
         width: 120,
       },
