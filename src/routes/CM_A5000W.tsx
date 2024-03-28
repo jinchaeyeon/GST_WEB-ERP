@@ -272,7 +272,7 @@ const CM_A5000W: React.FC = () => {
   const [projectWindowVisible2, setProjectWindowVisible2] =
     useState<boolean>(false);
   const [projectWindowVisible3, setProjectWindowVisible3] =
-    useState<boolean>(false);      
+    useState<boolean>(false);
   const [attachmentsQWindowVisible, setAttachmentsQWindowVisible] =
     useState<boolean>(false);
   const [attachmentsAWindowVisible, setAttachmentsAWindowVisible] =
@@ -388,26 +388,16 @@ const CM_A5000W: React.FC = () => {
 
   // 상세정보 프로젝트 데이터
   const setProjectData = (data: any) => {
-    // setFilters((prev: any) => {
-    //   return {
-    //     ...prev,
-    //     testnum: data.quotestnum,
-    //     user_name: data.smperson,
-    //     customer_code: data.custcd,
-    //     customernm: data.custnm,
-    //     project: data.quokey,
-    //   };
-    // });
     setInformation((prev: any) => {
       return {
         ...prev,
-        testnum: data.quotestnum,
-        user_name: data.smperson,
+        testnum: data.testnum,
+        user_name: data.smperson == undefined ? "" : data.smperson,
         customer_code: data.custcd,
         customernm: data.custnm,
         project: data.quokey,
-      }
-    })
+      };
+    });
   };
 
   // 요약정보 프로젝트 데이터
@@ -415,23 +405,9 @@ const CM_A5000W: React.FC = () => {
     setFilters((prev: any) => {
       return {
         ...prev,
-        testnum: data.quotestnum,
-        user_name: data.smperson,
-        customer_code: data.custcd,
-        customernm: data.custnm,
         project: data.quokey,
       };
     });
-    // setInformation((prev: any) => {
-    //   return {
-    //     ...prev,
-    //     testnum: data.quotestnum,
-    //     user_name: data.smperson,
-    //     customer_code: data.custcd,
-    //     customernm: data.custnm,
-    //     project: data.quokey,
-    //   }
-    // })
   };
 
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -556,7 +532,7 @@ const CM_A5000W: React.FC = () => {
         [name]: value,
         customer_code: value == "" ? "" : prev.customer_code,
       }));
-    } 
+    }
 
     if (name == "project") {
       setFilters((prev) => ({
@@ -564,7 +540,7 @@ const CM_A5000W: React.FC = () => {
         [name]: value,
         project: value,
       }));
-    } 
+    }
 
     setFilters((prev) => ({
       ...prev,
@@ -862,7 +838,7 @@ const CM_A5000W: React.FC = () => {
           fetchHtmlDocument(rows[0]);
         }
       } else {
-        setWorkType("N");
+        setWorkType("");
         resetAllGrid();
       }
     } else {
@@ -1102,7 +1078,7 @@ const CM_A5000W: React.FC = () => {
 
   //그리드 리셋
   const resetAllGrid = () => {
-    setWorkType("N");
+    setWorkType("");
     setPage(initialPageState); // 페이지 초기화
     setMainDataResult(process([], mainDataState));
     setInformation({
@@ -1302,7 +1278,7 @@ const CM_A5000W: React.FC = () => {
       alert("답변이 존재하는 요청 건은 수정할 수 없습니다.");
       return false;
     }
-
+    console.log(information);
     let valid = true;
     try {
       if (
@@ -1758,7 +1734,7 @@ const CM_A5000W: React.FC = () => {
                           name="project"
                           type="text"
                           value={filters.project}
-                          onChange={filterInputChange}                         
+                          onChange={filterInputChange}
                         />
                         <ButtonInInput>
                           <Button
@@ -2043,23 +2019,23 @@ const CM_A5000W: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                      <th>프로젝트</th>
-                      <td colSpan={3}>
-                        <Input
-                          name="project"
-                          type="text"
-                          value={information.project}
-                          className="readonly"
-                        />
-                        <ButtonInInput>
-                          <Button
-                            icon="more-horizontal"
-                            fillMode="flat"
-                            onClick={onProjectWndClick}
-                          />
-                        </ButtonInInput>
-                      </td>
-                    </tr>   
+                          <th>프로젝트</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="project"
+                              type="text"
+                              value={information.project}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                icon="more-horizontal"
+                                fillMode="flat"
+                                onClick={onProjectWndClick}
+                              />
+                            </ButtonInInput>
+                          </td>
+                        </tr>
                         <tr>
                           <th>제목</th>
                           <td colSpan={6}>
@@ -2242,20 +2218,20 @@ const CM_A5000W: React.FC = () => {
                         <tr>
                           <th>프로젝트</th>
                           <td>
-                        <Input
-                          name="project"
-                          type="text"
-                          value={information.project}
-                          className="readonly"
-                        />
-                        <ButtonInInput>
-                          <Button
-                            icon="more-horizontal"
-                            fillMode="flat"
-                            onClick={onProjectWndClick}
-                          />
-                        </ButtonInInput>
-                      </td>
+                            <Input
+                              name="project"
+                              type="text"
+                              value={information.project}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                icon="more-horizontal"
+                                fillMode="flat"
+                                onClick={onProjectWndClick}
+                              />
+                            </ButtonInInput>
+                          </td>
                         </tr>
                         <tr>
                           <th>제목</th>

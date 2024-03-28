@@ -631,6 +631,7 @@ const CopyWindow = ({
               footerCell={mainTotalFooterCell}
             />
             <GridColumn field="quotestnum" title="예약시험번호" width="150px" />
+            <GridColumn field="testnum" title="시험번호" width="150px" />
             <GridColumn field="quotype" title="견적형태" width="120px" />
             <GridColumn field="quosts" title="견적상태" width="120px" />
             <GridColumn
