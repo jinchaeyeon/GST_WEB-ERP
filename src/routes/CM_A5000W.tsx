@@ -1559,7 +1559,6 @@ const CM_A5000W: React.FC = () => {
     } else if (selectRows.ref_document_id != "") {
       alert("답변이 존재하는 요청 건은 삭제할 수 없습니다.");
     } else {
-      fetchHtmlDocument(selectRows);
       setWorkType("D");
       setParaDataSaved((prev) => ({
         ...prev,
