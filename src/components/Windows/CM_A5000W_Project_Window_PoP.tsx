@@ -53,14 +53,14 @@ let targetRowIndex: null | number = null;
 
 type TKendoWindow = {
   setVisible(isVisible: boolean): void;
-  testnum: string;
+  quotestnum: string;
   modal?: boolean;
   pathname: string;
 };
 
 const KendoWindow = ({
   setVisible,
-  testnum,
+  quotestnum,
   modal = false,
   pathname,
 }: TKendoWindow) => {
@@ -267,7 +267,7 @@ const KendoWindow = ({
     location: location,
     custcd: "",
     custnm: "",
-    testnum: testnum,
+    quotestnum: "",
     quonum: "",
     find_row_value: "",
     pgNum: 1,
@@ -290,7 +290,7 @@ const KendoWindow = ({
         "@p_location": filters.location,
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
-        "@p_testnum": filters.testnum,
+        "@p_quotestnum": filters.quotestnum,
         "@p_quonum": filters.quonum,
         "@p_find_row_value": filters.find_row_value,
       },
@@ -502,12 +502,12 @@ const KendoWindow = ({
                   />
                 </ButtonInInput>
               </td>
-              <th>시험번호</th>
+              <th>예약시험번호</th>
               <td>
                 <Input
-                  name="testnum"
+                  name="quotestnum"
                   type="text"
-                  value={filters.testnum}
+                  value={filters.quotestnum}
                   onChange={filterInputChange}
                 />
               </td>

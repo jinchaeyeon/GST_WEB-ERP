@@ -370,7 +370,7 @@ const CM_A5000W: React.FC = () => {
       customernm: data.customernm,
       title: data.title,
       is_emergency: data.is_emergency,
-      testnum: data.testnum,
+      quotestnum: data.quotestnum,
       attdatnum: data.attdatnum,
       files: data.files,
       ref_document_id: "",
@@ -391,7 +391,7 @@ const CM_A5000W: React.FC = () => {
     setInformation((prev: any) => {
       return {
         ...prev,
-        testnum: data.testnum,
+        quotestnum: data.quotestnum,
         user_name: data.smperson == undefined ? "" : data.smperson,
         customer_code: data.custcd,
         customernm: data.custnm,
@@ -480,7 +480,7 @@ const CM_A5000W: React.FC = () => {
         customernm: selectedRowData.customernm,
         title: selectedRowData.title,
         is_emergency: selectedRowData.is_emergency,
-        testnum: selectedRowData.testnum,
+        quotestnum: selectedRowData.quotestnum,
         attdatnum: selectedRowData.attdatnum,
         files: selectedRowData.files,
         ref_document_id: selectedRowData.ref_document_id,
@@ -665,7 +665,7 @@ const CM_A5000W: React.FC = () => {
     customernm: "",
     title: "",
     is_emergency: "",
-    testnum: "",
+    quotestnum: "",
     attdatnum: "",
     files: "",
     ref_document_id: "", //답변
@@ -799,7 +799,7 @@ const CM_A5000W: React.FC = () => {
             customernm: selectedRow.customernm,
             title: selectedRow.title,
             is_emergency: selectedRow.is_emergency,
-            testnum: selectedRow.testnum,
+            quotestnum: selectedRow.quotestnum,
             attdatnum: selectedRow.attdatnum,
             files: selectedRow.files,
             ref_document_id: selectedRow.ref_document_id,
@@ -830,7 +830,7 @@ const CM_A5000W: React.FC = () => {
             customernm: rows[0].customernm,
             title: rows[0].title,
             is_emergency: rows[0].is_emergency,
-            testnum: rows[0].testnum,
+            quotestnum: rows[0].quotestnum,
             attdatnum: rows[0].attdatnum,
             files: rows[0].files,
             ref_document_id: rows[0].ref_document_id,
@@ -1097,7 +1097,7 @@ const CM_A5000W: React.FC = () => {
       customernm: "",
       title: "",
       is_emergency: "",
-      testnum: "",
+      quotestnum: "",
       attdatnum: "",
       files: "",
       ref_document_id: "", //답변
@@ -1230,7 +1230,7 @@ const CM_A5000W: React.FC = () => {
       customernm: selectedRowData.customernm,
       title: selectedRowData.title,
       is_emergency: selectedRowData.is_emergency,
-      testnum: selectedRowData.testnum,
+      quotestnum: selectedRowData.quotestnum,
       attdatnum: selectedRowData.attdatnum,
       files: selectedRowData.files,
       ref_document_id: selectedRowData.ref_document_id,
@@ -1261,7 +1261,7 @@ const CM_A5000W: React.FC = () => {
     customer_code: "",
     title: "",
     is_emergency: "",
-    testnum: "",
+    quotestnum: "",
     attdatnum: "",
     document_id_A: "",
     person: "",
@@ -1323,7 +1323,7 @@ const CM_A5000W: React.FC = () => {
       customer_code: information.customer_code,
       title: information.title,
       is_emergency: information.is_emergency,
-      testnum: information.testnum,
+      quotestnum: information.quotestnum,
       attdatnum: information.attdatnum,
       username: information.user_name,
       project: information.project,
@@ -1423,7 +1423,7 @@ const CM_A5000W: React.FC = () => {
         "@p_customer_code": paraDataSaved.customer_code,
         "@p_title": paraDataSaved.title,
         "@p_is_emergency": paraDataSaved.is_emergency,
-        "@p_testnum": paraDataSaved.testnum,
+        "@p_quotestnum": paraDataSaved.quotestnum,
         "@p_attdatnum":
           paraDataSaved.attdatnum == undefined ? "" : paraDataSaved.attdatnum,
         "@p_document_id_A": paraDataSaved.document_id_A,
@@ -1479,7 +1479,7 @@ const CM_A5000W: React.FC = () => {
         customer_code: "",
         title: "",
         is_emergency: "",
-        testnum: "",
+        quotestnum: "",
         attdatnum: "",
         document_id_A: "",
         person: "",
@@ -1525,7 +1525,7 @@ const CM_A5000W: React.FC = () => {
       is_emergency: defaultOption.find(
         (item: any) => item.id === "is_emergency"
       ).valueCode,
-      testnum: "",
+      quotestnum: "",
       attdatnum: "",
       files: "",
       ref_document_id: "",
@@ -2000,12 +2000,12 @@ const CM_A5000W: React.FC = () => {
                               className="readonly"
                             />
                           </td>
-                          <th>시험번호</th>
+                          <th>예약시험번호</th>
                           <td colSpan={3}>
                             <Input
-                              name="testnum"
+                              name="quotestnum"
                               type="text"
-                              value={information.testnum}
+                              value={information.quotestnum}
                               className="readonly"
                             />
                             <ButtonInInput>
@@ -2190,12 +2190,12 @@ const CM_A5000W: React.FC = () => {
                               />
                             </ButtonInInput>
                           </td>
-                          <th>시험번호</th>
+                          <th>예약시험번호</th>
                           <td colSpan={3}>
                             <Input
-                              name="testnum"
+                              name="quotestnum"
                               type="text"
-                              value={information.testnum}
+                              value={information.quotestnum}
                               onChange={filterInputChange}
                               className="readonly"
                             />
@@ -2541,7 +2541,7 @@ const CM_A5000W: React.FC = () => {
       {projectWindowVisible2 && (
         <CM_A5000W_Project_Window_PoP
           setVisible={setProjectWindowVisible2}
-          testnum={information.testnum}
+          quotestnum={information.quotestnum}
           modal={true}
           pathname="CM_A5000W"
         />
