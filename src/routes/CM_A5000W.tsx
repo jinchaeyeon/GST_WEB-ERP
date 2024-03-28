@@ -2027,13 +2027,6 @@ const CM_A5000W: React.FC = () => {
                               value={information.project}
                               className="readonly"
                             />
-                            <ButtonInInput>
-                              <Button
-                                icon="more-horizontal"
-                                fillMode="flat"
-                                onClick={onProjectWndClick}
-                              />
-                            </ButtonInInput>
                           </td>
                         </tr>
                         <tr>

@@ -1349,6 +1349,7 @@ const CopyWindow = ({
     for (var i = 0; i < data.length; i++) {
       data[i].num = ++temp;
       data[i].rowstatus = "N";
+      data[i].enddt = "19000101";
     }
 
     try {

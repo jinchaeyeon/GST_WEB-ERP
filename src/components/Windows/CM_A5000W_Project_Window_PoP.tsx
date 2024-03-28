@@ -283,7 +283,7 @@ const KendoWindow = ({
     location: location,
     custcd: "",
     custnm: "",
-    quotestnum: "",
+    quotestnum: quotestnum,
     quonum: "",
     find_row_value: "",
     pgNum: 1,
