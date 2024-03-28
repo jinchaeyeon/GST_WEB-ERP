@@ -576,9 +576,9 @@ const CopyWindow = ({
             </tbody>
           </FilterBox>
         </FilterContainer>
-        <GridContainer height="55vh">
+        <GridContainer height="calc(100% - 200px)">
           <Grid
-            style={{ height: "calc(100% - 20px)" }}
+            style={{ height: "100%" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
