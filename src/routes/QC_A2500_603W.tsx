@@ -46,6 +46,7 @@ import {
   convertDateToStr,
   convertDateToStrWithTime2,
   getQueryFromBizComponent,
+  setDefaultDate,
   toDate,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -852,6 +853,11 @@ const BA_A0020_603: React.FC = () => {
     const chkperson = UserListData2.find(
       (items: any) => items.prsnnm == data.chkperson
     );
+    const defaultOption = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "new"
+    );
+
     setInformation({
       orgdiv: data.orgdiv == undefined ? "01" : data.orgdiv,
       ref_key: data.quokey == undefined ? "" : data.quokey,
@@ -869,9 +875,10 @@ const BA_A0020_603: React.FC = () => {
             ? ""
             : data.cpmperson
           : cpmperson.user_id,
-      ncrdiv: "",
-      combytype: "",
-      status: "01",
+      ncrdiv: defaultOption.find((item: any) => item.id === "ncrdiv").valueCode,
+      combytype: defaultOption.find((item: any) => item.id === "combytype")
+        .valueCode,
+      status: defaultOption.find((item: any) => item.id === "status").valueCode,
       chkperson:
         chkperson == undefined
           ? data.chkperson == undefined
@@ -889,9 +896,19 @@ const BA_A0020_603: React.FC = () => {
       datnum: "",
       ordnum: data.ordnum == undefined ? "" : data.ordnum,
       ordseq: data.ordseq == undefined ? 0 : data.ordseq,
-      devperson: data.devperson == undefined ? "" : data.devperson,
-      apperson: data.apperson == undefined ? "" : data.apperson,
-      chkperson2: data.chkperson2 == undefined ? "" : data.chkperson2,
+      devperson:
+        data.devperson == undefined
+          ? defaultOption.find((item: any) => item.id === "devperson").valueCode
+          : data.devperson,
+      apperson:
+        data.apperson == undefined
+          ? defaultOption.find((item: any) => item.id === "apperson").valueCode
+          : data.apperson,
+      chkperson2:
+        data.chkperson2 == undefined
+          ? defaultOption.find((item: any) => item.id === "chkperson2")
+              .valueCode
+          : data.chkperson2,
     });
     deletedMainRows = [];
     deletedMainRows2 = [];

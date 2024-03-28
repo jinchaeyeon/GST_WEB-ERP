@@ -7,7 +7,7 @@ import { Toolbar } from "primereact/toolbar";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
-import { convertDateToStr } from "../components/CommonFunction";
+import { GetPropertyValueByName, UseCustomOption, convertDateToStr, setDefaultDate } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import LineBarChart from "../components/KPIcomponents/Chart/LineBarChart";
 import MultiChart from "../components/KPIcomponents/Chart/MultiChart";
@@ -27,6 +27,24 @@ const SA_B2216W: React.FC = () => {
   let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("SA_B2216W", setCustomOptionData);
+ //customOptionData 조회 후 디폴트 값 세팅
+ useEffect(() => {
+  if (customOptionData !== null) {
+    const defaultOption = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "query"
+    );
+
+    setFilters((prev) => ({
+      ...prev,
+      frdt: setDefaultDate(customOptionData, "frdt"),
+      mm: setDefaultDate(customOptionData, "mm"),
+    }));
+  }
+}, [customOptionData]);
 
   const [color, setColor] = useRecoilState(colors);
   const [colorName, setColorName] = useRecoilState(colorsName);
