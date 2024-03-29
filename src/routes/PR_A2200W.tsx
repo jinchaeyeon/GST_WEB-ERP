@@ -1,7 +1,7 @@
 import { Card, CardContent, Grid, Typography } from "@mui/material";
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
-import { Switch, TextArea } from "@progress/kendo-react-inputs";
+import { Input, Switch, TextArea } from "@progress/kendo-react-inputs";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import Carousel from "react-material-ui-carousel";
 import { useSetRecoilState } from "recoil";
@@ -65,6 +65,10 @@ const PR_A2200W: React.FC = () => {
       comment: "",
     }));
     deletedMainRows = [];
+    setFilters2((prev) => ({
+      ...prev,
+      isSearch: true,
+    }));
   };
 
   const [isCaptured, setIsCaptured] = useState(false);
@@ -79,6 +83,7 @@ const PR_A2200W: React.FC = () => {
     pgSize: PAGE_SIZE,
     workType: "LIST",
     orgdiv: "01",
+    custnm: "",
     pgNum: 1,
     isSearch: true,
   });
@@ -87,6 +92,8 @@ const PR_A2200W: React.FC = () => {
     workType: "DETAIL",
     orgdiv: "01",
     devmngnum: "",
+    setup_hw_name: "",
+    setup_location: "",
     pgNum: 1,
     isSearch: true,
   });
@@ -108,25 +115,12 @@ const PR_A2200W: React.FC = () => {
       parameters: {
         "@p_work_type": filters.workType,
         "@p_orgdiv": filters.orgdiv,
-        "@p_dtgb": "",
-        "@p_frdt": "",
-        "@p_todt": "",
 
-        "@p_custcd": "",
-        "@p_custnm": "",
-        "@p_pjtmanager": "",
-        "@p_pjtperson": "",
-        "@p_project": "",
+        "@p_custnm": filters.custnm,
+        "@p_setup_hw_name": "",
+        "@p_setup_location": "",
 
-        "@p_finyn": "",
-        "@p_attdatnum": "",
         "@p_devmngnum": "",
-        "@p_pgmid": "",
-        "@p_pgmnm": "",
-
-        "@p_person": "",
-        "@p_finexpdt": "",
-        "@p_dptcd1": "",
       },
     };
     try {
@@ -172,25 +166,12 @@ const PR_A2200W: React.FC = () => {
       parameters: {
         "@p_work_type": filters2.workType,
         "@p_orgdiv": filters2.orgdiv,
-        "@p_dtgb": "",
-        "@p_frdt": "",
-        "@p_todt": "",
 
-        "@p_custcd": "",
         "@p_custnm": "",
-        "@p_pjtmanager": "",
-        "@p_pjtperson": "",
-        "@p_project": "",
+        "@p_setup_hw_name": filters2.setup_hw_name,
+        "@p_setup_location": filters2.setup_location,
 
-        "@p_finyn": "",
-        "@p_attdatnum": "",
         "@p_devmngnum": filters2.devmngnum,
-        "@p_pgmid": "",
-        "@p_pgmnm": "",
-
-        "@p_person": "",
-        "@p_finexpdt": "",
-        "@p_dptcd1": "",
       },
     };
     try {
@@ -390,6 +371,24 @@ const PR_A2200W: React.FC = () => {
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const filterInputChange2 = (e: any) => {
+    const { value, name } = e.target;
+
+    setFilters2((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const InputChange = (e: any) => {
+    const { value, name } = e.target;
+
     setInformation((prev) => ({
       ...prev,
       [name]: value,
@@ -418,6 +417,8 @@ const PR_A2200W: React.FC = () => {
 
     setFilters2((prev) => ({
       ...prev,
+      setup_hw_name: "",
+      setup_location: "",
       devmngnum: datas.devmngnum,
       isSearch: true,
     }));
@@ -822,9 +823,26 @@ const PR_A2200W: React.FC = () => {
                 </Button>
               </ButtonContainer>
             </TitleContainer>
+            <FormBoxWrap border={true}>
+              <FormBox>
+                <tbody>
+                  <tr>
+                    <th>업체명</th>
+                    <td>
+                      <Input
+                        name="custnm"
+                        type="text"
+                        value={filters.custnm}
+                        onChange={filterInputChange}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </FormBox>
+            </FormBoxWrap>
             <GridContainer
               style={{
-                height: "100%",
+                height: "70%",
                 overflowY: "scroll",
                 width: "100%",
               }}
@@ -871,6 +889,8 @@ const PR_A2200W: React.FC = () => {
                     setFilters2((prev) => ({
                       ...prev,
                       devmngnum: "",
+                      setup_hw_name: "",
+                      setup_location: "",
                       isSearch: true,
                     }));
                     if (swiper) {
@@ -898,6 +918,32 @@ const PR_A2200W: React.FC = () => {
                 </Button>
               </ButtonContainer>
             </TitleContainer>
+            <FormBoxWrap border={true}>
+              <FormBox>
+                <tbody>
+                  <tr>
+                    <th>장비명</th>
+                    <td>
+                      <Input
+                        name="setup_hw_name"
+                        type="text"
+                        value={filters2.setup_hw_name}
+                        onChange={filterInputChange2}
+                      />
+                    </td>
+                    <th>설치위치</th>
+                    <td>
+                      <Input
+                        name="setup_location"
+                        type="text"
+                        value={filters2.setup_location}
+                        onChange={filterInputChange2}
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </FormBox>
+            </FormBoxWrap>
             <GridContainer
               style={{
                 height: "100%",
@@ -927,8 +973,14 @@ const PR_A2200W: React.FC = () => {
                           height: "100%",
                         }}
                       >
-                        <Typography variant="h6">
-                          {item.setup_hw_name}
+                        <div style={{ height: "40px" }}>
+                          <Typography variant="h6">
+                            {item.setup_hw_name}
+                          </Typography>
+                        </div>
+
+                        <Typography variant="body2" color="text.secondary">
+                          {item.setup_location}
                         </Typography>
                       </CardContent>
                     </Card>
@@ -1029,7 +1081,7 @@ const PR_A2200W: React.FC = () => {
                     ))}
                   </Carousel>
                 ) : (
-                  ""
+                  <div style={{ width: "100%", height: "55%" }}></div>
                 )}
 
                 {isCaptured ? (
@@ -1086,7 +1138,7 @@ const PR_A2200W: React.FC = () => {
                                 overflowY: "auto",
                                 background: "#d6d8f9",
                               }}
-                              onChange={filterInputChange}
+                              onChange={InputChange}
                             />
                           </td>
                         </tr>
@@ -1136,6 +1188,8 @@ const PR_A2200W: React.FC = () => {
                       deletedMainRows = [];
                       setFilters2((prev) => ({
                         ...prev,
+                        setup_hw_name: "",
+                        setup_location: "",
                         devmngnum: "",
                         isSearch: true,
                       }));
@@ -1156,6 +1210,8 @@ const PR_A2200W: React.FC = () => {
                     onClick={() => {
                       setFilters2((prev) => ({
                         ...prev,
+                        setup_hw_name: "",
+                        setup_location: "",
                         isSearch: true,
                       }));
                       setStep(1);
@@ -1166,11 +1222,32 @@ const PR_A2200W: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </TitleContainer>
+              <FormBoxWrap
+                style={{ width: "20%", float: "right" }}
+                border={true}
+              >
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>업체명</th>
+                      <td>
+                        <Input
+                          name="custnm"
+                          type="text"
+                          value={filters.custnm}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
               <GridContainer
                 style={{
-                  height: "85vh",
-                  overflowY: "auto",
+                  // height: "80vh",
+                  // overflowY: "auto",
                   width: "100%",
+                  marginBottom: "30px" //높이제한이 없을시 필요
                 }}
               >
                 <Grid container spacing={2}>
@@ -1221,7 +1298,23 @@ const PR_A2200W: React.FC = () => {
                   >
                     조회
                   </Button>
-                  <Button onClick={() => setStep(0)} icon="arrow-left">
+                  <Button
+                    onClick={() => {
+                      setStep(0);
+                      setFilters2((prev) => ({
+                        ...prev,
+                        setup_hw_name: "",
+                        setup_location: "",
+                      }));
+                      setFilters((prev) => ({
+                        ...prev,
+                        custnm: "",
+                        isSearch: true,
+                      }));
+                      deletedMainRows = [];
+                    }}
+                    icon="arrow-left"
+                  >
                     이전
                   </Button>
                   <Button
@@ -1238,11 +1331,41 @@ const PR_A2200W: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </TitleContainer>
+              <FormBoxWrap
+                style={{ width: "40%", float: "right" }}
+                border={true}
+              >
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>장비명</th>
+                      <td>
+                        <Input
+                          name="setup_hw_name"
+                          type="text"
+                          value={filters2.setup_hw_name}
+                          onChange={filterInputChange2}
+                        />
+                      </td>
+                      <th>설치위치</th>
+                      <td>
+                        <Input
+                          name="setup_location"
+                          type="text"
+                          value={filters2.setup_location}
+                          onChange={filterInputChange2}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
               <GridContainer
                 style={{
-                  height: "85vh",
-                  overflowY: "auto",
+                  // height: "80vh",
+                  // overflowY: "auto",
                   width: "100%",
+                  marginBottom: "30px"  //높이제한이 없을시 필요
                 }}
               >
                 <Grid container spacing={2}>
@@ -1268,8 +1391,14 @@ const PR_A2200W: React.FC = () => {
                               height: "100%",
                             }}
                           >
-                            <Typography variant="h6">
-                              {item.setup_hw_name}
+                            <div style={{ height: "40px" }}>
+                              <Typography variant="h6">
+                                {item.setup_hw_name}
+                              </Typography>
+                            </div>
+
+                            <Typography variant="body2" color="text.secondary">
+                              {item.setup_location}
                             </Typography>
                           </CardContent>
                         </Card>
@@ -1305,7 +1434,21 @@ const PR_A2200W: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      <Button onClick={() => setStep(1)} icon="arrow-left">
+                      <Button
+                        onClick={() => {
+                          setStep(1);
+                          setFilters2((prev) => ({
+                            ...prev,
+                            setup_hw_name: "",
+                            setup_location: "",
+                          }));
+                          setFilters((prev) => ({
+                            ...prev,
+                            custnm: "",
+                          }));
+                        }}
+                        icon="arrow-left"
+                      >
                         이전
                       </Button>
                       <Button
@@ -1422,7 +1565,7 @@ const PR_A2200W: React.FC = () => {
                                 overflowY: "auto",
                                 background: "#d6d8f9",
                               }}
-                              onChange={filterInputChange}
+                              onChange={InputChange}
                             />
                           </td>
                         </tr>
@@ -1468,7 +1611,7 @@ const PR_A2200W: React.FC = () => {
                                 overflowY: "auto",
                                 background: "#d6d8f9",
                               }}
-                              onChange={filterInputChange}
+                              onChange={InputChange}
                             />
                           </td>
                         </tr>
