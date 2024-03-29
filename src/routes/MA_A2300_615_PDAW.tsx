@@ -1,4 +1,4 @@
-import { Card, CardContent, Grid, Input, Typography } from "@mui/material";
+import { Card, CardContent, Grid, Typography } from "@mui/material";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import {
@@ -10,6 +10,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
+import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import SwiperCore from "swiper";
@@ -18,11 +19,13 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import {
   AdminQuestionBox,
   ButtonContainer,
+  ButtonInInput,
   FilterBox,
   FilterBoxWrap,
   FormBox,
   FormBoxWrap,
   GridContainer,
+  GridContainerWrap,
   GridTitle,
   GridTitleContainer,
   Title,
@@ -32,7 +35,7 @@ import {
   UseGetValueFromSessionItem,
   UseParaPc,
 } from "../components/CommonFunction";
-import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
+import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { Iparameters } from "../store/types";
@@ -485,31 +488,35 @@ const MA_A2300_615_PDAW: React.FC = () => {
       heatno_s: [],
       barcode_s: [],
     };
-    mainDataResult.data.forEach((item: any, idx: number) => {
-      const { heatno = "", scanno = "" } = item;
+    if (checkDataResult.total > 0) {
+      checkDataResult.data.forEach((item: any, idx: number) => {
+        const { heatno = "", scanno = "" } = item;
 
-      dataArr.heatno_s.push(heatno);
-      dataArr.barcode_s.push(scanno);
-    });
+        dataArr.heatno_s.push(heatno);
+        dataArr.barcode_s.push(scanno);
+      });
 
-    const custcd = mainDataResult2.data.filter(
-      (item) =>
-        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-    )[0].custcd;
-    const group_code = mainDataResult3.data.filter(
-      (item) =>
-        item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
-    )[0].group_code;
+      const custcd = mainDataResult2.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0].custcd;
+      const group_code = mainDataResult3.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
+      )[0].group_code;
 
-    setParaData((prev) => ({
-      ...prev,
-      workType: "N",
-      orgdiv: "01",
-      custcd: custcd,
-      group_code: group_code,
-      heatno_s: dataArr.heatno_s.join("|"),
-      barcode_s: dataArr.barcode_s.join("|"),
-    }));
+      setParaData((prev) => ({
+        ...prev,
+        workType: "N",
+        orgdiv: "01",
+        custcd: custcd,
+        group_code: group_code,
+        heatno_s: dataArr.heatno_s.join("|"),
+        barcode_s: dataArr.barcode_s.join("|"),
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
   };
 
   const [ParaData, setParaData] = useState({
@@ -558,6 +565,15 @@ const MA_A2300_615_PDAW: React.FC = () => {
         heatno_s: "",
         barcode_s: "",
       });
+
+      setFilters((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+      }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -640,7 +656,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                   }}
                   icon="reset"
                 >
-                  Reset
+                  ALLReset
                 </Button>
                 <Button
                   onClick={() => {
@@ -693,8 +709,28 @@ const MA_A2300_615_PDAW: React.FC = () => {
                           type="text"
                           value={Information.heatno}
                           style={{ width: "100%" }}
+                          className="readonly"
                           disabled={true}
                         />
+                        <ButtonInInput>
+                          <Button
+                            id="reset"
+                            onClick={() => {
+                              barcode = "";
+                              setInformation({
+                                heatno: "",
+                                str: "",
+                                isSearch: false,
+                              });
+                              let availableWidthPx = document.getElementById("reset");
+                              if (availableWidthPx) {
+                                availableWidthPx.blur();
+                              }
+                            }}
+                            icon="reset"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
                       </td>
                     </tr>
                   </tbody>
@@ -709,38 +745,40 @@ const MA_A2300_615_PDAW: React.FC = () => {
                 width: "100%",
               }}
             >
-              {mainDataResult.data.map((item, idx) => (
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                  <AdminQuestionBox key={idx}>
-                    <Card
-                      style={{
-                        width: "100%",
-                        cursor: "pointer",
-                        backgroundColor:
-                          checkDataResult.data.filter(
-                            (data) =>
-                              data.heatno == item.heatno &&
-                              data.scanno == item.scanno
-                          )[0] != undefined
-                            ? "#d6d8f9"
-                            : "white",
-                      }}
-                    >
-                      <CardContent
-                        onClick={() => onCheckClick(item)}
-                        style={{ textAlign: "left", padding: "8px" }}
+              <Grid container spacing={2}>
+                {mainDataResult.data.map((item, idx) => (
+                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <AdminQuestionBox key={idx}>
+                      <Card
+                        style={{
+                          width: "100%",
+                          cursor: "pointer",
+                          backgroundColor:
+                            checkDataResult.data.filter(
+                              (data) =>
+                                data.heatno == item.heatno &&
+                                data.scanno == item.scanno
+                            )[0] != undefined
+                              ? "#d6d8f9"
+                              : "white",
+                        }}
                       >
-                        <Typography gutterBottom variant="h6" component="div">
-                          {item.heatno}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {item.scanno}
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </AdminQuestionBox>
-                </Grid>
-              ))}
+                        <CardContent
+                          onClick={() => onCheckClick(item)}
+                          style={{ textAlign: "left", padding: "8px" }}
+                        >
+                          <Typography gutterBottom variant="h6" component="div">
+                            {item.heatno}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {item.scanno}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </AdminQuestionBox>
+                  </Grid>
+                ))}
+              </Grid>
             </GridContainer>
             <GridContainer className="leading_PDA_container">
               <FormBoxWrap border={true}>
@@ -753,10 +791,11 @@ const MA_A2300_615_PDAW: React.FC = () => {
                       <td>
                         <Input
                           name="chk"
-                          type="number"
+                          type="text"
                           style={{
                             textAlign: "right",
                           }}
+                          className="readonly"
                           value={checkDataResult.total}
                         />
                       </td>
@@ -766,10 +805,11 @@ const MA_A2300_615_PDAW: React.FC = () => {
                       <td>
                         <Input
                           name="total"
-                          type="number"
+                          type="text"
                           style={{
                             textAlign: "right",
                           }}
+                          className="readonly"
                           value={mainDataResult.total}
                         />
                       </td>
@@ -1008,7 +1048,354 @@ const MA_A2300_615_PDAW: React.FC = () => {
           )}
         </Swiper>
       ) : (
-        ""
+        <>
+          <TitleContainer style={{ marginBottom: "15px" }}>
+            <Title>원료육입고</Title>
+            <ButtonContainer>
+              <Button
+                themeColor={"primary"}
+                fillMode={"solid"}
+                onClick={() => {
+                  setMainDataResult(process([], mainDataState));
+                  setCheckDataResult(process([], checkDataState));
+                  setInformation({
+                    heatno: "",
+                    str: "",
+                    isSearch: false,
+                  });
+                  setState("1");
+                  barcode = "";
+                }}
+                icon="reset"
+              >
+                ALLReset
+              </Button>
+              <Button
+                onClick={() => {
+                  if (
+                    Object.entries(checkDataResult.data).toString() ===
+                    Object.entries(mainDataResult.data).toString()
+                  ) {
+                    setCheckDataResult((prev) => ({
+                      data: [],
+                      total: 0,
+                    }));
+                  } else {
+                    setCheckDataResult((prev) => ({
+                      data: mainDataResult.data,
+                      total: mainDataResult.total,
+                    }));
+                  }
+                }}
+                icon="check"
+              >
+                AllCheck
+              </Button>
+              <Button
+                onClick={() => onSaveClick()}
+                themeColor={"primary"}
+                fillMode={"solid"}
+                icon="save"
+              >
+                저장
+              </Button>
+            </ButtonContainer>
+          </TitleContainer>
+          <GridContainerWrap>
+            <GridContainer width="50%">
+              <GridTitleContainer>
+                <GridTitle>바코드스캔</GridTitle>
+              </GridTitleContainer>
+              <FormBoxWrap border={true}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>이력번호</th>
+                      <td>
+                        <Input
+                          name="heatno"
+                          type="text"
+                          value={Information.heatno}
+                          className="readonly"
+                          disabled={true}
+                        />
+                        <ButtonInInput>
+                          <Button
+                            id="reset"
+                            onClick={() => {
+                              barcode = "";
+                              setInformation({
+                                heatno: "",
+                                str: "",
+                                isSearch: false,
+                              });
+                              let availableWidthPx = document.getElementById("reset");
+                              if (availableWidthPx) {
+                                availableWidthPx.blur();
+                              }
+                            }}
+                            icon="reset"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>구분</th>
+                      <td style={{ display: "flex" }}>
+                        <Button
+                          id={"button1"}
+                          themeColor={"primary"}
+                          fillMode={state == "1" ? "solid" : "outline"}
+                          onClick={() => onClick1()}
+                          style={{ marginRight: "10px", width: "50%" }}
+                        >
+                          이력번호
+                        </Button>
+                        <Button
+                          id={"button2"}
+                          themeColor={"primary"}
+                          fillMode={state == "2" ? "solid" : "outline"}
+                          onClick={() => onClick2()}
+                          style={{ width: "50%" }}
+                        >
+                          제품바코드
+                        </Button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+              <GridContainer
+                style={{
+                  height: "70vh",
+                  overflowY: "scroll",
+                  width: "100%",
+                }}
+              >
+                <Grid container spacing={2}>
+                  {mainDataResult.data.map((item, idx) => (
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                      <AdminQuestionBox key={idx}>
+                        <Card
+                          style={{
+                            width: "100%",
+                            cursor: "pointer",
+                            backgroundColor:
+                              checkDataResult.data.filter(
+                                (data) =>
+                                  data.heatno == item.heatno &&
+                                  data.scanno == item.scanno
+                              )[0] != undefined
+                                ? "#d6d8f9"
+                                : "white",
+                          }}
+                        >
+                          <CardContent
+                            onClick={() => onCheckClick(item)}
+                            style={{ textAlign: "left", padding: "8px" }}
+                          >
+                            <Typography
+                              gutterBottom
+                              variant="h6"
+                              component="div"
+                            >
+                              {item.heatno}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {item.scanno}
+                            </Typography>
+                          </CardContent>
+                        </Card>
+                      </AdminQuestionBox>
+                    </Grid>
+                  ))}
+                </Grid>
+              </GridContainer>
+              <GridContainer className="leading_PDA_container">
+                <FormBoxWrap border={true}>
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th>선택건수</th>
+                        <td>
+                          <Input
+                            name="chk"
+                            type="text"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            className="readonly"
+                            value={checkDataResult.total}
+                          />
+                        </td>
+                        <th>스캔건수</th>
+                        <td>
+                          <Input
+                            name="total"
+                            type="text"
+                            style={{
+                              textAlign: "right",
+                            }}
+                            className="readonly"
+                            value={mainDataResult.total}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+              </GridContainer>
+            </GridContainer>
+            <GridContainer width={`calc(50% - ${GAP}px)`}>
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>거래처선택</GridTitle>
+                </GridTitleContainer>
+                <FilterBoxWrap>
+                  <FilterBox>
+                    <tbody>
+                      <tr style={{ flexDirection: "row" }}>
+                        <th>업체명</th>
+                        <td>
+                          <Input
+                            name="custnm"
+                            type="text"
+                            value={filters.custnm}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                        <td>
+                          <Button
+                            onClick={search}
+                            icon="search"
+                            themeColor={"primary"}
+                          >
+                            조회
+                          </Button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FilterBox>
+                </FilterBoxWrap>
+                <GridKendo
+                  style={{ height: "34.4vh" }}
+                  data={process(
+                    mainDataResult2.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                    })),
+                    mainDataState2
+                  )}
+                  onDataStateChange={onMainDataStateChange}
+                  {...mainDataState2}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onMainSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult2.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  //더블클릭
+                >
+                  <GridColumn
+                    field="custcd"
+                    title="업체코드"
+                    width="140px"
+                    footerCell={mainTotalFooterCell}
+                  />
+                  <GridColumn field="custnm" title="업체명" width="200px" />
+                </GridKendo>
+              </GridContainer>
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>바코드종류</GridTitle>
+                </GridTitleContainer>
+                <FilterBoxWrap>
+                  <FilterBox>
+                    <tbody>
+                      <tr style={{ flexDirection: "row" }}>
+                        <th>바코드</th>
+                        <td>
+                          <Input
+                            name="group_name"
+                            type="text"
+                            value={filters2.group_name}
+                            onChange={filterInputChange2}
+                          />
+                        </td>
+                        <td>
+                          <Button
+                            onClick={search2}
+                            icon="search"
+                            themeColor={"primary"}
+                          >
+                            조회
+                          </Button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FilterBox>
+                </FilterBoxWrap>
+                <GridKendo
+                  style={{ height: "34.4vh" }}
+                  data={process(
+                    mainDataResult3.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                    })),
+                    mainDataState3
+                  )}
+                  onDataStateChange={onMainDataStateChange2}
+                  {...mainDataState3}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onMainSelectionChange2}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult3.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  //더블클릭
+                >
+                  <GridColumn
+                    field="group_name"
+                    title="바코드"
+                    width="140px"
+                    footerCell={mainTotalFooterCell2}
+                  />
+                </GridKendo>
+              </GridContainer>
+            </GridContainer>
+          </GridContainerWrap>
+        </>
       )}
     </>
   );

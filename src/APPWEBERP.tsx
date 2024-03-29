@@ -88,6 +88,7 @@ import CHAT_A0002W from "./routes/CHAT_A0002W";
 import CHAT_TEST_TRAVEL_BOT from "./routes/CHAT_TEST_TRAVEL_BOT";
 import CM_A0000W from "./routes/CM_A0000W";
 import CM_A1000W from "./routes/CM_A1000W";
+import CM_A1000W_617 from "./routes/CM_A1000W_617";
 import CM_A1600W from "./routes/CM_A1600W";
 import CM_A1710W from "./routes/CM_A1710W";
 import CM_A2000W from "./routes/CM_A2000W";
@@ -222,6 +223,7 @@ import SA_A2300W from "./routes/SA_A2300W";
 import SA_A2300W_PDA from "./routes/SA_A2300W_PDA";
 import SA_A3000W from "./routes/SA_A3000W";
 import SA_A5000W from "./routes/SA_A5000W";
+import SA_A5000W_615 from "./routes/SA_A5000W_615";
 import SA_A5001W from "./routes/SA_A5001W";
 import SA_A5010W from "./routes/SA_A5010W";
 import SA_A6000W from "./routes/SA_A6000W";
@@ -683,6 +685,8 @@ const AppInner: React.FC = () => {
       return SA_A3000W;
     } else if (str == "SA_A5000W") {
       return SA_A5000W;
+    } else if (str == "SA_A5000W_615") {
+      return SA_A5000W_615;
     } else if (str == "SA_A5001W") {
       return SA_A5001W;
     } else if (str == "SA_A5010W") {
@@ -789,6 +793,8 @@ const AppInner: React.FC = () => {
       return CM_A0000W;
     } else if (str == "CM_A1000W") {
       return CM_A1000W;
+    } else if (str == "CM_A1000W_617") {
+      return CM_A1000W_617;
     } else if (str == "CM_A1600W") {
       return CM_A1600W;
     } else if (str == "CM_A1710W") {
@@ -1155,6 +1161,11 @@ const AppInner: React.FC = () => {
                   <AuthRoute path="/SA_A2300W" component={SA_A2300W} exact />
                   <AuthRoute path="/SA_A3000W" component={SA_A3000W} exact />
                   <AuthRoute path="/SA_A5000W" component={SA_A5000W} exact />
+                  <AuthRoute
+                    path="/SA_A5000W_615"
+                    component={SA_A5000W_615}
+                    exact
+                  />
                   <AuthRoute path="/SA_A5001W" component={SA_A5001W} exact />
                   <AuthRoute path="/SA_A5010W" component={SA_A5010W} exact />
                   <AuthRoute path="/SA_A8000W" component={SA_A8000W} exact />
@@ -1233,6 +1244,11 @@ const AppInner: React.FC = () => {
                   {/* 전사관리 */}
                   <AuthRoute path="/CM_A0000W" component={CM_A0000W} exact />
                   <AuthRoute path="/CM_A1000W" component={CM_A1000W} exact />
+                  <AuthRoute
+                    path="/CM_A1000W_617"
+                    component={CM_A1000W_617}
+                    exact
+                  />
                   <AuthRoute path="/CM_A1600W" component={CM_A1600W} exact />
                   <AuthRoute path="/CM_A1710W" component={CM_A1710W} exact />
                   <AuthRoute path="/CM_A2000W" component={CM_A2000W} exact />

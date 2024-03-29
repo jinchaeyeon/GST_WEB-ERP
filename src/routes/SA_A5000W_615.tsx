@@ -4,7 +4,6 @@ import { Button } from "@progress/kendo-react-buttons";
 import { Input } from "@progress/kendo-react-inputs";
 import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
-import "swiper/css";
 import {
   AdminQuestionBox,
   ButtonContainer,
@@ -17,12 +16,7 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
-import {
-  GetPropertyValueByName,
-  UseCustomOption,
-} from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
@@ -30,8 +24,9 @@ import { isLoading } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 var barcode = "";
+var barcode2 = false;
 
-const MA_A3500W_615: React.FC = () => {
+const SA_A5000W_615: React.FC = () => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
@@ -49,48 +44,31 @@ const MA_A3500W_615: React.FC = () => {
   const [checkDataResult, setCheckDataResult] = useState<DataResult>(
     process([], checkDataState)
   );
-  //커스텀 옵션 조회
-  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("MA_A3500W_615", setCustomOptionData);
-
-  useEffect(() => {
-    if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(
-        customOptionData.menuCustomDefaultOptions,
-        "query"
-      );
-      setInformation((prev) => ({
-        ...prev,
-        out: defaultOption.find((item: any) => item.id === "out").valueCode,
-      }));
-    }
-  }, [customOptionData]);
-
   const [Information, setInformation] = useState({
-    scanno: "",
+    ordbarcode: "",
+    itembarcode: "",
     str: "",
+    str2: "",
     custcd: "",
     custnm: "",
-    out: "A",
     isSearch: false,
   });
-  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
-  const RadioChange = (e: any) => {
-    const { name, value } = e;
-
-    setInformation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
   useEffect(() => {
     if (Information.isSearch && Information.str != "") {
-      setFilters((prev) => ({
-        ...prev,
-        isSearch: true,
-        barcode: Information.str,
-      }));
+      if (Information.str2 != "") {
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: true,
+          itembarcode: Information.str2,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: true,
+          ordbarcode: Information.str,
+        }));
+      }
     }
   }, [Information]);
 
@@ -98,11 +76,19 @@ const MA_A3500W_615: React.FC = () => {
     document.addEventListener("keydown", function (evt) {
       if (evt.code == "Enter") {
         if (barcode != "") {
-          setInformation((prev) => ({
-            ...prev,
-            str: barcode,
-            isSearch: true,
-          }));
+          if (barcode2 == false) {
+            setInformation((prev) => ({
+              ...prev,
+              str: barcode,
+              isSearch: true,
+            }));
+          } else {
+            setInformation((prev) => ({
+              ...prev,
+              str2: barcode,
+              isSearch: true,
+            }));
+          }
         }
       } else if (
         evt.code != "ShiftLeft" &&
@@ -116,12 +102,18 @@ const MA_A3500W_615: React.FC = () => {
 
   const onCheckClick = (datas: any) => {
     const data = checkDataResult.data.filter(
-      (item) => item.scanno == datas.scanno
+      (item) =>
+        item.ordbarcode == datas.ordbarcode &&
+        item.itembarcode == datas.itembarcode
     )[0];
 
     if (data != undefined) {
       const setdatas = checkDataResult.data.filter(
-        (item) => !(item.scanno == datas.scanno)
+        (item) =>
+          !(
+            item.ordbarcode == datas.ordbarcode &&
+            item.itembarcode == datas.itembarcode
+          )
       );
       setCheckDataResult((prev) => ({
         data: setdatas,
@@ -139,10 +131,12 @@ const MA_A3500W_615: React.FC = () => {
     setMainDataResult(process([], mainDataState));
     setCheckDataResult(process([], checkDataState));
     barcode = "";
+    barcode2 = false;
     setInformation({
-      scanno: "",
+      ordbarcode: "",
+      itembarcode: "",
       str: "",
-      out: "A",
+      str2: "",
       custcd: "",
       custnm: "",
       isSearch: false,
@@ -159,7 +153,8 @@ const MA_A3500W_615: React.FC = () => {
   };
 
   const [filters, setFilters] = useState({
-    barcode: "",
+    ordbarcode: "",
+    itembarcode: "",
     pgNum: 1,
     isSearch: false,
     pgSize: PAGE_SIZE,
@@ -190,56 +185,80 @@ const MA_A3500W_615: React.FC = () => {
     let data: any;
     setLoading(true);
 
-    //조회조건 파라미터
-    const parameters: Iparameters = {
-      procedureName: "P_MA_A3500W_615_Q",
-      pageNumber: filters.pgNum,
-      pageSize: filters.pgSize,
-      parameters: {
-        "@p_work_type": "Q",
-        "@p_barcode": filters.barcode,
-      },
-    };
-
-    try {
-      data = await processApi<any>("procedure", parameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
-
+    if (filters.itembarcode == "") {
       setInformation((prev) => ({
         ...prev,
-        scanno: filters.barcode,
+        ordbarcode: filters.ordbarcode,
         isSearch: false,
       })); // 한번만 조회되도록
-      const newItem = {
-        scanno: totalRowCnt > 0 ? rows[0].barcode : Information.str,
-        wgt: totalRowCnt > 0 ? rows[0].wgt : 0,
-      };
-      let checkData = mainDataResult.data.filter(
-        (item) => item.scanno == newItem.scanno
-      )[0];
-      if (checkData != undefined) {
-        alert("이미 존재하는 데이터입니다.");
-      } else {
-        setMainDataResult((prev) => ({
-          data: [...prev.data, newItem],
-          total: prev.total + 1,
-        }));
-        setCheckDataResult((prev) => ({
-          data: [...prev.data, newItem],
-          total: prev.total + 1,
-        }));
-      }
-      setInformation((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       barcode = "";
+      barcode2 = true;
     } else {
-      console.log(data);
+      //조회조건 파라미터
+      const parameters: Iparameters = {
+        procedureName: "P_SA_A5000W_615_Q",
+        pageNumber: filters.pgNum,
+        pageSize: filters.pgSize,
+        parameters: {
+          "@p_work_type": "Q",
+          "@p_ordbarcode": filters.ordbarcode,
+          "@p_itembarcode": filters.itembarcode,
+        },
+      };
+
+      try {
+        data = await processApi<any>("procedure", parameters);
+      } catch (error) {
+        data = null;
+      }
+
+      if (data.isSuccess == true) {
+        const totalRowCnt = data.tables[0].TotalRowCount;
+        const rows = data.tables[0].Rows;
+
+        const newItem = {
+          ordbarcode: totalRowCnt > 0 ? rows[0].ordbarcode : Information.str,
+          itembarcode: totalRowCnt > 0 ? rows[0].itembarcode : Information.str2,
+          wgt: totalRowCnt > 0 ? rows[0].wgt : 0,
+        };
+        let checkData = mainDataResult.data.filter(
+          (item) =>
+            item.ordbarcode == newItem.ordbarcode &&
+            item.itembarcode == newItem.itembarcode
+        )[0];
+        if (checkData != undefined) {
+          alert("이미 존재하는 데이터입니다.");
+        } else {
+          setMainDataResult((prev) => ({
+            data: [...prev.data, newItem],
+            total: prev.total + 1,
+          }));
+          setCheckDataResult((prev) => ({
+            data: [...prev.data, newItem],
+            total: prev.total + 1,
+          }));
+        }
+        setInformation((prev) => ({
+          ...prev,
+          ordbarcode: "",
+          itembarcode: "",
+          str: "",
+          str2: "",
+          isSearch: false,
+        })); // 한번만 조회되도록
+        setFilters((prev) => ({
+          ...prev,
+          ordbarcode: "",
+          itembarcode: "",
+          isSearch: false,
+        })); // 한번만 조회되도록
+        barcode = "";
+        barcode2 = false;
+      } else {
+        console.log(data);
+      }
     }
+
     setFilters((prev) => ({
       ...prev,
       pgNum:
@@ -256,7 +275,7 @@ const MA_A3500W_615: React.FC = () => {
       {isMobile ? (
         <>
           <TitleContainer style={{ marginBottom: "15px" }}>
-            <Title style={{ textAlign: "center" }}>생산투입</Title>
+            <Title style={{ textAlign: "center" }}>판매처리</Title>
             <ButtonContainer>
               <Button
                 themeColor={"primary"}
@@ -296,36 +315,55 @@ const MA_A3500W_615: React.FC = () => {
           </TitleContainer>
           <GridContainer className="leading_PDA_container">
             <FormBoxWrap border={true}>
+              <GridTitleContainer>
+                <GridTitle></GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={() => {
+                      barcode = "";
+                      barcode2 = false;
+                      setInformation((prev) => ({
+                        ...prev,
+                        ordbarcode: "",
+                        itembarcode: "",
+                        str: "",
+                        str2: "",
+                        isSearch: false,
+                      }));
+                    }}
+                    icon="reset"
+                    fillMode="flat"
+                  />
+                </ButtonContainer>
+              </GridTitleContainer>
               <FormBox>
                 <tbody>
+                  <tr style={{ display: "flex", flexDirection: "row" }}>
+                    <th style={{ width: "5%", minWidth: "80px" }}>수주번호</th>
+                    <td>
+                      <Input
+                        name="ordbarcode"
+                        type="text"
+                        value={Information.ordbarcode}
+                        style={{ width: "100%" }}
+                        className="readonly"
+                        disabled={true}
+                      />
+                    </td>
+                  </tr>
                   <tr style={{ display: "flex", flexDirection: "row" }}>
                     <th style={{ width: "5%", minWidth: "80px" }}>
                       제품바코드
                     </th>
                     <td>
                       <Input
-                        name="scanno"
+                        name="itembarcode"
                         type="text"
-                        value={Information.scanno}
+                        value={Information.itembarcode}
                         style={{ width: "100%" }}
                         className="readonly"
                         disabled={true}
                       />
-                      <ButtonInInput>
-                        <Button
-                          onClick={() => {
-                            barcode = "";
-                            setInformation((prev) => ({
-                              ...prev,
-                              scanno: "",
-                              str: "",
-                              isSearch: false,
-                            }));
-                          }}
-                          icon="reset"
-                          fillMode="flat"
-                        />
-                      </ButtonInInput>
                     </td>
                   </tr>
                 </tbody>
@@ -334,7 +372,7 @@ const MA_A3500W_615: React.FC = () => {
           </GridContainer>
           <GridContainer
             style={{
-              height: "50vh",
+              height: "45vh",
               overflowY: "scroll",
               marginBottom: "10px",
               width: "100%",
@@ -350,7 +388,9 @@ const MA_A3500W_615: React.FC = () => {
                         cursor: "pointer",
                         backgroundColor:
                           checkDataResult.data.filter(
-                            (data) => data.scanno == item.scanno
+                            (data) =>
+                              data.ordbarcode == item.ordbarcode &&
+                              data.itembarcode == item.itembarcode
                           )[0] != undefined
                             ? "#d6d8f9"
                             : "white",
@@ -360,8 +400,11 @@ const MA_A3500W_615: React.FC = () => {
                         onClick={() => onCheckClick(item)}
                         style={{ textAlign: "left", padding: "8px" }}
                       >
+                        <Typography gutterBottom variant="h6" component="div">
+                          {item.ordbarcode}
+                        </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          {item.scanno}
+                          {item.itembarcode}
                         </Typography>
                       </CardContent>
                     </Card>
@@ -427,7 +470,7 @@ const MA_A3500W_615: React.FC = () => {
                     </td>
                   </tr>
                   <tr style={{ display: "flex", flexDirection: "row" }}>
-                    <th style={{ width: "5%", minWidth: "80px" }}>판매업체</th>
+                    <th style={{ width: "5%", minWidth: "80px" }}>거래처</th>
                     <td>
                       <Input
                         name="custnm"
@@ -445,18 +488,6 @@ const MA_A3500W_615: React.FC = () => {
                       </ButtonInInput>
                     </td>
                   </tr>
-                  <tr style={{ display: "flex", flexDirection: "row" }}>
-                    <th style={{ width: "5%", minWidth: "80px" }}>투입옵션</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionRadioGroup
-                          name="out"
-                          customOptionData={customOptionData}
-                          changeData={RadioChange}
-                        />
-                      )}
-                    </td>
-                  </tr>
                 </tbody>
               </FormBox>
             </FormBoxWrap>
@@ -465,7 +496,7 @@ const MA_A3500W_615: React.FC = () => {
       ) : (
         <>
           <TitleContainer style={{ marginBottom: "15px" }}>
-            <Title>생산투입</Title>
+            <Title>판매처리</Title>
             <ButtonContainer>
               <Button
                 themeColor={"primary"}
@@ -511,14 +542,12 @@ const MA_A3500W_615: React.FC = () => {
               <FormBox>
                 <tbody>
                   <tr>
-                    <th style={{ width: "5%", minWidth: "80px" }}>
-                      제품바코드
-                    </th>
+                    <th style={{ width: "5%", minWidth: "80px" }}>수주번호</th>
                     <td>
                       <Input
-                        name="scanno"
+                        name="ordbarcode"
                         type="text"
-                        value={Information.scanno}
+                        value={Information.ordbarcode}
                         style={{ width: "100%" }}
                         className="readonly"
                         disabled={true}
@@ -527,10 +556,13 @@ const MA_A3500W_615: React.FC = () => {
                         <Button
                           onClick={() => {
                             barcode = "";
+                            barcode2 = false;
                             setInformation((prev) => ({
                               ...prev,
-                              scanno: "",
+                              ordbarcode: "",
+                              itembarcode: "",
                               str: "",
+                              str2: "",
                               isSearch: false,
                             }));
                           }}
@@ -539,7 +571,20 @@ const MA_A3500W_615: React.FC = () => {
                         />
                       </ButtonInInput>
                     </td>
-                    <th style={{ width: "5%", minWidth: "80px" }}>판매업체</th>
+                    <th style={{ width: "5%", minWidth: "80px" }}>
+                      제품바코드
+                    </th>
+                    <td>
+                      <Input
+                        name="itembarcode"
+                        type="text"
+                        value={Information.itembarcode}
+                        style={{ width: "100%" }}
+                        className="readonly"
+                        disabled={true}
+                      />
+                    </td>
+                    <th style={{ width: "5%", minWidth: "80px" }}>거래처</th>
                     <td>
                       <Input
                         name="custnm"
@@ -556,26 +601,16 @@ const MA_A3500W_615: React.FC = () => {
                         />
                       </ButtonInInput>
                     </td>
-                    <th style={{ width: "5%", minWidth: "80px" }}>투입옵션</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionRadioGroup
-                          name="out"
-                          customOptionData={customOptionData}
-                          changeData={RadioChange}
-                        />
-                      )}
-                    </td>
                   </tr>
                 </tbody>
               </FormBox>
             </FormBoxWrap>
             <GridContainer
               style={{
-                height: "65vh",
+                height: "67vh",
                 overflowY: "scroll",
-                width: "100%",
                 marginBottom: "10px",
+                width: "100%",
               }}
             >
               <Grid container spacing={2}>
@@ -588,7 +623,9 @@ const MA_A3500W_615: React.FC = () => {
                           cursor: "pointer",
                           backgroundColor:
                             checkDataResult.data.filter(
-                              (data) => data.scanno == item.scanno
+                              (data) =>
+                                data.ordbarcode == item.ordbarcode &&
+                                data.itembarcode == item.itembarcode
                             )[0] != undefined
                               ? "#d6d8f9"
                               : "white",
@@ -598,8 +635,11 @@ const MA_A3500W_615: React.FC = () => {
                           onClick={() => onCheckClick(item)}
                           style={{ textAlign: "left", padding: "8px" }}
                         >
+                          <Typography gutterBottom variant="h6" component="div">
+                            {item.ordbarcode}
+                          </Typography>
                           <Typography variant="body2" color="text.secondary">
-                            {item.scanno}
+                            {item.itembarcode}
                           </Typography>
                         </CardContent>
                       </Card>
@@ -679,4 +719,4 @@ const MA_A3500W_615: React.FC = () => {
   );
 };
 
-export default MA_A3500W_615;
+export default SA_A5000W_615;
