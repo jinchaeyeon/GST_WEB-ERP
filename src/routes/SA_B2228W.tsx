@@ -17,8 +17,11 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import {
+  GetPropertyValueByName,
+  UseCustomOption,
   convertDateToStr,
   numberWithCommas3,
+  setDefaultDate,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
 import MultiChart from "../components/KPIcomponents/Chart/MultiChart";
@@ -50,7 +53,22 @@ const SA_B2228W: React.FC = () => {
   });
 
   useEffect(() => {}, [color]);
-
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("SA_B2228W", setCustomOptionData);
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
+      setFilters((prev) => ({
+        ...prev,
+        frdt: setDefaultDate(customOptionData, "frdt"),
+      }));
+    }
+  }, [customOptionData]);
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,

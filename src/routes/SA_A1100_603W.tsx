@@ -2887,6 +2887,7 @@ const SA_A1100_603W: React.FC = () => {
                         {customOptionData !== null && (
                           <CustomOptionComboBox
                             name="amtunit"
+                            type="new"
                             value={Information.amtunit}
                             customOptionData={customOptionData}
                             changeData={ComboBoxChange}
