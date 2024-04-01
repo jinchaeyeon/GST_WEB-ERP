@@ -13,12 +13,9 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import {
-  Checkbox,
-  Input,
-  InputChangeEvent,
-} from "@progress/kendo-react-inputs";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { Checkbox, Input } from "@progress/kendo-react-inputs";
+import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
@@ -54,21 +51,21 @@ import {
   ThreeNumberceil,
   UseBizComponent,
   UseCustomOption,
-  UseGetValueFromSessionItem,
   UseParaPc,
   convertDateToStr,
   dateformat,
   getGridItemChangedData,
+  getQueryFromBizComponent,
   toDate,
 } from "../CommonFunction";
 import { EDIT_FIELD, PAGE_SIZE, SELECTED_FIELD } from "../CommonString";
 import RequiredHeader from "../HeaderCells/RequiredHeader";
 import BizComponentRadioGroup from "../RadioGroups/BizComponentRadioGroup";
 import { CellRender, RowRender } from "../Renderers/Renderers";
-import PrsnnumWindow from "../Windows/CommonWindows/PrsnnumWindow";
 import CodeWindow from "./CommonWindows/CodeWindow";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import PopUpAttachmentsWindow from "./CommonWindows/PopUpAttachmentsWindow";
+import PrsnnumWindow from "./CommonWindows/PrsnnumWindow";
 
 type IKendoWindow = {
   setVisible(t: boolean): void;
@@ -105,95 +102,6 @@ type TdataArr = {
   remark_s: string[];
   carddt_s: string[];
   taxtype_s: string[];
-};
-const FormContext = createContext<{
-  custcd: string;
-  setCustcd: (d: any) => void;
-  custnm: string;
-  setCustnm: (d: any) => void;
-  mainDataState: State;
-  setMainDataState: (d: any) => void;
-}>({} as any);
-
-const ColumnCommandCell = (props: GridCellProps) => {
-  const {
-    ariaColumnIndex,
-    columnIndex,
-    dataItem,
-    field = "",
-    render,
-    onChange,
-    className = "",
-  } = props;
-  const {
-    custcd,
-    custnm,
-    setCustcd,
-    setCustnm,
-    mainDataState,
-    setMainDataState,
-  } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
-  const value = field && dataItem[field] ? dataItem[field] : "";
-
-  const handleChange = (e: InputChangeEvent) => {
-    if (onChange) {
-      onChange({
-        dataIndex: 0,
-        dataItem: dataItem,
-        field: field,
-        syntheticEvent: e.syntheticEvent,
-        value: e.target.value ?? "",
-      });
-    }
-  };
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-
-  const setCustData = (data: ICustData) => {
-    setCustcd(data.custcd);
-    setCustnm(data.custnm);
-  };
-
-  const defaultRendering = (
-    <td
-      className={className}
-      aria-colindex={ariaColumnIndex}
-      data-grid-col-index={columnIndex}
-      style={{ position: "relative" }}
-    >
-      {isInEdit ? (
-        <Input value={value} onChange={handleChange} type="text" />
-      ) : (
-        value
-      )}
-      <ButtonInInput>
-        <Button
-          onClick={onCustWndClick}
-          icon="more-horizontal"
-          fillMode="flat"
-        />
-      </ButtonInInput>
-    </td>
-  );
-
-  return (
-    <>
-      {render === undefined
-        ? null
-        : render?.call(undefined, defaultRendering, props)}
-      {custWindowVisible && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible}
-          workType={"N"}
-          setData={setCustData}
-        />
-      )}
-    </>
-  );
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
@@ -242,10 +150,13 @@ const KendoWindow = ({
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const [loginResult] = useRecoilState(loginResultState);
-  const companyCode = loginResult ? loginResult.companyCode : "";
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
-  const userId = UseGetValueFromSessionItem("user_id");
+  const userId = loginResult ? loginResult.userId : "";
+  const userName = loginResult ? loginResult.userName : "";
+  const companyCode = loginResult ? loginResult.companyCode : "";
+  const dptcd = loginResult ? loginResult.dptcd : "";
+  const dptnm = loginResult ? loginResult.dptnm : "";
   const [worktype, setWorkType] = useState<string>(workType);
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -255,10 +166,46 @@ const KendoWindow = ({
   UseCustomOption(pathname, setCustomOptionData);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "R_AC038, L_AC024, L_AC013, R_TAXDIV_, L_AC401, L_AC030T",
+    "R_AC038, L_AC024, L_AC013, R_TAXDIV_, L_AC401, L_AC030T, L_dptcd_001",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
+
+  const [dptcdListData, setdptcdListData] = useState([
+    { dptcd: "", dptnm: "" },
+  ]);
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const dptcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_dptcd_001"
+        )
+      );
+      fetchQuery(dptcdQueryStr, setdptcdListData);
+    }
+  }, [bizComponentData]);
+
+  const fetchQuery = useCallback(async (queryStr: string, setListData: any) => {
+    let data: any;
+
+    const bytes = require("utf8-bytes");
+    const convertedQueryStr = bytesToBase64(bytes(queryStr));
+
+    let query = {
+      query: convertedQueryStr,
+    };
+
+    try {
+      data = await processApi<any>("query", query);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      setListData(rows);
+    }
+  }, []);
 
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
 
@@ -290,10 +237,10 @@ const KendoWindow = ({
     location: "01",
     expensedt: new Date(),
     position: "",
-    prsnnum: "",
-    prsnnm: "",
-    dptcd: "",
-    dptnm: "",
+    prsnnum: userId,
+    prsnnm: userName,
+    dptcd: dptcd,
+    dptnm: dptnm,
     isSearch: true,
     find_row_value: "",
     pgNum: 1,
@@ -733,27 +680,6 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    const newData = mainDataResult.data.map((item) =>
-      item.num == parseInt(Object.getOwnPropertyNames(selectedState)[0])
-        ? {
-            ...item,
-            rcvcustcd: custcd,
-            rcvcustnm: custnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
-          }
-        : {
-            ...item,
-          }
-    );
-    setMainDataResult((prev) => {
-      return {
-        data: newData,
-        total: prev.total,
-      };
-    });
-  }, [custcd, custnm]);
-
-  useEffect(() => {
     if (worktype != "N" && filters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
@@ -779,6 +705,64 @@ const KendoWindow = ({
         find_row_value: "",
         pgNum: 1,
       }));
+    } else if (workType == "N") {
+      const newDataItem = {
+        [DATA_ITEM_KEY]: ++temp,
+        acntcd: "",
+        acntnm: "",
+        actkey: "",
+        amt: 0,
+        amtunit: "",
+        attdatnum: "",
+        auto_transfer: "",
+        cardcd: "",
+        carddt: convertDateToStr(new Date()),
+        chk: "N",
+        creditcd: "",
+        creditnm: "",
+        custcd: "",
+        custnm: "",
+        dptcd: dptcd,
+        etax: "",
+        expensedt: convertDateToStr(new Date()),
+        expenseno: "",
+        expenseseq1: 0,
+        expenseseq2: 0,
+        files: "",
+        fxassetcd: "",
+        incidentalamt: 0,
+        indt: convertDateToStr(new Date()),
+        insiz: "",
+        itemacnt: "",
+        itemcd: "",
+        itemnm: "",
+        ma210t_recdt: "",
+        ma210t_seq1: 0,
+        ma210t_seq2: 0,
+        ordnum: "",
+        orgdiv: "01",
+        printdiv: "",
+        qty: 0,
+        rcvcustcd: "",
+        rcvcustnm: "",
+        remark: "",
+        taxamt: 0,
+        taxdiv: "2",
+        taxnum: "",
+        taxtype: "",
+        totamt: 0,
+        unp: 0,
+        usekind: "A",
+        rowstatus: "N",
+      };
+
+      setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
+      setMainDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
     }
   }, []);
 
@@ -789,7 +773,7 @@ const KendoWindow = ({
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_AC_A1020W_Q",
+      procedureName: "P_HU_A4110W_Q",
       pageNumber: 1,
       pageSize: PAGE_SIZE,
       parameters: {
@@ -806,10 +790,10 @@ const KendoWindow = ({
         "@p_appsts": "",
         "@p_position": "",
         "@p_acntdiv": "",
-        "@p_dtgb": "",
-        "@p_expensedt_s": "",
-        "@p_expenseseq1_s": "",
-        "@p_serviceId": companyCode,
+        "@p_company_code": companyCode,
+
+        "@p_yyyy": "",
+        "@p_semiannualgb": "",
         "@p_find_row_value": "",
       },
     };
@@ -917,28 +901,46 @@ const KendoWindow = ({
       acntnm: "",
       actkey: "",
       amt: 0,
+      amtunit: "",
       attdatnum: "",
+      auto_transfer: "",
       cardcd: "",
       carddt: convertDateToStr(new Date()),
       chk: "N",
+      creditcd: "",
+      creditnm: "",
       custcd: "",
       custnm: "",
-      dptcd: worktype == "N" || worktype == "C" ? filters.dptcd : para.dptcd,
+      dptcd: dptcd,
       etax: "",
       expensedt: convertDateToStr(new Date()),
       expenseno: "",
       expenseseq1: 0,
       expenseseq2: 0,
       files: "",
+      fxassetcd: "",
+      incidentalamt: 0,
       indt: convertDateToStr(new Date()),
+      insiz: "",
+      itemacnt: "",
       itemcd: "",
       itemnm: "",
+      ma210t_recdt: "",
+      ma210t_seq1: 0,
+      ma210t_seq2: 0,
+      ordnum: "",
       orgdiv: "01",
+      printdiv: "",
+      qty: 0,
+      rcvcustcd: "",
+      rcvcustnm: "",
       remark: "",
       taxamt: 0,
       taxdiv: "2",
+      taxnum: "",
       taxtype: "",
       totamt: 0,
+      unp: 0,
       usekind: "A",
       rowstatus: "N",
     };
@@ -1419,124 +1421,111 @@ const KendoWindow = ({
           </tbody>
         </FormBox>
       </FormBoxWrap>
-      <FormContext.Provider
-        value={{
-          custcd,
-          custnm,
-          setCustcd,
-          setCustnm,
-          mainDataState,
-          setMainDataState,
-          // fetchGrid,
-        }}
-      >
-        <GridContainer height={position.height - 500 + "px"}>
-          <GridTitleContainer>
-            <GridTitle>기본정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="plus"
-                title="행 추가"
-              ></Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          <Grid
-            style={{ height: `calc(100% - 35px)` }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                carddt: row.carddt
-                  ? new Date(dateformat(row.carddt))
-                  : new Date(dateformat("19000101")),
-                [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-              })),
-              mainDataState
-            )}
-            onDataStateChange={onMainDataStateChange}
-            {...mainDataState}
-            //선택 subDataState
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
-            }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
-            onItemChange={onMainItemChange}
-            cellRender={customCellRender}
-            rowRender={customRowRender}
-            editField={EDIT_FIELD}
-          >
-            <GridColumn field="rowstatus" title=" " width="50px" />
-            <GridColumn
-              field="chk"
-              title=" "
-              width="45px"
-              headerCell={CustomCheckBoxCell2}
-              cell={CheckBoxCell}
-            />
-            <GridColumn
-              field="carddt"
-              title="사용일"
-              width="120px"
-              cell={DateCell}
-              headerCell={RequiredHeader}
-              footerCell={mainTotalFooterCell}
-            />
-            <GridColumn
-              field="rcvcustcd"
-              title="사용처"
-              width="150px"
-              cell={ColumnCommandCell}
-            />
-            <GridColumn field="rcvcustnm" title="사용처명" width="150px" />
-            <GridColumn field="remark" title="품의내역" width="200px" />
-            <GridColumn
-              field="dptcd"
-              title="비용부서"
-              width="120px"
-              cell={CustomComboBoxCell}
-            />
-            <GridColumn
-              field="amt"
-              title="지출금액"
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="taxamt"
-              title="세액"
-              width="100px"
-              cell={NumberCell}
-            />
-            <GridColumn
-              field="totamt"
-              title="합계"
-              width="100px"
-              cell={NumberCell}
-            />
-          </Grid>
-        </GridContainer>
-      </FormContext.Provider>
+      <GridContainer height={position.height - 500 + "px"}>
+        <GridTitleContainer>
+          <GridTitle>기본정보</GridTitle>
+          <ButtonContainer>
+            <Button
+              onClick={onAddClick}
+              themeColor={"primary"}
+              icon="plus"
+              title="행 추가"
+            ></Button>
+            <Button
+              onClick={onDeleteClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="minus"
+              title="행 삭제"
+            ></Button>
+          </ButtonContainer>
+        </GridTitleContainer>
+        <Grid
+          style={{ height: `calc(100% - 35px)` }}
+          data={process(
+            mainDataResult.data.map((row) => ({
+              ...row,
+              carddt: row.carddt
+                ? new Date(dateformat(row.carddt))
+                : new Date(dateformat("19000101")),
+              [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+            })),
+            mainDataState
+          )}
+          onDataStateChange={onMainDataStateChange}
+          {...mainDataState}
+          //선택 subDataState
+          dataItemKey={DATA_ITEM_KEY}
+          selectedField={SELECTED_FIELD}
+          selectable={{
+            enabled: true,
+            mode: "single",
+          }}
+          onSelectionChange={onSelectionChange}
+          //스크롤 조회기능
+          fixedScroll={true}
+          total={mainDataResult.total}
+          //정렬기능
+          sortable={true}
+          onSortChange={onMainSortChange}
+          //컬럼순서조정
+          reorderable={true}
+          //컬럼너비조정
+          resizable={true}
+          onItemChange={onMainItemChange}
+          cellRender={customCellRender}
+          rowRender={customRowRender}
+          editField={EDIT_FIELD}
+        >
+          <GridColumn field="rowstatus" title=" " width="50px" />
+          <GridColumn
+            field="chk"
+            title=" "
+            width="45px"
+            headerCell={CustomCheckBoxCell2}
+            cell={CheckBoxCell}
+          />
+          <GridColumn
+            field="carddt"
+            title="사용일"
+            width="120px"
+            cell={DateCell}
+            headerCell={RequiredHeader}
+            footerCell={mainTotalFooterCell}
+          />
+          <GridColumn
+            field="remark"
+            title="품의내역"
+            width="200px"
+            headerCell={RequiredHeader}
+          />
+          <GridColumn
+            field="dptcd"
+            title="비용부서"
+            width="120px"
+            cell={CustomComboBoxCell}
+            headerCell={RequiredHeader}
+          />
+          <GridColumn
+            field="amt"
+            title="공급가액"
+            width="100px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="taxamt"
+            title="부가세"
+            width="100px"
+            cell={NumberCell}
+          />
+          <GridColumn
+            field="totamt"
+            title="합계"
+            width="100px"
+            cell={NumberCell}
+          />
+        </Grid>
+      </GridContainer>
       <FormBoxWrap>
         <FormBox>
           <tbody>
@@ -1631,8 +1620,7 @@ const KendoWindow = ({
                             Object.getOwnPropertyNames(selectedState)[0]
                         )[0].itemcd
                   }
-                  onChange={InputChange}
-                  className="required"
+                  className="readonly"
                 />
                 <ButtonInInput>
                   <Button
@@ -1741,7 +1729,7 @@ const KendoWindow = ({
                           )[0].usekind == "F"
                         ? "readonly"
                         : undefined
-                    }
+                  }
                   />
                 )}
               </td>

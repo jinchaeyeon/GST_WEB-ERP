@@ -156,6 +156,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "HU_A3200W" ||
       link == "HU_A4000W" ||
       link == "HU_A4100W" ||
+      link == "HU_A4110W" ||
       link == "HU_A5020W" ||
       link == "HU_A6000W" ||
       link == "HU_A6020W" ||
