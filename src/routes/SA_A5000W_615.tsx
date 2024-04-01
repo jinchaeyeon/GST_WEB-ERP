@@ -16,6 +16,10 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
+import {
+  UseGetValueFromSessionItem,
+  UseParaPc,
+} from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
@@ -29,6 +33,9 @@ var barcode2 = false;
 const SA_A5000W_615: React.FC = () => {
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
+  const [pc, setPc] = useState("");
+  const userId = UseGetValueFromSessionItem("user_id");
+  UseParaPc(setPc);
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const [mainDataState, setMainDataState] = useState<State>({
@@ -212,7 +219,7 @@ const SA_A5000W_615: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess == true) {
+      if (data.isSuccess == true && data.tables.length > 0) {
         const totalRowCnt = data.tables[0].TotalRowCount;
         const rows = data.tables[0].Rows;
 
@@ -255,6 +262,9 @@ const SA_A5000W_615: React.FC = () => {
         barcode = "";
         barcode2 = false;
       } else {
+        alert(data.resultMessage);
+        barcode = "";
+        barcode2 = false;
         console.log(data);
       }
     }
@@ -270,6 +280,92 @@ const SA_A5000W_615: React.FC = () => {
     setLoading(false);
   };
 
+  const onSaveClick = () => {
+    let dataArr: any = {
+      ordbarcode_s: [],
+      itembarcode_s: [],
+    };
+    if (checkDataResult.total > 0) {
+      if (Information.custcd != "") {
+        checkDataResult.data.forEach((item: any, idx: number) => {
+          const { ordbarcode = "", itembarcode = "" } = item;
+
+          dataArr.ordbarcode_s.push(ordbarcode);
+          dataArr.itembarcode_s.push(itembarcode);
+        });
+
+        setParaData((prev) => ({
+          ...prev,
+          workType: "N",
+          orgdiv: "01",
+          custcd: Information.custcd,
+          ordbarcode_s: dataArr.ordbarcode_s.join("|"),
+          itembarcode_s: dataArr.itembarcode_s.join("|"),
+        }));
+      } else {
+        alert("거래처를 선택해주세요.");
+      }
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
+  const [ParaData, setParaData] = useState({
+    workType: "",
+    orgdiv: "01",
+    custcd: "",
+    ordbarcode_s: "",
+    itembarcode_s: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_SA_A5000W_615_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_custcd": ParaData.custcd,
+      "@p_ordbarcode_s": ParaData.ordbarcode_s,
+      "@p_itembarcode_s": ParaData.itembarcode_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "SA_A5000W_615",
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      alert("저장되었습니다.");
+      resetAll();
+      setParaData({
+        workType: "",
+        orgdiv: "01",
+        custcd: "",
+        ordbarcode_s: "",
+        itembarcode_s: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (ParaData.workType != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
   return (
     <>
       {isMobile ? (
@@ -308,7 +404,7 @@ const SA_A5000W_615: React.FC = () => {
               >
                 AllCheck
               </Button>
-              <Button onClick={() => {}} icon="save">
+              <Button onClick={() => onSaveClick()} icon="save">
                 저장
               </Button>
             </ButtonContainer>
@@ -529,7 +625,7 @@ const SA_A5000W_615: React.FC = () => {
               >
                 AllCheck
               </Button>
-              <Button onClick={() => {}} icon="save">
+              <Button onClick={() => onSaveClick()} icon="save">
                 저장
               </Button>
             </ButtonContainer>

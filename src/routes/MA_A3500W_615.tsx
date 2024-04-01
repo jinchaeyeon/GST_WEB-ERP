@@ -20,12 +20,12 @@ import {
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseGetValueFromSessionItem,
+  UseParaPc,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { ICustData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
@@ -36,6 +36,9 @@ const MA_A3500W_615: React.FC = () => {
   let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
+  const [pc, setPc] = useState("");
+  const userId = UseGetValueFromSessionItem("user_id");
+  UseParaPc(setPc);
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -69,8 +72,6 @@ const MA_A3500W_615: React.FC = () => {
   const [Information, setInformation] = useState({
     scanno: "",
     str: "",
-    custcd: "",
-    custnm: "",
     out: "A",
     isSearch: false,
   });
@@ -143,8 +144,6 @@ const MA_A3500W_615: React.FC = () => {
       scanno: "",
       str: "",
       out: "A",
-      custcd: "",
-      custnm: "",
       isSearch: false,
     });
   };
@@ -164,17 +163,6 @@ const MA_A3500W_615: React.FC = () => {
     isSearch: false,
     pgSize: PAGE_SIZE,
   });
-  const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
-  const onCustWndClick = () => {
-    setCustWindowVisible(true);
-  };
-  const setCustData = (data: ICustData) => {
-    setInformation((prev) => ({
-      ...prev,
-      custcd: data.custcd,
-      custnm: data.custnm,
-    }));
-  };
 
   useEffect(() => {
     if (filters.isSearch) {
@@ -238,7 +226,9 @@ const MA_A3500W_615: React.FC = () => {
       setInformation((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       barcode = "";
     } else {
+      alert(data.resultMessage)
       console.log(data);
+      barcode = "";
     }
     setFilters((prev) => ({
       ...prev,
@@ -250,6 +240,84 @@ const MA_A3500W_615: React.FC = () => {
     }));
     setLoading(false);
   };
+
+  const onSaveClick = () => {
+    let dataArr: any = {
+      barcode_s: [],
+    };
+    if (checkDataResult.total > 0) {
+      checkDataResult.data.forEach((item: any, idx: number) => {
+        const { scanno = "" } = item;
+
+        dataArr.barcode_s.push(scanno);
+      });
+
+      setParaData((prev) => ({
+        ...prev,
+        workType: "N",
+        orgdiv: "01",
+        out: Information.out,
+        barcode_s: dataArr.barcode_s.join("|"),
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
+  const [ParaData, setParaData] = useState({
+    workType: "",
+    orgdiv: "01",
+    out: "",
+    barcode_s: "",
+  });
+
+  const para: Iparameters = {
+    procedureName: "P_MA_A3500W_615_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": ParaData.workType,
+      "@p_orgdiv": ParaData.orgdiv,
+      "@p_custcd": "",
+      "@p_out": ParaData.out,
+      "@p_barcode_s": ParaData.barcode_s,
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "MA_A3500W_615",
+    },
+  };
+
+  const fetchTodoGridSaved = async () => {
+    let data: any;
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", para);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      alert("저장되었습니다.");
+      resetAll();
+      setParaData({
+        workType: "",
+        orgdiv: "01",
+        out: "",
+        barcode_s: "",
+      });
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (ParaData.workType != "") {
+      fetchTodoGridSaved();
+    }
+  }, [ParaData]);
 
   return (
     <>
@@ -289,7 +357,7 @@ const MA_A3500W_615: React.FC = () => {
               >
                 AllCheck
               </Button>
-              <Button onClick={() => {}} icon="save">
+              <Button onClick={() => onSaveClick()} icon="save">
                 저장
               </Button>
             </ButtonContainer>
@@ -334,7 +402,7 @@ const MA_A3500W_615: React.FC = () => {
           </GridContainer>
           <GridContainer
             style={{
-              height: "50vh",
+              height: "55vh",
               overflowY: "scroll",
               marginBottom: "10px",
               width: "100%",
@@ -427,25 +495,6 @@ const MA_A3500W_615: React.FC = () => {
                     </td>
                   </tr>
                   <tr style={{ display: "flex", flexDirection: "row" }}>
-                    <th style={{ width: "5%", minWidth: "80px" }}>판매업체</th>
-                    <td>
-                      <Input
-                        name="custnm"
-                        type="text"
-                        value={Information.custnm}
-                        style={{ width: "100%" }}
-                        className="readonly"
-                      />
-                      <ButtonInInput>
-                        <Button
-                          onClick={onCustWndClick}
-                          icon="more-horizontal"
-                          fillMode="flat"
-                        />
-                      </ButtonInInput>
-                    </td>
-                  </tr>
-                  <tr style={{ display: "flex", flexDirection: "row" }}>
                     <th style={{ width: "5%", minWidth: "80px" }}>투입옵션</th>
                     <td>
                       {customOptionData !== null && (
@@ -498,7 +547,7 @@ const MA_A3500W_615: React.FC = () => {
               >
                 AllCheck
               </Button>
-              <Button onClick={() => {}} icon="save">
+              <Button onClick={() => onSaveClick()} icon="save">
                 저장
               </Button>
             </ButtonContainer>
@@ -535,23 +584,6 @@ const MA_A3500W_615: React.FC = () => {
                             }));
                           }}
                           icon="reset"
-                          fillMode="flat"
-                        />
-                      </ButtonInInput>
-                    </td>
-                    <th style={{ width: "5%", minWidth: "80px" }}>판매업체</th>
-                    <td>
-                      <Input
-                        name="custnm"
-                        type="text"
-                        value={Information.custnm}
-                        style={{ width: "100%" }}
-                        className="readonly"
-                      />
-                      <ButtonInInput>
-                        <Button
-                          onClick={onCustWndClick}
-                          icon="more-horizontal"
                           fillMode="flat"
                         />
                       </ButtonInInput>
@@ -666,14 +698,6 @@ const MA_A3500W_615: React.FC = () => {
             </FormBoxWrap>
           </GridContainer>
         </>
-      )}
-      {custWindowVisible && (
-        <CustomersWindow
-          setVisible={setCustWindowVisible}
-          workType={"FILTER"}
-          setData={setCustData}
-          modal={true}
-        />
       )}
     </>
   );

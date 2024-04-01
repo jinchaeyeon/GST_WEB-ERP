@@ -94,14 +94,30 @@ type TdataArr = {
   rcvcustnm_s: string[];
   itemcd_s: string[];
   itemnm_s: string[];
+  qty_s: string[];
   amt_s: string[];
   taxamt_s: string[];
+  incidentalamt_s: string[];
+  amtunit_s: string[];
+  unp_s: string[];
+  wonamt_s: string[];
   acntcd_s: string[];
   acntnm_s: string[];
   attdatnum_s: string[];
+  fxassetcd_s: string[];
+  ordnum_s: string[];
   remark_s: string[];
   carddt_s: string[];
   taxtype_s: string[];
+  creditcd_s: string[];
+  creditnm_s: string[];
+  auto_transfer_s: string[];
+  printdiv_s: string[];
+  ma210t_recdt_s: string[];
+  ma210t_seq1_s: string[];
+  ma210t_seq2_s: string[];
+
+  expenseno_s: string[];
 };
 
 const CustomComboBoxCell = (props: GridCellProps) => {
@@ -222,9 +238,6 @@ const KendoWindow = ({
       height: event.height,
     });
   };
-
-  const [custcd, setCustcd] = useState<string>("");
-  const [custnm, setCustnm] = useState<string>("");
 
   const onClose = () => {
     if (unsavedName.length > 0) setDeletedName(unsavedName);
@@ -753,6 +766,7 @@ const KendoWindow = ({
         totamt: 0,
         unp: 0,
         usekind: "A",
+        wonamt: 0,
         rowstatus: "N",
       };
 
@@ -942,6 +956,7 @@ const KendoWindow = ({
       totamt: 0,
       unp: 0,
       usekind: "A",
+      wonamt: 0,
       rowstatus: "N",
     };
 
@@ -990,8 +1005,8 @@ const KendoWindow = ({
           item.location == "" ||
           item.prsnnum == "" ||
           item.usekind == "" ||
-          item.itemcd == "" ||
-          item.carddt == ""
+          item.remark == "" ||
+          item.dptcd == ""
         ) {
           valid = false;
         }
@@ -1022,14 +1037,30 @@ const KendoWindow = ({
           rcvcustnm_s: [],
           itemcd_s: [],
           itemnm_s: [],
+          qty_s: [],
           amt_s: [],
           taxamt_s: [],
+          incidentalamt_s: [],
+          amtunit_s: [],
+          unp_s: [],
+          wonamt_s: [],
           acntcd_s: [],
           acntnm_s: [],
           attdatnum_s: [],
+          fxassetcd_s: [],
+          ordnum_s: [],
           remark_s: [],
           carddt_s: [],
           taxtype_s: [],
+          creditcd_s: [],
+          creditnm_s: [],
+          auto_transfer_s: [],
+          printdiv_s: [],
+          ma210t_recdt_s: [],
+          ma210t_seq1_s: [],
+          ma210t_seq2_s: [],
+
+          expenseno_s: [],
         };
 
         dataItem.forEach((item: any, idx: number) => {
@@ -1048,14 +1079,30 @@ const KendoWindow = ({
             rcvcustnm = "",
             itemcd = "",
             itemnm = "",
+            qty = "",
             amt = "",
             taxamt = "",
+            incidentalamt = "",
+            amtunit = "",
+            unp = "",
+            wonamt = "",
             acntcd = "",
             acntnm = "",
             attdatnum = "",
+            fxassetcd = "",
+            ordnum = "",
             remark = "",
             carddt = "",
             taxtype = "",
+            creditcd = "",
+            creditnm = "",
+            auto_transfer = "",
+            printdiv = "",
+            ma210t_recdt = "",
+            ma210t_seq1 = "",
+            ma210t_seq2 = "",
+
+            expenseno = "",
           } = item;
           dataArr.rowstatus_s.push(rowstatus);
           dataArr.expenseseq2_s.push(
@@ -1073,14 +1120,39 @@ const KendoWindow = ({
           dataArr.rcvcustnm_s.push(rcvcustnm == undefined ? "" : rcvcustnm);
           dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
           dataArr.itemnm_s.push(itemnm == undefined ? "" : itemnm);
+          dataArr.qty_s.push(qty == undefined ? 0 : qty);
           dataArr.amt_s.push(amt == undefined ? 0 : amt);
           dataArr.taxamt_s.push(taxamt == undefined ? 0 : taxamt);
+          dataArr.incidentalamt_s.push(
+            incidentalamt == undefined ? 0 : incidentalamt
+          );
+          dataArr.amtunit_s.push(amtunit == undefined ? "" : amtunit);
+          dataArr.unp_s.push(unp == undefined ? 0 : unp);
+          dataArr.wonamt_s.push(wonamt == undefined ? 0 : wonamt);
           dataArr.acntcd_s.push(acntcd == undefined ? "" : acntcd);
           dataArr.acntnm_s.push(acntnm == undefined ? "" : acntnm);
           dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+          dataArr.fxassetcd_s.push(fxassetcd == undefined ? "" : fxassetcd);
+          dataArr.ordnum_s.push(ordnum == undefined ? "" : ordnum);
           dataArr.remark_s.push(remark == undefined ? "" : remark);
           dataArr.carddt_s.push(carddt == undefined ? "" : carddt);
           dataArr.taxtype_s.push(taxtype == undefined ? "" : taxtype);
+          dataArr.creditcd_s.push(creditcd == undefined ? "" : creditcd);
+          dataArr.creditnm_s.push(creditnm == undefined ? "" : creditnm);
+          dataArr.auto_transfer_s.push(
+            auto_transfer == undefined ? "" : auto_transfer
+          );
+          dataArr.printdiv_s.push(printdiv == undefined ? "" : printdiv);
+          dataArr.ma210t_recdt_s.push(
+            ma210t_recdt == undefined ? "" : ma210t_recdt
+          );
+          dataArr.ma210t_seq1_s.push(
+            ma210t_seq1 == undefined ? 0 : ma210t_seq1
+          );
+          dataArr.ma210t_seq2_s.push(
+            ma210t_seq2 == undefined ? 0 : ma210t_seq2
+          );
+          dataArr.expenseno_s.push(expenseno == undefined ? "" : expenseno);
         });
 
         deletedMainRows.forEach((item: any, idx: number) => {
@@ -1099,14 +1171,30 @@ const KendoWindow = ({
             rcvcustnm = "",
             itemcd = "",
             itemnm = "",
+            qty = "",
             amt = "",
             taxamt = "",
+            incidentalamt = "",
+            amtunit = "",
+            unp = "",
+            wonamt = "",
             acntcd = "",
             acntnm = "",
             attdatnum = "",
+            fxassetcd = "",
+            ordnum = "",
             remark = "",
             carddt = "",
             taxtype = "",
+            creditcd = "",
+            creditnm = "",
+            auto_transfer = "",
+            printdiv = "",
+            ma210t_recdt = "",
+            ma210t_seq1 = "",
+            ma210t_seq2 = "",
+
+            expenseno = "",
           } = item;
           dataArr.rowstatus_s.push(rowstatus);
           dataArr.expenseseq2_s.push(
@@ -1124,14 +1212,39 @@ const KendoWindow = ({
           dataArr.rcvcustnm_s.push(rcvcustnm == undefined ? "" : rcvcustnm);
           dataArr.itemcd_s.push(itemcd == undefined ? "" : itemcd);
           dataArr.itemnm_s.push(itemnm == undefined ? "" : itemnm);
+          dataArr.qty_s.push(qty == undefined ? 0 : qty);
           dataArr.amt_s.push(amt == undefined ? 0 : amt);
           dataArr.taxamt_s.push(taxamt == undefined ? 0 : taxamt);
+          dataArr.incidentalamt_s.push(
+            incidentalamt == undefined ? 0 : incidentalamt
+          );
+          dataArr.amtunit_s.push(amtunit == undefined ? "" : amtunit);
+          dataArr.unp_s.push(unp == undefined ? 0 : unp);
+          dataArr.wonamt_s.push(wonamt == undefined ? 0 : wonamt);
           dataArr.acntcd_s.push(acntcd == undefined ? "" : acntcd);
           dataArr.acntnm_s.push(acntnm == undefined ? "" : acntnm);
           dataArr.attdatnum_s.push(attdatnum == undefined ? "" : attdatnum);
+          dataArr.fxassetcd_s.push(fxassetcd == undefined ? "" : fxassetcd);
+          dataArr.ordnum_s.push(ordnum == undefined ? "" : ordnum);
           dataArr.remark_s.push(remark == undefined ? "" : remark);
           dataArr.carddt_s.push(carddt == undefined ? "" : carddt);
           dataArr.taxtype_s.push(taxtype == undefined ? "" : taxtype);
+          dataArr.creditcd_s.push(creditcd == undefined ? "" : creditcd);
+          dataArr.creditnm_s.push(creditnm == undefined ? "" : creditnm);
+          dataArr.auto_transfer_s.push(
+            auto_transfer == undefined ? "" : auto_transfer
+          );
+          dataArr.printdiv_s.push(printdiv == undefined ? "" : printdiv);
+          dataArr.ma210t_recdt_s.push(
+            ma210t_recdt == undefined ? "" : ma210t_recdt
+          );
+          dataArr.ma210t_seq1_s.push(
+            ma210t_seq1 == undefined ? 0 : ma210t_seq1
+          );
+          dataArr.ma210t_seq2_s.push(
+            ma210t_seq2 == undefined ? 0 : ma210t_seq2
+          );
+          dataArr.expenseno_s.push(expenseno == undefined ? "" : expenseno);
         });
 
         setParaData((prev) => ({
@@ -1157,14 +1270,29 @@ const KendoWindow = ({
           rcvcustnm_s: dataArr.rcvcustnm_s.join("|"),
           itemcd_s: dataArr.itemcd_s.join("|"),
           itemnm_s: dataArr.itemnm_s.join("|"),
+          qty_s: dataArr.qty_s.join("|"),
           amt_s: dataArr.amt_s.join("|"),
           taxamt_s: dataArr.taxamt_s.join("|"),
+          incidentalamt_s: dataArr.incidentalamt_s.join("|"),
+          amtunit_s: dataArr.amtunit_s.join("|"),
+          unp_s: dataArr.unp_s.join("|"),
+          wonamt_s: dataArr.wonamt_s.join("|"),
           acntcd_s: dataArr.acntcd_s.join("|"),
           acntnm_s: dataArr.acntnm_s.join("|"),
           attdatnum_s: dataArr.attdatnum_s.join("|"),
+          fxassetcd_s: dataArr.fxassetcd_s.join("|"),
+          ordnum_s: dataArr.ordnum_s.join("|"),
           remark_s: dataArr.remark_s.join("|"),
           carddt_s: dataArr.carddt_s.join("|"),
           taxtype_s: dataArr.taxtype_s.join("|"),
+          creditcd_s: dataArr.creditcd_s.join("|"),
+          creditnm_s: dataArr.creditnm_s.join("|"),
+          auto_transfer_s: dataArr.auto_transfer_s.join("|"),
+          printdiv_s: dataArr.printdiv_s.join("|"),
+          ma210t_recdt_s: dataArr.ma210t_recdt_s.join("|"),
+          ma210t_seq1_s: dataArr.ma210t_seq1_s.join("|"),
+          ma210t_seq2_s: dataArr.ma210t_seq2_s.join("|"),
+          expenseno_s: dataArr.expenseno_s.join("|"),
         }));
       }
     }
@@ -1192,18 +1320,34 @@ const KendoWindow = ({
     rcvcustnm_s: "",
     itemcd_s: "",
     itemnm_s: "",
+    qty_s: "",
     amt_s: "",
     taxamt_s: "",
+    incidentalamt_s: "",
+    amtunit_s: "",
+    unp_s: "",
+    wonamt_s: "",
     acntcd_s: "",
     acntnm_s: "",
     attdatnum_s: "",
+    fxassetcd_s: "",
+    ordnum_s: "",
     remark_s: "",
     carddt_s: "",
     taxtype_s: "",
+    creditcd_s: "",
+    creditnm_s: "",
+    auto_transfer_s: "",
+    printdiv_s: "",
+    ma210t_recdt_s: "",
+    ma210t_seq1_s: "",
+    ma210t_seq2_s: "",
+
+    expenseno_s: "",
   });
 
   const paraSaved: Iparameters = {
-    procedureName: "P_AC_A1020W_S",
+    procedureName: "P_HU_A4110W_S",
     pageNumber: 0,
     pageSize: 0,
     parameters: {
@@ -1229,18 +1373,32 @@ const KendoWindow = ({
       "@p_rcvcustnm_s": ParaData.rcvcustnm_s,
       "@p_itemcd_s": ParaData.itemcd_s,
       "@p_itemnm_s": ParaData.itemnm_s,
+      "@p_qty_s": ParaData.qty_s,
       "@p_amt_s": ParaData.amt_s,
       "@p_taxamt_s": ParaData.taxamt_s,
+      "@p_incidentalamt_s": ParaData.incidentalamt_s,
+      "@p_amtunit_s": ParaData.amtunit_s,
+      "@p_unp_s": ParaData.unp_s,
+      "@p_wonamt_s": ParaData.wonamt_s,
       "@p_acntcd_s": ParaData.acntcd_s,
       "@p_acntnm_s": ParaData.acntnm_s,
       "@p_attdatnum_s": ParaData.attdatnum_s,
+      "@p_fxassetcd_s": ParaData.fxassetcd_s,
+      "@p_ordnum_s": ParaData.ordnum_s,
       "@p_remark_s": ParaData.remark_s,
       "@p_carddt_s": ParaData.carddt_s,
       "@p_taxtype_s": ParaData.taxtype_s,
-      "@p_expenseno_s": "",
+      "@p_creditcd_s": ParaData.creditcd_s,
+      "@p_creditnm_s": ParaData.creditnm_s,
+      "@p_auto_transfer_s": ParaData.auto_transfer_s,
+      "@p_printdiv_s": ParaData.printdiv_s,
+      "@p_ma210t_recdt_s": ParaData.ma210t_recdt_s,
+      "@p_ma210t_seq1_s": ParaData.ma210t_seq1_s,
+      "@p_ma210t_seq2_s": ParaData.ma210t_seq2_s,
+      "@p_expenseno_s": ParaData.expenseno_s,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "AC_A1020W",
+      "@p_form_id": "HU_A4110W",
     },
   };
 
@@ -1299,14 +1457,30 @@ const KendoWindow = ({
         rcvcustnm_s: "",
         itemcd_s: "",
         itemnm_s: "",
+        qty_s: "",
         amt_s: "",
         taxamt_s: "",
+        incidentalamt_s: "",
+        amtunit_s: "",
+        unp_s: "",
+        wonamt_s: "",
         acntcd_s: "",
         acntnm_s: "",
         attdatnum_s: "",
+        fxassetcd_s: "",
+        ordnum_s: "",
         remark_s: "",
         carddt_s: "",
         taxtype_s: "",
+        creditcd_s: "",
+        creditnm_s: "",
+        auto_transfer_s: "",
+        printdiv_s: "",
+        ma210t_recdt_s: "",
+        ma210t_seq1_s: "",
+        ma210t_seq2_s: "",
+
+        expenseno_s: "",
       });
     } else {
       console.log("[오류 발생]");

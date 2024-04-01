@@ -40,12 +40,14 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseParaPc,
   UsePermissions,
   convertDateToStr,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas3,
   setDefaultDate,
+  useSysMessage,
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -56,18 +58,22 @@ import {
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import DetailWindow from "../components/Windows/HU_A4110W_Window";
 import ApprovalWindow from "../components/Windows/CommonWindows/ApprovalWindow";
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
+import DetailWindow from "../components/Windows/HU_A4110W_Window";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import {
+  deletedAttadatnumsState,
+  isLoading,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/HU_A4110W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "num";
-const numberField = ["amt"];
-const dateField = ["carddt"];
+const numberField = ["amt", "taxamt"];
+const dateField = ["carddt", "expensedt"];
 const yeardateField = ["yyyy"];
 let targetRowIndex: null | number = null;
 
@@ -86,6 +92,10 @@ const HU_A4110W: React.FC = () => {
   const userName = loginResult ? loginResult.userName : "";
   const companyCode = loginResult ? loginResult.companyCode : "";
   const [workType, setWorkType] = useState<"N" | "U" | "C">("N");
+  const [pc, setPc] = useState("");
+  UseParaPc(setPc);
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
 
   useEffect(() => {
     if (customOptionData !== null) {
@@ -714,6 +724,181 @@ const HU_A4110W: React.FC = () => {
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
+
+  const questionToDelete = useSysMessage("QuestionToDelete");
+
+  const onDeleteClick = (e: any) => {
+    if (!window.confirm(questionToDelete)) {
+      return false;
+    }
+    if (mainDataResult.total > 0) {
+      const data = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
+      setParaDataDeleted((prev) => ({
+        ...prev,
+        work_type: "D",
+        expensedt: data.expensedt,
+        expenseseq1: data.expenseseq1,
+      }));
+    } else {
+      alert("데이터가 없습니다.");
+    }
+  };
+
+  const [paraDataDeleted, setParaDataDeleted] = useState({
+    work_type: "",
+    expensedt: "",
+    expenseseq1: 0,
+  });
+
+  const paraDeleted: Iparameters = {
+    procedureName: "P_HU_A4110W_S",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraDataDeleted.work_type,
+
+      "@p_orgdiv": "01",
+
+      "@p_expensedt": paraDataDeleted.expensedt,
+      "@p_expenseseq1": paraDataDeleted.expenseseq1,
+      "@p_location": "",
+      "@p_prsnnum": "",
+      "@p_dptcd": "",
+      "@p_position": "",
+
+      "@p_rowstatus_s": "",
+      "@p_expenseseq2_s": "",
+      "@p_indt_s": "",
+      "@p_usekind_s": "",
+      "@p_cardcd_s": "",
+      "@p_taxdiv_s": "",
+      "@p_etax_s": "",
+      "@p_dptcd_s": "",
+      "@p_custcd_s": "",
+      "@p_custnm_s": "",
+      "@p_rcvcustcd_s": "",
+      "@p_rcvcustnm_s": "",
+      "@p_itemcd_s": "",
+      "@p_itemnm_s": "",
+      "@p_qty_s": "",
+      "@p_amt_s": "",
+      "@p_taxamt_s": "",
+      "@p_incidentalamt_s": "",
+      "@p_amtunit_s": "",
+      "@p_unp_s": "",
+      "@p_wonamt_s": "",
+      "@p_acntcd_s": "",
+      "@p_acntnm_s": "",
+      "@p_attdatnum_s": "",
+      "@p_fxassetcd_s": "",
+      "@p_ordnum_s": "",
+      "@p_remark_s": "",
+      "@p_carddt_s": "",
+      "@p_taxtype_s": "",
+      "@p_creditcd_s": "",
+      "@p_creditnm_s": "",
+      "@p_auto_transfer_s": "",
+      "@p_printdiv_s": "",
+      "@p_ma210t_recdt_s": "",
+      "@p_ma210t_seq1_s": "",
+      "@p_ma210t_seq2_s": "",
+      "@p_expenseno_s": "",
+      "@p_userid": userId,
+      "@p_pc": pc,
+      "@p_form_id": "HU_A4110W",
+    },
+  };
+
+  const resetAllGrid = () => {
+    setPage(initialPageState);
+    setSubPage(initialPageState);
+    setSubDataResult(process([], subDataState));
+    setMainDataResult(process([], mainDataState));
+  };
+
+  const fetchToDelete = async () => {
+    let data: any;
+
+    try {
+      data = await processApi<any>("procedure", paraDeleted);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const isLastDataDeleted =
+        mainDataResult.data.length === 1 && filters.pgNum > 0;
+      const findRowIndex = mainDataResult.data.findIndex(
+        (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
+      );
+
+      if (data.returnString != "") {
+        let array: any[] = [];
+
+        data.returnString.split("|").map((item: any) => {
+          array.push(item);
+        });
+        setDeletedAttadatnums(array);
+      }
+      resetAllGrid();
+
+      if (isLastDataDeleted) {
+        setPage({
+          skip:
+            filters.pgNum == 1 || filters.pgNum == 0
+              ? 0
+              : PAGE_SIZE * (filters.pgNum - 2),
+          take: PAGE_SIZE,
+        });
+
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value: "",
+          pgNum: isLastDataDeleted
+            ? prev.pgNum != 1
+              ? prev.pgNum - 1
+              : prev.pgNum
+            : prev.pgNum,
+          isSearch: true,
+        }));
+        setSubFilters((prev) => ({
+          ...prev,
+          isSearch: true
+        }))
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          find_row_value:
+            mainDataResult.data[findRowIndex < 1 ? 1 : findRowIndex - 1]
+              .expenseno,
+          pgNum: isLastDataDeleted ? prev.pgNum - 1 : prev.pgNum,
+          isSearch: true,
+        }));
+        setSubFilters((prev) => ({
+          ...prev,
+          isSearch: true
+        }))
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      alert(data.resultMessage);
+    }
+    //초기화
+    setParaDataDeleted((prev) => ({
+      work_type: "",
+      expensedt: "",
+      expenseseq1: 0,
+    }));
+  };
+
+  useEffect(() => {
+    if (paraDataDeleted.work_type === "D") fetchToDelete();
+  }, [paraDataDeleted]);
+
   return (
     <>
       <TitleContainer>
@@ -1052,7 +1237,7 @@ const HU_A4110W: React.FC = () => {
                   지출결의서복사
                 </Button>
                 <Button
-                  //onClick={onDeleteClick}
+                  onClick={onDeleteClick}
                   icon="delete"
                   fillMode="outline"
                   themeColor={"primary"}
@@ -1069,7 +1254,7 @@ const HU_A4110W: React.FC = () => {
               fileName="POINT ZONE"
             >
               <Grid
-                style={{ height: "75vh" }}
+                style={{ height: "78vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1159,6 +1344,10 @@ const HU_A4110W: React.FC = () => {
             setFilters((prev) => ({
               ...prev,
               find_row_value: str,
+              isSearch: true,
+            }));
+            setSubFilters((prev) => ({
+              ...prev,
               isSearch: true,
             }));
           }}

@@ -194,6 +194,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
         setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
       }
     } else {
+      alert(data.resultMessage)
       console.log(data);
     }
     setFilters((prev) => ({
@@ -245,6 +246,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
         setSelectedState2({ [selectedRow[DATA_ITEM_KEY2]]: true });
       }
     } else {
+      alert(data.resultMessage)
       console.log(data);
     }
     setFilters2((prev) => ({
