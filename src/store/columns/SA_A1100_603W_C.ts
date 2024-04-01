@@ -96,8 +96,8 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList2",
     columns: [
       {
-        id: "col_testnum",
-        field: "testnum",
+        id: "col_quotestnum",
+        field: "quotestnum",
         caption: "시험번호",
         width: 150,
       },

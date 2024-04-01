@@ -1508,7 +1508,7 @@ const KendoWindow = ({
           />
           <GridColumn
             field="amt"
-            title="공급가액"
+            title="지출금액"
             width="100px"
             cell={NumberCell}
           />
@@ -1729,7 +1729,7 @@ const KendoWindow = ({
                           )[0].usekind == "F"
                         ? "readonly"
                         : undefined
-                  }
+                    }
                   />
                 )}
               </td>
