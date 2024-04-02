@@ -41,7 +41,8 @@ import { isLoading } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 var barcode = "";
-var index = 0;
+let timestamp = 0;
+let interval: any;
 const DATA_ITEM_KEY = "custcd";
 const DATA_ITEM_KEY2 = "group_code";
 
@@ -194,7 +195,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
         setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
       }
     } else {
-      alert(data.resultMessage)
+      alert(data.resultMessage);
       console.log(data);
     }
     setFilters((prev) => ({
@@ -246,7 +247,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
         setSelectedState2({ [selectedRow[DATA_ITEM_KEY2]]: true });
       }
     } else {
-      alert(data.resultMessage)
+      alert(data.resultMessage);
       console.log(data);
     }
     setFilters2((prev) => ({
@@ -408,29 +409,36 @@ const MA_A2300_615_PDAW: React.FC = () => {
     }
   }, [Information]);
 
-  useEffect(() => {
-    document.addEventListener("keydown", function (evt) {
-      if (evt.code == "Enter") {
-        if (barcode != "") {
-          if (index == 0) {
+  document.addEventListener("keydown", function (evt) {
+    if (interval) {
+      clearInterval(interval);
+    }
+    if (evt.target != null) {
+      const target = evt.target as Element;
+      if (target.nodeName == "BODY") {
+        if (evt.code == "Enter") {
+          if (barcode != "") {
             setInformation((prev) => ({
               ...prev,
               str: barcode,
               isSearch: true,
             }));
-          } else {
-            barcode = "";
+            interval = setInterval(() => (barcode = ""), 50);
           }
         }
-      } else if (
-        evt.code != "ShiftLeft" &&
-        evt.code != "Shift" &&
-        evt.code != "Enter"
-      ) {
-        barcode += evt.key;
+        if (
+          evt.code != "ShiftLeft" &&
+          evt.code != "Shift" &&
+          evt.code != "Enter"
+        ) {
+          if (timestamp != evt.timeStamp) {
+            barcode += evt.key;
+            timestamp = evt.timeStamp;
+          }
+        }
       }
-    });
-  }, []);
+    }
+  });
 
   const onCheckClick = (datas: any) => {
     const data = checkDataResult.data.filter(
@@ -634,9 +642,6 @@ const MA_A2300_615_PDAW: React.FC = () => {
           onSwiper={(swiper) => {
             setSwiper(swiper);
           }}
-          onActiveIndexChange={(swiper) => {
-            index = swiper.activeIndex;
-          }}
         >
           <SwiperSlide key={0} className="leading_PDA">
             <TitleContainer style={{ marginBottom: "15px" }}>
@@ -724,7 +729,8 @@ const MA_A2300_615_PDAW: React.FC = () => {
                                 str: "",
                                 isSearch: false,
                               });
-                              let availableWidthPx = document.getElementById("reset");
+                              let availableWidthPx =
+                                document.getElementById("reset");
                               if (availableWidthPx) {
                                 availableWidthPx.blur();
                               }
@@ -772,7 +778,15 @@ const MA_A2300_615_PDAW: React.FC = () => {
                           <Typography gutterBottom variant="h6" component="div">
                             {item.heatno}
                           </Typography>
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            style={{
+                              whiteSpace: "nowrap",
+                              textOverflow: "ellipsis",
+                              overflow: "hidden",
+                            }}
+                          >
                             {item.scanno}
                           </Typography>
                         </CardContent>
@@ -1131,7 +1145,8 @@ const MA_A2300_615_PDAW: React.FC = () => {
                                 str: "",
                                 isSearch: false,
                               });
-                              let availableWidthPx = document.getElementById("reset");
+                              let availableWidthPx =
+                                document.getElementById("reset");
                               if (availableWidthPx) {
                                 availableWidthPx.blur();
                               }
@@ -1202,7 +1217,15 @@ const MA_A2300_615_PDAW: React.FC = () => {
                             >
                               {item.heatno}
                             </Typography>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              style={{
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis",
+                                overflow: "hidden",
+                              }}
+                            >
                               {item.scanno}
                             </Typography>
                           </CardContent>

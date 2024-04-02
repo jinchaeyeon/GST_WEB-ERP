@@ -341,7 +341,7 @@ const MA_A3600W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA061,L_BA171,L_BA172,L_BA173,L_sysUserMaster_001",
+    "L_BA061,L_BA116_280,L_BA171,L_BA172,L_BA173,L_sysUserMaster_001",
     //수주상태, 내수구분, 과세구분, 사업장, 담당자, 부서, 품목계정, 수량단위, 완료여부
     setBizComponentData
   );
@@ -361,9 +361,16 @@ const MA_A3600W: React.FC = () => {
   const [personListData, setPersonListData] = useState([
     { user_id: "", user_name: "" },
   ]);
-
+  const [itemtypeListData, setItemtypeListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
+      const itemtypeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_BA116_280"
+        )
+      );
       const itemacntQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
       );
@@ -381,6 +388,7 @@ const MA_A3600W: React.FC = () => {
       const itemlvl3QueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
       );
+      fetchQuery(itemtypeQueryStr, setItemtypeListData);
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
       fetchQuery(itemlvl3QueryStr, setItemlvl3ListData);
@@ -1633,6 +1641,9 @@ const MA_A3600W: React.FC = () => {
                   person: personListData.find(
                     (item: any) => item.user_id == row.person
                   )?.user_name,
+                  itemtype: itemtypeListData.find(
+                    (item: any) => item.sub_code == row.itemtype
+                  )?.code_name,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
                 mainDataState
@@ -1725,6 +1736,9 @@ const MA_A3600W: React.FC = () => {
                   person: personListData.find(
                     (item: any) => item.user_id == row.person
                   )?.user_name,
+                  itemtype: itemtypeListData.find(
+                    (item: any) => item.sub_code == row.itemtype
+                  )?.code_name,
                   [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                 })),
                 mainDataState2
@@ -1775,9 +1789,9 @@ const MA_A3600W: React.FC = () => {
                         }
                         footerCell={
                           item.sortOrder === 0
-                            ? mainTotalFooterCell
+                            ? mainTotalFooterCell2
                             : numberField2.includes(item.fieldName)
-                            ? gridSumQtyFooterCell
+                            ? gridSumQtyFooterCell2
                             : undefined
                         }
                       />

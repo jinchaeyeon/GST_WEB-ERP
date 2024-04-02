@@ -30,6 +30,8 @@ import { isLoading } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 var barcode = "";
+let interval: any;
+let timestamp = 0;
 
 const MA_A3500W_615: React.FC = () => {
   let deviceWidth = window.innerWidth;
@@ -95,25 +97,27 @@ const MA_A3500W_615: React.FC = () => {
     }
   }, [Information]);
 
-  useEffect(() => {
-    document.addEventListener("keydown", function (evt) {
-      if (evt.code == "Enter") {
-        if (barcode != "") {
-          setInformation((prev) => ({
-            ...prev,
-            str: barcode,
-            isSearch: true,
-          }));
-        }
-      } else if (
-        evt.code != "ShiftLeft" &&
-        evt.code != "Shift" &&
-        evt.code != "Enter"
-      ) {
-        barcode += evt.key;
+  document.addEventListener("keydown", function (evt) {
+    if (interval) {
+      clearInterval(interval);
+    }
+    if (evt.code == "Enter") {
+      if (barcode != "") {
+        setInformation((prev) => ({
+          ...prev,
+          str: barcode,
+          isSearch: true,
+        }));
+        interval = setInterval(() => (barcode = ""), 50);
       }
-    });
-  }, []);
+    }
+    if (evt.code != "ShiftLeft" && evt.code != "Shift" && evt.code != "Enter") {
+      if (timestamp != evt.timeStamp) {
+        barcode += evt.key;
+        timestamp = evt.timeStamp;
+      }
+    }
+  });
 
   const onCheckClick = (datas: any) => {
     const data = checkDataResult.data.filter(
@@ -226,7 +230,7 @@ const MA_A3500W_615: React.FC = () => {
       setInformation((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       barcode = "";
     } else {
-      alert(data.resultMessage)
+      alert(data.resultMessage);
       console.log(data);
       barcode = "";
     }
@@ -428,7 +432,15 @@ const MA_A3500W_615: React.FC = () => {
                         onClick={() => onCheckClick(item)}
                         style={{ textAlign: "left", padding: "8px" }}
                       >
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          style={{
+                            whiteSpace: "nowrap",
+                            textOverflow: "ellipsis",
+                            overflow: "hidden",
+                          }}
+                        >
                           {item.scanno}
                         </Typography>
                       </CardContent>
@@ -630,7 +642,15 @@ const MA_A3500W_615: React.FC = () => {
                           onClick={() => onCheckClick(item)}
                           style={{ textAlign: "left", padding: "8px" }}
                         >
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            style={{
+                              whiteSpace: "nowrap",
+                              textOverflow: "ellipsis",
+                              overflow: "hidden",
+                            }}
+                          >
                             {item.scanno}
                           </Typography>
                         </CardContent>
