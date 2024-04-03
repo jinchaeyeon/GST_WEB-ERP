@@ -297,7 +297,9 @@ const KendoWindow = ({
       pgmgb == "Z"
         ? "지출결의서 결재요청(" + para.expenseno + ")"
         : pgmgb == "W"
-        ? "근채허가신청 결재요청(" + para.expenseno + ")"
+        ? "근태허가신청 결재요청(" + para.expenseno + ")"
+        : pgmgb == "P"
+        ? "지출결의서(복지포인트) 결재요청(" + para.expenseno + ")"
         : "",
   });
 

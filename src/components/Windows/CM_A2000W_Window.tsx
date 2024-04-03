@@ -53,6 +53,7 @@ import {
   getGridItemChangedData,
   getQueryFromBizComponent,
   isValidDate,
+  setDefaultDate2,
   toDate,
 } from "../CommonFunction";
 import {
@@ -166,12 +167,14 @@ const CopyWindow = ({
     if (customOptionData !== null && workType != "U") {
       const defaultOption = GetPropertyValueByName(
         customOptionData.menuCustomDefaultOptions,
-        "query"
+        "new"
       );
       setFilters((prev) => ({
         ...prev,
+        recdt: setDefaultDate2(customOptionData, "recdt"),
         rcvperson: defaultOption.find((item: any) => item.id === "rcvperson")
           .valueCode,
+        reqdt: setDefaultDate2(customOptionData, "reqdt"),
       }));
     }
   }, [customOptionData]);
@@ -961,6 +964,7 @@ const CopyWindow = ({
                             value={filters.rcvperson}
                             customOptionData={customOptionData}
                             changeData={filterComboBoxChange}
+                            type="new"
                             textField="user_name"
                             valueField="user_id"
                             className="required"

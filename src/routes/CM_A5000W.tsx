@@ -1515,10 +1515,10 @@ const CM_A5000W: React.FC = () => {
       project: "",
       request_date: setDefaultDate2(customOptionData, "request_date"),
       finexpdt: setDefaultDate2(customOptionData, "finexpdt"),
-      require_type: "",
-      completion_method: "",
-      medicine_type: "",
-      status: "001",
+      require_type: defaultOption.find((item: any) => item.id === "require_type").valueCode,
+      completion_method: defaultOption.find((item: any) => item.id === "completion_method").valueCode,
+      medicine_type: defaultOption.find((item: any) => item.id === "medicine_type").valueCode,
+      status: defaultOption.find((item: any) => item.id === "status").valueCode,
       customer_code: "",
       customernm: "",
       title: "",
@@ -1535,7 +1535,7 @@ const CM_A5000W: React.FC = () => {
       attdatnum: "",
       files: "",
       ref_document_id: "",
-      person: "",
+      person: defaultOption.find((item: any) => item.id === "person").valueCode,
       recdt: null,
     });
   };

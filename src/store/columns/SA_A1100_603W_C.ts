@@ -6,8 +6,8 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList",
     columns: [
       {
-        id: "col_reckey_list",
-        field: "reckey",
+        id: "col_contractno_list",
+        field: "contractno",
         caption: "계약번호",
         width: 120,
       },
@@ -96,8 +96,8 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList2",
     columns: [
       {
-        id: "col_testnum",
-        field: "testnum",
+        id: "col_quotestnum",
+        field: "quotestnum",
         caption: "시험번호",
         width: 150,
       },
@@ -126,8 +126,8 @@ export const gridList: Array<TGrid> = [
         width: 150,
       },
       {
-        id: "col_outtype",
-        field: "outtype",
+        id: "col_contractgb",
+        field: "contractgb",
         caption: "출고형태",
         width: 120,
       },

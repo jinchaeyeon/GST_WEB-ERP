@@ -490,7 +490,7 @@ const BA_A0020W_603: React.FC = () => {
     };
 
     try {
-      data = await processApi<any>("query", query);      
+      data = await processApi<any>("query", query);
     } catch (error) {
       data = null;
     }
@@ -669,7 +669,7 @@ const BA_A0020W_603: React.FC = () => {
     setInformation((prev: any) => ({
       ...prev,
       [name]: value,
-      custdiv:"B",
+      custdiv: "B",
     }));
   };
 
@@ -1886,29 +1886,42 @@ const BA_A0020W_603: React.FC = () => {
     setMainDataResult2(process([], mainDataState2));
     setMainDataResult3(process([], mainDataState3));
     setMainDataResult4(process([], mainDataState4));
+    const defaultOption = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "new"
+    );
     setInformation({
-      area: "",
+      area: defaultOption.find((item: any) => item.id === "area").valueCode,
       custabbr: "",
-      custdiv: "B",
+      custdiv: defaultOption.find((item: any) => item.id === "custdiv")
+        .valueCode,
       listringyn: true,
-      listringdiv: "",
-      inunpitem: "",
-      unpitem: "",
+      listringdiv: defaultOption.find((item: any) => item.id === "listringdiv")
+        .valueCode,
+      inunpitem: defaultOption.find((item: any) => item.id === "inunpitem")
+        .valueCode,
+      unpitem: defaultOption.find((item: any) => item.id === "unpitem")
+        .valueCode,
       custcd: "자동생성",
       custnm: "",
-      bizdiv: "",
+      bizdiv: defaultOption.find((item: any) => item.id === "bizdiv").valueCode,
       bizregnum: "",
       repreregno: "",
-      compclass: "",
+      compclass: defaultOption.find((item: any) => item.id === "compclass")
+        .valueCode,
       comptype: "",
-      countrycd: "",
+      countrycd: defaultOption.find((item: any) => item.id === "countrycd")
+        .valueCode,
       groupnm: "",
-      itemlvl1: "",
+      itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1")
+        .valueCode,
       ceonm: "",
-      itemlvl3: "",
+      itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
+        .valueCode,
       address: "",
       address_sub: "",
-      itemlvl2: "",
+      itemlvl2: defaultOption.find((item: any) => item.id === "itemlvl2")
+        .valueCode,
       files: "",
       attdatnum: "",
       remark: "",
@@ -2821,17 +2834,6 @@ const BA_A0020W_603: React.FC = () => {
                   onChange={filterInputChange}
                 />
               </td>
-              {/* <th>구분</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="custdiv"
-                    value={filters.custdiv}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td> */}
               <th>대표자명</th>
               <td>
                 <Input
@@ -2973,17 +2975,29 @@ const BA_A0020W_603: React.FC = () => {
                   </td>
                   <th>구분</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="custdiv"
-                        disabled
-                        value={information.custdiv}
-                        bizComponentId="L_BA026"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                      />
-                    )}
+                    {workType == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="custdiv"
+                            disabled
+                            value={information.custdiv}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="custdiv"
+                            disabled
+                            value={information.custdiv}
+                            bizComponentId="L_BA026"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        )}
                   </td>
                   <th>상장여부</th>
                   <td>
@@ -2995,43 +3009,73 @@ const BA_A0020W_603: React.FC = () => {
                   </td>
                   <th>상장구분</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="listringdiv"
-                        value={information.listringdiv}
-                        bizComponentId="L_LISTRING"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
+                    {workType == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="listringdiv"
+                            value={information.listringdiv}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="listringdiv"
+                            value={information.listringdiv}
+                            bizComponentId="L_LISTRING"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
                   </td>
                 </tr>
                 <tr>
                   <th>매입단가항목</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="inunpitem"
-                        value={information.inunpitem}
-                        bizComponentId="L_BA008"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                      />
-                    )}
+                    {workType == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="inunpitem"
+                            value={information.inunpitem}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="inunpitem"
+                            value={information.inunpitem}
+                            bizComponentId="L_BA008"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
                   </td>
                   <th>매출단가항목</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="unpitem"
-                        value={information.unpitem}
-                        bizComponentId="L_BA008"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                      />
-                    )}
+                    {workType == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="unpitem"
+                            value={information.unpitem}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="unpitem"
+                            value={information.unpitem}
+                            bizComponentId="L_BA008"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        )}
                   </td>
                   <th>업체코드</th>
                   <td>
@@ -3113,16 +3157,27 @@ const BA_A0020W_603: React.FC = () => {
                 <tr>
                   <th>사업자구분</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="bizdiv"
-                        value={information.bizdiv}
-                        bizComponentId="L_BA027"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                      />
-                    )}
+                    {workType == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="bizdiv"
+                            value={information.bizdiv}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="bizdiv"
+                            value={information.bizdiv}
+                            bizComponentId="L_BA027"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        )}
                   </td>
                   {information.bizdiv == "2" ? (
                     <>
@@ -3152,15 +3207,25 @@ const BA_A0020W_603: React.FC = () => {
 
                   <th>업태</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="compclass"
-                        value={information.compclass}
-                        bizComponentId="L_BA025"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
+                    {workType == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="compclass"
+                            value={information.compclass}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="compclass"
+                            value={information.compclass}
+                            bizComponentId="L_BA025"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
                   </td>
                   <th>업종</th>
                   <td>
@@ -3184,15 +3249,25 @@ const BA_A0020W_603: React.FC = () => {
                   </td>
                   <th>신용평가등급</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="itemlvl1"
-                        value={information.itemlvl1}
-                        bizComponentId="L_BA075"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
+                    {workType == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="itemlvl1"
+                            value={information.itemlvl1}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="itemlvl1"
+                            value={information.itemlvl1}
+                            bizComponentId="L_BA075"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
                   </td>
                   <th>대표자명</th>
                   <td>
@@ -3205,15 +3280,25 @@ const BA_A0020W_603: React.FC = () => {
                   </td>
                   <th>개발분야</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="itemlvl3"
-                        value={information.itemlvl3}
-                        bizComponentId="L_BA077"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
+                    {workType == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="itemlvl3"
+                            value={information.itemlvl3}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="itemlvl3"
+                            value={information.itemlvl3}
+                            bizComponentId="L_BA077"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
                   </td>
                 </tr>
                 <tr>
@@ -3239,39 +3324,69 @@ const BA_A0020W_603: React.FC = () => {
                 <tr>
                   <th>기업구분</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="itemlvl2"
-                        value={information.itemlvl2}
-                        bizComponentId="L_BA076"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
+                    {workType == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="itemlvl2"
+                            value={information.itemlvl2}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="itemlvl2"
+                            value={information.itemlvl2}
+                            bizComponentId="L_BA076"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
                   </td>
                   <th>지역</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="area"
-                        value={information.area}
-                        bizComponentId="L_CR007"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
+                    {workType == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="area"
+                            value={information.area}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="area"
+                            value={information.area}
+                            bizComponentId="L_CR007"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
                   </td>
                   <th>국가</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="countrycd"
-                        value={information.countrycd}
-                        bizComponentId="L_BA057"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
+                    {workType == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="countrycd"
+                            value={information.countrycd}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="countrycd"
+                            value={information.countrycd}
+                            bizComponentId="L_BA057"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
                   </td>
                 </tr>
                 <tr>

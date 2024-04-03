@@ -44,7 +44,7 @@ import {
   dateformat,
   getGridItemChangedData,
   getQueryFromBizComponent,
-  setDefaultDate,
+  setDefaultDate2
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -213,11 +213,11 @@ const KendoWindow = ({
       setFilters((prev) => {
         return {
           ...prev,
-          publish_start_date: setDefaultDate(
+          publish_start_date: setDefaultDate2(
             customOptionData,
             "publish_start_date"
           ),
-          publish_end_date: setDefaultDate(
+          publish_end_date: setDefaultDate2(
             customOptionData,
             "publish_end_date"
           ),

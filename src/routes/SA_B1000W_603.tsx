@@ -87,20 +87,6 @@ const SA_B1000W_603: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SA_B1000W_603", setCustomOptionData);
   const setLoading = useSetRecoilState(isLoading);
-  //customOptionData 조회 후 디폴트 값 세팅
-  useEffect(() => {
-    if (customOptionData !== null) {
-      const defaultOption = GetPropertyValueByName(
-        customOptionData.menuCustomDefaultOptions,
-        "query"
-      );
-      setFilters((prev) => ({
-        ...prev,
-        status: defaultOption.find((item: any) => item.id === "status")
-          .valueCode,
-      }));
-    }
-  }, [customOptionData]);
 
   //조회조건 초기값
   const [filters, setFilters] = useState({

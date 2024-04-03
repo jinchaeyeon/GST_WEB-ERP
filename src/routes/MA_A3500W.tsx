@@ -118,7 +118,7 @@ let targetRowIndex4: null | number = null;
 let temp = 0;
 let deletedMainRows: object[] = [];
 
-const MA_A2400W: React.FC = () => {
+const MA_A3500W: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
@@ -3230,4 +3230,4 @@ const MA_A2400W: React.FC = () => {
   );
 };
 
-export default MA_A2400W;
+export default MA_A3500W;

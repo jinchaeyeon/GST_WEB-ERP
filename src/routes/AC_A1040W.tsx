@@ -1537,6 +1537,8 @@ const AC_A1040W: React.FC = () => {
                     value={filters.dptcd}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
+                    valueField="dptcd"
+                    textField="dptnm"
                   />
                 )}
               </td>

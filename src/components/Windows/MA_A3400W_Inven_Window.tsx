@@ -770,7 +770,7 @@ const CopyWindow = ({
 
   useEffect(() => {
     document.addEventListener("keydown", function (evt) {
-      if (evt.code == "Enter") {
+      if (evt.code == "Enter" || evt.code == "NumpadEnter") {
         if (barcode != "") {
           setInformation((prev) => ({
             ...prev,

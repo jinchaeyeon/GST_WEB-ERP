@@ -47,6 +47,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "MA_A3400W" ||
       link == "MA_A3500W" ||
       link == "MA_A3500W_615" ||
+      link == "MA_A3600W" ||
       link == "MA_A8000W" ||
       link == "MA_A9001W" ||
       link == "MA_B1000W_603" ||
@@ -69,6 +70,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "SA_A2300W_PDA" ||
       link == "SA_A3000W" ||
       link == "SA_A5000W" ||
+      link == "SA_A5000W_615" ||
       link == "SA_A5001W" ||
       link == "SA_A5010W" ||
       link == "SA_A6000W" ||
@@ -114,6 +116,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "QC_B9020_615W" ||
       link == "SY_A0120W" ||
       link == "SY_A0110W" ||
+      link == "SY_A0009W" ||
       link == "SY_A0010W" ||
       link == "SY_A0010_301W" ||
       link == "SY_A0012W" ||
@@ -123,6 +126,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "SY_A0025W" ||
       link == "CM_A0000W" ||
       link == "CM_A1000W" ||
+      link == "CM_A1000W_617" ||
       link == "CM_A1600W" ||
       link == "CM_A1710W" ||
       link == "CM_A2000W" ||
@@ -154,6 +158,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "HU_A3200W" ||
       link == "HU_A4000W" ||
       link == "HU_A4100W" ||
+      link == "HU_A4110W" ||
       link == "HU_A5020W" ||
       link == "HU_A6000W" ||
       link == "HU_A6020W" ||

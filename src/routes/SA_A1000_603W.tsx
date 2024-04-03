@@ -88,6 +88,7 @@ import {
   isValidDate,
   numberWithCommas3,
   setDefaultDate,
+  setDefaultDate2,
   toDate,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -3113,8 +3114,14 @@ const SA_A1000_603W: React.FC = () => {
 
   const onAddClick2 = () => {
     setWorktype("N");
+    const defaultOption = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "new"
+    );
+
     setInformation({
-      chkperson: "",
+      chkperson: defaultOption.find((item: any) => item.id === "person")
+        .valueCode,
       custcd: "",
       custnm: "",
       custprsnnm: "",
@@ -3131,18 +3138,23 @@ const SA_A1000_603W: React.FC = () => {
       guid4: "",
       guid5: "",
       etcguid: "",
-      materialindt: new Date(),
+      materialindt: setDefaultDate2(customOptionData, "materialindt"),
       materialnm: "",
-      materialtype: "",
-      numbering_id: "",
+      materialtype: defaultOption.find(
+        (item: any) => item.id === "materialtype"
+      ).valueCode,
+      numbering_id: defaultOption.find(
+        (item: any) => item.id === "numbering_id"
+      ).valueCode,
       ordsts: "",
-      person: "",
+      person: defaultOption.find((item: any) => item.id === "person").valueCode,
       person1: "",
-      quodt: new Date(),
+      quodt: setDefaultDate2(customOptionData, "quodt"),
       quonum: "",
       quorev: 0,
       quosts: "",
-      quotype: "",
+      quotype: defaultOption.find((item: any) => item.id === "quotype")
+        .valueCode,
       rcvcustnm: "",
       rcvcustprsnnm: "",
       remark: "",
@@ -3153,16 +3165,18 @@ const SA_A1000_603W: React.FC = () => {
       report3: "",
       report4: "",
       report5: "",
-      requestgb: "A",
-      testenddt: null,
-      teststdt: null,
-      testtype: "",
+      requestgb: defaultOption.find((item: any) => item.id === "requestgb")
+        .valueCode,
+      testenddt: setDefaultDate2(customOptionData, "testenddt"),
+      teststdt: setDefaultDate2(customOptionData, "teststdt"),
+      testtype: defaultOption.find((item: any) => item.id === "testtype")
+        .valueCode,
       translate1: "",
       translate2: "",
       translate3: "",
       translate4: "",
       translate5: "",
-      validt: null,
+      validt: setDefaultDate2(customOptionData, "validt"),
     });
     resetAllGrid();
     setTabSelected(1);
@@ -4302,60 +4316,107 @@ const SA_A1000_603W: React.FC = () => {
                   </td>
                   <th>작성자</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="person"
-                        value={Information.person}
-                        bizComponentId="L_sysUserMaster_001"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        textField="user_name"
-                        valueField="user_id"
-                        className="required"
-                      />
-                    )}
+                    {worktype == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="person"
+                            value={Information.person}
+                            type="new"
+                            customOptionData={customOptionData}
+                            textField="user_name"
+                            valueField="user_id"
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="person"
+                            value={Information.person}
+                            bizComponentId="L_sysUserMaster_001"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            textField="user_name"
+                            valueField="user_id"
+                            className="required"
+                          />
+                        )}
                   </td>
                   <th>영업담당자</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="chkperson"
-                        value={Information.chkperson}
-                        bizComponentId="L_sysUserMaster_001"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        textField="user_name"
-                        valueField="user_id"
-                      />
-                    )}
+                    {worktype == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="chkperson"
+                            value={Information.chkperson}
+                            type="new"
+                            customOptionData={customOptionData}
+                            textField="user_name"
+                            valueField="user_id"
+                            changeData={ComboBoxChange}
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="chkperson"
+                            value={Information.chkperson}
+                            bizComponentId="L_sysUserMaster_001"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            textField="user_name"
+                            valueField="user_id"
+                          />
+                        )}
                   </td>
                 </tr>
                 <tr>
                   <th>의뢰유형</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="quotype"
-                        value={Information.quotype}
-                        bizComponentId="L_SA016"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                      />
-                    )}
+                    {worktype == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="quotype"
+                            value={Information.quotype}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="quotype"
+                            value={Information.quotype}
+                            bizComponentId="L_SA016"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        )}
                   </td>
                   <th>국가</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="numbering_id"
-                        value={Information.numbering_id}
-                        bizComponentId="L_BA057"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                      />
-                    )}
+                    {worktype == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="numbering_id"
+                            value={Information.numbering_id}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="numbering_id"
+                            value={Information.numbering_id}
+                            bizComponentId="L_BA057"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        )}
                   </td>
                   <th>견적발행일</th>
                   <td></td>
@@ -4470,27 +4531,47 @@ const SA_A1000_603W: React.FC = () => {
                 <tr>
                   <th>시험분야</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="testtype"
-                        value={Information.testtype}
-                        bizComponentId="L_SA019_603"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
+                    {worktype == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="testtype"
+                            value={Information.testtype}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="testtype"
+                            value={Information.testtype}
+                            bizComponentId="L_SA019_603"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
                   </td>
                   <th>물질분야</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="materialtype"
-                        value={Information.materialtype}
-                        bizComponentId="L_SA001_603"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
+                    {worktype == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="materialtype"
+                            value={Information.materialtype}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="materialtype"
+                            value={Information.materialtype}
+                            bizComponentId="L_SA001_603"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
                   </td>
                   <th>시험물질명</th>
                   <td>
@@ -4503,15 +4584,25 @@ const SA_A1000_603W: React.FC = () => {
                   </td>
                   <th>의뢰목적</th>
                   <td>
-                    {bizComponentData !== null && (
-                      <BizComponentComboBox
-                        name="requestgb"
-                        value={Information.requestgb}
-                        bizComponentId="L_Requestgb"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    )}
+                    {worktype == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="requestgb"
+                            value={Information.requestgb}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="requestgb"
+                            value={Information.requestgb}
+                            bizComponentId="L_Requestgb"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
                   </td>
                 </tr>
                 <tr>

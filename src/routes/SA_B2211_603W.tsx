@@ -13,7 +13,7 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
-import { UsePermissions, convertDateToStr } from "../components/CommonFunction";
+import { GetPropertyValueByName, UseCustomOption, UsePermissions, convertDateToStr, setDefaultDate } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import LineBarChart from "../components/KPIcomponents/Chart/LineBarChart";
 import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutChart";
@@ -32,6 +32,21 @@ const SA_B2211_603W: React.FC = () => {
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const search = () => {};
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("SA_B2211_603W", setCustomOptionData);
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
+  
+      setFilters((prev) => ({
+        ...prev,
+        frdt: setDefaultDate(customOptionData, "frdt"),
+      }));
+    }
+  }, [customOptionData]);
   const theme = createTheme({
     palette: {
       primary: {

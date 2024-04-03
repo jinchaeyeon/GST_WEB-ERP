@@ -116,6 +116,8 @@ const CopyWindow = ({
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
+        person: defaultOption.find((item: any) => item.id === "person").valueCode,
+        quosts: defaultOption.find((item: any) => item.id === "quosts").valueCode,
         isSearch: true,
       }));
     }

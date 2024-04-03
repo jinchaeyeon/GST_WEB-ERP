@@ -30,9 +30,12 @@ import {
 } from "../CommonStyled";
 import YearCalendar from "../components/Calendars/YearCalendar";
 import {
+  GetPropertyValueByName,
+  UseCustomOption,
   convertDateToStr,
   dateformat4,
   handleKeyPressSearch,
+  setDefaultDate,
 } from "../components/CommonFunction";
 import { GAP } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -439,6 +442,23 @@ const SA_B2229W: React.FC = () => {
     ingcnt: 2,
     notingcnt: 2,
   });
+
+  //커스텀 옵션 조회
+  const [customOptionData, setCustomOptionData] = React.useState<any>(null);
+  UseCustomOption("SA_B2229W", setCustomOptionData);
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
+      setFilters((prev) => ({
+        ...prev,
+        yyyy: setDefaultDate(customOptionData, "yyyy"),
+      }));
+    }
+  }, [customOptionData]);
 
   //조회조건 초기값
   const [filters, setFilters] = useState<{ [name: string]: any }>({

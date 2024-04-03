@@ -881,7 +881,15 @@ const PanelBarNavContainer = (props: any) => {
                     <SvgIcon icon={userIcon} size="large" />
                   </Avatar>
                 ) : (
-                  <Avatar className="k-avatar-lg" rounded="full" type="image">
+                  <Avatar
+                    className="k-avatar-lg"
+                    rounded="full"
+                    type="image"
+                    style={{
+                      backgroundColor: "white",
+                      border: "2px solid #2289C3"
+                    }}
+                  >
                     <img
                       src={"data:image/png;base64," + contact[0].avatar}
                       alt="UserImage"

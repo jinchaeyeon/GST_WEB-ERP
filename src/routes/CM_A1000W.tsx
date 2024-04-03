@@ -132,7 +132,7 @@ const CM_A1000W: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_BA400, L_USERS",
+    "L_BA400, L_USERS, L_CUSTCD",
     //대분류, 품목계정, 수량단위, 내수구분, 중분류, 소분류, 입고구분, 담당자, 화폐단위, 도/사
     setBizComponentData
   );
@@ -142,7 +142,9 @@ const CM_A1000W: React.FC = () => {
   const [kindListData, setKindListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [custListData, setCustListData] = useState([
+    { custcd: "", custnm: "" },
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const usersQueryStr = getQueryFromBizComponent(
@@ -151,7 +153,10 @@ const CM_A1000W: React.FC = () => {
       const kindQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA400")
       );
-
+      const custQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_CUSTCD")
+      );
+      fetchQuery(custQueryStr, setCustListData);
       fetchQuery(usersQueryStr, setUsersListData);
       fetchQuery(kindQueryStr, setKindListData);
     }
@@ -226,7 +231,7 @@ const CM_A1000W: React.FC = () => {
     if (name == "custcd") {
       const defaultOption = GetPropertyValueByName(
         customOptionData.menuCustomDefaultOptions,
-        "query"
+        "new"
       );
 
       setInfomation((prev) => ({
@@ -237,8 +242,12 @@ const CM_A1000W: React.FC = () => {
             ? ""
             : defaultOption
                 .find((item: any) => item.id === "custnm")
-                .Rows.filter((item: { custcd: any }) => item.custcd == value)[0]
-                .custnm,
+                .Rows.filter((item: any) => item.custcd == value)[0] !=
+              undefined
+            ? defaultOption
+                .find((item: any) => item.id === "custnm")
+                .Rows.filter((item: any) => item.custcd == value)[0].custcd
+            : "",
       }));
     } else {
       setInfomation((prev) => ({
@@ -274,18 +283,12 @@ const CM_A1000W: React.FC = () => {
     if (name == "custnm") {
       const defaultOption = GetPropertyValueByName(
         customOptionData.menuCustomDefaultOptions,
-        "query"
+        "new"
       );
 
       setInfomation((prev) => ({
         ...prev,
-        custcd:
-          value == ""
-            ? ""
-            : defaultOption
-                .find((item: any) => item.id === "custnm")
-                .Rows.filter((item: { custnm: any }) => item.custnm == value)[0]
-                .custcd,
+        custcd: value,
         custnm: value,
       }));
     } else if (name == "strhh") {
@@ -515,7 +518,7 @@ const CM_A1000W: React.FC = () => {
             attdatnum: selectedRow.attdatnum,
             contents: selectedRow.contents,
             custcd: selectedRow.custcd,
-            custnm: selectedRow.custnm,
+            custnm: selectedRow.custcd,
             custperson: selectedRow.custperson,
             datnum: selectedRow.datnum,
             enddt: toDate(selectedRow.enddt),
@@ -557,7 +560,7 @@ const CM_A1000W: React.FC = () => {
             attdatnum: rows[0].attdatnum,
             contents: rows[0].contents,
             custcd: rows[0].custcd,
-            custnm: rows[0].custnm,
+            custnm: rows[0].custcd,
             custperson: rows[0].custperson,
             datnum: rows[0].datnum,
             enddt: toDate(rows[0].enddt),
@@ -792,7 +795,7 @@ const CM_A1000W: React.FC = () => {
       attdatnum: selectedRowData.attdatnum,
       contents: selectedRowData.contents,
       custcd: selectedRowData.custcd,
-      custnm: selectedRowData.custnm,
+      custnm: selectedRowData.custcd,
       custperson: selectedRowData.custperson,
       datnum: selectedRowData.datnum,
       enddt: toDate(selectedRowData.enddt),
@@ -848,7 +851,7 @@ const CM_A1000W: React.FC = () => {
     setInfomation((prev) => ({
       ...prev,
       custcd: data.custcd,
-      custnm: data.custnm,
+      custnm: data.custcd,
     }));
   };
 
@@ -1150,18 +1153,23 @@ const CM_A1000W: React.FC = () => {
     if (unsavedAttadatnums.length > 0) {
       setDeletedAttadatnums(unsavedAttadatnums);
     }
+    const defaultOption = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "new"
+    );
+
     setInfomation((prev) => ({
       ...prev,
       amt: 0,
       attdatnum: "",
       contents: "",
-      custcd: "",
-      custnm: "",
+      custcd: defaultOption.find((item: any) => item.id === "custnm").valueCode,
+      custnm: defaultOption.find((item: any) => item.id === "custnm").valueCode,
       custperson: "",
       datnum: "",
       enddt: filters.todt,
-      endhh: "00",
-      endmm: "00",
+      endhh: defaultOption.find((item: any) => item.id === "endhh").valueCode,
+      endmm: defaultOption.find((item: any) => item.id === "endmm").valueCode,
       endtime: "",
       exphh: 0,
       expmm: 0,
@@ -1169,8 +1177,8 @@ const CM_A1000W: React.FC = () => {
       finyn: false,
       insert_user_id: "",
       key_id: "",
-      kind1: "",
-      kind2: "",
+      kind1: defaultOption.find((item: any) => item.id === "kind1").valueCode,
+      kind2: defaultOption.find((item: any) => item.id === "kind2").valueCode,
       opengb: "",
       person: "",
       pgmid: "",
@@ -1179,8 +1187,8 @@ const CM_A1000W: React.FC = () => {
       project: "",
       ref_key: "",
       strdt: filters.todt,
-      strhh: "00",
-      strmm: "00",
+      strhh: defaultOption.find((item: any) => item.id === "strhh").valueCode,
+      strmm: defaultOption.find((item: any) => item.id === "strmm").valueCode,
       strtime: "",
       title: "",
       usehh: 0,
@@ -1206,6 +1214,10 @@ const CM_A1000W: React.FC = () => {
     } else if (infomation.title == "") {
       alert("제목을 입력해주세요.");
     } else {
+      const custnm = custListData.find(
+        (item: any) => item.custcd === infomation.custnm
+      )?.custnm;
+
       setParaData((prev) => ({
         ...prev,
         workType: workType,
@@ -1222,7 +1234,7 @@ const CM_A1000W: React.FC = () => {
         kind1: infomation.kind1,
         kind2: infomation.kind2,
         custcd: infomation.custcd,
-        custnm: infomation.custnm,
+        custnm: custnm != undefined ? custnm : "",
         opengb: infomation.opengb,
         attdatnum: infomation.attdatnum,
         finyn: infomation.finyn == true ? "Y" : "N",
@@ -1641,6 +1653,7 @@ const CM_A1000W: React.FC = () => {
                         <CustomOptionComboBox
                           name="strhh"
                           value={infomation.strhh}
+                          type="new"
                           customOptionData={customOptionData}
                           changeData={ComboBoxChange}
                           className="required"
@@ -1651,6 +1664,7 @@ const CM_A1000W: React.FC = () => {
                         <CustomOptionComboBox
                           name="strmm"
                           value={infomation.strmm}
+                          type="new"
                           customOptionData={customOptionData}
                           changeData={ComboBoxChange}
                           className="required"
@@ -1682,6 +1696,7 @@ const CM_A1000W: React.FC = () => {
                       <CustomOptionComboBox
                         name="kind1"
                         value={infomation.kind1}
+                        type="new"
                         customOptionData={customOptionData}
                         changeData={ComboBoxChange}
                         className="required"
@@ -1707,6 +1722,7 @@ const CM_A1000W: React.FC = () => {
                         <CustomOptionComboBox
                           name="endhh"
                           value={infomation.endhh}
+                          type="new"
                           customOptionData={customOptionData}
                           changeData={ComboBoxChange}
                           className="required"
@@ -1717,6 +1733,7 @@ const CM_A1000W: React.FC = () => {
                         <CustomOptionComboBox
                           name="endmm"
                           value={infomation.endmm}
+                          type="new"
                           customOptionData={customOptionData}
                           changeData={ComboBoxChange}
                           className="required"
@@ -1766,9 +1783,10 @@ const CM_A1000W: React.FC = () => {
                       <CustomOptionComboBox
                         name="custnm"
                         value={infomation.custnm}
+                        type="new"
                         customOptionData={customOptionData}
                         changeData={ComboBoxChange}
-                        valueField="custnm"
+                        valueField="custcd"
                         textField="custnm"
                       />
                     )}
@@ -1787,6 +1805,7 @@ const CM_A1000W: React.FC = () => {
                     {customOptionData !== null && (
                       <CustomOptionComboBox
                         name="kind2"
+                        type="new"
                         value={infomation.kind2}
                         customOptionData={customOptionData}
                         changeData={ComboBoxChange}

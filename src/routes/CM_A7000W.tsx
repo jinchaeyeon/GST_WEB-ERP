@@ -58,6 +58,7 @@ import {
   getQueryFromBizComponent,
   handleKeyPressSearch,
   setDefaultDate,
+  setDefaultDate2,
   toDate,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -1129,18 +1130,22 @@ const CM_A7000W: React.FC = () => {
     setWorkType("N");
     setTabSelected(1);
     setDetailDataResult(process([], detailDataState));
+    const defaultOption = GetPropertyValueByName(
+      customOptionData.menuCustomDefaultOptions,
+      "new"
+    );
     setInformation({
       orgdiv: "01",
       meetingnum: "",
-      usegb: "",
+      usegb: defaultOption.find((item: any) => item.id === "usegb").valueCode,
       person: userId,
       personnm: userName,
-      recdt: new Date(),
+      recdt: setDefaultDate2(customOptionData, "recdt"),
       title: "",
       files: "",
       attdatnum: "",
       ref_key: "",
-      custcd: "",
+      custcd: defaultOption.find((item: any) => item.id === "custcd").valueCode,
       custnm: "",
       custprsncd: "",
       custprsnnm: "",
@@ -1150,10 +1155,10 @@ const CM_A7000W: React.FC = () => {
       telno: "",
       phoneno: "",
       email: "",
-      testtype: "",
-      requestgb: "",
-      materialtype: "",
-      type: "",
+      testtype: defaultOption.find((item: any) => item.id === "testtype").valueCode,
+      requestgb: defaultOption.find((item: any) => item.id === "requestgb").valueCode,
+      materialtype: defaultOption.find((item: any) => item.id === "materialtype").valueCode,
+      type: defaultOption.find((item: any) => item.id === "type").valueCode,
     });
   };
 
