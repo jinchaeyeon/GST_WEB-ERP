@@ -410,6 +410,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
   }, [Information]);
 
   document.addEventListener("keydown", function (evt) {
+    alert(evt.code);
     if (interval) {
       clearInterval(interval);
     }
