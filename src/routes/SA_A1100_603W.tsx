@@ -76,11 +76,11 @@ import { isLoading } from "../store/atoms";
 
 type TdataArr = {
   rowstatus_s: string[];
-  seq2_s: string[];
+  seq_s: string[];
   wonamt_s: string[];
   taxamt_s: string[];
   amt_s: string[];
-  outtype_s: string[];
+  contractgb_s: string[];
   quonum_s: string[];
   quorev_s: string[];
   quoseq_s: string[];
@@ -235,7 +235,7 @@ const SA_A1100_603W: React.FC = () => {
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
-  const [outtypeListData, setOuttypeListData] = useState([
+  const [contractgbListData, setcontractgbListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [materialtypeListData, setMaterialtypeListData] = useState([
@@ -244,7 +244,7 @@ const SA_A1100_603W: React.FC = () => {
 
   useEffect(() => {
     if (bizComponentData.length > 0) {
-      const outtypeQueryStr = getQueryFromBizComponent(
+      const contractgbQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA037")
       );
       const userQueryStr = getQueryFromBizComponent(
@@ -263,7 +263,7 @@ const SA_A1100_603W: React.FC = () => {
           (item: any) => item.bizComponentId === "L_SA001_603"
         )
       );
-      fetchQueryData(outtypeQueryStr, setOuttypeListData);
+      fetchQueryData(contractgbQueryStr, setcontractgbListData);
       fetchQueryData(userQueryStr, setUserListData);
       fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
       fetchQueryData(dptcdQueryStr, setdptcdListData);
@@ -315,8 +315,7 @@ const SA_A1100_603W: React.FC = () => {
     orgdiv: "01",
     location: "01",
     quokey: "",
-    recdt: "",
-    seq1: 0,
+    contractno: "",
     groupgb: "A",
     find_row_value: "",
     pgNum: 1,
@@ -329,8 +328,7 @@ const SA_A1100_603W: React.FC = () => {
     orgdiv: "01",
     location: "01",
     quokey: "",
-    recdt: "",
-    seq1: 0,
+    contractno: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -341,8 +339,7 @@ const SA_A1100_603W: React.FC = () => {
     orgdiv: "01",
     location: "01",
     quokey: "",
-    recdt: "",
-    seq1: 0,
+    contractno: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -353,8 +350,7 @@ const SA_A1100_603W: React.FC = () => {
     orgdiv: "01",
     location: "01",
     quokey: "",
-    recdt: "",
-    seq1: 0,
+    contractno: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -365,8 +361,7 @@ const SA_A1100_603W: React.FC = () => {
     orgdiv: "01",
     location: "01",
     quokey: "",
-    recdt: "",
-    seq1: 0,
+    contractno: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -471,8 +466,7 @@ const SA_A1100_603W: React.FC = () => {
       ...prev,
       workType: "DETAIL",
       quokey: selectedRowData.quokey,
-      recdt: selectedRowData.recdt,
-      seq1: selectedRowData.seq1,
+      contractno: selectedRowData.contractno,
       groupgb: "A",
       pgNum: 1,
       isSearch: true,
@@ -481,8 +475,7 @@ const SA_A1100_603W: React.FC = () => {
       ...prev,
       workType: "COMMENT",
       quokey: selectedRowData.quokey,
-      recdt: selectedRowData.recdt,
-      seq1: selectedRowData.seq1,
+      contractno: selectedRowData.contractno,
       pgNum: 1,
       isSearch: true,
     }));
@@ -490,8 +483,7 @@ const SA_A1100_603W: React.FC = () => {
       ...prev,
       workType: "SALE",
       quokey: selectedRowData.quokey,
-      recdt: selectedRowData.recdt,
-      seq1: selectedRowData.seq1,
+      contractno: selectedRowData.contractno,
       pgNum: 1,
       isSearch: true,
     }));
@@ -499,8 +491,7 @@ const SA_A1100_603W: React.FC = () => {
       ...prev,
       workType: "MEETING",
       quokey: selectedRowData.quokey,
-      recdt: selectedRowData.recdt,
-      seq1: selectedRowData.seq1,
+      contractno: selectedRowData.contractno,
       pgNum: 1,
       isSearch: true,
     }));
@@ -508,8 +499,7 @@ const SA_A1100_603W: React.FC = () => {
       ...prev,
       workType: "PAYMENT",
       quokey: selectedRowData.quokey,
-      recdt: selectedRowData.recdt,
-      seq1: selectedRowData.seq1,
+      contractno: selectedRowData.contractno,
       pgNum: 1,
       isSearch: true,
     }));
@@ -786,9 +776,8 @@ const SA_A1100_603W: React.FC = () => {
         "@p_custnm": filters.custnm,
         "@p_quotestnum": filters.quotestnum,
         "@p_finyn": filters.finyn,
-        "@p_recdt": "",
-        "@p_seq1": 0,
         "@p_groupgb": "",
+        "@p_contractno": "",
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -807,7 +796,7 @@ const SA_A1100_603W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.reckey == filters.find_row_value
+            (row: any) => row.contractno == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -832,7 +821,7 @@ const SA_A1100_603W: React.FC = () => {
         const selectedRow =
           filters.find_row_value == ""
             ? rows[0]
-            : rows.find((row: any) => row.reckey == filters.find_row_value);
+            : rows.find((row: any) => row.contractno == filters.find_row_value);
 
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -878,9 +867,8 @@ const SA_A1100_603W: React.FC = () => {
         "@p_custnm": "",
         "@p_quotestnum": "",
         "@p_finyn": "",
-        "@p_recdt": subFilters.recdt,
-        "@p_seq1": subFilters.seq1,
         "@p_groupgb": subFilters.groupgb,
+        "@p_contractno": subFilters.contractno,
         "@p_find_row_value": subFilters.find_row_value,
       },
     };
@@ -955,9 +943,8 @@ const SA_A1100_603W: React.FC = () => {
         "@p_custnm": "",
         "@p_quotestnum": "",
         "@p_finyn": "",
-        "@p_recdt": subFilters2.recdt,
-        "@p_seq1": subFilters2.seq1,
         "@p_groupgb": "",
+        "@p_contractno": subFilters2.contractno,
         "@p_find_row_value": subFilters2.find_row_value,
       },
     };
@@ -1013,9 +1000,8 @@ const SA_A1100_603W: React.FC = () => {
         "@p_custnm": "",
         "@p_quotestnum": "",
         "@p_finyn": "",
-        "@p_recdt": subFilters3.recdt,
-        "@p_seq1": subFilters3.seq1,
         "@p_groupgb": "",
+        "@p_contractno": subFilters3.contractno,
         "@p_find_row_value": subFilters3.find_row_value,
       },
     };
@@ -1115,9 +1101,8 @@ const SA_A1100_603W: React.FC = () => {
         "@p_custnm": "",
         "@p_quotestnum": "",
         "@p_finyn": "",
-        "@p_recdt": subFilters4.recdt,
-        "@p_seq1": subFilters4.seq1,
         "@p_groupgb": "",
+        "@p_contractno": subFilters4.contractno,
         "@p_find_row_value": subFilters4.find_row_value,
       },
     };
@@ -1205,9 +1190,8 @@ const SA_A1100_603W: React.FC = () => {
         "@p_custnm": "",
         "@p_quotestnum": "",
         "@p_finyn": "",
-        "@p_recdt": subFilters6.recdt,
-        "@p_seq1": subFilters6.seq1,
         "@p_groupgb": "",
+        "@p_contractno": subFilters6.contractno,
         "@p_find_row_value": subFilters6.find_row_value,
       },
     };
@@ -2076,11 +2060,10 @@ const SA_A1100_603W: React.FC = () => {
   const [ParaData, setParaData] = useState({
     workType: "",
     rowstatus_s: "",
-    seq2_s: "",
     wonamt_s: "",
     taxamt_s: "",
     amt_s: "",
-    outtype_s: "",
+    contractgb_s: "",
     quonum_s: "",
     quorev_s: "",
     quoseq_s: "",
@@ -2098,18 +2081,16 @@ const SA_A1100_603W: React.FC = () => {
     parameters: {
       "@p_work_type": ParaData.workType,
       "@p_orgdiv": "01",
-      "@p_recdt": subFilters.recdt,
-      "@p_seq1": subFilters.seq1,
+      "@p_contractno": subFilters.contractno,
       "@p_location": "01",
       "@p_project": Information.project,
       "@p_wonchgrat": Information.wonchgrat,
       "@p_amtunit": Information.amtunit,
       "@p_rowstatus_s": ParaData.rowstatus_s,
-      "@p_seq2_s": ParaData.seq2_s,
       "@p_amt_s": ParaData.amt_s,
       "@p_wonamt_s": ParaData.wonamt_s,
       "@p_taxamt_s": ParaData.taxamt_s,
-      "@p_outtype_s": ParaData.outtype_s,
+      "@p_contractgb_s": ParaData.contractgb_s,
       "@p_quonum_s": ParaData.quonum_s,
       "@p_quorev_s": ParaData.quorev_s,
       "@p_quoseq_s": ParaData.quoseq_s,
@@ -2139,11 +2120,11 @@ const SA_A1100_603W: React.FC = () => {
     } else {
       let dataArr: TdataArr = {
         rowstatus_s: [],
-        seq2_s: [],
+        seq_s: [],
         wonamt_s: [],
         taxamt_s: [],
         amt_s: [],
-        outtype_s: [],
+        contractgb_s: [],
         quonum_s: [],
         quorev_s: [],
         quoseq_s: [],
@@ -2153,21 +2134,21 @@ const SA_A1100_603W: React.FC = () => {
         const {
           rowstatus = "",
           amt = "",
-          seq2 = "",
+          seq = "",
           wonamt = "",
           taxamt = "",
-          outtype = "",
+          contractgb = "",
           quonum = "",
           quorev = "",
           quoseq = "",
         } = item;
 
         dataArr.rowstatus_s.push(rowstatus);
-        dataArr.seq2_s.push(seq2);
+        dataArr.seq_s.push(seq);
         dataArr.wonamt_s.push(wonamt);
         dataArr.taxamt_s.push(taxamt);
         dataArr.amt_s.push(amt);
-        dataArr.outtype_s.push(outtype);
+        dataArr.contractgb_s.push(contractgb);
         dataArr.quonum_s.push(quonum);
         dataArr.quorev_s.push(quorev);
         dataArr.quoseq_s.push(quoseq);
@@ -2177,21 +2158,21 @@ const SA_A1100_603W: React.FC = () => {
         const {
           rowstatus = "",
           amt = "",
-          seq2 = "",
+          seq = "",
           wonamt = "",
           taxamt = "",
-          outtype = "",
+          contractgb = "",
           quonum = "",
           quorev = "",
           quoseq = "",
         } = item;
 
         dataArr.rowstatus_s.push("D");
-        dataArr.seq2_s.push(seq2);
+        dataArr.seq_s.push(seq);
         dataArr.wonamt_s.push(wonamt);
         dataArr.taxamt_s.push(taxamt);
         dataArr.amt_s.push(amt);
-        dataArr.outtype_s.push(outtype);
+        dataArr.contractgb_s.push(contractgb);
         dataArr.quonum_s.push(quonum);
         dataArr.quorev_s.push(quorev);
         dataArr.quoseq_s.push(quoseq);
@@ -2201,11 +2182,11 @@ const SA_A1100_603W: React.FC = () => {
         ...prev,
         workType: "N",
         rowstatus_s: dataArr.rowstatus_s.join("|"),
-        seq2_s: dataArr.seq2_s.join("|"),
+        seq_s: dataArr.seq_s.join("|"),
         wonamt_s: dataArr.wonamt_s.join("|"),
         taxamt_s: dataArr.taxamt_s.join("|"),
         amt_s: dataArr.amt_s.join("|"),
-        outtype_s: dataArr.outtype_s.join("|"),
+        contractgb_s: dataArr.contractgb_s.join("|"),
         quonum_s: dataArr.quonum_s.join("|"),
         quorev_s: dataArr.quorev_s.join("|"),
         quoseq_s: dataArr.quoseq_s.join("|"),
@@ -2336,11 +2317,10 @@ const SA_A1100_603W: React.FC = () => {
       setParaData({
         workType: "",
         rowstatus_s: "",
-        seq2_s: "",
         wonamt_s: "",
         taxamt_s: "",
         amt_s: "",
-        outtype_s: "",
+        contractgb_s: "",
         quonum_s: "",
         quorev_s: "",
         quoseq_s: "",
@@ -2420,7 +2400,7 @@ const SA_A1100_603W: React.FC = () => {
       seq: dataArr.seq.join("|"),
       recdt: dataArr.recdt.join("|"),
       user_id: dataArr.user_id.join("|"),
-      ref_key: subFilters.recdt + "-" + subFilters.seq1,
+      ref_key: subFilters.contractno,
     }));
   };
 
@@ -2448,7 +2428,7 @@ const SA_A1100_603W: React.FC = () => {
       "@p_comment": paraDataSaved.comment,
       "@p_user_id": paraDataSaved.user_id,
       "@p_form_id": "SA_A1100_603W",
-      "@p_table_id": "SA200T",
+      "@p_table_id": "SA204T",
       "@p_orgdiv": "01",
       "@p_ref_key": paraDataSaved.ref_key,
       "@p_exec_pc": pc,
@@ -2522,14 +2502,14 @@ const SA_A1100_603W: React.FC = () => {
         [DATA_ITEM_KEY2]: ++temp2,
         amt: selectRow.amt,
         itemnm: selectRow.itemnm,
-        outtype: "B",
+        contractgb: "B",
+        contractno: selectRow.contractno,
         quonum: selectRow.quonum,
         quorev: selectRow.quorev,
         quoseq: selectRow.quoseq,
         recdt: selectRow.recdt,
         remark: selectRow.remark,
-        seq1: 0,
-        seq2: 0,
+        seq: 0,
         taxamt: selectRow.taxamt,
         totamt: selectRow.totamt,
         quotestnum: selectRow.quotestnum,
@@ -2559,7 +2539,7 @@ const SA_A1100_603W: React.FC = () => {
         newData.push(item);
         Object2.push(index);
       } else {
-        if (item.outtype == "A") {
+        if (item.contractgb == "A") {
           alert("계약된 건은 행 삭제가 불가능합니다.");
           newData.push(item);
           Object2.push(index);
@@ -3150,8 +3130,8 @@ const SA_A1100_603W: React.FC = () => {
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
-                      outtype: outtypeListData.find(
-                        (items: any) => items.sub_code == row.outtype
+                      contractgb: contractgbListData.find(
+                        (items: any) => items.sub_code == row.contractgb
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                     })),

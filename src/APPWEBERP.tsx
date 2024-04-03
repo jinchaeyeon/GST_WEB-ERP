@@ -248,6 +248,7 @@ import SA_B3000W from "./routes/SA_B3000W";
 import SA_B3100W from "./routes/SA_B3100W";
 import SA_B3101W from "./routes/SA_B3101W";
 import SA_B3600W from "./routes/SA_B3600W";
+import SY_A0009W from "./routes/SY_A0009W";
 import SY_A0010W from "./routes/SY_A0010W";
 import SY_A0010_301W from "./routes/SY_A0010_301W";
 import SY_A0011W from "./routes/SY_A0011W";
@@ -781,6 +782,8 @@ const AppInner: React.FC = () => {
       return SY_A0110W;
     } else if (str == "SY_A0010W") {
       return SY_A0010W;
+    } else if (str == "SY_A0009W") {
+      return SY_A0009W;
     } else if (str == "SY_A0010_301W") {
       return SY_A0010_301W;
     } else if (str == "SY_A0012W") {
@@ -1237,6 +1240,7 @@ const AppInner: React.FC = () => {
                     exact
                   />
                   {/* 시스템 */}
+                  <AuthRoute path="/SY_A0009W" component={SY_A0009W} exact />
                   <AuthRoute path="/SY_A0120W" component={SY_A0120W} exact />
                   <AuthRoute path="/SY_A0110W" component={SY_A0110W} exact />
                   <AuthRoute path="/SY_A0010W" component={SY_A0010W} exact />
