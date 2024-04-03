@@ -719,7 +719,7 @@ const MA_A2310_606W: React.FC = () => {
 
   useEffect(() => {
     document.addEventListener("keydown", function (evt) {
-      if (evt.code == "Enter") {
+      if (evt.code == "Enter" || evt.code == "NumpadEnter") {
         if (barcode != "") {
           setInformation((prev) => ({
             ...prev,
@@ -730,7 +730,8 @@ const MA_A2310_606W: React.FC = () => {
       } else if (
         evt.code != "ShiftLeft" &&
         evt.code != "Shift" &&
-        evt.code != "Enter"
+        evt.code != "Enter" &&
+        evt.code != "NumpadEnter"
       ) {
         barcode += evt.key;
       }

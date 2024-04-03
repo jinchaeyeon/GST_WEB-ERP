@@ -416,7 +416,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
     if (evt.target != null) {
       const target = evt.target as Element;
       if (target.nodeName == "BODY") {
-        if (evt.code == "Enter") {
+        if (evt.code == "Enter" || evt.code == "NumpadEnter") {
           if (barcode != "") {
             setInformation((prev) => ({
               ...prev,
@@ -429,7 +429,8 @@ const MA_A2300_615_PDAW: React.FC = () => {
         if (
           evt.code != "ShiftLeft" &&
           evt.code != "Shift" &&
-          evt.code != "Enter"
+          evt.code != "Enter" &&
+          evt.code != "NumpadEnter"
         ) {
           if (timestamp != evt.timeStamp) {
             barcode += evt.key;

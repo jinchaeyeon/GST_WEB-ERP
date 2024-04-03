@@ -101,7 +101,7 @@ const MA_A3500W_615: React.FC = () => {
     if (interval) {
       clearInterval(interval);
     }
-    if (evt.code == "Enter") {
+    if (evt.code == "Enter" || evt.code == "NumpadEnter") {
       if (barcode != "") {
         setInformation((prev) => ({
           ...prev,
@@ -111,7 +111,12 @@ const MA_A3500W_615: React.FC = () => {
         interval = setInterval(() => (barcode = ""), 50);
       }
     }
-    if (evt.code != "ShiftLeft" && evt.code != "Shift" && evt.code != "Enter") {
+    if (
+      evt.code != "ShiftLeft" &&
+      evt.code != "Shift" &&
+      evt.code != "Enter" &&
+      evt.code != "NumpadEnter"
+    ) {
       if (timestamp != evt.timeStamp) {
         barcode += evt.key;
         timestamp = evt.timeStamp;
