@@ -43,7 +43,6 @@ import {
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
-  PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -54,6 +53,8 @@ import { useApi } from "../hooks/api";
 import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import sigData from "../store/map/sig.json";
+import sidoData from "../store/map/sido.json";
 
 const dateField = ["regorgdt", "rtrdt"];
 interface IPrsnnum {
@@ -63,6 +64,80 @@ interface IPrsnnum {
   abilcd: string;
   postcd: string;
 }
+
+
+declare global {
+  interface Window {
+    kakao: {
+      maps: any;
+    };
+  }
+}
+
+// 타입스크립트 인터페이스 정의
+interface FeatureCollection {
+  type: string;
+  features: Feature[];
+}
+
+interface Feature {
+  type: string;
+  geometry: Geometry;
+  properties: any;
+}
+
+interface Geometry {
+  type: string;
+  coordinates: number[][][];
+}
+
+interface LatLng {
+  getLat: () => number;
+  getLng: () => number;
+}
+
+interface Map {
+  getLevel: () => number;
+  setCenter: (latLng: LatLng) => void;
+  getCenter: () => LatLng;
+}
+
+interface Polygon {
+  setMap: (map: Map | null) => void;
+}
+
+// GeoJSON의 Feature 타입 정의
+interface Feature {
+  type: string;
+  geometry: Geometry;
+  properties: any;
+}
+
+// GeoJSON의 Geometry 타입 정의. 이 예제에서는 Polygon만을 다룹니다.
+interface Geometry {
+  type: string;
+  coordinates: number[][][];
+}
+// GeoJSON의 FeatureCollection 타입 정의
+interface FeatureCollection {
+  type: string;
+  features: Feature[];
+}
+
+interface Map {
+  getLevel: () => number;
+  setCenter: (latLng: LatLng) => void;
+  getCenter: () => LatLng;
+}
+
+interface Geometry {
+  type: string;
+  coordinates: number[][][];
+}
+
+// 지도 직원 거주지 클러스터링 위해 페이지 사이즈 임의로 늘림
+const PAGE_SIZE = 10000;
+
 const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 const HU_A1000W: React.FC = () => {
@@ -318,6 +393,7 @@ const HU_A1000W: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
+
 
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
@@ -692,6 +768,270 @@ const HU_A1000W: React.FC = () => {
     if (paraDataDeleted.work_type != "") fetchToDelete();
   }, [paraDataDeleted]);
 
+// 지도
+
+const [showMap, setShowMap] = useState(false);
+const [mapLoaded, setMapLoaded] = useState(false);
+const [map, setMap] = useState<any>(null);
+const [newMainDataResult, setNewMainDataResult] = useState<any>(null);
+
+const convertAddressToLatLng = async () => {
+  setLoading(true);
+  const apiKey = "2ff229205b565c4bb29089b6569c6ee8"; // 여기에 실제 API 키를 입력하세요.
+  const newResults = await mainDataResult.data.reduce(
+    async (accPromise, item) => {
+      const acc = await accPromise;
+      if (!item.koraddr || item.koraddr.trim() === "") {
+        // 주소가 비어있는 경우, 변환 없이 현재 아이템을 결과에 추가하지 않음
+        return acc;
+      }
+
+      const address = item.koraddr.trim();
+      const response = await fetch(
+        `https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(
+          address
+        )}`,
+        {
+          headers: {
+            Authorization: `KakaoAK ${apiKey}`,
+          },
+        }
+      );
+      const json = await response.json();
+
+      if (json.documents && json.documents.length > 0) {
+        const { x, y } = json.documents[0];
+        acc.push({ ...item, lat: y, lng: x }); // 변환 성공한 경우만 결과 배열에 추가
+      }
+      // 변환 실패한 경우는 결과 배열에 추가하지 않음
+      return acc;
+    },
+    Promise.resolve([])
+  );
+  
+  setNewMainDataResult({ data: newResults });
+  setLoading(false);
+};
+
+  // 카카오 지도 스크립트 로드 함수
+  const loadKakaoMapScript = () => {
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=aea9b34baa4e0c15204135788fc582b1&autoload=false&libraries=clusterer`;
+    document.head.appendChild(script);
+
+    script.onload = () => {
+      setMapLoaded(true); // 스크립트 로드 완료 상태 설정
+    };
+  };
+
+  // 폴리곤의 중심점을 계산하는 함수
+  function calculatePolygonCenter(coordinates: any) {
+    let lat = 0;
+    let lng = 0;
+    //@ts-ignore
+    coordinates.forEach((coordinate) => {
+      lat += coordinate.getLat();
+      lng += coordinate.getLng();
+    });
+    lat /= coordinates.length;
+    lng /= coordinates.length;
+    return new window.kakao.maps.LatLng(lat, lng);
+  }
+
+  const initializeMap = (): void => {
+    if (window.kakao && window.kakao.maps) {
+      window.kakao.maps.load(() => {
+        const container = document.getElementById("map");
+        if (!container) return;
+
+        const options = {
+          center: new window.kakao.maps.LatLng(36.4683, 127.9358),
+          level: 12,
+        };
+        
+        const map = new window.kakao.maps.Map(container, options);
+        let detailMode: boolean = false;
+
+        const markers = addMarkers(map);
+
+        // 클러스터러 생성 및 마커 추가
+        const clusterer = new window.kakao.maps.MarkerClusterer({
+          map: map,
+          averageCenter: true,
+          minLevel: 10,
+        });
+        clusterer.addMarkers(markers);
+        // 폴리곤을 저장할 배열을 선언합니다.
+        let allPolygons: any[] = [];
+        let allOverlays: any[] = [];
+
+        const addPolygons = (map: any, data: FeatureCollection): void => {
+          // 기존에 표시된 모든 폴리곤을 제거
+          allPolygons.forEach((polygon) => polygon.setMap(null));
+          allPolygons = []; 
+
+          // 기존에 표시된 모든 오버레이를 제거
+          allOverlays.forEach(overlay => overlay.setMap(null));
+          allOverlays = [];
+
+          const polygons = data.features.map((feature) => {
+            const coordinates = feature.geometry.coordinates[0].map(
+              (coordinate: number[]) =>
+                new window.kakao.maps.LatLng(coordinate[1], coordinate[0])
+            );
+            const polygon = new window.kakao.maps.Polygon({
+              map: map,
+              path: coordinates,
+              strokeWeight: 2,
+              strokeColor: "#004c80",
+              strokeOpacity: 0.8,
+              fillColor: "#fff",
+              fillOpacity: 0.7,
+            });
+
+            // 이벤트 리스너들을  추가합니다.
+            addEventListeners(polygon, feature, map);
+
+            // 폴리곤의 중심점을 계산합니다.
+            const center = calculatePolygonCenter(coordinates);
+
+            // 폴리곤 생성 시 CustomOverlay도 함께 생성하고 지도에 표시합니다.
+            const customOverlay = new window.kakao.maps.CustomOverlay({
+              content: `<div style="padding:5px; font-weight:700">${feature.properties.SIG_KOR_NM}</div>`,
+              position: center,
+              zIndex: 3,
+            });
+            customOverlay.setMap(map);
+
+            allOverlays.push(customOverlay);
+
+            return polygon;
+          });
+          allPolygons = allPolygons.concat(polygons);
+        };
+
+        // 이벤트 리스너를 추가하는 함수
+        const addEventListeners = (
+          polygon: any,
+          feature: Feature,
+          map: any
+        ) => {
+          const customOverlay = new window.kakao.maps.CustomOverlay({
+            position: polygon.getPath()[0],
+            zIndex: 3,
+          });
+
+          window.kakao.maps.event.addListener(polygon, "mouseover", () => {
+            polygon.setOptions({ fillColor: "#09f" });
+            customOverlay.setMap(map);
+          });
+
+          window.kakao.maps.event.addListener(polygon, "mouseout", () => {
+            polygon.setOptions({ fillColor: "#fff" });
+            customOverlay.setMap(null);
+          });
+
+          window.kakao.maps.event.addListener(
+            polygon,
+            "click",
+            (mouseEvent: any) => {
+              map.setLevel(10, { animate: { duration: 300 } });
+              map.panTo(mouseEvent.latLng);
+            }
+          );
+        };
+
+        // 지도 레벨 변경 시 폴리곤 로드
+        window.kakao.maps.event.addListener(map, "zoom_changed", () => {
+          const level = map.getLevel();
+
+          // 기존 폴리곤 제거
+          allPolygons.forEach(polygon => polygon.setMap(null));
+          allPolygons = [];
+          allOverlays.forEach(overlay => overlay.setMap(null));
+          allOverlays = [];
+
+          if (level < 10) {
+            allPolygons.forEach((polygon) => polygon.setMap(null));
+            allPolygons = [];
+            detailMode = false;
+          } else if (level == 10) {
+            addPolygons(map, sigData as unknown as FeatureCollection);
+            detailMode = true;
+          } else {
+            addPolygons(map, sidoData as unknown as FeatureCollection);
+            detailMode = false;
+          }
+        });
+
+        addPolygons(map, sidoData as unknown as FeatureCollection); // 초기 폴리곤 로드
+      });
+    }
+  };
+  
+  // showMap 상태가 변경될 때마다 처리
+  useEffect(() => {
+    if (showMap && !mapLoaded) {
+      convertAddressToLatLng();
+      loadKakaoMapScript(); // 지도 스크립트 로드
+    }
+    if (showMap && mapLoaded) {
+      initializeMap();
+    }
+  }, [showMap, mapLoaded, newMainDataResult]);
+
+  const addMarkers = (map: any) => {
+    const markers: any = [];
+    if (newMainDataResult) {
+      newMainDataResult.data.forEach((item: any) => {
+        const imageSrc =
+            "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png", // 마커이미지의 주소입니다
+          imageSize = new window.kakao.maps.Size(34, 37); // 마커이미지의 크기입니다
+        // imageOption = {offset: new window.kakao.maps.Point(27, 69)};
+
+        const markerImage = new window.kakao.maps.MarkerImage(
+          imageSrc,
+          imageSize
+        );
+        const marker = new window.kakao.maps.Marker({
+          map: map,
+          position: new window.kakao.maps.LatLng(item.lat, item.lng),
+          image: markerImage,
+        });
+
+        // 마커 위에 회사이름 나타내기
+        var infowindow = new window.kakao.maps.InfoWindow({
+          content: `<div style=" width:150px; text-align:center; padding:6px 10px; font-size:14px; font-weight:700;">${item.prsnnm}</div>`,
+        });
+        // 지도의 레벨이 변했을 때의 이벤트 리스너를 등록합니다.
+        window.kakao.maps.event.addListener(map, "zoom_changed", function () {
+          // 현재 지도의 레벨을 얻어옵니다
+          var level = map.getLevel();
+          var currentCenter = map.getCenter();
+
+          if (level <= 9) {
+            infowindow.open(map, marker);
+            map.setCenter(currentCenter);
+          } else {
+            infowindow.close();
+          }
+        });
+        window.kakao.maps.event.trigger(map, "zoom_changed");
+        // 마커 클릭 이벤트 리스너
+        window.kakao.maps.event.addListener(marker, "click", () => {
+          // 선택된 행의 키 저장
+          setSelectedState({ [item[DATA_ITEM_KEY]]: true });
+        });
+        markers.push(marker);
+      });
+    }
+    return markers;
+  };
+
+
+
+
   return (
     <>
       <TitleContainer>
@@ -766,7 +1106,15 @@ const HU_A1000W: React.FC = () => {
       <GridContainer>
         <GridTitleContainer>
           <GridTitle>기본정보</GridTitle>
+
           <ButtonContainer>
+          <Button
+              onClick={() => setShowMap(!showMap)}
+              themeColor={"primary"} 
+            >
+              {" "}
+              {showMap ? "리스트로 보기" : "거주지 지도"}
+            </Button>
             <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
               사용자생성
             </Button>
@@ -780,6 +1128,12 @@ const HU_A1000W: React.FC = () => {
             </Button>
           </ButtonContainer>
         </GridTitleContainer>
+        {showMap ? (
+              <div
+                style={{ height: "76.5vh", marginTop: "5px" }}
+                id="map"
+              ></div>
+            ) : (
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
@@ -872,7 +1226,7 @@ const HU_A1000W: React.FC = () => {
                     )
                 )}
           </Grid>
-        </ExcelExport>
+        </ExcelExport>)}
       </GridContainer>
       {userWindowVisible && (
         <UserWindow

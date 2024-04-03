@@ -697,7 +697,6 @@ const BA_A0020: React.FC = () => {
         }
       }
 
-      console.log("rows", rows);
       setMainDataResult({
         data: rows,
         total: totalRowCnt == -1 ? 0 : totalRowCnt,
@@ -3186,8 +3185,7 @@ const BA_A0020: React.FC = () => {
   // 주소값을 위도, 경도값으로 바꾸는 api
 
   const convertAddressToLatLng = async () => {
-    console.log("convertAddressToLatLng 실행");
-
+    setLoading(true);
     const apiKey = "2ff229205b565c4bb29089b6569c6ee8"; // 여기에 실제 API 키를 입력하세요.
     const newResults = await mainDataResult.data.reduce(
       async (accPromise, item) => {
@@ -3221,13 +3219,11 @@ const BA_A0020: React.FC = () => {
       Promise.resolve([])
     );
 
-    console.log("newResults", newResults);
     setNewMainDataResult({ data: newResults });
+    setLoading(false);
   };
   // 카카오 지도 스크립트 로드 함수
   const loadKakaoMapScript = () => {
-    console.log("loadKakaoMapScript 실행");
-
     const script = document.createElement("script");
     script.async = true;
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=aea9b34baa4e0c15204135788fc582b1&autoload=false&libraries=clusterer`;
@@ -3237,32 +3233,6 @@ const BA_A0020: React.FC = () => {
       setMapLoaded(true); // 스크립트 로드 완료 상태 설정
     };
   };
-  // const initializeMap = () => {
-  //   console.log("initializeMap 실행");
-
-  //   if (window.kakao && window.kakao.maps) {
-  //     window.kakao.maps.load(() => {
-  //       const container = document.getElementById("map");
-  //       const options = {
-  //         center: new window.kakao.maps.LatLng(36.2683, 127.6358),
-  //         level: 13,
-  //       };
-  //       const newMap = new window.kakao.maps.Map(container, options);
-  //       setMap(newMap);
-  //       // 마커 추가 로직 실행
-  //       const markers = addMarkers(newMap);
-
-  //       // 클러스터러 생성 및 마커 추가
-  //       const clusterer = new window.kakao.maps.MarkerClusterer({
-  //         map: newMap,
-  //         averageCenter: true,
-  //         minLevel: 10,
-  //       });
-
-  //       clusterer.addMarkers(markers);
-  //     });
-  //   }
-  // };
 
   // 폴리곤의 중심점을 계산하는 함수
   function calculatePolygonCenter(coordinates: any) {
@@ -3279,8 +3249,6 @@ const BA_A0020: React.FC = () => {
   }
 
   const initializeMap = (): void => {
-    console.log("initializeMap 실행");
-
     if (window.kakao && window.kakao.maps) {
       window.kakao.maps.load(() => {
         const container = document.getElementById("map");
@@ -3293,7 +3261,7 @@ const BA_A0020: React.FC = () => {
         
         const map = new window.kakao.maps.Map(container, options);
         let detailMode: boolean = false;
-        
+
         const markers = addMarkers(map);
 
         // 클러스터러 생성 및 마커 추가
@@ -3386,7 +3354,6 @@ const BA_A0020: React.FC = () => {
         // 지도 레벨 변경 시 폴리곤 로드
         window.kakao.maps.event.addListener(map, "zoom_changed", () => {
           const level = map.getLevel();
-          console.log("Current level:", level);
 
           // 기존 폴리곤 제거
           allPolygons.forEach(polygon => polygon.setMap(null));
@@ -3420,13 +3387,10 @@ const BA_A0020: React.FC = () => {
     }
     if (showMap && mapLoaded) {
       initializeMap();
-      console.log("newMainDataResult", newMainDataResult);
     }
   }, [showMap, mapLoaded, newMainDataResult]);
 
   const addMarkers = (map: any) => {
-    console.log("addMarkers 실행", newMainDataResult);
-
     const markers: any = [];
     if (newMainDataResult) {
       newMainDataResult.data.forEach((item: any) => {
