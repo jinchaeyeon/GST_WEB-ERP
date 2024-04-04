@@ -197,6 +197,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
       }
     } else {
       alert(data.resultMessage);
+      setTimeout(function () {
+        events();
+      }, 1);
       console.log(data);
     }
     setFilters((prev) => ({
@@ -249,6 +252,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
       }
     } else {
       alert(data.resultMessage);
+      setTimeout(function () {
+        events();
+      }, 1);
       console.log(data);
     }
     setFilters2((prev) => ({
@@ -360,6 +366,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
 
           if (checkData != undefined) {
             alert("이미 존재하는 데이터입니다.");
+            setTimeout(function () {
+              events();
+            }, 1);
           } else {
             setMainDataResult((prev) => ({
               data: [...prev.data, newItem],
@@ -395,6 +404,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
 
           if (checkData != undefined) {
             alert("이미 존재하는 데이터입니다.");
+            setTimeout(function () {
+              events();
+            }, 1);
           } else {
             setMainDataResult((prev) => ({
               data: [...prev.data, newItem],
@@ -415,6 +427,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
         barcode = "";
       }
     }
+    events();
   }, [Information]);
 
   document.addEventListener("keydown", function (evt) {
@@ -470,6 +483,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
         total: prev.total + 1,
       }));
     }
+    events();
   };
 
   const onClick1 = () => {
@@ -487,6 +501,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
     if (availableWidthPx) {
       availableWidthPx.blur();
     }
+    events();
   };
 
   const onClick2 = () => {
@@ -502,6 +517,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
     if (availableWidthPx) {
       availableWidthPx.blur();
     }
+    events();
   };
 
   const onSaveClick = () => {
@@ -537,6 +553,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
       }));
     } else {
       alert("데이터가 없습니다.");
+      setTimeout(function () {
+        events();
+      }, 1);
     }
   };
 
@@ -577,6 +596,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
 
     if (data.isSuccess === true) {
       alert("저장되었습니다.");
+      setTimeout(function () {
+        events();
+      }, 1);
       resetAll();
       setParaData({
         workType: "",
@@ -599,6 +621,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
       console.log("[오류 발생]");
       console.log(data);
       alert(data.resultMessage);
+      setTimeout(function () {
+        events();
+      }, 1);
     }
     setLoading(false);
   };
@@ -651,7 +676,10 @@ const MA_A2300_615_PDAW: React.FC = () => {
 
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    if (e.nativeEvent.data != null) {
+    if (
+      e.nativeEvent.data != null &&
+      Math.abs(Information.str.length - value.length) == 1
+    ) {
       setInformation((prev) => ({
         ...prev,
         str: value,
@@ -666,10 +694,16 @@ const MA_A2300_615_PDAW: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isMobile && index == 0) {
+    if (isMobile) {
+      events();
+    }
+  },[mainDataResult.data]);
+
+  const events = () => {
+    if (isMobile) {
       document.getElementById("hiddeninput")?.focus();
     }
-  });
+  };
 
   return (
     <>
@@ -681,7 +715,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
           }}
           onActiveIndexChange={(swiper) => {
             if (swiper.activeIndex == 0) {
-              document.getElementById("hiddeninput")?.focus();
+              events();
             }
             index = swiper.activeIndex;
           }}
@@ -703,6 +737,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                     });
                     setState("1");
                     barcode = "";
+                    events();
                   }}
                   icon="reset"
                 >
@@ -724,6 +759,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                         total: mainDataResult.total,
                       }));
                     }
+                    events();
                   }}
                   icon="check"
                 >
@@ -736,7 +772,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
                         swiper.slideTo(1);
                       } else {
                         alert("데이터를 선택해주세요");
-                        document.getElementById("hiddeninput")?.focus();
+                        setTimeout(function () {
+                          events();
+                        }, 1);
                       }
                     }
                   }}
@@ -766,12 +804,13 @@ const MA_A2300_615_PDAW: React.FC = () => {
                         <ButtonInInput>
                           <Button
                             id="search"
-                            onClick={() =>
+                            onClick={() => {
                               setInformation((prev) => ({
                                 ...prev,
                                 isSearch: true,
-                              }))
-                            }
+                              }));
+                              events();
+                            }}
                             icon="search"
                             fillMode="flat"
                           />
@@ -789,7 +828,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
                           value={Information.heatno}
                           className="readonly"
                           style={{ width: "100%" }}
-                          disabled={true}
+                          onClick={() => {
+                            events();
+                          }}
                         />
                         <ButtonInInput>
                           <Button
@@ -801,6 +842,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                                 str: "",
                                 isSearch: false,
                               }));
+                              events();
                             }}
                             icon="reset"
                             fillMode="flat"
@@ -822,7 +864,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
             >
               <Grid container spacing={2}>
                 {mainDataResult.data.map((item, idx) => (
-                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <Grid key={idx} item xs={12} sm={12} md={12} lg={12} xl={12}>
                     <AdminQuestionBox key={idx}>
                       <Card
                         style={{
@@ -880,6 +922,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                           }}
                           className="readonly"
                           value={checkDataResult.total}
+                          onClick={() => events()}
                         />
                       </td>
                       <th style={{ width: "5%", minWidth: "80px" }}>
@@ -894,6 +937,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                           }}
                           className="readonly"
                           value={mainDataResult.total}
+                          onClick={() => events()}
                         />
                       </td>
                     </tr>
@@ -1261,7 +1305,15 @@ const MA_A2300_615_PDAW: React.FC = () => {
               >
                 <Grid container spacing={2}>
                   {mainDataResult.data.map((item, idx) => (
-                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <Grid
+                      key={idx}
+                      item
+                      xs={12}
+                      sm={12}
+                      md={12}
+                      lg={12}
+                      xl={12}
+                    >
                       <AdminQuestionBox key={idx}>
                         <Card
                           style={{
