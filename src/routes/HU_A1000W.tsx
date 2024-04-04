@@ -970,10 +970,13 @@ const convertAddressToLatLng = async () => {
     }
   };
   
+  useEffect(() => {
+    convertAddressToLatLng();
+  }, [mainDataResult]);
+  
   // showMap 상태가 변경될 때마다 처리
   useEffect(() => {
     if (showMap && !mapLoaded) {
-      convertAddressToLatLng();
       loadKakaoMapScript(); // 지도 스크립트 로드
     }
     if (showMap && mapLoaded) {
