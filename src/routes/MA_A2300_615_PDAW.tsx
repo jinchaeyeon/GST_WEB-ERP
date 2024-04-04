@@ -1321,6 +1321,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                             }}
                             className="readonly"
                             value={checkDataResult.total}
+                            disabled={true}
                           />
                         </td>
                         <th>스캔건수</th>
@@ -1333,6 +1334,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                             }}
                             className="readonly"
                             value={mainDataResult.total}
+                            disabled={true}
                           />
                         </td>
                       </tr>
