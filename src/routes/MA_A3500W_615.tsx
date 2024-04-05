@@ -359,14 +359,11 @@ const MA_A3500W_615: React.FC = () => {
     if (isMobile) {
       events();
     }
-  },[mainDataResult.data]);
-  
+  }, []);
+
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    if (
-      e.nativeEvent.data != null &&
-      Math.abs(Information.str.length - value.length) == 1
-    ) {
+    if (Math.abs(Information.str.length - value.length) == 1) {
       setInformation((prev) => ({
         ...prev,
         str: value,

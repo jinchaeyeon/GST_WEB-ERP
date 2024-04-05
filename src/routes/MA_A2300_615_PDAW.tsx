@@ -676,10 +676,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
 
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    if (
-      e.nativeEvent.data != null &&
-      Math.abs(Information.str.length - value.length) == 1
-    ) {
+    if (Math.abs(Information.str.length - value.length) == 1) {
       setInformation((prev) => ({
         ...prev,
         str: value,
@@ -697,7 +694,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
     if (isMobile) {
       events();
     }
-  },[mainDataResult.data]);
+  }, []);
 
   const events = () => {
     if (isMobile) {
