@@ -85,6 +85,10 @@ const MA_A3500W_615: React.FC = () => {
       ...prev,
       [name]: value,
     }));
+    if (!isMobile) {
+      (document.activeElement as HTMLElement).blur();
+    }
+    events();
   };
 
   useEffect(() => {
@@ -95,31 +99,34 @@ const MA_A3500W_615: React.FC = () => {
         barcode: Information.str,
       }));
     }
+    events();
   }, [Information]);
 
   document.addEventListener("keydown", function (evt) {
-    if (interval) {
-      clearInterval(interval);
-    }
-    if (evt.code == "Enter" || evt.code == "NumpadEnter") {
-      if (barcode != "") {
-        setInformation((prev) => ({
-          ...prev,
-          str: barcode,
-          isSearch: true,
-        }));
-        interval = setInterval(() => (barcode = ""), 50);
+    if (!isMobile) {
+      if (interval) {
+        clearInterval(interval);
       }
-    }
-    if (
-      evt.code != "ShiftLeft" &&
-      evt.code != "Shift" &&
-      evt.code != "Enter" &&
-      evt.code != "NumpadEnter"
-    ) {
-      if (timestamp != evt.timeStamp) {
-        barcode += evt.key;
-        timestamp = evt.timeStamp;
+      if (evt.code == "Enter" || evt.code == "NumpadEnter") {
+        if (barcode != "") {
+          setInformation((prev) => ({
+            ...prev,
+            str: barcode,
+            isSearch: true,
+          }));
+          interval = setInterval(() => (barcode = ""), 50);
+        }
+      }
+      if (
+        evt.code != "ShiftLeft" &&
+        evt.code != "Shift" &&
+        evt.code != "Enter" &&
+        evt.code != "NumpadEnter"
+      ) {
+        if (timestamp != evt.timeStamp) {
+          barcode += evt.key;
+          timestamp = evt.timeStamp;
+        }
       }
     }
   });
@@ -143,6 +150,7 @@ const MA_A3500W_615: React.FC = () => {
         total: prev.total + 1,
       }));
     }
+    events();
   };
 
   const resetAll = () => {
@@ -155,6 +163,8 @@ const MA_A3500W_615: React.FC = () => {
       out: "A",
       isSearch: false,
     });
+    let availableWidthPx = document.getElementById("allreset");
+    availableWidthPx?.blur();
   };
 
   const getWgt = (data: any[]) => {
@@ -222,6 +232,9 @@ const MA_A3500W_615: React.FC = () => {
       )[0];
       if (checkData != undefined) {
         alert("이미 존재하는 데이터입니다.");
+        setTimeout(function () {
+          events();
+        }, 1);
       } else {
         setMainDataResult((prev) => ({
           data: [...prev.data, newItem],
@@ -232,13 +245,18 @@ const MA_A3500W_615: React.FC = () => {
           total: prev.total + 1,
         }));
       }
-      setInformation((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
+      setInformation((prev) => ({ ...prev, str: "", isSearch: false })); // 한번만 조회되도록
       barcode = "";
     } else {
       alert(data.resultMessage);
+      setTimeout(function () {
+        events();
+      }, 1);
+      setInformation((prev) => ({ ...prev, str: "", isSearch: false })); // 한번만 조회되도록
       console.log(data);
       barcode = "";
     }
+    events();
     setFilters((prev) => ({
       ...prev,
       pgNum:
@@ -270,6 +288,9 @@ const MA_A3500W_615: React.FC = () => {
       }));
     } else {
       alert("데이터가 없습니다.");
+      setTimeout(function () {
+        events();
+      }, 1);
     }
   };
 
@@ -307,6 +328,9 @@ const MA_A3500W_615: React.FC = () => {
 
     if (data.isSuccess === true) {
       alert("저장되었습니다.");
+      setTimeout(function () {
+        events();
+      }, 1);
       resetAll();
       setParaData({
         workType: "",
@@ -318,6 +342,9 @@ const MA_A3500W_615: React.FC = () => {
       console.log("[오류 발생]");
       console.log(data);
       alert(data.resultMessage);
+      setTimeout(function () {
+        events();
+      }, 1);
     }
     setLoading(false);
   };
@@ -327,6 +354,34 @@ const MA_A3500W_615: React.FC = () => {
       fetchTodoGridSaved();
     }
   }, [ParaData]);
+
+  useEffect(() => {
+    if (isMobile) {
+      events();
+    }
+  }, []);
+
+  const InputChange = (e: any) => {
+    const { value, name } = e.target;
+    if (Math.abs(Information.str.length - value.length) == 1) {
+      setInformation((prev) => ({
+        ...prev,
+        str: value,
+      }));
+    } else {
+      setInformation((prev) => ({
+        ...prev,
+        str: e.value,
+        isSearch: true,
+      }));
+    }
+  };
+
+  const events = () => {
+    if (isMobile) {
+      document.getElementById("hiddeninput")?.focus();
+    }
+  };
 
   return (
     <>
@@ -340,6 +395,7 @@ const MA_A3500W_615: React.FC = () => {
                 fillMode={"solid"}
                 onClick={() => {
                   resetAll();
+                  events();
                 }}
                 icon="reset"
               >
@@ -361,6 +417,7 @@ const MA_A3500W_615: React.FC = () => {
                       total: mainDataResult.total,
                     }));
                   }
+                  events();
                 }}
                 icon="check"
               >
@@ -376,6 +433,33 @@ const MA_A3500W_615: React.FC = () => {
               <FormBox>
                 <tbody>
                   <tr style={{ display: "flex", flexDirection: "row" }}>
+                    <th style={{ width: "5%", minWidth: "80px" }}>스캔번호</th>
+                    <td>
+                      <Input
+                        name="str"
+                        type="text"
+                        id="hiddeninput"
+                        value={Information.str}
+                        style={{ width: "100%" }}
+                        onChange={InputChange}
+                      />
+                      <ButtonInInput>
+                        <Button
+                          id="search"
+                          onClick={() => {
+                            setInformation((prev) => ({
+                              ...prev,
+                              isSearch: true,
+                            }));
+                            events();
+                          }}
+                          icon="search"
+                          fillMode="flat"
+                        />
+                      </ButtonInInput>
+                    </td>
+                  </tr>
+                  <tr style={{ display: "flex", flexDirection: "row" }}>
                     <th style={{ width: "5%", minWidth: "80px" }}>
                       제품바코드
                     </th>
@@ -386,7 +470,7 @@ const MA_A3500W_615: React.FC = () => {
                         value={Information.scanno}
                         style={{ width: "100%" }}
                         className="readonly"
-                        disabled={true}
+                        onClick={() => events()}
                       />
                       <ButtonInInput>
                         <Button
@@ -398,6 +482,7 @@ const MA_A3500W_615: React.FC = () => {
                               str: "",
                               isSearch: false,
                             }));
+                            events();
                           }}
                           icon="reset"
                           fillMode="flat"
@@ -411,7 +496,7 @@ const MA_A3500W_615: React.FC = () => {
           </GridContainer>
           <GridContainer
             style={{
-              height: "55vh",
+              height: "45vh",
               overflowY: "scroll",
               marginBottom: "10px",
               width: "100%",
@@ -419,7 +504,7 @@ const MA_A3500W_615: React.FC = () => {
           >
             <Grid container spacing={2}>
               {mainDataResult.data.map((item, idx) => (
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                <Grid key={idx} item xs={12} sm={12} md={12} lg={12} xl={12}>
                   <AdminQuestionBox key={idx}>
                     <Card
                       style={{
@@ -470,6 +555,7 @@ const MA_A3500W_615: React.FC = () => {
                         }}
                         className="readonly"
                         value={checkDataResult.total}
+                        onClick={() => events()}
                       />
                     </td>
                     <th style={{ width: "5%", minWidth: "80px" }}>스캔건수</th>
@@ -482,6 +568,7 @@ const MA_A3500W_615: React.FC = () => {
                         }}
                         className="readonly"
                         value={mainDataResult.total}
+                        onClick={() => events()}
                       />
                     </td>
                   </tr>
@@ -496,6 +583,7 @@ const MA_A3500W_615: React.FC = () => {
                         }}
                         className="readonly"
                         value={getWgt(checkDataResult.data)}
+                        onClick={() => events()}
                       />
                     </td>
                     <th style={{ width: "5%", minWidth: "80px" }}>총중량</th>
@@ -508,6 +596,7 @@ const MA_A3500W_615: React.FC = () => {
                         }}
                         className="readonly"
                         value={getWgt(mainDataResult.data)}
+                        onClick={() => events()}
                       />
                     </td>
                   </tr>
@@ -539,6 +628,7 @@ const MA_A3500W_615: React.FC = () => {
                 onClick={() => {
                   resetAll();
                 }}
+                id="allreset"
                 icon="reset"
               >
                 ALLReset
@@ -559,7 +649,10 @@ const MA_A3500W_615: React.FC = () => {
                       total: mainDataResult.total,
                     }));
                   }
+                  let availableWidthPx = document.getElementById("allcheck");
+                  availableWidthPx?.blur();
                 }}
+                id="allcheck"
                 icon="check"
               >
                 AllCheck
@@ -584,6 +677,7 @@ const MA_A3500W_615: React.FC = () => {
                       <Input
                         name="scanno"
                         type="text"
+                        id="scanno"
                         value={Information.scanno}
                         style={{ width: "100%" }}
                         className="readonly"
@@ -599,7 +693,11 @@ const MA_A3500W_615: React.FC = () => {
                               str: "",
                               isSearch: false,
                             }));
+                            let availableWidthPx =
+                              document.getElementById("reset");
+                            availableWidthPx?.blur();
                           }}
+                          id="reset"
                           icon="reset"
                           fillMode="flat"
                         />
@@ -629,7 +727,7 @@ const MA_A3500W_615: React.FC = () => {
             >
               <Grid container spacing={2}>
                 {mainDataResult.data.map((item, idx) => (
-                  <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
+                  <Grid key={idx} item xs={12} sm={12} md={6} lg={4} xl={4}>
                     <AdminQuestionBox key={idx}>
                       <Card
                         style={{
@@ -679,6 +777,7 @@ const MA_A3500W_615: React.FC = () => {
                         }}
                         className="readonly"
                         value={checkDataResult.total}
+                        disabled={true}
                       />
                     </td>
                     <th style={{ width: "5%", minWidth: "80px" }}>스캔건수</th>
@@ -691,6 +790,7 @@ const MA_A3500W_615: React.FC = () => {
                         }}
                         className="readonly"
                         value={mainDataResult.total}
+                        disabled={true}
                       />
                     </td>
                     <th style={{ width: "5%", minWidth: "80px" }}>선택중량</th>
@@ -703,6 +803,7 @@ const MA_A3500W_615: React.FC = () => {
                         }}
                         className="readonly"
                         value={getWgt(checkDataResult.data)}
+                        disabled={true}
                       />
                     </td>
                     <th style={{ width: "5%", minWidth: "80px" }}>총중량</th>
@@ -715,6 +816,7 @@ const MA_A3500W_615: React.FC = () => {
                         }}
                         className="readonly"
                         value={getWgt(mainDataResult.data)}
+                        disabled={true}
                       />
                     </td>
                   </tr>

@@ -45,6 +45,7 @@ let timestamp = 0;
 let interval: any;
 const DATA_ITEM_KEY = "custcd";
 const DATA_ITEM_KEY2 = "group_code";
+var index = 0;
 
 const MA_A2300_615_PDAW: React.FC = () => {
   const processApi = useApi();
@@ -196,6 +197,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
       }
     } else {
       alert(data.resultMessage);
+      setTimeout(function () {
+        events();
+      }, 1);
       console.log(data);
     }
     setFilters((prev) => ({
@@ -248,6 +252,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
       }
     } else {
       alert(data.resultMessage);
+      setTimeout(function () {
+        events();
+      }, 1);
       console.log(data);
     }
     setFilters2((prev) => ({
@@ -343,6 +350,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
           setInformation((prev) => ({
             ...prev,
             heatno: prev.str,
+            str: "",
             isSearch: false,
           })); // 한번만 조회되도록
         } else {
@@ -358,6 +366,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
 
           if (checkData != undefined) {
             alert("이미 존재하는 데이터입니다.");
+            setTimeout(function () {
+              events();
+            }, 1);
           } else {
             setMainDataResult((prev) => ({
               data: [...prev.data, newItem],
@@ -368,7 +379,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
               total: prev.total + 1,
             }));
           }
-          setInformation((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
+          setInformation((prev) => ({ ...prev, str: "", isSearch: false })); // 한번만 조회되도록
         }
         barcode = "";
       }
@@ -378,6 +389,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
           setInformation((prev) => ({
             ...prev,
             heatno: prev.str,
+            str: "",
             isSearch: false,
           })); // 한번만 조회되도록
         } else {
@@ -392,6 +404,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
 
           if (checkData != undefined) {
             alert("이미 존재하는 데이터입니다.");
+            setTimeout(function () {
+              events();
+            }, 1);
           } else {
             setMainDataResult((prev) => ({
               data: [...prev.data, newItem],
@@ -402,40 +417,47 @@ const MA_A2300_615_PDAW: React.FC = () => {
               total: prev.total + 1,
             }));
           }
-          setInformation((prev) => ({ ...prev, heatno: "", isSearch: false })); // 한번만 조회되도록
+          setInformation((prev) => ({
+            ...prev,
+            heatno: "",
+            str: "",
+            isSearch: false,
+          })); // 한번만 조회되도록
         }
         barcode = "";
       }
     }
+    events();
   }, [Information]);
 
   document.addEventListener("keydown", function (evt) {
-    alert(evt.code);
-    if (interval) {
-      clearInterval(interval);
-    }
-    if (evt.target != null) {
-      const target = evt.target as Element;
-      if (target.nodeName == "BODY") {
-        if (evt.code == "Enter" || evt.code == "NumpadEnter") {
-          if (barcode != "") {
-            setInformation((prev) => ({
-              ...prev,
-              str: barcode,
-              isSearch: true,
-            }));
-            interval = setInterval(() => (barcode = ""), 50);
+    if (!isMobile) {
+      if (interval) {
+        clearInterval(interval);
+      }
+      if (evt.target != null) {
+        const target = evt.target as Element;
+        if (target.nodeName == "BODY") {
+          if (evt.code == "Enter" || evt.code == "NumpadEnter") {
+            if (barcode != "") {
+              setInformation((prev) => ({
+                ...prev,
+                str: barcode,
+                isSearch: true,
+              }));
+              interval = setInterval(() => (barcode = ""), 50);
+            }
           }
-        }
-        if (
-          evt.code != "ShiftLeft" &&
-          evt.code != "Shift" &&
-          evt.code != "Enter" &&
-          evt.code != "NumpadEnter"
-        ) {
-          if (timestamp != evt.timeStamp) {
-            barcode += evt.key;
-            timestamp = evt.timeStamp;
+          if (
+            evt.code != "ShiftLeft" &&
+            evt.code != "Shift" &&
+            evt.code != "Enter" &&
+            evt.code != "NumpadEnter"
+          ) {
+            if (timestamp != evt.timeStamp) {
+              barcode += evt.key;
+              timestamp = evt.timeStamp;
+            }
           }
         }
       }
@@ -461,6 +483,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
         total: prev.total + 1,
       }));
     }
+    events();
   };
 
   const onClick1 = () => {
@@ -478,6 +501,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
     if (availableWidthPx) {
       availableWidthPx.blur();
     }
+    events();
   };
 
   const onClick2 = () => {
@@ -493,6 +517,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
     if (availableWidthPx) {
       availableWidthPx.blur();
     }
+    events();
   };
 
   const onSaveClick = () => {
@@ -528,6 +553,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
       }));
     } else {
       alert("데이터가 없습니다.");
+      setTimeout(function () {
+        events();
+      }, 1);
     }
   };
 
@@ -568,6 +596,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
 
     if (data.isSuccess === true) {
       alert("저장되었습니다.");
+      setTimeout(function () {
+        events();
+      }, 1);
       resetAll();
       setParaData({
         workType: "",
@@ -590,6 +621,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
       console.log("[오류 발생]");
       console.log(data);
       alert(data.resultMessage);
+      setTimeout(function () {
+        events();
+      }, 1);
     }
     setLoading(false);
   };
@@ -625,6 +659,8 @@ const MA_A2300_615_PDAW: React.FC = () => {
       isSearch: true,
       pgNum: 1,
     }));
+    let availableWidthPx = document.getElementById("search2");
+    availableWidthPx?.blur();
   };
 
   const search2 = () => {
@@ -634,6 +670,36 @@ const MA_A2300_615_PDAW: React.FC = () => {
       isSearch: true,
       pgNum: 1,
     }));
+    let availableWidthPx = document.getElementById("search3");
+    availableWidthPx?.blur();
+  };
+
+  const InputChange = (e: any) => {
+    const { value, name } = e.target;
+    if (Math.abs(Information.str.length - value.length) == 1) {
+      setInformation((prev) => ({
+        ...prev,
+        str: value,
+      }));
+    } else {
+      setInformation((prev) => ({
+        ...prev,
+        str: e.value,
+        isSearch: true,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    if (isMobile) {
+      events();
+    }
+  }, []);
+
+  const events = () => {
+    if (isMobile) {
+      document.getElementById("hiddeninput")?.focus();
+    }
   };
 
   return (
@@ -643,6 +709,12 @@ const MA_A2300_615_PDAW: React.FC = () => {
           className="leading_PDA_Swiper"
           onSwiper={(swiper) => {
             setSwiper(swiper);
+          }}
+          onActiveIndexChange={(swiper) => {
+            if (swiper.activeIndex == 0) {
+              events();
+            }
+            index = swiper.activeIndex;
           }}
         >
           <SwiperSlide key={0} className="leading_PDA">
@@ -662,6 +734,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                     });
                     setState("1");
                     barcode = "";
+                    events();
                   }}
                   icon="reset"
                 >
@@ -683,6 +756,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                         total: mainDataResult.total,
                       }));
                     }
+                    events();
                   }}
                   icon="check"
                 >
@@ -695,6 +769,9 @@ const MA_A2300_615_PDAW: React.FC = () => {
                         swiper.slideTo(1);
                       } else {
                         alert("데이터를 선택해주세요");
+                        setTimeout(function () {
+                          events();
+                        }, 1);
                       }
                     }
                   }}
@@ -710,6 +787,35 @@ const MA_A2300_615_PDAW: React.FC = () => {
                   <tbody>
                     <tr style={{ display: "flex", flexDirection: "row" }}>
                       <th style={{ width: "5%", minWidth: "80px" }}>
+                        스캔번호
+                      </th>
+                      <td>
+                        <Input
+                          name="str"
+                          type="text"
+                          id="hiddeninput"
+                          value={Information.str}
+                          style={{ width: "100%" }}
+                          onChange={InputChange}
+                        />
+                        <ButtonInInput>
+                          <Button
+                            id="search"
+                            onClick={() => {
+                              setInformation((prev) => ({
+                                ...prev,
+                                isSearch: true,
+                              }));
+                              events();
+                            }}
+                            icon="search"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                    </tr>
+                    <tr style={{ display: "flex", flexDirection: "row" }}>
+                      <th style={{ width: "5%", minWidth: "80px" }}>
                         이력번호
                       </th>
                       <td>
@@ -717,25 +823,23 @@ const MA_A2300_615_PDAW: React.FC = () => {
                           name="heatno"
                           type="text"
                           value={Information.heatno}
-                          style={{ width: "100%" }}
                           className="readonly"
-                          disabled={true}
+                          style={{ width: "100%" }}
+                          onClick={() => {
+                            events();
+                          }}
                         />
                         <ButtonInInput>
                           <Button
                             id="reset"
                             onClick={() => {
-                              barcode = "";
-                              setInformation({
+                              setInformation((prev) => ({
+                                ...prev,
                                 heatno: "",
                                 str: "",
                                 isSearch: false,
-                              });
-                              let availableWidthPx =
-                                document.getElementById("reset");
-                              if (availableWidthPx) {
-                                availableWidthPx.blur();
-                              }
+                              }));
+                              events();
                             }}
                             icon="reset"
                             fillMode="flat"
@@ -757,7 +861,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
             >
               <Grid container spacing={2}>
                 {mainDataResult.data.map((item, idx) => (
-                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                  <Grid key={idx} item xs={12} sm={12} md={12} lg={12} xl={12}>
                     <AdminQuestionBox key={idx}>
                       <Card
                         style={{
@@ -815,6 +919,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                           }}
                           className="readonly"
                           value={checkDataResult.total}
+                          onClick={() => events()}
                         />
                       </td>
                       <th style={{ width: "5%", minWidth: "80px" }}>
@@ -829,6 +934,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                           }}
                           className="readonly"
                           value={mainDataResult.total}
+                          onClick={() => events()}
                         />
                       </td>
                     </tr>
@@ -1071,6 +1177,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
             <Title>원료육입고</Title>
             <ButtonContainer>
               <Button
+                id="allreset"
                 themeColor={"primary"}
                 fillMode={"solid"}
                 onClick={() => {
@@ -1083,12 +1190,15 @@ const MA_A2300_615_PDAW: React.FC = () => {
                   });
                   setState("1");
                   barcode = "";
+                  let availableWidthPx = document.getElementById("allreset");
+                  availableWidthPx?.blur();
                 }}
                 icon="reset"
               >
                 ALLReset
               </Button>
               <Button
+                id="allcheck"
                 onClick={() => {
                   if (
                     Object.entries(checkDataResult.data).toString() ===
@@ -1104,6 +1214,8 @@ const MA_A2300_615_PDAW: React.FC = () => {
                       total: mainDataResult.total,
                     }));
                   }
+                  let availableWidthPx = document.getElementById("allcheck");
+                  availableWidthPx?.blur();
                 }}
                 icon="check"
               >
@@ -1141,17 +1253,15 @@ const MA_A2300_615_PDAW: React.FC = () => {
                           <Button
                             id="reset"
                             onClick={() => {
-                              barcode = "";
-                              setInformation({
+                              setInformation((prev) => ({
+                                ...prev,
                                 heatno: "",
                                 str: "",
                                 isSearch: false,
-                              });
+                              }));
                               let availableWidthPx =
                                 document.getElementById("reset");
-                              if (availableWidthPx) {
-                                availableWidthPx.blur();
-                              }
+                              availableWidthPx?.blur();
                             }}
                             icon="reset"
                             fillMode="flat"
@@ -1192,7 +1302,15 @@ const MA_A2300_615_PDAW: React.FC = () => {
               >
                 <Grid container spacing={2}>
                   {mainDataResult.data.map((item, idx) => (
-                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <Grid
+                      key={idx}
+                      item
+                      xs={12}
+                      sm={12}
+                      md={12}
+                      lg={12}
+                      xl={12}
+                    >
                       <AdminQuestionBox key={idx}>
                         <Card
                           style={{
@@ -1252,6 +1370,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                             }}
                             className="readonly"
                             value={checkDataResult.total}
+                            disabled={true}
                           />
                         </td>
                         <th>스캔건수</th>
@@ -1264,6 +1383,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                             }}
                             className="readonly"
                             value={mainDataResult.total}
+                            disabled={true}
                           />
                         </td>
                       </tr>
@@ -1294,6 +1414,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                           <Button
                             onClick={search}
                             icon="search"
+                            id="search2"
                             themeColor={"primary"}
                           >
                             조회
@@ -1368,6 +1489,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                           <Button
                             onClick={search2}
                             icon="search"
+                            id="search3"
                             themeColor={"primary"}
                           >
                             조회

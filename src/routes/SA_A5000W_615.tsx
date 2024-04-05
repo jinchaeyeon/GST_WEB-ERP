@@ -76,6 +76,7 @@ const SA_A5000W_615: React.FC = () => {
   });
 
   useEffect(() => {
+    console.log(Information);
     if (Information.isSearch && Information.str != "") {
       setFilters((prev) => ({
         ...prev,
@@ -91,31 +92,34 @@ const SA_A5000W_615: React.FC = () => {
   }, [Information]);
 
   document.addEventListener("keydown", function (evt) {
-    if (interval) {
-      clearInterval(interval);
-    }
-    if (evt.code == "Enter" || evt.code == "NumpadEnter") {
-      if (barcode != "") {
-        setInformation((prev) => ({
-          ...prev,
-          str: barcode,
-          isSearch: true,
-        }));
-        interval = setInterval(() => (barcode = ""), 50);
+    if (!isMobile) {
+      if (interval) {
+        clearInterval(interval);
       }
-    }
-    if (
-      evt.code != "ShiftLeft" &&
-      evt.code != "Shift" &&
-      evt.code != "Enter" &&
-      evt.code != "NumpadEnter"
-    ) {
-      if (timestamp != evt.timeStamp) {
-        barcode += evt.key;
-        timestamp = evt.timeStamp;
+      if (evt.code == "Enter" || evt.code == "NumpadEnter") {
+        if (barcode != "") {
+          setInformation((prev) => ({
+            ...prev,
+            str: barcode,
+            isSearch: true,
+          }));
+          interval = setInterval(() => (barcode = ""), 50);
+        }
+      }
+      if (
+        evt.code != "ShiftLeft" &&
+        evt.code != "Shift" &&
+        evt.code != "Enter" &&
+        evt.code != "NumpadEnter"
+      ) {
+        if (timestamp != evt.timeStamp) {
+          barcode += evt.key;
+          timestamp = evt.timeStamp;
+        }
       }
     }
   });
+
   const resetAll = () => {
     setMainDataResult(process([], mainDataState));
     setMainDataResult2(process([], mainDataState2));
@@ -132,6 +136,9 @@ const SA_A5000W_615: React.FC = () => {
       itemnm: "",
       isSearch: false,
     });
+    events();
+    let availableWidthPx = document.getElementById("allreset");
+    availableWidthPx?.blur();
   };
 
   const getWgt = (data: any[]) => {
@@ -161,6 +168,7 @@ const SA_A5000W_615: React.FC = () => {
       custcd: data.custcd,
       custnm: data.custnm,
     }));
+    events();
   };
 
   useEffect(() => {
@@ -201,6 +209,7 @@ const SA_A5000W_615: React.FC = () => {
       if (data.isSuccess == true && data.tables.length > 0) {
         const totalRowCnt = data.tables[0].TotalRowCount;
         const rows = data.tables[0].Rows;
+        setInformation((prev) => ({ ...prev, str: "", isSearch: false })); // 한번만 조회되도록
 
         let array: any[] = [];
         let valid = true;
@@ -241,11 +250,16 @@ const SA_A5000W_615: React.FC = () => {
         setInformation((prev) => ({
           ...prev,
           ordbarcode: filters.ordbarcode,
+          str: "",
           isSearch: false,
         })); // 한번만 조회되도록
         barcode = "";
       } else {
         alert(data.resultMessage);
+        setTimeout(function () {
+          events();
+        }, 1);
+        setInformation((prev) => ({ ...prev, str: "", isSearch: false })); // 한번만 조회되도록
         barcode = "";
         console.log(data);
       }
@@ -272,6 +286,8 @@ const SA_A5000W_615: React.FC = () => {
       if (data.isSuccess == true && data.tables.length > 0) {
         const totalRowCnt = data.tables[0].TotalRowCount;
         const rows = data.tables[0].Rows;
+        setInformation((prev) => ({ ...prev, str: "", isSearch: false })); // 한번만 조회되도록
+
         let array: any[] = [];
         let valid = true;
         rows.map((item: any) => {
@@ -326,15 +342,21 @@ const SA_A5000W_615: React.FC = () => {
         setInformation((prev) => ({
           ...prev,
           itembarcode: filters.itembarcode,
+          str: "",
           isSearch: false,
         })); // 한번만 조회되도록
         barcode = "";
       } else {
         alert(data.resultMessage);
+        setTimeout(function () {
+          events();
+        }, 1);
+        setInformation((prev) => ({ ...prev, str: "", isSearch: false })); // 한번만 조회되도록
         barcode = "";
         console.log(data);
       }
     }
+    events();
     setFilters((prev) => ({
       ...prev,
       pgNum:
@@ -371,9 +393,15 @@ const SA_A5000W_615: React.FC = () => {
         }));
       } else {
         alert("거래처를 선택해주세요.");
+        setTimeout(function () {
+          events();
+        }, 1);
       }
     } else {
       alert("데이터가 없습니다.");
+      setTimeout(function () {
+        events();
+      }, 1);
     }
   };
 
@@ -414,6 +442,9 @@ const SA_A5000W_615: React.FC = () => {
 
     if (data.isSuccess === true) {
       alert("저장되었습니다.");
+      setTimeout(function () {
+        events();
+      }, 1);
       resetAll();
       setParaData({
         workType: "",
@@ -427,6 +458,9 @@ const SA_A5000W_615: React.FC = () => {
       console.log("[오류 발생]");
       console.log(data);
       alert(data.resultMessage);
+      setTimeout(function () {
+        events();
+      }, 1);
     }
     setLoading(false);
   };
@@ -475,10 +509,39 @@ const SA_A5000W_615: React.FC = () => {
       itemnm: item.itemnm,
     }));
     barcode = "";
-    if (swiper) {
-      swiper.slideTo(1);
-    }
+    swiper?.slideTo(1);
     setStep(1);
+  };
+
+  const InputChange = (e: any) => {
+    const { value, name } = e.target;
+    if (Math.abs(Information.str.length - value.length) == 1) {
+      setInformation((prev) => ({
+        ...prev,
+        str: value,
+      }));
+    } else {
+      setInformation((prev) => ({
+        ...prev,
+        str: e.value,
+        isSearch: true,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    if (isMobile) {
+      events();
+    }
+  }, []);
+
+  const events = () => {
+    if (isMobile && index == 0) {
+      document.getElementById("hiddeninput")?.focus();
+    }
+    if (isMobile && index == 1) {
+      document.getElementById("hiddeninput2")?.focus();
+    }
   };
 
   return (
@@ -492,6 +555,7 @@ const SA_A5000W_615: React.FC = () => {
             }}
             onActiveIndexChange={(swiper) => {
               index = swiper.activeIndex;
+              events();
             }}
           >
             <SwiperSlide key={0} className="leading_PDA">
@@ -503,6 +567,7 @@ const SA_A5000W_615: React.FC = () => {
                     fillMode={"solid"}
                     onClick={() => {
                       resetAll();
+                      events();
                     }}
                     icon="reset"
                   >
@@ -518,6 +583,9 @@ const SA_A5000W_615: React.FC = () => {
                           swiper.slideTo(1);
                         } else {
                           alert("데이터가 없습니다.");
+                          setTimeout(function () {
+                            events();
+                          }, 1);
                         }
                       }
                     }}
@@ -533,6 +601,35 @@ const SA_A5000W_615: React.FC = () => {
                     <tbody>
                       <tr style={{ display: "flex", flexDirection: "row" }}>
                         <th style={{ width: "5%", minWidth: "80px" }}>
+                          스캔번호
+                        </th>
+                        <td>
+                          <Input
+                            name="str"
+                            type="text"
+                            id="hiddeninput"
+                            value={Information.str}
+                            style={{ width: "100%" }}
+                            onChange={InputChange}
+                          />
+                          <ButtonInInput>
+                            <Button
+                              id="search"
+                              onClick={() => {
+                                setInformation((prev) => ({
+                                  ...prev,
+                                  isSearch: true,
+                                }));
+                                events();
+                              }}
+                              icon="search"
+                              fillMode="flat"
+                            />
+                          </ButtonInInput>
+                        </td>
+                      </tr>
+                      <tr style={{ display: "flex", flexDirection: "row" }}>
+                        <th style={{ width: "5%", minWidth: "80px" }}>
                           수주번호
                         </th>
                         <td>
@@ -544,21 +641,6 @@ const SA_A5000W_615: React.FC = () => {
                             className="readonly"
                             disabled={true}
                           />
-                          <ButtonInInput>
-                            <Button
-                              onClick={() => {
-                                barcode = "";
-                                setInformation((prev) => ({
-                                  ...prev,
-                                  ordbarcode: "",
-                                  str: "",
-                                  isSearch: false,
-                                }));
-                              }}
-                              icon="reset"
-                              fillMode="flat"
-                            />
-                          </ButtonInInput>
                         </td>
                       </tr>
                     </tbody>
@@ -576,10 +658,7 @@ const SA_A5000W_615: React.FC = () => {
                 <Grid container spacing={2}>
                   {mainDataResult.data.map((item, idx) => (
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                      <AdminQuestionBox
-                        key={idx}
-                        onClick={() => onCheckItem(item)}
-                      >
+                      <AdminQuestionBox key={idx}>
                         <Card
                           style={{
                             width: "100%",
@@ -590,6 +669,7 @@ const SA_A5000W_615: React.FC = () => {
                         >
                           <CardContent
                             style={{ textAlign: "left", padding: "8px" }}
+                            onClick={() => onCheckItem(item)}
                           >
                             <Typography
                               gutterBottom
@@ -637,6 +717,7 @@ const SA_A5000W_615: React.FC = () => {
                             }}
                             className="readonly"
                             value={mainDataResult.total}
+                            onClick={() => events()}
                           />
                         </td>
                         <th style={{ width: "5%", minWidth: "80px" }}>
@@ -651,6 +732,7 @@ const SA_A5000W_615: React.FC = () => {
                             }}
                             className="readonly"
                             value={getWgt(mainDataResult.data)}
+                            onClick={() => events()}
                           />
                         </td>
                       </tr>
@@ -665,6 +747,7 @@ const SA_A5000W_615: React.FC = () => {
                             value={Information.custnm}
                             style={{ width: "100%" }}
                             className="readonly"
+                            onClick={() => events()}
                           />
                           <ButtonInInput>
                             <Button
@@ -689,6 +772,7 @@ const SA_A5000W_615: React.FC = () => {
                       onClick={() => {
                         if (swiper) {
                           swiper.slideTo(0);
+                          events();
                         }
                       }}
                       icon="arrow-left"
@@ -703,6 +787,35 @@ const SA_A5000W_615: React.FC = () => {
                       <tbody>
                         <tr style={{ display: "flex", flexDirection: "row" }}>
                           <th style={{ width: "5%", minWidth: "80px" }}>
+                            스캔번호
+                          </th>
+                          <td>
+                            <Input
+                              name="str"
+                              type="text"
+                              id="hiddeninput2"
+                              value={Information.str}
+                              style={{ width: "100%" }}
+                              onChange={InputChange}
+                            />
+                            <ButtonInInput>
+                              <Button
+                                id="search"
+                                onClick={() => {
+                                  setInformation((prev) => ({
+                                    ...prev,
+                                    isSearch: true,
+                                  }));
+                                  events();
+                                }}
+                                icon="search"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                        </tr>
+                        <tr style={{ display: "flex", flexDirection: "row" }}>
+                          <th style={{ width: "5%", minWidth: "80px" }}>
                             제품바코드
                           </th>
                           <td>
@@ -714,21 +827,6 @@ const SA_A5000W_615: React.FC = () => {
                               className="readonly"
                               disabled={true}
                             />
-                            <ButtonInInput>
-                              <Button
-                                onClick={() => {
-                                  barcode = "";
-                                  setInformation((prev) => ({
-                                    ...prev,
-                                    itembarcode: "",
-                                    str: "",
-                                    isSearch: false,
-                                  }));
-                                }}
-                                icon="reset"
-                                fillMode="flat"
-                              />
-                            </ButtonInInput>
                           </td>
                         </tr>
                         <tr style={{ display: "flex", flexDirection: "row" }}>
@@ -742,7 +840,7 @@ const SA_A5000W_615: React.FC = () => {
                               value={Information.itemnm}
                               style={{ width: "100%" }}
                               className="readonly"
-                              disabled={true}
+                              onClick={() => events()}
                             />
                           </td>
                         </tr>
@@ -752,7 +850,7 @@ const SA_A5000W_615: React.FC = () => {
                 </GridContainer>
                 <GridContainer
                   style={{
-                    height: "65vh",
+                    height: "60vh",
                     overflowY: "scroll",
                     marginBottom: "10px",
                     width: "100%",
@@ -810,6 +908,7 @@ const SA_A5000W_615: React.FC = () => {
                     onClick={() => {
                       resetAll();
                     }}
+                    id="allreset"
                     icon="reset"
                   >
                     ALLReset
@@ -828,7 +927,10 @@ const SA_A5000W_615: React.FC = () => {
                       } else {
                         alert("데이터가 없습니다.");
                       }
+                      let availableWidthPx = document.getElementById("next");
+                      availableWidthPx?.blur();
                     }}
+                    id="next"
                     icon="arrow-right"
                   >
                     다음
@@ -855,21 +957,6 @@ const SA_A5000W_615: React.FC = () => {
                             className="readonly"
                             disabled={true}
                           />
-                          <ButtonInInput>
-                            <Button
-                              onClick={() => {
-                                barcode = "";
-                                setInformation((prev) => ({
-                                  ...prev,
-                                  ordbarcode: "",
-                                  str: "",
-                                  isSearch: false,
-                                }));
-                              }}
-                              icon="reset"
-                              fillMode="flat"
-                            />
-                          </ButtonInInput>
                         </td>
                         <th style={{ width: "5%", minWidth: "80px" }}>
                           거래처
@@ -905,10 +992,7 @@ const SA_A5000W_615: React.FC = () => {
                   <Grid container spacing={2}>
                     {mainDataResult.data.map((item, idx) => (
                       <Grid item xs={12} sm={12} md={6} lg={4} xl={4}>
-                        <AdminQuestionBox
-                          key={idx}
-                          onClick={() => onCheckItem(item)}
-                        >
+                        <AdminQuestionBox key={idx}>
                           <Card
                             style={{
                               width: "100%",
@@ -919,6 +1003,7 @@ const SA_A5000W_615: React.FC = () => {
                           >
                             <CardContent
                               style={{ textAlign: "left", padding: "8px" }}
+                              onClick={() => onCheckItem(item)}
                             >
                               <Typography
                                 gutterBottom
@@ -968,6 +1053,7 @@ const SA_A5000W_615: React.FC = () => {
                             }}
                             className="readonly"
                             value={mainDataResult.total}
+                            disabled={true}
                           />
                         </td>
                         <th style={{ width: "5%", minWidth: "80px" }}>
@@ -982,6 +1068,7 @@ const SA_A5000W_615: React.FC = () => {
                             }}
                             className="readonly"
                             value={getWgt(mainDataResult.data)}
+                            disabled={true}
                           />
                         </td>
                       </tr>
@@ -998,7 +1085,10 @@ const SA_A5000W_615: React.FC = () => {
                   <Button
                     onClick={() => {
                       setStep(0);
+                      let availableWidthPx = document.getElementById("prev");
+                      availableWidthPx?.blur();
                     }}
+                    id="prev"
                     icon="arrow-left"
                   >
                     이전
@@ -1022,21 +1112,6 @@ const SA_A5000W_615: React.FC = () => {
                             className="readonly"
                             disabled={true}
                           />
-                          <ButtonInInput>
-                            <Button
-                              onClick={() => {
-                                barcode = "";
-                                setInformation((prev) => ({
-                                  ...prev,
-                                  itembarcode: "",
-                                  str: "",
-                                  isSearch: false,
-                                }));
-                              }}
-                              icon="reset"
-                              fillMode="flat"
-                            />
-                          </ButtonInInput>
                         </td>
                         <th style={{ width: "5%", minWidth: "80px" }}>
                           품목명
