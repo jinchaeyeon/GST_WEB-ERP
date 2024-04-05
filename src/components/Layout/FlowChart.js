@@ -5,6 +5,7 @@ import CropPortraitIcon from "@mui/icons-material/CropPortrait";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FlipToBackIcon from "@mui/icons-material/FlipToBack";
 import FlipToFrontIcon from "@mui/icons-material/FlipToFront";
+import DeleteIcon from '@mui/icons-material/Delete';
 import ImageIcon from "@mui/icons-material/Image";
 import MovingIcon from "@mui/icons-material/Moving";
 import RedoIcon from "@mui/icons-material/Redo";
@@ -861,6 +862,11 @@ const FlowChart = (props) => {
     );
   };
 
+  const onDelete = () => {
+    setNodes((nds) => nds.filter((node) => !node.selected));
+    setType("B");
+  };
+
   return (
     <>
       <GridContainerWrap height={isMobile ? "200vh" : "83vh"}>
@@ -1170,6 +1176,26 @@ const FlowChart = (props) => {
                         </div>
                       </Button>
                     </Grid>
+                    <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+          {/* 삭제 버튼 추가 */}
+          <Button
+            style={{ color: "rgba(0, 0, 0, .725)" }}
+            variant="text"
+            onClick={() => onDelete()}
+            fullWidth
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <DeleteIcon /> {/* 이 아이콘을 프로젝트에 맞게 변경해주세요 */}
+              <Typography variant="caption">노드 삭제</Typography>
+            </div>
+          </Button>
+        </Grid>
                   </Grid>
                 </FormBoxWrap>
               </AccordionDetails>
