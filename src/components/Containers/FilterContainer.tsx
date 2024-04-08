@@ -5,7 +5,7 @@ type TChildren = {
   children: ReactNode;
 };
 const FilterContainer = ({ children }: TChildren) => {
-  const [isFilterHide, setIsFilterHide] = useState(false);
+  const [isFilterHide, setIsFilterHide] = useState(true);
 
   return (
     <>

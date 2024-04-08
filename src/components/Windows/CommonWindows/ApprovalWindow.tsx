@@ -45,9 +45,11 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseMessages,
   UseParaPc,
   convertDateToStr,
   convertDateToStrWithTime2,
+  findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -207,6 +209,10 @@ const KendoWindow = ({
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption(pathname, setCustomOptionData);
 
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages(pathname, setMessagesData);
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -357,10 +363,10 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data !== null) {
+    if (data && data.tables && data.tables[0] && data.tables[0].TotalRowCount !== undefined) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-
+      
       setMainDataResult((prev) => {
         return {
           data: rows,
@@ -387,6 +393,7 @@ const KendoWindow = ({
       }
     } else {
       console.log(data);
+      alert(data.resultMessage)
     }
     setFilters((prev) => ({
       ...prev,

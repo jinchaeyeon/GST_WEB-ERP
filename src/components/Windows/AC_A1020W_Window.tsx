@@ -1334,8 +1334,8 @@ const KendoWindow = ({
         <FormBox>
           <tbody>
             <tr>
-              <th>결의서 No</th>
-              <td>
+              <th className={worktype === "N" ? "hide-on-mobile" : ""}>결의서 No</th>
+              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="expenseno"
                   type="text"
@@ -1343,8 +1343,8 @@ const KendoWindow = ({
                   className="readonly"
                 />
               </td>
-              <th>신청일자</th>
-              <td>
+              <th className={worktype === "N" ? "hide-on-mobile" : ""}>신청일자</th>
+              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
                 <DatePicker
                   name="expensedt"
                   value={filters.expensedt}
@@ -1397,8 +1397,8 @@ const KendoWindow = ({
                   />
                 </ButtonInInput>
               </td>
-              <th>요청자 성명</th>
-              <td>
+              <th className={worktype === "N" ? "hide-on-mobile" : ""}>요청자 성명</th>
+              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="prsnnm"
                   type="text"
@@ -1406,8 +1406,8 @@ const KendoWindow = ({
                   className="readonly"
                 />
               </td>
-              <th>요청자 부서</th>
-              <td>
+              <th className={worktype === "N" ? "hide-on-mobile" : ""}>요청자 부서</th>
+              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="dptnm"
                   type="text"
@@ -1594,8 +1594,8 @@ const KendoWindow = ({
                   />
                 </ButtonInInput>
               </td>
-              <th>고객사명</th>
-              <td>
+              <th className={worktype === "N" ? "hide-on-mobile" : ""}>고객사명</th>
+              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="custnm"
                   type="text"
@@ -1770,8 +1770,8 @@ const KendoWindow = ({
                   />
                 )}
               </td>
-              <th>계정과목코드</th>
-              <td>
+              <th className={worktype === "N" ? "hide-on-mobile" : ""}>계정과목코드</th>
+              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="acntcd"
                   type="text"
@@ -1790,8 +1790,8 @@ const KendoWindow = ({
                   className="readonly"
                 />
               </td>
-              <th>계정과목명</th>
-              <td>
+              <th className={worktype === "N" ? "hide-on-mobile" : ""}>계정과목명</th>
+              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="acntnm"
                   type="text"
@@ -1836,8 +1836,8 @@ const KendoWindow = ({
                   />
                 )}
               </td>
-              <th>카드관련</th>
-              <td>
+              <th className={worktype === "N" ? "hide-on-mobile" : ""}>카드관련</th>
+              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
                 {bizComponentData !== null && (
                   <BizComponentComboBox
                     name="cardcd"
