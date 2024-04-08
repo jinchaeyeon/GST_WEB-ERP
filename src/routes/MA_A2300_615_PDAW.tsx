@@ -686,7 +686,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
     if (isMobile) {
       events();
     }
-  }, []);
+  });
 
   const events = () => {
     if (isMobile) {

@@ -364,7 +364,7 @@ const MA_A3500W_615: React.FC = () => {
     if (isMobile) {
       events();
     }
-  },[]);
+  });
 
   const events = () => {
     if (isMobile) {

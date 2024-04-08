@@ -529,7 +529,7 @@ const SA_A5000W_615: React.FC = () => {
     if (isMobile) {
       events();
     }
-  }, []);
+  });
 
   const events = () => {
     if (isMobile && index == 0) {
