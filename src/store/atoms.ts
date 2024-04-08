@@ -51,7 +51,7 @@ export const clickedState = atom<string>({
   default: "",
 });
 
-export const linkState = atom<string>({
+export const linkState = atom<any>({
   key: "linkState",
   default: "",
 });

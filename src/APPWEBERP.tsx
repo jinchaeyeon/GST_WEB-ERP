@@ -4,6 +4,7 @@ import {
   LocalizationProvider,
   load,
 } from "@progress/kendo-react-intl";
+import axios from "axios";
 import currencyData from "cldr-core/supplemental/currencyData.json";
 import likelySubtags from "cldr-core/supplemental/likelySubtags.json";
 import weekData from "cldr-core/supplemental/weekData.json";
@@ -373,23 +374,18 @@ const App: React.FC = () => {
 };
 
 const AppInner: React.FC = () => {
-  const fileName: string = `apiserver`;
-  const get_text_file = async (filepath: any) => {
-    // prefix public dir files with `process.env.PUBLIC_URL`
-    // see https://create-react-app.dev/docs/using-the-public-folder/
-    const res = await fetch(`${process.env.PUBLIC_URL}/${filepath}`);
-  
-    // check for errors
-    if (!res.ok) {
-      throw res;
-    }
-  
-    return res.text();
-  };
-  useEffect(() => {
-    get_text_file(`${fileName}`).then(setLink).catch(console.error);
-  }, [fileName]);
+  const fileName: string = `apiserver.json`;
   const [Link, setLink] = useRecoilState(linkState);
+  const get_text_file = async () => {
+    axios.get(`/${fileName}`).then((res: any) => {
+      setLink(res.data[0].url);
+    });
+  };
+
+  useEffect(() => {
+    get_text_file();
+  }, [Link]);
+
   const [loginResult] = useRecoilState(loginResultState);
   const role = loginResult ? loginResult.role : "";
   const isAdmin = role === "ADMIN";
@@ -412,10 +408,12 @@ const AppInner: React.FC = () => {
     if (
       token &&
       userId != "" &&
-      (sessionUserId === "" || sessionUserId == null)
+      (sessionUserId === "" || sessionUserId == null) &&
+      Link != "" &&
+      Link != undefined
     )
       fetchSessionItem();
-  }, [userId, sessionUserId]);
+  }, [userId, sessionUserId, Link]);
 
   let sessionOrgdiv = sessionItem.find(
     (sessionItem) => sessionItem.code == "orgdiv"

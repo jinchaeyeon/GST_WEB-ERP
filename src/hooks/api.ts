@@ -130,11 +130,11 @@ const generateUrl = (url: string, params: any) => {
 };
 
 export const useApi = () => {
+  const [Link, setLink] = useRecoilState(linkState);
   const token = localStorage.getItem("accessToken");
   // const [token] = useRecoilState(accessTokenState);
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
-  const [Link, setLink] = useRecoilState(linkState);
-
+  
   const processApi = <T>(name: string, params: any = null): Promise<T> => {
     return new Promise((resolve, reject) => {
       let info: any = domain[name];

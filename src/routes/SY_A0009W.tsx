@@ -331,7 +331,8 @@ const SY_A0009W: React.FC = () => {
               <IconButton
                 aria-label="notice"
                 onClick={() => {
-                  window.open(`https://erp.gsti.co.kr/CM_A0000W`);
+                  const origin = window.location.origin;
+                  window.open(origin + `/CM_A0000W`);
                 }}
               >
                 <div

@@ -11,6 +11,7 @@ import {
   accessTokenState,
   loginResultState,
   passwordExpirationInfoState,
+  linkState
 } from "../store/atoms";
 
 import { resetLocalStorage } from "../components/CommonFunction";
@@ -18,6 +19,7 @@ import { DEFAULT_LANG_CODE } from "../components/CommonString";
 import Loader from "../components/Loader";
 import Loading from "../components/Loading";
 import { isLoading } from "../store/atoms";
+import { useRecoilState } from "recoil";
 
 interface IFormData {
   langCode: string;
@@ -94,17 +96,20 @@ const Login: React.FC = () => {
     password: "",
     chk: "Y",
   });
+  const [Link, setLink] = useRecoilState(linkState);
 
   useEffect(() => {
-    fetchCultureCodes();
-    fetchCompanyCodes();
-    if (new URLSearchParams(location.search).has("cust")) {
-      resetLocalStorage();
-      history.replace({}, "/");
-    } else if (accessToken) {
-      window.location.href = "/Home";
+    if(Link != "" && Link != undefined) {
+      fetchCultureCodes();
+      fetchCompanyCodes();
+      if (new URLSearchParams(location.search).has("cust")) {
+        resetLocalStorage();
+        history.replace({}, "/");
+      } else if (accessToken) {
+        window.location.href = "/Home";
+      }
     }
-  }, []);
+  }, [Link]);
 
   const handleSubmit = (data: { [name: string]: any }) => {
     processLogin(data);
