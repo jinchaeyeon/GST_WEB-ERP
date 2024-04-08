@@ -585,6 +585,14 @@ input.readonly {
   }
 }
 
+/* 모바일 특정 칼럼 숨김 */
+@media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none;
+  }
+}
+
+
 /* @media print {
     @page {
       size: 21cm 29.7cm;
