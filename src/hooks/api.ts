@@ -1,9 +1,8 @@
 import axios from "axios";
 import { useRecoilState } from "recoil";
 import { resetLocalStorage } from "../components/CommonFunction";
-import { loginResultState } from "../store/atoms";
+import { linkState, loginResultState } from "../store/atoms";
 
-let BASE_URL = process.env.REACT_APP_API_URL;
 const cachios = require("cachios");
 const domain: any = {
   query: { action: "post", url: "api/data/sql-query" },
@@ -134,6 +133,7 @@ export const useApi = () => {
   const token = localStorage.getItem("accessToken");
   // const [token] = useRecoilState(accessTokenState);
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
+  const [Link, setLink] = useRecoilState(linkState);
 
   const processApi = <T>(name: string, params: any = null): Promise<T> => {
     return new Promise((resolve, reject) => {
@@ -141,7 +141,7 @@ export const useApi = () => {
       let url = null;
       let p = null;
       url = generateUrl(info.url, params);
-      url = `${BASE_URL}${url}`;
+      url = `${Link}${url}`;
 
       let headers: any = {};
 
@@ -255,7 +255,8 @@ axiosInstance.interceptors.response.use(
     let errResponseStatus = null;
     let errResponseURL = "";
     const originalRequest = error.config;
-
+    const [Link, setLink] = useRecoilState(linkState);
+    
     try {
       errResponseStatus = error.response.status;
       errResponseURL = error.request.responseURL;
@@ -270,7 +271,7 @@ axiosInstance.interceptors.response.use(
 
         isTokenRefreshing = true;
 
-        const url = `${BASE_URL}api/auth/refresh`;
+        const url = `${Link}api/auth/refresh`;
         let p;
 
         // refresh token을 이용하여 access token 재발행 받기
