@@ -95,6 +95,7 @@
     "primeicons": "^6.0.1",
     "primereact": "^9.6.0",
     "react": "^18.1.0",
+    "react-app-polyfill": "^3.0.0",
     "react-calendar": "^4.6.0",
     "react-chartjs-2": "^5.2.0",
     "react-circular-progressbar": "^2.1.0",
@@ -154,7 +155,8 @@
     "production": [
       ">0.2%",
       "not dead",
-      "not op_mini all"
+      "not op_mini all",
+      "chrome >= 38"
     ],
     "development": [
       "last 1 chrome version",

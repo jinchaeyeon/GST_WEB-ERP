@@ -1,3 +1,4 @@
+import 'react-app-polyfill/stable';
 import "primeflex/primeflex.css";
 import "primeicons/primeicons.css"; // icons
 import "primereact/resources/primereact.css"; // core css
