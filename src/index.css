@@ -13,6 +13,106 @@ code {
     monospace;
 }
 
+.k-grid tr.k-alt {
+  background-color: #0000000a !important;
+}
+
+.p-inputtext {
+  padding: 0.75rem 0.75rem !important;
+}
+
+/* 그리드 행높이 조절 */
+.k-grid tbody tr,
+.k-grid tr,
+.k-grid td,
+.k-grid tbody tr td,
+.k-grid td.k-state-selected,
+.k-grid td.k-selected,
+.k-grid tr.k-state-selected>td,
+.k-grid tr.k-selected>td {
+  height: 34px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.k-form-horizontal .k-form-field>.k-label,
+.k-form-horizontal .k-form-field>kendo-label,
+.k-form-horizontal .k-form-field>.k-form-label {
+  width: 40% !important;
+}
+
+.k-form-horizontal .k-form-field-wrap {
+  max-width: calc(60% - 10px) !important;
+}
+
+/* 스케줄러 이벤트 팝업창 반복 여부 숨기기 */
+.k-form.k-scheduler-edit-form>.k-form-field:nth-child(5) {
+  display: none;
+}
+
+.k-form.k-scheduler-edit-form>.k-form-field:nth-child(4)>.k-form-field-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.k-form.k-scheduler-edit-form #k-event-description {
+  min-height: 150px;
+}
+
+.visible-mobile-only {
+  display: none;
+}
+
+.k-grid .k-grid-header .k-header .k-cell-inner>.k-link {
+  justify-content: center;
+  /*공통설정 : 그리드 헤더 텍스트 중앙정렬*/
+}
+
+.k-window {
+  z-index: 10100 !important;
+  /* 버그 : 메뉴바가 window 위로 올라오는 현상 수정  */
+}
+
+ul.required,
+ul.required:hover,
+ul.required.k-hover,
+span.required,
+span.required:hover,
+span.required.k-hover,
+input.required,
+input.required:hover,
+input.required.k-hover,
+.k-daterangepicker.required input {
+  background-color: #fff0ef;
+  width: "100%";
+}
+
+.k-daterangepicker.required,
+.k-daterangepicker.required:hover {
+  background-color: unset;
+}
+
+ul.readonly,
+span.readonly,
+input.readonly {
+  background-color: #efefef;
+}
+
+.k-radio-label {
+  font-size: 14px;
+  line-height: 1.4285714286;
+}
+
+.k-grid-md td {
+  padding-block: 0px !important;
+}
+
+/* 메뉴 바 폰트 굵기 조정 */
+.k-panelbar>.k-item>.k-link,
+.k-panelbar>.k-panelbar-header>.k-link {
+  font-weight: 400;
+}
+
 #CM_A3100W_CALENDAR {
   width: 98% !important;
 }
