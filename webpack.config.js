@@ -6,7 +6,7 @@ const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin"
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 module.exports = {
-  mode: "development",
+  mode: isDevelopment ? "development" : "production",
   // Production 빌드 시, 리액트 코드 트랜스파일링 할 시작점 설정.
   entry: "./src/index.tsx",
 
@@ -47,28 +47,20 @@ module.exports = {
         test: /\.js?/,
         loader: "babel-loader",
         options: {
-          presets: [
-            "@babel/preset-env",
-            ["@babel/preset-react", { runtime: "automatic" }],
-          ],
+          presets: ["@babel/preset-env", "@babel/preset-react"],
           plugins: [
             "@babel/plugin-proposal-class-properties",
-            isDevelopment && require.resolve("react-refresh/babel"),
-          ].filter(Boolean),
+          ],
         },
       },
       {
         test: /\.jsx?$/,
         loader: "babel-loader",
         options: {
-          presets: [
-            "@babel/preset-env",
-            ["@babel/preset-react", { runtime: "automatic" }],
-          ],
+          presets: ["@babel/preset-env", "@babel/preset-react"],
           plugins: [
             "@babel/plugin-proposal-class-properties",
-            isDevelopment && require.resolve("react-refresh/babel"),
-          ].filter(Boolean),
+          ],
         },
       },
       {
@@ -123,16 +115,15 @@ module.exports = {
       template: path.join(__dirname, "/public/index.html"),
       inject: true,
     }),
-    new webpack.DefinePlugin({ process: { env: {} } }),
-    isDevelopment && new webpack.HotModuleReplacementPlugin(),
-    isDevelopment && new ReactRefreshWebpackPlugin(),
-  ].filter(Boolean),
-
+    new webpack.ProvidePlugin({ React: "react" }),
+  ],
+  
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".jsx", ".scss", ".css"],
   },
   output: {
     filename: "bundle.js",
-    path: path.resolve(__dirname, "public"),
+    path: path.resolve(__dirname, "../dist"),
+    clean: true,
   },
 };
