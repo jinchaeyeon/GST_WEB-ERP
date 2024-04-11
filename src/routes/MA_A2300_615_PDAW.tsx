@@ -149,20 +149,20 @@ const MA_A2300_615_PDAW: React.FC = () => {
   });
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
     setFilters((prev) => ({
       ...prev,
       [name]: value,
     }));
+    
   };
   const filterInputChange2 = (e: any) => {
     const { value, name } = e.target;
-
     setFilters2((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
+
   //요약정보 조회
   const fetchMainGrid = async (filters: any) => {
     let data: any;
@@ -464,6 +464,8 @@ const MA_A2300_615_PDAW: React.FC = () => {
     }
   });
 
+  
+
   const onCheckClick = (datas: any) => {
     const data = checkDataResult.data.filter(
       (item) => item.heatno == datas.heatno && item.scanno == datas.scanno
@@ -683,7 +685,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isMobile) {
+    if (isMobile && index == 0) {
       events();
     }
   });
