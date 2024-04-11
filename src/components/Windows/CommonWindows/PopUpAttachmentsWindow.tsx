@@ -15,7 +15,7 @@ import { Checkbox } from "@progress/kendo-react-inputs";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import Draggable from "react-draggable";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   BottomContainer,
   ButtonContainer,
@@ -23,7 +23,7 @@ import {
 } from "../../../CommonStyled";
 import { useApi } from "../../../hooks/api";
 import { IAttachmentData, IWindowPosition } from "../../../hooks/interfaces";
-import { unsavedNameState } from "../../../store/atoms";
+import { isLoading, unsavedNameState } from "../../../store/atoms";
 import CenterCell from "../../Cells/CenterCell";
 import CheckBoxCell from "../../Cells/CheckBoxCell";
 import NumberCell from "../../Cells/NumberCell";
@@ -87,6 +87,7 @@ const KendoWindow = ({
   const [mainDataResult, setMainDataResult] = useState<DataResult>(
     process([], {})
   );
+  const setLoading = useSetRecoilState(isLoading);
 
   useEffect(() => {
     fetchGrid();
@@ -310,7 +311,7 @@ const KendoWindow = ({
 
   const handleFileUpload = async (files: FileList | null) => {
     if (files === null) return false;
-
+    setLoading(true);
     let newAttachmentNumber = "";
     const promises = [];
 
@@ -342,6 +343,7 @@ const KendoWindow = ({
         fetchGrid();
       }
     }
+    setLoading(false);
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {
