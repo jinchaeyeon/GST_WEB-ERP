@@ -30,7 +30,6 @@ import TopButtons from "../components/Buttons/TopButtons";
 import CenterCell from "../components/Cells/CenterCell";
 import {
   GetPropertyValueByName,
-  UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
@@ -38,7 +37,7 @@ import {
   convertDateToStr,
   findMessage,
   handleKeyPressSearch,
-  setDefaultDate,
+  setDefaultDate
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -162,9 +161,6 @@ const CM_B1101W: React.FC = () => {
   UsePermissions(setPermissions);
 
   const [tabSelected, setTabSelected] = React.useState(0);
-  //커스텀 옵션 조회
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("", setBizComponentData);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("CM_B1101W", setCustomOptionData);
   const [messagesData, setMessagesData] = React.useState<any>(null);

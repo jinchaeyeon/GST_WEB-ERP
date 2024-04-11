@@ -518,15 +518,6 @@ const PanelBarNavContainer = (props: any) => {
   ];
   if (companyCode === "2207A046" && isAdmin) {
     panelBars.push({
-      path: "/WORD_EDITOR",
-      menuName: "EDITOR",
-      index: "",
-      menuId: "",
-      parentMenuId: "",
-      menuCategory: "",
-      isFavorite: false,
-    });
-    panelBars.push({
       path: "/GANTT",
       menuName: "GANTT",
       index: "",
@@ -576,7 +567,7 @@ const PanelBarNavContainer = (props: any) => {
   }
 
   // Parent 그룹 없는 메뉴 Array
-  const singleMenus = ["/Home", "/GANTT", "/WORD_EDITOR"];
+  const singleMenus = ["/Home", "/GANTT"];
 
   let prgMenus: null | { id: string; text: string }[] = null;
   if (menus) {

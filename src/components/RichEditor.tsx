@@ -280,7 +280,7 @@ const RichEditor = React.forwardRef(
             /rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)/g;
           const updatedElementStyle = elementStyle.replace(
             rgbaRegex,
-            (_, r, g, b, a) => rgbaToHex(`rgba(${r}, ${g}, ${b}, ${a || "1"})`)
+            (_:any, r:any, g:any, b:any, a:any) => rgbaToHex(`rgba(${r}, ${g}, ${b}, ${a || "1"})`)
           );
 
           element.setAttribute("style", updatedElementStyle);

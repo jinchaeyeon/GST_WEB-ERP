@@ -5,11 +5,11 @@ type TChildren = {
   children: ReactNode;
 };
 const FilterContainer = ({ children }: TChildren) => {
-  const [isFilterHide, setIsFilterHide] = useState(true);
+  const [isFilterHide, setIsFilterHide] = useState(false);
 
   return (
     <>
-      <div className="visible-mobile-only " style={{ textAlign: "right" }}>
+      <div className="visible-mobile-only" style={{ textAlign: "right" }}>
         <FilterHideToggleButton
           isFilterHide={isFilterHide}
           toggleFilterHide={() => setIsFilterHide((prev) => !prev)}

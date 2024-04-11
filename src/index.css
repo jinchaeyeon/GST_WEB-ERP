@@ -738,6 +738,7 @@ input.readonly {
 
 body {
   -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 /**************** 작업일보 ****************/

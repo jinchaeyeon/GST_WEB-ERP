@@ -6,7 +6,7 @@ import {
   FieldArrayRenderProps,
   Form,
   FormElement,
-  FormRenderProps
+  FormRenderProps,
 } from "@progress/kendo-react-form";
 import {
   Grid,
@@ -14,7 +14,7 @@ import {
   GridColumn,
   GridHeaderSelectionChangeEvent,
   GridSelectionChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Error } from "@progress/kendo-react-labels";
 import * as React from "react";
@@ -27,7 +27,7 @@ import {
   GridContainer,
   NumberKeypad,
   NumberKeypadCell,
-  NumberKeypadRow
+  NumberKeypadRow,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { IWindowPosition } from "../../hooks/interfaces";
@@ -39,18 +39,15 @@ import {
   UseMessages,
   UseParaPc,
   arrayLengthValidator,
-  getCodeFromValue
+  getCodeFromValue,
 } from "../CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
   FORM_DATA_INDEX,
-  SELECTED_FIELD
+  SELECTED_FIELD,
 } from "../CommonString";
-import {
-  FormComboBoxCell,
-  FormNumberCell
-} from "../Editors";
+import { FormComboBoxCell, FormNumberCell } from "../Editors";
 import { CellRender, RowRender } from "../Renderers/Renderers";
 
 // Create React.Context to pass props to the Form Field components from the main component
@@ -325,38 +322,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             mode: "single",
           }}
           onSelectionChange={onSelectionChange}
-          //onHeaderSelectionChange={onHeaderSelectionChange}
         >
-          {/* <GridToolbar>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onAdd}
-              icon="add"
-            >
-              추가
-            </Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onRemove}
-              icon="minus"
-            >
-              삭제
-            </Button>
-          </GridToolbar> */}
-
-          {/* <GridColumn
-            field={SELECTED_FIELD}
-            width="45px"
-            headerSelectionValue={
-              dataWithIndexes.findIndex(
-                (item: any) => !selectedState[idGetter(item)]
-              ) === -1
-            }
-          /> */}
           <GridColumn field="rowstatus" title=" " width="40px" />
 
           <GridColumn

@@ -128,7 +128,7 @@ const generateUrl = (url: string, params: any) => {
     return result.join("/");
   }
 };
-
+ 
 export const useApi = () => {
   const [Link, setLink] = useRecoilState(linkState);
   const token = localStorage.getItem("accessToken");
@@ -346,7 +346,6 @@ export const useApi = () => {
 
   return processApi;
 };
-
 axiosInstance.interceptors.response.use(
   (response: any) => {
     return response;
@@ -357,21 +356,21 @@ axiosInstance.interceptors.response.use(
     response: { status: any };
     message: string;
   }) => {
+    const [Link, setLink] = useRecoilState(linkState);
     // res에서 error가 발생했을 경우 catch로 넘어가기 전에 처리하는 부분
     let errResponseStatus = null;
     let errResponseURL = "";
     const originalRequest = error.config;
-    const [Link, setLink] = useRecoilState(linkState);
-    const fileName: string = `apiserver.json`;
-    const get_text_file = async () => {
-      axios.get(`/${fileName}`).then((res: any) => {
-        setLink(res.data[0].url);
-      });
-    };
+    // const fileName: string = `apiserver.json`;
+    // const get_text_file = async () => {
+    //   axios.get(`/${fileName}`).then((res: any) => {
+    //     setLink(res.data[0].url);
+    //   }); 
+    // };
 
-    if (Link == undefined || Link == "") {
-      get_text_file();
-    }
+    // if (Link == undefined || Link == "") {
+    //   get_text_file();
+    // }
 
     try {
       errResponseStatus = error.response.status;
