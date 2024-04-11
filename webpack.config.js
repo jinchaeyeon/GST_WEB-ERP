@@ -1,7 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -103,8 +103,15 @@ module.exports = {
         use: ["style-loader", "css-loader"],
       },
       {
-        test: /\.(png|jpg|jpeg)$/,
-        use: ["file-loader"],
+        test: /\.(png|jpg|jpeg|ttf|woff|svg)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              outputPath: 'static/media',
+            },
+          },
+        ],
       },
     ],
   },
@@ -112,8 +119,17 @@ module.exports = {
   // 번들링된 JS 코드를 html 파일과 매핑 및 주입시키기 위한 플러그인 설정.
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "/public/index.html"),
-      inject: true,
+      template: './public/index.html',
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: 'public/',
+            globOptions: {
+              ignore: ['**/index.html'],
+            },
+        },
+      ],
     }),
     new webpack.ProvidePlugin({ React: "react" }),
   ],
@@ -122,8 +138,7 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js", ".jsx", ".scss", ".css"],
   },
   output: {
-    filename: "bundle.js",
-    path: path.resolve(__dirname, "../dist"),
-    clean: true,
+    path: path.resolve(__dirname, "build/static/js"),
+    filename: "bundle.js", // main.js가 기본값
   },
 };
