@@ -46,7 +46,7 @@ export default function FileViewers(props) {
 
   return (
     <Worker
-      workerUrl={`https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js`}
+      workerUrl={`https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js`}
     >
       <Viewer fileUrl={props.file} plugins={[defaultLayoutPluginInstance]} />
     </Worker>

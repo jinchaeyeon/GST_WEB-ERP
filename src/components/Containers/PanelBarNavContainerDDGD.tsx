@@ -33,6 +33,7 @@ import {
   deletedNameState,
   isMenuOpendState,
   isMobileMenuOpendState,
+  linkState,
   loginResultState,
   menuList,
   menusState,
@@ -54,11 +55,10 @@ const PanelBarNavContainer = (props: any) => {
   const [loginResult] = useRecoilState(loginResultState);
   // const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   // const [token] = useState(accessToken);
+
   const accessToken = localStorage.getItem("accessToken");
   const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
-  // useEffect(() => {
-  //   if (token === null) fetchMenus();
-  // }, [token]);
+
   const [menus, setMenus] = useRecoilState(menusState);
   const [isMobileMenuOpend, setIsMobileMenuOpend] = useRecoilState(
     isMobileMenuOpendState
@@ -193,7 +193,6 @@ const PanelBarNavContainer = (props: any) => {
   useEffect(() => {
     // console.log("caches" in window);
     // console.log(window.caches);
-
     checkPwExpInfo();
   }, []);
 
@@ -519,15 +518,6 @@ const PanelBarNavContainer = (props: any) => {
   ];
   if (companyCode === "2207A046" && isAdmin) {
     panelBars.push({
-      path: "/WORD_EDITOR",
-      menuName: "EDITOR",
-      index: "",
-      menuId: "",
-      parentMenuId: "",
-      menuCategory: "",
-      isFavorite: false,
-    });
-    panelBars.push({
       path: "/GANTT",
       menuName: "GANTT",
       index: "",
@@ -577,7 +567,7 @@ const PanelBarNavContainer = (props: any) => {
   }
 
   // Parent 그룹 없는 메뉴 Array
-  const singleMenus = ["/Home", "/GANTT", "/WORD_EDITOR"];
+  const singleMenus = ["/Home", "/GANTT"];
 
   let prgMenus: null | { id: string; text: string }[] = null;
   if (menus) {

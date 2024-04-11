@@ -220,8 +220,6 @@ const CM_A0000W: React.FC = () => {
         ? //WEB ERP개발할떄 바꿀부분입니다.(setDetailWindowVisible: WEB ERP, setDetailWindowVisible2: DDGD)
           //setDetailWindowVisible2(true)
           setDetailWindowVisible(true)
-        : path.split("/")[2].split(".")[1] == "gsti"
-        ? setDetailWindowVisible(true)
         : path.split("/")[2].split(".")[1] == "ddgd"
         ? setDetailWindowVisible2(true)
         : setDetailWindowVisible(true);

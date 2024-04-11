@@ -51,6 +51,11 @@ export const clickedState = atom<string>({
   default: "",
 });
 
+export const linkState = atom<any>({
+  key: "linkState",
+  default: "",
+});
+
 export const infoState = atom<TInfoItem>({
   key: "infoState",
   default: {

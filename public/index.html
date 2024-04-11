@@ -4,14 +4,9 @@
 <head>
   <base href="/" />
   <meta charset="utf-8" />
-  <!-- <meta
-      http-equiv="Content-Security-Policy"
-      content="upgrade-insecure-requests"
-    /> -->
-  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#000000" />
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta name="description" content="" />
@@ -34,22 +29,21 @@
       document.querySelector('meta[property="og:title"]').setAttribute("content", "댕댕가든");
       document.querySelector('meta[property="og:url"]').setAttribute("content", window.location.href);
     }
-    if (window.location.href.includes("local")) {
-      document.title = "local";
-      document.querySelector('meta[name="description"]').setAttribute("content", "local입니다");
-      document.querySelector('meta[property="og:description"]').setAttribute("content", "local입니다");
-      document.querySelector('meta[property="og:title"]').setAttribute("content", "local");
-      document.querySelector('meta[property="og:url"]').setAttribute("content", window.location.href);
-    }
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUS92Hna_8-daiuPLjf1Da9VYCVkbgwJ4&callback=initMap&v=weekly" defer></script>
-  <script src="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.min.js"></script>
-  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUS92Hna_8-daiuPLjf1Da9VYCVkbgwJ4&callback=initMap&v=weekly"
+    defer></script>
+  <script src="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js"></script>
+  <link rel="apple-touch-icon" href="logo192.png" />
+  <link rel="icon" href="favicon.ico" />
   <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" type="text/css" href="WEBERP.css" />
+  <link rel="stylesheet" type="text/css" href="DDGD.css" />
+  <link rel="api" href="apiserver.json" />
   <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.

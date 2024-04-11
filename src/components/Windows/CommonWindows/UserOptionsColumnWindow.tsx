@@ -17,8 +17,7 @@ import {
   GridHeaderCellProps,
   GridHeaderSelectionChangeEvent,
   GridSelectionChangeEvent,
-  GridToolbar,
-  getSelectedState,
+  getSelectedState
 } from "@progress/kendo-react-grid";
 import { Error } from "@progress/kendo-react-labels";
 import * as React from "react";
@@ -390,6 +389,47 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         }}
       >
         {visited && validationMessage && <Error>{validationMessage}</Error>}
+        <ButtonContainer>
+          <Button
+            onClick={onArrowsUpBtnClick}
+            fillMode="outline"
+            themeColor={"primary"}
+            icon="chevron-up"
+          ></Button>
+          <Button
+            onClick={onArrowsDownBtnClick}
+            fillMode="outline"
+            themeColor={"primary"}
+            icon="chevron-down"
+          ></Button>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onAdd}
+            icon="add"
+          >
+            추가
+          </Button>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onRemove}
+            icon="minus"
+          >
+            삭제
+          </Button>
+          <Button
+            type={"button"}
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onGetColumnClick}
+            icon="file-add"
+          >
+            가져오기
+          </Button>
+        </ButtonContainer>
         <Grid
           data={dataWithIndexes.map((item: any) => ({
             ...item,
@@ -412,48 +452,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           onSelectionChange={onSelectionChange}
           onHeaderSelectionChange={onHeaderSelectionChange}
         >
-          <GridToolbar>
-            <Button
-              onClick={onArrowsUpBtnClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="chevron-up"
-            ></Button>
-            <Button
-              onClick={onArrowsDownBtnClick}
-              fillMode="outline"
-              themeColor={"primary"}
-              icon="chevron-down"
-            ></Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onAdd}
-              icon="add"
-            >
-              추가
-            </Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onRemove}
-              icon="minus"
-            >
-              삭제
-            </Button>
-            <Button
-              type={"button"}
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onGetColumnClick}
-              icon="file-add"
-            >
-              가져오기
-            </Button>
-          </GridToolbar>
-
           <GridColumn
             field={SELECTED_FIELD}
             width="45px"

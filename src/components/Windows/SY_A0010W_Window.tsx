@@ -13,8 +13,7 @@ import {
   GridPageChangeEvent,
   GridSelectionChangeEvent,
   GridSortChangeEvent,
-  GridToolbar,
-  getSelectedState,
+  getSelectedState
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -1476,6 +1475,28 @@ const KendoWindow = ({
         </GridContainer>
       </GridContainerWrap>
       <GridContainer height="calc(100% - 420px)" margin={{ top: "30px" }}>
+        <ButtonContainer>
+          <Button
+            themeColor={"primary"}
+            onClick={onAddClick}
+            icon="add"
+            title="행 추가"
+          />
+          <Button
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onDeleteClick}
+            icon="minus"
+            title="행 삭제"
+          />
+          <Button
+            themeColor={"primary"}
+            fillMode="outline"
+            onClick={onCopyClick}
+            icon="copy"
+            title="행 복사"
+          />
+        </ButtonContainer>
         <Grid
           style={{ height: "100%" }}
           data={process(
@@ -1526,28 +1547,6 @@ const KendoWindow = ({
           //컬럼너비조정
           resizable={true}
         >
-          <GridToolbar>
-            <Button
-              themeColor={"primary"}
-              onClick={onAddClick}
-              icon="add"
-              title="행 추가"
-            />
-            <Button
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onDeleteClick}
-              icon="minus"
-              title="행 삭제"
-            />
-            <Button
-              themeColor={"primary"}
-              fillMode="outline"
-              onClick={onCopyClick}
-              icon="copy"
-              title="행 복사"
-            />
-          </GridToolbar>
           <GridColumn
             field="chk"
             title=" "

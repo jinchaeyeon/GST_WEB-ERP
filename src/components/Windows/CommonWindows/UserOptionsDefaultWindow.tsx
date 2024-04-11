@@ -17,7 +17,6 @@ import {
   GridEvent,
   GridHeaderSelectionChangeEvent,
   GridSelectionChangeEvent,
-  GridToolbar,
   getSelectedState
 } from "@progress/kendo-react-grid";
 import { Error } from "@progress/kendo-react-labels";
@@ -346,6 +345,26 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
   return (
     <GridContainer margin={{ top: "30px" }}>
       {visited && validationMessage && <Error>{validationMessage}</Error>}
+      <ButtonContainer>
+        <Button
+          type={"button"}
+          themeColor={"primary"}
+          fillMode="outline"
+          onClick={onAdd}
+          icon="add"
+        >
+          추가
+        </Button>
+        <Button
+          type={"button"}
+          themeColor={"primary"}
+          fillMode="outline"
+          onClick={onRemove}
+          icon="minus"
+        >
+          삭제
+        </Button>
+      </ButtonContainer>
       <Grid
         data={dataWithIndexes.map((item: any) => ({
           ...item,
@@ -368,27 +387,6 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         onSelectionChange={onSelectionChange}
         onHeaderSelectionChange={onHeaderSelectionChange}
       >
-        <GridToolbar>
-          <Button
-            type={"button"}
-            themeColor={"primary"}
-            fillMode="outline"
-            onClick={onAdd}
-            icon="add"
-          >
-            추가
-          </Button>
-          <Button
-            type={"button"}
-            themeColor={"primary"}
-            fillMode="outline"
-            onClick={onRemove}
-            icon="minus"
-          >
-            삭제
-          </Button>
-        </GridToolbar>
-
         {/* <GridColumn
             field={SELECTED_FIELD}
             width="45px"

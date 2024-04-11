@@ -11,8 +11,7 @@ import {
   GridItemChangeEvent,
   GridPageChangeEvent,
   GridSelectionChangeEvent,
-  GridToolbar,
-  getSelectedState,
+  getSelectedState
 } from "@progress/kendo-react-grid";
 import { Checkbox } from "@progress/kendo-react-inputs";
 import * as React from "react";
@@ -1333,6 +1332,22 @@ const DetailWindow = ({
         <GridContainer width={`50%`}>
           <GridTitleContainer>
             <GridTitle>투입이력</GridTitle>
+            <ButtonContainer>
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onInRemoveClick}
+                title="행 삭제"
+                icon="minus"
+              ></Button>
+              <Button
+                themeColor={"primary"}
+                onClick={onStockWndClick}
+                icon="folder-open"
+              >
+                재고참조
+              </Button>
+            </ButtonContainer>
           </GridTitleContainer>
           <Grid
             style={{ height: "53vh" }}
@@ -1376,22 +1391,6 @@ const DetailWindow = ({
             rowRender={customRowRender}
             editField={EDIT_FIELD}
           >
-            <GridToolbar>
-              <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onInRemoveClick}
-                title="행 삭제"
-                icon="minus"
-              ></Button>
-              <Button
-                themeColor={"primary"}
-                onClick={onStockWndClick}
-                icon="folder-open"
-              >
-                재고참조
-              </Button>
-            </GridToolbar>
             <GridColumn field="rowstatus" title=" " width="40px" />
             <GridColumn
               field="chk"
@@ -1430,6 +1429,22 @@ const DetailWindow = ({
         <GridContainer width={`calc(50% - ${GAP}px)`}>
           <GridTitleContainer>
             <GridTitle>불량내역</GridTitle>
+            <ButtonContainer>
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onBadAddClick}
+                title="행 추가"
+                icon="plus"
+              ></Button>
+              <Button
+                themeColor={"primary"}
+                fillMode="outline"
+                onClick={onBadRemoveClick}
+                title="행 삭제"
+                icon="minus"
+              ></Button>
+            </ButtonContainer>
           </GridTitleContainer>
           <Grid
             style={{ height: "53vh" }}
@@ -1473,22 +1488,6 @@ const DetailWindow = ({
             rowRender={customRowRender1}
             editField={EDIT_FIELD}
           >
-            <GridToolbar>
-              <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onBadAddClick}
-                title="행 추가"
-                icon="plus"
-              ></Button>
-              <Button
-                themeColor={"primary"}
-                fillMode="outline"
-                onClick={onBadRemoveClick}
-                title="행 삭제"
-                icon="minus"
-              ></Button>
-            </GridToolbar>
             <GridColumn field="rowstatus" title=" " width="40px" />
             <GridColumn
               field="chk"

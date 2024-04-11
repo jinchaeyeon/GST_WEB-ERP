@@ -295,6 +295,7 @@ export const findMessage = (messagesData: any, id: string) => {
 //현재 경로를 받아서 메시지 조회 후 결과값을 반환
 export const UseMessages = (pathname: string, setListData: any) => {
   const processApi = useApi();
+
   React.useEffect(() => {
     fetchMessagesData();
   }, []);
@@ -532,15 +533,16 @@ export const UseDesignInfo = (pathname: string, setListData: any) => {
 // 권한 조회 후 결과값을 반환
 export const UsePermissions = (setListData: any) => {
   const processApi = useApi();
-  const pathname = window.location.pathname.replace("/", "");
-  const [loginResult] = useRecoilState(loginResultState);
-  const userId = loginResult ? loginResult.userId : "";
 
   useEffect(() => {
     if (loginResult) {
       fetchData();
     }
   }, []);
+
+  const pathname = window.location.pathname.replace("/", "");
+  const [loginResult] = useRecoilState(loginResultState);
+  const userId = loginResult ? loginResult.userId : "";
 
   //커스텀 옵션 조회
   const fetchData = useCallback(async () => {

@@ -204,7 +204,7 @@ const PR_B1104W: React.FC = () => {
     },
   ]);
   const [selected, setSelected] = useState<TList | null>(null);
-  const [stackChartAllLabel, setStackChartAllLabel] = useState();
+  const [stackChartAllLabel, setStackChartAllLabel] = useState([]);
 
   const parameters = {
     procedureName: "P_PR_B1104W_Q",

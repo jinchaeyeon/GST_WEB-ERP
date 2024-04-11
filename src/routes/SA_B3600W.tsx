@@ -129,9 +129,9 @@ const SA_B3600W: React.FC = () => {
     isSearch: true,
   });
   const [mainPgNum, setMainPgNum] = useState(1);
-  const [AllList, setAllList] = useState();
-  const [AllChartAllLabel, setAllChartAllLabel] = useState();
-  const [ChartList, setChartList] = useState();
+  const [AllList, setAllList] = useState([]);
+  const [AllChartAllLabel, setAllChartAllLabel] = useState([]);
+  const [ChartList, setChartList] = useState([]);
   const [AllPanel, setAllPanel] = useState({
     badcnt: 0,
     cancel_percent: 0,
@@ -139,10 +139,10 @@ const SA_B3600W: React.FC = () => {
     okcnt: 0,
     totcnt: 0,
   });
-  const [stackChartLabel, setStackChartLabel] = useState();
-  const [stackChartAllLabel, setStackChartAllLabel] = useState();
-  const [toppercentData, setTopPercentCust] = useState();
-  const [topdelayData, setTopDelayCust] = useState();
+  const [stackChartLabel, setStackChartLabel] = useState([]);
+  const [stackChartAllLabel, setStackChartAllLabel] = useState([]);
+  const [toppercentData, setTopPercentCust] = useState([]);
+  const [topdelayData, setTopDelayCust] = useState([]);
   const [selected, setSelected] = useState<TList | null>(null);
 
   //조회조건 파라미터

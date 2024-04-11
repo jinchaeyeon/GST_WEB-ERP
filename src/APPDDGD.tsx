@@ -205,8 +205,10 @@ import TO_B0011W from "./routes/TO_B0011W";
 import {
   colors,
   isMobileMenuOpendState,
+  linkState,
   loginResultState,
 } from "./store/atoms";
+import axios from "axios";
 const LoginCRM = lazy(() => import("./routes/LoginCRM"));
 const MainAdminCRM = lazy(() => import("./routes/MainAdminCRM"));
 
@@ -308,6 +310,18 @@ const App: React.FC = () => {
 };
 
 const AppInner: React.FC = () => {
+    const fileName: string = `apiserver.json`;
+  const [Link, setLink] = useRecoilState(linkState);
+  const get_text_file = async () => {
+    axios.get(`/${fileName}`).then((res: any) => {
+      setLink(res.data[0].url);
+    });
+  };
+
+  useEffect(() => {
+    get_text_file();
+  }, [Link]);
+
   const [loginResult] = useRecoilState(loginResultState);
   const role = loginResult ? loginResult.role : "";
   const isAdmin = role === "ADMIN";

@@ -219,7 +219,6 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "CHAT_A0001W" ||
       link == "CHAT_A0002W" ||
       link == "CHAT_TEST_TRAVEL_BOT" ||
-      link == "WORD_EDITOR" ||
       link == "GANTT" ||
       link == "SA_B3600W" ||
       link == "PR_B1103W" ||

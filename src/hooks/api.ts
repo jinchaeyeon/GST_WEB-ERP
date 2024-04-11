@@ -1,9 +1,8 @@
 import axios from "axios";
 import { useRecoilState } from "recoil";
 import { resetLocalStorage } from "../components/CommonFunction";
-import { loginResultState } from "../store/atoms";
+import { linkState, loginResultState } from "../store/atoms";
 
-let BASE_URL = process.env.REACT_APP_API_URL;
 const cachios = require("cachios");
 const domain: any = {
   query: { action: "post", url: "api/data/sql-query" },
@@ -129,118 +128,224 @@ const generateUrl = (url: string, params: any) => {
     return result.join("/");
   }
 };
-
+ 
 export const useApi = () => {
+  const [Link, setLink] = useRecoilState(linkState);
   const token = localStorage.getItem("accessToken");
   // const [token] = useRecoilState(accessTokenState);
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
+  const fileName: string = `apiserver.json`;
 
   const processApi = <T>(name: string, params: any = null): Promise<T> => {
     return new Promise((resolve, reject) => {
       let info: any = domain[name];
-      let url = null;
+      let url: string | string[] | null = null;
       let p = null;
       url = generateUrl(info.url, params);
-      url = `${BASE_URL}${url}`;
 
-      let headers: any = {};
+      if (Link == "" || Link == undefined) {
+        axios.get(`/${fileName}`).then((res: any) => {
+          setLink(res.data[0].url);
+          url = `${res.data[0].url}${url}`;
 
-      if (
-        name === "file-upload" ||
-        name === "file-download" ||
-        name === "excel-view2" ||
-        name === "send-email"
-      )
-        headers = {
-          "Content-Type": "multipart/form-data",
-          responseType: "stream",
-          accept: "*/*",
-        };
+          let headers: any = {};
 
-      if (name === "manual-list" || name === "excel-view")
-        headers = {
-          ...headers,
-          responseType: "application/pdf",
-        };
+          if (
+            name === "file-upload" ||
+            name === "file-download" ||
+            name === "excel-view2" ||
+            name === "send-email"
+          )
+            headers = {
+              "Content-Type": "multipart/form-data",
+              responseType: "stream",
+              accept: "*/*",
+            };
 
-      if (name === "file-list" || name == "manual-upload")
-        headers = { "Content-Type": "multipart/form-data", accept: "*/*" };
+          if (name === "manual-list" || name === "excel-view")
+            headers = {
+              ...headers,
+              responseType: "application/pdf",
+            };
 
-      if (name === "platform-procedure" || name === "platform-query")
-        headers = { ...headers, DBAlias: "Platform" };
+          if (name === "file-list" || name == "manual-upload")
+            headers = { "Content-Type": "multipart/form-data", accept: "*/*" };
 
-      if (loginResult) {
-        headers = { ...headers, CultureName: loginResult.langCode };
-      }
+          if (name === "platform-procedure" || name === "platform-query")
+            headers = { ...headers, DBAlias: "Platform" };
 
-      if (
-        token &&
-        !headers.hasOwnProperty("Authorization") &&
-        !info.url.includes("auth/login")
-      ) {
-        headers = { ...headers, Authorization: `Bearer ${token}` };
-      }
+          if (loginResult) {
+            headers = { ...headers, CultureName: loginResult.langCode };
+          }
 
-      if (info.action != "get") {
-        initCache();
-      }
-      const getHeader: any = {
-        params: params,
-        headers: headers,
-      };
+          if (
+            token &&
+            !headers.hasOwnProperty("Authorization") &&
+            !info.url.includes("auth/login")
+          ) {
+            headers = { ...headers, Authorization: `Bearer ${token}` };
+          }
 
-      if (name === "file-download") {
-        getHeader.responseType = "blob";
-        // 캐싱 방지용 타임스탬프
-        url +=
-          (url.includes("?") ? "&" : "?") + "timestamp=" + new Date().getTime();
-      }
-
-      switch (info.action) {
-        case "get":
-          p = cachedHttp.get(url, getHeader);
-          break;
-        case "post":
-          p = axiosInstance.post(url, params, { headers: headers });
-          break;
-        case "delete":
-          p = axiosInstance.delete(url, {
+          if (info.action != "get") {
+            initCache();
+          }
+          const getHeader: any = {
             params: params,
             headers: headers,
-          });
-          break;
-        case "put":
-          p = axiosInstance.put(url, params, { headers: headers });
-          break;
-        default:
-          const message =
-            "Please check the axios request type(get, post, put, delete)";
-          console.error(message);
-          throw message;
+          };
+
+          if (name === "file-download") {
+            getHeader.responseType = "blob";
+            // 캐싱 방지용 타임스탬프
+            url +=
+              (url.includes("?") ? "&" : "?") +
+              "timestamp=" +
+              new Date().getTime();
+          }
+
+          switch (info.action) {
+            case "get":
+              p = cachedHttp.get(url, getHeader);
+              break;
+            case "post":
+              p = axiosInstance.post(url, params, { headers: headers });
+              break;
+            case "delete":
+              p = axiosInstance.delete(url, {
+                params: params,
+                headers: headers,
+              });
+              break;
+            case "put":
+              p = axiosInstance.put(url, params, { headers: headers });
+              break;
+            default:
+              const message =
+                "Please check the axios request type(get, post, put, delete)";
+              console.error(message);
+              throw message;
+          }
+          return (
+            p
+              //.then((response: any) => resolve(response.data))
+              .then((response: any) => {
+                return name === "file-download"
+                  ? resolve(response)
+                  : resolve(response.data);
+              })
+              .catch((err: any) => {
+                const res = err.response;
+                // if (res && res.status == 401) {
+                //   // setToken(null as any);
+                //   // setMenus(null as any);
+                // }
+                reject(res.data);
+              })
+          );
+        });
+      } else {
+        url = `${Link}${url}`;
+
+        let headers: any = {};
+
+        if (
+          name === "file-upload" ||
+          name === "file-download" ||
+          name === "excel-view2" ||
+          name === "send-email"
+        )
+          headers = {
+            "Content-Type": "multipart/form-data",
+            responseType: "stream",
+            accept: "*/*",
+          };
+
+        if (name === "manual-list" || name === "excel-view")
+          headers = {
+            ...headers,
+            responseType: "application/pdf",
+          };
+
+        if (name === "file-list" || name == "manual-upload")
+          headers = { "Content-Type": "multipart/form-data", accept: "*/*" };
+
+        if (name === "platform-procedure" || name === "platform-query")
+          headers = { ...headers, DBAlias: "Platform" };
+
+        if (loginResult) {
+          headers = { ...headers, CultureName: loginResult.langCode };
+        }
+
+        if (
+          token &&
+          !headers.hasOwnProperty("Authorization") &&
+          !info.url.includes("auth/login")
+        ) {
+          headers = { ...headers, Authorization: `Bearer ${token}` };
+        }
+
+        if (info.action != "get") {
+          initCache();
+        }
+        const getHeader: any = {
+          params: params,
+          headers: headers,
+        };
+
+        if (name === "file-download") {
+          getHeader.responseType = "blob";
+          // 캐싱 방지용 타임스탬프
+          url +=
+            (url.includes("?") ? "&" : "?") +
+            "timestamp=" +
+            new Date().getTime();
+        }
+
+        switch (info.action) {
+          case "get":
+            p = cachedHttp.get(url, getHeader);
+            break;
+          case "post":
+            p = axiosInstance.post(url, params, { headers: headers });
+            break;
+          case "delete":
+            p = axiosInstance.delete(url, {
+              params: params,
+              headers: headers,
+            });
+            break;
+          case "put":
+            p = axiosInstance.put(url, params, { headers: headers });
+            break;
+          default:
+            const message =
+              "Please check the axios request type(get, post, put, delete)";
+            console.error(message);
+            throw message;
+        }
+        return (
+          p
+            //.then((response: any) => resolve(response.data))
+            .then((response: any) => {
+              return name === "file-download"
+                ? resolve(response)
+                : resolve(response.data);
+            })
+            .catch((err: any) => {
+              const res = err.response;
+              // if (res && res.status == 401) {
+              //   // setToken(null as any);
+              //   // setMenus(null as any);
+              // }
+              reject(res.data);
+            })
+        );
       }
-      return (
-        p
-          //.then((response: any) => resolve(response.data))
-          .then((response: any) => {
-            return name === "file-download"
-              ? resolve(response)
-              : resolve(response.data);
-          })
-          .catch((err: any) => {
-            const res = err.response;
-            // if (res && res.status == 401) {
-            //   // setToken(null as any);
-            //   // setMenus(null as any);
-            // }
-            reject(res.data);
-          })
-      );
     });
   };
 
   return processApi;
 };
-
 axiosInstance.interceptors.response.use(
   (response: any) => {
     return response;
@@ -251,10 +356,21 @@ axiosInstance.interceptors.response.use(
     response: { status: any };
     message: string;
   }) => {
+    const [Link, setLink] = useRecoilState(linkState);
     // res에서 error가 발생했을 경우 catch로 넘어가기 전에 처리하는 부분
     let errResponseStatus = null;
     let errResponseURL = "";
     const originalRequest = error.config;
+    // const fileName: string = `apiserver.json`;
+    // const get_text_file = async () => {
+    //   axios.get(`/${fileName}`).then((res: any) => {
+    //     setLink(res.data[0].url);
+    //   }); 
+    // };
+
+    // if (Link == undefined || Link == "") {
+    //   get_text_file();
+    // }
 
     try {
       errResponseStatus = error.response.status;
@@ -270,7 +386,7 @@ axiosInstance.interceptors.response.use(
 
         isTokenRefreshing = true;
 
-        const url = `${BASE_URL}api/auth/refresh`;
+        const url = `${Link}api/auth/refresh`;
         let p;
 
         // refresh token을 이용하여 access token 재발행 받기

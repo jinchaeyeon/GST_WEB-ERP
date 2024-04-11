@@ -173,13 +173,13 @@ const QC_B0100W: React.FC = () => {
   const [mainPgNum, setMainPgNum] = useState(1);
   const [AllList, setAllList] = useState();
   const [CardData, setCardData] = useState<any>([]);
-  const [ProccdData, setProccdData] = useState();
+  const [ProccdData, setProccdData] = useState([]);
   const [All, setAll] = useState<any>();
   const [MonthData, setMonthData] = useState();
   const [selected, setSelected] = useState<TList | null>(null);
-  const [stackChartLabel, setStackChartLabel] = useState();
-  const [stackChartAllLabel, setStackChartAllLabel] = useState();
-  const [stackChartAllLabel2, setStackChartAllLabel2] = useState();
+  const [stackChartLabel, setStackChartLabel] = useState([]);
+  const [stackChartAllLabel, setStackChartAllLabel] = useState([]);
+  const [stackChartAllLabel2, setStackChartAllLabel2] = useState([]);
 
   const parameters = {
     procedureName: "P_QC_B0100W_Q",

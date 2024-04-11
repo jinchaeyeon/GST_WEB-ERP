@@ -178,14 +178,14 @@ const PR_B1103W: React.FC = () => {
   const [mainPgNum, setMainPgNum] = useState(1);
   const [AllList, setAllList] = useState();
   const [DetailList, setDetailList] = useState<any[]>();
-  const [MonthData, setMonthData] = useState();
+  const [MonthData, setMonthData] = useState([]);
   const [AllPanel, setAllPanel] = useState({
     avg_worktime: 0,
     qty: 0,
     worktime: 0,
   });
-  const [stackChartLabel, setStackChartLabel] = useState();
-  const [stackChartAllLabel, setStackChartAllLabel] = useState();
+  const [stackChartLabel, setStackChartLabel] = useState([]);
+  const [stackChartAllLabel, setStackChartAllLabel] = useState([]);
   const [selected, setSelected] = useState<any>(null);
   const [detailSelected, setDetailSelected] = useState(null);
 

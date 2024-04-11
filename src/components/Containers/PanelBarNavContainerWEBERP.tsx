@@ -67,6 +67,7 @@ import {
   deletedNameState,
   isMenuOpendState,
   isMobileMenuOpendState,
+  linkState,
   loginResultState,
   menuList,
   menusState,
@@ -103,14 +104,14 @@ const PanelBarNavContainer = (props: any) => {
   const processApi = useApi();
   const location = useLocation();
   const history = useHistory();
+  const [Link, setLink] = useRecoilState(linkState);
+
   const [loginResult] = useRecoilState(loginResultState);
   // const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   // const [token] = useState(accessToken);
   const accessToken = localStorage.getItem("accessToken");
   const [pwExpInfo, setPwExpInfo] = useRecoilState(passwordExpirationInfoState);
-  // useEffect(() => {
-  //   if (token === null) fetchMenus();
-  // }, [token]);
+
   const [menus, setMenus] = useRecoilState(menusState);
   const [isMobileMenuOpend, setIsMobileMenuOpend] = useRecoilState(
     isMobileMenuOpendState
@@ -222,7 +223,9 @@ const PanelBarNavContainer = (props: any) => {
 
   useEffect(() => {
     // if (token && menus === null) fetchMenus();
-    if (menus === null) fetchMenus();
+    if (menus === null) {
+      fetchMenus();
+    }
   }, [menus]);
 
   // 첨부파일 삭제
@@ -253,7 +256,6 @@ const PanelBarNavContainer = (props: any) => {
   useEffect(() => {
     // console.log("caches" in window);
     // console.log(window.caches);
-
     checkPwExpInfo();
   }, []);
 
@@ -580,15 +582,6 @@ const PanelBarNavContainer = (props: any) => {
   ];
   if (companyCode === "2207A046" && isAdmin) {
     panelBars.push({
-      path: "/WORD_EDITOR",
-      menuName: "EDITOR",
-      index: "",
-      menuId: "",
-      parentMenuId: "",
-      menuCategory: "",
-      isFavorite: false,
-    });
-    panelBars.push({
       path: "/GANTT",
       menuName: "GANTT",
       index: "",
@@ -638,7 +631,7 @@ const PanelBarNavContainer = (props: any) => {
   }
 
   // Parent 그룹 없는 메뉴 Array
-  const singleMenus = ["/Home", "/GANTT", "/WORD_EDITOR"];
+  const singleMenus = ["/Home", "/GANTT"];
 
   let prgMenus: null | { id: string; text: string }[] = null;
   if (menus) {
@@ -867,7 +860,7 @@ const PanelBarNavContainer = (props: any) => {
               <Logo size="32px" name={"GST WEB"} />
               {webTitle}
             </AppName>
-            <GridContainerWrap height={"120px"} style={{ gap: "0px" }}>
+            <GridContainerWrap height={"150px"} style={{ gap: "0px" }}>
               <GridContainer
                 width="80%"
                 style={{
@@ -887,7 +880,7 @@ const PanelBarNavContainer = (props: any) => {
                     type="image"
                     style={{
                       backgroundColor: "white",
-                      border: "2px solid #2289C3"
+                      border: "2px solid #2289C3",
                     }}
                   >
                     <img
@@ -922,6 +915,7 @@ const PanelBarNavContainer = (props: any) => {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  flexDirection: isMobileMenuOpend ? "row" : "column",
                 }}
               >
                 <Button

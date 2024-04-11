@@ -114,10 +114,6 @@ const CM_A1710W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
-  //커스텀 옵션 조회
-  const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("", setBizComponentData);
-
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("CM_A1710W", setCustomOptionData);
 
