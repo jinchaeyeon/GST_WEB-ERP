@@ -8,7 +8,6 @@ import {
   Badge,
   Card,
   CardContent,
-  CardMedia,
   Divider,
   Grid,
   IconButton,
@@ -16,7 +15,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Typography,
+  Typography
 } from "@mui/material";
 import { SvgIcon } from "@progress/kendo-react-common";
 import { Avatar } from "@progress/kendo-react-layout";
@@ -464,6 +463,9 @@ const SY_A0009W: React.FC = () => {
                   justifyContent: "center",
                   height: "120px",
                   alignItems: "center",
+                  backgroundImage: `url(/cloud.jpg)`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "350% center",
                 }}
               >
                 <CardContent>
@@ -491,6 +493,9 @@ const SY_A0009W: React.FC = () => {
                   justifyContent: "center",
                   height: "120px",
                   alignItems: "center",
+                  backgroundImage: `url(/cloud.jpg)`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "350% center",
                 }}
               >
                 <CardContent>
@@ -511,16 +516,11 @@ const SY_A0009W: React.FC = () => {
                   justifyContent: "center",
                   height: "120px",
                   alignItems: "center",
+                  backgroundImage: `url(/cloud.jpg)`,
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "350% center",
                 }}
               >
-                {/* <CardMedia
-                  component="div"
-                  style={{
-                    backgroundColor: "#2289C3",
-                    width: "50px",
-                    height: "100%",
-                  }}
-                /> */}
                 <CardContent>
                   <Typography
                     variant="h5"
