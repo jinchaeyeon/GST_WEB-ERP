@@ -132,7 +132,7 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js", ".jsx", ".scss", ".css"],
   },
   output: {
-    path: path.resolve(__dirname, "build/static"),
+    path: path.resolve(__dirname, "build"),
     filename: "bundle.js", // main.js가 기본값
   },
 };

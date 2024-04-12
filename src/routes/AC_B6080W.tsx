@@ -30,12 +30,14 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
+  DDGDcolorList,
   FilterBox,
   GridContainer,
   GridTitle,
   GridTitleContainer,
   Title,
   TitleContainer,
+  WebErpcolorList,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
@@ -1062,7 +1064,14 @@ const AC_B6080W: React.FC = () => {
           </FilterContainer>
           <GridContainer width="100%">
             <GridContainer height="25vh">
-              <Chart style={{ height: "100%" }}>
+              <Chart
+                seriesColors={
+                  window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                    ? DDGDcolorList
+                    : WebErpcolorList
+                }
+                style={{ height: "100%" }}
+              >
                 <ChartTooltip format="{0}" />
                 <ChartValueAxis>
                   <ChartValueAxisItem

@@ -29,6 +29,13 @@
       document.querySelector('meta[property="og:title"]').setAttribute("content", "댕댕가든");
       document.querySelector('meta[property="og:url"]').setAttribute("content", window.location.href);
     }
+    if (window.location.href.includes("local")) {
+      document.title = "local";
+      document.querySelector('meta[name="description"]').setAttribute("content", "local입니다");
+      document.querySelector('meta[property="og:description"]').setAttribute("content", "local입니다");
+      document.querySelector('meta[property="og:title"]').setAttribute("content", "local");
+      document.querySelector('meta[property="og:url"]').setAttribute("content", window.location.href);
+    }
   </script>
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUS92Hna_8-daiuPLjf1Da9VYCVkbgwJ4&callback=initMap&v=weekly"
