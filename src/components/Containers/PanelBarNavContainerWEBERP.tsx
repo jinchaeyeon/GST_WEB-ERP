@@ -1273,7 +1273,7 @@ const PanelBarNavContainer = (props: any) => {
             />
           </div>
         )}
-        <Content isMenuOpen={isMenuOpend} style={{ border: "1px solid red" }}>
+        <Content isMenuOpen={isMenuOpend}>
           <TopTitle>
             <div style={{ width: "30px" }}></div>
             <AppName theme={"#2289c3"}>

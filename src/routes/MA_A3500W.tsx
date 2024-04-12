@@ -2731,7 +2731,7 @@ const MA_A3500W: React.FC = () => {
                   fileName="자재불출"
                 >
                   <Grid
-                    style={{ height: "30.3vh" }}
+                    style={{ height: "32vh" }}
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
@@ -3118,7 +3118,7 @@ const MA_A3500W: React.FC = () => {
             fileName="자재불출"
           >
             <Grid
-              style={{ height: "43.3vh" }}
+              style={{ height: "47.1vh" }}
               data={process(
                 subDataResult2.data.map((row) => ({
                   ...row,

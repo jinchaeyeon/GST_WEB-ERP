@@ -1622,7 +1622,7 @@ const MA_A3600W: React.FC = () => {
             fileName="전용처리"
           >
             <Grid
-              style={{ height: "35vh" }}
+              style={{ height: "37vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1717,7 +1717,7 @@ const MA_A3600W: React.FC = () => {
             fileName="전용처리"
           >
             <Grid
-              style={{ height: "35vh" }}
+              style={{ height: "37vh" }}
               data={process(
                 mainDataResult2.data.map((row) => ({
                   ...row,
@@ -1836,7 +1836,7 @@ const MA_A3600W: React.FC = () => {
           fileName="전용처리"
         >
           <Grid
-            style={{ height: "35vh" }}
+            style={{ height: "37vh" }}
             data={process(
               mainDataResult3.data.map((row) => ({
                 ...row,

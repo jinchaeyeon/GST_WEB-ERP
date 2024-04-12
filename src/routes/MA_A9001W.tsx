@@ -2976,7 +2976,7 @@ const MA_A9001W: React.FC = () => {
                     fileName="매입 E-TAX(전표)"
                   >
                     <Grid
-                      style={{ height: "40.5vh" }}
+                      style={{ height: "42vh" }}
                       data={process(
                         subDataResult.data.map((row) => ({
                           ...row,
@@ -3054,7 +3054,7 @@ const MA_A9001W: React.FC = () => {
                     fileName="매입 E-TAX(전표)"
                   >
                     <Grid
-                      style={{ height: "40.5vh" }}
+                      style={{ height: "42vh" }}
                       data={process(
                         subDataResult2.data.map((row) => ({
                           ...row,
@@ -3135,7 +3135,7 @@ const MA_A9001W: React.FC = () => {
                     fileName="매입 E-TAX(전표)"
                   >
                     <Grid
-                      style={{ height: "40.5vh" }}
+                      style={{ height: "42vh" }}
                       data={process(
                         subDataResult3.data.map((row) => ({
                           ...row,

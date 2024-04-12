@@ -1283,7 +1283,7 @@ const MA_A2000W: React.FC = () => {
           fileName="자재발주"
         >
           <Grid
-            style={{ height: "35.2vh" }}
+            style={{ height: "35.5vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,

@@ -1088,7 +1088,7 @@ const MA_B7201W: React.FC = () => {
             group={group}
           >
             <Grid
-              style={{ height: "75vh" }}
+              style={{ height: "79vh" }}
               data={newData.map((item: { items: any[] }) => ({
                 ...item,
                 items: item.items.map((row: any) => ({
@@ -1161,7 +1161,7 @@ const MA_B7201W: React.FC = () => {
               fileName="기간재고조회(품목별)"
             >
               <Grid
-                style={{ height: "35.5vh" }}
+                style={{ height: "37vh" }}
                 data={process(
                   detailDataResult.data.map((row) => ({
                     ...row,
@@ -1244,7 +1244,7 @@ const MA_B7201W: React.FC = () => {
               fileName="기간재고조회(품목별)"
             >
               <Grid
-                style={{ height: "35.5vh" }}
+                style={{ height: "38vh" }}
                 data={process(
                   detailDataResult2.data.map((row) => ({
                     ...row,

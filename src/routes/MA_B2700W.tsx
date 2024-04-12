@@ -724,7 +724,7 @@ const MA_B2700W: React.FC = () => {
           fileName="요약정보"
         >
           <Grid
-            style={{ height: "76.5vh" }}
+            style={{ height: "78.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

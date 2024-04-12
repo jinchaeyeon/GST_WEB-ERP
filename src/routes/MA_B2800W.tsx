@@ -518,12 +518,7 @@ const MA_B2800W: React.FC = () => {
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
     return (
-      <td
-        colSpan={props.colSpan}
-        className={"k-grid-footer-sticky"}
-        style={props.style}
-        {...{ [GRID_COL_INDEX_ATTRIBUTE]: 2 }}
-      >
+      <td>
         총{" "}
         {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
           (parts[1] ? "." + parts[1] : "")}
@@ -695,13 +690,11 @@ const MA_B2800W: React.FC = () => {
         field={"purnum"}
         title={"발주번호"}
         width="150px"
-        locked={true}
       />
     );
     array.push(
       <GridColumn
         field={"purdt"}
-        locked={true}
         editable={false}
         title={"발주일자"}
         cell={CustomLockedCell}
@@ -712,7 +705,6 @@ const MA_B2800W: React.FC = () => {
     array.push(
       <GridColumn
         field={"inexpdt"}
-        locked={true}
         editable={false}
         title={"입고요청일"}
         cell={CustomLockedCell}
@@ -720,21 +712,20 @@ const MA_B2800W: React.FC = () => {
       />
     );
     array.push(
-      <GridColumn field={"d_day"} locked={true} title={"D-DAY"} width="80px" />
+      <GridColumn field={"d_day"} title={"D-DAY"} width="80px" />
     );
     array.push(
-      <GridColumn field={"custnm"} locked={true} title={"업체"} width="150px" />
+      <GridColumn field={"custnm"} title={"업체"} width="150px" />
     );
     array.push(
       <GridColumn
-        field={"itemnm"}
-        locked={true}
+        field={"itemnm"}        
         title={"품목명"}
         width="150px"
       />
     );
     array.push(
-      <GridColumn field={"insiz"} locked={true} title={"규격"} width="150px" />
+      <GridColumn field={"insiz"} title={"규격"} width="150px" />
     );
     return array;
   };
@@ -1164,7 +1155,7 @@ const MA_B2800W: React.FC = () => {
             fileName="발주대비입고현황"
           >
             <Grid
-              style={{ height: "73.8vh" }}
+              style={{ height: "74.5vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1211,14 +1202,13 @@ const MA_B2800W: React.FC = () => {
               rowRender={customRowRender2}
               editField={EDIT_FIELD}
             >
-              <GridColumn cell={ColumnCommandCell} locked={true} width="60px" />
-              <GridColumn locked={true} title="자료">
+              <GridColumn cell={ColumnCommandCell} width="60px"/>
+              <GridColumn title="자료">
                 {createColumn()}
               </GridColumn>
               <GridColumn title="발주">{createColumn2()}</GridColumn>
               <GridColumn title="입고">{createColumn3()}</GridColumn>
               <GridColumn title="미입고">{createColumn4()}</GridColumn>
-              <GridColumn title="">{createColumn5()}</GridColumn>
             </Grid>
           </ExcelExport>
         </GridContainer>

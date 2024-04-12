@@ -37,16 +37,6 @@ iframe#webpack-dev-server-client-overlay{display:none!important}
   padding-bottom: 0 !important;
 }
 
-.k-dropdowngrid-popup {
-  overflow: auto !important;
-  max-height: 210px;
-}
-
-.k-data-table {
-  overflow: auto !important;
-
-}
-
 .k-form-horizontal .k-form-field>.k-label,
 .k-form-horizontal .k-form-field>kendo-label,
 .k-form-horizontal .k-form-field>.k-form-label {

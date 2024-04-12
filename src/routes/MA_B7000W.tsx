@@ -1166,7 +1166,7 @@ const MA_B7000: React.FC = () => {
             fileName="재고조회"
           >
             <Grid
-              style={{ height: "35vh" }}
+              style={{ height: "37.5vh" }}
               data={process(
                 detail1DataResult.data.map((row) => ({
                   ...row,
@@ -1246,7 +1246,7 @@ const MA_B7000: React.FC = () => {
             fileName="재고조회"
           >
             <Grid
-              style={{ height: "35vh" }}
+              style={{ height: "37.5vh" }}
               data={process(
                 detail2DataResult.data.map((row) => ({
                   ...row,

@@ -1201,7 +1201,7 @@ const MA_A3400W: React.FC = () => {
           fileName="기타출고"
         >
           <Grid
-            style={{ height: "32.5vh" }}
+            style={{ height: "37vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,
