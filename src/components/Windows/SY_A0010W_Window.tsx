@@ -1474,7 +1474,7 @@ const KendoWindow = ({
           />
         </GridContainer>
       </GridContainerWrap>
-      <GridContainer height="calc(100% - 420px)" margin={{ top: "30px" }}>
+      <GridContainer height="calc(100% - 420px)" margin={{ top: "30px", bottom: "30px" }}>
         <ButtonContainer>
           <Button
             themeColor={"primary"}

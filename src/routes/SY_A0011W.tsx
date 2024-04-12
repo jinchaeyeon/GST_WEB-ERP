@@ -1451,7 +1451,7 @@ const Page: React.FC = () => {
             fileName="사용자 그룹"
           >
             <Grid
-              style={{ height: "80.5vh" }}
+              style={{ height: "83.6vh" }}
               data={process(
                 mainDataResult.data.map((row, idx) => ({
                   ...row,
@@ -1534,7 +1534,7 @@ const Page: React.FC = () => {
             fileName="사용자 그룹"
           >
             <TreeList
-              style={{ height: "80.5vh", overflow: "auto" }}
+              style={{ height: "83.6vh", overflow: "auto" }}
               data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                 extendDataItem(item, SUB_ITEMS_FIELD, {
                   [EXPANDED_FIELD]: expanded.includes(
@@ -1580,7 +1580,7 @@ const Page: React.FC = () => {
             fileName="사용자 그룹"
           >
             <TreeList
-              style={{ height: "80.8vh" }}
+              style={{ height: "83.8vh",overflowY: "scroll" }}
               data={mapTree(data2, SUB_ITEMS_FIELD, (item) =>
                 extendDataItem(item, SUB_ITEMS_FIELD, {
                   [EXPANDED_FIELD]: expanded2.includes(

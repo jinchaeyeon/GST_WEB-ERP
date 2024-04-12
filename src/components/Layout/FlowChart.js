@@ -869,7 +869,7 @@ const FlowChart = (props) => {
 
   return (
     <>
-      <GridContainerWrap height={isMobile ? "200vh" : "83vh"}>
+      <GridContainerWrap height={isMobile ? "100vh" : "85vh"}>
         <GridContainer
           width="65%"
           height={isMobile ? "100%" : ""}

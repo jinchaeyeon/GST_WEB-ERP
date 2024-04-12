@@ -300,6 +300,13 @@ input.readonly {
   height: 100%!important;
 }
 
+.overflow_scrollhidden{
+  overflow-y: scroll;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 .leading_PDA {
   text-align: center !important;
   font-size: 18px !important;

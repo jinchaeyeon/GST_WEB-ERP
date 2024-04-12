@@ -1494,7 +1494,7 @@ const BA_A0100W: React.FC = () => {
             fileName="동물실관리"
           >
             <Grid
-              style={{ height: "80.5vh" }}
+              style={{ height: "83.5vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1617,7 +1617,7 @@ const BA_A0100W: React.FC = () => {
             fileName="동물실관리"
           >
             <Grid
-              style={{ height: "80.5vh" }}
+              style={{ height: "83.5vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,

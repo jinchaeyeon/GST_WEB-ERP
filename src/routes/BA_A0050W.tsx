@@ -2169,7 +2169,7 @@ const BA_A0050: React.FC = () => {
               fileName="BOM관리"
             >
               <Grid
-                style={{ height: "28.4vh" }}
+                style={{ height: "31vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -2258,7 +2258,7 @@ const BA_A0050: React.FC = () => {
               fileName="BOM관리"
             >
               <Grid
-                style={{ height: "36.5vh" }}
+                style={{ height: "39vh" }}
                 data={process(
                   subDataResult.data.map((row) => ({
                     ...row,
@@ -2364,7 +2364,7 @@ const BA_A0050: React.FC = () => {
               fileName="BOM관리"
             >
               <Grid
-                style={{ height: "76vh" }}
+                style={{ height: "79.8vh" }}
                 data={process(
                   subData2Result.data.map((row) => ({
                     ...row,

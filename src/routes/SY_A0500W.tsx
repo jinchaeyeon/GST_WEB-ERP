@@ -87,7 +87,7 @@ const boardStyle: CSSProperties = {
 };
 const containerStyle: CSSProperties = {
   width: "100%",
-  height: "75vh",
+  height: "82vh",
   border: "1px solid gray",
 };
 /** Styling properties applied to each square element */
@@ -1215,7 +1215,7 @@ const SY_A0500W: React.FC = () => {
             fileName="레이아웃 설정"
           >
             <Grid
-              style={{ height: "79vh" }}
+              style={{ height: "82.5vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
