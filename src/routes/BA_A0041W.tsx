@@ -1951,7 +1951,7 @@ const BA_A0041W: React.FC = () => {
           fileName="품목관리(멀티)"
         >
           <Grid
-            style={{ height: "67vh" }}
+            style={{ height: "72vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

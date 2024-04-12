@@ -6,10 +6,11 @@ export type TCommonCodeData = {
 };
 
 export interface IWindowPosition {
-  left: number;
-  top: number;
+  left: any;
+  top: any;
   width: number;
   height: number;
+  transform?:any;
 }
 
 export interface IAttachmentData {

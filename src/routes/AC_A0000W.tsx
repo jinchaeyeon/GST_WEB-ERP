@@ -983,7 +983,7 @@ const AC_A0000W: React.FC = () => {
           fileName="법인기본"
         >
           <Grid
-            style={{ height: "44vh" }}
+            style={{ height: "51.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

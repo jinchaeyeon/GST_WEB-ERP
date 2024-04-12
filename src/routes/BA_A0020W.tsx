@@ -3648,12 +3648,12 @@ const BA_A0020: React.FC = () => {
           >
             {showMap ? (
               <div
-                style={{ height: "76.5vh", marginTop: "5px" }}
+                style={{ height: "79.5vh", marginTop: "5px" }}
                 id="map"
               ></div>
             ) : (
               <Grid
-                style={{ height: "76.5vh" }}
+                style={{ height: "79vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -3757,7 +3757,7 @@ const BA_A0020: React.FC = () => {
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
-              <FormBoxWrap style={{ height: isMobile ? "100%" : "67.2vh" }}>
+              <FormBoxWrap style={{ height: isMobile ? "100%" : "71.5vh" }}>
                 <FormBox>
                   <tbody>
                     <tr>
@@ -4343,7 +4343,7 @@ const BA_A0020: React.FC = () => {
                     fileName="업체관리"
                   >
                     <Grid
-                      style={{ height: "66vh" }}
+                      style={{ height: "71.5vh" }}
                       data={process(
                         subDataResult.data.map((row) => ({
                           ...row,
@@ -4473,7 +4473,7 @@ const BA_A0020: React.FC = () => {
                   fileName="업체관리"
                 >
                   <Grid
-                    style={{ height: "66vh" }}
+                    style={{ height: "71.5vh" }}
                     data={process(
                       subDataResult2.data.map((row) => ({
                         ...row,

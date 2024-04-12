@@ -2629,7 +2629,7 @@ const CopyWindow = ({
                     value={filters.files}
                     className="readonly"
                   />
-                  <ButtonInInput style={{ marginTop: "30px" }}>
+                  <ButtonInInput>
                     <Button
                       type={"button"}
                       onClick={onAttachmentsWndClick}
@@ -2712,7 +2712,7 @@ const CopyWindow = ({
               </ButtonContainer>
             </GridTitleContainer>
             <Grid
-              style={{ height: "calc(100% - 50px)" }}
+              style={{ height: "calc(100% - 70px)" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,

@@ -1499,7 +1499,7 @@ const CR_A0010W: React.FC = () => {
               fileName="고객관리"
             >
               <Grid
-                style={{ height: "76vh" }}
+                style={{ height: "79.8vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,

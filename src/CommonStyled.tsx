@@ -364,6 +364,8 @@ export const FormBox = styled.table`
     text-align: right;
     vertical-align: middle;
     padding-right: 10px;
+    padding-left: 7px;
+    text-align: left;
   }
   tr td {
     /* background-color: #ffffff;
@@ -877,9 +879,13 @@ export const Gnv = styled.div<TGnv>`
   text-align: center;
 
   border-right: 1px solid rgb(235, 235, 235);
-  min-height: 100vh;
   background-color: #fff;
-
+  height: 100vh;
+  position: fixed;
+  overflow: scroll;
+  ::-webkit-scrollbar {
+  display: none;
+}
   .logout span {
     color: #656565;
   }
@@ -938,7 +944,16 @@ export const Content = styled.div<ContentType>`
   width: calc(
     100% - ${(props) => (props.isMenuOpen ? GNV_WIDTH : CLOSED_GNV_WIDTH)}px
   );
-
+  /* 컨테이너 고정 추가 */
+  left: calc(
+    ${(props) => (props.isMenuOpen ? GNV_WIDTH : '25')}px
+  );;
+  position: fixed;
+  overflow: scroll;
+  height: calc(100vh-30px);
+  ::-webkit-scrollbar {
+  display: none;
+}
   /*=========================================================================
   미디어 쿼리
   ##Device = 모바일
@@ -946,6 +961,8 @@ export const Content = styled.div<ContentType>`
   =========================================================================*/
   @media (max-width: 1200px) {
     width: 100%;
+    left: 0;
+    height: 100vh;
   }
 `;
 

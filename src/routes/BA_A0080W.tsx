@@ -1901,7 +1901,7 @@ const BA_A0080: React.FC = () => {
             fileName="단가관리"
           >
             <Grid
-              style={{ height: "80vh" }}
+              style={{ height: "83.6vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,
@@ -2023,7 +2023,7 @@ const BA_A0080: React.FC = () => {
               fileName="단가관리"
             >
               <Grid
-                style={{ height: "80vh" }}
+                style={{ height: "83.6vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,

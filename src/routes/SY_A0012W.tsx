@@ -1540,7 +1540,7 @@ const SY_A0120: React.FC = () => {
                 fileName="사용자 정보"
               >
                 <Grid
-                  style={{ height: "76.5vh" }}
+                  style={{ height: "79.8vh" }}
                   data={process(
                     mainDataResult.data.map((row, idx) => ({
                       ...row,

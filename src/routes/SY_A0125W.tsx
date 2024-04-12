@@ -1333,7 +1333,7 @@ const SY_A0125W: React.FC = () => {
             fileName="부서관리"
           >
             <TreeList
-              style={{ height: "80.7vh", overflow: "auto" }}
+              style={{ height: "83.6vh", overflow: "auto" }}
               data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                 extendDataItem(item, SUB_ITEMS_FIELD, {
                   [EXPANDED_FIELD]: expanded.includes(
@@ -1496,7 +1496,7 @@ const SY_A0125W: React.FC = () => {
             fileName="부서관리"
           >
             <Grid
-              style={{ height: "58vh" }}
+              style={{ height: "64vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,

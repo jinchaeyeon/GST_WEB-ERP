@@ -1279,7 +1279,7 @@ const BA_A0070W: React.FC = () => {
             fileName="환율관리"
           >
             <Grid
-              style={{ height: "80.5vh" }}
+              style={{ height: "83.5vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,
@@ -1368,7 +1368,7 @@ const BA_A0070W: React.FC = () => {
             fileName="환율관리"
           >
             <Grid
-              style={{ height: "80.5vh" }}
+              style={{ height: "83.5vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,

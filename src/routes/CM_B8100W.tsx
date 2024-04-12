@@ -445,7 +445,7 @@ const CM_B8100W: React.FC = () => {
           fileName="사용자별 근무현황"
         >
           <Grid
-            style={{ height: "80.7vh" }}
+            style={{ height: "83.6vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

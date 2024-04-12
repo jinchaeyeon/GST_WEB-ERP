@@ -1345,7 +1345,7 @@ const SA_A5010W: React.FC = () => {
           fileName="직접판매처리"
         >
           <Grid
-            style={{ height: "32.5vh" }}
+            style={{ height: "36vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,

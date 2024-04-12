@@ -1483,7 +1483,7 @@ const CopyWindow = ({
         onClose={onClose}
         modal={modal}
       >
-        <FormBoxWrap style={{ width: "1530px", marginLeft: "-70px" }}>
+        <FormBoxWrap>
           <FormBox>
             <tbody>
               <tr>

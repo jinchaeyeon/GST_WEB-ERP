@@ -654,7 +654,7 @@ const BA_B0080W: React.FC = () => {
           fileName="단가조회"
         >
           <Grid
-            style={{ height: "80.5vh" }}
+            style={{ height: "83.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
