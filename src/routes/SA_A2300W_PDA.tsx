@@ -184,7 +184,7 @@ const SA_A2300_PDA: React.FC = () => {
   const tabPage1 = (
     <>
       <TitleContainer>
-        <Title>출하처리</Title>
+        <Title>출고처리(PDA)</Title>
       </TitleContainer>
       <Scheduler
         height={deviceHeight * 0.85}

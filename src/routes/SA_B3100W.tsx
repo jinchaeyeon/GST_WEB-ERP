@@ -749,7 +749,7 @@ const SA_B3100W: React.FC = () => {
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ height: "79.5vh", width: "100%" }}
+        style={{ height: "81.5vh", width: "100%" }}
       >
         <TabStripTab title="전체">
           <GridContainerWrap flexDirection="column">
@@ -802,7 +802,7 @@ const SA_B3100W: React.FC = () => {
                 fileName="매출집계(풀목)"
               >
                 <Grid
-                  style={{ height: "33.5vh" }}
+                  style={{ height: "37vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,

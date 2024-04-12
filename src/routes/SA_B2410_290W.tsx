@@ -1365,7 +1365,7 @@ const SA_B2410: React.FC = () => {
               fileName="판매현황"
             >
               <Grid
-                style={{ height: "39vh" }}
+                style={{ height: "42vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,

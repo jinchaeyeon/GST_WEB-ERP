@@ -763,7 +763,7 @@ const SA_B3000W: React.FC = () => {
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ height: "80vh", width: "100%" }}
+        style={{ height: "82.8vh", width: "100%" }}
       >
         <TabStripTab title="전체">
           <GridContainerWrap flexDirection="column">

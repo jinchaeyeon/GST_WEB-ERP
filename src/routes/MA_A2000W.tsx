@@ -1085,7 +1085,7 @@ const MA_A2000W: React.FC = () => {
                 />
               </td>
               <th>완료여부</th>
-              <td>
+              <td colSpan={2}>
                 {customOptionData !== null && (
                   <CustomOptionRadioGroup
                     name="finyn"

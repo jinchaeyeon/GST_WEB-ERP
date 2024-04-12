@@ -1490,7 +1490,7 @@ const CopyWindow = ({
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "calc(100% - 50px)" }}
+            style={{ height: "calc(100% - 70px)" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

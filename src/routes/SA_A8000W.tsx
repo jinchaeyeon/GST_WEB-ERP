@@ -1103,7 +1103,7 @@ const SA_A8000W: React.FC = () => {
           fileName="수금처리"
         >
           <Grid
-            style={{ height: "35.5vh" }}
+            style={{ height: "40vh" }}
             data={process(
               mainDataResult2.data.map((row) => ({
                 ...row,
