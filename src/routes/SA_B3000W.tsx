@@ -34,11 +34,13 @@ import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
+  DDGDcolorList,
   FilterBox,
   GridContainer,
   GridContainerWrap,
   Title,
   TitleContainer,
+  WebErpcolorList,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import YearCalendar from "../components/Calendars/YearCalendar";
@@ -766,7 +768,14 @@ const SA_B3000W: React.FC = () => {
         <TabStripTab title="전체">
           <GridContainerWrap flexDirection="column">
             <GridContainer height="36.5vh">
-              <Chart style={{ height: "100%" }}>
+              <Chart
+                seriesColors={
+                  window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                    ? DDGDcolorList
+                    : WebErpcolorList
+                }
+                style={{ height: "100%" }}
+              >
                 <ChartValueAxis>
                   <ChartValueAxisItem
                     labels={{

@@ -25,11 +25,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
+  DDGDcolorList,
   FilterBox,
   GridContainer,
   GridContainerWrap,
   Title,
   TitleContainer,
+  WebErpcolorList,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import MonthCalendar from "../components/Calendars/MonthCalendar";
@@ -894,7 +896,13 @@ const AC_B1260W: React.FC = () => {
         <TabStripTab title="제조경비">
           <GridContainerWrap flexDirection="column">
             <GridContainer>
-              <Chart>
+              <Chart
+                seriesColors={
+                  window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                    ? DDGDcolorList
+                    : WebErpcolorList
+                }
+              >
                 <ChartValueAxis>
                   <ChartValueAxisItem
                     labels={{

@@ -26,6 +26,7 @@ import { useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
+  DDGDcolorList,
   FilterBox,
   GridContainer,
   GridContainerWrap,
@@ -33,6 +34,7 @@ import {
   GridTitleContainer,
   Title,
   TitleContainer,
+  WebErpcolorList,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import DateCell from "../components/Cells/DateCell";
@@ -774,6 +776,11 @@ const QC_A0120: React.FC = () => {
             <GridContainer width="60%">
               <GridContainerWrap>
                 <Chart
+                  seriesColors={
+                    window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                      ? DDGDcolorList
+                      : WebErpcolorList
+                  }
                   onSeriesClick={onChartSeriesClick}
                   className={"QC_A0120_TAB1"}
                 >
@@ -792,6 +799,11 @@ const QC_A0120: React.FC = () => {
                   </ChartSeries>
                 </Chart>
                 <Chart
+                  seriesColors={
+                    window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                      ? DDGDcolorList
+                      : WebErpcolorList
+                  }
                   onSeriesClick={onChartSeriesClick}
                   className={"QC_A0120_TAB1"}
                 >
@@ -812,6 +824,11 @@ const QC_A0120: React.FC = () => {
               </GridContainerWrap>
               <GridContainerWrap>
                 <Chart
+                  seriesColors={
+                    window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                      ? DDGDcolorList
+                      : WebErpcolorList
+                  }
                   onSeriesClick={onChartSeriesClick}
                   className={"QC_A0120_TAB1"}
                 >
@@ -830,6 +847,11 @@ const QC_A0120: React.FC = () => {
                   </ChartSeries>
                 </Chart>
                 <Chart
+                  seriesColors={
+                    window.location.href.split("/")[2].split(".")[1] == "ddgd"
+                      ? DDGDcolorList
+                      : WebErpcolorList
+                  }
                   onSeriesClick={onChartSeriesClick}
                   className={"QC_A0120_TAB1"}
                 >
