@@ -27,9 +27,8 @@ export default function Timelines(props) {
           fontWeight: "lighter",
           marginBottom: "10px",
           backgroundImage: `url(/proccd.jpg)`,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
+          backgroundPosition: "right center",
           opacity: 0.9,
         }}
       >
