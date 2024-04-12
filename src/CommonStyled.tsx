@@ -7,13 +7,23 @@ import logoSrc from "./img/logo.png";
 import processStsSrc from "./img/process_16.png";
 import successStsSrc from "./img/success_16.png";
 
-export const WebErpcolorList :string[] = [
-    "#2289c3",
-]
+export const WebErpcolorList: string[] = [
+  "#2289c3",
+  "#f798ae",
+  "#ffe162",
+  "#1fdd94",
+  "#4b5ffa",
+  "#14cae9",
+];
 
-export const DDGDcolorList :string[] = [
+export const DDGDcolorList: string[] = [
   "#f5b901",
-]
+  "#f798ae",
+  "#ffe162",
+  "#1fdd94",
+  "#4b5ffa",
+  "#14cae9",
+];
 
 export const ScrollableContainerBox = styled.div`
   padding: 10px;
