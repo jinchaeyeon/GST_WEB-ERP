@@ -24,7 +24,7 @@ import numbersEn from "cldr-numbers-full/main/en/numbers.json";
 import numbersJa from "cldr-numbers-full/main/ja/numbers.json";
 import numbersKo from "cldr-numbers-full/main/ko/numbers.json";
 import numbersZh from "cldr-numbers-full/main/zh/numbers.json";
-import React, { Suspense, lazy, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useThemeSwitcher } from "react-css-theme-switcher";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
@@ -147,6 +147,7 @@ import HU_B3220W from "./routes/HU_B3220W";
 import HU_B4000W from "./routes/HU_B4000W";
 import HU_B4001W from "./routes/HU_B4001W";
 import HU_B4010W from "./routes/HU_B4010W";
+import Login from "./routes/Login";
 import MA_A0010W from "./routes/MA_A0010W";
 import MA_A1000W from "./routes/MA_A1000W";
 import MA_A2000W from "./routes/MA_A2000W";
@@ -183,7 +184,9 @@ import MA_B7000W_mihyeon from "./routes/MA_B7000W_mihyeon";
 import MA_B7000_606W from "./routes/MA_B7000_606W";
 import MA_B7200W from "./routes/MA_B7200W";
 import MA_B7201W from "./routes/MA_B7201W";
+import Main from "./routes/Main";
 import MainBIO from "./routes/MainBIO";
+import MainNotApproval from "./routes/MainNotApproval";
 import NotFound from "./routes/NotFound";
 import PR_A0030W from "./routes/PR_A0030W";
 import PR_A0040W from "./routes/PR_A0040W";
@@ -272,9 +275,6 @@ import {
   sessionItemState,
 } from "./store/atoms";
 import { Iparameters } from "./store/types";
-const Login = lazy(() => import("./routes/Login"));
-const Main = lazy(() => import("./routes/Main"));
-const MainNotApproval = lazy(() => import("./routes/MainNotApproval"));
 
 load(
   likelySubtags,

@@ -1,7 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -10,11 +10,10 @@ module.exports = {
   // Production 빌드 시, 리액트 코드 트랜스파일링 할 시작점 설정.
   entry: "./src/index.tsx",
 
-  // webpack Develop 모드 실행 시, 사용될 static 파일들 경로와 관리 방식 설정.
   devServer: {
-    // static: {
-    //   directory: path.resolve(__dirname, "public"),
-    // },
+    static: {
+      directory: path.resolve(__dirname, "public"),
+    },
     client: {
       overlay: {
         runtimeErrors: (error) => {
@@ -48,9 +47,7 @@ module.exports = {
         loader: "babel-loader",
         options: {
           presets: ["@babel/preset-env", "@babel/preset-react"],
-          plugins: [
-            "@babel/plugin-proposal-class-properties",
-          ],
+          plugins: ["@babel/plugin-proposal-class-properties"],
         },
       },
       {
@@ -58,9 +55,7 @@ module.exports = {
         loader: "babel-loader",
         options: {
           presets: ["@babel/preset-env", "@babel/preset-react"],
-          plugins: [
-            "@babel/plugin-proposal-class-properties",
-          ],
+          plugins: ["@babel/plugin-proposal-class-properties"],
         },
       },
       {
@@ -99,16 +94,16 @@ module.exports = {
         ],
       },
       {
-        test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.(png|jpg|jpeg|ttf|woff|svg)$/,
         use: [
           {
-            loader: 'file-loader',
+            loader: "file-loader",
             options: {
-              outputPath: 'static/media',
+              outputPath: "static/media",
             },
           },
         ],
@@ -119,26 +114,25 @@ module.exports = {
   // 번들링된 JS 코드를 html 파일과 매핑 및 주입시키기 위한 플러그인 설정.
   plugins: [
     new HtmlWebpackPlugin({
-      template: './public/index.html',
+      template: "./public/index.html",
     }),
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: 'public/',
-            globOptions: {
-              ignore: ['**/index.html'],
-            },
+          from: "public/",
+          globOptions: {
+            ignore: ["**/index.html"],
+          },
         },
       ],
     }),
     new webpack.ProvidePlugin({ React: "react" }),
   ],
-  
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".jsx", ".scss", ".css"],
   },
   output: {
-    path: path.resolve(__dirname, "build/static/js"),
+    path: path.resolve(__dirname, "build/static"),
     filename: "bundle.js", // main.js가 기본값
   },
 };

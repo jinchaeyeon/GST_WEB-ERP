@@ -23,7 +23,7 @@ import numbersEn from "cldr-numbers-full/main/en/numbers.json";
 import numbersJa from "cldr-numbers-full/main/ja/numbers.json";
 import numbersKo from "cldr-numbers-full/main/ko/numbers.json";
 import numbersZh from "cldr-numbers-full/main/zh/numbers.json";
-import React, { Suspense, lazy, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
 import styled, { createGlobalStyle } from "styled-components";
@@ -152,6 +152,7 @@ import SA_A5000W from "./routes/SA_A5000W";
 import SA_A5001W from "./routes/SA_A5001W";
 import SA_A5010W from "./routes/SA_A5010W";
 
+import axios from "axios";
 import { useThemeSwitcher } from "react-css-theme-switcher";
 import AC_B1240W from "./routes/AC_B1240W";
 import AC_B1340W from "./routes/AC_B1340W";
@@ -171,8 +172,10 @@ import HU_B2140W from "./routes/HU_B2140W";
 import HU_B3180W from "./routes/HU_B3180W";
 import HU_B3220W from "./routes/HU_B3220W";
 import HU_B4010W from "./routes/HU_B4010W";
+import LoginCRM from "./routes/LoginCRM";
 import MA_A2310_606W from "./routes/MA_A2310_606W";
 import MA_A2410W from "./routes/MA_A2410W";
+import MainAdminCRM from "./routes/MainAdminCRM";
 import PR_A2000W from "./routes/PR_A2000W";
 import QC_B0030W from "./routes/QC_B0030W";
 import SA_A1000_603W from "./routes/SA_A1000_603W";
@@ -208,9 +211,6 @@ import {
   linkState,
   loginResultState,
 } from "./store/atoms";
-import axios from "axios";
-const LoginCRM = lazy(() => import("./routes/LoginCRM"));
-const MainAdminCRM = lazy(() => import("./routes/MainAdminCRM"));
 
 load(
   likelySubtags,
@@ -310,7 +310,7 @@ const App: React.FC = () => {
 };
 
 const AppInner: React.FC = () => {
-    const fileName: string = `apiserver.json`;
+  const fileName: string = `apiserver.json`;
   const [Link, setLink] = useRecoilState(linkState);
   const get_text_file = async () => {
     axios.get(`/${fileName}`).then((res: any) => {
@@ -826,7 +826,12 @@ const AppInner: React.FC = () => {
             <Router>
               <Switch>
                 <Route sensitive={false} path="/" component={LoginCRM} exact />
-                <Route sensitive={false} path="/Error" component={NotFound} exact />
+                <Route
+                  sensitive={false}
+                  path="/Error"
+                  component={NotFound}
+                  exact
+                />
                 <PanelBarNavContainerDDGD>
                   {/* 메인 홈 */}
                   {loginResult ? (

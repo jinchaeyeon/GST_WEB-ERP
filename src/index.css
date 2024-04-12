@@ -1,17 +1,19 @@
 body {
-  margin: 0;
+  margin: 0!important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif, "TheJamsil5Bold";
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  --swiper-navigation-size: 20px;
+    sans-serif, "TheJamsil5Bold" !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  --swiper-navigation-size: 20px !important;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+    monospace !important;
 }
+
+iframe#webpack-dev-server-client-overlay{display:none!important}
 
 .k-grid tr.k-alt {
   background-color: #0000000a !important;
@@ -30,9 +32,9 @@ code {
 .k-grid td.k-selected,
 .k-grid tr.k-state-selected>td,
 .k-grid tr.k-selected>td {
-  height: 34px;
-  padding-top: 0;
-  padding-bottom: 0;
+  height: 34px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 .k-form-horizontal .k-form-field>.k-label,
@@ -47,24 +49,24 @@ code {
 
 /* 스케줄러 이벤트 팝업창 반복 여부 숨기기 */
 .k-form.k-scheduler-edit-form>.k-form-field:nth-child(5) {
-  display: none;
+  display: none !important;
 }
 
 .k-form.k-scheduler-edit-form>.k-form-field:nth-child(4)>.k-form-field-wrap {
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
 }
 
 .k-form.k-scheduler-edit-form #k-event-description {
-  min-height: 150px;
+  min-height: 150px !important;
 }
 
 .visible-mobile-only {
-  display: none;
+  display: none !important;
 }
 
 .k-grid .k-grid-header .k-header .k-cell-inner>.k-link {
-  justify-content: center;
+  justify-content: center !important;
   /*공통설정 : 그리드 헤더 텍스트 중앙정렬*/
 }
 
@@ -83,24 +85,24 @@ input.required,
 input.required:hover,
 input.required.k-hover,
 .k-daterangepicker.required input {
-  background-color: #fff0ef;
-  width: "100%";
+  background-color: #fff0ef !important;
+  width: "100%" !important;
 }
 
 .k-daterangepicker.required,
 .k-daterangepicker.required:hover {
-  background-color: unset;
+  background-color: unset !important;
 }
 
 ul.readonly,
 span.readonly,
 input.readonly {
-  background-color: #efefef;
+  background-color: #efefef !important;
 }
 
 .k-radio-label {
-  font-size: 14px;
-  line-height: 1.4285714286;
+  font-size: 14px !important;
+  line-height: 1.4285714286 !important;
 }
 
 .k-grid-md td {
@@ -110,7 +112,7 @@ input.readonly {
 /* 메뉴 바 폰트 굵기 조정 */
 .k-panelbar>.k-item>.k-link,
 .k-panelbar>.k-panelbar-header>.k-link {
-  font-weight: 400;
+  font-weight: 400 !important;
 }
 
 #CM_A3100W_CALENDAR {
@@ -126,7 +128,7 @@ input.readonly {
 }
 
 .k-numerictextbox>.k-input-inner {
-  text-align: right;
+  text-align: right!important;
 }
 
 .k-panelbar .k-panelbar-group>.k-panelbar-item>.k-link {
@@ -155,54 +157,54 @@ input.readonly {
 }
 
 .simple-floatingedges {
-  flex-direction: column;
-  display: flex;
-  flex-grow: 1;
-  height: 100%;
+  flex-direction: column!important;
+  display: flex!important;
+  flex-grow: 1!important;
+  height: 100%!important;
 }
 
 .simple-floatingedges .react-flow__handle {
-  width: 20px;
-  height: 20px;
-  opacity: 0;
+  width: 20px!important;
+  height: 20px!important;
+  opacity: 0!important;
 }
 
 .simple-floatingedges .react-flow__handle-top {
-  top: -8px;
+  top: -8px!important;
 }
 
 .simple-floatingedges .react-flow__handle-bottom {
-  bottom: -8px;
+  bottom: -8px!important;
 }
 
 .simple-floatingedges .react-flow__handle-left {
-  left: -8px;
+  left: -8px!important;
 }
 
 .simple-floatingedges .react-flow__handle-right {
-  right: -8px;
+  right: -8px!important;
 }
 
 .simple-floatingedges .react-flow__node-customNode {
-  border-radius: 3px;
-  font-size: 12px;
-  text-align: center;
-  width: 100%;
-  height: 100%;
+  border-radius: 3px!important;
+  font-size: 12px!important;
+  text-align: center!important;
+  width: 100%!important;
+  height: 100%!important;
 }
 
 .simple-floatingedges .react-flow__node-customNode :global .react-flow__resize-control.handle {
-  width: 10px;
-  height: 10px;
-  border-radius: 100%;
+  width: 10px!important;
+  height: 10px!important;
+  border-radius: 100%!important;
 }
 
 .simple-floatingedges .react-flow__node-groupNode {
-  border-radius: 3px;
-  font-size: 12px;
-  text-align: center;
-  width: 100%;
-  height: 100%;
+  border-radius: 3px!important;
+  font-size: 12px!important;
+  text-align: center!important;
+  width: 100%!important;
+  height: 100%!important;
 }
 
 .simple-floatingedges .react-flow__node {
@@ -263,8 +265,8 @@ input.readonly {
 
 /*스플린터*/
 .pane-content {
-  padding: 0 10px;
-  height: 100%;
+  padding: 0 10px!important;
+  height: 100%!important;
 }
 
 .k-splitter {
@@ -284,18 +286,18 @@ input.readonly {
 
 /*DDGD 전용 css */
 .react-calendar {
-  height: 100%;
+  height: 100%!important;
 }
 
 @media (max-width: 1200px) {
   .react-calendar {
-    height: 80%;
+    height: 80%!important;
   }
 }
 
 .swiper {
-  width: 100%;
-  height: 100%;
+  width: 100%!important;
+  height: 100%!important;
 }
 
 .leading_PDA {
@@ -320,129 +322,129 @@ input.readonly {
 }
 
 .swiper-slide {
-  text-align: center;
-  font-size: 18px;
-  background: #fff;
+  text-align: center!important;
+  font-size: 18px!important;
+  background: #fff!important;
 
   /* Center slide text vertically */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: flex!important;
+  justify-content: center!important;
+  align-items: center!important;
 }
 
 /*404페이지*/
 .page-404 {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-content: center;
+  width: 100%!important;
+  height: 100%!important;
+  display: flex!important;
+  align-content: center!important;
 }
 
 .page-404 .outer {
-  left: 0;
-  display: table;
+  left: 0!important;
+  display: table!important;
 
-  width: 100%;
+  width: 100%!important;
 }
 
 .page-404 .outer .middle {
-  display: table-cell;
+  display: table-cell!important;
 
-  vertical-align: middle;
+  vertical-align: middle!important;
 }
 
 .page-404 .outer .middle .inner {
-  width: 350px;
-  margin-right: auto;
-  margin-left: auto;
+  width: 350px!important;
+  margin-right: auto!important;
+  margin-left: auto!important;
 }
 
 .page-404 .outer .middle .inner .inner-circle {
-  height: 300px;
+  height: 300px!important;
 
-  border-radius: 50%;
-  background-color: #ffffff;
+  border-radius: 50%!important;
+  background-color: #ffffff!important;
 }
 
 .page-404 .outer .middle .inner .inner-circle i {
-  font-size: 5em;
-  line-height: 1em;
+  font-size: 5em!important;
+  line-height: 1em!important;
 
-  float: right;
+  float: right!important;
 
-  width: 1.6em;
-  height: 1.6em;
-  margin-top: -.7em;
-  margin-right: -.5em;
-  padding: 20px;
+  width: 1.6em!important;
+  height: 1.6em!important;
+  margin-top: -.7em!important;
+  margin-right: -.5em!important;
+  padding: 20px!important;
 
-  -webkit-transition: all .4s;
-  transition: all .4s;
-  text-align: center;
+  -webkit-transition: all .4s!important;
+  transition: all .4s!important;
+  text-align: center!important;
 
   color: #f5f5f5 !important;
-  border-radius: 50%;
-  background-color: #666666;
-  box-shadow: 0 0 0 15px #f0f0f0;
+  border-radius: 50%!important;
+  background-color: #666666!important;
+  box-shadow: 0 0 0 15px #f0f0f0!important;
 }
 
 .page-404 .outer .middle .inner .inner-circle span {
-  font-size: 11em;
-  font-weight: 700;
-  line-height: 1.2em;
+  font-size: 11em!important;
+  font-weight: 700!important;
+  line-height: 1.2em!important;
 
-  display: block;
+  display: block!important;
 
-  -webkit-transition: all .4s;
-  transition: all .4s;
-  text-align: center;
+  -webkit-transition: all .4s!important;
+  transition: all .4s!important;
+  text-align: center!important;
 
-  color: #666666;
+  color: #666666!important;
 }
 
 .page-404 .outer .middle .inner .inner-status {
-  font-size: 20px;
+  font-size: 20px!important;
 
-  display: block;
+  display: block!important;
 
-  margin-top: 20px;
-  margin-bottom: 5px;
+  margin-top: 20px!important;
+  margin-bottom: 5px!important;
 
-  text-align: center;
+  text-align: center!important;
 
-  color: #666666;
+  color: #666666!important;
 }
 
 .page-404 .outer .middle .inner .inner-detail {
-  line-height: 1.4em;
+  line-height: 1.4em!important;
 
-  display: block;
+  display: block!important;
 
-  margin-bottom: 30px;
+  margin-bottom: 30px!important;
 
-  text-align: center;
+  text-align: center!important;
 
-  color: #999999;
+  color: #999999!important;
 }
 
 .page-404 .outer .middle .inner .btn {
-  line-height: 1.4em;
+  line-height: 1.4em!important;
 
-  display: block;
+  display: block!important;
 
-  margin-bottom: 10px;
+  margin-bottom: 10px!important;
 
-  text-align: center;
+  text-align: center!important;
 
-  font-size: 28px;
+  font-size: 28px!important;
 
-  color: #666666;
+  color: #666666!important;
 
-  border: 2px solid #666666;
+  border: 2px solid #666666!important;
 
-  border-radius: 10px;
+  border-radius: 10px!important;
 
-  cursor: pointer;
+  cursor: pointer!important;
 }
 
 /*스케줄러 폼 변경*/
@@ -488,47 +490,47 @@ div.k-animation-container {
 
 .k-pager-md .k-pager-numbers-wrap {
   justify-content: center !important;
-  width: 100%;
+  width: 100%!important;
 }
 
 .k-grouping-header {
-  border-width: 0 0 1px;
-  border-style: solid;
-  border-color: inherit;
-  white-space: normal;
+  border-width: 0 0 1px!important;
+  border-style: solid!important;
+  border-color: inherit!important;
+  white-space: normal!important;
   display: none !important;
-  align-items: center;
-  position: relative;
-  flex-wrap: wrap;
+  align-items: center!important;
+  position: relative!important;
+  flex-wrap: wrap!important;
 }
 
 .k-grouping-header::before {
-  content: "";
-  height: calc(1em + 10px);
+  content: ""!important;
+  height: calc(1em + 10px)!important;
   display: none !important;
-  vertical-align: middle;
+  vertical-align: middle!important;
 }
 
 .k-grouping-header .k-chip-list {
-  flex-grow: 0;
+  flex-grow: 0!important;
   display: none !important;
 }
 
 .k-grouping-header>.k-grouping-drop-container {
-  flex-grow: 1;
-  padding-block: 8px;
-  margin-block: -8px;
+  flex-grow: 1!important;
+  padding-block: 8px!important;
+  margin-block: -8px!important;
   display: none !important;
-  align-self: stretch;
-  align-items: center;
+  align-self: stretch!important;
+  align-items: center!important;
 }
 
 /* 주석 해제 시 그리드 페이저의 우측 info 보임 */
 @media screen and (min-width: 600px) {
   .k-pager-md .k-pager-info {
     display: flex !important;
-    margin-right: 0;
-    margin-left: 0;
+    margin-right: 0!important;
+    margin-left: 0!important;
     justify-content: flex-end !important;
   }
 }
@@ -543,20 +545,20 @@ div.k-animation-container {
   }
 
   .customized-timeline .p-timeline-event-opposite {
-    flex: 0;
+    flex: 0!important;
   }
 
   .customized-timeline .p-card {
-    margin-top: 1rem;
+    margin-top: 1rem!important;
   }
 }
 
 .customized-timeline .p-timeline-event-opposite {
-  display: none;
+  display: none!important;
 }
 
 /* .k-grid tr {
-    height: 36px;
+    height: 36px!important;
   } */
 .k-form-horizontal .k-form-field>.k-label,
 .k-form-horizontal .k-form-field>kendo-label,
@@ -578,20 +580,20 @@ div.k-animation-container {
 
 /* 스케줄러 이벤트 팝업창 반복 여부 숨기기 */
 .k-form.k-scheduler-edit-form>.k-form-field:nth-child(5) {
-  display: none;
+  display: none!important;
 }
 
 .k-form.k-scheduler-edit-form>.k-form-field:nth-child(4)>.k-form-field-wrap {
-  display: flex;
-  align-items: center;
+  display: flex!important;
+  align-items: center!important;
 }
 
 .k-form.k-scheduler-edit-form #k-event-description {
-  min-height: 150px;
+  min-height: 150px!important;
 }
 
 .visible-mobile-only {
-  display: none;
+  display: none!important;
 }
 
 .k-animation-container-relative {
@@ -610,7 +612,7 @@ div.k-animation-container {
 }
 
 .k-grid .k-grid-header .k-header .k-cell-inner>.k-link {
-  justify-content: center;
+  justify-content: center!important;
   /*공통설정 : 그리드 헤더 텍스트 중앙정렬*/
 }
 
@@ -629,23 +631,23 @@ input.required,
 input.required:hover,
 input.required.k-hover,
 .k-daterangepicker.required input {
-  background-color: #fff0ef;
+  background-color: #fff0ef!important;
 }
 
 .k-daterangepicker.required,
 .k-daterangepicker.required:hover {
-  background-color: unset;
+  background-color: unset!important;
 }
 
 ul.readonly,
 span.readonly,
 input.readonly {
-  background-color: #efefef;
+  background-color: #efefef!important;
 }
 
 .k-radio-label {
-  font-size: 14px;
-  line-height: 1.4285714286;
+  font-size: 14px!important;
+  line-height: 1.4285714286!important;
 }
 
 /* 그리드 행높이 조절 */
@@ -655,14 +657,14 @@ input.readonly {
 .k-grid td.k-selected,
 .k-grid tr.k-state-selected>td,
 .k-grid tr.k-selected>td {
-  height: 34px;
-  padding-top: 0;
-  padding-bottom: 0;
+  height: 34px!important;
+  padding-top: 0!important;
+  padding-bottom: 0!important;
 }
 
 .k-tabstrip>.k-content.k-active,
 .k-tabstrip>.k-content.k-active>div.k-animation-container {
-  width: inherit;
+  width: inherit!important;
 }
 
 .k-daterange-picker .k-dateinput,
@@ -673,11 +675,11 @@ input.readonly {
 /* 모바일 결재문서 숨김 처리 */
 @media (max-width: 768px) {
   .visible-mobile-only {
-    display: block;
+    display: block!important;
   }
 
   .preview-grid-container {
-    display: none;
+    display: none!important;
   }
 
   .k-scheduler-edit-dialog .k-dialog {
@@ -688,705 +690,703 @@ input.readonly {
 /* 모바일 특정 칼럼 숨김 */
 @media (max-width: 768px) {
   .hide-on-mobile {
-    display: none;
+    display: none!important;
   }
 }
 
 
 /* @media print {
     @page {
-      size: 21cm 29.7cm;
-      margin-top: 1cm;
-      margin-right: 1cm;
-      margin-bottom: 0cm;
-      margin-left: 1cm;
+      size: 21cm 29.7cm!important;
+      margin-top: 1cm!important;
+      margin-right: 1cm!important;
+      margin-bottom: 0cm!important;
+      margin-left: 1cm!important;
     }
   
     .printable {
-      display: block;
+      display: block!important;
     }
   
     #non-printable {
-      display: none;
+      display: none!important;
     }
   } */
 
 .printable {
-  width: 19cm;
-  min-height: 27.7cm;
-  padding: 1cm;
-  background-color: #fff;
+  width: 19cm!important;
+  min-height: 27.7cm!important;
+  padding: 1cm!important;
+  background-color: #fff!important;
 }
 
 .printable.landscape {
-  min-height: 19cm;
-  width: 27.7cm;
+  min-height: 19cm!important;
+  width: 27.7cm!important;
 }
 
 .printable.barcode {
-  width: 5.7cm;
-  min-height: 2.7cm;
+  width: 5.7cm!important;
+  min-height: 2.7cm!important;
 }
 
 @media print {
   .nonprintable {
-    display: none
+    display: none  !important;
   }
-
-  ;
 }
 
 body {
-  -webkit-print-color-adjust: exact;
-  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact!important;
+  print-color-adjust: exact!important;
 }
 
 /**************** 작업일보 ****************/
 
 #ItemCostSheet {
-  width: 100%;
+  width: 100%!important;
 }
 
 #ItemCostSheet table {
-  border: 1px solid;
-  table-layout: fixed;
-  border-collapse: collapse;
-  border-spacing: 0;
+  border: 1px solid!important;
+  table-layout: fixed!important;
+  border-collapse: collapse!important;
+  border-spacing: 0!important;
 }
 
 #ItemCostSheet td,
 #ItemCostSheet th {
-  font-family: Arial, sans-serif;
-  border-style: solid;
-  border-width: 1px;
-  overflow: hidden;
-  word-break: normal;
-  vertical-align: middle;
+  font-family: Arial, sans-serif!important;
+  border-style: solid!important;
+  border-width: 1px!important;
+  overflow: hidden!important;
+  word-break: normal!important;
+  vertical-align: middle!important;
 }
 
 #ItemCostSheet .title_container {
-  display: flex;
-  justify-content: space-between;
+  display: flex!important;
+  justify-content: space-between!important;
 }
 
 #ItemCostSheet .title {
-  text-align: center;
-  margin-bottom: 3cm;
-  margin-top: 0.5cm;
-  font-size: 3em;
-  width: 100%;
+  text-align: center!important;
+  margin-bottom: 3cm!important;
+  margin-top: 0.5cm!important;
+  font-size: 3em!important;
+  width: 100%!important;
 }
 
 #ItemCostSheet table.tb_approval {
-  height: 3.6cm;
-  width: 8cm;
-  margin-bottom: 1cm;
-  text-align: center;
+  height: 3.6cm!important;
+  width: 8cm!important;
+  margin-bottom: 1cm!important;
+  text-align: center!important;
 }
 
 #ItemCostSheet table.tb_approval th {
-  height: 0.7cm;
+  height: 0.7cm!important;
 }
 
 #ItemCostSheet table.tb_approval tr.contents {
-  height: 2cm;
+  height: 2cm!important;
 }
 
 #ItemCostSheet table.main_tb .center {
-  text-align: center;
+  text-align: center!important;
 }
 
 #ItemCostSheet table.main_tb .number {
-  text-align: right;
+  text-align: right!important;
 }
 
 #ItemCostSheet table.main_tb th,
 #ItemCostSheet table.main_tb td {
-  padding: 0 0.1cm;
-  line-height: 0.6cm;
-  height: 1.2cm;
-  word-wrap: break-word;
-  font-size: 0.85em;
+  padding: 0 0.1cm!important;
+  line-height: 0.6cm!important;
+  height: 1.2cm!important;
+  word-wrap: break-word!important;
+  font-size: 0.85em!important;
 }
 
 #ItemCostSheet .right {
-  float: right;
-  clear: both;
+  float: right!important;
+  clear: both!important;
 }
 
 #ItemCostSheet .red {
-  background-color: rgb(253, 242, 242);
+  background-color: rgb(253, 242, 242)!important;
 }
 
 #ItemCostSheet .orange {
-  background-color: rgb(255, 233, 220);
+  background-color: rgb(255, 233, 220)!important;
 }
 
 /**************** 업무일지 ****************/
 
 #DailyReport {
-  width: 100%;
+  width: 100%!important;
 }
 
 #DailyReport table {
-  border: 1px solid;
-  table-layout: fixed;
-  border-collapse: collapse;
-  border-spacing: 0;
+  border: 1px solid!important;
+  table-layout: fixed!important;
+  border-collapse: collapse!important;
+  border-spacing: 0!important;
 }
 
 #DailyReport td,
 #DailyReport th {
-  font-family: Arial, sans-serif;
-  border-style: solid;
-  border-width: 1px;
-  overflow: hidden;
-  word-break: normal;
-  vertical-align: middle;
+  font-family: Arial, sans-serif!important;
+  border-style: solid!important;
+  border-width: 1px!important;
+  overflow: hidden!important;
+  word-break: normal!important;
+  vertical-align: middle!important;
 }
 
 #DailyReport .title_container {
-  display: flex;
-  justify-content: space-between;
+  display: flex!important;
+  justify-content: space-between!important;
 }
 
 #DailyReport .title {
-  text-align: center;
-  margin-bottom: 3cm;
-  margin-top: 0.5cm;
-  font-size: 3em;
-  width: 100%;
+  text-align: center!important;
+  margin-bottom: 3cm!important;
+  margin-top: 0.5cm!important;
+  font-size: 3em!important;
+  width: 100%!important;
 }
 
 #DailyReport table.tb_approval {
-  height: 3.6cm;
-  width: 8cm;
-  margin-bottom: 1cm;
-  text-align: center;
+  height: 3.6cm!important;
+  width: 8cm!important;
+  margin-bottom: 1cm!important;
+  text-align: center!important;
 }
 
 #DailyReport table.tb_approval th {
-  height: 0.7cm;
+  height: 0.7cm!important;
 }
 
 #DailyReport table.tb_approval tr.contents {
-  height: 2cm;
+  height: 2cm!important;
 }
 
 #DailyReport table.main_tb .center {
-  text-align: center;
+  text-align: center!important;
 }
 
 #DailyReport table.main_tb .number {
-  text-align: right;
+  text-align: right!important;
 }
 
 #DailyReport table.main_tb th,
 #DailyReport table.main_tb td {
-  padding: 0 0.1cm;
-  line-height: 0.6cm;
-  height: 1.2cm;
-  word-wrap: break-word;
-  font-size: 0.85em;
+  padding: 0 0.1cm!important;
+  line-height: 0.6cm!important;
+  height: 1.2cm!important;
+  word-wrap: break-word!important;
+  font-size: 0.85em!important;
 }
 
 #DailyReport .right {
-  float: right;
-  clear: both;
+  float: right!important;
+  clear: both!important;
 }
 
 /**************** 작업일보 ****************/
 
 #WorkDailyReport table {
-  border: 1px solid;
-  table-layout: fixed;
-  border-collapse: collapse;
-  border-spacing: 0;
+  border: 1px solid!important;
+  table-layout: fixed!important;
+  border-collapse: collapse!important;
+  border-spacing: 0!important;
 }
 
 #WorkDailyReport td,
 #WorkDailyReport th {
-  font-family: Arial, sans-serif;
-  border-style: solid;
-  border-width: 1px;
-  overflow: hidden;
-  word-break: normal;
-  vertical-align: middle;
+  font-family: Arial, sans-serif!important;
+  border-style: solid!important;
+  border-width: 1px!important;
+  overflow: hidden!important;
+  word-break: normal!important;
+  vertical-align: middle!important;
 }
 
 #WorkDailyReport .title_container {
-  display: flex;
-  justify-content: space-between;
+  display: flex!important;
+  justify-content: space-between!important;
 }
 
 #WorkDailyReport .title {
-  text-align: center;
-  margin-bottom: 3cm;
-  margin-top: 0.5cm;
-  font-size: 3em;
-  width: 100%;
+  text-align: center!important;
+  margin-bottom: 3cm!important;
+  margin-top: 0.5cm!important;
+  font-size: 3em!important;
+  width: 100%!important;
 }
 
 #WorkDailyReport table.tb_approval {
-  height: 3.6cm;
-  width: 8cm;
-  margin-bottom: 1cm;
-  text-align: center;
+  height: 3.6cm!important;
+  width: 8cm!important;
+  margin-bottom: 1cm!important;
+  text-align: center!important;
 }
 
 #WorkDailyReport table.tb_approval th {
-  height: 0.7cm;
+  height: 0.7cm!important;
 }
 
 #WorkDailyReport table.tb_approval tr.contents {
-  height: 2cm;
+  height: 2cm!important;
 }
 
 #WorkDailyReport table.main_tb .center {
-  text-align: center;
+  text-align: center!important;
 }
 
 #WorkDailyReport table.main_tb .number {
-  text-align: right;
+  text-align: right!important;
 }
 
 #WorkDailyReport table.main_tb th,
 #WorkDailyReport table.main_tb td {
-  padding: 0 0.1cm;
-  line-height: 0.6cm;
-  height: 1.2cm;
-  word-wrap: break-word;
-  font-size: 0.85em;
+  padding: 0 0.1cm!important;
+  line-height: 0.6cm!important;
+  height: 1.2cm!important;
+  word-wrap: break-word!important;
+  font-size: 0.85em!important;
 }
 
 #WorkDailyReport .right {
-  float: right;
-  clear: both;
+  float: right!important;
+  clear: both!important;
 }
 
 /**************** 직접입고 ********************/
 #BarcodePrint table {
-  border: 1px solid;
-  table-layout: fixed;
-  border-collapse: collapse;
-  border-spacing: 0;
+  border: 1px solid!important;
+  table-layout: fixed!important;
+  border-collapse: collapse!important;
+  border-spacing: 0!important;
 }
 
 #BarcodePrint td,
 #BarcodePrint th {
-  font-family: Arial, sans-serif;
-  border-style: solid;
-  border-width: 1px;
-  overflow: hidden;
-  word-break: normal;
-  vertical-align: middle;
+  font-family: Arial, sans-serif!important;
+  border-style: solid!important;
+  border-width: 1px!important;
+  overflow: hidden!important;
+  word-break: normal!important;
+  vertical-align: middle!important;
 }
 
 #BarcodePrint .title_container {
-  display: flex;
-  justify-content: space-between;
+  display: flex!important;
+  justify-content: space-between!important;
 }
 
 #BarcodePrint .title {
-  text-align: center;
-  margin-bottom: 3cm;
-  margin-top: 0.5cm;
-  font-size: 3em;
-  width: 100%;
+  text-align: center!important;
+  margin-bottom: 3cm!important;
+  margin-top: 0.5cm!important;
+  font-size: 3em!important;
+  width: 100%!important;
 }
 
 #BarcodePrint table.tb_approval {
-  height: 3.6cm;
-  width: 8cm;
-  margin-bottom: 1cm;
-  text-align: center;
+  height: 3.6cm!important;
+  width: 8cm!important;
+  margin-bottom: 1cm!important;
+  text-align: center!important;
 }
 
 #BarcodePrint table.tb_approval th {
-  height: 0.7cm;
+  height: 0.7cm!important;
 }
 
 #BarcodePrint table.tb_approval tr.contents {
-  height: 2cm;
+  height: 2cm!important;
 }
 
 #BarcodePrint table.main_tb .center {
-  text-align: center;
+  text-align: center!important;
 }
 
 #BarcodePrint table.main_tb .number {
-  text-align: right;
+  text-align: right!important;
 }
 
 #BarcodePrint table.main_tb th,
 #BarcodePrint table.main_tb td {
-  padding: 0 0.1cm;
-  line-height: 0.6cm;
-  height: 1.2cm;
-  word-wrap: break-word;
-  font-size: 0.85em;
+  padding: 0 0.1cm!important;
+  line-height: 0.6cm!important;
+  height: 1.2cm!important;
+  word-wrap: break-word!important;
+  font-size: 0.85em!important;
 }
 
 #BarcodePrint .right {
-  float: right;
-  clear: both;
+  float: right!important;
+  clear: both!important;
 }
 
 /**************** 근태허가신청 ****************/
 
 #AbsenceRequest table {
-  border: 1px solid;
-  table-layout: fixed;
-  border-collapse: collapse;
-  border-spacing: 0;
+  border: 1px solid!important;
+  table-layout: fixed!important;
+  border-collapse: collapse!important;
+  border-spacing: 0!important;
 }
 
 #AbsenceRequest td,
 #AbsenceRequest th {
-  font-family: Arial, sans-serif;
-  border-style: solid;
-  border-width: 1px;
-  overflow: hidden;
-  word-break: normal;
-  vertical-align: middle;
+  font-family: Arial, sans-serif!important;
+  border-style: solid!important;
+  border-width: 1px!important;
+  overflow: hidden!important;
+  word-break: normal!important;
+  vertical-align: middle!important;
 }
 
 #AbsenceRequest .title {
-  text-align: center;
-  margin-bottom: 3cm;
-  margin-top: 0.5cm;
-  font-size: 2.5em;
+  text-align: center!important;
+  margin-bottom: 3cm!important;
+  margin-top: 0.5cm!important;
+  font-size: 2.5em!important;
 }
 
 #AbsenceRequest table.tb_approval {
-  height: 3.6cm;
-  width: 8cm;
-  margin-bottom: 1cm;
-  text-align: center;
+  height: 3.6cm!important;
+  width: 8cm!important;
+  margin-bottom: 1cm!important;
+  text-align: center!important;
 }
 
 #AbsenceRequest table.tb_approval th {
-  height: 0.7cm;
+  height: 0.7cm!important;
 }
 
 #AbsenceRequest table.tb_approval tr.contents {
-  height: 2cm;
+  height: 2cm!important;
 }
 
 #AbsenceRequest table.tb_mid {
-  height: 6cm;
-  width: 100%;
+  height: 6cm!important;
+  width: 100%!important;
 }
 
 #AbsenceRequest table.tb_mid td {
-  padding-left: 0.5cm;
-  line-height: 0.8cm;
-  height: 0.8cm;
+  padding-left: 0.5cm!important;
+  line-height: 0.8cm!important;
+  height: 0.8cm!important;
 }
 
 #AbsenceRequest .right {
-  float: right;
-  clear: both;
+  float: right!important;
+  clear: both!important;
 }
 
 #AbsenceRequest #reason {
-  padding: 4cm 0;
-  text-align: center;
-  font-size: 1.3em;
+  padding: 4cm 0!important;
+  text-align: center!important;
+  font-size: 1.3em!important;
 }
 
 #AbsenceRequest td.tg-baqh.number {
-  text-align: right;
-  padding-right: 5px;
+  text-align: right!important;
+  padding-right: 5px!important;
 }
 
 #AbsenceRequest td.tg-baqh.bottom_dot {
-  border-bottom: 2px dotted;
+  border-bottom: 2px dotted!important;
 }
 
 #AbsenceRequest td.tg-baqh.foot_1 {
-  text-align: right;
+  text-align: right!important;
 }
 
 #AbsenceRequest .tg th {
-  font-family: Arial, sans-serif;
-  font-size: 14px;
-  font-weight: normal;
-  /*padding:10px 5px;*/
-  border-style: solid;
-  border-width: 1px;
-  overflow: hidden;
-  word-break: normal;
+  font-family: Arial, sans-serif!important;
+  font-size: 14px!important;
+  font-weight: normal!important;
+  /*padding:10px 5px!important;*/
+  border-style: solid!important;
+  border-width: 1px!important;
+  overflow: hidden!important;
+  word-break: normal!important;
 }
 
 #AbsenceRequest tr.contents .tg-baqh {
-  font-size: 0.95em;
+  font-size: 0.95em!important;
 }
 
 #AbsenceRequest .page-break {
-  page-break-before: always;
+  page-break-before: always!important;
 }
 
 #AbsenceRequest .tg .tg-baqh {
-  text-align: center;
-  vertical-align: middle;
-  height: 44px;
-  font-size: 0.95em;
+  text-align: center!important;
+  vertical-align: middle!important;
+  height: 44px!important;
+  font-size: 0.95em!important;
 }
 
 #AbsenceRequest .tg .tg-qj3h {
-  font-size: 1.4em;
-  text-align: center;
-  vertical-align: middle;
+  font-size: 1.4em!important;
+  text-align: center!important;
+  vertical-align: middle!important;
 }
 
 #AbsenceRequest
 
-/*.tg .tg-lqy6{text-align:right;vertical-align:top}*/
+/*.tg .tg-lqy6{text-align:right!important;vertical-align:top}*/
 #AbsenceRequest .tg .tg-13pz {
   /*등록번호*/
-  font-size: 1.1em;
-  text-align: center;
-  vertical-align: middle;
-  height: 23.2px;
+  font-size: 1.1em!important;
+  text-align: center!important;
+  vertical-align: middle!important;
+  height: 23.2px!important;
 }
 
 #AbsenceRequest .span1 {
-  letter-spacing: 10px;
-  font-weight: bold;
-  font-size: 1.2em;
+  letter-spacing: 10px!important;
+  font-weight: bold!important;
+  font-size: 1.2em!important;
 }
 
 #AbsenceRequest .span2 {
-  font-size: 0.65em;
+  font-size: 0.65em!important;
 }
 
 #AbsenceRequest #btn_print {
-  width: 21cm;
-  height: 35px;
-  font-size: 1.1em;
-  top: 0;
-  margin-bottom: 10px;
+  width: 21cm!important;
+  height: 35px!important;
+  font-size: 1.1em!important;
+  top: 0!important;
+  margin-bottom: 10px!important;
 }
 
 #AbsenceRequest .qc {
-  background-color: #ffff73;
+  background-color: #ffff73!important;
 }
 
 #AbsenceRequest caption {
-  caption-side: bottom;
+  caption-side: bottom!important;
 }
 
 #AbsenceRequest .qc caption {
-  background-color: #ffff73;
+  background-color: #ffff73!important;
 }
 
 #AbsenceRequest span.cap1 {
-  float: left;
-  font-size: 0.8em;
+  float: left!important;
+  font-size: 0.8em!important;
 }
 
 #AbsenceRequest span.cap2 {
-  /*float:right;*/
-  font-size: 0.8em;
-  font-weight: bold;
+  /*float:right!important;*/
+  font-size: 0.8em!important;
+  font-weight: bold!important;
 }
 
 /*loading화면*/
 #AbsenceRequest #mask {
-  z-index: 9998;
-  position: absolute;
-  background-color: black;
-  opacity: 0.4;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: -1px;
+  z-index: 9998!important;
+  position: absolute!important;
+  background-color: black!important;
+  opacity: 0.4!important;
+  width: 100%!important;
+  height: 100%!important;
+  left: 0!important;
+  top: -1px!important;
   /*없으면 인쇄버튼 들이 안가려짐*/
 }
 
 #AbsenceRequest .important-cell {
-  background-color: rgb(235, 235, 235);
-  font-weight: 600;
+  background-color: rgb(235, 235, 235)!important;
+  font-weight: 600!important;
 }
 
 #AbsenceRequest .important-cell2 {
-  background-color: rgb(255, 247, 175);
-  font-weight: 600;
+  background-color: rgb(255, 247, 175)!important;
+  font-weight: 600!important;
 }
 
 #AbsenceRequest .tb_at_bottom .tg-baqh {
-  height: 50px;
+  height: 50px!important;
 }
 
 #AbsenceRequest #date {
-  margin-bottom: 1cm;
+  margin-bottom: 1cm!important;
 }
 
 #AbsenceRequest #name {
-  display: inline-block;
-  width: 3.5cm;
-  text-align: center;
+  display: inline-block!important;
+  width: 3.5cm!important;
+  text-align: center!important;
 }
 
 #AbsenceRequest .bottom {
-  font-size: 1.1em;
+  font-size: 1.1em!important;
 }
 
 #AbsenceRequest #company {
-  margin-top: 5cm;
-  text-align: center;
+  margin-top: 5cm!important;
+  text-align: center!important;
 }
 
 #AbsenceRequest #button1 {
-  background-color: transparent;
-  color: #ff2015;
-  border: solid 2px #ff2015;
-  width: 2cm;
-  height: 40px;
-  margin-bottom: 5px;
+  background-color: transparent!important;
+  color: #ff2015!important;
+  border: solid 2px #ff2015!important;
+  width: 2cm!important;
+  height: 40px!important;
+  margin-bottom: 5px!important;
 }
 
 #AbsenceRequest #button1:hover {
-  color: #820e08;
-  border: solid 2px #820e08;
+  color: #820e08!important;
+  border: solid 2px #820e08!important;
 }
 
 #AbsenceRequest #button2 {
-  background-color: #1076ab;
-  color: white;
-  border: none;
-  width: 2cm;
-  height: 40px;
-  margin-bottom: 5px;
+  background-color: #1076ab!important;
+  color: white!important;
+  border: none!important;
+  width: 2cm!important;
+  height: 40px!important;
+  margin-bottom: 5px!important;
 }
 
 #AbsenceRequest #button2:hover {
-  background-color: #004c77;
+  background-color: #004c77!important;
 }
 
 #AbsenceRequest .button-head #button1,
 #AbsenceRequest .button-head #button2 {
-  font-family: "Noto Sans KR", "Myriad Pro", "dotum", sans-serif;
-  font-size: 18px;
-  font-weight: 100;
+  font-family: "Noto Sans KR", "Myriad Pro", "dotum", sans-serif!important;
+  font-size: 18px!important;
+  font-weight: 100!important;
 }
 
 #AbsenceRequest .button_wrap {
-  width: 21cm;
-  text-align: right;
+  width: 21cm!important;
+  text-align: right!important;
 }
 
 /**************** 지출결의서 ****************/
 
 #CashDisbursementVoucher .logo {
-  /* background-image: url(image/gst_logo2.png); */
-  background-repeat: no-repeat;
-  width: 60%;
-  height: 90%;
-  background-size: 100%;
-  display: inline-block;
-  background-position: center;
+  /* background-image: url(image/gst_logo2.png)!important; */
+  background-repeat: no-repeat!important;
+  width: 60%!important;
+  height: 90%!important;
+  background-size: 100%!important;
+  display: inline-block!important;
+  background-position: center!important;
 }
 
 #CashDisbursementVoucher table {
-  border: 2px solid;
-  table-layout: fixed;
-  border-collapse: collapse;
-  border-spacing: 0;
-  width: 17cm;
+  border: 2px solid!important;
+  table-layout: fixed!important;
+  border-collapse: collapse!important;
+  border-spacing: 0!important;
+  width: 17cm!important;
 }
 
 #CashDisbursementVoucher table.top_tb {
-  height: 5cm;
+  height: 5cm!important;
 }
 
 #CashDisbursementVoucher table td,
 #CashDisbursementVoucher table th {
-  font-size: 0.8em;
+  font-size: 0.8em!important;
 }
 
 #CashDisbursementVoucher table.top_tb tr:nth-child(2) th:first-child,
 #CashDisbursementVoucher table.top_tb tr:nth-child(4) td:first-child {
-  height: 0.7cm;
+  height: 0.7cm!important;
 }
 
 #CashDisbursementVoucher table.top_tb tr:nth-child(2) th:nth-child(5) {
-  width: 0.5cm;
+  width: 0.5cm!important;
 }
 
 #CashDisbursementVoucher table.title_tb tr,
 #CashDisbursementVoucher table.main_tb tr {
-  height: 0.8cm;
+  height: 0.8cm!important;
 }
 
 #CashDisbursementVoucher table.main_tb tr:last-child {
-  height: 2.5cm;
+  height: 2.5cm!important;
 }
 
 #CashDisbursementVoucher table.main_tb {
-  border-bottom: none;
-  border-top: none;
+  border-bottom: none!important;
+  border-top: none!important;
 }
 
 #CashDisbursementVoucher table.main_tb:last-child {
-  border-bottom: solid 2px;
+  border-bottom: solid 2px!important;
 }
 
 #CashDisbursementVoucher table.title_tb {
-  border-top: none;
-  border-bottom: none;
+  border-top: none!important;
+  border-bottom: none!important;
 }
 
 #CashDisbursementVoucher table.title_tb tr:first-child th {
-  border-top: none;
+  border-top: none!important;
 }
 
 #CashDisbursementVoucher table.title_tb tr:last-child th {
-  border-bottom: none;
+  border-bottom: none!important;
 }
 
 #CashDisbursementVoucher td,
 #CashDisbursementVoucher th {
-  font-family: Arial, sans-serif;
-  border-style: solid;
-  border-width: 1px;
-  overflow: hidden;
-  word-break: normal;
-  text-align: center;
-  vertical-align: middle;
+  font-family: Arial, sans-serif!important;
+  border-style: solid!important;
+  border-width: 1px!important;
+  overflow: hidden!important;
+  word-break: normal!important;
+  text-align: center!important;
+  vertical-align: middle!important;
 }
 
 #CashDisbursementVoucher table.main_tb tr:last-child td:last-child {
-  text-align: left;
-  padding-left: 0.2cm;
+  text-align: left!important;
+  padding-left: 0.2cm!important;
 }
 
 #CashDisbursementVoucher .title {
-  font-size: 1.7em;
+  font-size: 1.7em!important;
 }
 
 #CashDisbursementVoucher td.number {
-  text-align: right;
-  padding-right: 0.2cm;
+  text-align: right!important;
+  padding-right: 0.2cm!important;
 }
 
 #CashDisbursementVoucher .tg th {
-  font-family: Arial, sans-serif;
-  font-size: 14px;
-  font-weight: normal;
-  /*padding:10px 5px;*/
-  border-style: solid;
-  border-width: 1px;
-  overflow: hidden;
-  word-break: normal;
+  font-family: Arial, sans-serif!important;
+  font-size: 14px!important;
+  font-weight: normal!important;
+  /*padding:10px 5px!important;*/
+  border-style: solid!important;
+  border-width: 1px!important;
+  overflow: hidden!important;
+  word-break: normal!important;
 }
 
 #CashDisbursementVoucher .page-break {
-  page-break-before: always;
+  page-break-before: always!important;
 }
 
 #CashDisbursementVoucher .important-cell {
-  background-color: rgb(235, 235, 235);
-  font-weight: 600;
+  background-color: rgb(235, 235, 235)!important;
+  font-weight: 600!important;
 }
