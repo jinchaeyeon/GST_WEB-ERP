@@ -5,7 +5,9 @@ type TChildren = {
   children: ReactNode;
 };
 const FilterContainer = ({ children }: TChildren) => {
-  const [isFilterHide, setIsFilterHide] = useState(false);
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
+  const [isFilterHide, setIsFilterHide] = useState(isMobile);
 
   return (
     <>
