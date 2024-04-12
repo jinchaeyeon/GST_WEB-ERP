@@ -353,7 +353,7 @@ const SA_B3101W: React.FC = () => {
           fileName="매입매출현황"
         >
           <Grid
-            style={{ height: "38vh" }}
+            style={{ height: "41vh" }}
             data={process(
               gridDataResult.data.map((row) => ({
                 ...row,

@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { resetLocalStorage } from "../components/CommonFunction";
-import { linkState, loginResultState } from "../store/atoms";
+import { isLoading, linkState, loginResultState } from "../store/atoms";
 
 const cachios = require("cachios");
 const domain: any = {
@@ -135,7 +135,8 @@ export const useApi = () => {
   // const [token] = useRecoilState(accessTokenState);
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
   const fileName: string = `apiserver.json`;
-
+  const setLoading = useSetRecoilState(isLoading);
+  
   const processApi = <T>(name: string, params: any = null): Promise<T> => {
     return new Promise((resolve, reject) => {
       let info: any = domain[name];
@@ -235,6 +236,8 @@ export const useApi = () => {
               })
               .catch((err: any) => {
                 const res = err.response;
+                alert("실패하였습니다. 다시 시도해주세요.");
+                setLoading(false);
                 // if (res && res.status == 401) {
                 //   // setToken(null as any);
                 //   // setMenus(null as any);
