@@ -44,7 +44,6 @@ type IKendoWindow = {
   permission?: permission;
   modal?: boolean;
 };
-const setLoading = useSetRecoilState(isLoading);
 
 const DATA_ITEM_KEY = "idx";
 let idx = 0;
@@ -66,6 +65,7 @@ const KendoWindow = ({
   });
   const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
   const [attachmentNumber, setAttachmentNumber] = useState(para);
+  const setLoading = useSetRecoilState(isLoading);
 
   const handleMove = (event: WindowMoveEvent) => {
     setPosition({ ...position, left: event.left, top: event.top });
