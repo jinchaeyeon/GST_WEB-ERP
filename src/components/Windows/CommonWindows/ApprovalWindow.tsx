@@ -1346,6 +1346,7 @@ const KendoWindow = ({
 
   const handleFileUpload = async (files: FileList | null) => {
     if (files === null) return false;
+    setLoading(true)
 
     let newAttachmentNumber = "";
     const promises = [];
@@ -1378,6 +1379,7 @@ const KendoWindow = ({
         fetchAttdatnumGrid();
       }
     }
+    setLoading(false)
   };
 
   const uploadFile = async (files: File, newAttachmentNumber?: string) => {

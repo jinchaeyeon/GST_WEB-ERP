@@ -808,6 +808,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
 
   const handleFileUpload = async (files: FileList | null) => {
     if (files === null) return false;
+    setLoading(true)
 
     let data: any;
 
@@ -829,6 +830,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
     }
 
     fetchmanualGrid();
+    setLoading(false)
   };
 
   const questionToDelete = useSysMessage("QuestionToDelete");
