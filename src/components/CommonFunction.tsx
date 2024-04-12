@@ -3,7 +3,7 @@ import { GridEvent, GridItemChangeEvent } from "@progress/kendo-react-grid";
 import { bytesToBase64 } from "byte-base64";
 import calculateSize from "calculate-size";
 import { detect } from "detect-browser";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useRef, useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useApi } from "../hooks/api";
 import { loginResultState, sessionItemState } from "../store/atoms";
@@ -13,6 +13,9 @@ import messageEnUs from "../store/cultures/Messages.en-US.json";
 import messageKoKr from "../store/cultures/Messages.ko-KR.json";
 import { TSysCaptionKey, TSysMessageKey } from "../store/types";
 import { COM_CODE_DEFAULT_VALUE, SELECTED_FIELD } from "./CommonString";
+import BScroll from '@better-scroll/core';
+
+
 
 //소수점3자리에서 반올림
 export const ThreeNumberceil = (number: number) => {
@@ -1106,4 +1109,29 @@ export const getAttdatnumQuery = (code: any) => {
     FROM comCodeMaster 
     WHERE group_code = 'SYS060' AND sub_code = '${code}'
     `;
+};
+
+// 모바일 스크롤 감지
+export const useBetterScroll = () => {
+  const scrollContainerRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    setTimeout(() => {
+      if (scrollContainerRef.current) {
+        const scroll = new BScroll(scrollContainerRef.current, {
+          scrollX: true,
+          scrollY: true,
+          click: true,
+          bounce: {
+            top: true,
+            bottom: true,
+            left: true,
+            right: true
+          }
+        });
+  
+        return () => scroll.destroy();
+      }
+    }, 50); 
+  }, []);
+  return scrollContainerRef;
 };

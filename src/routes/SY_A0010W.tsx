@@ -51,6 +51,7 @@ import {
   UsePermissions,
   getQueryFromBizComponent,
   handleKeyPressSearch,
+  useBetterScroll,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
@@ -1190,6 +1191,7 @@ const Page: React.FC = () => {
       _export.save(optionsGridOne);
     }
   };
+  const scrollRef :any = useBetterScroll();
 
   return (
     <>
@@ -1319,6 +1321,12 @@ const Page: React.FC = () => {
             group={group}
           >
             <Grid
+              ref={node => {
+                gridRef.current = node;  // Grid 기능을 위한 ref 저장
+                if (node) {
+                  scrollRef.current = node;  // BetterScroll을 위한 ref 저장
+                }
+              }}
               style={{ height: "76.5vh" }}
               data={newData.map((item: { items: any[] }) => ({
                 ...item,
@@ -1349,7 +1357,7 @@ const Page: React.FC = () => {
               pageable={true}
               onPageChange={pageChange}
               //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
+              // ref={gridRef}
               rowHeight={30}
               resizable={true}
             >
@@ -1418,7 +1426,12 @@ const Page: React.FC = () => {
               take={page2.take}
               pageable={true}
               onPageChange={pageChange2}
-              ref={gridRef2}
+              ref={node => {
+                gridRef2.current = node;  // Grid 기능을 위한 ref 저장
+                if (node) {
+                  scrollRef.current = node;  // BetterScroll을 위한 ref 저장
+                }
+              }}
               rowHeight={30}
               //정렬기능
               sortable={true}
