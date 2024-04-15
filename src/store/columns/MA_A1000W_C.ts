@@ -102,7 +102,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_itemacnt",
         field: "itemacnt",
-        caption: "품목계쩡",
+        caption: "품목계정",
         width: 120,
       },
       {

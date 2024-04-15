@@ -15,7 +15,7 @@ import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
 import CryptoJS from "crypto-js";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInInput,
@@ -50,11 +50,18 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import UserWindow from "../components/Windows/CommonWindows/UserWindow";
 import DetailWindow from "../components/Windows/HU_A1000W_Window";
 import { useApi } from "../hooks/api";
-import { deletedAttadatnumsState, isLoading } from "../store/atoms";
+import {
+  deletedAttadatnumsState,
+  isLoading,
+  loginResultState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/HU_A1000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 import sigData from "../store/map/sig.json";
 import sidoData from "../store/map/sido.json";
+import { CSSProperties } from "styled-components";
+import { TabStripSelectEventArguments } from "@progress/kendo-react-layout";
+import { Container } from "@mui/material";
 
 const dateField = ["regorgdt", "rtrdt"];
 interface IPrsnnum {
@@ -64,7 +71,6 @@ interface IPrsnnum {
   abilcd: string;
   postcd: string;
 }
-
 
 declare global {
   interface Window {
@@ -134,6 +140,43 @@ interface Geometry {
   type: string;
   coordinates: number[][][];
 }
+
+interface OrgProps {
+  user_name: string;
+  postcd: string | undefined;
+  profile_img?: string;
+  backgroundColor: string;
+}
+
+interface OrgData {
+  orgdiv: string;
+  dptcd: string;
+  dptnm: string;
+  location: string;
+  mfcsaldv: string;
+  prntdptcd: string;
+  prntdptnm: string;
+  refdptcd: string;
+  remark: string;
+  useyn: string;
+  postcd: string;
+}
+
+// 직급별 정렬
+const getPositionOrder = (postcd: string): number => {
+  switch (postcd) {
+    case "PM":
+      return 1;
+    case "팀장":
+      return 2;
+    case "주임":
+      return 3;
+    case "사원":
+      return 4;
+    default:
+      return 5;
+  }
+};
 
 // 지도 직원 거주지 클러스터링 위해 페이지 사이즈 임의로 늘림
 const PAGE_SIZE = 10000;
@@ -393,7 +436,6 @@ const HU_A1000W: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-
 
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
@@ -768,50 +810,50 @@ const HU_A1000W: React.FC = () => {
     if (paraDataDeleted.work_type != "") fetchToDelete();
   }, [paraDataDeleted]);
 
-// 지도
+  // 지도
 
-const [showMap, setShowMap] = useState(false);
-const [mapLoaded, setMapLoaded] = useState(false);
-const [map, setMap] = useState<any>(null);
-const [newMainDataResult, setNewMainDataResult] = useState<any>(null);
+  const [showMap, setShowMap] = useState(false);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [map, setMap] = useState<any>(null);
+  const [newMainDataResult, setNewMainDataResult] = useState<any>(null);
 
-const convertAddressToLatLng = async () => {
-  setLoading(true);
-  const apiKey = "2ff229205b565c4bb29089b6569c6ee8"; // 여기에 실제 API 키를 입력하세요.
-  const newResults = await mainDataResult.data.reduce(
-    async (accPromise, item) => {
-      const acc = await accPromise;
-      if (!item.koraddr || item.koraddr.trim() === "") {
-        // 주소가 비어있는 경우, 변환 없이 현재 아이템을 결과에 추가하지 않음
-        return acc;
-      }
-
-      const address = item.koraddr.trim();
-      const response = await fetch(
-        `https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(
-          address
-        )}`,
-        {
-          headers: {
-            Authorization: `KakaoAK ${apiKey}`,
-          },
+  const convertAddressToLatLng = async () => {
+    setLoading(true);
+    const apiKey = "2ff229205b565c4bb29089b6569c6ee8"; // 여기에 실제 API 키를 입력하세요.
+    const newResults = await mainDataResult.data.reduce(
+      async (accPromise, item) => {
+        const acc = await accPromise;
+        if (!item.koraddr || item.koraddr.trim() === "") {
+          // 주소가 비어있는 경우, 변환 없이 현재 아이템을 결과에 추가하지 않음
+          return acc;
         }
-      );
-      const json = await response.json();
 
-      if (json.documents && json.documents.length > 0) {
-        const { x, y } = json.documents[0];
-        acc.push({ ...item, lat: y, lng: x }); // 변환 성공한 경우만 결과 배열에 추가
-      }
-      // 변환 실패한 경우는 결과 배열에 추가하지 않음
-      return acc;
-    },
-    Promise.resolve([])
-  );
-  
-  setNewMainDataResult({ data: newResults });
-  setLoading(false);
-};
+        const address = item.koraddr.trim();
+        const response = await fetch(
+          `https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(
+            address
+          )}`,
+          {
+            headers: {
+              Authorization: `KakaoAK ${apiKey}`,
+            },
+          }
+        );
+        const json = await response.json();
+
+        if (json.documents && json.documents.length > 0) {
+          const { x, y } = json.documents[0];
+          acc.push({ ...item, lat: y, lng: x }); // 변환 성공한 경우만 결과 배열에 추가
+        }
+        // 변환 실패한 경우는 결과 배열에 추가하지 않음
+        return acc;
+      },
+      Promise.resolve([])
+    );
+
+    setNewMainDataResult({ data: newResults });
+    setLoading(false);
+  };
 
   // 카카오 지도 스크립트 로드 함수
   const loadKakaoMapScript = () => {
@@ -849,7 +891,7 @@ const convertAddressToLatLng = async () => {
           center: new window.kakao.maps.LatLng(36.4683, 127.9358),
           level: 12,
         };
-        
+
         const map = new window.kakao.maps.Map(container, options);
         let detailMode: boolean = false;
 
@@ -869,10 +911,10 @@ const convertAddressToLatLng = async () => {
         const addPolygons = (map: any, data: FeatureCollection): void => {
           // 기존에 표시된 모든 폴리곤을 제거
           allPolygons.forEach((polygon) => polygon.setMap(null));
-          allPolygons = []; 
+          allPolygons = [];
 
           // 기존에 표시된 모든 오버레이를 제거
-          allOverlays.forEach(overlay => overlay.setMap(null));
+          allOverlays.forEach((overlay) => overlay.setMap(null));
           allOverlays = [];
 
           const polygons = data.features.map((feature) => {
@@ -947,9 +989,9 @@ const convertAddressToLatLng = async () => {
           const level = map.getLevel();
 
           // 기존 폴리곤 제거
-          allPolygons.forEach(polygon => polygon.setMap(null));
+          allPolygons.forEach((polygon) => polygon.setMap(null));
           allPolygons = [];
-          allOverlays.forEach(overlay => overlay.setMap(null));
+          allOverlays.forEach((overlay) => overlay.setMap(null));
           allOverlays = [];
 
           if (level < 10) {
@@ -969,11 +1011,11 @@ const convertAddressToLatLng = async () => {
       });
     }
   };
-  
+
   useEffect(() => {
     convertAddressToLatLng();
   }, [mainDataResult]);
-  
+
   // showMap 상태가 변경될 때마다 처리
   useEffect(() => {
     if (showMap && !mapLoaded) {
@@ -1032,8 +1074,527 @@ const convertAddressToLatLng = async () => {
     return markers;
   };
 
+  // 조직도
+  const [showOrg, setShowOrg] = useState(false);
+  const [loginResult] = useRecoilState(loginResultState);
+  const companyCode = loginResult ? loginResult.companyCode : "";
+  const [information, setInformation] = useState<OrgData[]>([]);
+  const [information2, setInformation2] = useState<OrgProps[]>([]);
+  const [combinedResult, setCombinedResult] = useState<any[]>([]);
+  const [profileImg, setProfileImg] = useState<any[]>([]);
+  const [dptcdArray, setDptcdArray] = useState<string[]>([]);
+  UseBizComponent(
+    "L_dptcd_001, L_HU005",
+    // 부서코드부서명, 직위
+    setBizComponentData
+  );
+  const [dptcdListData2, setDptcdListData2] = useState([
+    { dptcd: "", dptnm: "" },
+  ]);
+  useEffect(() => {
+    if (bizComponentData !== null) {
+      const dtpcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_dptcd_001"
+        )
+      );
+      const postcdQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+      );
+      fetchQuery(dtpcdQueryStr, (data: any) => {
+        setDptcdListData2(data);
+        setDptcdArray(data.map((item: any) => item.dptcd));
+      });
+      fetchQuery(postcdQueryStr, setpostcdListData);
+    }
+  }, [bizComponentData]);
 
+  //조회조건 초기값
+  const [filters2, setFilters2] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "Q",
+    orgdiv: "01",
+    location: "",
+    dptcd: "",
+    dptnm: "",
+    user_name: "",
+    serviceid: companyCode,
+    find_row_value: "",
+    isSearch: true,
+  });
+  const [subFilters, setsubFilters] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "USERINFO",
+    orgdiv: "01",
+    dptcd: "",
+    dptnm: "",
+    user_name: "",
+    serviceid: companyCode,
+    location: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
 
+  const [picFilters, setpicFilters] = useState({
+    pgSize: PAGE_SIZE,
+    work_type: "LIST",
+    cboOrgdiv: "01",
+    cboLocation: "",
+    dptcd: "",
+    lang_id: "",
+    user_category: "",
+    user_id: "",
+    user_name: "",
+    radRtrchk: "%",
+    radUsediv: "%",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: true,
+  });
+
+  const fetchData = async (filters2: any) => {
+    const parameters: Iparameters = {
+      procedureName: "P_SY_A0125W_Q",
+      pageNumber: 1,
+      pageSize: 500,
+      parameters: {
+        "@p_work_type": filters2.workType,
+        "@p_orgdiv": filters2.orgdiv,
+        "@p_location": filters2.location,
+        "@p_dptcd": filters2.dptcd,
+        "@p_dptnm": filters2.dptnm,
+        "@p_user_name": filters2.user_name,
+        "@p_serviceid": filters2.serviceid,
+      },
+    };
+
+    try {
+      const data = await processApi<any>("procedure", parameters);
+      if (data.isSuccess === true) {
+        setInformation(data.tables[0].Rows);
+      } else {
+        console.log("[에러발생]");
+      }
+    } catch (error) {
+      console.error("API 호출 중 오류:", error);
+    }
+  };
+  useEffect(() => {
+    fetchData(filters2);
+  }, [filters2]);
+
+  const fetchData2 = async (subFilters: any, dptcdArray: string[]) => {
+    let tempCombinedResult: any[] = [];
+
+    for (const dptcd of dptcdArray) {
+      const subparameters: Iparameters = {
+        procedureName: "P_SY_A0125W_Q",
+        pageNumber: subFilters.pgNum,
+        pageSize: subFilters.pgSize,
+        parameters: {
+          "@p_work_type": subFilters.workType,
+          "@p_orgdiv": subFilters.orgdiv,
+          "@p_location": subFilters.location,
+          "@p_dptcd": dptcd, // 각 부서 코드를 전달
+          "@p_dptnm": subFilters.dptnm,
+          "@p_user_name": subFilters.user_name,
+          "@p_serviceid": subFilters.serviceid,
+        },
+      };
+
+      try {
+        const data = await processApi<any>("procedure", subparameters);
+        if (data.isSuccess === true) {
+          tempCombinedResult = [...tempCombinedResult, ...data.tables[0].Rows];
+        } else {
+          console.log("[에러발생]");
+        }
+      } catch (error) {
+        console.error("API 호출 중 오류:", error);
+      }
+    }
+    setCombinedResult(tempCombinedResult);
+  };
+
+  useEffect(() => {
+    fetchData2(subFilters, dptcdArray);
+  }, [dptcdArray]);
+
+  const fetchData3 = async (picFilters: any) => {
+    //if (!permissions?.view) return;
+    let data: any;
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_SY_A0012W_Q ",
+      pageNumber: picFilters.pgNum,
+      pageSize: picFilters.pgSize,
+      parameters: {
+        "@p_work_type": picFilters.work_type,
+        "@p_orgdiv": picFilters.cboOrgdiv,
+        "@p_location": picFilters.cboLocation,
+        "@p_dptcd": picFilters.dptcd,
+        "@p_lang_id": picFilters.lang_id,
+        "@p_user_category": picFilters.user_category,
+        "@p_user_id": picFilters.user_id,
+        "@p_user_name": picFilters.user_name,
+        "@p_rtrchk": picFilters.radRtrchk === "T" ? "%" : picFilters.radRtrchk,
+        "@p_usediv": picFilters.radUsediv,
+        "@p_find_row_value": picFilters.find_row_value,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      const profileImageData = rows.map((row: any) => {
+        return {
+          user_id: row.user_id,
+          profile_img: row.profile_image,
+        };
+      });
+      setProfileImg(profileImageData);
+    }
+  };
+
+  useEffect(() => {
+    fetchData3(picFilters);
+  }, [picFilters]);
+
+  interface ProfileProps {
+    user_name: string;
+    postcd: string | undefined;
+    profile_img?: string;
+    color?: string;
+  }
+
+  const Profile = ({ user_name, postcd, profile_img, color }: ProfileProps) => {
+    const isProfileNeeded = (postcd: string | undefined) => {
+      return postcd === "이사" || postcd === "PM";
+    };
+
+    return (
+      <>
+        {isProfileNeeded(postcd) ? (
+          <div
+            style={{
+              background: "#f3f3f3",
+              borderRadius: "15px",
+              height: "200px",
+              width: "165px",
+              boxShadow: "12px 12px rgba(0,0,0,0.1)",
+              transition: "all 0.3s cubic-bezier(.25,.8,.25,1)",
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column" as FlexDirection,
+              border: "1px solid #e4e2e2",
+              marginBottom: "30px",
+            }}
+          >
+            <img
+              src={
+                profile_img
+                  ? `data:image/jpeg;base64,${profile_img}`
+                  : "./logo192.png"
+              }
+              alt="Profile"
+              style={{
+                borderRadius: "65555px",
+                borderStyle: "solid",
+                borderColor: "#e2e2e2",
+                borderWidth: "2px",
+                width: "80px",
+                height: "80px",
+                objectFit: "cover",
+                margin: "auto",
+                marginTop: "50px",
+                padding: "3px",
+              }}
+            />
+            <div
+              style={{
+                color: "#ffffff",
+                height: "40px",
+                width: "100%",
+                position: "relative",
+                fontFamily: "sans-serif",
+                fontWeight: "900",
+                fontSize: "18px",
+                textAlign: "center",
+                lineHeight: "40px",
+                marginTop: "10px",
+                backgroundColor: color,
+              }}
+            >
+              {user_name}
+            </div>
+            <p
+              style={{
+                color: "#000000",
+                textAlign: "center",
+                fontFamily: "sans-serif",
+                position: "relative",
+                fontWeight: "700",
+                fontSize: "15px",
+                marginTop: "10px",
+                paddingBottom: "40px",
+              }}
+            >
+              {postcd}
+            </p>
+          </div>
+        ) : (
+          <div
+            style={{
+              background: "#f3f3f3",
+              borderRadius: "10px",
+              height: "85px",
+              width: "250px",
+              boxShadow: "12px 12px rgba(0,0,0,0.1)",
+              display: "flex",
+              marginBottom: "20px",
+              position: "relative",
+            }}
+          >
+            <img
+              src={
+                profile_img
+                  ? `data:image/jpeg;base64,${profile_img}`
+                  : "./logo192.png"
+              }
+              alt="Profile"
+              style={{
+                borderRadius: "65555px",
+                borderStyle: "solid",
+                borderColor: "#e2e2e2",
+                borderWidth: "2px",
+                width: "60px",
+                height: "60px",
+                objectFit: "cover",
+                margin: "15px 0 0 20px",
+              }}
+            />
+            <p
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                paddingLeft: "15px",
+              }}
+            >
+              <span
+                style={{
+                  fontWeight: "600",
+                  color: "#3f3f3f",
+                  fontSize: "17px",
+                  paddingBottom: "10px",
+                }}
+              >
+                {user_name}
+              </span>
+              <span
+                style={{ fontWeight: "600", fontSize: "15px", color: color }}
+              >
+                {postcd}
+              </span>
+            </p>
+          </div>
+        )}
+      </>
+    );
+  };
+
+  const OrgData = () => {
+    const departmentColors = [
+      "#FCB9AA",
+      "#FFDBCC",
+      "#ECEAE4",
+      "#A2E1DB",
+      "#55CBCD",
+      "#CCE2CB",
+      "#B6CFB6",
+      "#97C1A9",
+    ];
+
+    const getDepartmentColor = (index: number): string => {
+      // 색상 인덱스가 배열의 범위를 초과하는 경우를 대비하여 나머지 연산을 사용합니다.
+      const colorIndex = index % departmentColors.length;
+      return departmentColors[colorIndex];
+    };
+
+    return (
+      <>      
+        <div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              flexWrap: "wrap",
+              width: "100%",
+              paddingTop: "20px",
+            }}
+          >            
+            {information.map((info, index) => (
+              <div key={index} className="department">
+                {info.prntdptcd === "" && (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "flex-start",
+                      flexWrap: "wrap",
+                      marginRight: "45px",
+                    }}
+                  >
+                    <p
+                      style={{
+                        borderRadius: "8px",
+                        height: "50px",
+                        width: "170px",
+                        position: "relative",
+                        fontSize: "24px",
+                        fontWeight: "bolder",
+                        color: "white",
+                        textAlign: "center",
+                        lineHeight: "45px",
+                        backgroundColor: getDepartmentColor(index),
+                      }}
+                    >
+                      {info.dptnm}
+                    </p>
+                    {combinedResult
+                      .filter((person) => person.dptcd === info.dptcd)
+                      .map((person, personIndex) => {
+                        const profileData = profileImg.find(
+                          (item) => item.user_id === person.user_id
+                        );
+
+                        return (
+                          <div key={personIndex}>
+                            {personIndex === 0 && (
+                              <div
+                                style={{
+                                  width: "2px",
+                                  height: "30px",
+                                  backgroundColor: "black",
+                                  marginLeft: "50%",
+                                }}
+                              />
+                            )}
+                            <Profile
+                              user_name={person.user_name}
+                              postcd={
+                                postcdListData.find(
+                                  (item: any) => item.sub_code === person.postcd
+                                )?.code_name
+                              }
+                              profile_img={
+                                profileData ? profileData.profile_img : null
+                              }
+                              color={getDepartmentColor(index)}
+                            />
+                          </div>
+                        );
+                      })}
+                  </div>
+                )}
+                <div className="subdepartmentContainer">
+                  {index !== information.length - 1 && (
+                    <div className="horizontal-connector" />
+                  )}
+                  <div>
+                    {information
+                      .filter((subInfo) => subInfo.prntdptcd === info.dptcd)
+                      .map((subInfo, subIndex, array) => (
+                        <div
+                          key={subIndex}
+                          style={{
+                            borderRadius: "8px",
+                            height: "50px",
+                            width: "170px",
+                            position: "relative",
+                            fontSize: "24px",
+                            fontWeight: "bolder",
+                            color: "white",
+                            textAlign: "center",
+                            lineHeight: "45px",
+                            backgroundColor: getDepartmentColor(index),
+                          }}
+                        >
+                          {subIndex !== 0 ||
+                            (array.length > 1 && (
+                              <div
+                                style={{
+                                  width: "2px",
+                                  height: "30px",
+                                  backgroundColor: "black",
+                                  marginLeft: "50%",
+                                }}
+                              />
+                            ))}
+                          <p className="departmentText">{subInfo.dptnm}</p>
+                          {combinedResult
+                            .filter((person) => person.dptcd === subInfo.dptcd)
+                            .map((person, personIndex) => {
+                              const profileData = profileImg.find(
+                                (item) => item.user_id === person.user_id
+                              );
+                              return (
+                                <div key={personIndex}>
+                                  {personIndex === 0 && (
+                                    <div
+                                      style={{
+                                        width: "2px",
+                                        height: "30px",
+                                        backgroundColor: "black",
+                                        marginLeft: "50%",
+                                      }}
+                                    />
+                                  )}
+                                  <div className="subProfile">
+                                    <Profile
+                                      user_name={person.user_name}
+                                      postcd={
+                                        postcdListData.find(
+                                          (item: any) =>
+                                            item.sub_code === person.postcd
+                                        )?.code_name
+                                      }
+                                      profile_img={
+                                        profileData
+                                          ? profileData.profile_img
+                                          : null
+                                      }
+                                      color={getDepartmentColor(index)}
+                                    />
+                                  </div>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>        
+      </>
+    );
+  };
+
+  useEffect(() => {
+    if (showOrg) {
+      OrgData();
+    }
+  }, [showOrg]);
 
   return (
     <>
@@ -1111,12 +1672,13 @@ const convertAddressToLatLng = async () => {
           <GridTitle>기본정보</GridTitle>
 
           <ButtonContainer>
-          <Button
-              onClick={() => setShowMap(!showMap)}
-              themeColor={"primary"} 
-            >
+            <Button onClick={() => setShowMap(!showMap)} themeColor={"primary"}>
               {" "}
               {showMap ? "리스트로 보기" : "거주지 지도"}
+            </Button>
+            <Button onClick={() => setShowOrg(!showOrg)} themeColor={"primary"}>
+              {" "}
+              {showOrg ? "리스트로 보기" : "조직도 보기"}
             </Button>
             <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
               사용자생성
@@ -1131,105 +1693,108 @@ const convertAddressToLatLng = async () => {
             </Button>
           </ButtonContainer>
         </GridTitleContainer>
+
         {showMap ? (
-              <div
-                style={{ height: "76.5vh", marginTop: "5px" }}
-                id="map"
-              ></div>
-            ) : (
-        <ExcelExport
-          data={mainDataResult.data}
-          ref={(exporter) => {
-            _export = exporter;
-          }}
-          fileName="인사관리"
-        >
-          <Grid
-            style={{ height: "78vh" }}
-            data={process(
-              mainDataResult.data.map((row) => ({
-                ...row,
-                dptcd: dptcdListData.find(
-                  (item: any) => item.dptcd == row.dptcd
-                )?.dptnm,
-                postcd: postcdListData.find(
-                  (item: any) => item.sub_code === row.postcd
-                )?.code_name,
-                perregnum:
-                  row.perregnum == "" ||
-                  row.perregnum == null ||
-                  row.perregnum == undefined
-                    ? ""
-                    : decrypt(row.perregnum, row.salt),
-                telephon:
-                  row.telephon == "" ||
-                  row.telephon == null ||
-                  row.telephon == undefined
-                    ? ""
-                    : decrypt(row.telephon, row.salt),
-                phonenum:
-                  row.phonenum == "" ||
-                  row.phonenum == null ||
-                  row.phonenum == undefined
-                    ? ""
-                    : decrypt(row.phonenum, row.salt),
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              mainDataState
-            )}
-            {...mainDataState}
-            onDataStateChange={onMainDataStateChange}
-            //선택 기능
-            dataItemKey={DATA_ITEM_KEY}
-            selectedField={SELECTED_FIELD}
-            selectable={{
-              enabled: true,
-              mode: "single",
+          <div style={{ height: "76.5vh", marginTop: "5px" }} id="map"></div>
+        ) : showOrg ? (  
+          OrgData()          
+        ) : (
+          <ExcelExport
+            data={mainDataResult.data}
+            ref={(exporter) => {
+              _export = exporter;
             }}
-            onSelectionChange={onSelectionChange}
-            //스크롤 조회 기능
-            fixedScroll={true}
-            total={mainDataResult.total}
-            skip={page.skip}
-            take={page.take}
-            pageable={true}
-            onPageChange={pageChange}
-            //원하는 행 위치로 스크롤 기능
-            ref={gridRef}
-            rowHeight={30}
-            //정렬기능
-            sortable={true}
-            onSortChange={onMainSortChange}
-            //컬럼순서조정
-            reorderable={true}
-            //컬럼너비조정
-            resizable={true}
+            fileName="인사관리"
           >
-            <GridColumn cell={CommandCell} width="50px" />
-            {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]
-                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                .map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          dateField.includes(item.fieldName)
-                            ? DateCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
-                        }
-                      ></GridColumn>
-                    )
-                )}
-          </Grid>
-        </ExcelExport>)}
+            <Grid
+              style={{ height: "78vh" }}
+              data={process(
+                mainDataResult.data.map((row) => ({
+                  ...row,
+                  dptcd: dptcdListData.find(
+                    (item: any) => item.dptcd == row.dptcd
+                  )?.dptnm,
+                  postcd: postcdListData.find(
+                    (item: any) => item.sub_code === row.postcd
+                  )?.code_name,
+                  perregnum:
+                    row.perregnum == "" ||
+                    row.perregnum == null ||
+                    row.perregnum == undefined
+                      ? ""
+                      : decrypt(row.perregnum, row.salt),
+                  telephon:
+                    row.telephon == "" ||
+                    row.telephon == null ||
+                    row.telephon == undefined
+                      ? ""
+                      : decrypt(row.telephon, row.salt),
+                  phonenum:
+                    row.phonenum == "" ||
+                    row.phonenum == null ||
+                    row.phonenum == undefined
+                      ? ""
+                      : decrypt(row.phonenum, row.salt),
+                  [SELECTED_FIELD]: selectedState[idGetter(row)],
+                })),
+                mainDataState
+              )}
+              {...mainDataState}
+              onDataStateChange={onMainDataStateChange}
+              //선택 기능
+              dataItemKey={DATA_ITEM_KEY}
+              selectedField={SELECTED_FIELD}
+              selectable={{
+                enabled: true,
+                mode: "single",
+              }}
+              onSelectionChange={onSelectionChange}
+              //스크롤 조회 기능
+              fixedScroll={true}
+              total={mainDataResult.total}
+              skip={page.skip}
+              take={page.take}
+              pageable={true}
+              onPageChange={pageChange}
+              //원하는 행 위치로 스크롤 기능
+              ref={gridRef}
+              rowHeight={30}
+              //정렬기능
+              sortable={true}
+              onSortChange={onMainSortChange}
+              //컬럼순서조정
+              reorderable={true}
+              //컬럼너비조정
+              resizable={true}
+            >
+              <GridColumn cell={CommandCell} width="50px" />
+              {customOptionData !== null &&
+                customOptionData.menuCustomColumnOptions["grdList"]
+                  .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+                  .map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            dateField.includes(item.fieldName)
+                              ? DateCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder === 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        ></GridColumn>
+                      )
+                  )}
+            </Grid>
+          </ExcelExport>
+        )}
       </GridContainer>
       {userWindowVisible && (
         <UserWindow
@@ -1279,5 +1844,7 @@ const convertAddressToLatLng = async () => {
     </>
   );
 };
+
+type FlexDirection = "row" | "row-reverse" | "column" | "column-reverse";
 
 export default HU_A1000W;
