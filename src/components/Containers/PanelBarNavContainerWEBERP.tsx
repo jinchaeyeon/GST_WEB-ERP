@@ -11,6 +11,7 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
+import Tooltip from "@mui/material/Tooltip";
 import {
   DataResult,
   GroupDescriptor,
@@ -35,7 +36,6 @@ import {
   TabStripTab,
 } from "@progress/kendo-react-layout";
 import { Popup } from "@progress/kendo-react-popup";
-import { Tooltip } from "@progress/kendo-react-tooltip";
 import { userIcon } from "@progress/kendo-svg-icons";
 import { useCallback, useEffect, useState } from "react";
 import cookie from "react-cookies";
@@ -1204,7 +1204,10 @@ const PanelBarNavContainer = (props: any) => {
                           <PanelBarItem
                             key={childIdx}
                             title={
-                              <Tooltip position="right" anchorElement="target">
+                              <Tooltip
+                                title={childPath.menuName}
+                                placement="right"
+                              >
                                 <span title={childPath.menuName}>
                                   {childPath.menuName}
                                 </span>
