@@ -42,7 +42,6 @@
     "@progress/kendo-react-popup": "^5.14.1",
     "@progress/kendo-react-progressbars": "^5.9.0",
     "@progress/kendo-react-scheduler": "^5.9.0",
-    "@progress/kendo-react-tooltip": "^5.18.0",
     "@progress/kendo-react-treelist": "^5.9.0",
     "@progress/kendo-react-treeview": "^5.14.1",
     "@progress/kendo-react-upload": "^5.9.0",
