@@ -78,7 +78,7 @@ import { FormWithCustomEditor } from "../components/Scheduler/custom-form";
 import { CustomEditItem } from "../components/Scheduler/custom-item";
 import { CustomItem } from "../components/Scheduler/customItem";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { OSState, isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/CM_A1600W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -197,7 +197,7 @@ const CM_A1600: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("CM_A1600W", setMessagesData);
-
+  const [osstate, setOSState] = useRecoilState(OSState);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   if (!OLD_COMPANY.includes(companyCode)) {
@@ -2248,19 +2248,34 @@ const CM_A1600: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>개인 스케줄(표)</GridTitle>
               </GridTitleContainer>
-              <Scheduler
-                height={"73vh"}
-                data={schedulerDataResult}
-                onDataChange={handleDataChange}
-                defaultDate={displayDate}
-                editable={true}
-                editItem={CustomEditItem}
-                form={FormWithCustomEditor}
-              >
-                <WeekView />
-                <MonthView />
-                <DayView />
-              </Scheduler>
+              {osstate == true ? (
+                <div
+                  style={{
+                    backgroundColor: "#ccc",
+                    height: "73vh",
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  현재 OS에서는 지원이 불가능합니다.
+                </div>
+              ) : (
+                <Scheduler
+                  height={"73vh"}
+                  data={schedulerDataResult}
+                  onDataChange={handleDataChange}
+                  defaultDate={displayDate}
+                  editable={true}
+                  editItem={CustomEditItem}
+                  form={FormWithCustomEditor}
+                >
+                  <WeekView />
+                  <MonthView />
+                  <DayView />
+                </Scheduler>
+              )}
             </GridContainer>
             <GridContainer width={`calc(35% - ${GAP}px)`}>
               <FilterContainer>
@@ -2525,31 +2540,46 @@ const CM_A1600: React.FC = () => {
             </FilterBox>
           </FilterContainer>
           <GridContainer>
-            <Scheduler
-              height={"77vh"}
-              data={schedulerDataResult2}
-              defaultDate={displayDate}
-              group={{
-                resources: ["person"],
-                orientation,
-              }}
-              resources={[
-                {
-                  name: "person",
-                  data: userListData,
-                  field: "person",
-                  valueField: "value",
-                  textField: "text",
-                },
-              ]}
-              item={CustomItem}
-            >
-              <TimelineView
-                columnWidth={schedulerFilter2.width}
-                slotDuration={schedulerFilter2.number2 * 60}
-                numberOfDays={schedulerFilter2.number}
-              />
-            </Scheduler>
+            {osstate == true ? (
+              <div
+                style={{
+                  backgroundColor: "#ccc",
+                  height: "77vh",
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                현재 OS에서는 지원이 불가능합니다.
+              </div>
+            ) : (
+              <Scheduler
+                height={"77vh"}
+                data={schedulerDataResult2}
+                defaultDate={displayDate}
+                group={{
+                  resources: ["person"],
+                  orientation,
+                }}
+                resources={[
+                  {
+                    name: "person",
+                    data: userListData,
+                    field: "person",
+                    valueField: "value",
+                    textField: "text",
+                  },
+                ]}
+                item={CustomItem}
+              >
+                <TimelineView
+                  columnWidth={schedulerFilter2.width}
+                  slotDuration={schedulerFilter2.number2 * 60}
+                  numberOfDays={schedulerFilter2.number}
+                />
+              </Scheduler>
+            )}
           </GridContainer>
         </TabStripTab>
         <TabStripTab title="개인 스케줄(표)">

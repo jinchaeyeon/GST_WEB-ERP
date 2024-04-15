@@ -33,7 +33,7 @@ import {
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { OSState, isLoading, loginResultState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 const CUSTOMER_ITEM_KEY = "custcd";
@@ -180,20 +180,38 @@ const SA_A2300_PDA: React.FC = () => {
   const CustomItem = (props: SchedulerItemProps) => (
     <SchedulerItem {...props} onClick={onClickSchedulerItem} />
   );
+  const [osstate, setOSState] = useRecoilState(OSState);
 
   const tabPage1 = (
     <>
       <TitleContainer>
         <Title>출고처리(PDA)</Title>
       </TitleContainer>
-      <Scheduler
-        height={deviceHeight * 0.85}
-        data={schedulerDataResult.length > 0 ? schedulerDataResult : undefined}
-        defaultDate={new Date()}
-        item={CustomItem}
-      >
-        <MonthView />
-      </Scheduler>
+      {osstate == true ? (
+        <div
+          style={{
+            backgroundColor: "#ccc",
+            height: `${deviceHeight * 0.85}px`,
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          현재 OS에서는 지원이 불가능합니다.
+        </div>
+      ) : (
+        <Scheduler
+          height={deviceHeight * 0.85}
+          data={
+            schedulerDataResult.length > 0 ? schedulerDataResult : undefined
+          }
+          defaultDate={new Date()}
+          item={CustomItem}
+        >
+          <MonthView />
+        </Scheduler>
+      )}
     </>
   );
 

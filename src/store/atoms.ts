@@ -8,6 +8,9 @@ import {
   TpointsItem,
   TSessionItem,
 } from "./types";
+import { recoilPersist } from 'recoil-persist';
+
+const { persistAtom } = recoilPersist();
 
 const localStorageEffect: <T>(key: string) => AtomEffect<T> =
   (key: string) =>
@@ -141,4 +144,10 @@ export const colors = atom<string[]>({
 export const colorsName = atom<string>({
   key: "colorsName",
   default: "Blue",
+});
+
+export const OSState = atom<boolean>({
+  key: "OSState",
+  default: false,
+  effects_UNSTABLE: [persistAtom]
 });

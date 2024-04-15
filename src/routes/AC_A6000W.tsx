@@ -79,9 +79,10 @@ import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRange
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { OSState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/AC_A6000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import { useRecoilState } from "recoil";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -378,6 +379,7 @@ const AC_A6000W: React.FC = () => {
   //메시지 조회
   const [messagesData, setMessagesData] = useState<any>(null);
   UseMessages("AC_A6000W", setMessagesData);
+  const [osstate, setOSState] = useRecoilState(OSState);
   const [custcd, setCustcd] = useState<string>("");
   const [custnm, setCustnm] = useState<string>("");
   const [custcd2, setCustcd2] = useState<string>("");
@@ -1992,17 +1994,32 @@ const AC_A6000W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle>일정</GridTitle>
           </GridTitleContainer>
-          <Scheduler
-            height={"81vh"}
-            data={schedulerDataResult}
-            date={filters.frdt}
-            defaultDate={new Date()}
-            item={CustomItem}
-            viewSlot={CustomViewSlot}
-            header={(props) => <React.Fragment />}
-          >
-            <MonthView itemsPerSlot={8} />
-          </Scheduler>
+          {osstate == true ? (
+            <div
+              style={{
+                backgroundColor: "#ccc",
+                height: "81vh",
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              현재 OS에서는 지원이 불가능합니다.
+            </div>
+          ) : (
+            <Scheduler
+              height={"81vh"}
+              data={schedulerDataResult}
+              date={filters.frdt}
+              defaultDate={new Date()}
+              item={CustomItem}
+              viewSlot={CustomViewSlot}
+              header={(props) => <React.Fragment />}
+            >
+              <MonthView itemsPerSlot={8} />
+            </Scheduler>
+          )}
         </GridContainer>
         <GridContainer width={`calc(40% - ${GAP}px)`}>
           <FormBoxWrap>

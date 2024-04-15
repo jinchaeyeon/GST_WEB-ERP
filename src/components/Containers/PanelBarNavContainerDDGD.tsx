@@ -1,3 +1,4 @@
+import Tooltip from "@mui/material/Tooltip";
 import { Button } from "@progress/kendo-react-buttons";
 import {
   AutoComplete,
@@ -8,7 +9,6 @@ import {
   PanelBarItem,
   PanelBarSelectEventArguments,
 } from "@progress/kendo-react-layout";
-import { Tooltip } from "@progress/kendo-react-tooltip";
 import { useCallback, useEffect, useState } from "react";
 import cookie from "react-cookies";
 import { useHistory, useLocation, withRouter } from "react-router-dom";
@@ -33,7 +33,6 @@ import {
   deletedNameState,
   isMenuOpendState,
   isMobileMenuOpendState,
-  linkState,
   loginResultState,
   menuList,
   menusState,
@@ -653,10 +652,15 @@ const PanelBarNavContainer = (props: any) => {
                           <PanelBarItem
                             key={childIdx}
                             title={
-                              <Tooltip position="right" anchorElement="target">
-                                <span title={childPath.menuName}>
-                                  {childPath.menuName}
-                                </span>
+                              <Tooltip
+                                title={childPath.menuName}
+                                placement="right"
+                              >
+                                <>
+                                  <span title={childPath.menuName}>
+                                    {childPath.menuName}
+                                  </span>
+                                </>
                               </Tooltip>
                             }
                             route={
