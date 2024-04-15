@@ -81,6 +81,7 @@ const SY_A0025W: React.FC = () => {
   UsePermissions(setPermissions);
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
+  const [showAdditionalFields, setShowAdditionalFields] = useState(false);
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -1185,7 +1186,7 @@ const SY_A0025W: React.FC = () => {
             fileName="관리번호 채번정보"
           >
             <Grid
-              style={{ height: "81.8vh" }}
+              style={{ height: isMobile ? "50vh" : "81.8vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1348,7 +1349,7 @@ const SY_A0025W: React.FC = () => {
             <FormBoxWrap
               border={true}
               style={{
-                height: "59vh",
+                minHeight: isMobile ? "40vh" : "59vh",
                 display: isMobile == true ? "block" : "flex",
                 alignItems: "center",
               }}
@@ -1389,6 +1390,9 @@ const SY_A0025W: React.FC = () => {
                       </td>
                     )}
                   </tr>
+                  {!isMobile || (isMobile && showAdditionalFields) ? (
+<>
+
                   <tr>
                     <th>채번요소2</th>
                     <td>
@@ -1521,6 +1525,26 @@ const SY_A0025W: React.FC = () => {
                       </td>
                     )}
                   </tr>
+                  </>
+                ) : null}
+                {isMobile && (
+                  <tr>
+                    <td>
+                      <Button
+                        themeColor={"primary"}
+                        fillMode={null}
+                        onClick={() =>
+                          setShowAdditionalFields(!showAdditionalFields)
+                        }
+                      >
+                        {showAdditionalFields
+                          ? "채변 숨기기"
+                          : "채변 더보기"}
+                      </Button>
+                    </td>
+                  </tr>
+                )}
+
                   <tr>
                     <th>시작채번연변</th>
                     <td colSpan={3}>
@@ -1589,7 +1613,7 @@ const SY_A0025W: React.FC = () => {
             fileName="관리번호 채번정보"
           >
             <Grid
-              style={{ height: "81.6vh" }}
+              style={{ height: isMobile ? "50vh" : "81.6vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,

@@ -13,7 +13,7 @@ import {
   GridPageChangeEvent,
   GridSelectionChangeEvent,
   GridSortChangeEvent,
-  getSelectedState
+  getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Checkbox, Input, TextArea } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
@@ -1212,6 +1212,8 @@ const KendoWindow = ({
     });
   };
 
+  const [showAdditionalFields, setShowAdditionalFields] = useState(false);
+
   return (
     <Window
       title={workType === "N" ? "공통코드 생성" : "공통코드 정보"}
@@ -1318,63 +1320,87 @@ const KendoWindow = ({
                     />
                   </td>
                 </tr>
+                {!isMobile || (isMobile && showAdditionalFields) ? (
+                  <>
+                    <tr>
+                      <th>여유필드캡션5</th>
+                      <td>
+                        <Input
+                          name="field_caption5"
+                          type="text"
+                          value={initialVal.field_caption5}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>여유필드캡션6</th>
+                      <td>
+                        <Input
+                          name="field_caption6"
+                          type="text"
+                          value={initialVal.field_caption6}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>여유필드캡션7</th>
+                      <td>
+                        <Input
+                          name="field_caption7"
+                          type="text"
+                          value={initialVal.field_caption7}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>여유필드캡션8</th>
+                      <td>
+                        <Input
+                          name="field_caption8"
+                          type="text"
+                          value={initialVal.field_caption8}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>여유필드캡션9</th>
+                      <td>
+                        <Input
+                          name="field_caption9"
+                          type="text"
+                          value={initialVal.field_caption9}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>여유필드캡션10</th>
+                      <td>
+                        <Input
+                          name="field_caption10"
+                          type="text"
+                          value={initialVal.field_caption10}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                  </>
+                ) : null}
+                {isMobile && (
+                  <tr>
+                    <td>
+                      <Button
+                        themeColor={"primary"}
+                        fillMode={null}
+                        onClick={() =>
+                          setShowAdditionalFields(!showAdditionalFields)
+                        }
+                      >
+                        {showAdditionalFields
+                          ? "여유 필드 숨기기"
+                          : "여유 필드 더보기"}
+                      </Button>
+                    </td>
+                  </tr>
+                )}
+
                 <tr>
-                  <th>여유필드캡션5</th>
-                  <td>
-                    <Input
-                      name="field_caption5"
-                      type="text"
-                      value={initialVal.field_caption5}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>여유필드캡션6</th>
-                  <td>
-                    <Input
-                      name="field_caption6"
-                      type="text"
-                      value={initialVal.field_caption6}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>여유필드캡션7</th>
-                  <td>
-                    <Input
-                      name="field_caption7"
-                      type="text"
-                      value={initialVal.field_caption7}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>여유필드캡션8</th>
-                  <td>
-                    <Input
-                      name="field_caption8"
-                      type="text"
-                      value={initialVal.field_caption8}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>여유필드캡션9</th>
-                  <td>
-                    <Input
-                      name="field_caption9"
-                      type="text"
-                      value={initialVal.field_caption9}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>여유필드캡션10</th>
-                  <td>
-                    <Input
-                      name="field_caption10"
-                      type="text"
-                      value={initialVal.field_caption10}
-                      onChange={filterInputChange}
-                    />
-                  </td>
                   <th>숫자 참조 필드1</th>
                   <td>
                     <Input
@@ -1393,8 +1419,6 @@ const KendoWindow = ({
                       onChange={filterInputChange}
                     />
                   </td>
-                </tr>
-                <tr>
                   <th>숫자 참조 필드3</th>
                   <td>
                     <Input
@@ -1413,6 +1437,8 @@ const KendoWindow = ({
                       onChange={filterInputChange}
                     />
                   </td>
+                </tr>
+                <tr>
                   <th>숫자 참조 필드5</th>
                   <td>
                     <Input
@@ -1474,7 +1500,10 @@ const KendoWindow = ({
           />
         </GridContainer>
       </GridContainerWrap>
-      <GridContainer height="calc(100% - 420px)" margin={{ top: "30px", bottom: "30px" }}>
+      <GridContainer
+        height="calc(100% - 420px)"
+        margin={{ top: "30px", bottom: "30px" }}
+      >
         <ButtonContainer>
           <Button
             themeColor={"primary"}

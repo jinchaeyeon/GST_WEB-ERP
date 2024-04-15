@@ -214,6 +214,8 @@ const Page: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const processApi = useApi();
@@ -2131,7 +2133,7 @@ const Page: React.FC = () => {
             fileName="사용자 권한"
           >
             <Grid
-              style={{ height: "77.8vh" }}
+              style={{ height: isMobile ? "50vh" : "77.8vh" }}
               data={process(
                 mainDataResult.data.map((row, idx) => ({
                   ...row,
@@ -2179,13 +2181,13 @@ const Page: React.FC = () => {
               <GridColumn
                 field={"chk_org"}
                 title={"원본"}
-                width={"45px"}
+                width={"50px"}
                 cell={CheckBoxCell}
               />
               <GridColumn
                 field={"chk_tar"}
                 title={"대상"}
-                width={"45px"}
+                width={"50px"}
                 cell={CheckBoxCell}
               />
               {customOptionData !== null &&
@@ -2369,7 +2371,7 @@ const Page: React.FC = () => {
             fileName="사용자 권한"
           >
             <TreeList
-              style={{ height: "78.2vh" }}
+              style={{ height: isMobile ? "50vh" : "78.2vh" ,overflowY: "scroll"}}
               data={mapTree(allMenuDataResult.data, SUB_ITEMS_FIELD, (item) =>
                 extendDataItem(item, SUB_ITEMS_FIELD, {
                   [EXPANDED_FIELD]: allMenuDataResult.expanded.includes(
