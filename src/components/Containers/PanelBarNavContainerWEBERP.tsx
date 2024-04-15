@@ -1208,9 +1208,11 @@ const PanelBarNavContainer = (props: any) => {
                                 title={childPath.menuName}
                                 placement="right"
                               >
-                                <span title={childPath.menuName}>
-                                  {childPath.menuName}
-                                </span>
+                                <>
+                                  <span title={childPath.menuName}>
+                                    {childPath.menuName}
+                                  </span>
+                                </>
                               </Tooltip>
                             }
                             route={

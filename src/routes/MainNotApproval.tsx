@@ -27,7 +27,7 @@ import {
   GridContainerWrap,
   GridTitle,
   GridTitleContainer,
-  MainTopContainer
+  MainTopContainer,
 } from "../CommonStyled";
 import CenterCell from "../components/Cells/CenterCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
@@ -46,7 +46,7 @@ import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { LayoutSquareRead } from "../components/DnD/LayoutSquareRead";
 import { PieceRead } from "../components/DnD/PieceRead";
 import { useApi } from "../hooks/api";
-import { loginResultState, sessionItemState } from "../store/atoms";
+import { OSState, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 const DATA_ITEM_KEY = "datnum";
@@ -71,6 +71,7 @@ const Main: React.FC = () => {
   const userId = loginResult ? loginResult.userId : "";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const geoLocation = useGeoLocation();
+  const [osstate, setOSState] = useRecoilState(OSState);
 
   useEffect(() => {
     fetchSessionItem();
@@ -824,16 +825,31 @@ const Main: React.FC = () => {
                     </div>
                   )}
                 </GridTitleContainer>
-                <Scheduler
-                  height={"718px"}
-                  data={schedulerDataResult}
-                  defaultDate={displayDate}
-                  item={CustomItem}
-                >
-                  <MonthView />
-                  <DayView />
-                  <WeekView />
-                </Scheduler>
+                {osstate == true ? (
+                  <div
+                    style={{
+                      backgroundColor: "#ccc",
+                      height: "718px",
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    현재 OS에서는 지원이 불가능합니다.
+                  </div>
+                ) : (
+                  <Scheduler
+                    height={"718px"}
+                    data={schedulerDataResult}
+                    defaultDate={displayDate}
+                    item={CustomItem}
+                  >
+                    <MonthView />
+                    <DayView />
+                    <WeekView />
+                  </Scheduler>
+                )}
               </GridContainer>
             </TabStripTab>
             <TabStripTab

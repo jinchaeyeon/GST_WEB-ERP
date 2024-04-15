@@ -49,7 +49,7 @@ import {
 import { PAGE_SIZE } from "../components/CommonString";
 import { FormWithCustomEditor } from "../components/Scheduler/custom-form_CM_A3100W";
 import { useApi } from "../hooks/api";
-import { isLoading, loginResultState } from "../store/atoms";
+import { OSState, isLoading, loginResultState } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
 let temp = 0;
@@ -82,13 +82,14 @@ const CM_A3100W: React.FC = () => {
   const [resultState, setResultState] = useState<GroupResult[]>(
     processWithGroups([], initialGroup)
   );
+  const [osstate, setOSState] = useRecoilState(OSState);
   const [list, setList] = useState([]);
   const [view, setView] = React.useState("timeline");
   const [date, setDate] = React.useState(new Date());
   const [orientation, setOrientation] = React.useState<
     "horizontal" | "vertical"
   >("vertical");
-  console.log(data);
+
   const handleViewChange = React.useCallback(
     (event: any) => {
       setView(event.value);
@@ -728,38 +729,53 @@ const CM_A3100W: React.FC = () => {
                 </Button>
               </ButtonContainer>
             </GridTitleContainer>
-            <Scheduler
-              id="CM_A3100W_SCHEDULER"
-              data={data}
-              onDataChange={handleDataChange}
-              view={view}
-              onViewChange={handleViewChange}
-              date={date}
-              onDateChange={handleDateChange}
-              editable={true}
-              defaultDate={filters.todt}
-              footer={(props) => <React.Fragment />}
-              group={{
-                resources: ["전체"],
-                orientation,
-              }}
-              resources={[
-                {
-                  name: "전체",
-                  data: list,
-                  field: "resource",
-                  valueField: "value",
-                  textField: "text",
-                },
-              ]}
-              form={FormWithCustomEditor}
-            >
-              <TimelineView showWorkHours={false} />
-              <DayView showWorkHours={false} />
-              <WeekView showWorkHours={false} />
-              <MonthView />
-              <AgendaView />
-            </Scheduler>
+            {osstate == true ? (
+              <div
+                style={{
+                  backgroundColor: "#ccc",
+                  height: "100%",
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                현재 OS에서는 지원이 불가능합니다.
+              </div>
+            ) : (
+              <Scheduler
+                id="CM_A3100W_SCHEDULER"
+                data={data}
+                onDataChange={handleDataChange}
+                view={view}
+                onViewChange={handleViewChange}
+                date={date}
+                onDateChange={handleDateChange}
+                editable={true}
+                defaultDate={filters.todt}
+                footer={(props) => <React.Fragment />}
+                group={{
+                  resources: ["전체"],
+                  orientation,
+                }}
+                resources={[
+                  {
+                    name: "전체",
+                    data: list,
+                    field: "resource",
+                    valueField: "value",
+                    textField: "text",
+                  },
+                ]}
+                form={FormWithCustomEditor}
+              >
+                <TimelineView showWorkHours={false} />
+                <DayView showWorkHours={false} />
+                <WeekView showWorkHours={false} />
+                <MonthView />
+                <AgendaView />
+              </Scheduler>
+            )}
           </GridContainer>
           <GridContainer style={{ marginTop: "10px" }}></GridContainer>
         </GridContainer>

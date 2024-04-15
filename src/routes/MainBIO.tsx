@@ -41,7 +41,7 @@ import Card from "../components/KPIcomponents/Card/CardBox";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import MessengerWindow from "../components/Windows/CommonWindows/MessengerWindow";
 import { useApi } from "../hooks/api";
-import { loginResultState, sessionItemState } from "../store/atoms";
+import { OSState, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 interface Tsize {
@@ -98,6 +98,8 @@ const Main: React.FC = () => {
   const onMessengerClick = () => {
     setWindowVisible(true);
   };
+  const [osstate, setOSState] = useRecoilState(OSState);
+
   //그리드 데이터 스테이트
   const [allPanelDataState, setAllPanelDataState] = useState<State>({
     sort: [],
@@ -822,16 +824,31 @@ const Main: React.FC = () => {
                       </div>
                     )}
                   </GridTitleContainer>
-                  <Scheduler
-                    height={"600px"}
-                    data={schedulerDataResult}
-                    defaultDate={displayDate}
-                    item={CustomItem}
-                  >
-                    <MonthView />
-                    <DayView />
-                    <WeekView />
-                  </Scheduler>
+                  {osstate == true ? (
+                    <div
+                      style={{
+                        backgroundColor: "#ccc",
+                        height: "600px",
+                        width: "100%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      현재 OS에서는 지원이 불가능합니다.
+                    </div>
+                  ) : (
+                    <Scheduler
+                      height={"600px"}
+                      data={schedulerDataResult}
+                      defaultDate={displayDate}
+                      item={CustomItem}
+                    >
+                      <MonthView />
+                      <DayView />
+                      <WeekView />
+                    </Scheduler>
+                  )}
                 </GridContainer>
               </TabStripTab>
               <TabStripTab

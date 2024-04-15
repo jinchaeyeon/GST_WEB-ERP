@@ -50,7 +50,7 @@ import { GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import { LayoutSquareRead } from "../components/DnD/LayoutSquareRead";
 import { PieceRead } from "../components/DnD/PieceRead";
 import { useApi } from "../hooks/api";
-import { loginResultState, sessionItemState } from "../store/atoms";
+import { OSState, loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
 const DATA_ITEM_KEY = "datnum";
@@ -76,6 +76,7 @@ const Main: React.FC = () => {
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const geoLocation = useGeoLocation();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [osstate, setOSState] = useRecoilState(OSState);
   // Kendo Chart에 Theme 적용하는데 간헐적으로 오류 발생하여 n초 후 렌더링되도록 처리함 (메인메뉴 접속할때마다 적용)
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -871,16 +872,31 @@ const Main: React.FC = () => {
                     </div>
                   )}
                 </GridTitleContainer>
-                <Scheduler
-                  height={"718px"}
-                  data={schedulerDataResult}
-                  defaultDate={displayDate}
-                  item={CustomItem}
-                >
-                  <MonthView />
-                  <DayView />
-                  <WeekView />
-                </Scheduler>
+                {osstate == true ? (
+                  <div
+                    style={{
+                      backgroundColor: "#ccc",
+                      height: "718px",
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    현재 OS에서는 지원이 불가능합니다.
+                  </div>
+                ) : (
+                  <Scheduler
+                    height={"718px"}
+                    data={schedulerDataResult}
+                    defaultDate={displayDate}
+                    item={CustomItem}
+                  >
+                    <MonthView />
+                    <DayView />
+                    <WeekView />
+                  </Scheduler>
+                )}
               </GridContainer>
             </TabStripTab>
             <TabStripTab
