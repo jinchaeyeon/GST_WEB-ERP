@@ -2131,7 +2131,7 @@ const Page: React.FC = () => {
             fileName="사용자 권한"
           >
             <Grid
-              style={{ height: "79.8vh" }}
+              style={{ height: "77.8vh" }}
               data={process(
                 mainDataResult.data.map((row, idx) => ({
                   ...row,
@@ -2322,7 +2322,7 @@ const Page: React.FC = () => {
               fileName="사용자 권한"
             >
               <TreeList
-                style={{ height: "45vh", overflow: "auto" }}
+                style={{ height: "43vh", overflow: "auto" }}
                 data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                   extendDataItem(item, SUB_ITEMS_FIELD, {
                     [EXPANDED_FIELD]: expanded.includes(
@@ -2369,7 +2369,7 @@ const Page: React.FC = () => {
             fileName="사용자 권한"
           >
             <TreeList
-              style={{ height: "80vh" }}
+              style={{ height: "78.2vh" }}
               data={mapTree(allMenuDataResult.data, SUB_ITEMS_FIELD, (item) =>
                 extendDataItem(item, SUB_ITEMS_FIELD, {
                   [EXPANDED_FIELD]: allMenuDataResult.expanded.includes(

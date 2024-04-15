@@ -880,6 +880,7 @@ export const Gnv = styled.div<TGnv>`
 
   border-right: 1px solid rgb(235, 235, 235);
   background-color: #fff;
+    /* 메뉴 고정 추가 */
   height: 100vh;
   position: fixed;
   overflow: scroll;
@@ -948,9 +949,9 @@ export const Content = styled.div<ContentType>`
   left: calc(
     ${(props) => (props.isMenuOpen ? GNV_WIDTH : '25')}px
   );;
+  height: 97vh;
   position: fixed;
   overflow: scroll;
-  height: calc(100vh-30px);
   ::-webkit-scrollbar {
   display: none;
 }

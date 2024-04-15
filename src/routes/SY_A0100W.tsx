@@ -520,7 +520,7 @@ const App: React.FC = () => {
           group={group}
         >
           <Grid
-            style={{ height: "79.8vh" }}
+            style={{ height: "77.8vh" }}
             data={newData.map((item) => ({
               ...item,
               items: item.items.map((row: any) => ({
