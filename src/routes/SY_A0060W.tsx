@@ -282,8 +282,7 @@ const SY_A0060W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
-          {/* <Box className="overflow_scrollhidden" style={{ height: "82vh"}}> */}
-          <Box style={{ height: "80vh"}}>
+          <Box className="overflow_scrollhidden" style={{ height: "78vh" }}>
             <GridTitleContainer>
               <GridTitle></GridTitle>
               <ButtonContainer>
