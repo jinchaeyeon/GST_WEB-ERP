@@ -80,7 +80,7 @@ type TLayout = {
 
 /*우클릭 이벤트 박스*/
 export const ContextMenu = styled.div<TLayout>`
-  position: absolute;
+  position: fixed;
   width: 200px;
   background-color: #ffffff;
   border-radius: 5px;

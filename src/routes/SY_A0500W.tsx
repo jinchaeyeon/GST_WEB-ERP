@@ -99,7 +99,9 @@ const SY_A0500W: React.FC = () => {
   const layout = useMemo(() => new Layout(), []);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
-
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
+  
   //커스텀 옵션 조회
   const setLoading = useSetRecoilState(isLoading);
   const [customOptionData, setCustomOptionData] = useState<any>(null);
@@ -306,21 +308,44 @@ const SY_A0500W: React.FC = () => {
     }
   };
 
+  const longPressTimer:any = useRef(null);
   function renderSquare(
     row: number,
     col: number,
     squareStyle: CSSProperties,
-    knightLists: any[]
+    knightLists: any[],
   ) {
     const data = detailDataResult.data.filter(
       (item: any) => item.col_index == col && item.row_index == row
     )[0];
+    
+    const handleLongPress = (e: any) => {
+      e.preventDefault(); // Prevent scrolling and other default actions
+      longPressTimer.current = setTimeout(() => {
+        if (data) {
+          onClickMenu(e, row, col, data);
+        }
+      }, 500); // 500ms for long press
+    };
+  
+  
+    const clearLongPress = () => {
+      if (longPressTimer.current) {
+        clearTimeout(longPressTimer.current);
+      }
+    };
 
+    
     return (
       <div
         key={`${row}${col}`}
         style={squareStyle}
         onContextMenu={(e) => onClickMenu(e, row, col, data)}
+        onDoubleClick={(e) => onClickMenu(e, row, col, data)}
+        onTouchStart={handleLongPress}
+        onTouchEnd={clearLongPress}
+        onTouchCancel={clearLongPress} // 터치가 중단되는 경우도 처리
+        onTouchMove={clearLongPress} // 터치가 움직일 때도 중단
       >
         <LayoutSquare
           x={row}
@@ -1215,7 +1240,7 @@ const SY_A0500W: React.FC = () => {
             fileName="레이아웃 설정"
           >
             <Grid
-              style={{ height: "80.5vh" }}
+              style={{ height: isMobile ? "40vh" : "80.5vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1325,6 +1350,8 @@ const SY_A0500W: React.FC = () => {
               </Button>
             </ButtonContainer>
           </GridTitleContainer>
+          {isMobile ? null:
+          
           <FormBoxWrap>
             <FormBox>
               <tbody>
@@ -1374,6 +1401,7 @@ const SY_A0500W: React.FC = () => {
               </tbody>
             </FormBox>
           </FormBoxWrap>
+}
           <DndProvider backend={HTML5Backend}>
             <div style={containerStyle}>
               <div style={boardStyle}>{squares}</div>
