@@ -1185,7 +1185,7 @@ const SY_A0025W: React.FC = () => {
             fileName="관리번호 채번정보"
           >
             <Grid
-              style={{ height: "83.8vh" }}
+              style={{ height: "81.8vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,
@@ -1348,7 +1348,7 @@ const SY_A0025W: React.FC = () => {
             <FormBoxWrap
               border={true}
               style={{
-                minHeight: "63vh",
+                height: "59vh",
                 display: isMobile == true ? "block" : "flex",
                 alignItems: "center",
               }}
@@ -1589,7 +1589,7 @@ const SY_A0025W: React.FC = () => {
             fileName="관리번호 채번정보"
           >
             <Grid
-              style={{ height: "83.6vh" }}
+              style={{ height: "81.6vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,

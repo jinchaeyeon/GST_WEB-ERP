@@ -1327,7 +1327,7 @@ const Page: React.FC = () => {
                   scrollRef.current = node;  // BetterScroll을 위한 ref 저장
                 }
               }}
-              style={{ height: "79.8vh" }}
+              style={{ height: "77.8vh" }}
               data={newData.map((item: { items: any[] }) => ({
                 ...item,
                 items: item.items.map((row: any) => ({
@@ -1396,7 +1396,7 @@ const Page: React.FC = () => {
             fileName="공통코드정보"
           >
             <Grid
-              style={{ height: "80vh" }}
+              style={{ height: "78vh" }}
               data={process(
                 detailDataResult.data.map((row) => ({
                   ...row,
