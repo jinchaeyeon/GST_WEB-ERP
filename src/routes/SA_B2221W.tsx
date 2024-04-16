@@ -383,6 +383,7 @@ const SA_B2221: React.FC = () => {
           companies: newRows.companies,
           series: newRows.series,
         });
+        console.log(newRows.companies);
       }
     }
     // 필터 isSearch false처리, pgNum 세팅

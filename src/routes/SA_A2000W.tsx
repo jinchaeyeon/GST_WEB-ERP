@@ -1348,7 +1348,7 @@ const SA_B2000: React.FC = () => {
           fileName="수주처리"
         >
           <Grid
-            style={{ height: "37vh" }}
+            style={{ height: "35vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
