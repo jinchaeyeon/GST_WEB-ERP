@@ -1428,7 +1428,7 @@ const HU_A1000W: React.FC = () => {
     };
 
     return (
-      <>      
+      <>
         <div>
           <div
             style={{
@@ -1439,18 +1439,26 @@ const HU_A1000W: React.FC = () => {
               width: "100%",
               paddingTop: "20px",
             }}
-          >            
+          >
             {information.map((info, index) => (
-              <div key={index} className="department">
+              <div key={index} className="department"
+              style={{ marginBottom: "80px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "flex-start",
+              flexWrap: "wrap",
+              marginRight: "20px"
+               }}>
                 {info.prntdptcd === "" && (
                   <div
                     style={{
+                      marginBottom: "80px",
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
-                      justifyContent: "flex-start",
+                      justifyContent: "center",
                       flexWrap: "wrap",
-                      marginRight: "45px",
                     }}
                   >
                     <p
@@ -1483,7 +1491,7 @@ const HU_A1000W: React.FC = () => {
                                 style={{
                                   width: "2px",
                                   height: "30px",
-                                  backgroundColor: "black",
+                                  backgroundColor: "grey",
                                   marginLeft: "50%",
                                 }}
                               />
@@ -1505,9 +1513,19 @@ const HU_A1000W: React.FC = () => {
                       })}
                   </div>
                 )}
-                <div className="subdepartmentContainer">
+                <div
+                  className="subdepartmentContainer"
+                  style={{
+                    marginTop: "20px",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    flexWrap: "wrap",
+                    width: "100%",
+                  }}
+                >
                   {index !== information.length - 1 && (
-                    <div className="horizontal-connector" />
+                    <div style={{ paddingTop: "10px" }} />
                   )}
                   <div>
                     {information
@@ -1528,17 +1546,7 @@ const HU_A1000W: React.FC = () => {
                             backgroundColor: getDepartmentColor(index),
                           }}
                         >
-                          {subIndex !== 0 ||
-                            (array.length > 1 && (
-                              <div
-                                style={{
-                                  width: "2px",
-                                  height: "30px",
-                                  backgroundColor: "black",
-                                  marginLeft: "50%",
-                                }}
-                              />
-                            ))}
+                          {subIndex !== 0 || (array.length > 1 && <div />)}
                           <p className="departmentText">{subInfo.dptnm}</p>
                           {combinedResult
                             .filter((person) => person.dptcd === subInfo.dptcd)
@@ -1553,7 +1561,7 @@ const HU_A1000W: React.FC = () => {
                                       style={{
                                         width: "2px",
                                         height: "30px",
-                                        backgroundColor: "black",
+                                        backgroundColor: "grey",
                                         marginLeft: "50%",
                                       }}
                                     />
@@ -1585,7 +1593,7 @@ const HU_A1000W: React.FC = () => {
               </div>
             ))}
           </div>
-        </div>        
+        </div>
       </>
     );
   };
@@ -1696,8 +1704,8 @@ const HU_A1000W: React.FC = () => {
 
         {showMap ? (
           <div style={{ height: "76.5vh", marginTop: "5px" }} id="map"></div>
-        ) : showOrg ? (  
-          OrgData()          
+        ) : showOrg ? (
+          OrgData()
         ) : (
           <ExcelExport
             data={mainDataResult.data}

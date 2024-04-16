@@ -716,7 +716,8 @@ const SA_B2220W: React.FC = () => {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={5}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={5}
+              style={{ paddingBottom: "15px" }}>
               <PaginatorTable
                 value={ProjectList}
                 column={{

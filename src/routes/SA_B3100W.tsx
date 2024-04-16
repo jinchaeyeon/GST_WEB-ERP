@@ -749,11 +749,11 @@ const SA_B3100W: React.FC = () => {
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ height: "81.5vh", width: "100%" }}
+        style={{ height: "80vh", width: "100%", paddingBottom: "15px" }}
       >
         <TabStripTab title="전체">
           <GridContainerWrap flexDirection="column">
-            <GridContainer height="36.5vh">
+            <GridContainer height="35vh">
               <Chart
                 seriesColors={
                   window.location.href.split("/")[2].split(".")[1] == "ddgd"
@@ -802,7 +802,7 @@ const SA_B3100W: React.FC = () => {
                 fileName="매출집계(풀목)"
               >
                 <Grid
-                  style={{ height: "37vh" }}
+                  style={{ height: "35.5vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
