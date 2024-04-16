@@ -236,7 +236,6 @@ export const useApi = () => {
               })
               .catch((err: any) => {
                 const res = err.response;
-                alert("실패하였습니다. 다시 시도해주세요.");
                 setLoading(false);
                 // if (res && res.status == 401) {
                 //   // setToken(null as any);
@@ -360,20 +359,10 @@ axiosInstance.interceptors.response.use(
     message: string;
   }) => {
     const [Link, setLink] = useRecoilState(linkState);
-    // res에서 error가 발생했을 경우 catch로 넘어가기 전에 처리하는 부분
-    let errResponseStatus = null;
-    let errResponseURL = "";
-    const originalRequest = error.config;
-    // const fileName: string = `apiserver.json`;
-    // const get_text_file = async () => {
-    //   axios.get(`/${fileName}`).then((res: any) => {
-    //     setLink(res.data[0].url);
-    //   }); 
-    // };
 
-    // if (Link == undefined || Link == "") {
-    //   get_text_file();
-    // }
+    let errResponseStatus = null;
+    let errResponseURL = ""; 
+    const originalRequest = error.config;
 
     try {
       errResponseStatus = error.response.status;
