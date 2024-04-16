@@ -121,6 +121,8 @@ const SY_A0125W: React.FC = () => {
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -1333,7 +1335,7 @@ const SY_A0125W: React.FC = () => {
             fileName="부서관리"
           >
             <TreeList
-              style={{ height: "83.6vh", overflow: "auto" }}
+              style={{ height: isMobile ? "50vh" : "81.6vh", overflow: "auto" }}
               data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                 extendDataItem(item, SUB_ITEMS_FIELD, {
                   [EXPANDED_FIELD]: expanded.includes(
@@ -1496,7 +1498,7 @@ const SY_A0125W: React.FC = () => {
             fileName="부서관리"
           >
             <Grid
-              style={{ height: "64vh" }}
+              style={{ height: isMobile ? "40vh" :  "60.3vh" }}
               data={process(
                 subDataResult.data.map((row) => ({
                   ...row,

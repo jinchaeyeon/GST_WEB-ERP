@@ -716,7 +716,8 @@ const SA_B2200: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-      <GridContainer>
+      <GridContainer
+        style={{ paddingBottom: "15px" }}>
         <ExcelExport
           data={mainDataResult.data}
           ref={(exporter) => {
@@ -728,7 +729,7 @@ const SA_B2200: React.FC = () => {
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "77vh", marginBottom: "10px" }}
+            style={{ height: "76vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

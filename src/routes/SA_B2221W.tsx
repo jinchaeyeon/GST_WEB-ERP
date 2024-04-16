@@ -383,7 +383,6 @@ const SA_B2221: React.FC = () => {
           companies: newRows.companies,
           series: newRows.series,
         });
-        console.log(newRows.companies);
       }
     }
     // 필터 isSearch false처리, pgNum 세팅
@@ -714,11 +713,11 @@ const SA_B2221: React.FC = () => {
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ height: "79.5vh", width: "100%" }}
+        style={{ height: "78.2vh", width: "100%", paddingBottom: "20px" }}
       >
         <TabStripTab title="전체">
           <GridContainerWrap flexDirection="column">
-            <GridContainer height="36vh">
+            <GridContainer height="35vh">
               <Chart
                 seriesColors={
                   window.location.href.split("/")[2].split(".")[1] == "ddgd"
@@ -764,7 +763,7 @@ const SA_B2221: React.FC = () => {
                 fileName="수주집계(품목)"
               >
                 <Grid
-                  style={{ height: "35vh" }}
+                  style={{ height: "32.5vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,

@@ -759,7 +759,8 @@ const SA_B2410: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-      <GridContainer>
+      <GridContainer
+        style={{ paddingBottom: "15px" }}>
         <GridTitleContainer>
           <GridTitle>요약정보</GridTitle>
         </GridTitleContainer>
@@ -771,7 +772,7 @@ const SA_B2410: React.FC = () => {
           fileName="출고현황"
         >
           <Grid
-            style={{ height: "73vh" }}
+            style={{ height: "72.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

@@ -1,5 +1,17 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
-import { Chart } from "@progress/kendo-react-charts";
+import {
+  Chart,
+  ChartCategoryAxis,
+  ChartCategoryAxisItem,
+  ChartCategoryAxisTitle,
+  ChartLegend,
+  ChartSeries,
+  ChartSeriesItem,
+  ChartTitle,
+  ChartValueAxis,
+  ChartValueAxisItem,
+  ChartValueAxisTitle,
+} from "@progress/kendo-react-charts";
 import { getter } from "@progress/kendo-react-common";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
@@ -34,6 +46,7 @@ import {
   chkScrollHandler,
   convertDateToStr,
   handleKeyPressSearch,
+  numberWithCommas,
   setDefaultDate,
 } from "../components/CommonFunction";
 import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
@@ -45,7 +58,8 @@ import { IItemData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B3101W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-
+let deviceWidth = window.innerWidth;
+let isMobile = deviceWidth <= 1200;
 const DATA_ITEM_KEY = "num";
 const numberField: string[] = [
   "qty01",
@@ -89,18 +103,27 @@ const SA_B3101W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
-        //   itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
-        //   .valueCode,
-        //   rdoAmtdiv: defaultOption.find((item: any) => item.id === "rdoAmtdiv")
-        //   .valueCode,
+          // itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
+          // .valueCode,
+        radAmtdiv: defaultOption.find((item: any) => item.id === "radAmtdiv")
+          .valueCode,
       }));
     }
   }, [customOptionData]);
 
-  const [allChartDataResult, setAllChartDataResult] = useState({
-    companies: [""],
-    series: [0],
-  });
+  const [series, setSeries] = useState([
+    {
+      name: "매입",
+      data: [0], // value
+    },
+    {
+      name: "매출",
+      data: [0], // value
+    },
+  ]);
+  const [unitTitle, setUnitTitle] = useState("(단위: 천원)");
+  const [chartTitle, setChartTitle] = useState(convertDateToStr(new Date()).substr(0, 4) + "년 매입/매출현황");
+  const [categories, setCategories] = useState<string[]>([]);
 
   const [gridDataState, setGridDataState] = useState<State>({
     sort: [],
@@ -125,7 +148,6 @@ const SA_B3101W: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
-
     setFilters((prev) => ({
       ...prev,
       [name]: value,
@@ -157,7 +179,7 @@ const SA_B3101W: React.FC = () => {
       parameters: {
         "@p_work_type": workType,
         "@p_orgdiv": filters.orgdiv,
-        "@p_yyyy": convertDateToStr(filters.yyyy).substr(0, 4),
+        "@p_recdt": convertDateToStr(filters.yyyy).substr(0, 4),
         "@p_amtdiv": filters.radAmtdiv,
       },
     };
@@ -167,6 +189,40 @@ const SA_B3101W: React.FC = () => {
     } catch (error) {
       data = null;
     }
+
+    if (data.isSuccess === true) {
+      const rows = data.tables[0].Rows;
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      if (workType == "CHART") {
+        let newRows: { argument: string[]; income: number[]; outcome: number[] } =
+          { argument: [], income: [], outcome: [] };
+        rows.forEach((row: any) => {
+          if (!newRows.argument.includes(row.argument)) {
+            newRows.argument.push(row.argument);
+          }
+          if (row.series == "매입") {
+            newRows.income.push(row.value);
+          } else {
+            newRows.outcome.push(row.value);
+          }
+        });
+  
+        setCategories(newRows.argument);
+        setSeries([
+          { name: "매입", data: newRows.income },
+          { name: "매출", data: newRows.outcome },
+        ]);
+        Object.values(categories);
+        Object.values(series);
+      } else if (workType == "LIST") {
+        setGridDataResult((prev) => {
+          return {
+            data: rows,
+            total: totalRowCnt == -1 ? 0 : totalRowCnt,
+          };
+        });
+      }
+    } 
     setFilters((prev) => ({
       ...prev,
       isSearch: false,
@@ -184,14 +240,28 @@ const SA_B3101W: React.FC = () => {
     }));
   };
 
+  useEffect(() => {
+    if (filters.isSearch && permissions !== null) {
+      setFilters((prev) => ({ ...prev, isSearch: false }));
+      fetchGrid("CHART");
+      fetchGrid("LIST");
+    }
+  }, [filters, permissions]);
+  console.log(gridDataResult);
   //그리드 리셋
   const resetGrid = () => {
     setGridDataResult(process([], gridDataState));
-    setAllChartDataResult({
-      companies: [""],
-      series: [0],
-    });
-    setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+    setSeries([
+      {
+        name: "매입",
+        data: [0],
+      },
+      {
+        name: "매출",
+        data: [0],
+      },
+    ]);
+    // setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
   };
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
   const onGridDataStateChange = (event: GridDataStateChangeEvent) => {
@@ -281,6 +351,17 @@ const SA_B3101W: React.FC = () => {
 
   const search = () => {
     resetGrid();
+    setFilters((prev: any) => ({
+      ...prev,
+      pgNum: 1,
+      find_row_value: "",
+      isSearch: true,
+    }));
+    const unitText = filters.radAmtdiv === "A" ? "(단위: 천원)" : "(단위: 원)";
+    const chartTitle =
+    convertDateToStr(filters.yyyy).substr(0, 4) + "년 매입/매출현황";
+    setUnitTitle(unitText);
+    setChartTitle(chartTitle);
   };
 
   //엑셀 내보내기
@@ -292,6 +373,7 @@ const SA_B3101W: React.FC = () => {
       _export.save(optionsGridOne);
     }
   };
+  
 
   return (
     <>
@@ -340,11 +422,35 @@ const SA_B3101W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-      <GridContainer>
-        <GridTitleContainer>
-          <GridTitle>차트</GridTitle>
-        </GridTitleContainer>
-        <Chart></Chart>
+      <GridContainer style={{ height: "35vh" }}>
+      <GridTitle>차트</GridTitle>
+        <Chart style={{ height: !isMobile ? "100%" : "" }}>
+          <ChartTitle text={chartTitle} />
+          <ChartLegend position="top" orientation="horizontal" />
+          <ChartValueAxis>
+            <ChartValueAxisItem
+              labels={{
+                visible: true,
+                content: (e) => numberWithCommas(e.value) + "",
+              }}
+            > <ChartValueAxisTitle text={unitTitle} />
+            </ChartValueAxisItem>
+          </ChartValueAxis>
+          <ChartCategoryAxis>
+            <ChartCategoryAxisItem categories={categories} />
+          </ChartCategoryAxis>
+          <ChartSeries>
+            {series.map((item, idx) => (
+              <ChartSeriesItem
+                key={idx}
+                type="column"
+                tooltip={{ visible: true }}
+                data={item.data}
+                name={item.name}
+              />
+            ))}
+          </ChartSeries>
+        </Chart>
         <ExcelExport
           data={gridDataResult.data}
           ref={(exporter) => {
@@ -352,8 +458,9 @@ const SA_B3101W: React.FC = () => {
           }}
           fileName="매입매출현황"
         >
+          <GridTitle>상세정보</GridTitle>
           <Grid
-            style={{ height: "41vh" }}
+            style={{ height: "38.5vh" }}
             data={process(
               gridDataResult.data.map((row) => ({
                 ...row,
@@ -391,29 +498,28 @@ const SA_B3101W: React.FC = () => {
                     <GridColumn
                       key={idx}
                       field={item.fieldName}
-                      title={item.caption}
-                      footerCell={
-                        item.sortOrder === 0 ? gridTotalFooterCell : undefined
-                      }
-                    >
-                      <GridColumn />
+                      title={item.caption}                      
+                    > 
                       <GridColumn
                         title={"매입액"}
-                        cell={NumberCell}
+                        // cell={NumberCell}
                         field={item.fieldName}
                         footerCell={gridSumQtyFooterCell}
+                        width={item.width}
                       />
                       <GridColumn
                         title={"매출액"}
                         cell={NumberCell}
                         field={item.fieldName}
                         footerCell={gridSumQtyFooterCell}
+                        width={item.width}
                       />
                       <GridColumn
                         title={"%"}
                         cell={NumberCell}
                         field={item.fieldName}
                         footerCell={gridSumQtyFooterCell}
+                        width={item.width}
                       />
                     </GridColumn>
                   ) : (
@@ -433,6 +539,7 @@ const SA_B3101W: React.FC = () => {
               )}
           </Grid>
         </ExcelExport>
+        <div style={{ paddingBottom: "15px" }}/>
       </GridContainer>
       {itemWindowVisible && (
         <ItemsWindow

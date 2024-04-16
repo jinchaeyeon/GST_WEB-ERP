@@ -97,7 +97,9 @@ const Page: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const [group, setGroup] = React.useState(initialGroup);
   const [total, setTotal] = useState(0);
-
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
+  
   const idGetter = getter(DATA_ITEM_KEY);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -1327,7 +1329,7 @@ const Page: React.FC = () => {
                   scrollRef.current = node;  // BetterScroll을 위한 ref 저장
                 }
               }}
-              style={{ height: "77.8vh" }}
+              style={{ height: isMobile ? "50vh" : "77.8vh" }}
               data={newData.map((item: { items: any[] }) => ({
                 ...item,
                 items: item.items.map((row: any) => ({
@@ -1396,7 +1398,7 @@ const Page: React.FC = () => {
             fileName="공통코드정보"
           >
             <Grid
-              style={{ height: "78vh" }}
+              style={{ height: isMobile ? "50vh" : "78vh" }}
               data={process(
                 detailDataResult.data.map((row) => ({
                   ...row,

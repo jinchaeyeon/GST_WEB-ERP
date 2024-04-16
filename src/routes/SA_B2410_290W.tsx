@@ -1666,7 +1666,7 @@ const SA_B2410: React.FC = () => {
           </GridContainerWrap>
         </TabStripTab>
       </TabStrip>
-      <GridContainer style={{ marginTop: "10px" }}>
+      <GridContainer style={{ marginTop: "10px", paddingBottom: "20px" }}>
         <GridTitleContainer>
           <GridTitle>세부정보</GridTitle>
         </GridTitleContainer>
@@ -1678,7 +1678,7 @@ const SA_B2410: React.FC = () => {
           fileName="판매현황"
         >
           <Grid
-            style={{ height: "26vh" }}
+            style={{ height: "28vh" }}
             data={process(
               detail1DataResult.data.map((row) => ({
                 ...row,
