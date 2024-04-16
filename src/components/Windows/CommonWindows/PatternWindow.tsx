@@ -559,7 +559,7 @@ const KendoWindow = ({
       onClose={onClose}
       modal={modal}
     >
-      <GridContainerWrap height="calc(100% - 70px)">
+      <GridContainerWrap >
         <GridContainer width={`45%`}>
           <GridTitleContainer>
             <GridTitle>요약정보</GridTitle>
@@ -598,7 +598,7 @@ const KendoWindow = ({
             reorderable={true}
             //컬럼너비조정
             resizable={true}
-            style={{ height: `calc(100% - 40px)` }}
+            style={{ height: "52vh" }}
           >
             <GridColumn
               field="pattern_id"
@@ -655,7 +655,7 @@ const KendoWindow = ({
             resizable={true}
             onSelectionChange={onDetailDataSelectionChange2}
             onRowDoubleClick={onRowDoubleClick}
-            style={{ height: `calc(100% - 40px)` }}
+            style={{ height: "52vh" }}
           >
             <GridColumn
               field="proccd"
