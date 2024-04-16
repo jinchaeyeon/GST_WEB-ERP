@@ -632,6 +632,7 @@ const SY_A0120: React.FC = () => {
         user_category: defaultOption.find(
           (item: any) => item.id === "user_category"
         ).valueCode,
+        isSearch: true,
       }));
     }
   }, [customOptionData]);
@@ -740,7 +741,7 @@ const SY_A0120: React.FC = () => {
     radUsediv: "%",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   let gridRef: any = useRef(null);

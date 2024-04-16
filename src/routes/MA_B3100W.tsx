@@ -648,7 +648,7 @@ const MA_B3100: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-      <TabStrip selected={tabSelected} onSelect={handleSelectTab}>
+      <TabStrip selected={tabSelected} onSelect={handleSelectTab} style={{ height: "81.5vh", width: "100%" }}>
         <TabStripTab title="전체">
           <GridContainerWrap flexDirection="column">
             <GridContainer>
@@ -701,7 +701,7 @@ const MA_B3100: React.FC = () => {
                 fileName="매입집계(품목)"
               >
                 <Grid
-                  style={{ height: "28vh" }}
+                  style={{ height: "31vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,

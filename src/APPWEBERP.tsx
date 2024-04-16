@@ -268,6 +268,7 @@ import SY_A0500W from "./routes/SY_A0500W";
 import SY_B0060W from "./routes/SY_B0060W";
 import TO_B0011W from "./routes/TO_B0011W";
 import {
+  OSState,
   colors,
   isMobileMenuOpendState,
   linkState,
@@ -390,6 +391,7 @@ const AppInner: React.FC = () => {
   const role = loginResult ? loginResult.role : "";
   const isAdmin = role === "ADMIN";
   const [color, setColor] = useRecoilState(colors);
+  const [osstate, setOSState] = useRecoilState(OSState);
   const [themecolor, setThemeColor] = useState<string[]>([
     "#2196f3",
     "#1976d2",
@@ -397,6 +399,14 @@ const AppInner: React.FC = () => {
     "#bbdefb",
   ]);
 
+  useEffect(() => {
+    if (/SmartTV/i.test(navigator.userAgent) || /SmartTV/i.test(navigator.platform)) {
+      setOSState(true);
+    } else {
+      setOSState(false);
+    }
+  }, [osstate]);
+ 
   useEffect(() => {
     setThemeColor(color);
   }, [color]);

@@ -528,6 +528,7 @@ const CR_A0010W: React.FC = () => {
           ).valueCode,
           radUsediv: defaultOption.find((item: any) => item.id === "radUsediv")
             .valueCode,
+          isSearch: true,
         }));
       }
     }
@@ -600,7 +601,7 @@ const CR_A0010W: React.FC = () => {
     radUsediv: "%",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   let gridRef: any = useRef(null);

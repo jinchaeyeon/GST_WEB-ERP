@@ -1877,7 +1877,7 @@ const MA_A7000W: React.FC = () => {
             fileName="기초재고등록"
           >
             <Grid
-              style={{ height: "76vh" }}
+              style={{ height: "77vh" }}
               data={process(
                 mainDataResult.data.map((row) => ({
                   ...row,

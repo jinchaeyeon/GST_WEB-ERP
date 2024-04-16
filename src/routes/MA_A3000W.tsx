@@ -741,7 +741,7 @@ const MA_A3000W: React.FC = () => {
     return (
       <td
         colSpan={props.colSpan}
-        className={"k-grid-footer-sticky"}
+        // className={"k-grid-footer-sticky"}
         style={props.style}
         {...{ [GRID_COL_INDEX_ATTRIBUTE]: 2 }}
       >
@@ -2323,7 +2323,6 @@ const MA_A3000W: React.FC = () => {
             }}
             onSelectionChange={onSelectionChange}
             //스크롤 조회 기능
-            fixedScroll={true}
             total={mainDataResult.total}
             skip={page.skip}
             take={page.take}
@@ -2347,14 +2346,12 @@ const MA_A3000W: React.FC = () => {
             <GridColumn
               field="rowstatus"
               title=" "
-              locked={true}
               width="50px"
             />
             <GridColumn
               field="chk"
               title=" "
               width="45px"
-              locked={true}
               headerCell={CustomCheckBoxCell2}
               cell={CustomCheckBoxCell}
             />
@@ -2376,7 +2373,6 @@ const MA_A3000W: React.FC = () => {
                           ? CustomComboBoxCell
                           : undefined
                       }
-                      locked={lockField.includes(item.fieldName) ? true : false}
                       footerCell={
                         item.sortOrder === 0 ? mainTotalFooterCell : undefined
                       }
@@ -2467,7 +2463,7 @@ const MA_A3000W: React.FC = () => {
               mode: "single",
             }}
             onSelectionChange={onDetailSelectionChange}
-            fixedScroll={true}
+            fixedScroll={false}
             total={detailDataResult.total}
             skip={page2.skip}
             take={page2.take}

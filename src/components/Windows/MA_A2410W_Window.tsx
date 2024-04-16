@@ -1395,7 +1395,7 @@ const DetailWindow = ({
             </tbody>
           </FormBox>
         </FormBoxWrap>
-        <GridContainer height="calc(100% - 230px)">
+        <GridContainer style={{height: "calc(100% - 230px)", paddingBottom: "70px"}} >
           <GridTitleContainer>
             <GridTitle>상세정보</GridTitle>
             <ButtonContainer>
@@ -1423,7 +1423,7 @@ const DetailWindow = ({
             </ButtonContainer>
           </GridTitleContainer>
           <Grid
-            style={{ height: "calc(100% - 50px)" }}
+            style={{ height: "calc(100% - 50px)"}}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

@@ -21,7 +21,7 @@ import { useApi } from "../hooks/api";
 import { IFormComboBoxCell } from "../hooks/interfaces";
 import FieldCheckBox from "./CheckBoxes/FieldCheckBox";
 import FieldComboBox from "./ComboBoxes/FieldComboBox";
-import {
+import { 
   checkIsDDLValid,
   checkIsObjValid,
   getQueryFromBizComponent,
