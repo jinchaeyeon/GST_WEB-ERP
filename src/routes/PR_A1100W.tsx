@@ -2853,10 +2853,10 @@ const PR_A1100W: React.FC = () => {
                         ...row,
                         plandt: row.plandt
                           ? new Date(dateformat(row.plandt))
-                          : new Date(dateformat("19000101")),
+                          : new Date(dateformat("99991231")),
                         finexpdt: row.finexpdt
                           ? new Date(dateformat(row.finexpdt))
-                          : new Date(dateformat("19000101")),
+                          : new Date(dateformat("99991231")),
                         qtyunit: qtyunitListData.find(
                           (item: any) => item.sub_code === row.qtyunit
                         )?.code_name,

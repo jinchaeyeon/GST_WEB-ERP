@@ -3047,7 +3047,7 @@ const SA_A1000_603W: React.FC = () => {
 
     const newDataItem = {
       [DATA_ITEM_KEY2]: ++temp2,
-      enddt: "19000101",
+      enddt: "99991231",
       glpyn: "G",
       itemcd: "",
       itemlvl1: "",
@@ -3058,7 +3058,7 @@ const SA_A1000_603W: React.FC = () => {
       quoseq: 0,
       quotestnum: "",
       remark: "",
-      startdt: "19000101",
+      startdt: "99991231",
       type: "",
       rowstatus: "N",
     };
@@ -4908,10 +4908,10 @@ const SA_A1000_603W: React.FC = () => {
                             : row.rowstatus,
                         startdt: row.startdt
                           ? new Date(dateformat(row.startdt))
-                          : new Date(dateformat("19000101")),
+                          : new Date(dateformat("99991231")),
                         enddt: row.enddt
                           ? new Date(dateformat(row.enddt))
-                          : new Date(dateformat("19000101")),
+                          : new Date(dateformat("99991231")),
                         quosts: quostsListData.find(
                           (items: any) => items.sub_code == row.quosts
                         )?.code_name,

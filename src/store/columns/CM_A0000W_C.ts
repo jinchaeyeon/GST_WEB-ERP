@@ -7,7 +7,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_category",
         field: "category",
-        caption: "카테고리",
+        caption: "분류",
         width: 120,
       },
       {

@@ -1148,7 +1148,7 @@ const CopyWindow = ({
       load_place: "",
       pac: "A",
       itemlvl1: "",
-      enddt: "19000101",
+      enddt: "99991231",
       extra_field1: "",
       rowstatus: "N",
     };
@@ -1298,7 +1298,7 @@ const CopyWindow = ({
           itemlvl3: item.itemlvl3,
           itemnm: item.itemnm,
           itemno: item.itemno,
-          enddt: "19000101",
+          enddt: "99991231",
           itemthick: item.itemthick,
           len: item.len,
           load_place: item.load_place,
@@ -1349,7 +1349,7 @@ const CopyWindow = ({
     for (var i = 0; i < data.length; i++) {
       data[i].num = ++temp;
       data[i].rowstatus = "N";
-      data[i].enddt = "19000101";
+      data[i].enddt = "99991231";
     }
 
     try {
@@ -1404,7 +1404,7 @@ const CopyWindow = ({
           itemno: item.itemno,
           itemthick: 0,
           len: 0,
-          enddt: "19000101",
+          enddt: "99991231",
           lotnum: item.lotnum,
           nowqty: 0,
           ordkey: item.ordkey,
@@ -1479,7 +1479,7 @@ const CopyWindow = ({
           itemlvl3: item.itemlvl3,
           itemnm: item.itemnm,
           itemno: item.itemno,
-          enddt: "19000101",
+          enddt: "99991231",
           itemthick: item.itemthick,
           len: item.len,
           load_place: item.load_place,
@@ -2724,7 +2724,7 @@ const CopyWindow = ({
                       : row.rowstatus,
                   enddt: row.enddt
                     ? new Date(dateformat(row.enddt))
-                    : new Date(dateformat("19000101")),
+                    : new Date(dateformat("99991231")),
                   [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                 })),
                 mainDataState

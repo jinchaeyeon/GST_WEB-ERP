@@ -5551,7 +5551,7 @@ const HU_A4000W: React.FC = () => {
                             ...row,
                             baddt: row.baddt
                               ? new Date(dateformat(row.baddt))
-                              : new Date(dateformat("19000101")),
+                              : new Date(dateformat("99991231")),
                             [SELECTED_FIELD]: selectedState5[idGetter5(row)], //선택된 데이터
                           })),
                           mainDataState5
@@ -5671,7 +5671,7 @@ const HU_A4000W: React.FC = () => {
                               ...row,
                               recdt: row.recdt
                                 ? new Date(dateformat(row.recdt))
-                                : new Date(dateformat("19000101")),
+                                : new Date(dateformat("99991231")),
                               [SELECTED_FIELD]: selectedState6[idGetter6(row)], //선택된 데이터
                             })),
                             mainDataState6
@@ -5800,7 +5800,7 @@ const HU_A4000W: React.FC = () => {
                               ...row,
                               reqdt: row.reqdt
                                 ? new Date(dateformat(row.reqdt))
-                                : new Date(dateformat("19000101")),
+                                : new Date(dateformat("99991231")),
                               [SELECTED_FIELD]: selectedState7[idGetter7(row)], //선택된 데이터
                             })),
                             mainDataState7

@@ -2115,7 +2115,7 @@ const AC_A6000W: React.FC = () => {
                       )?.user_name,
                       acntdt: row.acntdt
                         ? new Date(dateformat(row.acntdt))
-                        : new Date(dateformat("19000101")),
+                        : new Date(dateformat("99991231")),
                       [SELECTED_FIELD]: selectedState[idGetter(row)],
                     })),
                     mainDataState
@@ -2249,7 +2249,7 @@ const AC_A6000W: React.FC = () => {
                       )?.user_name,
                       acntdt: row.acntdt
                         ? new Date(dateformat(row.acntdt))
-                        : new Date(dateformat("19000101")),
+                        : new Date(dateformat("99991231")),
                       [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                     })),
                     mainDataState2

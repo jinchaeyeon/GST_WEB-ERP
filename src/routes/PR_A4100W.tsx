@@ -1334,7 +1334,7 @@ const PR_A4100W: React.FC = () => {
                 ...row,
                 finexpdt: row.finexpdt
                   ? new Date(dateformat(row.finexpdt))
-                  : new Date(dateformat("19000101")),
+                  : new Date(dateformat("99991231")),
                 proccd: proccdListData.find(
                   (items: any) => items.sub_code === row.proccd
                 )?.code_name,

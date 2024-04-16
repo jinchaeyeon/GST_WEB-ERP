@@ -1061,7 +1061,7 @@ const PS_A0060_301W: React.FC = () => {
                 ...row,
                 date: row.date
                   ? new Date(dateformat(row.date))
-                  : new Date(dateformat("19000101")),
+                  : new Date(dateformat("99991231")),
                 rowstatus:
                   row.rowstatus == null ||
                   row.rowstatus == "" ||

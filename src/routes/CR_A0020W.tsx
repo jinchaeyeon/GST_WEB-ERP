@@ -745,7 +745,7 @@ const CR_A0020W: React.FC = () => {
                 ...row,
                 birdt: row.birdt
                   ? new Date(dateformat(row.birdt))
-                  : new Date(dateformat("19000101")), //new Date(dateformat("19000101")),
+                  : new Date(dateformat("99991231")), //new Date(dateformat("99991231")),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
               mainDataState

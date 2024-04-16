@@ -1106,7 +1106,7 @@ const CM_A8250W: React.FC = () => {
                   ...row,
                   recdt: row.recdt
                     ? new Date(dateformat(row.recdt))
-                    : new Date(dateformat("19000101")),
+                    : new Date(dateformat("99991231")),
                   rowstatus:
                     row.rowstatus == null ||
                     row.rowstatus == "" ||

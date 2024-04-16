@@ -2029,7 +2029,7 @@ const BA_A0080: React.FC = () => {
                     ...row,
                     recdt: row.recdt
                       ? new Date(dateformat(row.recdt))
-                      : new Date(dateformat("19000101")),
+                      : new Date(dateformat("99991231")),
                     itemlvl1: itemlvl1ListData.find(
                       (item: any) => item.sub_code === row.itemlvl1
                     )?.code_name,

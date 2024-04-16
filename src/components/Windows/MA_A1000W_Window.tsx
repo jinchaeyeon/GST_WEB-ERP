@@ -1945,7 +1945,7 @@ const CopyWindow = ({
                   )?.code_name,
                   inexpdt: row.inexpdt
                     ? new Date(dateformat(row.inexpdt))
-                    : new Date(dateformat("19000101")),
+                    : new Date(dateformat("99991231")),
                   [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                 })),
                 mainDataState

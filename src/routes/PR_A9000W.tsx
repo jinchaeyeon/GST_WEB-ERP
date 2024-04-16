@@ -2756,7 +2756,7 @@ const PR_A9000W: React.FC = () => {
                         ...row,
                         proddt: row.proddt
                           ? new Date(dateformat(row.proddt))
-                          : new Date(dateformat("19000101")),
+                          : new Date(dateformat("99991231")),
                         [SELECTED_FIELD]: selectedState[idGetter(row)],
                       })),
                       mainDataState
@@ -2889,7 +2889,7 @@ const PR_A9000W: React.FC = () => {
                       ...row,
                       proddt: row.proddt
                         ? new Date(dateformat(row.proddt))
-                        : new Date(dateformat("19000101")),
+                        : new Date(dateformat("99991231")),
                       [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
                     })),
                     detailDataState

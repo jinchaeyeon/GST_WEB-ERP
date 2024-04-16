@@ -901,10 +901,10 @@ const SA_A6000W: React.FC = () => {
                 ...row,
                 yyyy: row.yyyy
                   ? new Date(dateformat(row.yyyy))
-                  : new Date(dateformat("19000101")),
+                  : new Date(dateformat("99991231")),
                 mm: row.mm
                   ? new Date(dateformat(row.mm))
-                  : new Date(dateformat("19000101")),
+                  : new Date(dateformat("99991231")),
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState

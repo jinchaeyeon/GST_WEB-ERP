@@ -1581,13 +1581,13 @@ const AC_A0090W: React.FC = () => {
                 ...row,
                 taxdt1: row.taxdt1
                   ? new Date(dateformat(row.taxdt1))
-                  : new Date(dateformat("19000101")),
+                  : new Date(dateformat("99991231")),
                 taxdt2: row.taxdt2
                   ? new Date(dateformat(row.taxdt2))
-                  : new Date(dateformat("19000101")),
+                  : new Date(dateformat("99991231")),
                 inputdt: row.inputdt
                   ? new Date(dateformat(row.inputdt))
-                  : new Date(dateformat("19000101")),
+                  : new Date(dateformat("99991231")),
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -1743,10 +1743,10 @@ const AC_A0090W: React.FC = () => {
                 ...row,
                 indate: row.indate
                   ? new Date(dateformat(row.indate))
-                  : new Date(dateformat("19000101")),
+                  : new Date(dateformat("99991231")),
                 shipdt: row.shipdt
                   ? new Date(dateformat(row.shipdt))
-                  : new Date(dateformat("19000101")),
+                  : new Date(dateformat("99991231")),
                 [SELECTED_FIELD]: selectedState2[idGetter2(row)],
               })),
               mainDataState2

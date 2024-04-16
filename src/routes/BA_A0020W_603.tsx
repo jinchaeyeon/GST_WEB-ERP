@@ -73,6 +73,7 @@ import {
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import CenterCell from "../components/Cells/CenterCell";
+import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import NumberCell from "../components/Cells/NumberCell";
 import YearDateCell from "../components/Cells/YearDateCell";
@@ -99,7 +100,6 @@ let deletedMainRows4: object[] = [];
 
 const requiredField = ["prsnnm", "yyyy"];
 const numberField = [
-  "num",
   "dedt_ratio",
   "totasset",
   "salesmoney",
@@ -107,6 +107,8 @@ const numberField = [
   "current_income",
   "paid_up_capital",
 ];
+const CenterCells = ["num"];
+const CheckBoxReadOnlyCells = ["listringyn"];
 const commandField = ["files"];
 const dateField = ["yyyy"];
 const comboField = ["postcd"];
@@ -447,12 +449,12 @@ const BA_A0020W_603: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("BA_A0020W_603", setCustomOptionData);
+
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
     "L_BA057, L_CR007, L_BA026, L_LISTRING, L_BA075, L_BA076, L_BA077, L_BA008, L_BA027, L_BA025",
     setBizComponentData
   );
-
   const [custdivListData, setCustdivListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -511,6 +513,8 @@ const BA_A0020W_603: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         custdiv: "B",
+        itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
+          .valueCode,
       }));
     }
   }, [customOptionData]);
@@ -620,6 +624,9 @@ const BA_A0020W_603: React.FC = () => {
       attdatnum: "",
       remark: "",
       num: 0,
+      phonenum: "",
+      faxnum: "",
+      email: "",
       auto: true,
     });
   };
@@ -627,6 +634,15 @@ const BA_A0020W_603: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const filterComboBoxChange = (e: any) => {
+    const { name, value } = e;
 
     setFilters((prev) => ({
       ...prev,
@@ -691,6 +707,8 @@ const BA_A0020W_603: React.FC = () => {
     custnm: "",
     custdiv: "B",
     ceonm: "",
+    itemlvl3: "",
+    bizregnum: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -753,6 +771,9 @@ const BA_A0020W_603: React.FC = () => {
     attdatnum: "",
     remark: "",
     num: 0,
+    phonenum: "",
+    faxnum: "",
+    email: "",
     auto: true,
   });
 
@@ -773,6 +794,8 @@ const BA_A0020W_603: React.FC = () => {
         "@p_custnm": filters.custnm,
         "@p_custdiv": filters.custdiv,
         "@p_ceonm": filters.ceonm,
+        "@p_itemlvl3": filters.itemlvl3,
+        "@p_bizregnum": filters.bizregnum,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -874,6 +897,9 @@ const BA_A0020W_603: React.FC = () => {
             attdatnum: selectedRow.attdatnum,
             remark: selectedRow.remark,
             num: selectedRow.num,
+            phonenum: selectedRow.phonenum,
+            faxnum: selectedRow.faxnum,
+            email: selectedRow.email,
             auto: true,
           });
         } else {
@@ -928,6 +954,9 @@ const BA_A0020W_603: React.FC = () => {
             attdatnum: rows[0].attdatnum,
             remark: rows[0].remark,
             num: rows[0].num,
+            phonenum: rows[0].phonenum,
+            faxnum: rows[0].faxnum,
+            email: rows[0].email,
             auto: true,
           });
         }
@@ -966,6 +995,8 @@ const BA_A0020W_603: React.FC = () => {
         "@p_custnm": filters.custnm,
         "@p_custdiv": filters.custdiv,
         "@p_ceonm": filters.ceonm,
+        "@p_itemlvl3": filters.itemlvl3,
+        "@p_bizregnum": filters.bizregnum,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -1032,6 +1063,8 @@ const BA_A0020W_603: React.FC = () => {
         "@p_custnm": filters.custnm,
         "@p_custdiv": filters.custdiv,
         "@p_ceonm": filters.ceonm,
+        "@p_itemlvl3": filters.itemlvl3,
+        "@p_bizregnum": filters.bizregnum,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -1086,6 +1119,8 @@ const BA_A0020W_603: React.FC = () => {
         "@p_custnm": filters.custnm,
         "@p_custdiv": filters.custdiv,
         "@p_ceonm": filters.ceonm,
+        "@p_itemlvl3": filters.itemlvl3,
+        "@p_bizregnum": filters.bizregnum,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -1376,6 +1411,9 @@ const BA_A0020W_603: React.FC = () => {
       attdatnum: selectedRowData.attdatnum,
       remark: selectedRowData.remark,
       num: selectedRowData.num,
+      phonenum: selectedRowData.phonenum,
+      faxnum: selectedRowData.faxnum,
+      email: selectedRowData.email,
       auto: true,
     });
   };
@@ -1926,6 +1964,9 @@ const BA_A0020W_603: React.FC = () => {
       attdatnum: "",
       remark: "",
       num: 0,
+      phonenum: "",
+      faxnum: "",
+      email: "",
       auto: true,
     });
   };
@@ -2186,6 +2227,9 @@ const BA_A0020W_603: React.FC = () => {
         attdatnum: information.attdatnum,
         remark: information.remark,
         auto: information.auto == true ? "Y" : "N",
+        phonenum: information.phonenum,
+        faxnum: information.faxnum,
+        email: information.email,
         useyn: "Y",
       }));
     }
@@ -2219,6 +2263,9 @@ const BA_A0020W_603: React.FC = () => {
     remark: "",
     auto: "",
     useyn: "",
+    phonenum: "",
+    faxnum: "",
+    email: "",
 
     rowstatus_s: "",
 
@@ -2280,6 +2327,9 @@ const BA_A0020W_603: React.FC = () => {
       "@p_remark": paraData.remark,
       "@p_auto": paraData.auto,
       "@p_useyn": paraData.useyn,
+      "@p_phonenum": paraData.phonenum,
+      "@p_faxnum": paraData.faxnum,
+      "@p_email": paraData.email,
 
       /* 재무 */
       "@p_seq_s": paraData.seq_s,
@@ -2413,6 +2463,9 @@ const BA_A0020W_603: React.FC = () => {
         remark: "",
         auto: "",
         useyn: "",
+        phonenum: "",
+        faxnum: "",
+        email: "",
 
         rowstatus_s: "",
 
@@ -2844,6 +2897,28 @@ const BA_A0020W_603: React.FC = () => {
                 />
               </td>
             </tr>
+            <tr>
+              <th>개발분야</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="itemlvl3"
+                    value={filters.itemlvl3}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>사업자등록번호</th>
+              <td>
+                <Input
+                  name="bizregnum"
+                  type="text"
+                  value={filters.bizregnum}
+                  onChange={filterInputChange}
+                />
+              </td>
+            </tr>
           </tbody>
         </FilterBox>
       </FilterContainer>
@@ -2872,7 +2947,7 @@ const BA_A0020W_603: React.FC = () => {
           fileName="고객정보관리"
         >
           <Grid
-            style={{ height: "35vh" }}
+            style={{ height: "25vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -2928,8 +3003,10 @@ const BA_A0020W_603: React.FC = () => {
                       title={item.caption}
                       width={item.width}
                       cell={
-                        numberField.includes(item.fieldName)
+                        CenterCells.includes(item.fieldName)
                           ? CenterCell
+                          : CheckBoxReadOnlyCells.includes(item.fieldName)
+                          ? CheckBoxReadOnlyCell
                           : undefined
                       }
                       footerCell={
@@ -3322,6 +3399,35 @@ const BA_A0020W_603: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
+                  <th>TEL</th>
+                  <td>
+                    <Input
+                      name="phonenum"
+                      type="text"
+                      value={information.phonenum}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>FAX</th>
+                  <td>
+                    <Input
+                      name="faxnum"
+                      type="text"
+                      value={information.faxnum}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>이메일</th>
+                  <td>
+                    <Input
+                      name="email"
+                      type="text"
+                      value={information.email}
+                      onChange={InputChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
                   <th>기업구분</th>
                   <td>
                     {workType == "N"
@@ -3467,13 +3573,13 @@ const BA_A0020W_603: React.FC = () => {
                 fileName="고객정보관리"
               >
                 <Grid
-                  style={{ height: "33vh" }}
+                  style={{ height: "37vh" }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
                       yyyy: row.yyyy
                         ? new Date(dateformat(row.yyyy))
-                        : new Date(dateformat("19000101")),
+                        : new Date(dateformat("99991231")),
                       [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
                     })),
                     mainDataState2
@@ -3581,13 +3687,13 @@ const BA_A0020W_603: React.FC = () => {
               fileName="고객정보관리"
             >
               <Grid
-                style={{ height: "33vh" }}
+                style={{ height: "37vh" }}
                 data={process(
                   mainDataResult3.data.map((row) => ({
                     ...row,
                     yyyy: row.yyyy
                       ? new Date(dateformat(row.yyyy))
-                      : new Date(dateformat("19000101")),
+                      : new Date(dateformat("99991231")),
                     [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
                   })),
                   mainDataState3
@@ -3692,7 +3798,7 @@ const BA_A0020W_603: React.FC = () => {
               fileName="고객정보관리"
             >
               <Grid
-                style={{ height: "33vh" }}
+                style={{ height: "37vh" }}
                 data={process(
                   mainDataResult4.data.map((row) => ({
                     ...row,

@@ -801,14 +801,14 @@ const MA_A3000W: React.FC = () => {
       amt: 0,
       custcd: "",
       custnm: "",
-      enddt: "19000101",
+      enddt: "99991231",
       extra_field5: "",
       indt: convertDateToStr(new Date()),
       load_place: "0",
       outcustcd: "",
       outcustnm: "",
-      outdt: "19000101",
-      outrecdt: "19000101",
+      outdt: "99991231",
+      outrecdt: "99991231",
       outseq1: 0,
       outseq2: 0,
       person: "admin",
@@ -817,7 +817,7 @@ const MA_A3000W: React.FC = () => {
       remark: "",
       seq1: 0,
       seq2: 0,
-      strdt: "19000101",
+      strdt: "99991231",
       taxamt: 0,
       unp: 0,
       wonamt: 0,
@@ -2286,7 +2286,7 @@ const MA_A3000W: React.FC = () => {
                     : row.rowstatus,
                 purdt: row.purdt
                   ? new Date(dateformat(row.purdt))
-                  : new Date(dateformat("19000101")),
+                  : new Date(dateformat("99991231")),
                 custcd: custListData.find(
                   (item: any) => item.custcd === row.custcd
                 )?.custnm,
@@ -2439,16 +2439,16 @@ const MA_A3000W: React.FC = () => {
                     : row.rowstatus,
                 indt: row.indt
                   ? new Date(dateformat(row.indt))
-                  : new Date(dateformat("19000101")),
+                  : new Date(dateformat("99991231")),
                 strdt: row.strdt
                   ? new Date(dateformat(row.strdt))
-                  : new Date(dateformat("19000101")),
+                  : new Date(dateformat("99991231")),
                 enddt: row.enddt
                   ? new Date(dateformat(row.enddt))
-                  : new Date(dateformat("19000101")),
+                  : new Date(dateformat("99991231")),
                 outdt: row.outdt
                   ? new Date(dateformat(row.outdt))
-                  : new Date(dateformat("19000101")),
+                  : new Date(dateformat("99991231")),
                 [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
               })),
               detailDataState

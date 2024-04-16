@@ -1621,7 +1621,7 @@ const KendoWindow = ({
               ...row,
               carddt: row.carddt
                 ? new Date(dateformat(row.carddt))
-                : new Date(dateformat("19000101")),
+                : new Date(dateformat("99991231")),
               [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
             })),
             mainDataState

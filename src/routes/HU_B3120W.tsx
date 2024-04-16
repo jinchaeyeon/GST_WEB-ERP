@@ -1265,7 +1265,7 @@ const HU_B3120W: React.FC = () => {
                         ...row,
                         payyrmm: row.payyrmm
                           ? new Date(dateformat(row.payyrmm))
-                          : new Date(dateformat("19000101")),
+                          : new Date(dateformat("99991231")),
                         [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
                       })),
                       mainDataState2
@@ -1341,7 +1341,7 @@ const HU_B3120W: React.FC = () => {
                         ...row,
                         payyrmm: row.payyrmm
                           ? new Date(dateformat(row.payyrmm))
-                          : new Date(dateformat("19000101")),
+                          : new Date(dateformat("99991231")),
                         paytype: paytypeListData.find(
                           (item: any) => item.sub_code === row.paytype
                         )?.code_name,

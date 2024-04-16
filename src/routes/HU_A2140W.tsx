@@ -924,7 +924,7 @@ const HU_A2140W: React.FC = () => {
           prsnnum: item.prsnnum,
           recdt: convertDateToStr(new Date()),
           remark: item.remark,
-          resdt: "19000101",
+          resdt: "99991231",
           restime: item.restime,
           seq: item.seq,
           shh: item.shh,
@@ -1517,16 +1517,16 @@ const HU_A2140W: React.FC = () => {
                   )?.name,
                   enddate: row.enddate
                     ? new Date(dateformat(row.enddate))
-                    : new Date(dateformat("19000101")),
+                    : new Date(dateformat("99991231")),
                   recdt: row.recdt
                     ? new Date(dateformat(row.recdt))
-                    : new Date(dateformat("19000101")),
+                    : new Date(dateformat("99991231")),
                   startdate: row.startdate
                     ? new Date(dateformat(row.startdate))
-                    : new Date(dateformat("19000101")),
+                    : new Date(dateformat("99991231")),
                   stddt: row.stddt
                     ? new Date(dateformat(row.stddt))
-                    : new Date(dateformat("19000101")),
+                    : new Date(dateformat("99991231")),
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
                 mainDataState

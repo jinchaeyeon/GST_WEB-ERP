@@ -1374,7 +1374,7 @@ const BA_A0070W: React.FC = () => {
                   ...row,
                   basedt: row.basedt
                     ? new Date(dateformat(row.basedt))
-                    : new Date(dateformat("19000101")),
+                    : new Date(dateformat("99991231")),
                   rowstatus:
                     row.rowstatus == null ||
                     row.rowstatus == "" ||

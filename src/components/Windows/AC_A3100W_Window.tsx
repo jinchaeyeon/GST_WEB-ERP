@@ -2394,7 +2394,7 @@ const CopyWindow = ({
                     ...row,
                     fxdt: row.fxdt
                       ? new Date(dateformat(row.fxdt))
-                      : new Date(dateformat("19000101")),
+                      : new Date(dateformat("99991231")),
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
                   mainDataState
@@ -2530,7 +2530,7 @@ const CopyWindow = ({
                     ...row,
                     fxyrmm: row.fxyrmm
                       ? new Date(dateformat(row.fxyrmm))
-                      : new Date(dateformat("19000101")),
+                      : new Date(dateformat("99991231")),
                     [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                   })),
                   mainDataState2
@@ -2655,7 +2655,7 @@ const CopyWindow = ({
                     ...row,
                     fxyrmm: row.fxyrmm
                       ? new Date(dateformat(row.fxyrmm))
-                      : new Date(dateformat("19000101")),
+                      : new Date(dateformat("99991231")),
                     [SELECTED_FIELD]: selectedState3[idGetter3(row)],
                   })),
                   mainDataState3

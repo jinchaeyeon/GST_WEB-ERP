@@ -72,7 +72,7 @@ const numberField = [
   "quoamt",
   "amt",
 ];
-const dateField = ["quodt"];
+const dateField = ["quodt", "recdt"];
 
 const BA_A0021W_603: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -157,9 +157,14 @@ const BA_A0021W_603: React.FC = () => {
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_sysUserMaster_001, L_BA026, L_BA076, L_BA077",
+    "L_SA001_603, L_CM701, L_CM700, L_sysUserMaster_001, L_BA026, L_BA076, L_BA077",
     setBizComponentData
   );
+  const [usegbListData, setUsegbListData] = useState([COM_CODE_DEFAULT_VALUE]);
+  const [typeListData, setTypeListData] = useState([COM_CODE_DEFAULT_VALUE]);
+  const [materialtypeListData, setMaterialtypeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   const [custdivListData, setCustdivListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
@@ -174,6 +179,17 @@ const BA_A0021W_603: React.FC = () => {
   ]);
   useEffect(() => {
     if (bizComponentData !== null) {
+      const usegbQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_CM700")
+      );
+      const typeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId === "L_CM701")
+      );
+      const materialtypeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_SA001_603"
+        )
+      );
       const custdivQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId === "L_BA026")
       );
@@ -188,6 +204,9 @@ const BA_A0021W_603: React.FC = () => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
+      fetchQuery(usegbQueryStr, setUsegbListData);
+      fetchQuery(typeQueryStr, setTypeListData);
+      fetchQuery(materialtypeQueryStr, setMaterialtypeListData);
       fetchQuery(userQueryStr, setUserListData);
       fetchQuery(custdivQueryStr, setCustdivListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
@@ -1336,6 +1355,15 @@ const BA_A0021W_603: React.FC = () => {
                         person: userListData.find(
                           (items: any) => items.user_id == row.person
                         )?.user_name,
+                        materialtype: materialtypeListData.find(
+                          (item: any) => item.sub_code === row.materialtype
+                        )?.code_name,
+                        type: typeListData.find(
+                          (item: any) => item.sub_code === row.type
+                        )?.code_name,
+                        usegb: usegbListData.find(
+                          (item: any) => item.sub_code === row.usegb
+                        )?.code_name,
                         [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
                       })),
                       mainDataState2
@@ -1377,6 +1405,8 @@ const BA_A0021W_603: React.FC = () => {
                               cell={
                                 numberField.includes(item.fieldName)
                                   ? NumberCell
+                                  : dateField.includes(item.fieldName)
+                                  ? DateCell
                                   : undefined
                               }
                               footerCell={

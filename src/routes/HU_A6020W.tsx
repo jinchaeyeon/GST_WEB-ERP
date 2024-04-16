@@ -2866,13 +2866,13 @@ FROM HU072T WHERE paycd = '4'`;
                       )?.code_name,
                       dutydt: row.dutydt
                         ? new Date(dateformat(row.dutydt))
-                        : new Date(dateformat("19000101")),
+                        : new Date(dateformat("99991231")),
                       startdate: row.startdate
                         ? new Date(dateformat(row.startdate))
-                        : new Date(dateformat("19000101")),
+                        : new Date(dateformat("99991231")),
                       enddate: row.enddate
                         ? new Date(dateformat(row.enddate))
-                        : new Date(dateformat("19000101")),
+                        : new Date(dateformat("99991231")),
                       [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                     })),
                     mainDataState

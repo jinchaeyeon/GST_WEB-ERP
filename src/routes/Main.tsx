@@ -859,19 +859,6 @@ const Main: React.FC = () => {
           >
             <TabStripTab title="업무 달력">
               <GridContainer>
-                <GridTitleContainer>
-                  <GridTitle></GridTitle>
-                  {customOptionData !== null && (
-                    <div>
-                      <CustomOptionComboBox
-                        name="cboSchedulerType"
-                        value={schedulerFilter.cboSchedulerType}
-                        customOptionData={customOptionData}
-                        changeData={schedulerFilterChange}
-                      />
-                    </div>
-                  )}
-                </GridTitleContainer>
                 {osstate == true ? (
                   <div
                     style={{
@@ -886,16 +873,31 @@ const Main: React.FC = () => {
                     현재 OS에서는 지원이 불가능합니다.
                   </div>
                 ) : (
-                  <Scheduler
-                    height={"718px"}
-                    data={schedulerDataResult}
-                    defaultDate={displayDate}
-                    item={CustomItem}
-                  >
-                    <MonthView />
-                    <DayView />
-                    <WeekView />
-                  </Scheduler>
+                  <>
+                    <GridTitleContainer>
+                      <GridTitle></GridTitle>
+                      {customOptionData !== null && (
+                        <div>
+                          <CustomOptionComboBox
+                            name="cboSchedulerType"
+                            value={schedulerFilter.cboSchedulerType}
+                            customOptionData={customOptionData}
+                            changeData={schedulerFilterChange}
+                          />
+                        </div>
+                      )}
+                    </GridTitleContainer>
+                    <Scheduler
+                      height={"718px"}
+                      data={schedulerDataResult}
+                      defaultDate={displayDate}
+                      item={CustomItem}
+                    >
+                      <MonthView />
+                      <DayView />
+                      <WeekView />
+                    </Scheduler>
+                  </>
                 )}
               </GridContainer>
             </TabStripTab>

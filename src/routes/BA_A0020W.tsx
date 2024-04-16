@@ -4485,7 +4485,7 @@ const BA_A0020: React.FC = () => {
                             : row.rowstatus,
                         yyyy: row.yyyy
                           ? new Date(dateformat(row.yyyy))
-                          : new Date(dateformat("19000101")),
+                          : new Date(dateformat("99991231")),
                         [SELECTED_FIELD]: selectedsubDataState2[idGetter3(row)],
                       })),
                       subDataState2
