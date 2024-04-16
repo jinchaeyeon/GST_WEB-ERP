@@ -327,6 +327,10 @@ input.readonly {
   width: 100% !important;
   height: 90vh !important;
 }
+.leading_80_Swiper {
+  width: 100% !important;
+  height: 81vh !important;
+}
 
 .swiper-slide {
   text-align: center!important;

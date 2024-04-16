@@ -61,6 +61,8 @@ const DATA_ITEM_KEY = "num";
 let targetRowIndex: null | number = null;
 
 const AC_A0000W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -983,7 +985,7 @@ const AC_A0000W: React.FC = () => {
           fileName="법인기본"
         >
           <Grid
-            style={{ height: "51.5vh" }}
+            style={{ height: isMobile ? "30vh" :  "46.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
