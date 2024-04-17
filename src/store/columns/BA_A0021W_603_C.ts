@@ -53,6 +53,18 @@ export const gridList: Array<TGrid> = [
         width: 100,
       },
       {
+        id: "col_amt",
+        field: "amt",
+        caption: "기청구액",
+        width: 100,
+      },
+      {
+        id: "col_no_amt",
+        field: "no_amt",
+        caption: "미청구액",
+        width: 100,
+      },
+      {
         id: "col_misu_amt",
         field: "misu_amt",
         caption: "미수금액",
@@ -152,7 +164,7 @@ export const gridList: Array<TGrid> = [
         width: 150,
       },
       {
-        id: "col_amt",
+        id: "col_amt2",
         field: "amt",
         caption: "계약금액",
         width: 100,

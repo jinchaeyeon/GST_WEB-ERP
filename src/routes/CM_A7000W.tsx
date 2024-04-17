@@ -68,7 +68,7 @@ import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersPersonWindow from "../components/Windows/CommonWindows/CustomersPersonWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+import PrsnnumMultiWindow from "../components/Windows/CommonWindows/PrsnnumMultiWindow";
 import { useApi } from "../hooks/api";
 import { IAttachmentData, ICustData } from "../hooks/interfaces";
 import {
@@ -87,15 +87,18 @@ import {
   TGrid,
   TPermissions,
 } from "../store/types";
-import PrsnnumMultiWindow from "../components/Windows/CommonWindows/PrsnnumMultiWindow";
 
 const DATA_ITEM_KEY = "num";
+const DATA_ITEM_KEY2 = "num";
 let targetRowIndex: null | number = null;
 const DateField = ["recdt"];
 let reference = "";
+let temp = 0;
+let deletedMainRows: any[] = [];
 
 const CM_A7000W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
+  const idGetter2 = getter(DATA_ITEM_KEY2);
 
   let gridRef: any = useRef(null);
   const setLoading = useSetRecoilState(isLoading);
@@ -126,6 +129,10 @@ const CM_A7000W: React.FC = () => {
   );
 
   const [selectedState, setSelectedState] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+
+  const [selectedState2, setSelectedState2] = useState<{
     [id: string]: boolean | number[];
   }>({});
 
@@ -564,6 +571,15 @@ const CM_A7000W: React.FC = () => {
     isSearch: false,
   });
 
+  const [filters2, setFilters2] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "CR083T",
+    orgdiv: "01",
+    meetingnum: "",
+    pgNum: 1,
+    isSearch: false,
+  });
+
   const [information, setInformation] = useState({
     orgdiv: "01",
     meetingnum: "",
@@ -618,6 +634,7 @@ const CM_A7000W: React.FC = () => {
         "@p_custprsncd": filters.custprsncd,
         "@p_materialtype": filters.materialtype,
         "@p_extra_field2": filters.extra_field2,
+        "@p_meetingnum": "",
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -672,11 +689,19 @@ const CM_A7000W: React.FC = () => {
 
         if (selectedRow != undefined) {
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
-
+          setFilters2((prev) => ({
+            ...prev,
+            meetingnum: selectedRow.meetingnum,
+            isSearch: true,
+          }));
           setWorkType("U");
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-
+          setFilters2((prev) => ({
+            ...prev,
+            meetingnum: rows[0].meetingnum,
+            isSearch: true,
+          }));
           setWorkType("U");
         }
       } else {
@@ -689,6 +714,71 @@ const CM_A7000W: React.FC = () => {
     }
     // 필터 isSearch false처리, pgNum 세팅
     setFilters((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  //그리드 데이터 조회
+  const fetchMainGrid2 = async (filters2: any) => {
+    //if (!permissions?.view) return;
+    let data: any;
+    setLoading(true);
+
+    //조회조건 파라미터
+    const parameters: Iparameters = {
+      procedureName: "P_CM_A7000W_Q",
+      pageNumber: filters2.pgNum,
+      pageSize: filters2.pgSize,
+      parameters: {
+        "@p_work_type": filters2.workType,
+        "@p_orgdiv": filters2.orgdiv,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_custnm": filters.custnm,
+        "@p_title": filters.title,
+        "@p_ref_key": filters.ref_key,
+        "@p_person": filters.person,
+        "@p_usegb": filters.usegb,
+        "@p_type": filters.type,
+        "@p_custprsncd": filters.custprsncd,
+        "@p_materialtype": filters.materialtype,
+        "@p_extra_field2": filters.extra_field2,
+        "@p_meetingnum": filters2.meetingnum,
+        "@p_find_row_value": filters.find_row_value,
+      },
+    };
+
+    try {
+      data = await processApi<any>("procedure", parameters);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess === true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      setDetailDataResult((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
+      if (totalRowCnt > 0) {
+        setSelectedState2({ [rows[0][DATA_ITEM_KEY2]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setFilters2((prev) => ({
       ...prev,
       pgNum:
         data && data.hasOwnProperty("pageNumber")
@@ -746,6 +836,16 @@ const CM_A7000W: React.FC = () => {
     }
   }, [filters, permissions]);
 
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (filters2.isSearch && permissions !== null) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(filters2);
+      setFilters2((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      fetchMainGrid2(deepCopiedFilters);
+    }
+  }, [filters2, permissions]);
+
   //메인 그리드 데이터 변경 되었을 때
   useEffect(() => {
     if (targetRowIndex !== null && gridRef.current) {
@@ -795,11 +895,16 @@ const CM_A7000W: React.FC = () => {
   const onMainDataStateChange = (event: GridDataStateChangeEvent) => {
     setMainDataState(event.dataState);
   };
+  const onMainDataStateChange2 = (event: GridDataStateChangeEvent) => {
+    setDetailDataState(event.dataState);
+  };
 
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
-
+  const onMainSortChange2 = (e: any) => {
+    setDetailDataState((prev) => ({ ...prev, sort: e.sort }));
+  };
   //그리드 푸터
   const mainTotalFooterCell = (props: GridFooterCellProps) => {
     var parts = mainDataResult.total.toString().split(".");
@@ -812,7 +917,17 @@ const CM_A7000W: React.FC = () => {
       </td>
     );
   };
-
+  const mainTotalFooterCell2 = (props: GridFooterCellProps) => {
+    var parts = detailDataResult.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -821,6 +936,25 @@ const CM_A7000W: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY,
     });
     setSelectedState(newSelectedState);
+
+    const selectedIdx = event.startRowIndex;
+    const selectedRowData = event.dataItems[selectedIdx];
+
+    setFilters2((prev) => ({
+      ...prev,
+      meetingnum: selectedRowData.meetingnum,
+      isSearch: true,
+    }));
+  };
+
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState2,
+      dataItemKey: DATA_ITEM_KEY2,
+    });
+    setSelectedState2(newSelectedState);
   };
 
   const onRowDoubleClick = (event: GridRowDoubleClickEvent) => {
@@ -832,7 +966,11 @@ const CM_A7000W: React.FC = () => {
     setTabSelected(1);
 
     setWorkType("U");
-
+    setFilters2((prev) => ({
+      ...prev,
+      meetingnum: selectedRowData.meetingnum,
+      isSearch: true,
+    }));
     setInformation({
       orgdiv: selectedRowData.orgdiv,
       meetingnum: selectedRowData.meetingnum,
@@ -885,6 +1023,9 @@ const CM_A7000W: React.FC = () => {
     contents: "",
     place: "",
     extra_field2: "",
+    rowstatus_s: "",
+    seq_s: "",
+    prsnnum_s: "",
     userid: userId,
     pc: pc,
     formid: "CM_A7000W",
@@ -910,6 +1051,31 @@ const CM_A7000W: React.FC = () => {
 
     if (!valid) return false;
 
+    const dataItem = detailDataResult.data.filter((item: any) => {
+      return (
+        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        item.rowstatus !== undefined
+      );
+    });
+
+    let dataArr: any = {
+      rowstatus_s: [],
+      prsnnum_s: [],
+      seq_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const { rowstatus = "", prsnnum = "" } = item;
+      dataArr.rowstatus_s.push(rowstatus);
+      dataArr.prsnnum_s.push(prsnnum);
+      dataArr.seq_s.push("0");
+    });
+    deletedMainRows.forEach((item: any, idx: number) => {
+      const { rowstatus = "", prsnnum = "", seq = "" } = item;
+      dataArr.rowstatus_s.push("D");
+      dataArr.prsnnum_s.push(prsnnum);
+      dataArr.seq_s.push(seq);
+    });
     setParaDataSaved({
       workType: workType,
       orgdiv: "01",
@@ -929,6 +1095,9 @@ const CM_A7000W: React.FC = () => {
       place: information.place,
       extra_field2: information.extra_field2,
       contents: "",
+      rowstatus_s: dataArr.rowstatus_s.join("|"),
+      seq_s: dataArr.seq_s.join("|"),
+      prsnnum_s: dataArr.prsnnum_s.join("|"),
       userid: userId,
       pc: pc,
       formid: "CM_A7000W",
@@ -985,6 +1154,9 @@ const CM_A7000W: React.FC = () => {
         "@p_contents": paraDataSaved.contents,
         "@p_place": paraDataSaved.place,
         "@p_extra_field2": paraDataSaved.extra_field2,
+        "@p_rowstatus_s": paraDataSaved.rowstatus_s,
+        "@p_seq_s": paraDataSaved.seq_s,
+        "@p_prsnnum_s": paraDataSaved.prsnnum_s,
         "@p_userid": userId,
         "@p_pc": pc,
         "@p_form_id": "CM_A7000W",
@@ -1000,6 +1172,7 @@ const CM_A7000W: React.FC = () => {
 
     if (data.isSuccess === true) {
       let array: any[] = [];
+      deletedMainRows = [];
       if (workType == "D" && paraDataSaved.attdatnum != "") {
         array.push(paraDataSaved.attdatnum);
       }
@@ -1031,6 +1204,9 @@ const CM_A7000W: React.FC = () => {
         place: "",
         extra_field2: "",
         contents: "",
+        rowstatus_s: "",
+        seq_s: "",
+        prsnnum_s: "",
         userid: userId,
         pc: pc,
         formid: "CM_A7000W",
@@ -1163,7 +1339,68 @@ const CM_A7000W: React.FC = () => {
   };
 
   const setPrsnnumData = (data: any[]) => {
-    console.log(data)
+    data.map((items) => {
+      detailDataResult.data.map((item) => {
+        if (item.num > temp) {
+          temp = item.num;
+        }
+      });
+
+      const newDataItem = {
+        [DATA_ITEM_KEY]: ++temp,
+        prsnnum: items.user_id,
+        prsnnm: items.user_name,
+        rowstatus: "N",
+      };
+
+      setSelectedState2({ [newDataItem[DATA_ITEM_KEY2]]: true });
+      setDetailDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+    });
+  };
+
+  const onDeleteClick2 = (e: any) => {
+    let newData: any[] = [];
+    let Object: any[] = [];
+    let Object2: any[] = [];
+    let data;
+    detailDataResult.data.forEach((item: any, index: number) => {
+      if (!selectedState2[item[DATA_ITEM_KEY2]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          // const newData2 = {
+          //   ...item,
+          //   rowstatus: "D",
+          // };
+          const newData2 = item;
+          newData2.rowstatus = "D";
+          deletedMainRows.push(newData2);
+        }
+        Object.push(index);
+      }
+    });
+
+    if (Math.min(...Object) < Math.min(...Object2)) {
+      data = detailDataResult.data[Math.min(...Object2)];
+    } else {
+      data = detailDataResult.data[Math.min(...Object) - 1];
+    }
+
+    setDetailDataResult((prev) => ({
+      data: newData,
+      total: prev.total - Object.length,
+    }));
+    if (Object.length > 0) {
+      setSelectedState2({
+        [data != undefined ? data[DATA_ITEM_KEY2] : newData[0]]: true,
+      });
+    }
   };
 
   return (
@@ -1816,9 +2053,63 @@ const CM_A7000W: React.FC = () => {
             </GridContainer>
             <GridContainer width={`calc(60% - ${GAP}px)`}>
               <GridTitleContainer>
+                <GridTitle>참석자 리스트</GridTitle>
+                <ButtonContainer>
+                  {" "}
+                  <Button
+                    onClick={onDeleteClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <GridContainer>
+                <Grid
+                  style={{ height: "25vh" }}
+                  data={process(
+                    detailDataResult.data.map((row) => ({
+                      ...row,
+
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
+                    })),
+                    detailDataState
+                  )}
+                  {...detailDataState}
+                  onDataStateChange={onMainDataStateChange2}
+                  // 선택기능
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange2}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={detailDataResult.total}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    title="사번"
+                    field="prsnnum"
+                    width={"120px"}
+                    footerCell={mainTotalFooterCell2}
+                  />
+                  <GridColumn title="성명" field="prsnnm" width={"120px"} />
+                </Grid>
+              </GridContainer>
+              <GridTitleContainer>
                 <GridTitle>참고자료</GridTitle>
               </GridTitleContainer>
-              <GridContainer style={{ height: "76vh" }}>
+              <GridContainer style={{ height: "47vh" }}>
                 <RichEditor id="refEditor" ref={refEditorRef} />
               </GridContainer>
             </GridContainer>

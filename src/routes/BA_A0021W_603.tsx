@@ -42,6 +42,7 @@ import {
   convertDateToStr,
   getQueryFromBizComponent,
   handleKeyPressSearch,
+  numberWithCommas3,
   setDefaultDate,
 } from "../components/CommonFunction";
 import {
@@ -71,6 +72,7 @@ const numberField = [
   "misu_amt",
   "quoamt",
   "amt",
+  "no_amt",
 ];
 const dateField = ["quodt", "recdt"];
 
@@ -1292,10 +1294,14 @@ const BA_A0021W_603: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                      <th>미수채권</th>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                    <tr>
+                      <th>계약금액</th>
                       <td>
                         <Input
-                          name="misu"
+                          name="cont_amt"
                           type="text"
                           value={
                             mainDataResult.data.filter(
@@ -1303,13 +1309,96 @@ const BA_A0021W_603: React.FC = () => {
                                 item[DATA_ITEM_KEY] ==
                                 Object.getOwnPropertyNames(selectedState)[0]
                             )[0] == undefined
-                              ? ""
-                              : mainDataResult.data.filter(
-                                  (item) =>
-                                    item[DATA_ITEM_KEY] ==
-                                    Object.getOwnPropertyNames(selectedState)[0]
-                                )[0].misu
+                              ? 0
+                              : numberWithCommas3(
+                                  mainDataResult.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].cont_amt
+                                )
                           }
+                          style={{ textAlign: "right" }}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>기청구액</th>
+                      <td>
+                        <Input
+                          name="amt"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item) =>
+                                item[DATA_ITEM_KEY] ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? 0
+                              : numberWithCommas3(
+                                  mainDataResult.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].amt
+                                )
+                          }
+                          style={{ textAlign: "right" }}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>미청구액</th>
+                      <td>
+                        <Input
+                          name="no_amt"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item) =>
+                                item[DATA_ITEM_KEY] ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? 0
+                              : numberWithCommas3(
+                                  mainDataResult.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].no_amt
+                                )
+                          }
+                          style={{ textAlign: "right" }}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>미수금액</th>
+                      <td>
+                        <Input
+                          name="misu_amt"
+                          type="text"
+                          value={
+                            mainDataResult.data.filter(
+                              (item) =>
+                                item[DATA_ITEM_KEY] ==
+                                Object.getOwnPropertyNames(selectedState)[0]
+                            )[0] == undefined
+                              ? 0
+                              : numberWithCommas3(
+                                  mainDataResult.data.filter(
+                                    (item) =>
+                                      item[DATA_ITEM_KEY] ==
+                                      Object.getOwnPropertyNames(
+                                        selectedState
+                                      )[0]
+                                  )[0].misu_amt
+                                )
+                          }
+                          style={{ textAlign: "right" }}
                           className="readonly"
                         />
                       </td>
