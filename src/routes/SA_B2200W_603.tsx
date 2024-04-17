@@ -57,7 +57,14 @@ import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DATA_ITEM_KEY = "num";
 const dateField = ["exdlvdt2", "orddt"];
-const numberField = ["d_day"];
+const numberField = [
+  "d_day",
+  "week_b",
+  "week_r",
+  "qty_t",
+  "totqty",
+  "contracamt",
+];
 
 const SA_B2200W_603: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -331,7 +338,7 @@ const SA_B2200W_603: React.FC = () => {
     itemcd: "",
     itemnm: "",
     itemacnt: "",
-    poregnum: "",
+    testnum: "",
     finyn: "%",
     ordsts: "",
     custcd: "",
@@ -368,7 +375,7 @@ const SA_B2200W_603: React.FC = () => {
         "@p_ordsts": filters.ordsts,
         "@p_finyn": filters.finyn,
         "@p_ordnum": filters.ordnum,
-        "@p_poregnum": filters.poregnum,
+        "@p_testnum": filters.testnum,
         "@p_project": filters.project,
         "@p_company_code": companyCode,
       },
@@ -458,6 +465,27 @@ const SA_B2200W_603: React.FC = () => {
     );
   };
 
+  const gridSumQtyFooterCell = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
+
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
+  };
+
   const onMainSortChange = (e: any) => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
@@ -482,7 +510,7 @@ const SA_B2200W_603: React.FC = () => {
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th>수주일</th>
+              <th>수주일자</th>
               <td>
                 <CommonDateRangePicker
                   value={{
@@ -499,7 +527,7 @@ const SA_B2200W_603: React.FC = () => {
                   className="required"
                 />
               </td>
-              <th>품목</th>
+              <th>품목코드</th>
               <td>
                 <Input
                   name="itemcd"
@@ -535,12 +563,12 @@ const SA_B2200W_603: React.FC = () => {
                   />
                 )}
               </td>
-              <th>PO번호</th>
+              <th>시험번호</th>
               <td>
                 <Input
-                  name="poregnum"
+                  name="testnum"
                   type="text"
-                  value={filters.poregnum}
+                  value={filters.testnum}
                   onChange={filterInputChange}
                 />
               </td>
@@ -592,7 +620,7 @@ const SA_B2200W_603: React.FC = () => {
                   />
                 )}
               </td>
-              <th>프로젝트</th>
+              <th>PJT NO.</th>
               <td>
                 <Input
                   name="project"
@@ -682,7 +710,11 @@ const SA_B2200W_603: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder === 0
+                          ? mainTotalFooterCell
+                          : numberField.includes(item.fieldName)
+                          ? gridSumQtyFooterCell
+                          : undefined
                       }
                     ></GridColumn>
                   )

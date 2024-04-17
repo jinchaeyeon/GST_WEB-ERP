@@ -5,8 +5,8 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList",
     columns: [
       {
-        id: "col_quokey",
-        field: "quokey",
+        id: "col_quonum",
+        field: "quonum",
         caption: "PJT NO.",
         width: 150,
       },
@@ -94,6 +94,36 @@ export const gridList: Array<TGrid> = [
         field: "itemacnt",
         caption: "품목계정",
         width: 120,
+      },
+      {
+        id: "col_week_b",
+        field: "week_b",
+        caption: "기본(주차)",
+        width: 100,
+      },
+      {
+        id: "col_week_r",
+        field: "week_r",
+        caption: "회복(주차)",
+        width: 100,
+      },
+      {
+        id: "col_qty_t",
+        field: "qty_t",
+        caption: "TK",
+        width: 100,
+      },
+      {
+        id: "col_totqty",
+        field: "totqty",
+        caption: "총 마리수",
+        width: 100,
+      },
+      {
+        id: "col_contracamt",
+        field: "contracamt",
+        caption: "계약금액",
+        width: 100,
       },
       {
         id: "col_remark",
