@@ -118,7 +118,7 @@ const FlowChartReadOnly = (props) => {
 
   return (
     <>
-      <GridContainerWrap height={isMobile ? "100vh" : "84vh"}>
+      <GridContainerWrap height={isMobile ? "67vh" : "84vh"}>
         <GridContainer
           width="100%"
           height={isMobile ? "100%" : ""}

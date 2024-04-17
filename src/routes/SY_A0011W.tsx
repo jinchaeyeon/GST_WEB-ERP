@@ -13,6 +13,9 @@ import {
   getSelectedState,
 } from "@progress/kendo-react-grid";
 import { Input } from "@progress/kendo-react-inputs";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   TreeList,
   TreeListColumnProps,
@@ -67,6 +70,8 @@ import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0011W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
+var index = 0;
+
 //그리드 별 키 필드값
 const DATA_ITEM_KEY = "num";
 const USER_MENU_DATA_ITEM_KEY = "KeyID";
@@ -110,6 +115,8 @@ const RowRenderForDragging = (properties: any) => {
 };
 
 const Page: React.FC = () => {
+  const [swiper, setSwiper] = useState<SwiperCore>();
+
   const setLoading = useSetRecoilState(isLoading);
   const userId = UseGetValueFromSessionItem("user_id");
   let deviceWidth = window.innerWidth;
@@ -653,6 +660,9 @@ const Page: React.FC = () => {
       user_group_id: selectedRowData.user_group_id,
       isSearch: true,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
 
   const onUserMenuSelectionChange = useCallback(
@@ -1366,254 +1376,557 @@ const Page: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
-        <Title>사용자 그룹</Title>
-
-        <ButtonContainer>
-          {permissions && (
-            <TopButtons
-              search={search}
-              exportExcel={exportExcel}
-              permissions={permissions}
-              pathname="SY_A0011W"
-            />
-          )}
-        </ButtonContainer>
-      </TitleContainer>
-      <FilterContainer>
-        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-          <tbody>
-            <tr>
-              <th>사용자그룹ID</th>
-              <td>
-                <Input
-                  name="user_group_id"
-                  type="text"
-                  value={filters.user_group_id}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>사용자그룹명</th>
-              <td>
-                <Input
-                  name="user_group_name"
-                  type="text"
-                  value={filters.user_group_name}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>사용유무</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="use_yn"
-                    value={filters.use_yn}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                    textField="name"
-                    valueField="code"
-                  />
-                )}
-              </td>
-            </tr>
-          </tbody>
-        </FilterBox>
-      </FilterContainer>
-
-      <GridContainerWrap>
-        <GridContainer width={`30%`}>
-          <GridTitleContainer>
-            <GridTitle>사용자그룹 정보</GridTitle>
-
-            {permissions && (
-              <ButtonContainer>
-                <Button
-                  onClick={onAddClick}
-                  themeColor={"primary"}
-                  icon="file-add"
-                  disabled={permissions.save ? false : true}
-                >
-                  생성
-                </Button>
-                <Button
-                  onClick={onDeleteClick}
-                  icon="delete"
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  disabled={permissions.delete ? false : true}
-                >
-                  삭제
-                </Button>
-              </ButtonContainer>
-            )}
-          </GridTitleContainer>
-          <ExcelExport
-            ref={(exporter) => (_export = exporter)}
-            data={mainDataResult.data}
-            fileName="사용자 그룹"
+      {isMobile ? (
+        <GridContainerWrap>
+          <Swiper
+            className="leading_PDA_container"
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
           >
-            <Grid
-              style={{ height: isMobile ? "50vh" : "81.6vh" }}
-              data={process(
-                mainDataResult.data.map((row, idx) => ({
-                  ...row,
-                  use_yn: useYnListData.find(
-                    (item: any) => item.code === row.use_yn
-                  )?.name,
-                  postcd: postcdListData.find(
-                    (item: any) => item.sub_code === row.postcd
-                  )?.code_name,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                })),
-                mainDataState
-              )}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onMainSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-            >
-              <GridColumn cell={CommandCell} width="50px" />
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
-                        }
+            <SwiperSlide key={0} className="leading_PDA">
+              <GridContainer>
+                <TitleContainer>
+                  <Title>사용자 그룹</Title>
+
+                  <ButtonContainer>
+                    {permissions && (
+                      <TopButtons
+                        search={search}
+                        exportExcel={exportExcel}
+                        permissions={permissions}
+                        pathname="SY_A0011W"
                       />
-                    )
+                    )}
+                  </ButtonContainer>
+                </TitleContainer>
+                <FilterContainer>
+                  <FilterBox
+                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                  >
+                    <tbody>
+                      <tr>
+                        <th>사용자그룹ID</th>
+                        <td>
+                          <Input
+                            name="user_group_id"
+                            type="text"
+                            value={filters.user_group_id}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                        <th>사용자그룹명</th>
+                        <td>
+                          <Input
+                            name="user_group_name"
+                            type="text"
+                            value={filters.user_group_name}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                        <th>사용유무</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="use_yn"
+                              value={filters.use_yn}
+                              customOptionData={customOptionData}
+                              changeData={filterComboBoxChange}
+                              textField="name"
+                              valueField="code"
+                            />
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FilterBox>
+                </FilterContainer>
+                <GridTitleContainer>
+                  {permissions && (
+                    <ButtonContainer>
+                      <Button
+                        onClick={onAddClick}
+                        themeColor={"primary"}
+                        icon="file-add"
+                        disabled={permissions.save ? false : true}
+                      >
+                        생성
+                      </Button>
+                      <Button
+                        onClick={onDeleteClick}
+                        icon="delete"
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        disabled={permissions.delete ? false : true}
+                      >
+                        삭제
+                      </Button>
+                    </ButtonContainer>
+                  )}
+                </GridTitleContainer>
+                <ExcelExport
+                  ref={(exporter) => (_export = exporter)}
+                  data={mainDataResult.data}
+                  fileName="사용자 그룹"
+                >
+                  <Grid
+                    style={{ height: "75vh" }}
+                    data={process(
+                      mainDataResult.data.map((row, idx) => ({
+                        ...row,
+                        use_yn: useYnListData.find(
+                          (item: any) => item.code === row.use_yn
+                        )?.name,
+                        postcd: postcdListData.find(
+                          (item: any) => item.sub_code === row.postcd
+                        )?.code_name,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onMainSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn cell={CommandCell} width="50px" />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions[
+                        "grdHeaderList"
+                      ].map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              footerCell={
+                                item.sortOrder === 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide
+              key={1}
+              className="leading_PDA"
+              style={{ display: "flex", flexDirection: "column" }}
+            >
+              <Button
+                style={{ marginRight: "85%" }}
+                onClick={() => {
+                  if (swiper) {
+                    swiper.slideTo(0);
+                  }
+                }}
+                icon="arrow-left"
+              >
+                이전
+              </Button>
+              <GridContainer
+                style={{
+                  width: `${deviceWidth - 30}px`,
+                }}
+              >
+                <GridTitleContainer>
+                  <GridTitle>사용자그룹별 메뉴 권한</GridTitle>
+                  {permissions !== null && (
+                    <ButtonContainer>
+                      <Button
+                        onClick={onSaveClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="save"
+                        disabled={permissions.save ? false : true}
+                      ></Button>
+                    </ButtonContainer>
+                  )}
+                </GridTitleContainer>
+                <ExcelExport
+                  ref={(exporter) => (_export2 = exporter)}
+                  hierarchy={true}
+                  fileName="사용자 그룹"
+                >
+                  <TreeList
+                    style={{ height: "35vh", overflow: "auto" }}
+                    data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
+                      extendDataItem(item, SUB_ITEMS_FIELD, {
+                        [EXPANDED_FIELD]: expanded.includes(
+                          item[USER_MENU_DATA_ITEM_KEY]
+                        ),
+                        [EDIT_FIELD]:
+                          item[USER_MENU_DATA_ITEM_KEY] === editItemId
+                            ? editItemField
+                            : undefined,
+                        [SELECTED_FIELD]:
+                          userMenuSelectedState[idGetter2(item)], //선택된 데이터
+                      })
+                    )}
+                    subItemsField={SUB_ITEMS_FIELD}
+                    expandField={EXPANDED_FIELD}
+                    onExpandChange={onUserMenuExpandChange}
+                    // 수정 기능
+                    editField={EDIT_FIELD}
+                    cellRender={renderers.cellRender}
+                    onItemChange={onUserMenuItemChange}
+                    // 행 드래그 앤 드롭 기능
+                    rowRender={userMenuRowRender}
+                    // 컬럼 리스트
+                    columns={userMenuColumns}
+                    // 선택
+                    selectable={{
+                      enabled: true,
+                      drag: false,
+                      cell: false,
+                      mode: "single",
+                    }}
+                    selectedField={SELECTED_FIELD}
+                    onSelectionChange={onUserMenuSelectionChange}
+                  />
+                </ExcelExport>
+              </GridContainer>
+              <GridContainer
+                style={{
+                  width: `${deviceWidth - 30}px`,
+                }}
+              >
+                <GridTitleContainer>
+                  <GridTitle>[참조] 전체 메뉴</GridTitle>
+                </GridTitleContainer>
+                <ExcelExport
+                  ref={(exporter) => (_export3 = exporter)}
+                  hierarchy={true}
+                  fileName="사용자 그룹"
+                >
+                  <TreeList
+                    style={{ height: "40vh", overflowY: "scroll" }}
+                    data={mapTree(data2, SUB_ITEMS_FIELD, (item) =>
+                      extendDataItem(item, SUB_ITEMS_FIELD, {
+                        [EXPANDED_FIELD]: expanded2.includes(
+                          item[ALL_MENU_DATA_ITEM_KEY]
+                        ),
+                        [EDIT_FIELD]:
+                          item[ALL_MENU_DATA_ITEM_KEY] == editItemId2
+                            ? editItemField2
+                            : undefined,
+                        [SELECTED_FIELD]: allMenuSelectedState[idGetter3(item)], //선택된 데이터
+                      })
+                    )}
+                    expandField={EXPANDED_FIELD}
+                    subItemsField={SUB_ITEMS_FIELD}
+                    onExpandChange={onAllMenuExpandChange}
+                    //선택 기능
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      drag: false,
+                      cell: false,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onAllMenuSelectionChange}
+                    //드래그용 행
+                    rowRender={allMenuRowRender}
+                    columns={allMenuColumns}
+                  />
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
+        </GridContainerWrap>
+      ) : (
+        <>
+          <TitleContainer>
+            <Title>사용자 그룹</Title>
+
+            <ButtonContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="SY_A0011W"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>사용자그룹ID</th>
+                  <td>
+                    <Input
+                      name="user_group_id"
+                      type="text"
+                      value={filters.user_group_id}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>사용자그룹명</th>
+                  <td>
+                    <Input
+                      name="user_group_name"
+                      type="text"
+                      value={filters.user_group_name}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>사용유무</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="use_yn"
+                        value={filters.use_yn}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                        textField="name"
+                        valueField="code"
+                      />
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+          <GridContainerWrap>
+            <GridContainer width={`30%`}>
+              <GridTitleContainer>
+                <GridTitle>사용자그룹 정보</GridTitle>
+
+                {permissions && (
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="file-add"
+                      disabled={permissions.save ? false : true}
+                    >
+                      생성
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      icon="delete"
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      disabled={permissions.delete ? false : true}
+                    >
+                      삭제
+                    </Button>
+                  </ButtonContainer>
                 )}
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
-        <GridContainer width={`calc(45% - ${GAP}px)`}>
-          <GridTitleContainer>
-            <GridTitle>사용자그룹별 메뉴 권한</GridTitle>
-            {permissions !== null && (
-              <ButtonContainer>
-                <Button
-                  onClick={onSaveClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="save"
-                  disabled={permissions.save ? false : true}
-                ></Button>
-              </ButtonContainer>
-            )}
-          </GridTitleContainer>
-          <ExcelExport
-            ref={(exporter) => (_export2 = exporter)}
-            hierarchy={true}
-            fileName="사용자 그룹"
-          >
-            <TreeList
-              style={{ height: isMobile ? "50vh" : "81.6vh", overflow: "auto" }}
-              data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
-                extendDataItem(item, SUB_ITEMS_FIELD, {
-                  [EXPANDED_FIELD]: expanded.includes(
-                    item[USER_MENU_DATA_ITEM_KEY]
-                  ),
-                  [EDIT_FIELD]:
-                    item[USER_MENU_DATA_ITEM_KEY] === editItemId
-                      ? editItemField
-                      : undefined,
-                  [SELECTED_FIELD]: userMenuSelectedState[idGetter2(item)], //선택된 데이터
-                })
-              )}
-              subItemsField={SUB_ITEMS_FIELD}
-              expandField={EXPANDED_FIELD}
-              onExpandChange={onUserMenuExpandChange}
-              // 수정 기능
-              editField={EDIT_FIELD}
-              cellRender={renderers.cellRender}
-              onItemChange={onUserMenuItemChange}
-              // 행 드래그 앤 드롭 기능
-              rowRender={userMenuRowRender}
-              // 컬럼 리스트
-              columns={userMenuColumns}
-              // 선택
-              selectable={{
-                enabled: true,
-                drag: false,
-                cell: false,
-                mode: "single",
-              }}
-              selectedField={SELECTED_FIELD}
-              onSelectionChange={onUserMenuSelectionChange}
-            />
-          </ExcelExport>
-        </GridContainer>
-        <GridContainer width={`calc(35% - ${GAP}px)`}>
-          <GridTitleContainer>
-            <GridTitle>[참조] 전체 메뉴</GridTitle>
-          </GridTitleContainer>
-          <ExcelExport
-            ref={(exporter) => (_export3 = exporter)}
-            hierarchy={true}
-            fileName="사용자 그룹"
-          >
-            <TreeList
-              style={{ height: isMobile ? "50vh" : "81.8vh",overflowY: "scroll" }}
-              data={mapTree(data2, SUB_ITEMS_FIELD, (item) =>
-                extendDataItem(item, SUB_ITEMS_FIELD, {
-                  [EXPANDED_FIELD]: expanded2.includes(
-                    item[ALL_MENU_DATA_ITEM_KEY]
-                  ),
-                  [EDIT_FIELD]:
-                    item[ALL_MENU_DATA_ITEM_KEY] == editItemId2
-                      ? editItemField2
-                      : undefined,
-                  [SELECTED_FIELD]: allMenuSelectedState[idGetter3(item)], //선택된 데이터
-                })
-              )}
-              expandField={EXPANDED_FIELD}
-              subItemsField={SUB_ITEMS_FIELD}
-              onExpandChange={onAllMenuExpandChange}
-              //선택 기능
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                drag: false,
-                cell: false,
-                mode: "single",
-              }}
-              onSelectionChange={onAllMenuSelectionChange}
-              //드래그용 행
-              rowRender={allMenuRowRender}
-              columns={allMenuColumns}
-            />
-          </ExcelExport>
-        </GridContainer>
-      </GridContainerWrap>
+              </GridTitleContainer>
+              <ExcelExport
+                ref={(exporter) => (_export = exporter)}
+                data={mainDataResult.data}
+                fileName="사용자 그룹"
+              >
+                <Grid
+                  style={{ height: isMobile ? "50vh" : "81.6vh" }}
+                  data={process(
+                    mainDataResult.data.map((row, idx) => ({
+                      ...row,
+                      use_yn: useYnListData.find(
+                        (item: any) => item.code === row.use_yn
+                      )?.name,
+                      postcd: postcdListData.find(
+                        (item: any) => item.sub_code === row.postcd
+                      )?.code_name,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onMainSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn cell={CommandCell} width="50px" />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions[
+                      "grdHeaderList"
+                    ].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            footerCell={
+                              item.sortOrder === 0
+                                ? mainTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+            <GridContainer width={`calc(45% - ${GAP}px)`}>
+              <GridTitleContainer>
+                <GridTitle>사용자그룹별 메뉴 권한</GridTitle>
+                {permissions !== null && (
+                  <ButtonContainer>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      disabled={permissions.save ? false : true}
+                    ></Button>
+                  </ButtonContainer>
+                )}
+              </GridTitleContainer>
+              <ExcelExport
+                ref={(exporter) => (_export2 = exporter)}
+                hierarchy={true}
+                fileName="사용자 그룹"
+              >
+                <TreeList
+                  style={{
+                    height: isMobile ? "50vh" : "81.6vh",
+                    overflow: "auto",
+                  }}
+                  data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
+                    extendDataItem(item, SUB_ITEMS_FIELD, {
+                      [EXPANDED_FIELD]: expanded.includes(
+                        item[USER_MENU_DATA_ITEM_KEY]
+                      ),
+                      [EDIT_FIELD]:
+                        item[USER_MENU_DATA_ITEM_KEY] === editItemId
+                          ? editItemField
+                          : undefined,
+                      [SELECTED_FIELD]: userMenuSelectedState[idGetter2(item)], //선택된 데이터
+                    })
+                  )}
+                  subItemsField={SUB_ITEMS_FIELD}
+                  expandField={EXPANDED_FIELD}
+                  onExpandChange={onUserMenuExpandChange}
+                  // 수정 기능
+                  editField={EDIT_FIELD}
+                  cellRender={renderers.cellRender}
+                  onItemChange={onUserMenuItemChange}
+                  // 행 드래그 앤 드롭 기능
+                  rowRender={userMenuRowRender}
+                  // 컬럼 리스트
+                  columns={userMenuColumns}
+                  // 선택
+                  selectable={{
+                    enabled: true,
+                    drag: false,
+                    cell: false,
+                    mode: "single",
+                  }}
+                  selectedField={SELECTED_FIELD}
+                  onSelectionChange={onUserMenuSelectionChange}
+                />
+              </ExcelExport>
+            </GridContainer>
+            <GridContainer width={`calc(35% - ${GAP}px)`}>
+              <GridTitleContainer>
+                <GridTitle>[참조] 전체 메뉴</GridTitle>
+              </GridTitleContainer>
+              <ExcelExport
+                ref={(exporter) => (_export3 = exporter)}
+                hierarchy={true}
+                fileName="사용자 그룹"
+              >
+                <TreeList
+                  style={{
+                    height: isMobile ? "50vh" : "81.8vh",
+                    overflowY: "scroll",
+                  }}
+                  data={mapTree(data2, SUB_ITEMS_FIELD, (item) =>
+                    extendDataItem(item, SUB_ITEMS_FIELD, {
+                      [EXPANDED_FIELD]: expanded2.includes(
+                        item[ALL_MENU_DATA_ITEM_KEY]
+                      ),
+                      [EDIT_FIELD]:
+                        item[ALL_MENU_DATA_ITEM_KEY] == editItemId2
+                          ? editItemField2
+                          : undefined,
+                      [SELECTED_FIELD]: allMenuSelectedState[idGetter3(item)], //선택된 데이터
+                    })
+                  )}
+                  expandField={EXPANDED_FIELD}
+                  subItemsField={SUB_ITEMS_FIELD}
+                  onExpandChange={onAllMenuExpandChange}
+                  //선택 기능
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    drag: false,
+                    cell: false,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onAllMenuSelectionChange}
+                  //드래그용 행
+                  rowRender={allMenuRowRender}
+                  columns={allMenuColumns}
+                />
+              </ExcelExport>
+            </GridContainer>
+          </GridContainerWrap>
+        </>
+      )}
       {detailWindowVisible && (
         <DetailWindow
           setVisible={setDetailWindowVisible}

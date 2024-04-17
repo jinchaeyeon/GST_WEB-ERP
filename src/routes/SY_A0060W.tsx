@@ -12,6 +12,9 @@ import { Button } from "@progress/kendo-react-buttons";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   FilterBox,
@@ -36,7 +39,11 @@ import { useApi } from "../hooks/api";
 import { isLoading } from "../store/atoms";
 import { Iparameters, TPermissions } from "../store/types";
 
+var index = 0;
+
 const SY_A0060W: React.FC = () => {
+  const [swiper, setSwiper] = useState<SwiperCore>();
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
