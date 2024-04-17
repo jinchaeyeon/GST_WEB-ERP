@@ -539,7 +539,7 @@ const CM_A1600: React.FC = () => {
       const rows = data.tables[0].Rows.map((row: any) => ({
         ...row,
       }));
-
+      
       if (userFilter.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef2.current) {
@@ -1473,10 +1473,8 @@ const CM_A1600: React.FC = () => {
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedTodoRows.push(newData2);
         }
         Object.push(index);
@@ -1508,10 +1506,8 @@ const CM_A1600: React.FC = () => {
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedTodoRows2.push(newData2);
         }
         Object.push(index);

@@ -2547,10 +2547,8 @@ const HU_A3040W: React.FC = () => {
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows2.push(newData2);
         }
         Object.push(index);
@@ -2584,10 +2582,8 @@ const HU_A3040W: React.FC = () => {
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows4.push(newData2);
         }
         Object.push(index);
@@ -2621,10 +2617,8 @@ const HU_A3040W: React.FC = () => {
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows6.push(newData2);
         }
         Object.push(index);
