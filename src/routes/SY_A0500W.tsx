@@ -25,6 +25,9 @@ import React, {
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useRecoilState, useSetRecoilState } from "recoil";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ContextMenu,
@@ -78,6 +81,7 @@ export interface BoardProps {
   layout: Layout;
 }
 
+var index = 0;
 /** Styling properties applied to the board element */
 const boardStyle: CSSProperties = {
   width: "100%",
@@ -96,12 +100,14 @@ let targetRowIndex: null | number = null;
 let temp = 0;
 
 const SY_A0500W: React.FC = () => {
+  const [swiper, setSwiper] = useState<SwiperCore>();
+
   const layout = useMemo(() => new Layout(), []);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
-  
+
   //커스텀 옵션 조회
   const setLoading = useSetRecoilState(isLoading);
   const [customOptionData, setCustomOptionData] = useState<any>(null);
@@ -308,17 +314,17 @@ const SY_A0500W: React.FC = () => {
     }
   };
 
-  const longPressTimer:any = useRef(null);
+  const longPressTimer: any = useRef(null);
   function renderSquare(
     row: number,
     col: number,
     squareStyle: CSSProperties,
-    knightLists: any[],
+    knightLists: any[]
   ) {
     const data = detailDataResult.data.filter(
       (item: any) => item.col_index == col && item.row_index == row
     )[0];
-    
+
     const handleLongPress = (e: any) => {
       e.preventDefault(); // Prevent scrolling and other default actions
       longPressTimer.current = setTimeout(() => {
@@ -327,15 +333,13 @@ const SY_A0500W: React.FC = () => {
         }
       }, 500); // 500ms for long press
     };
-  
-  
+
     const clearLongPress = () => {
       if (longPressTimer.current) {
         clearTimeout(longPressTimer.current);
       }
     };
 
-    
     return (
       <div
         key={`${row}${col}`}
@@ -695,6 +699,9 @@ const SY_A0500W: React.FC = () => {
       isSearch: true,
       pgNum: 1,
     }));
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
 
   //그리드의 dataState 요소 변경 시 => 데이터 컨트롤에 사용되는 dataState에 적용
@@ -1210,205 +1217,452 @@ const SY_A0500W: React.FC = () => {
           )}
         </ButtonContainer>
       </TitleContainer>
-      <GridContainerWrap onClick={deletemenu}>
-        <GridContainer width="20%">
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-          </GridTitleContainer>
-          <FormBoxWrap>
-            <FormBox>
-              <tbody>
-                <tr>
-                  <th style={{ width: "10%" }}>사업장</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="location"
-                        value={filters.location}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            </FormBox>
-          </FormBoxWrap>
-          <ExcelExport
-            ref={(exporter) => (_export = exporter)}
-            data={mainDataResult.data}
-            fileName="레이아웃 설정"
+      {isMobile ? (
+        <GridContainerWrap onClick={deletemenu}>
+          <Swiper
+            className="leading_80_Swiper"
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
           >
-            <Grid
-              style={{ height: isMobile ? "40vh" : "80.5vh" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  location: locationListData.find(
-                    (item: any) => item.sub_code == row.location
-                  )?.code_name,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                })),
-                mainDataState
-              )}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onMainSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
+            <SwiperSlide key={0} className="leading_PDA">
+              <GridContainer>
+                <FormBoxWrap>
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th style={{ width: "10%" }}>사업장</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="location"
+                              value={filters.location}
+                              customOptionData={customOptionData}
+                              changeData={filterComboBoxChange}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+                <ExcelExport
+                  ref={(exporter) => (_export = exporter)}
+                  data={mainDataResult.data}
+                  fileName="레이아웃 설정"
+                >
+                  <Grid
+                    style={{ height: "70.5vh" }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        location: locationListData.find(
+                          (item: any) => item.sub_code == row.location
+                        )?.code_name,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onMainSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"].map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              footerCell={
+                                item.sortOrder === 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide
+              key={1}
+              style={{ display: "flex", flexDirection: "column" }}
             >
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
-                        }
-                      />
-                    )
+              <Button
+              style={{marginRight:"85%"}}
+                onClick={() => {
+                  if (swiper) {
+                    swiper.slideTo(0);
+                  }
+                }}
+                icon="arrow-left"
+              >
+                이전
+              </Button>
+              <GridContainer
+                style={{
+                  minHeight: "70vh",
+                  width: `${deviceWidth - 30}px`,
+                  overflow: "scroll",
+                }}
+              >
+                <GridTitleContainer>
+                  <GridTitle>프로세스 레이아웃</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick2}
+                      themeColor={"primary"}
+                      icon="plus"
+                    >
+                      행 추가
+                    </Button>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="plus"
+                    >
+                      열 추가
+                    </Button>
+                    <Button
+                      onClick={onRemoveClick2}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    >
+                      행 삭제
+                    </Button>
+                    <Button
+                      onClick={onRemoveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                    >
+                      열 삭제
+                    </Button>
+                    <Button
+                      onClick={onAddClick3}
+                      themeColor={"primary"}
+                      icon="file-add"
+                    >
+                      신규
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="delete"
+                    >
+                      삭제
+                    </Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                    >
+                      저장
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                {isMobile ? null : (
+                  <FormBoxWrap>
+                    <FormBox>
+                      <tbody>
+                        <tr>
+                          <th>사업장</th>
+                          <td>
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="location"
+                                value={information.location}
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                                className="required"
+                                type="new"
+                              />
+                            )}
+                          </td>
+                          <th>레이아웃ID</th>
+                          <td>
+                            {workType == "N" ? (
+                              <Input
+                                name="layout_id"
+                                type="text"
+                                value={information.layout_id}
+                                onChange={InputChange}
+                                className="required"
+                              />
+                            ) : (
+                              <Input
+                                name="layout_id"
+                                type="text"
+                                value={information.layout_id}
+                                className="readonly"
+                              />
+                            )}
+                          </td>
+                          <th>레이아웃명</th>
+                          <td>
+                            <Input
+                              name="layout_name"
+                              type="text"
+                              value={information.layout_name}
+                              onChange={InputChange}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </FormBox>
+                  </FormBoxWrap>
                 )}
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
-        <GridContainer width={`calc(80% - ${GAP}px)`}>
-          <GridTitleContainer>
-            <GridTitle>프로세스 레이아웃</GridTitle>
-            <ButtonContainer>
-              <Button onClick={onAddClick2} themeColor={"primary"} icon="plus">
-                행 추가
-              </Button>
-              <Button onClick={onAddClick} themeColor={"primary"} icon="plus">
-                열 추가
-              </Button>
-              <Button
-                onClick={onRemoveClick2}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
+                <DndProvider backend={HTML5Backend}>
+                  <div style={containerStyle}>
+                    <div style={boardStyle}>{squares}</div>
+                  </div>
+                </DndProvider>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
+        </GridContainerWrap>
+      ) : (
+        <GridContainerWrap onClick={deletemenu}>
+          <GridContainer width="20%">
+            <GridTitleContainer>
+              <GridTitle>요약정보</GridTitle>
+            </GridTitleContainer>
+            <FormBoxWrap>
+              <FormBox>
+                <tbody>
+                  <tr>
+                    <th style={{ width: "10%" }}>사업장</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="location"
+                          value={filters.location}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              </FormBox>
+            </FormBoxWrap>
+            <ExcelExport
+              ref={(exporter) => (_export = exporter)}
+              data={mainDataResult.data}
+              fileName="레이아웃 설정"
+            >
+              <Grid
+                style={{ height: isMobile ? "40vh" : "80.5vh" }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    location: locationListData.find(
+                      (item: any) => item.sub_code == row.location
+                    )?.code_name,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                //선택 기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onMainSelectionChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
               >
-                행 삭제
-              </Button>
-              <Button
-                onClick={onRemoveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-              >
-                열 삭제
-              </Button>
-              <Button
-                onClick={onAddClick3}
-                themeColor={"primary"}
-                icon="file-add"
-              >
-                신규
-              </Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="delete"
-              >
-                삭제
-              </Button>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-              >
-                저장
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
-          {isMobile ? null:
-          
-          <FormBoxWrap>
-            <FormBox>
-              <tbody>
-                <tr>
-                  <th>사업장</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="location"
-                        value={information.location}
-                        customOptionData={customOptionData}
-                        changeData={ComboBoxChange}
-                        className="required"
-                        type="new"
-                      />
-                    )}
-                  </td>
-                  <th>레이아웃ID</th>
-                  <td>
-                    {workType == "N" ? (
-                      <Input
-                        name="layout_id"
-                        type="text"
-                        value={information.layout_id}
-                        onChange={InputChange}
-                        className="required"
-                      />
-                    ) : (
-                      <Input
-                        name="layout_id"
-                        type="text"
-                        value={information.layout_id}
-                        className="readonly"
-                      />
-                    )}
-                  </td>
-                  <th>레이아웃명</th>
-                  <td>
-                    <Input
-                      name="layout_name"
-                      type="text"
-                      value={information.layout_name}
-                      onChange={InputChange}
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </FormBox>
-          </FormBoxWrap>
-}
-          <DndProvider backend={HTML5Backend}>
-            <div style={containerStyle}>
-              <div style={boardStyle}>{squares}</div>
-            </div>
-          </DndProvider>
-        </GridContainer>
-      </GridContainerWrap>
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          footerCell={
+                            item.sortOrder === 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
+          <GridContainer width={`calc(80% - ${GAP}px)`}>
+            <GridTitleContainer>
+              <GridTitle>프로세스 레이아웃</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick2}
+                  themeColor={"primary"}
+                  icon="plus"
+                >
+                  행 추가
+                </Button>
+                <Button onClick={onAddClick} themeColor={"primary"} icon="plus">
+                  열 추가
+                </Button>
+                <Button
+                  onClick={onRemoveClick2}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                  title="행 삭제"
+                >
+                  행 삭제
+                </Button>
+                <Button
+                  onClick={onRemoveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="minus"
+                >
+                  열 삭제
+                </Button>
+                <Button
+                  onClick={onAddClick3}
+                  themeColor={"primary"}
+                  icon="file-add"
+                >
+                  신규
+                </Button>
+                <Button
+                  onClick={onDeleteClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="delete"
+                >
+                  삭제
+                </Button>
+                <Button
+                  onClick={onSaveClick}
+                  fillMode="outline"
+                  themeColor={"primary"}
+                  icon="save"
+                >
+                  저장
+                </Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            {isMobile ? null : (
+              <FormBoxWrap>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>사업장</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="location"
+                            value={information.location}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                            type="new"
+                          />
+                        )}
+                      </td>
+                      <th>레이아웃ID</th>
+                      <td>
+                        {workType == "N" ? (
+                          <Input
+                            name="layout_id"
+                            type="text"
+                            value={information.layout_id}
+                            onChange={InputChange}
+                            className="required"
+                          />
+                        ) : (
+                          <Input
+                            name="layout_id"
+                            type="text"
+                            value={information.layout_id}
+                            className="readonly"
+                          />
+                        )}
+                      </td>
+                      <th>레이아웃명</th>
+                      <td>
+                        <Input
+                          name="layout_name"
+                          type="text"
+                          value={information.layout_name}
+                          onChange={InputChange}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
+            )}
+            <DndProvider backend={HTML5Backend}>
+              <div style={containerStyle}>
+                <div style={boardStyle}>{squares}</div>
+              </div>
+            </DndProvider>
+          </GridContainer>
+        </GridContainerWrap>
+      )}
       {clicked != "" && (
         <ContextMenu top={points.y} left={points.x}>
           {info.key == "" ? (
