@@ -671,7 +671,7 @@ const MA_B3000W: React.FC = () => {
                 fileName="매입집계(업체)"
               >
                 <Grid
-                  style={{ height: "28vh" }}
+                  style={{ height: "31vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -754,7 +754,7 @@ const MA_B3000W: React.FC = () => {
                 fileName="매입집계(업체)"
               >
                 <Grid
-                  style={{ height: "28vh" }}
+                  style={{ height: "31vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
@@ -900,7 +900,7 @@ const MA_B3000W: React.FC = () => {
                 fileName="매입집계(업체)"
               >
                 <Grid
-                  style={{ height: "28vh" }}
+                  style={{ height: "31vh" }}
                   data={process(
                     gridDataResult.data.map((row) => ({
                       ...row,
