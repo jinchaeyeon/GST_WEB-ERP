@@ -114,7 +114,7 @@ const KendoWindow = ({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1000,
-    height: 400,
+    height: isMobile == true ? 600 : 400,
   });
 
   const handleMove = (event: WindowMoveEvent) => {

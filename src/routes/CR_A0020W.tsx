@@ -109,6 +109,9 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 let workType: string = "";
 
 const CR_A0020W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
+
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -739,7 +742,7 @@ const CR_A0020W: React.FC = () => {
             )}
           </GridTitleContainer>
           <Grid
-            style={{ height: "83.5vh" }}
+            style={{ height: isMobile ? "70vh" :"81.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
