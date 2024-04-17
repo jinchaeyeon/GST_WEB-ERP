@@ -7,7 +7,12 @@ import { Toolbar } from "primereact/toolbar";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
-import { GetPropertyValueByName, UseCustomOption, convertDateToStr, setDefaultDate } from "../components/CommonFunction";
+import {
+  GetPropertyValueByName,
+  UseCustomOption,
+  convertDateToStr,
+  setDefaultDate,
+} from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import LineBarChart from "../components/KPIcomponents/Chart/LineBarChart";
 import MultiChart from "../components/KPIcomponents/Chart/MultiChart";
@@ -30,26 +35,25 @@ const SA_B2216W: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SA_B2216W", setCustomOptionData);
- //customOptionData 조회 후 디폴트 값 세팅
- useEffect(() => {
-  if (customOptionData !== null) {
-    const defaultOption = GetPropertyValueByName(
-      customOptionData.menuCustomDefaultOptions,
-      "query"
-    );
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
 
-    setFilters((prev) => ({
-      ...prev,
-      frdt: setDefaultDate(customOptionData, "frdt"),
-      mm: setDefaultDate(customOptionData, "mm"),
-    }));
-  }
-}, [customOptionData]);
+      setFilters((prev) => ({
+        ...prev,
+        frdt: setDefaultDate(customOptionData, "frdt"),
+        mm: setDefaultDate(customOptionData, "mm"),
+      }));
+    }
+  }, [customOptionData]);
 
   const [color, setColor] = useRecoilState(colors);
   const [colorName, setColorName] = useRecoilState(colorsName);
   const [selected, setSelected] = useState<any>();
-  const [selected2, setSelected2] = useState<any>();
   useEffect(() => {}, [color]);
 
   const theme = createTheme({
@@ -141,19 +145,6 @@ const SA_B2216W: React.FC = () => {
     },
   };
 
-  //조회조건 파라미터
-  const parameters4 = {
-    procedureName: "P_SA_B2216W_Q",
-    pageNumber: 1,
-    pageSize: filters.pgSize,
-    parameters: {
-      "@p_work_type": "Q4",
-      "@p_orgdiv": filters.orgdiv,
-      "@p_yyyy": convertDateToStr(filters.frdt).substring(0, 4),
-      "@p_mm": convertDateToStr(filters.mm).substring(4, 6),
-    },
-  };
-
   const fetchMainGrid = async () => {
     setLoading(true);
     let data: any;
@@ -239,25 +230,10 @@ const SA_B2216W: React.FC = () => {
     if (data3.isSuccess === true) {
       const rows3 = data3.tables[0].Rows.map((item: any) => ({
         ...item,
-        _percent: item._percent + "%",
       }));
 
       setUserList(rows3);
       setSelected(rows3[0]);
-    }
-
-    let data4: any;
-    try {
-      data4 = await processApi<any>("procedure", parameters4);
-    } catch (error) {
-      data4 = null;
-    }
-
-    if (data4.isSuccess === true) {
-      const rows4 = data4.tables[0].Rows;
-
-      setProjectList(rows4);
-      setSelected2(rows4[0]);
     }
 
     setLoading(false);
@@ -272,8 +248,6 @@ const SA_B2216W: React.FC = () => {
       fetchMainGrid();
     }
   }, [filters]);
-
-  const [ProjectList, setProjectList] = useState<any[]>([]);
 
   const [UserList, setUserList] = useState<any[]>([]);
 
@@ -419,48 +393,27 @@ const SA_B2216W: React.FC = () => {
           </Grid>
           <Divider />
           <Grid container spacing={2} style={{ marginBottom: "50px" }}>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={7}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <PaginatorTable
                 value={UserList}
                 column={{
                   user_name: "구분",
-                  cnt1: "방문",
+                  cnt1: "담당프로젝트 수",
                   cnt2: "상담",
                   cnt3: "컨설팅",
                   cnt4: "견적",
                   cnt5: "계약",
-                  _percent: "견적 대비 계약 현황",
                 }}
                 title={
                   convertDateToStr(filters.frdt).substring(0, 4) +
                   "년도 개인별 활동 현황"
                 }
                 numberCell={["cnt1", "cnt2", "cnt3", "cnt4", "cnt5"]}
-                width={[120, 100, 100, 100, 100, 100, 100]}
+                width={[120, 100, 100, 100, 100, 100]}
                 key="num"
                 selection={selected}
                 onSelectionChange={(e: any) => {
                   setSelected(e.value);
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={5}>
-              <PaginatorTable
-                value={ProjectList}
-                column={{
-                  user_name: "구분",
-                  value: "담당 프로젝트 수",
-                }}
-                numberCell={["value"]}
-                title={
-                  convertDateToStr(filters.frdt).substring(0, 4) +
-                  "년도 개인별 프로젝트 관리 수"
-                }
-                width={[120, 100]}
-                key="num"
-                selection={selected2}
-                onSelectionChange={(e: any) => {
-                  setSelected2(e.value);
                 }}
               />
             </Grid>

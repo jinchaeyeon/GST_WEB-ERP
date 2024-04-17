@@ -235,6 +235,7 @@ import SA_A5010W from "./routes/SA_A5010W";
 import SA_A6000W from "./routes/SA_A6000W";
 import SA_A8000W from "./routes/SA_A8000W";
 import SA_B1000W_603 from "./routes/SA_B1000W_603";
+import SA_B1101_603W from "./routes/SA_B1101_603W";
 import SA_B2200W from "./routes/SA_B2200W";
 import SA_B2200W_603 from "./routes/SA_B2200W_603";
 import SA_B2211W from "./routes/SA_B2211W";
@@ -400,13 +401,16 @@ const AppInner: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (/SmartTV/i.test(navigator.userAgent) || /SmartTV/i.test(navigator.platform)) {
+    if (
+      /SmartTV/i.test(navigator.userAgent) ||
+      /SmartTV/i.test(navigator.platform)
+    ) {
       setOSState(true);
     } else {
       setOSState(false);
     }
   }, [osstate]);
- 
+
   useEffect(() => {
     setThemeColor(color);
   }, [color]);
@@ -1044,6 +1048,8 @@ const AppInner: React.FC = () => {
       return SA_A1100_603W;
     } else if (str == "SA_B1000W_603") {
       return SA_B1000W_603;
+    } else if (str == "SA_B1101_603W") {
+      return SA_B1101_603W;
     } else if (str == "SA_B2216W") {
       return SA_B2216W;
     } else if (str == "SA_B2220W") {
@@ -1460,6 +1466,11 @@ const AppInner: React.FC = () => {
                   <AuthRoute
                     path="/SA_B1000W_603"
                     component={SA_B1000W_603}
+                    exact
+                  />
+                  <AuthRoute
+                    path="/SA_B1101_603W"
+                    component={SA_B1101_603W}
                     exact
                   />
                   <AuthRoute path="/SA_A6000W" component={SA_A6000W} exact />
