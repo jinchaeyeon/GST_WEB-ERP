@@ -780,7 +780,7 @@ const MA_A3500W: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-
+      
       setSubDataResult((prev) => {
         return {
           data: rows,
@@ -1695,10 +1695,8 @@ const MA_A3500W: React.FC = () => {
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows.push(newData2);
         }
         Object3.push(index);

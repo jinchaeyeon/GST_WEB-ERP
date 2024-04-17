@@ -2638,10 +2638,8 @@ const CopyWindow = ({
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows.push(newData2);
         }
         Object.push(index);
@@ -2675,10 +2673,8 @@ const CopyWindow = ({
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows2.push(newData2);
         }
         Object.push(index);
@@ -2712,10 +2708,8 @@ const CopyWindow = ({
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows3.push(newData2);
         }
         Object.push(index);
@@ -2749,10 +2743,8 @@ const CopyWindow = ({
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows4.push(newData2);
         }
         Object.push(index);
@@ -2786,10 +2778,8 @@ const CopyWindow = ({
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows5.push(newData2);
         }
         Object.push(index);
@@ -2823,10 +2813,8 @@ const CopyWindow = ({
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows6.push(newData2);
         }
         Object.push(index);
@@ -2860,10 +2848,8 @@ const CopyWindow = ({
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows7.push(newData2);
         }
         Object.push(index);
@@ -2897,10 +2883,8 @@ const CopyWindow = ({
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows8.push(newData2);
         }
         Object.push(index);

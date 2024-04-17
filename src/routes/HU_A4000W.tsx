@@ -3587,7 +3587,7 @@ const HU_A4000W: React.FC = () => {
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
-    let Object: any[] = [];
+    let Object1: any[] = [];
     let Object2: any[] = [];
     let data: any;
     mainDataResult.data.forEach((item: any, index: number) => {
@@ -3596,27 +3596,25 @@ const HU_A4000W: React.FC = () => {
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows.push(newData2);
         }
-        Object.push(index);
+        Object1.push(index);
       }
     });
 
-    if (Math.min(...Object) < Math.min(...Object2)) {
+    if (Math.min(...Object1) < Math.min(...Object2)) {
       data = mainDataResult.data[Math.min(...Object2)];
     } else {
-      data = mainDataResult.data[Math.min(...Object) - 1];
+      data = mainDataResult.data[Math.min(...Object1) - 1];
     }
 
     setMainDataResult((prev) => ({
       data: newData,
-      total: prev.total - Object.length,
+      total: prev.total - Object1.length,
     }));
-    if (Object.length > 0) {
+    if (Object1.length > 0) {
       setSelectedState({
         [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,
       });
@@ -3645,10 +3643,8 @@ const HU_A4000W: React.FC = () => {
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows2.push(newData2);
         }
         Object.push(index);
@@ -3683,10 +3679,8 @@ const HU_A4000W: React.FC = () => {
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows5.push(newData2);
         }
         Object.push(index);
@@ -3721,10 +3715,8 @@ const HU_A4000W: React.FC = () => {
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows6.push(newData2);
         }
         Object.push(index);
@@ -3759,10 +3751,8 @@ const HU_A4000W: React.FC = () => {
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows7.push(newData2);
         }
         Object.push(index);
@@ -3797,10 +3787,8 @@ const HU_A4000W: React.FC = () => {
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows8.push(newData2);
         }
         Object.push(index);

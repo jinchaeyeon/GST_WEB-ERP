@@ -944,10 +944,8 @@ const AC_A0030W: React.FC = () => {
             : "";
 
         if (item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows.push(newData2);
         }
       }
@@ -977,10 +975,8 @@ const AC_A0030W: React.FC = () => {
             : "";
 
         if (item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows2.push(newData2);
         }
       }

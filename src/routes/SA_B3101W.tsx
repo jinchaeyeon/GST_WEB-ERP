@@ -102,9 +102,7 @@ const SA_B3101W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        yyyy: setDefaultDate(customOptionData, "yyyy"),
-          // itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
-          // .valueCode,
+        yyyy: setDefaultDate(customOptionData, "yyyy"),       
         radAmtdiv: defaultOption.find((item: any) => item.id === "radAmtdiv")
           .valueCode,
       }));
@@ -461,13 +459,7 @@ const SA_B3101W: React.FC = () => {
           <GridTitle>상세정보</GridTitle>
           <Grid
             style={{ height: "38.5vh" }}
-            data={process(
-              gridDataResult.data.map((row) => ({
-                ...row,
-                [SELECTED_FIELD]: selectedState[idGetter(row)],
-              })),
-              gridDataState
-            )}
+            data={gridDataResult.data}
             {...gridDataState}
             onDataStateChange={onGridDataStateChange}
             //선택 기능
@@ -499,10 +491,10 @@ const SA_B3101W: React.FC = () => {
                       key={idx}
                       field={item.fieldName}
                       title={item.caption}                      
-                    > 
+                    >                       
                       <GridColumn
                         title={"매입액"}
-                        // cell={NumberCell}
+                        cell={NumberCell}
                         field={item.fieldName}
                         footerCell={gridSumQtyFooterCell}
                         width={item.width}
