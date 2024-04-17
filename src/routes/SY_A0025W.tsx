@@ -977,29 +977,27 @@ const SY_A0025W: React.FC = () => {
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
-    let Object: any[] = [];
-    let Object2: any[] = [];
+    let object: any[] = []; 
+    let object2: any[] = [];
     let data;
     subDataResult.data.forEach((item: any, index: number) => {
       if (!selectedsubDataState[item[DATA_ITEM_KEY]]) {
         newData.push(item);
-        Object2.push(index);
+        object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows.push(newData2);
         }
-        Object.push(index);
+        object.push(index);
       }
     });
 
-    if (Math.min(...Object) < Math.min(...Object2)) {
-      data = subDataResult.data[Math.min(...Object2)];
+    if (Math.min(...object) < Math.min(...object2)) {
+      data = subDataResult.data[Math.min(...object2)];
     } else {
-      data = subDataResult.data[Math.min(...Object) - 1];
+      data = subDataResult.data[Math.min(...object) - 1];
     }
     const isLastDataDeleted =
       subDataResult.data.length === 0 && filters2.pgNum > 1;
@@ -1016,7 +1014,7 @@ const SY_A0025W: React.FC = () => {
 
     setSubDataResult((prev) => ({
       data: newData,
-      total: prev.total - Object.length,
+      total: prev.total - object.length,
     }));
     setSelectedsubDataState({
       [data != undefined ? data[DATA_ITEM_KEY] : newData[0]]: true,

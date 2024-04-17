@@ -1124,28 +1124,26 @@ const BA_A0070W: React.FC = () => {
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
-    let Object: any[] = [];
-    let Object2: any[] = [];
+    let ObjectArray: any[] = [];
+    let ObjectArray2: any[] = [];
     let data;
     mainDataResult.data.forEach((item: any, index: number) => {
       if (!selectedState[item[DATA_ITEM_KEY]]) {
         newData.push(item);
-        Object2.push(index);
+        ObjectArray2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = {
-            ...item,
-            rowstatus: "D",
-          };
+          const newData2 = item;
+          newData2.rowstatus = "D";
           deletedMainRows.push(newData2);
         }
-        Object.push(index);
+        ObjectArray.push(index);
       }
     });
-    if (Math.min(...Object) < Math.min(...Object2)) {
-      data = mainDataResult.data[Math.min(...Object2)];
+    if (Math.min(...ObjectArray) < Math.min(...ObjectArray2)) {
+      data = mainDataResult.data[Math.min(...ObjectArray2)];
     } else {
-      data = mainDataResult.data[Math.min(...Object) - 1];
+      data = mainDataResult.data[Math.min(...ObjectArray) - 1];
     }
 
     //newData 생성
