@@ -2775,7 +2775,7 @@ const SA_A1100_603W: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th style={{ textAlign: "right" }}>계약명 </th>
+                      <th>계약명 </th>
                       <td>
                         {subFilters.groupgb == "B" ? (
                           <Input
@@ -2795,7 +2795,7 @@ const SA_A1100_603W: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th style={{ textAlign: "right" }}> 시험물질명 </th>
+                      <th> 시험물질명 </th>
                       <td>
                         <Input
                           name="materialnm"
@@ -2807,7 +2807,7 @@ const SA_A1100_603W: React.FC = () => {
                     </tr>
 
                     <tr>
-                      <th style={{ textAlign: "right" }}> 합계금액 </th>
+                      <th> 합계금액 </th>
                       <td>
                         <Input
                           name="totamt"
@@ -2847,7 +2847,7 @@ const SA_A1100_603W: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th style={{ textAlign: "right" }}> 환율 </th>
+                      <th> 환율 </th>
                       <td>
                         {subFilters.groupgb == "B" ? (
                           <NumericTextBox
@@ -2917,7 +2917,7 @@ const SA_A1100_603W: React.FC = () => {
                         ...row,
                         paydt: row.paydt
                           ? new Date(dateformat(row.paydt))
-                          : new Date(dateformat("19000101")),
+                          : new Date(dateformat("99991231")),
                         [SELECTED_FIELD]: selectedState6[idGetter6(row)],
                       })),
                       mainDataState6

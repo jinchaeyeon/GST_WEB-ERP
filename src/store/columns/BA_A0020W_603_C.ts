@@ -58,6 +58,30 @@ export const gridList: Array<TGrid> = [
         caption: "주소(본사)",
         width: 150,
       },
+      {
+        id: "col_compclassname",
+        field: "compclassname",
+        caption: "업태",
+        width: 120,
+      },
+      {
+        id: "col_listringyn",
+        field: "listringyn",
+        caption: "상장여부",
+        width: 100,
+      },
+      {
+        id: "col_listringdivname",
+        field: "listringdivname",
+        caption: "상장구분",
+        width: 120,
+      },
+      {
+        id: "col_itemlvl1name",
+        field: "itemlvl1name",
+        caption: "신용평가등급",
+        width: 120,
+      },
     ],
   },
   {

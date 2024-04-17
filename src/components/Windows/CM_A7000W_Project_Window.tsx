@@ -116,8 +116,10 @@ const CopyWindow = ({
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
-        person: defaultOption.find((item: any) => item.id === "person").valueCode,
-        quosts: defaultOption.find((item: any) => item.id === "quosts").valueCode,
+        person: defaultOption.find((item: any) => item.id === "person")
+          .valueCode,
+        quosts: defaultOption.find((item: any) => item.id === "quosts")
+          .valueCode,
         isSearch: true,
       }));
     }
@@ -346,6 +348,7 @@ const CopyWindow = ({
     custnm: "",
     materialnm: "",
     quosts: "",
+    quokey: "",
     find_row_value: "",
     isSearch: true,
     pgNum: 1,
@@ -373,6 +376,7 @@ const CopyWindow = ({
         "@p_custnm": filters.custnm,
         "@p_materialnm": filters.materialnm,
         "@p_quosts": filters.quosts,
+        "@p_quokey": filters.quokey,
         "@p_find_row_value": "",
       },
     };
@@ -546,6 +550,15 @@ const CopyWindow = ({
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
+                <th>PJT NO.</th>
+                <td>
+                  <Input
+                    name="quokey"
+                    type="text"
+                    value={filters.quokey}
+                    onChange={filterInputChange}
+                  />
+                </td>
                 <th>일자조건</th>
                 <td>
                   {customOptionData !== null && (
@@ -576,7 +589,7 @@ const CopyWindow = ({
                     className="required"
                   />
                 </td>
-                <th>담당자</th>
+                <th>영업담당자</th>
                 <td>
                   {customOptionData !== null && (
                     <CustomOptionComboBox
@@ -586,17 +599,6 @@ const CopyWindow = ({
                       changeData={filterComboBoxChange}
                       valueField="user_id"
                       textField="user_name"
-                    />
-                  )}
-                </td>
-                <th>견적상태</th>
-                <td>
-                  {customOptionData !== null && (
-                    <CustomOptionComboBox
-                      name="quosts"
-                      value={filters.quosts}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
                     />
                   )}
                 </td>
@@ -628,13 +630,24 @@ const CopyWindow = ({
                   />
                 </td>
                 <th>시험물질명</th>
-                <td colSpan={3}>
+                <td>
                   <Input
                     name="materialnm"
                     type="text"
                     value={filters.materialnm}
                     onChange={filterInputChange}
                   />
+                </td>
+                <th>견적상태</th>
+                <td>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="quosts"
+                      value={filters.quosts}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
                 </td>
               </tr>
             </tbody>
@@ -717,7 +730,7 @@ const CopyWindow = ({
           >
             <GridColumn
               field="quokey"
-              title="프로젝트번호"
+              title="PJT NO."
               width="150px"
               footerCell={mainTotalFooterCell}
             />
@@ -729,9 +742,8 @@ const CopyWindow = ({
               width="100px"
               cell={DateCell}
             />
-            <GridColumn field="person" title="담당자" width="100px" />
+            <GridColumn field="person" title="영업담당자" width="100px" />
             <GridColumn field="custnm" title="업체명" width="150px" />
-            <GridColumn field="custprsncd" title="의뢰자코드" width="120px" />
             <GridColumn field="custprsnnm" title="의뢰자명" width="120px" />
             <GridColumn field="postnm" title="직위/직책" width="120px" />
             <GridColumn field="dptnm" title="부서명" width="120px" />

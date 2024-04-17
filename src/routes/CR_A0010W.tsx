@@ -900,9 +900,9 @@ const CR_A0010W: React.FC = () => {
     const newDataItem = {
       [DATA_ITEM_KEY]: ++temp,
       apply_start_date: convertDateToStr(new Date()),
-      apply_end_date: "19000101",
+      apply_end_date: "99991231",
       bircd: "Y",
-      birdt: "19000101",
+      birdt: "99991231",
       custcd: "",
       dptcd: "",
       email: "",
@@ -1278,7 +1278,7 @@ const CR_A0010W: React.FC = () => {
               "@p_tel_no": 전화번호,
               "@p_mobile_no": 휴대폰번호,
               "@p_apply_start_date": convertDateToStr(new Date()),
-              "@p_apply_end_date": "19000101",
+              "@p_apply_end_date": "99991231",
               "@p_hold_check_yn": "N",
               "@p_memo": "",
               "@p_ip_check_yn": "N",
@@ -1506,13 +1506,13 @@ const CR_A0010W: React.FC = () => {
                     ...row,
                     birdt: row.birdt
                       ? new Date(dateformat(row.birdt))
-                      : new Date(dateformat("19000101")),
+                      : new Date(dateformat("99991231")),
                     apply_start_date: row.apply_start_date
                       ? new Date(dateformat(row.apply_start_date))
-                      : new Date(dateformat("19000101")),
+                      : new Date(dateformat("99991231")),
                     apply_end_date: row.apply_end_date
                       ? new Date(dateformat(row.apply_end_date))
-                      : new Date(dateformat("19000101")),
+                      : new Date(dateformat("99991231")),
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
                   mainDataState

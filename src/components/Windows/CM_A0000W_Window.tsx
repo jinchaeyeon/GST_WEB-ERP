@@ -736,7 +736,7 @@ const KendoWindow = ({
                   </td>
                 </tr>
                 <tr>
-                  <th>카테고리</th>
+                  <th>분류</th>
                   <td>
                     {customOptionData !== null && (
                       <CustomOptionComboBox
@@ -765,7 +765,7 @@ const KendoWindow = ({
                   </td>
                 </tr>
                 <tr>
-                  <th>공지시작일</th>
+                  <th>시작일자</th>
                   <td>
                     <DatePicker
                       name="publish_start_date"
@@ -776,7 +776,7 @@ const KendoWindow = ({
                       className="required"
                     />
                   </td>
-                  <th>공지종료일</th>
+                  <th>종료일자</th>
                   <td>
                     <DatePicker
                       name="publish_end_date"

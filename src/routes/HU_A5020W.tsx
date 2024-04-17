@@ -1326,7 +1326,7 @@ const HU_A5020W: React.FC = () => {
                     )?.dptnm,
                     payyrmm: row.payyrmm
                       ? new Date(dateformat(row.payyrmm))
-                      : new Date(dateformat("19000101")),
+                      : new Date(dateformat("99991231")),
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
                   mainDataState

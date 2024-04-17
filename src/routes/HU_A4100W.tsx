@@ -1189,7 +1189,7 @@ const HU_A4100W: React.FC = () => {
                   )?.user_name,
                   yyyy: row.yyyy
                     ? new Date(dateformat(row.yyyy))
-                    : new Date(dateformat("19000101")),
+                    : new Date(dateformat("99991231")),
                   [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                 })),
                 mainDataState

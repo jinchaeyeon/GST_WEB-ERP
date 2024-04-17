@@ -735,7 +735,7 @@ const CM_A0000W: React.FC = () => {
                 />
               </td>
 
-              <th>카테고리</th>
+              <th></th>
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox

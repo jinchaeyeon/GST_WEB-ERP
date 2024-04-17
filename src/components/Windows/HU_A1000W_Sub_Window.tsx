@@ -683,7 +683,7 @@ const KendoWindow = ({
               ...row,
               yyyymm: row.yyyymm
                 ? new Date(dateformat(row.yyyymm))
-                : new Date(dateformat("19000101")),
+                : new Date(dateformat("99991231")),
               [SELECTED_FIELD]: selectedState[idGetter(row)],
             })),
             mainDataState

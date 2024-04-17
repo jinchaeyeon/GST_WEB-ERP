@@ -7,14 +7,20 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_recdt",
         field: "recdt",
-        caption: "회의일",
+        caption: "작성일자",
         width: 120,
       },
       {
         id: "col_custnm",
         field: "custnm",
-        caption: "업체",
+        caption: "업체명",
         width: 150,
+      },
+      {
+        id: "col_custprsnnm",
+        field: "custprsnnm",
+        caption: "의뢰자",
+        width: 120,
       },
       {
         id: "col_title",
@@ -25,13 +31,13 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_usegb",
         field: "usegb",
-        caption: "회의록 목적",
+        caption: "목적",
         width: 120,
       },
       {
         id: "col_ref_key",
         field: "ref_key",
-        caption: "연결 PJ No.",
+        caption: "PJT NO.",
         width: 150,
       },
       {
@@ -41,10 +47,22 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_files",
-        field: "files",
-        caption: "첨부파일",
-        width: 150,
+        id: "col_type",
+        field: "type",
+        caption: "유형",
+        width: 120,
+      },
+      {
+        id: "col_materialtype",
+        field: "materialtype",
+        caption: "물질분야",
+        width: 120,
+      },
+      {
+        id: "col_extra_field2",
+        field: "extra_field2",
+        caption: "물질상세분야",
+        width: 120,
       },
     ],
   },

@@ -2361,7 +2361,7 @@ const CM_A1600: React.FC = () => {
                       ...row,
                       strtime: row.strtime
                         ? new Date(dateformat(row.strtime))
-                        : new Date(dateformat("19000101")),
+                        : new Date(dateformat("99991231")),
                       [SELECTED_FIELD]: todoSelectedState[idGetter(row)],
                     })),
                     todoDataState
@@ -2681,10 +2681,10 @@ const CM_A1600: React.FC = () => {
                     ...row,
                     strtime: row.strtime
                       ? new Date(dateformat(row.strtime))
-                      : new Date(dateformat("19000101")),
+                      : new Date(dateformat("99991231")),
                     endtime: row.endtime
                       ? new Date(dateformat(row.endtime))
-                      : new Date(dateformat("19000101")),
+                      : new Date(dateformat("99991231")),
                     [SELECTED_FIELD]: userselectedState[idGetter2(row)],
                   })),
                   userDataState

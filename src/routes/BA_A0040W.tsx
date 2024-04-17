@@ -2553,7 +2553,7 @@ const BA_A0040: React.FC = () => {
                           : row.rowstatus,
                       recdt: row.recdt
                         ? new Date(dateformat(row.recdt))
-                        : new Date(dateformat("19000101")),
+                        : new Date(dateformat("99991231")),
                       [SELECTED_FIELD]: selectedsubData2State[idGetter2(row)],
                     })),
                     subData2State

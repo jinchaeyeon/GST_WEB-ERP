@@ -62,7 +62,7 @@ const DateCell = (props: GridCellProps) => {
           placeholder=""
         />
       ) : typeof value === "object" ? (
-        convertDateToStr(value) == "19000101" ? (
+        convertDateToStr(value) == "99991231" ? (
           ""
         ) : (
           convertDateToStr(value).substring(0, 4)

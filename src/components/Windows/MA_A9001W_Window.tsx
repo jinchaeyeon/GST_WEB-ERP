@@ -904,10 +904,10 @@ const CopyWindow = ({
                         : row.rowstatus,
                     enddt: row.enddt
                       ? new Date(dateformat(row.enddt))
-                      : new Date(dateformat("19000101")),
+                      : new Date(dateformat("99991231")),
                     pubdt: row.pubdt
                       ? new Date(dateformat(row.pubdt))
-                      : new Date(dateformat("19000101")),
+                      : new Date(dateformat("99991231")),
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
                   mainDataState

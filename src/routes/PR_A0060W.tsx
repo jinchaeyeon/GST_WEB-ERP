@@ -3003,7 +3003,7 @@ const PR_A0060: React.FC = () => {
                         ...row,
                         fxdt: row.fxdt
                           ? new Date(dateformat(row.fxdt))
-                          : new Date(dateformat("19000101")),
+                          : new Date(dateformat("99991231")),
                         rowstatus:
                           row.rowstatus == null ||
                           row.rowstatus == "" ||

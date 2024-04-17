@@ -673,14 +673,14 @@ const CopyWindow = ({
       custcd: cust[0].custcd,
       custnm: cust[0].custnm,
       drcrdiv: "1",
-      enddt: "19000101",
+      enddt: "99991231",
       fornamt: 0,
       location: "",
       mngitemcd1: "",
       notenum: "",
       orgdiv: "01",
       pubbank: "",
-      pubdt: "19000101",
+      pubdt: "99991231",
       pubperson: "",
       remark: "",
       remark1: "",
@@ -1310,10 +1310,10 @@ const CopyWindow = ({
                     ...row,
                     pubdt: row.pubdt
                       ? new Date(dateformat(row.pubdt))
-                      : new Date(dateformat("19000101")),
+                      : new Date(dateformat("99991231")),
                     enddt: row.enddt
                       ? new Date(dateformat(row.enddt))
-                      : new Date(dateformat("19000101")),
+                      : new Date(dateformat("99991231")),
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
                   mainDataState

@@ -763,11 +763,11 @@ const SA_B3000W: React.FC = () => {
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ height: "80vh", width: "100%", marginBottom: "20px"}}
+        style={{ height: "80vh", width: "100%", paddingBottom: "20px" }}
       >
         <TabStripTab title="전체">
           <GridContainerWrap flexDirection="column">
-            <GridContainer height="36.5vh">
+            <GridContainer height="34.5vh">
               <Chart
                 seriesColors={
                   window.location.href.split("/")[2].split(".")[1] == "ddgd"

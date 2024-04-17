@@ -1396,7 +1396,7 @@ const HU_A2070W: React.FC = () => {
                   ...row,
                   dutydt: row.dutydt
                     ? new Date(dateformat(row.dutydt))
-                    : new Date(dateformat("19000101")),
+                    : new Date(dateformat("99991231")),
                   [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
                 })),
                 mainDataState2

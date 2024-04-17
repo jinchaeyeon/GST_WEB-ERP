@@ -1,5 +1,5 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
-import React, { CSSProperties, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 // ES2015 module syntax
 import { Grid as GridMui } from "@mui/material";
 import { Button } from "@progress/kendo-react-buttons";
@@ -19,24 +19,17 @@ import { useRecoilState } from "recoil";
 import {
   AnswerIcon,
   GridContainer,
-  GridContainerWrap,
-  GridTitle,
-  GridTitleContainer,
+  GridContainerWrap
 } from "../CommonStyled";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
   convertDateToStr,
-  convertDateToStrWithTime2,
   getQueryFromBizComponent,
-  toDate2,
 } from "../components/CommonFunction";
 import { GAP, PAGE_SIZE } from "../components/CommonString";
-import { LayoutSquareRead } from "../components/DnD/LayoutSquareRead";
-import { PieceRead } from "../components/DnD/PieceRead";
 import Card from "../components/KPIcomponents/Card/CardBox";
 import PaginatorTable from "../components/KPIcomponents/Table/PaginatorTable";
 import MessengerWindow from "../components/Windows/CommonWindows/MessengerWindow";
@@ -56,17 +49,6 @@ type TSchedulerDataResult = {
   end: Date;
 };
 
-const boardStyle: CSSProperties = {
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  flexWrap: "wrap",
-};
-const containerStyle: CSSProperties = {
-  width: "100%",
-  height: "600px",
-};
-
 const answerynBodyTemplate = (rowData: any) => {
   return (
     <>
@@ -82,17 +64,12 @@ const Main: React.FC = () => {
   const sessionUserId = UseGetValueFromSessionItem("user_id");
   const [sessionItem, setSessionItem] = useRecoilState(sessionItemState);
   const [tabSelected, setTabSelected] = React.useState(0);
-  const [tabSelected2, setTabSelected2] = React.useState(0);
-  const [layoutTab, setLayoutTab] = useState<any[]>([]);
-  const [squares, setSquares] = useState<any[]>([]);
   const [colorData, setColorData] = useState<any[]>([]);
-  const [purposeData, setPurposeData] = useState<any[]>([]);
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   const [selected, setSelected] = useState<any>();
   const [selected2, setSelected2] = useState<any>();
-  const [selected3, setSelected3] = useState<any>();
   const userName = loginResult ? loginResult.userName : "";
-  UseBizComponent("L_APPOINTMENT_COLOR, L_BA400", setBizComponentData);
+  UseBizComponent("L_APPOINTMENT_COLOR", setBizComponentData);
 
   const [windowVisible, setWindowVisible] = useState<boolean>(false);
   const onMessengerClick = () => {
@@ -104,15 +81,6 @@ const Main: React.FC = () => {
   const [allPanelDataState, setAllPanelDataState] = useState<State>({
     sort: [],
   });
-  const [mainDataState, setMainDataState] = useState<State>({
-    sort: [],
-  });
-  const [detailDataState, setDetailDataState] = useState<State>({
-    sort: [],
-  });
-  const [meetingDataState, setMeetingDataState] = useState<State>({
-    sort: [],
-  });
   const [consultDataState, setConsultDataState] = useState<State>({
     sort: [],
   });
@@ -121,15 +89,6 @@ const Main: React.FC = () => {
   });
   const [AllPanel, setAllPanel] = useState<DataResult>(
     process([], allPanelDataState)
-  );
-  const [mainDataResult, setMainDataResult] = useState<DataResult>(
-    process([], mainDataState)
-  );
-  const [detailDataResult, setDetailDataResult] = useState<DataResult>(
-    process([], detailDataState)
-  );
-  const [meetingList, setMeetingList] = useState<DataResult>(
-    process([], meetingDataState)
   );
   const [consultList, setConsultList] = useState<DataResult>(
     process([], consultDataState)
@@ -141,77 +100,6 @@ const Main: React.FC = () => {
     setTabSelected(e.selected);
   };
 
-  const handleSelectTab2 = (e: any) => {
-    setTabSelected2(e.selected);
-    const selectedRow = mainDataResult.data[e.selected];
-
-    const width = 100 / selectedRow.col_cnt;
-    const height = 100 / selectedRow.row_cnt;
-    const squareStyle: CSSProperties = {
-      width: width + "%",
-      height: height + "%",
-    };
-    let arrays = [];
-    const datas = detailDataResult.data.filter(
-      (item) => mainDataResult.data[e.selected].layout_key == item.layout_key
-    );
-
-    for (let i = 0; i < selectedRow.row_cnt; i++) {
-      for (let j = 0; j < selectedRow.col_cnt; j++) {
-        arrays.push(renderSquare(i, j, squareStyle, datas));
-      }
-    }
-    setSquares(arrays);
-  };
-
-  useEffect(() => {
-    let arrays = [];
-    for (let i = 0; i < mainDataResult.data.length; i++) {
-      var name: string = mainDataResult.data[i].layout_name;
-      arrays.push(
-        <TabStripTab title={name}>
-          <div style={containerStyle}>
-            <div style={boardStyle}>{squares}</div>
-          </div>
-        </TabStripTab>
-      );
-    }
-    setLayoutTab(arrays);
-  }, [mainDataResult, tabSelected2, tabSelected]);
-
-  function renderSquare(
-    row: number,
-    col: number,
-    squareStyle: CSSProperties,
-    knightLists: any[]
-  ) {
-    const data = knightLists.filter(
-      (item: any) => item.col_index == col && item.row_index == row
-    );
-
-    return (
-      <div key={`${row}${col}`} style={squareStyle}>
-        <LayoutSquareRead x={row} y={col}>
-          <PieceRead
-            isKnight={knights(data, row, col)}
-            list={data}
-            info={data}
-          />
-        </LayoutSquareRead>
-      </div>
-    );
-  }
-
-  function knights(data: any[], x: number, y: number) {
-    let valid = false;
-    data.map((item) => {
-      if (item.row_index == x && item.col_index == y) {
-        valid = true;
-      }
-    });
-    return valid;
-  }
-
   useEffect(() => {
     if (bizComponentData !== null) {
       const colorQueryStr = getQueryFromBizComponent(
@@ -219,11 +107,6 @@ const Main: React.FC = () => {
           (item: any) => item.bizComponentId === "L_APPOINTMENT_COLOR"
         )
       );
-      const purposeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA400")
-      );
-
-      fetchQuery(purposeQueryStr, setPurposeData);
       fetchQuery(colorQueryStr, setColorData);
     }
   }, [bizComponentData]);
@@ -279,13 +162,6 @@ const Main: React.FC = () => {
 
       setSchedulerFilter((prev) => ({
         ...prev,
-        cboSchedulerType: defaultOption.find(
-          (item: any) => item.id === "cboSchedulerType"
-        ).valueCode,
-        isSearch: true,
-      }));
-      setLayoutFilter((prev) => ({
-        ...prev,
         isSearch: true,
       }));
       setFilters2((prev) => ({
@@ -306,12 +182,6 @@ const Main: React.FC = () => {
     isSearch: false,
   });
 
-  const [layoutFilter, setLayoutFilter] = useState({
-    pgSize: PAGE_SIZE,
-    worktype: "process_layout",
-    isSearch: true,
-  });
-
   const schedulerParameters: Iparameters = {
     procedureName: "sys_sel_default_home_web",
     pageNumber: 1,
@@ -325,22 +195,6 @@ const Main: React.FC = () => {
       "@p_todt": "",
       "@p_ref_date": "",
       "@p_ref_key": "N",
-    },
-  };
-
-  const layoutParameters: Iparameters = {
-    procedureName: "sys_sel_default_home_web",
-    pageNumber: 1,
-    pageSize: layoutFilter.pgSize,
-    parameters: {
-      "@p_work_type": layoutFilter.worktype,
-      "@p_orgdiv": sessionOrgdiv,
-      "@p_location": sessionLocation,
-      "@p_user_id": userId,
-      "@p_frdt": "",
-      "@p_todt": "",
-      "@p_ref_date": "",
-      "@p_ref_key": "",
     },
   };
 
@@ -412,14 +266,6 @@ const Main: React.FC = () => {
       let rows1 = data.tables[1].Rows.map((row: any) => ({
         ...row,
       }));
-      let rows2 = data.tables[2].Rows.map((row: any) => ({
-        ...row,
-        meetingdt: convertDateToStrWithTime2(toDate2(row.meetingdt)),
-        meetingpurpose: purposeData.find(
-          (item: any) => item.sub_code == row.meetingpurpose
-        )?.code_name,
-      }));
-
       setWaitList((prev) => {
         return {
           data: rows,
@@ -434,13 +280,6 @@ const Main: React.FC = () => {
         };
       });
       setSelected2(rows1[0]);
-      setMeetingList((prev) => {
-        return {
-          data: rows2,
-          total: data.tables[2].RowCount,
-        };
-      });
-      setSelected3(rows2[0]);
     }
     setFilters3((prev) => ({
       ...prev,
@@ -505,62 +344,6 @@ const Main: React.FC = () => {
     }
   }, []);
 
-  const fetchLayout = async () => {
-    let data: any;
-
-    try {
-      data = await processApi<any>("procedure", layoutParameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true && data.tables[0]) {
-      const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows;
-      const totalRowCnt2 = data.tables[1].RowCount;
-      const rows2 = data.tables[1].Rows;
-
-      setMainDataResult((prev) => {
-        return {
-          data: rows,
-          total: totalRowCnt == -1 ? 0 : totalRowCnt,
-        };
-      });
-      setDetailDataResult((prev) => {
-        return {
-          data: rows2,
-          total: totalRowCnt2 == -1 ? 0 : totalRowCnt2,
-        };
-      });
-
-      if (totalRowCnt > 0) {
-        const selectedRow = rows[0];
-
-        const width = 100 / selectedRow.col_cnt;
-        const height = 100 / selectedRow.row_cnt;
-        const squareStyle: CSSProperties = {
-          width: width + "%",
-          height: height + "%",
-        };
-        let arrays = [];
-        const datas = rows2.filter(
-          (item: any) => selectedRow.layout_key == item.layout_key
-        );
-
-        for (let i = 0; i < selectedRow.row_cnt; i++) {
-          for (let j = 0; j < selectedRow.col_cnt; j++) {
-            arrays.push(renderSquare(i, j, squareStyle, datas));
-          }
-        }
-        setSquares(arrays);
-      }
-    }
-    setLayoutFilter((prev) => ({
-      ...prev,
-      isSearch: false,
-    }));
-  };
-
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     orgdiv: "01",
@@ -593,12 +376,6 @@ const Main: React.FC = () => {
   }, [schedulerFilter]);
 
   useEffect(() => {
-    if (layoutFilter.isSearch === true && bizComponentData !== null) {
-      fetchLayout();
-    }
-  }, [layoutFilter]);
-
-  useEffect(() => {
     if (filters2.isSearch === true && bizComponentData !== null) {
       fetchCard();
     }
@@ -609,16 +386,6 @@ const Main: React.FC = () => {
       fetchTable();
     }
   }, [filters3]);
-
-  //스케줄러조회조건 Change 함수 => 사용자가 선택한 드롭다운리스트 값을 조회 파라미터로 세팅
-  const schedulerFilterChange = (e: any) => {
-    const { name, value } = e;
-
-    setSchedulerFilter((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
   const cardOption = [
     {
@@ -811,19 +578,6 @@ const Main: React.FC = () => {
             >
               <TabStripTab title="업무 달력">
                 <GridContainer>
-                  <GridTitleContainer>
-                    <GridTitle></GridTitle>
-                    {customOptionData !== null && (
-                      <div>
-                        <CustomOptionComboBox
-                          name="cboSchedulerType"
-                          value={schedulerFilter.cboSchedulerType}
-                          customOptionData={customOptionData}
-                          changeData={schedulerFilterChange}
-                        />
-                      </div>
-                    )}
-                  </GridTitleContainer>
                   {osstate == true ? (
                     <div
                       style={{
@@ -851,18 +605,6 @@ const Main: React.FC = () => {
                   )}
                 </GridContainer>
               </TabStripTab>
-              <TabStripTab
-                title="프로세스 레이아웃"
-                disabled={mainDataResult.total == 0 ? true : false}
-              >
-                <TabStrip
-                  style={{ width: "100%" }}
-                  selected={tabSelected2}
-                  onSelect={handleSelectTab2}
-                >
-                  {layoutTab}
-                </TabStrip>
-              </TabStripTab>
             </TabStrip>
           </GridContainer>
         </GridContainer>
@@ -873,17 +615,20 @@ const Main: React.FC = () => {
                 <PaginatorTable
                   value={waitList.data}
                   column={{
-                    projectNo: "프로젝트NO",
-                    status: "진행상태",
+                    projectNo: "PJT NO",
+                    status: "상태",
+                    consts: "계약여부",
+                    custnm: "업체명",
+                    chkperson: "영업담당자"
                   }}
-                  title={"업무 대기(프로젝트 관리)"}
-                  width={[150, 120]}
+                  title={"프로젝트 관리"}
+                  width={[150, 120, 100, 120, 120]}
                   key="num"
                   selection={selected}
                   onSelectionChange={(e: any) => {
                     setSelected(e.value);
                   }}
-                  height={"210px"}
+                  height={"300px"}
                   filters={false}
                 />
               </GridMui>
@@ -891,40 +636,21 @@ const Main: React.FC = () => {
                 <PaginatorTable
                   value={consultList.data}
                   column={{
+                    projectNo: "PJT NO",
+                    custnm: "업체명",
                     title: "제목",
-                    projectNo: "프로젝트NO",
-                    requestNo: "요청NO",
-                    answeryn: "답변",
+                    answeryn: "답변여부",
                   }}
                   title={"컨설팅 요청 및 답변"}
-                  width={[150, 150, 150, 80]}
+                  width={[150, 120, 200, 100]}
                   key="num"
                   selection={selected2}
                   onSelectionChange={(e: any) => {
                     setSelected2(e.value);
                   }}
-                  height={"210px"}
+                  height={"300px"}
                   filters={false}
                   customCell={[["answeryn", answerynBodyTemplate]]}
-                />
-              </GridMui>
-              <GridMui item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <PaginatorTable
-                  value={meetingList.data}
-                  column={{
-                    meetingdt: "미팅시간",
-                    meetingpurpose: "구분",
-                    remark: "비고",
-                  }}
-                  title={"미팅 일정"}
-                  width={[120, 120, 200]}
-                  key="num"
-                  selection={selected3}
-                  onSelectionChange={(e: any) => {
-                    setSelected3(e.value);
-                  }}
-                  height={"210px"}
-                  filters={false}
                 />
               </GridMui>
             </GridMui>

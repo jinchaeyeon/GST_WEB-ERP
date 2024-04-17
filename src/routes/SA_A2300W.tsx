@@ -1308,7 +1308,7 @@ const SA_A2300: React.FC = () => {
           fileName="출하처리"
         >
           <Grid
-            style={{ height: "37.5vh" }}
+            style={{ height: "35vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,
@@ -1376,6 +1376,8 @@ const SA_A2300: React.FC = () => {
           </Grid>
         </ExcelExport>
       </GridContainer>
+      <div
+        style={{ paddingBottom: "15px" }}/>
       {detailWindowVisible && (
         <DetailWindow
           setVisible={setDetailWindowVisible}

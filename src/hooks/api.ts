@@ -128,7 +128,7 @@ const generateUrl = (url: string, params: any) => {
     return result.join("/");
   }
 };
- 
+
 export const useApi = () => {
   const [Link, setLink] = useRecoilState(linkState);
   const token = localStorage.getItem("accessToken");
@@ -136,7 +136,7 @@ export const useApi = () => {
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
   const fileName: string = `apiserver.json`;
   const setLoading = useSetRecoilState(isLoading);
-  
+
   const processApi = <T>(name: string, params: any = null): Promise<T> => {
     return new Promise((resolve, reject) => {
       let info: any = domain[name];
@@ -237,11 +237,15 @@ export const useApi = () => {
               .catch((err: any) => {
                 const res = err.response;
                 setLoading(false);
-                // if (res && res.status == 401) {
-                //   // setToken(null as any);
-                //   // setMenus(null as any);
-                // }
-                reject(res.data);
+                if (info.url.includes("auth/login")) {
+                  reject(
+                    new Error(
+                      "일치하는 로그인 정보를 찾을 수 없습니다.\r\n올바른 회사코드, 아이디, 비밀번호를 입력해주세요."
+                    )
+                  );
+                } else {
+                  reject(res.data);
+                }
               })
           );
         });
@@ -335,11 +339,15 @@ export const useApi = () => {
             })
             .catch((err: any) => {
               const res = err.response;
-              // if (res && res.status == 401) {
-              //   // setToken(null as any);
-              //   // setMenus(null as any);
-              // }
-              reject(res.data);
+              if (info.url.includes("auth/login")) {
+                reject(
+                  new Error(
+                    "일치하는 로그인 정보를 찾을 수 없습니다.\r\n올바른 회사코드, 아이디, 비밀번호를 입력해주세요."
+                  )
+                );
+              } else {
+                reject(res.data);
+              }
             })
         );
       }
@@ -361,7 +369,7 @@ axiosInstance.interceptors.response.use(
     const [Link, setLink] = useRecoilState(linkState);
 
     let errResponseStatus = null;
-    let errResponseURL = ""; 
+    let errResponseURL = "";
     const originalRequest = error.config;
 
     try {
