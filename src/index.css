@@ -318,6 +318,7 @@ input.readonly {
   align-items: center !important;
   flex-direction: column !important;
   overflow: scroll;
+  min-height: 70vh !important;
 }
 
 .leading_PDA_container {
@@ -328,6 +329,10 @@ input.readonly {
 .leading_PDA_Swiper {
   width: 100% !important;
   height: 90vh !important;
+}
+.leading_95_Swiper {
+  width: 100% !important;
+  height: 95vh !important;
 }
 .leading_80_Swiper {
   width: 100% !important;

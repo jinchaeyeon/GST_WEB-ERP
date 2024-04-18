@@ -987,7 +987,7 @@ const SY_A0025W: React.FC = () => {
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
-    let object: any[] = []; 
+    let object: any[] = [];
     let object2: any[] = [];
     let data;
     subDataResult.data.forEach((item: any, index: number) => {
@@ -1146,7 +1146,7 @@ const SY_A0025W: React.FC = () => {
       {isMobile ? (
         <GridContainerWrap>
           <Swiper
-            className="leading_PDA_Swiper"
+            className="leading_95_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1155,54 +1155,56 @@ const SY_A0025W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0} className="leading_PDA">
-              <TitleContainer>
-                <Title>관리번호 채번정보</Title>
-
-                <ButtonContainer>
-                  {permissions && (
-                    <TopButtons
-                      search={search}
-                      permissions={permissions}
-                      exportExcel={exportExcel}
-                      pathname="SY_A0025W"
-                    />
-                  )}
-                </ButtonContainer>
-              </TitleContainer>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>관리번호ID</th>
-                      <td>
-                        <Input
-                          name="numbering_id"
-                          type="text"
-                          value={filters.numbering_id}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                      <th>관리번호명</th>
-                      <td>
-                        <Input
-                          name="numbering_name"
-                          type="text"
-                          value={filters.numbering_name}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               <GridContainer>
+                <TitleContainer>
+                  <Title>관리번호 채번정보</Title>
+
+                  <ButtonContainer>
+                    {permissions && (
+                      <TopButtons
+                        search={search}
+                        permissions={permissions}
+                        exportExcel={exportExcel}
+                        pathname="SY_A0025W"
+                      />
+                    )}
+                  </ButtonContainer>
+                </TitleContainer>
+                <FilterContainer>
+                  <FilterBox
+                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                  >
+                    <tbody>
+                      <tr>
+                        <th>관리번호ID</th>
+                        <td>
+                          <Input
+                            name="numbering_id"
+                            type="text"
+                            value={filters.numbering_id}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                        <th>관리번호명</th>
+                        <td>
+                          <Input
+                            name="numbering_name"
+                            type="text"
+                            value={filters.numbering_name}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FilterBox>
+                </FilterContainer>
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
                   data={mainDataResult.data}
                   fileName="관리번호 채번정보"
                 >
                   <Grid
-                    style={{ height: "80vh" }}
+                    style={{ height: "78vh" }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1269,7 +1271,7 @@ const SY_A0025W: React.FC = () => {
             <SwiperSlide
               key={1}
               className="leading_PDA"
-              style={{ display: "flex", flexDirection: "column" }}
+              style={{ display: "flex", flexDirection: "column", paddingTop:"20vh"}}
             >
               <div
                 style={{
@@ -1301,9 +1303,8 @@ const SY_A0025W: React.FC = () => {
               </div>
               <GridContainer
                 style={{
-                  minHeight: "50vh",
+                  minHeight: "60vh",
                   width: `${deviceWidth - 30}px`,
-                  overflow: "scroll",
                 }}
               >
                 <GridTitleContainer>
@@ -1326,7 +1327,7 @@ const SY_A0025W: React.FC = () => {
                     </Button>
                   </ButtonContainer>
                 </GridTitleContainer>
-                <FormBoxWrap border={true}>
+                <FormBoxWrap border={true} style={{ minHeight: "50vh", width: `${deviceWidth - 30}px` }}>
                   <FormBox>
                     <tbody>
                       <tr>
@@ -1398,11 +1399,11 @@ const SY_A0025W: React.FC = () => {
                 </FormBoxWrap>
               </GridContainer>
               <GridContainer
-              style={{
-                minHeight: "35vh",
-                width: `${deviceWidth - 30}px`,
-                overflow: "scroll",
-              }}>
+                style={{
+                  minHeight: "50vh",
+                  width: `${deviceWidth - 30}px`,
+                }}
+              >
                 <GridTitleContainer>
                   <GridTitle>채번구성정보</GridTitle>
                 </GridTitleContainer>
