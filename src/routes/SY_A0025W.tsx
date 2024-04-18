@@ -30,6 +30,9 @@ import {
 import TopButtons from "../components/Buttons/TopButtons";
 import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import NumberCell from "../components/Cells/NumberCell";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   UseBizComponent,
@@ -56,6 +59,8 @@ import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0025W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
+var index = 0;
+
 const DATA_ITEM_KEY = "num";
 const SUB_DATA_ITEM_KEY = "num";
 let deletedMainRows: any[] = [];
@@ -66,6 +71,8 @@ const checkField = ["use_yn"];
 const NumberField = ["last_serno"];
 
 const SY_A0025W: React.FC = () => {
+  const [swiper, setSwiper] = useState<SwiperCore>();
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -570,6 +577,9 @@ const SY_A0025W: React.FC = () => {
       start_serno: selectedRowData.start_serno,
       sampleno: "",
     });
+    if (swiper && isMobile) {
+      swiper.slideTo(1);
+    }
   };
 
   const onSubDataSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -977,7 +987,7 @@ const SY_A0025W: React.FC = () => {
 
   const onDeleteClick = (e: any) => {
     let newData: any[] = [];
-    let object: any[] = []; 
+    let object: any[] = [];
     let object2: any[] = [];
     let data;
     subDataResult.data.forEach((item: any, index: number) => {
@@ -1133,565 +1143,1217 @@ const SY_A0025W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
-        <Title>관리번호 채번정보</Title>
-
-        <ButtonContainer>
-          {permissions && (
-            <TopButtons
-              search={search}
-              permissions={permissions}
-              exportExcel={exportExcel}
-              pathname="SY_A0025W"
-            />
-          )}
-        </ButtonContainer>
-      </TitleContainer>
-      <FilterContainer>
-        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-          <tbody>
-            <tr>
-              <th>관리번호ID</th>
-              <td>
-                <Input
-                  name="numbering_id"
-                  type="text"
-                  value={filters.numbering_id}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>관리번호명</th>
-              <td>
-                <Input
-                  name="numbering_name"
-                  type="text"
-                  value={filters.numbering_name}
-                  onChange={filterInputChange}
-                />
-              </td>
-            </tr>
-          </tbody>
-        </FilterBox>
-      </FilterContainer>
-      <GridContainerWrap>
-        <GridContainer width={"25%"}>
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-          </GridTitleContainer>
-          <ExcelExport
-            ref={(exporter) => (_export = exporter)}
-            data={mainDataResult.data}
-            fileName="관리번호 채번정보"
+      {isMobile ? (
+        <GridContainerWrap>
+          <Swiper
+            className="leading_95_Swiper"
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
           >
-            <Grid
-              style={{ height: isMobile ? "50vh" : "81.8vh" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  use_yn: row.use_yn == "Y" ? true : false,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)],
-                })),
-                mainDataState
-              )}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-            >
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          checkField.includes(item.fieldName)
-                            ? CheckBoxReadOnlyCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
-                        }
-                      />
-                    )
-                )}
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
+            <SwiperSlide key={0} className="leading_PDA_custom">
+              <GridContainer style={{ width: `${deviceWidth - 30}px`, overflow: "scroll"}}>
+                <TitleContainer>
+                  <Title>관리번호 채번정보</Title>
 
-        <GridContainer width={`calc(52% - ${GAP}px)`}>
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>기본정보</GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onNewClick}
-                  themeColor={"primary"}
-                  icon="file-add"
+                  <ButtonContainer>
+                    {permissions && (
+                      <TopButtons
+                        search={search}
+                        permissions={permissions}
+                        exportExcel={exportExcel}
+                        pathname="SY_A0025W"
+                      />
+                    )}
+                  </ButtonContainer>
+                </TitleContainer>
+                <FilterContainer>
+                  <FilterBox
+                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                  >
+                    <tbody>
+                      <tr>
+                        <th>관리번호ID</th>
+                        <td>
+                          <Input
+                            name="numbering_id"
+                            type="text"
+                            value={filters.numbering_id}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                        <th>관리번호명</th>
+                        <td>
+                          <Input
+                            name="numbering_name"
+                            type="text"
+                            value={filters.numbering_name}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FilterBox>
+                </FilterContainer>
+                <ExcelExport
+                  ref={(exporter) => (_export = exporter)}
+                  data={mainDataResult.data}
+                  fileName="관리번호 채번정보"
                 >
-                  신규
+                  <Grid
+                    style={{ height: "78vh" }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        use_yn: row.use_yn == "Y" ? true : false,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"].map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                checkField.includes(item.fieldName)
+                                  ? CheckBoxReadOnlyCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder === 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide
+              key={1}
+              className="leading_PDA_custom"
+              style={{ display: "flex", flexDirection: "column", paddingTop:"25vh"}}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  width: "100%",
+                }}
+              >
+                <Button
+                  onClick={() => {
+                    if (swiper) {
+                      swiper.slideTo(0);
+                    }
+                  }}
+                  icon="arrow-left"
+                >
+                  이전
                 </Button>
                 <Button
-                  onClick={onDeleteClick2}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="delete"
+                  onClick={() => {
+                    if (swiper) {
+                      swiper.slideTo(2);
+                    }
+                  }}
+                  icon="arrow-right"
                 >
-                  삭제
+                  상세정보
                 </Button>
-              </ButtonContainer>
-            </GridTitleContainer>
-            <FormBoxWrap border={true}>
-              <FormBox>
-                <tbody>
-                  <tr>
-                    <th>관리번호ID</th>
-                    {infomation.worktype == "N" ? (
-                      <td>
-                        <Input
-                          name="numbering_id"
-                          type="text"
-                          value={infomation.numbering_id}
-                          onChange={InputChange}
-                          className="required"
-                        />
-                      </td>
-                    ) : (
-                      <td>
-                        <Input
-                          name="numbering_id"
-                          type="text"
-                          value={infomation.numbering_id}
-                          className="readonly"
-                        />
-                      </td>
-                    )}
-                    <th></th>
-                    <td>
-                      <Checkbox
-                        name="use_yn"
-                        label={"사용여부"}
-                        value={infomation.use_yn}
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>관리번호명</th>
-                    <td>
-                      <Input
-                        name="numbering_name"
-                        type="text"
-                        value={infomation.numbering_name}
-                        onChange={InputChange}
-                        className="required"
-                      />
-                    </td>
-                    <th>채번 길이</th>
-                    <td>
-                      <Input
-                        name="numbering_length"
-                        type="number"
-                        value={infomation.numbering_length}
-                        onChange={InputChange}
-                        className="required"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>메모</th>
-                    <td colSpan={3}>
-                      <TextArea
-                        value={infomation.memo}
-                        name="memo"
-                        rows={3}
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </FormBox>
-            </FormBoxWrap>
-          </GridContainer>
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>채번구성정보</GridTitle>
-            </GridTitleContainer>
-            <FormBoxWrap
-              border={true}
-              style={{
-                minHeight: isMobile ? "40vh" : "59vh",
-                display: isMobile == true ? "block" : "flex",
-                alignItems: "center",
-              }}
+              </div>
+              <GridContainer
+                style={{
+                  minHeight: "60vh",
+                  width: `${deviceWidth - 30}px`
+                  , overflow: "scroll"
+                }}
+              >
+                <GridTitleContainer>
+                  <GridTitle>기본정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onNewClick}
+                      themeColor={"primary"}
+                      icon="file-add"
+                    >
+                      신규
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick2}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="delete"
+                    >
+                      삭제
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <FormBoxWrap border={true} style={{ minHeight: "50vh", width: `${deviceWidth - 30}px` }}>
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th>관리번호ID</th>
+                        {infomation.worktype == "N" ? (
+                          <td>
+                            <Input
+                              name="numbering_id"
+                              type="text"
+                              value={infomation.numbering_id}
+                              onChange={InputChange}
+                              className="required"
+                            />
+                          </td>
+                        ) : (
+                          <td>
+                            <Input
+                              name="numbering_id"
+                              type="text"
+                              value={infomation.numbering_id}
+                              className="readonly"
+                            />
+                          </td>
+                        )}
+                        <td>
+                          <Checkbox
+                            name="use_yn"
+                            label={"사용여부"}
+                            value={infomation.use_yn}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>관리번호명</th>
+                        <td>
+                          <Input
+                            name="numbering_name"
+                            type="text"
+                            value={infomation.numbering_name}
+                            onChange={InputChange}
+                            className="required"
+                          />
+                        </td>
+                        <th>채번 길이</th>
+                        <td>
+                          <Input
+                            name="numbering_length"
+                            type="number"
+                            value={infomation.numbering_length}
+                            onChange={InputChange}
+                            className="required"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>메모</th>
+                        <td colSpan={3}>
+                          <TextArea
+                            value={infomation.memo}
+                            name="memo"
+                            rows={3}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+              </GridContainer>
+              <GridContainer
+                style={{
+                  minHeight: "50vh",
+                  width: `${deviceWidth - 30}px`,
+                }}
+              >
+                <GridTitleContainer>
+                  <GridTitle>채번구성정보</GridTitle>
+                </GridTitleContainer>
+                <FormBoxWrap
+                  border={true}
+                  style={{
+                    minHeight: "40vh",
+                    display: "block",
+                    alignItems: "center",
+                  }}
+                >
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th>채번요소1</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="number_element1"
+                              value={infomation.number_element1}
+                              customOptionData={customOptionData}
+                              changeData={ComboBoxChange}
+                              className="required"
+                            />
+                          )}
+                        </td>
+                        <th>채번요소값1</th>
+                        {infomation.number_element1 == "FIXED" ? (
+                          <td>
+                            <Input
+                              name="number_value1"
+                              type="text"
+                              value={infomation.number_value1}
+                              onChange={InputChange}
+                            />
+                          </td>
+                        ) : (
+                          <td>
+                            <Input
+                              name="number_value1"
+                              type="text"
+                              value={infomation.number_value1}
+                              className="readonly"
+                            />
+                          </td>
+                        )}
+                      </tr>
+                      {!isMobile || (isMobile && showAdditionalFields) ? (
+                        <>
+                          <tr>
+                            <th>채번요소2</th>
+                            <td>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="number_element2"
+                                  value={infomation.number_element2}
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )}
+                            </td>
+                            <th>채번요소값2</th>
+                            {infomation.number_element2 == "FIXED" ? (
+                              <td>
+                                <Input
+                                  name="number_value2"
+                                  type="text"
+                                  value={infomation.number_value2}
+                                  onChange={InputChange}
+                                />
+                              </td>
+                            ) : (
+                              <td>
+                                <Input
+                                  name="number_value2"
+                                  type="text"
+                                  value={infomation.number_value2}
+                                  className="readonly"
+                                />
+                              </td>
+                            )}
+                          </tr>
+                          <tr>
+                            <th>채번요소3</th>
+                            <td>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="number_element3"
+                                  value={infomation.number_element3}
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )}
+                            </td>
+                            <th>채번요소값3</th>
+                            {infomation.number_element3 == "FIXED" ? (
+                              <td>
+                                <Input
+                                  name="number_value3"
+                                  type="text"
+                                  value={infomation.number_value3}
+                                  onChange={InputChange}
+                                />
+                              </td>
+                            ) : (
+                              <td>
+                                <Input
+                                  name="number_value3"
+                                  type="text"
+                                  value={infomation.number_value3}
+                                  className="readonly"
+                                />
+                              </td>
+                            )}
+                          </tr>
+                          <tr>
+                            <th>채번요소4</th>
+                            <td>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="number_element4"
+                                  value={infomation.number_element4}
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )}
+                            </td>
+                            <th>채번요소값4</th>
+                            {infomation.number_element4 == "FIXED" ? (
+                              <td>
+                                <Input
+                                  name="number_value4"
+                                  type="text"
+                                  value={infomation.number_value4}
+                                  onChange={InputChange}
+                                />
+                              </td>
+                            ) : (
+                              <td>
+                                <Input
+                                  name="number_value4"
+                                  type="text"
+                                  value={infomation.number_value4}
+                                  className="readonly"
+                                />
+                              </td>
+                            )}
+                          </tr>
+                          <tr>
+                            <th>채번요소5</th>
+                            <td>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="number_element5"
+                                  value={infomation.number_element5}
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )}
+                            </td>
+                            <th>채번요소값5</th>
+                            {infomation.number_element5 == "FIXED" ? (
+                              <td>
+                                <Input
+                                  name="number_value5"
+                                  type="text"
+                                  value={infomation.number_value5}
+                                  onChange={InputChange}
+                                />
+                              </td>
+                            ) : (
+                              <td>
+                                <Input
+                                  name="number_value5"
+                                  type="text"
+                                  value={infomation.number_value5}
+                                  className="readonly"
+                                />
+                              </td>
+                            )}
+                          </tr>
+                        </>
+                      ) : null}
+                      {isMobile && (
+                        <tr>
+                          <td>
+                            <Button
+                              themeColor={"primary"}
+                              fillMode={null}
+                              onClick={() =>
+                                setShowAdditionalFields(!showAdditionalFields)
+                              }
+                            >
+                              {showAdditionalFields
+                                ? "채변 숨기기"
+                                : "채변 더보기"}
+                            </Button>
+                          </td>
+                        </tr>
+                      )}
+
+                      <tr>
+                        <th>시작채번연변</th>
+                        <td colSpan={3}>
+                          <Input
+                            name="start_serno"
+                            type="number"
+                            value={infomation.start_serno}
+                            onChange={InputChange}
+                            className="required"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>
+                          <Button
+                            onClick={onSample}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                          >
+                            샘플채번보기
+                          </Button>
+                        </th>
+                        <td colSpan={3}>
+                          <Input
+                            name="sampleno"
+                            type="number"
+                            value={infomation.sampleno}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+              </GridContainer>
+            </SwiperSlide>
+            <SwiperSlide
+              key={2}
+              className="leading_PDA"
+              style={{ display: "flex", flexDirection: "column" }}
             >
-              <FormBox>
-                <tbody>
-                  <tr>
-                    <th>채번요소1</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="number_element1"
-                          value={infomation.number_element1}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          className="required"
-                        />
-                      )}
-                    </td>
-                    <th>채번요소값1</th>
-                    {infomation.number_element1 == "FIXED" ? (
-                      <td>
-                        <Input
-                          name="number_value1"
-                          type="text"
-                          value={infomation.number_value1}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    ) : (
-                      <td>
-                        <Input
-                          name="number_value1"
-                          type="text"
-                          value={infomation.number_value1}
-                          className="readonly"
-                        />
-                      </td>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "left",
+                  width: "100%",
+                }}
+              >
+                <Button
+                  onClick={() => {
+                    if (swiper) {
+                      swiper.slideTo(1);
+                    }
+                  }}
+                  icon="arrow-left"
+                >
+                  이전
+                </Button>
+              </div>
+              <GridContainer
+                style={{
+                  minHeight: "70vh",
+                  width: `${deviceWidth - 30}px`,
+                  overflow: "scroll",
+                }}
+              >
+                <GridTitleContainer>
+                  <GridTitle>상세정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="전체 저장"
+                    />
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <ExcelExport
+                  ref={(exporter) => (_export2 = exporter)}
+                  data={subDataResult.data}
+                  fileName="관리번호 채번정보"
+                >
+                  <Grid
+                    style={{ height: "77vh" }}
+                    data={process(
+                      subDataResult.data.map((row) => ({
+                        ...row,
+                        basedt: row.basedt
+                          ? new Date(dateformat(row.basedt))
+                          : new Date(),
+                        rowstatus:
+                          row.rowstatus == null ||
+                          row.rowstatus == "" ||
+                          row.rowstatus == undefined
+                            ? ""
+                            : row.rowstatus,
+                        [SELECTED_FIELD]: selectedsubDataState[idGetter(row)],
+                      })),
+                      subDataState
                     )}
-                  </tr>
-                  {!isMobile || (isMobile && showAdditionalFields) ? (
-<>
+                    {...subDataState}
+                    onDataStateChange={onSubDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSubDataSelectionChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={subDataResult.total}
+                    skip={page2.skip}
+                    take={page2.take}
+                    pageable={true}
+                    onPageChange={pageChange2}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef2}
+                    rowHeight={30}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onSubDataSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    //incell 수정 기능
+                    onItemChange={onMainItemChange}
+                    cellRender={customCellRender}
+                    rowRender={customRowRender}
+                    editField={EDIT_FIELD}
+                  >
+                    <GridColumn
+                      field="rowstatus"
+                      title=" "
+                      width="50px"
+                      editable={false}
+                    />
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                NumberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder === 0
+                                  ? subTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
+        </GridContainerWrap>
+      ) : (
+        <>
+          <TitleContainer>
+            <Title>관리번호 채번정보</Title>
 
-                  <tr>
-                    <th>채번요소2</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="number_element2"
-                          value={infomation.number_element2}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                        />
-                      )}
-                    </td>
-                    <th>채번요소값2</th>
-                    {infomation.number_element2 == "FIXED" ? (
-                      <td>
-                        <Input
-                          name="number_value2"
-                          type="text"
-                          value={infomation.number_value2}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    ) : (
-                      <td>
-                        <Input
-                          name="number_value2"
-                          type="text"
-                          value={infomation.number_value2}
-                          className="readonly"
-                        />
-                      </td>
-                    )}
-                  </tr>
-                  <tr>
-                    <th>채번요소3</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="number_element3"
-                          value={infomation.number_element3}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                        />
-                      )}
-                    </td>
-                    <th>채번요소값3</th>
-                    {infomation.number_element3 == "FIXED" ? (
-                      <td>
-                        <Input
-                          name="number_value3"
-                          type="text"
-                          value={infomation.number_value3}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    ) : (
-                      <td>
-                        <Input
-                          name="number_value3"
-                          type="text"
-                          value={infomation.number_value3}
-                          className="readonly"
-                        />
-                      </td>
-                    )}
-                  </tr>
-                  <tr>
-                    <th>채번요소4</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="number_element4"
-                          value={infomation.number_element4}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                        />
-                      )}
-                    </td>
-                    <th>채번요소값4</th>
-                    {infomation.number_element4 == "FIXED" ? (
-                      <td>
-                        <Input
-                          name="number_value4"
-                          type="text"
-                          value={infomation.number_value4}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    ) : (
-                      <td>
-                        <Input
-                          name="number_value4"
-                          type="text"
-                          value={infomation.number_value4}
-                          className="readonly"
-                        />
-                      </td>
-                    )}
-                  </tr>
-                  <tr>
-                    <th>채번요소5</th>
-                    <td>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="number_element5"
-                          value={infomation.number_element5}
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                        />
-                      )}
-                    </td>
-                    <th>채번요소값5</th>
-                    {infomation.number_element5 == "FIXED" ? (
-                      <td>
-                        <Input
-                          name="number_value5"
-                          type="text"
-                          value={infomation.number_value5}
-                          onChange={InputChange}
-                        />
-                      </td>
-                    ) : (
-                      <td>
-                        <Input
-                          name="number_value5"
-                          type="text"
-                          value={infomation.number_value5}
-                          className="readonly"
-                        />
-                      </td>
-                    )}
-                  </tr>
-                  </>
-                ) : null}
-                {isMobile && (
-                  <tr>
-                    <td>
-                      <Button
-                        themeColor={"primary"}
-                        fillMode={null}
-                        onClick={() =>
-                          setShowAdditionalFields(!showAdditionalFields)
-                        }
-                      >
-                        {showAdditionalFields
-                          ? "채변 숨기기"
-                          : "채변 더보기"}
-                      </Button>
-                    </td>
-                  </tr>
-                )}
-
-                  <tr>
-                    <th>시작채번연변</th>
-                    <td colSpan={3}>
-                      <Input
-                        name="start_serno"
-                        type="number"
-                        value={infomation.start_serno}
-                        onChange={InputChange}
-                        className="required"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>
-                      <Button
-                        onClick={onSample}
-                        fillMode="outline"
-                        themeColor={"primary"}
-                      >
-                        샘플채번보기
-                      </Button>
-                    </th>
-                    <td colSpan={3}>
-                      <Input
-                        name="sampleno"
-                        type="number"
-                        value={infomation.sampleno}
-                        onChange={InputChange}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </FormBox>
-            </FormBoxWrap>
-          </GridContainer>
-        </GridContainer>
-        <GridContainer width={`calc(23% - ${GAP}px)`}>
-          <GridTitleContainer>
-            <GridTitle>상세정보</GridTitle>
             <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="plus"
-                title="행 추가"
-              ></Button>
-              <Button
-                onClick={onDeleteClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="minus"
-                title="행 삭제"
-              ></Button>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-                title="전체 저장"
-              />
-            </ButtonContainer>
-          </GridTitleContainer>
-          <ExcelExport
-            ref={(exporter) => (_export2 = exporter)}
-            data={subDataResult.data}
-            fileName="관리번호 채번정보"
-          >
-            <Grid
-              style={{ height: isMobile ? "50vh" : "81.6vh" }}
-              data={process(
-                subDataResult.data.map((row) => ({
-                  ...row,
-                  basedt: row.basedt
-                    ? new Date(dateformat(row.basedt))
-                    : new Date(),
-                  rowstatus:
-                    row.rowstatus == null ||
-                    row.rowstatus == "" ||
-                    row.rowstatus == undefined
-                      ? ""
-                      : row.rowstatus,
-                  [SELECTED_FIELD]: selectedsubDataState[idGetter(row)],
-                })),
-                subDataState
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  permissions={permissions}
+                  exportExcel={exportExcel}
+                  pathname="SY_A0025W"
+                />
               )}
-              {...subDataState}
-              onDataStateChange={onSubDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              onSelectionChange={onSubDataSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={subDataResult.total}
-              skip={page2.skip}
-              take={page2.take}
-              pageable={true}
-              onPageChange={pageChange2}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef2}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onSubDataSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-              //incell 수정 기능
-              onItemChange={onMainItemChange}
-              cellRender={customCellRender}
-              rowRender={customRowRender}
-              editField={EDIT_FIELD}
-            >
-              <GridColumn
-                field="rowstatus"
-                title=" "
-                width="50px"
-                editable={false}
-              />
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        id={item.id}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          NumberField.includes(item.fieldName)
-                            ? NumberCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder === 0 ? subTotalFooterCell : undefined
-                        }
-                      />
-                    )
-                )}
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
-      </GridContainerWrap>
+            </ButtonContainer>
+          </TitleContainer>
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>관리번호ID</th>
+                  <td>
+                    <Input
+                      name="numbering_id"
+                      type="text"
+                      value={filters.numbering_id}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>관리번호명</th>
+                  <td>
+                    <Input
+                      name="numbering_name"
+                      type="text"
+                      value={filters.numbering_name}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+          <GridContainerWrap>
+            <GridContainer width={"25%"}>
+              <GridTitleContainer>
+                <GridTitle>요약정보</GridTitle>
+              </GridTitleContainer>
+              <ExcelExport
+                ref={(exporter) => (_export = exporter)}
+                data={mainDataResult.data}
+                fileName="관리번호 채번정보"
+              >
+                <Grid
+                  style={{ height: "81.8vh" }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      use_yn: row.use_yn == "Y" ? true : false,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)],
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              checkField.includes(item.fieldName)
+                                ? CheckBoxReadOnlyCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? mainTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+
+            <GridContainer width={`calc(52% - ${GAP}px)`}>
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>기본정보</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onNewClick}
+                      themeColor={"primary"}
+                      icon="file-add"
+                    >
+                      신규
+                    </Button>
+                    <Button
+                      onClick={onDeleteClick2}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="delete"
+                    >
+                      삭제
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <FormBoxWrap border={true}>
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th>관리번호ID</th>
+                        {infomation.worktype == "N" ? (
+                          <td>
+                            <Input
+                              name="numbering_id"
+                              type="text"
+                              value={infomation.numbering_id}
+                              onChange={InputChange}
+                              className="required"
+                            />
+                          </td>
+                        ) : (
+                          <td>
+                            <Input
+                              name="numbering_id"
+                              type="text"
+                              value={infomation.numbering_id}
+                              className="readonly"
+                            />
+                          </td>
+                        )}
+                        <th></th>
+                        <td>
+                          <Checkbox
+                            name="use_yn"
+                            label={"사용여부"}
+                            value={infomation.use_yn}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>관리번호명</th>
+                        <td>
+                          <Input
+                            name="numbering_name"
+                            type="text"
+                            value={infomation.numbering_name}
+                            onChange={InputChange}
+                            className="required"
+                          />
+                        </td>
+                        <th>채번 길이</th>
+                        <td>
+                          <Input
+                            name="numbering_length"
+                            type="number"
+                            value={infomation.numbering_length}
+                            onChange={InputChange}
+                            className="required"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>메모</th>
+                        <td colSpan={3}>
+                          <TextArea
+                            value={infomation.memo}
+                            name="memo"
+                            rows={3}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+              </GridContainer>
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>채번구성정보</GridTitle>
+                </GridTitleContainer>
+                <FormBoxWrap
+                  border={true}
+                  style={{
+                    minHeight:  "59vh",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th>채번요소1</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="number_element1"
+                              value={infomation.number_element1}
+                              customOptionData={customOptionData}
+                              changeData={ComboBoxChange}
+                              className="required"
+                            />
+                          )}
+                        </td>
+                        <th>채번요소값1</th>
+                        {infomation.number_element1 == "FIXED" ? (
+                          <td>
+                            <Input
+                              name="number_value1"
+                              type="text"
+                              value={infomation.number_value1}
+                              onChange={InputChange}
+                            />
+                          </td>
+                        ) : (
+                          <td>
+                            <Input
+                              name="number_value1"
+                              type="text"
+                              value={infomation.number_value1}
+                              className="readonly"
+                            />
+                          </td>
+                        )}
+                      </tr>
+                      {!isMobile || (isMobile && showAdditionalFields) ? (
+                        <>
+                          <tr>
+                            <th>채번요소2</th>
+                            <td>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="number_element2"
+                                  value={infomation.number_element2}
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )}
+                            </td>
+                            <th>채번요소값2</th>
+                            {infomation.number_element2 == "FIXED" ? (
+                              <td>
+                                <Input
+                                  name="number_value2"
+                                  type="text"
+                                  value={infomation.number_value2}
+                                  onChange={InputChange}
+                                />
+                              </td>
+                            ) : (
+                              <td>
+                                <Input
+                                  name="number_value2"
+                                  type="text"
+                                  value={infomation.number_value2}
+                                  className="readonly"
+                                />
+                              </td>
+                            )}
+                          </tr>
+                          <tr>
+                            <th>채번요소3</th>
+                            <td>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="number_element3"
+                                  value={infomation.number_element3}
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )}
+                            </td>
+                            <th>채번요소값3</th>
+                            {infomation.number_element3 == "FIXED" ? (
+                              <td>
+                                <Input
+                                  name="number_value3"
+                                  type="text"
+                                  value={infomation.number_value3}
+                                  onChange={InputChange}
+                                />
+                              </td>
+                            ) : (
+                              <td>
+                                <Input
+                                  name="number_value3"
+                                  type="text"
+                                  value={infomation.number_value3}
+                                  className="readonly"
+                                />
+                              </td>
+                            )}
+                          </tr>
+                          <tr>
+                            <th>채번요소4</th>
+                            <td>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="number_element4"
+                                  value={infomation.number_element4}
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )}
+                            </td>
+                            <th>채번요소값4</th>
+                            {infomation.number_element4 == "FIXED" ? (
+                              <td>
+                                <Input
+                                  name="number_value4"
+                                  type="text"
+                                  value={infomation.number_value4}
+                                  onChange={InputChange}
+                                />
+                              </td>
+                            ) : (
+                              <td>
+                                <Input
+                                  name="number_value4"
+                                  type="text"
+                                  value={infomation.number_value4}
+                                  className="readonly"
+                                />
+                              </td>
+                            )}
+                          </tr>
+                          <tr>
+                            <th>채번요소5</th>
+                            <td>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="number_element5"
+                                  value={infomation.number_element5}
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange}
+                                />
+                              )}
+                            </td>
+                            <th>채번요소값5</th>
+                            {infomation.number_element5 == "FIXED" ? (
+                              <td>
+                                <Input
+                                  name="number_value5"
+                                  type="text"
+                                  value={infomation.number_value5}
+                                  onChange={InputChange}
+                                />
+                              </td>
+                            ) : (
+                              <td>
+                                <Input
+                                  name="number_value5"
+                                  type="text"
+                                  value={infomation.number_value5}
+                                  className="readonly"
+                                />
+                              </td>
+                            )}
+                          </tr>
+                        </>
+                      ) : null}
+                      {isMobile && (
+                        <tr>
+                          <td>
+                            <Button
+                              themeColor={"primary"}
+                              fillMode={null}
+                              onClick={() =>
+                                setShowAdditionalFields(!showAdditionalFields)
+                              }
+                            >
+                              {showAdditionalFields
+                                ? "채변 숨기기"
+                                : "채변 더보기"}
+                            </Button>
+                          </td>
+                        </tr>
+                      )}
+
+                      <tr>
+                        <th>시작채번연변</th>
+                        <td colSpan={3}>
+                          <Input
+                            name="start_serno"
+                            type="number"
+                            value={infomation.start_serno}
+                            onChange={InputChange}
+                            className="required"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>
+                          <Button
+                            onClick={onSample}
+                            fillMode="outline"
+                            themeColor={"primary"}
+                          >
+                            샘플채번보기
+                          </Button>
+                        </th>
+                        <td colSpan={3}>
+                          <Input
+                            name="sampleno"
+                            type="number"
+                            value={infomation.sampleno}
+                            onChange={InputChange}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </FormBoxWrap>
+              </GridContainer>
+            </GridContainer>
+            <GridContainer width={`calc(23% - ${GAP}px)`}>
+              <GridTitleContainer>
+                <GridTitle>상세정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="plus"
+                    title="행 추가"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                  ></Button>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    title="전체 저장"
+                  />
+                </ButtonContainer>
+              </GridTitleContainer>
+              <ExcelExport
+                ref={(exporter) => (_export2 = exporter)}
+                data={subDataResult.data}
+                fileName="관리번호 채번정보"
+              >
+                <Grid
+                  style={{ height: isMobile ? "50vh" : "81.6vh" }}
+                  data={process(
+                    subDataResult.data.map((row) => ({
+                      ...row,
+                      basedt: row.basedt
+                        ? new Date(dateformat(row.basedt))
+                        : new Date(),
+                      rowstatus:
+                        row.rowstatus == null ||
+                        row.rowstatus == "" ||
+                        row.rowstatus == undefined
+                          ? ""
+                          : row.rowstatus,
+                      [SELECTED_FIELD]: selectedsubDataState[idGetter(row)],
+                    })),
+                    subDataState
+                  )}
+                  {...subDataState}
+                  onDataStateChange={onSubDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSubDataSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={subDataResult.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef2}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onSubDataSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  //incell 수정 기능
+                  onItemChange={onMainItemChange}
+                  cellRender={customCellRender}
+                  rowRender={customRowRender}
+                  editField={EDIT_FIELD}
+                >
+                  <GridColumn
+                    field="rowstatus"
+                    title=" "
+                    width="50px"
+                    editable={false}
+                  />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              NumberField.includes(item.fieldName)
+                                ? NumberCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? subTotalFooterCell
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </GridContainerWrap>
+        </>
+      )}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div

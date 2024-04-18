@@ -24,6 +24,9 @@ import {
   TextContainer,
 } from "../CommonStyled";
 import CenterCell from "../components/Cells/CenterCell";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -38,9 +41,16 @@ import { useApi } from "../hooks/api";
 import { loginResultState, sessionItemState } from "../store/atoms";
 import { Iparameters } from "../store/types";
 
+var index = 0;
+
 const DATA_ITEM_KEY = "datnum";
 
 const SY_B0060W: React.FC = () => {
+  const [swiper, setSwiper] = useState<SwiperCore>();
+
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
+
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
   const [loginResult, setLoginResult] = useRecoilState(loginResultState);
@@ -551,154 +561,376 @@ const SY_B0060W: React.FC = () => {
 
   return (
     <>
-      <MainTopContainer>
-        <ButtonContainer>
-          <Button icon={"home"} fillMode={"flat"} themeColor={"primary"}>
-            HOMEPAGE
-          </Button>
-          <Button icon={"email"} fillMode={"flat"} themeColor={"primary"}>
-            E-MAIL
-          </Button>
-        </ButtonContainer>
-        {!visible ? (
-          <>
-            <MainWorkStartEndContainer>
-              <TextContainer theme={"#2289c3"}>
-                {workTimeDataResult.strtime} - {workTimeDataResult.endtime}
-              </TextContainer>
-              <Button
-                themeColor={"primary"}
-                onClick={() => {
-                  fetchWorkTimeSaved("start");
-                }}
-              >
-                출근
-              </Button>
-              <Button
-                themeColor={"primary"}
-                onClick={() => {
-                  fetchWorkTimeSaved("end");
-                }}
-              >
-                퇴근
-              </Button>
-            </MainWorkStartEndContainer>
-            <ApprovalBox>
-              <ApprovalInner>
-                <div>미결</div>
-                <div>{approvalValueState.app}</div>
-              </ApprovalInner>
-              <ApprovalInner>
-                <div>참조</div>
-                <div>{approvalValueState.ref}</div>
-              </ApprovalInner>
-              <ApprovalInner>
-                <div>반려</div>
-                <div>{approvalValueState.rtr}</div>
-              </ApprovalInner>
-            </ApprovalBox>
-          </>
-        ) : (
-          ""
-        )}
-      </MainTopContainer>
-      <GridContainerWrap>
-        <GridContainer width="65%">
-          <GridTitleContainer>
-            <GridTitle>레이아웃</GridTitle>
-          </GridTitleContainer>
-          <FlowChartReadOnly data={mainDataResult2.data} filters={filters2} />
-        </GridContainer>
-        <GridContainer width={`calc(35% - ${GAP}px)`}>
-          <GridContainer>
-            <GridTitleContainer>
-              <GridTitle>공지사항</GridTitle>
-            </GridTitleContainer>
-            <Grid
-              style={{ height: "380px" }}
-              data={process(
-                noticeDataResult.data.map((row) => ({
-                  ...row,
-                  [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
-                })),
-                noticeDataState
+      {isMobile ? (
+        <GridContainerWrap>
+          <Swiper
+            className="leading_PDA_container"
+            onSwiper={(swiper) => {
+              setSwiper(swiper);
+            }}
+            onActiveIndexChange={(swiper) => {
+              index = swiper.activeIndex;
+            }}
+          >
+            <SwiperSlide
+              key={0}
+              className="leading_PDA"
+            >
+              <MainTopContainer>
+                <ButtonContainer>
+                  <Button
+                    icon={"home"}
+                    fillMode={"flat"}
+                    themeColor={"primary"}
+                  >
+                    HOMEPAGE
+                  </Button>
+                  <Button
+                    icon={"email"}
+                    fillMode={"flat"}
+                    themeColor={"primary"}
+                  >
+                    E-MAIL
+                  </Button>
+                </ButtonContainer>
+              </MainTopContainer>
+
+              {!visible ? (
+                <>
+                  <MainWorkStartEndContainer>
+                    <TextContainer theme={"#2289c3"}>
+                      {workTimeDataResult.strtime} -{" "}
+                      {workTimeDataResult.endtime}
+                    </TextContainer>
+                    <Button
+                      themeColor={"primary"}
+                      onClick={() => {
+                        fetchWorkTimeSaved("start");
+                      }}
+                    >
+                      출근
+                    </Button>
+                    <Button
+                      themeColor={"primary"}
+                      onClick={() => {
+                        fetchWorkTimeSaved("end");
+                      }}
+                    >
+                      퇴근
+                    </Button>
+                    <Button
+                    onClick={() => {
+                      if (swiper) {
+                        swiper.slideTo(1);
+                      }
+                    }}
+                    icon="info"
+                  >
+                    공지사항
+                  </Button>
+                  </MainWorkStartEndContainer>
+                  <ApprovalBox>
+                    <ApprovalInner>
+                      <div>미결</div>
+                      <div>{approvalValueState.app}</div>
+                    </ApprovalInner>
+                    <ApprovalInner>
+                      <div>참조</div>
+                      <div>{approvalValueState.ref}</div>
+                    </ApprovalInner>
+                    <ApprovalInner>
+                      <div>반려</div>
+                      <div>{approvalValueState.rtr}</div>
+                    </ApprovalInner>
+                  </ApprovalBox>
+                </>
+              ) : (
+                ""
               )}
-              {...noticeDataState}
-              onDataStateChange={onNoticeDataStateChange}
-              //선택기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
-              }}
-              //정렬기능
-              sortable={true}
-              onSortChange={onNoticeSortChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={noticeDataResult.total}
-              onScroll={onNoticeScrollHandler}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
+              <GridContainer
+              style={{ height: "71vh" ,width: `${deviceWidth-30}px`}}>
+                <GridTitleContainer>
+                  <GridTitle>레이아웃</GridTitle>
+                </GridTitleContainer>
+                <FlowChartReadOnly
+                  data={mainDataResult2.data}
+                  filters={filters2}
+                />
+              </GridContainer>
+            </SwiperSlide>
+
+            <SwiperSlide
+              key={1}
+              className="leading_PDA"
+              style={{ display: "flex", flexDirection: "column" }}
             >
-              <GridColumn
-                field="recdt_week"
-                title="작성일"
-                cell={CenterCell}
-                footerCell={noticeTotalFooterCell}
-                width="140px"
-              />
-              <GridColumn
-                field="person"
-                title="작성자"
-                cell={CenterCell}
-                width="120px"
-              />
-              <GridColumn field="title" title="제목" />
-            </Grid>
-          </GridContainer>
-          <GridContainer>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "left",
+                  width: "100%",
+                }}
+              >
+                <Button
+                  onClick={() => {
+                    if (swiper) {
+                      swiper.slideTo(0);
+                    }
+                  }}
+                  icon="arrow-left"
+                >
+                  이전
+                </Button>
+              </div>
+              <GridContainer
+                style={{
+                  minHeight: "70vh",
+                  width: `${deviceWidth - 30}px`,
+                  overflow: "scroll",
+                }}
+              >
+                {" "}
+                <GridContainer>
+                  <GridTitleContainer>
+                    <GridTitle>공지사항</GridTitle>
+                  </GridTitleContainer>
+                  <Grid
+                    style={{ height: "40vh" }}
+                    data={process(
+                      noticeDataResult.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
+                      })),
+                      noticeDataState
+                    )}
+                    {...noticeDataState}
+                    onDataStateChange={onNoticeDataStateChange}
+                    //선택기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onNoticeSortChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={noticeDataResult.total}
+                    onScroll={onNoticeScrollHandler}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn
+                      field="recdt_week"
+                      title="작성일"
+                      cell={CenterCell}
+                      footerCell={noticeTotalFooterCell}
+                      width="140px"
+                    />
+                    <GridColumn
+                      field="person"
+                      title="작성자"
+                      cell={CenterCell}
+                      width="120px"
+                    />
+                    <GridColumn field="title" title="제목" />
+                  </Grid>
+                </GridContainer>
+                <GridContainer>
+                  <GridTitleContainer>
+                    <GridTitle>업무지시요청</GridTitle>
+                  </GridTitleContainer>
+                  <Grid
+                    style={{ height: "40vh" }}
+                    data={process(workOrderDataResult.data, workOrderDataState)}
+                    {...workOrderDataState}
+                    onDataStateChange={onWorkOrderDataStateChange}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onWorkOrderSortChange}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={workOrderDataResult.total}
+                    onScroll={onWorkOrderScrollHandler}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    <GridColumn
+                      field="recdt_week"
+                      title="작성일"
+                      cell={CenterCell}
+                      footerCell={workOrderTotalFooterCell}
+                      width="140px"
+                    />
+                    <GridColumn
+                      field="user_name"
+                      title="작성자"
+                      cell={CenterCell}
+                      width="120px"
+                    />
+                    <GridColumn field="title" title="제목" />
+                  </Grid>
+                </GridContainer>
+              </GridContainer>
+            </SwiperSlide>
+          </Swiper>
+        </GridContainerWrap>
+      ) : (
+        <>
+          <MainTopContainer>
+            <ButtonContainer>
+              <Button icon={"home"} fillMode={"flat"} themeColor={"primary"}>
+                HOMEPAGE
+              </Button>
+              <Button icon={"email"} fillMode={"flat"} themeColor={"primary"}>
+                E-MAIL
+              </Button>
+            </ButtonContainer>
+            {!visible ? (
+              <>
+                <MainWorkStartEndContainer>
+                  <TextContainer theme={"#2289c3"}>
+                    {workTimeDataResult.strtime} - {workTimeDataResult.endtime}
+                  </TextContainer>
+                  <Button
+                    themeColor={"primary"}
+                    onClick={() => {
+                      fetchWorkTimeSaved("start");
+                    }}
+                  >
+                    출근
+                  </Button>
+                  <Button
+                    themeColor={"primary"}
+                    onClick={() => {
+                      fetchWorkTimeSaved("end");
+                    }}
+                  >
+                    퇴근
+                  </Button>
+                </MainWorkStartEndContainer>
+                <ApprovalBox>
+                  <ApprovalInner>
+                    <div>미결</div>
+                    <div>{approvalValueState.app}</div>
+                  </ApprovalInner>
+                  <ApprovalInner>
+                    <div>참조</div>
+                    <div>{approvalValueState.ref}</div>
+                  </ApprovalInner>
+                  <ApprovalInner>
+                    <div>반려</div>
+                    <div>{approvalValueState.rtr}</div>
+                  </ApprovalInner>
+                </ApprovalBox>
+              </>
+            ) : (
+              ""
+            )}
+          </MainTopContainer>
+          <GridContainer width="65%">
             <GridTitleContainer>
-              <GridTitle>업무지시요청</GridTitle>
+              <GridTitle>레이아웃</GridTitle>
             </GridTitleContainer>
-            <Grid
-              style={{ height: "380px" }}
-              data={process(workOrderDataResult.data, workOrderDataState)}
-              {...workOrderDataState}
-              onDataStateChange={onWorkOrderDataStateChange}
-              //정렬기능
-              sortable={true}
-              onSortChange={onWorkOrderSortChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={workOrderDataResult.total}
-              onScroll={onWorkOrderScrollHandler}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-            >
-              <GridColumn
-                field="recdt_week"
-                title="작성일"
-                cell={CenterCell}
-                footerCell={workOrderTotalFooterCell}
-                width="140px"
-              />
-              <GridColumn
-                field="user_name"
-                title="작성자"
-                cell={CenterCell}
-                width="120px"
-              />
-              <GridColumn field="title" title="제목" />
-            </Grid>
+            <FlowChartReadOnly data={mainDataResult2.data} filters={filters2} />
           </GridContainer>
-        </GridContainer>
-      </GridContainerWrap>
+          <GridContainer width={`calc(35% - ${GAP}px)`}>
+            <GridContainer>
+              <GridTitleContainer>
+                <GridTitle>공지사항</GridTitle>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: "380px" }}
+                data={process(
+                  noticeDataResult.data.map((row) => ({
+                    ...row,
+                    [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
+                  })),
+                  noticeDataState
+                )}
+                {...noticeDataState}
+                onDataStateChange={onNoticeDataStateChange}
+                //선택기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                //정렬기능
+                sortable={true}
+                onSortChange={onNoticeSortChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={noticeDataResult.total}
+                onScroll={onNoticeScrollHandler}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                <GridColumn
+                  field="recdt_week"
+                  title="작성일"
+                  cell={CenterCell}
+                  footerCell={noticeTotalFooterCell}
+                  width="140px"
+                />
+                <GridColumn
+                  field="person"
+                  title="작성자"
+                  cell={CenterCell}
+                  width="120px"
+                />
+                <GridColumn field="title" title="제목" />
+              </Grid>
+            </GridContainer>
+            <GridContainer>
+              <GridTitleContainer>
+                <GridTitle>업무지시요청</GridTitle>
+              </GridTitleContainer>
+              <Grid
+                style={{ height: "380px" }}
+                data={process(workOrderDataResult.data, workOrderDataState)}
+                {...workOrderDataState}
+                onDataStateChange={onWorkOrderDataStateChange}
+                //정렬기능
+                sortable={true}
+                onSortChange={onWorkOrderSortChange}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={workOrderDataResult.total}
+                onScroll={onWorkOrderScrollHandler}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+              >
+                <GridColumn
+                  field="recdt_week"
+                  title="작성일"
+                  cell={CenterCell}
+                  footerCell={workOrderTotalFooterCell}
+                  width="140px"
+                />
+                <GridColumn
+                  field="user_name"
+                  title="작성자"
+                  cell={CenterCell}
+                  width="120px"
+                />
+                <GridColumn field="title" title="제목" />
+              </Grid>
+            </GridContainer>
+          </GridContainer>
+        </>
+      )}
     </>
   );
 };

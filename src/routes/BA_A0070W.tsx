@@ -567,7 +567,6 @@ const BA_A0070W: React.FC = () => {
     if (swiper && isMobile) {
       swiper.slideTo(1);
     }
-    
   };
 
   //엑셀 내보내기
@@ -1281,12 +1280,13 @@ const BA_A0070W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0} className="leading_PDA">
-              <GridContainer width={"15%"}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "scroll" }}
+              >
                 <GridTitleContainer>
-                  <GridTitle>기준일자</GridTitle>
-                  <ButtonContainer >
+                  <ButtonContainer>
                     <Button
-                    style={{marginTop:"5px"}}
+                      style={{ marginTop: "5px" }}
                       onClick={onDeleteClick2}
                       fillMode="outline"
                       themeColor={"primary"}
@@ -1303,7 +1303,7 @@ const BA_A0070W: React.FC = () => {
                   fileName="환율관리"
                 >
                   <Grid
-                    style={{ height: "70vh" }}
+                    style={{ height: "72vh" }}
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
@@ -1360,23 +1360,40 @@ const BA_A0070W: React.FC = () => {
                   </Grid>
                 </ExcelExport>
               </GridContainer>
-              </SwiperSlide>
-            <SwiperSlide key={1} style={{ display: 'flex', flexDirection: 'column' }}>
-            <Button
-              style={{marginRight:"85%"}}
-                onClick={() => {
-                  if (swiper) {
-                    swiper.slideTo(0);
-                  }
+            </SwiperSlide>
+            <SwiperSlide
+              key={1}
+              className="leading_PDA"
+              style={{ display: "flex", flexDirection: "column" }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "left",
+                  width: "100%",
                 }}
-                icon="arrow-left"
               >
-                이전
-              </Button>
-              <GridContainer style={{ minHeight: "70vh" ,width: `${deviceWidth-30}px`, overflow:"scroll"}}>
+                <Button
+                  onClick={() => {
+                    if (swiper) {
+                      swiper.slideTo(0);
+                    }
+                  }}
+                  icon="arrow-left"
+                >
+                  이전
+                </Button>
+              </div>
+              <GridContainer
+                style={{
+                  minHeight: "70vh",
+                  width: `${deviceWidth - 30}px`,
+                  overflow: "scroll",
+                }}
+              >
                 <GridTitleContainer>
                   <GridTitle>상세정보</GridTitle>
-                  <ButtonContainer style={{marginTop:"5px"}}>
+                  <ButtonContainer style={{ marginTop: "5px" }}>
                     <Button
                       onClick={onAddClick}
                       themeColor={"primary"}
