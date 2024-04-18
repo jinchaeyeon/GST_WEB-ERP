@@ -318,8 +318,22 @@ input.readonly {
   align-items: center !important;
   flex-direction: column !important;
   overflow: scroll;
-  min-height: 70vh !important;
 }
+
+.leading_PDA_custom {
+  text-align: center !important;
+  font-size: 18px !important;
+  background: #fff !important;
+
+  /* Center slide text vertically */
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  flex-direction: column !important;
+  overflow: scroll;
+  height: 92vh !important;
+}
+
 
 .leading_PDA_container {
   width: 100% !important;
@@ -332,11 +346,11 @@ input.readonly {
 }
 .leading_95_Swiper {
   width: 100% !important;
-  height: 95vh !important;
+  
 }
 .leading_80_Swiper {
   width: 100% !important;
-  height: 81vh !important;
+  height: 83vh !important;
 }
 .leading_70_Swiper {
   width: 100% !important;

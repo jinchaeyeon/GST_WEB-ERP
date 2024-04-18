@@ -1154,8 +1154,8 @@ const SY_A0025W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA">
-              <GridContainer>
+            <SwiperSlide key={0} className="leading_PDA_custom">
+              <GridContainer style={{ width: `${deviceWidth - 30}px`, overflow: "scroll"}}>
                 <TitleContainer>
                   <Title>관리번호 채번정보</Title>
 
@@ -1270,8 +1270,8 @@ const SY_A0025W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide
               key={1}
-              className="leading_PDA"
-              style={{ display: "flex", flexDirection: "column", paddingTop:"20vh"}}
+              className="leading_PDA_custom"
+              style={{ display: "flex", flexDirection: "column", paddingTop:"25vh"}}
             >
               <div
                 style={{
@@ -1304,7 +1304,8 @@ const SY_A0025W: React.FC = () => {
               <GridContainer
                 style={{
                   minHeight: "60vh",
-                  width: `${deviceWidth - 30}px`,
+                  width: `${deviceWidth - 30}px`
+                  , overflow: "scroll"
                 }}
               >
                 <GridTitleContainer>
@@ -1840,7 +1841,7 @@ const SY_A0025W: React.FC = () => {
                 fileName="관리번호 채번정보"
               >
                 <Grid
-                  style={{ height: isMobile ? "50vh" : "81.8vh" }}
+                  style={{ height: "81.8vh" }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -2005,8 +2006,8 @@ const SY_A0025W: React.FC = () => {
                 <FormBoxWrap
                   border={true}
                   style={{
-                    minHeight: isMobile ? "40vh" : "59vh",
-                    display: isMobile ? "block" : "flex",
+                    minHeight:  "59vh",
+                    display: "flex",
                     alignItems: "center",
                   }}
                 >

@@ -2099,8 +2099,8 @@ const BA_A0050: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA">
-              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
+            <SwiperSlide key={0} className="leading_PDA_custom">
+              <GridContainer style={{ width: `${deviceWidth - 30}px`, overflow: "scroll"  }}>
                 <TitleContainer>
                   <Title>BOM관리</Title>
 
@@ -2248,8 +2248,8 @@ const BA_A0050: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide
               key={1}
-              className="leading_PDA"
-              style={{ display: "flex", flexDirection: "column", paddingTop:"20vh" }}
+              className="leading_PDA_custom"
+              style={{ display: "flex", flexDirection: "column", paddingTop:"22vh" }}
             >
               <div
                 style={{

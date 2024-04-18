@@ -3440,7 +3440,7 @@ const BA_A0020: React.FC = () => {
           if (swiper && isMobile) {
             swiper.slideTo(1);
           }
-      
+
           // 선택된 행의 키 저장
           setSelectedState({ [item[DATA_ITEM_KEY]]: true });
 
@@ -3649,7 +3649,9 @@ const BA_A0020: React.FC = () => {
             }}
           >
             <SwiperSlide key={0} className="leading_PDA">
-              <GridContainer>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "scroll" }}
+              >
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
@@ -3670,12 +3672,16 @@ const BA_A0020: React.FC = () => {
                 >
                   {showMap ? (
                     <div
-                      style={{ height: "72vh", marginTop: "5px", width: `${deviceWidth-30}px` }}
+                      style={{
+                        height: "72vh",
+                        marginTop: "5px",
+                        width: `${deviceWidth - 30}px`,
+                      }}
                       id="map"
                     ></div>
                   ) : (
                     <Grid
-                      style={{ height: "72vh" ,width: `${deviceWidth-30}px`}}
+                      style={{ height: "72vh", width: `${deviceWidth - 30}px` }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -3745,19 +3751,36 @@ const BA_A0020: React.FC = () => {
                 </ExcelExport>
               </GridContainer>
             </SwiperSlide>
-            <SwiperSlide key={1} style={{ display: 'flex', flexDirection: 'column' }}>
-              <Button
-              style={{marginRight:"85%"}}
-                onClick={() => {
-                  if (swiper) {
-                    swiper.slideTo(0);
-                  }
+            <SwiperSlide
+              key={1}
+              className="leading_PDA"
+              style={{ display: "flex", flexDirection: "column" }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "left",
+                  width: "100%",
                 }}
-                icon="arrow-left"
               >
-                이전
-              </Button>
-              <GridContainer style={{ minHeight: "70vh" ,width: `${deviceWidth-30}px`, overflow:"scroll"}}>
+                <Button
+                  onClick={() => {
+                    if (swiper) {
+                      swiper.slideTo(0);
+                    }
+                  }}
+                  icon="arrow-left"
+                >
+                  이전
+                </Button>
+              </div>
+              <GridContainer
+                style={{
+                  minHeight: "70vh",
+                  width: `${deviceWidth - 30}px`,
+                  overflow: "scroll",
+                }}
+              >
                 <TabStrip
                   selected={tabSelected}
                   onSelect={handleSelectTab}
