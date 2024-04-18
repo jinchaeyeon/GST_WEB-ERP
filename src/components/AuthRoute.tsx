@@ -80,6 +80,7 @@ function AuthRoute({ component, ...rest }: RouteProps) {
       link == "SA_B2211W" ||
       link == "SA_B2211_603W" ||
       link == "SA_B2221W" ||
+      link == "SA_B2221W_603" ||
       link == "SA_B2227W" ||
       link == "SA_B2228W" ||
       link == "SA_B2410W" ||

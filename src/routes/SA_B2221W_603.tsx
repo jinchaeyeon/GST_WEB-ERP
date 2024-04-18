@@ -38,9 +38,10 @@ import {
   FilterBox,
   GridContainer,
   GridContainerWrap,
+  GridTitleContainer,
   Title,
   TitleContainer,
-  WebErpcolorList
+  WebErpcolorList,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import YearCalendar from "../components/Calendars/YearCalendar";
@@ -64,25 +65,26 @@ import { PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import SA_B2221W_603_Window from "../components/Windows/SA_B2221W_603_Window";
 import { useApi } from "../hooks/api";
 import { IItemData } from "../hooks/interfaces";
 import { isLoading, loginResultState } from "../store/atoms";
-import { gridList } from "../store/columns/SA_B2221W_C";
+import { gridList } from "../store/columns/SA_B2221W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const numberField: string[] = [
-  "qty01",
-  "qty02",
-  "qty03",
-  "qty04",
-  "qty05",
-  "qty06",
-  "qty07",
-  "qty08",
-  "qty09",
-  "qty10",
-  "qty11",
-  "qty12",
+  "amt01",
+  "amt02",
+  "amt03",
+  "amt04",
+  "amt05",
+  "amt06",
+  "amt07",
+  "amt08",
+  "amt09",
+  "amt10",
+  "amt11",
+  "amt12",
 ];
 const dateField = ["recdt", "time"];
 const DATA_ITEM_KEY = "num";
@@ -106,7 +108,7 @@ const SA_B2221: React.FC = () => {
   let isMobile = deviceWidth <= 1200;
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_B2221W", setMessagesData);
+  UseMessages("SA_B2221W_603", setMessagesData);
 
   const pageChange = (event: GridPageChangeEvent) => {
     const { page } = event;
@@ -153,10 +155,10 @@ const SA_B2221: React.FC = () => {
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_B2221W", setCustomOptionData);
+  UseCustomOption("SA_B2221W_603", setCustomOptionData);
 
   const [wordInfoData, setWordInfoData] = React.useState<any>(null);
-  UseDesignInfo("SA_B2221W", setWordInfoData);
+  UseDesignInfo("SA_B2221W_603", setWordInfoData);
 
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
@@ -183,6 +185,8 @@ const SA_B2221: React.FC = () => {
         rdoAmtunit: defaultOption.find((item: any) => item.id === "rdoAmtunit")
           .valueCode,
         rdoAmtgb: defaultOption.find((item: any) => item.id === "rdoAmtgb")
+          .valueCode,
+          itemlvl2: defaultOption.find((item: any) => item.id === "itemlvl2")
           .valueCode,
       }));
     }
@@ -286,6 +290,7 @@ const SA_B2221: React.FC = () => {
     itemnm: "",
     itemacnt: "",
     rdoAmtgb: "A",
+    itemlvl2: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -299,7 +304,7 @@ const SA_B2221: React.FC = () => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_B2221W_Q",
+      procedureName: "P_SA_B2221W_603_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -311,6 +316,7 @@ const SA_B2221: React.FC = () => {
         "@p_amtunit": filters.rdoAmtunit,
         "@p_itemcd": itemcd ? itemcd : filters.itemcd,
         "@p_itemnm": filters.itemnm,
+        "@p_itemlvl2": filters.itemlvl2,
         "@p_itemacnt": filters.itemacnt,
         "@p_amtgb": filters.rdoAmtgb,
       },
@@ -355,9 +361,9 @@ const SA_B2221: React.FC = () => {
           // 첫번째 행 선택하기
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
           if (tabSelected === 1) {
-            fetchGrid("MCHART", rows[0].itemcd);
+            fetchGrid("MCHART", rows[0].sub_code);
           } else if (tabSelected === 2) {
-            fetchGrid("QCHART", rows[0].itemcd);
+            fetchGrid("QCHART", rows[0].sub_code);
           }
         }
       }
@@ -436,6 +442,8 @@ const SA_B2221: React.FC = () => {
     });
 
     setSelectedState(newSelectedState);
+
+    onDetailClick();
   };
 
   const onMonthGridSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -449,10 +457,11 @@ const SA_B2221: React.FC = () => {
     const selectedRowData = event.dataItems[selectedIdx];
     setSelectedState(newSelectedState);
     if (tabSelected === 1) {
-      fetchGrid("MCHART", selectedRowData.itemcd);
+      fetchGrid("MCHART", selectedRowData.sub_code);
     } else if (tabSelected === 2) {
-      fetchGrid("QCHART", selectedRowData.itemcd);
+      fetchGrid("QCHART", selectedRowData.sub_code);
     }
+    onDetailClick();
   };
 
   //엑셀 내보내기
@@ -577,7 +586,7 @@ const SA_B2221: React.FC = () => {
         convertDateToStr(filters.yyyy).substr(0, 4) == null ||
         convertDateToStr(filters.yyyy).substr(0, 4) == undefined
       ) {
-        throw findMessage(messagesData, "SA_B2221W_001");
+        throw findMessage(messagesData, "SA_B2221W_603_001");
       } else {
         resetGrid();
         setPage(initialPageState); // 페이지 초기화
@@ -595,6 +604,13 @@ const SA_B2221: React.FC = () => {
     }
   };
 
+  const [DetailWindowVisible, setDetailWindowVisible] =
+    useState<boolean>(false);
+
+  const onDetailClick = () => {
+    setDetailWindowVisible(true);
+  };
+
   return (
     <>
       <TitleContainer>
@@ -608,7 +624,7 @@ const SA_B2221: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="SA_B2221W"
+              pathname="SA_B2221W_603"
             />
           )}
         </ButtonContainer>
@@ -654,6 +670,17 @@ const SA_B2221: React.FC = () => {
                   value={filters.itemnm}
                   onChange={filterInputChange}
                 />
+              </td>
+              <th>시험유형</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="itemlvl2"
+                    value={filters.itemlvl2}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
               </td>
             </tr>
             <tr>
@@ -1009,8 +1036,8 @@ const SA_B2221: React.FC = () => {
                     ].map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 &&
-                        (item.fieldName !== "itemcd" &&
-                        item.fieldName !== "itemnm" ? (
+                        (item.fieldName !== "sub_code" &&
+                        item.fieldName !== "code_name" ? (
                           <GridColumn
                             key={idx}
                             field={item.fieldName}
@@ -1198,6 +1225,39 @@ const SA_B2221: React.FC = () => {
           setVisible={setItemWindowVisible}
           workType={"FILTER"}
           setData={setItemData}
+          modal={true}
+        />
+      )}
+      {DetailWindowVisible && (
+        <SA_B2221W_603_Window
+          setVisible={setDetailWindowVisible}
+          itemcd={
+            gridDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0] != undefined
+              ? gridDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0].sub_code
+              : ""
+          }
+          itemnm={
+            gridDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0] != undefined
+              ? gridDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0].code_name
+              : ""
+          }
+          yyyy={filters.yyyy}
           modal={true}
         />
       )}

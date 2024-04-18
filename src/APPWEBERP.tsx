@@ -243,6 +243,7 @@ import SA_B2211_603W from "./routes/SA_B2211_603W";
 import SA_B2216W from "./routes/SA_B2216W";
 import SA_B2220W from "./routes/SA_B2220W";
 import SA_B2221W from "./routes/SA_B2221W";
+import SA_B2221W_603 from "./routes/SA_B2221W_603";
 import SA_B2226W from "./routes/SA_B2226W";
 import SA_B2227W from "./routes/SA_B2227W";
 import SA_B2228W from "./routes/SA_B2228W";
@@ -740,6 +741,8 @@ const AppInner: React.FC = () => {
       return SA_B2211_603W;
     } else if (str == "SA_B2221W") {
       return SA_B2221W;
+    } else if (str == "SA_B2221W_603") {
+      return SA_B2221W_603;
     } else if (str == "SA_B2227W") {
       return SA_B2227W;
     } else if (str == "SA_B2410W") {
@@ -1229,6 +1232,11 @@ const AppInner: React.FC = () => {
                     exact
                   />
                   <AuthRoute path="/SA_B2221W" component={SA_B2221W} exact />
+                  <AuthRoute
+                    path="/SA_B2221W_603"
+                    component={SA_B2221W_603}
+                    exact
+                  />
                   <AuthRoute path="/SA_B2410W" component={SA_B2410W} exact />
                   <AuthRoute
                     path="/SA_B2410_290W"

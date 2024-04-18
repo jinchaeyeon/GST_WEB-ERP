@@ -21,7 +21,7 @@ import {
 import { useApi } from "../../hooks/api";
 import { isLoading } from "../../store/atoms";
 import { Iparameters, TPermissions } from "../../store/types";
-import CenterCell from "../Cells/CenterCell";
+import DateCell from "../Cells/DateCell";
 import {
   convertDateToStr,
   dateformat,
@@ -384,6 +384,7 @@ const CommentsGrid = (props: {
       row_status: "N",
       user_id: user_id,
       user_name: user_name,
+      comment: "",
     };
     setDataResult((prev) => {
       return {
@@ -410,8 +411,12 @@ const CommentsGrid = (props: {
         newData.push(item);
         Object2.push(index);
       } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = item;
+          newData2.rowstatus = "D";
+          deletedRows.push(newData2);
+        }
         Object.push(index);
-        deletedRows.push(item);
       }
     });
 
@@ -419,13 +424,6 @@ const CommentsGrid = (props: {
       data = dataResult.data[Math.min(...Object2)];
     } else {
       data = dataResult.data[Math.min(...Object) - 1];
-    }
-    const isLastDataDeleted = dataResult.data.length === 0 && filters.pgNum > 1;
-    if (isLastDataDeleted) {
-      setPage({
-        skip: PAGE_SIZE * (filters.pgNum - 2),
-        take: PAGE_SIZE,
-      });
     }
     setDataResult((prev) => ({
       data: newData,
@@ -650,7 +648,7 @@ const CommentsGrid = (props: {
           title="작성일"
           width="100px"
           editable={false}
-          cell={CenterCell}
+          cell={DateCell}
           footerCell={TotalFooterCell}
         />
         <GridColumn

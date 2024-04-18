@@ -39,6 +39,7 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import CheckBoxReadOnlyCell from "../components/Cells/CheckBoxReadOnlyCell";
 import DateCell from "../components/Cells/DateCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
@@ -68,6 +69,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import RichEditor from "../components/RichEditor";
 import CopyWindow from "../components/Windows/CM_A5000W_Copy_Window";
 import ProjectsWindow from "../components/Windows/CM_A5000W_Project_Window";
@@ -98,6 +100,7 @@ let targetRowIndex: null | number = null;
 let reference = "";
 const DateField = ["request_date", "finexpdt", "completion_date"];
 const StatusField = ["status"];
+const checkboxField = ["is_emergency"];
 
 interface IPrsnnum {
   user_id: string;
@@ -176,6 +179,15 @@ const CM_A5000W: React.FC = () => {
           todt: setDefaultDate(customOptionData, "todt"),
           dtgb1: defaultOption.find((item: any) => item.id === "dtgb1")
             .valueCode,
+          is_emergency: defaultOption.find(
+            (item: any) => item.id === "is_emergency"
+          ).valueCode,
+          require_type: defaultOption.find(
+            (item: any) => item.id === "require_type"
+          ).valueCode,
+          materialtype: defaultOption.find(
+            (item: any) => item.id === "materialtype"
+          ).valueCode,
           isSearch: true,
           find_row_value: queryParams.get("go") as string,
         }));
@@ -186,6 +198,15 @@ const CM_A5000W: React.FC = () => {
           todt: setDefaultDate(customOptionData, "todt"),
           dtgb1: defaultOption.find((item: any) => item.id === "dtgb1")
             .valueCode,
+          is_emergency: defaultOption.find(
+            (item: any) => item.id === "is_emergency"
+          ).valueCode,
+          materialtype: defaultOption.find(
+            (item: any) => item.id === "materialtype"
+          ).valueCode,
+          require_type: defaultOption.find(
+            (item: any) => item.id === "require_type"
+          ).valueCode,
           isSearch: true,
         }));
       }
@@ -194,16 +215,27 @@ const CM_A5000W: React.FC = () => {
 
   //비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_CM500_603_Q, L_CM501_603_Q", setBizComponentData);
+  UseBizComponent(
+    "L_sysUserMaster_001, L_CM503_603, L_CM502_603, L_SA001_603, L_CM500_603_Q",
+    setBizComponentData
+  );
   //상태, 의약품상세분류
 
   const [statusListData, setStatusListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  const [meditypeListData, setMeditypeListData] = React.useState([
+  const [materialtypeListData, setMaterialtypeListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [require_typeListData, setRequire_typeListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [completion_methodListData, setCompletion_methodListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [userListData, setUserListData] = useState([
+    { user_id: "", user_name: "" },
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const statusQueryStr = getQueryFromBizComponent(
@@ -211,15 +243,31 @@ const CM_A5000W: React.FC = () => {
           (item: any) => item.bizComponentId == "L_CM500_603_Q"
         )
       );
-
-      const meditypeQueryStr = getQueryFromBizComponent(
+      const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM501_603_Q"
+          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
-
+      const materialtypeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_SA001_603"
+        )
+      );
+      const require_typeQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_CM502_603"
+        )
+      );
+      const completion_methodQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_CM503_603"
+        )
+      );
+      fetchQueryData(userQueryStr, setUserListData);
+      fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
+      fetchQueryData(require_typeQueryStr, setRequire_typeListData);
+      fetchQueryData(completion_methodQueryStr, setCompletion_methodListData);
       fetchQueryData(statusQueryStr, setStatusListData);
-      fetchQueryData(meditypeQueryStr, setMeditypeListData);
     }
   }, [bizComponentData]);
 
@@ -356,25 +404,27 @@ const CM_A5000W: React.FC = () => {
     setWorkType("N");
     setTabSelected(1);
     setInformation({
-      document_id: "",
-      cpmnum: data.cpmnum,
+      document_id: "자동생성",
       user_id: data.user_id,
       user_name: data.user_name,
       request_date: new Date(),
       finexpdt: new Date(),
       require_type: data.require_type,
       completion_method: data.completion_method,
-      medicine_type: data.medicine_type,
       status: data.status,
       customer_code: data.customer_code,
       customernm: data.customernm,
       title: data.title,
       is_emergency: data.is_emergency,
       quotestnum: data.quotestnum,
+      testnum: data.testnum,
       attdatnum: data.attdatnum,
       files: data.files,
       ref_document_id: "",
       project: data.project,
+      materialtype: data.materialtype,
+      extra_field2: data.extra_field2,
+      custprsnnm: data.custprsnnm,
     });
     setInformation2({
       document_id: "",
@@ -396,6 +446,10 @@ const CM_A5000W: React.FC = () => {
         customer_code: data.custcd,
         customernm: data.custnm,
         project: data.quokey,
+        materialtype: data.materialtype,
+        extra_field2: data.extra_field2,
+        custprsnnm: data.custprsnnm,
+        testnum: data.testnum,
       };
     });
   };
@@ -467,24 +521,26 @@ const CM_A5000W: React.FC = () => {
 
       setInformation({
         document_id: selectedRowData.document_id,
-        cpmnum: selectedRowData.cpmnum,
         user_id: selectedRowData.user_id,
         user_name: selectedRowData.user_name,
         request_date: toDate(selectedRowData.request_date),
         finexpdt: toDate(selectedRowData.finexpdt),
         require_type: selectedRowData.require_type,
         completion_method: selectedRowData.completion_method,
-        medicine_type: selectedRowData.medicine_type,
         status: selectedRowData.status,
         customer_code: selectedRowData.customer_code,
         customernm: selectedRowData.customernm,
         title: selectedRowData.title,
         is_emergency: selectedRowData.is_emergency,
         quotestnum: selectedRowData.quotestnum,
+        testnum: selectedRowData.testnum,
         attdatnum: selectedRowData.attdatnum,
         files: selectedRowData.files,
         ref_document_id: selectedRowData.ref_document_id,
         project: selectedRowData.project,
+        materialtype: selectedRowData.materialtype,
+        extra_field2: selectedRowData.extra_field2,
+        custprsnnm: selectedRowData.custprsnnm,
       });
 
       setInformation2({
@@ -550,6 +606,15 @@ const CM_A5000W: React.FC = () => {
 
   //조회조건 ComboBox Change 함수 => 사용자가 ComboBox에 입력한 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const filterRadioChange = (e: any) => {
     const { name, value } = e;
 
     setFilters((prev) => ({
@@ -630,12 +695,15 @@ const CM_A5000W: React.FC = () => {
     todt: new Date(),
     dtgb1: "",
     status: [{ sub_code: "%", code_name: "전체" }],
-    medicine_type: [{ sub_code: "%", code_name: "전체" }],
     custnm: "",
     user_id: "",
     user_name: "",
     project: "",
     customer_code: "",
+    materialtype: "",
+    is_emergency: "Y",
+    extra_field2: "",
+    require_type: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: false,
@@ -651,23 +719,25 @@ const CM_A5000W: React.FC = () => {
 
   const [information, setInformation] = useState({
     document_id: "",
-    cpmnum: "",
     user_id: "",
     user_name: "",
-    project: "",
     request_date: new Date(),
     finexpdt: new Date(),
     require_type: "",
     completion_method: "",
-    medicine_type: "",
+    materialtype: "",
+    extra_field2: "",
     status: "",
     customer_code: "",
     customernm: "",
-    title: "",
-    is_emergency: "",
+    custprsnnm: "",
     quotestnum: "",
+    testnum: "",
+    project: "",
     attdatnum: "",
     files: "",
+    title: "",
+    is_emergency: "",
     ref_document_id: "", //답변
   });
 
@@ -699,13 +769,6 @@ const CM_A5000W: React.FC = () => {
         ? filters.status[0].sub_code
         : getName(filters.status);
 
-    const medicine_type =
-      filters.medicine_type.length == 0
-        ? ""
-        : filters.medicine_type.length == 1
-        ? filters.medicine_type[0].sub_code
-        : getName(filters.medicine_type);
-
     //조회조건 파라미터
     const parameters: Iparameters = {
       procedureName: "P_CM_A5000W_Q",
@@ -715,15 +778,18 @@ const CM_A5000W: React.FC = () => {
         "@p_work_type": filters.workType,
         "@p_document_id": filters.document_id,
         "@p_dtgb": filters.dtgb1,
+        "@p_status": status,
+        "@p_extra_field2": filters.extra_field2,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
-        "@p_status": status,
-        "@p_medicine_type": medicine_type,
         "@p_user_id": filters.user_id,
         "@p_user_name": filters.user_name,
-        "@p_project": filters.project,
         "@p_customer_code": filters.custnm == "" ? "" : filters.customer_code,
         "@p_customernm": filters.custnm,
+        "@p_project": filters.project,
+        "@p_materialtype": filters.materialtype,
+        "@p_is_emergency": filters.is_emergency,
+        "@p_require_type": filters.require_type,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -785,7 +851,6 @@ const CM_A5000W: React.FC = () => {
 
           setInformation({
             document_id: selectedRow.document_id,
-            cpmnum: selectedRow.cpmnum,
             user_id: selectedRow.user_id,
             user_name: selectedRow.user_name,
             project: selectedRow.project,
@@ -793,16 +858,19 @@ const CM_A5000W: React.FC = () => {
             finexpdt: toDate(selectedRow.finexpdt),
             require_type: selectedRow.require_type,
             completion_method: selectedRow.completion_method,
-            medicine_type: selectedRow.medicine_type,
             status: selectedRow.status,
             customer_code: selectedRow.customer_code,
             customernm: selectedRow.customernm,
             title: selectedRow.title,
             is_emergency: selectedRow.is_emergency,
             quotestnum: selectedRow.quotestnum,
+            testnum: selectedRow.testnum,
             attdatnum: selectedRow.attdatnum,
             files: selectedRow.files,
             ref_document_id: selectedRow.ref_document_id,
+            materialtype: selectedRow.materialtype,
+            extra_field2: selectedRow.extra_field2,
+            custprsnnm: selectedRow.custprsnnm,
           });
           fetchHtmlDocument(selectedRow);
         } else {
@@ -816,7 +884,6 @@ const CM_A5000W: React.FC = () => {
           }));
           setInformation({
             document_id: rows[0].document_id,
-            cpmnum: rows[0].cpmnum,
             user_id: rows[0].user_id,
             user_name: rows[0].user_name,
             project: rows[0].project,
@@ -824,16 +891,19 @@ const CM_A5000W: React.FC = () => {
             finexpdt: toDate(rows[0].finexpdt),
             require_type: rows[0].require_type,
             completion_method: rows[0].completion_method,
-            medicine_type: rows[0].medicine_type,
             status: rows[0].status,
             customer_code: rows[0].customer_code,
             customernm: rows[0].customernm,
             title: rows[0].title,
             is_emergency: rows[0].is_emergency,
             quotestnum: rows[0].quotestnum,
+            testnum: rows[0].testnum,
             attdatnum: rows[0].attdatnum,
             files: rows[0].files,
             ref_document_id: rows[0].ref_document_id,
+            materialtype: rows[0].materialtype,
+            extra_field2: rows[0].extra_field2,
+            custprsnnm: rows[0].custprsnnm,
           });
           fetchHtmlDocument(rows[0]);
         }
@@ -873,13 +943,16 @@ const CM_A5000W: React.FC = () => {
         "@p_frdt": "",
         "@p_todt": "",
         "@p_status": "",
-        "@p_medicine_type": "",
         "@p_user_id": "",
         "@p_user_name": "",
         "@p_project": "",
         "@p_customer_code": "",
         "@p_customernm": "",
         "@p_find_row_value": "",
+        "@p_extra_field2": "",
+        "@p_materialtype": "",
+        "@p_is_emergency": "",
+        "@p_require_type": "",
       },
     };
 
@@ -1083,7 +1156,6 @@ const CM_A5000W: React.FC = () => {
     setMainDataResult(process([], mainDataState));
     setInformation({
       document_id: "",
-      cpmnum: "",
       user_id: "",
       user_name: "",
       project: "",
@@ -1091,16 +1163,19 @@ const CM_A5000W: React.FC = () => {
       finexpdt: new Date(),
       require_type: "",
       completion_method: "",
-      medicine_type: "",
       status: "",
       customer_code: "",
       customernm: "",
       title: "",
       is_emergency: "",
       quotestnum: "",
+      testnum: "",
       attdatnum: "",
       files: "",
       ref_document_id: "", //답변
+      materialtype: "",
+      extra_field2: "",
+      custprsnnm: "",
     });
     setInformation2({
       document_id: "",
@@ -1216,7 +1291,6 @@ const CM_A5000W: React.FC = () => {
 
     setInformation({
       document_id: selectedRowData.document_id,
-      cpmnum: selectedRowData.cpmnum,
       user_id: selectedRowData.user_id,
       user_name: selectedRowData.user_name,
       project: selectedRowData.project,
@@ -1224,16 +1298,19 @@ const CM_A5000W: React.FC = () => {
       finexpdt: toDate(selectedRowData.finexpdt),
       require_type: selectedRowData.require_type,
       completion_method: selectedRowData.completion_method,
-      medicine_type: selectedRowData.medicine_type,
       status: selectedRowData.status,
       customer_code: selectedRowData.customer_code,
       customernm: selectedRowData.customernm,
       title: selectedRowData.title,
       is_emergency: selectedRowData.is_emergency,
       quotestnum: selectedRowData.quotestnum,
+      testnum: selectedRowData.testnum,
       attdatnum: selectedRowData.attdatnum,
       files: selectedRowData.files,
       ref_document_id: selectedRowData.ref_document_id,
+      materialtype: selectedRowData.materialtype,
+      extra_field2: selectedRowData.extra_field2,
+      custprsnnm: selectedRowData.custprsnnm,
     });
     setInformation2({
       document_id: selectedRowData.document_id,
@@ -1251,12 +1328,10 @@ const CM_A5000W: React.FC = () => {
   const [paraDataSaved, setParaDataSaved] = useState({
     workType: "",
     document_id: "",
-    cpmnum: "",
     request_date: "",
     finexpdt: "",
     require_type: "",
     completion_method: "",
-    medicine_type: "",
     status: "",
     customer_code: "",
     title: "",
@@ -1278,7 +1353,7 @@ const CM_A5000W: React.FC = () => {
       alert("답변이 존재하는 요청 건은 수정할 수 없습니다.");
       return false;
     }
-    console.log(information);
+
     let valid = true;
     try {
       if (
@@ -1295,12 +1370,30 @@ const CM_A5000W: React.FC = () => {
         convertDateToStr(information.finexpdt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "CM_A5000W_001");
-      } else if (information.status == "") {
+      } else if (
+        information.status == "" ||
+        information.status == undefined ||
+        information.status == null
+      ) {
         throw findMessage(messagesData, "CM_A5000W_002");
-      } else if (information.title == "") {
+      } else if (
+        information.title == "" ||
+        information.title == undefined ||
+        information.title == null
+      ) {
         throw findMessage(messagesData, "CM_A5000W_003");
-      } else if (information.user_name == "") {
+      } else if (
+        information.user_name == "" ||
+        information.user_name == undefined ||
+        information.user_name == null
+      ) {
         throw findMessage(messagesData, "CM_A5000W_004");
+      } else if (
+        information.project == "" ||
+        information.project == undefined ||
+        information.project == null
+      ) {
+        throw findMessage(messagesData, "CM_A5000W_005");
       }
     } catch (e) {
       alert(e);
@@ -1312,13 +1405,11 @@ const CM_A5000W: React.FC = () => {
     setParaDataSaved((prev) => ({
       ...prev,
       workType: workType,
-      document_id: information.document_id,
-      cpmnum: information.cpmnum,
+      document_id: workType == "N" ? "" : information.document_id,
       request_date: convertDateToStr(information.request_date),
       finexpdt: convertDateToStr(information.finexpdt),
       require_type: information.require_type,
       completion_method: information.completion_method,
-      medicine_type: information.medicine_type,
       status: information.status,
       customer_code: information.customer_code,
       title: information.title,
@@ -1410,7 +1501,6 @@ const CM_A5000W: React.FC = () => {
             ? paraDataSaved.workType
             : paraDataSaved.workType[0],
         "@p_document_id": paraDataSaved.document_id,
-        "@p_cpmnum": paraDataSaved.cpmnum,
         "@p_request_date": paraDataSaved.request_date,
         "@p_finexpdt": paraDataSaved.finexpdt,
         "@p_require_type": paraDataSaved.require_type,
@@ -1418,7 +1508,6 @@ const CM_A5000W: React.FC = () => {
           paraDataSaved.completion_method == undefined
             ? ""
             : paraDataSaved.completion_method,
-        "@p_medicine_type": paraDataSaved.medicine_type,
         "@p_status": paraDataSaved.status,
         "@p_customer_code": paraDataSaved.customer_code,
         "@p_title": paraDataSaved.title,
@@ -1469,12 +1558,10 @@ const CM_A5000W: React.FC = () => {
       setParaDataSaved({
         workType: "",
         document_id: "",
-        cpmnum: "",
         request_date: "",
         finexpdt: "",
         require_type: "",
         completion_method: "",
-        medicine_type: "",
         status: "",
         customer_code: "",
         title: "",
@@ -1508,16 +1595,18 @@ const CM_A5000W: React.FC = () => {
       "new"
     );
     setInformation({
-      document_id: "",
-      cpmnum: "",
+      document_id: "자동생성",
       user_id: "",
       user_name: "",
       project: "",
       request_date: setDefaultDate2(customOptionData, "request_date"),
       finexpdt: setDefaultDate2(customOptionData, "finexpdt"),
-      require_type: defaultOption.find((item: any) => item.id === "require_type").valueCode,
-      completion_method: defaultOption.find((item: any) => item.id === "completion_method").valueCode,
-      medicine_type: defaultOption.find((item: any) => item.id === "medicine_type").valueCode,
+      require_type: defaultOption.find(
+        (item: any) => item.id === "require_type"
+      ).valueCode,
+      completion_method: defaultOption.find(
+        (item: any) => item.id === "completion_method"
+      ).valueCode,
       status: defaultOption.find((item: any) => item.id === "status").valueCode,
       customer_code: "",
       customernm: "",
@@ -1526,9 +1615,15 @@ const CM_A5000W: React.FC = () => {
         (item: any) => item.id === "is_emergency"
       ).valueCode,
       quotestnum: "",
+      testnum: "",
       attdatnum: "",
       files: "",
       ref_document_id: "",
+      materialtype: defaultOption.find(
+        (item: any) => item.id === "materialtype"
+      ).valueCode,
+      extra_field2: "",
+      custprsnnm: "",
     });
     setInformation2({
       document_id: "",
@@ -1617,237 +1712,266 @@ const CM_A5000W: React.FC = () => {
         style={{ width: "100%" }}
       >
         <TabStripTab title="요약정보">
-          <GridContainerWrap>
-            <GridContainer width="22%">
-              <FilterContainer>
-                <GridTitleContainer>
-                  <GridTitleContainer>
-                    <GridTitle>조회조건</GridTitle>
-                  </GridTitleContainer>
-                </GridTitleContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th>일자구분</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="dtgb1"
-                            value={filters.dtgb1}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                            valueField="code"
-                            textField="name"
-                            className="required"
-                          />
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>상태</th>
-                      <td>
-                        <MultiSelect
-                          name="status"
-                          data={statusListData}
-                          onChange={filterMultiSelectChange}
-                          value={filters.status}
-                          textField="code_name"
-                          dataItemKey="sub_code"
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>의약품 상세분류</th>
-                      <td>
-                        <MultiSelect
-                          name="medicine_type"
-                          data={meditypeListData}
-                          onChange={filterMultiSelectChange}
-                          value={filters.medicine_type}
-                          textField="code_name"
-                          dataItemKey="sub_code"
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>조회일자</th>
-                      <td>
-                        <CommonDateRangePicker
-                          value={{
-                            start: filters.frdt,
-                            end: filters.todt,
-                          }}
-                          onChange={(e: { value: { start: any; end: any } }) =>
-                            setFilters((prev) => ({
-                              ...prev,
-                              frdt: e.value.start,
-                              todt: e.value.end,
-                            }))
-                          }
-                          className="required"
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>SM담당자</th>
-                      <td>
-                        <Input
-                          name="user_name"
-                          type="text"
-                          value={filters.user_name}
-                          onChange={filterInputChange}
-                        />
-                        <ButtonInInput>
-                          <Button
-                            type="button"
-                            icon="more-horizontal"
-                            fillMode="flat"
-                            onClick={onPrsnnumWndClick}
-                          />
-                        </ButtonInInput>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>회사명</th>
-                      <td>
-                        <Input
-                          name="custnm"
-                          type="text"
-                          value={filters.custnm}
-                          onChange={filterInputChange}
-                        />
-                        <ButtonInInput>
-                          <Button
-                            type={"button"}
-                            onClick={onCustWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th>프로젝트</th>
-                      <td>
-                        <Input
-                          name="project"
-                          type="text"
-                          value={filters.project}
-                          onChange={filterInputChange}
-                        />
-                        <ButtonInInput>
-                          <Button
-                            icon="more-horizontal"
-                            fillMode="flat"
-                            onClick={onProjectWndClick3}
-                          />
-                        </ButtonInInput>
-                      </td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
-            </GridContainer>
-            <GridContainer width={`calc(88% - ${GAP}px)`}>
+          <FilterContainer>
+            <GridTitleContainer>
               <GridTitleContainer>
-                <GridTitle>요약정보</GridTitle>
-                <ButtonContainer>
-                  <Button
-                    onClick={onAddClick}
-                    themeColor={"primary"}
-                    icon="file-add"
-                  >
-                    신규
-                  </Button>
-                  <Button
-                    onClick={onCopyClick}
-                    themeColor={"primary"}
-                    fillMode={"outline"}
-                    icon="copy"
-                  >
-                    이전요청 복사
-                  </Button>
-                </ButtonContainer>
+                <GridTitle>조회조건</GridTitle>
               </GridTitleContainer>
-              <ExcelExport
-                data={mainDataResult.data}
-                ref={(exporter) => {
-                  _export = exporter;
-                }}
-                fileName="컨설팅(문의·답변)관리"
-              >
-                <Grid
-                  style={{ height: "78vh" }}
-                  data={process(
-                    mainDataResult.data.map((row) => ({
-                      ...row,
-                      medicine_type: meditypeListData.find(
-                        (items: any) => items.sub_code == row.medicine_type
-                      )?.code_name,
-                      [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-                    })),
-                    mainDataState
-                  )}
-                  {...mainDataState}
-                  onDataStateChange={onMainDataStateChange}
-                  // 선택기능
-                  dataItemKey={DATA_ITEM_KEY}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onSelectionChange}
-                  onRowDoubleClick={onRowDoubleClick}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult.total}
-                  skip={page.skip}
-                  take={page.take}
-                  pageable={true}
-                  onPageChange={pageChange}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                  onItemChange={onMainItemChange}
-                  editField={EDIT_FIELD}
-                >
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              DateField.includes(item.fieldName)
-                                ? DateCell
-                                : StatusField.includes(item.fieldName)
-                                ? StatusCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder === 0
-                                ? mainTotalFooterCell
-                                : undefined
-                            }
-                          />
-                        )
+            </GridTitleContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>일자구분</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="dtgb1"
+                        value={filters.dtgb1}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                        valueField="code"
+                        textField="name"
+                        className="required"
+                      />
                     )}
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-          </GridContainerWrap>
+                  </td>
+                  <th>조회일자</th>
+                  <td>
+                    <CommonDateRangePicker
+                      value={{
+                        start: filters.frdt,
+                        end: filters.todt,
+                      }}
+                      onChange={(e: { value: { start: any; end: any } }) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          frdt: e.value.start,
+                          todt: e.value.end,
+                        }))
+                      }
+                      className="required"
+                    />
+                  </td>
+                  <th>상태</th>
+                  <td>
+                    <MultiSelect
+                      name="status"
+                      data={statusListData}
+                      onChange={filterMultiSelectChange}
+                      value={filters.status}
+                      textField="code_name"
+                      dataItemKey="sub_code"
+                    />
+                  </td>
+                  <th>물질상세분야</th>
+                  <td>
+                    <Input
+                      name="extra_field2"
+                      type="text"
+                      value={filters.extra_field2}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>영업담당자</th>
+                  <td>
+                    <Input
+                      name="user_name"
+                      type="text"
+                      value={filters.user_name}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        type="button"
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onPrsnnumWndClick}
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>업체명</th>
+                  <td>
+                    <Input
+                      name="custnm"
+                      type="text"
+                      value={filters.custnm}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        type={"button"}
+                        onClick={onCustWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>PJT NO.</th>
+                  <td>
+                    <Input
+                      name="project"
+                      type="text"
+                      value={filters.project}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onProjectWndClick3}
+                      />
+                    </ButtonInInput>
+                  </td>
+                </tr>
+                <tr>
+                  <th>물질분야</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="materialtype"
+                        value={filters.materialtype}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>긴급여부</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="is_emergency"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                  <th>문의분야</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="require_type"
+                        value={filters.require_type}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+          <GridContainer>
+            <GridTitleContainer>
+              <GridTitle>요약정보</GridTitle>
+              <ButtonContainer>
+                <Button
+                  onClick={onAddClick}
+                  themeColor={"primary"}
+                  icon="file-add"
+                >
+                  신규
+                </Button>
+                <Button
+                  onClick={onCopyClick}
+                  themeColor={"primary"}
+                  fillMode={"outline"}
+                  icon="copy"
+                >
+                  이전요청 복사
+                </Button>
+              </ButtonContainer>
+            </GridTitleContainer>
+            <ExcelExport
+              data={mainDataResult.data}
+              ref={(exporter) => {
+                _export = exporter;
+              }}
+              fileName="컨설팅(문의·답변)관리"
+            >
+              <Grid
+                style={{ height: "60vh" }}
+                data={process(
+                  mainDataResult.data.map((row) => ({
+                    ...row,
+                    person: userListData.find(
+                      (items: any) => items.user_id == row.person
+                    )?.user_name,
+                    materialtype: materialtypeListData.find(
+                      (items: any) => items.sub_code == row.materialtype
+                    )?.code_name,
+                    require_type: require_typeListData.find(
+                      (items: any) => items.sub_code == row.require_type
+                    )?.code_name,
+                    completion_method: completion_methodListData.find(
+                      (items: any) => items.sub_code == row.completion_method
+                    )?.code_name,
+                    [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
+                  })),
+                  mainDataState
+                )}
+                {...mainDataState}
+                onDataStateChange={onMainDataStateChange}
+                // 선택기능
+                dataItemKey={DATA_ITEM_KEY}
+                selectedField={SELECTED_FIELD}
+                selectable={{
+                  enabled: true,
+                  mode: "single",
+                }}
+                onSelectionChange={onSelectionChange}
+                onRowDoubleClick={onRowDoubleClick}
+                //스크롤 조회 기능
+                fixedScroll={true}
+                total={mainDataResult.total}
+                skip={page.skip}
+                take={page.take}
+                pageable={true}
+                onPageChange={pageChange}
+                //원하는 행 위치로 스크롤 기능
+                ref={gridRef}
+                rowHeight={30}
+                //정렬기능
+                sortable={true}
+                onSortChange={onMainSortChange}
+                //컬럼순서조정
+                reorderable={true}
+                //컬럼너비조정
+                resizable={true}
+                onItemChange={onMainItemChange}
+                editField={EDIT_FIELD}
+              >
+                {customOptionData !== null &&
+                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          id={item.id}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            DateField.includes(item.fieldName)
+                              ? DateCell
+                              : StatusField.includes(item.fieldName)
+                              ? StatusCell
+                              : checkboxField.includes(item.fieldName)
+                              ? CheckBoxReadOnlyCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder === 0
+                              ? mainTotalFooterCell
+                              : undefined
+                          }
+                        />
+                      )
+                  )}
+              </Grid>
+            </ExcelExport>
+          </GridContainer>
         </TabStripTab>
 
         <TabStripTab
@@ -1886,17 +2010,17 @@ const CM_A5000W: React.FC = () => {
                     <FormBox>
                       <tbody>
                         <tr>
-                          <th>CPM관리번호</th>
+                          <th>등록번호</th>
                           <td colSpan={3}>
                             <Input
-                              name="cpmnum"
+                              name="document_id"
                               type="text"
-                              value={information.cpmnum}
+                              value={information.document_id}
                               className="readonly"
                               readOnly={true}
                             />
                           </td>
-                          <th>SM담당자</th>
+                          <th>영업담당자</th>
                           <td colSpan={3}>
                             <Input
                               name="user_name"
@@ -1908,7 +2032,7 @@ const CM_A5000W: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>문의일</th>
+                          <th>문의일자</th>
                           <td colSpan={3}>
                             <DatePicker
                               name="request_date"
@@ -1918,7 +2042,7 @@ const CM_A5000W: React.FC = () => {
                               className="readonly"
                             />
                           </td>
-                          <th>답변기한요청일</th>
+                          <th>답변기한일</th>
                           <td colSpan={3}>
                             <DatePicker
                               name="finexpdt"
@@ -1960,20 +2084,6 @@ const CM_A5000W: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>의약품상세분류</th>
-                          <td colSpan={3}>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="medicine_type"
-                                value={information.medicine_type}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                                className="readonly"
-                                disabled={true}
-                              />
-                            )}
-                          </td>
                           <th>상태</th>
                           <td colSpan={3}>
                             {customOptionData !== null && (
@@ -1988,14 +2098,23 @@ const CM_A5000W: React.FC = () => {
                               />
                             )}
                           </td>
-                        </tr>
-                        <tr>
                           <th>회사명</th>
                           <td colSpan={3}>
                             <Input
                               name="customernm"
                               type="text"
                               value={information.customernm}
+                              className="readonly"
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>PJT NO.</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="project"
+                              type="text"
+                              value={information.project}
                               className="readonly"
                             />
                           </td>
@@ -2018,12 +2137,54 @@ const CM_A5000W: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>프로젝트</th>
+                          <th>의뢰자</th>
                           <td colSpan={3}>
                             <Input
-                              name="project"
+                              name="custprsnnm"
                               type="text"
-                              value={information.project}
+                              value={information.custprsnnm}
+                              className="readonly"
+                            />
+                          </td>
+                          <th>시험번호</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="testnum"
+                              type="text"
+                              value={information.testnum}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                type={"button"}
+                                onClick={onProjectWndClick2}
+                                icon="search"
+                                fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>물질분야</th>
+                          <td colSpan={3}>
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="materialtype"
+                                value={information.materialtype}
+                                type="new"
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                                className="readonly"
+                                disabled={true}
+                              />
+                            )}
+                          </td>
+                          <th>물질상세분야</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="extra_field2"
+                              type="text"
+                              value={information.extra_field2}
                               className="readonly"
                             />
                           </td>
@@ -2059,16 +2220,17 @@ const CM_A5000W: React.FC = () => {
                     <FormBox>
                       <tbody>
                         <tr>
-                          <th>CPM관리번호</th>
+                          <th>등록번호</th>
                           <td colSpan={3}>
                             <Input
-                              name="cpmnum"
+                              name="document_id"
                               type="text"
-                              value={information.cpmnum}
-                              onChange={InputChange}
+                              value={information.document_id}
+                              className="readonly"
+                              readOnly={true}
                             />
                           </td>
-                          <th>SM담당자</th>
+                          <th>영업담당자</th>
                           <td colSpan={3}>
                             <Input
                               name="user_name"
@@ -2088,7 +2250,7 @@ const CM_A5000W: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>문의일</th>
+                          <th>문의일자</th>
                           <td colSpan={3}>
                             <DatePicker
                               name="request_date"
@@ -2099,7 +2261,7 @@ const CM_A5000W: React.FC = () => {
                               className="required"
                             />
                           </td>
-                          <th>답변기한요청일</th>
+                          <th>답변기한일</th>
                           <td colSpan={3}>
                             <DatePicker
                               name="finexpdt"
@@ -2138,18 +2300,6 @@ const CM_A5000W: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>의약품상세분류</th>
-                          <td colSpan={3}>
-                            {customOptionData !== null && (
-                              <CustomOptionComboBox
-                                name="medicine_type"
-                                value={information.medicine_type}
-                                type="new"
-                                customOptionData={customOptionData}
-                                changeData={ComboBoxChange}
-                              />
-                            )}
-                          </td>
                           <th>상태</th>
                           <td colSpan={3}>
                             {customOptionData !== null && (
@@ -2163,8 +2313,6 @@ const CM_A5000W: React.FC = () => {
                               />
                             )}
                           </td>
-                        </tr>
-                        <tr>
                           <th>회사명</th>
                           <td colSpan={3}>
                             <Input
@@ -2179,6 +2327,24 @@ const CM_A5000W: React.FC = () => {
                                 onClick={onCustWndClick2}
                                 icon="more-horizontal"
                                 fillMode="flat"
+                              />
+                            </ButtonInInput>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>PJT NO.</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="project"
+                              type="text"
+                              value={information.project}
+                              className="readonly"
+                            />
+                            <ButtonInInput>
+                              <Button
+                                icon="more-horizontal"
+                                fillMode="flat"
+                                onClick={onProjectWndClick}
                               />
                             </ButtonInInput>
                           </td>
@@ -2208,21 +2374,62 @@ const CM_A5000W: React.FC = () => {
                           </td>
                         </tr>
                         <tr>
-                          <th>프로젝트</th>
-                          <td>
+                          <th>의뢰자</th>
+                          <td colSpan={3}>
                             <Input
-                              name="project"
+                              name="custprsnnm"
                               type="text"
-                              value={information.project}
+                              value={information.custprsnnm}
+                              className="readonly"
+                            />
+                          </td>
+                          <th>시험번호</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="testnum"
+                              type="text"
+                              value={information.testnum}
                               className="readonly"
                             />
                             <ButtonInInput>
                               <Button
+                                type={"button"}
+                                onClick={onProjectWndClick}
                                 icon="more-horizontal"
                                 fillMode="flat"
-                                onClick={onProjectWndClick}
+                              />
+                              <Button
+                                type={"button"}
+                                onClick={onProjectWndClick2}
+                                icon="search"
+                                fillMode="flat"
                               />
                             </ButtonInInput>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th>물질분야</th>
+                          <td colSpan={3}>
+                            {customOptionData !== null && (
+                              <CustomOptionComboBox
+                                name="materialtype"
+                                value={information.materialtype}
+                                type="new"
+                                customOptionData={customOptionData}
+                                changeData={ComboBoxChange}
+                                className="readonly"
+                                disabled={true}
+                              />
+                            )}
+                          </td>
+                          <th>물질상세분야</th>
+                          <td colSpan={3}>
+                            <Input
+                              name="extra_field2"
+                              type="text"
+                              value={information.extra_field2}
+                              className="readonly"
+                            />
                           </td>
                         </tr>
                         <tr>
@@ -2257,7 +2464,7 @@ const CM_A5000W: React.FC = () => {
                 <GridTitleContainer>
                   <GridTitle>문의</GridTitle>
                 </GridTitleContainer>
-                <GridContainer height="35.5vh">
+                <GridContainer height="32vh">
                   <RichEditor id="docEditor" ref={docEditorRef} hideTools />
                 </GridContainer>
               </GridContainer>
@@ -2391,7 +2598,7 @@ const CM_A5000W: React.FC = () => {
                           />
                         )}
                       </td>
-                      <th>담당자</th>
+                      <th>PM담당자</th>
                       <td>
                         {workType == "N"
                           ? customOptionData !== null && (
