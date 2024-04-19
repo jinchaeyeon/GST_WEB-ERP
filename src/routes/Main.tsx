@@ -831,7 +831,7 @@ const Main: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA">
+            <SwiperSlide key={0} className="leading_PDA_custom">
               <MainTopContainer>
                 <ButtonContainer>
                   <Button
@@ -889,14 +889,14 @@ const Main: React.FC = () => {
                     공지
                   </Button>
               </ApprovalBox>
-              <GridContainer style={{ width: `${deviceWidth - 30}px`, marginTop: "2vh", height: `${deviceHeight - 170}px`, overflow: "scroll" }}>
+              <GridContainer style={{ width: `${deviceWidth - 30}px`, marginTop: "2vh" }}>
                 <TabStrip
                   style={{ width: "100%" }}
                   selected={tabSelected}
                   onSelect={handleSelectTab}
                 >
                   <TabStripTab title="업무 달력">
-                    <GridContainer style={{overflow:"scroll"}}>
+                    <GridContainer style={{overflow:"scroll", height: `${deviceHeight * 0.60}px`}}>
                       {osstate == true ? (
                         <div
                           style={{
