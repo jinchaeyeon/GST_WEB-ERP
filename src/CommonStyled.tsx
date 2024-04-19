@@ -121,6 +121,7 @@ export const TitleContainer = styled.div`
   @media (max-width: 1200px) {
     display: inline-block;
     width: 100%;
+    padding: 0 5px 5px 0;
   }
 `;
 
@@ -168,7 +169,8 @@ export const MainWorkStartEndContainer = styled.div`
 
   @media (max-width: 1200px) {
     margin-left: 0;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    margin-right: 0;
   }
 `;
 
@@ -624,6 +626,7 @@ export const GridTitleContainer = styled.div`
   @media (max-width: 1200px) {
     display: inline-block;
     width: 100%;
+    padding: 0 5px 0 0;
   }
 `;
 

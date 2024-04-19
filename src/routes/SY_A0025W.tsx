@@ -87,6 +87,7 @@ const SY_A0025W: React.FC = () => {
 
   UsePermissions(setPermissions);
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight;
   let isMobile = deviceWidth <= 1200;
   const [showAdditionalFields, setShowAdditionalFields] = useState(false);
 
@@ -1146,7 +1147,8 @@ const SY_A0025W: React.FC = () => {
       {isMobile ? (
         <GridContainerWrap>
           <Swiper
-            className="leading_95_Swiper"
+            className="leading_PDA_container"
+            autoHeight={true} 
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1154,12 +1156,42 @@ const SY_A0025W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA_custom">
-              <GridContainer style={{ width: `${deviceWidth - 30}px`, overflow: "scroll"}}>
+            <SwiperSlide key={0} className="leading_PDA_custom" >
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px` }}
+              >
                 <TitleContainer>
                   <Title>관리번호 채번정보</Title>
 
                   <ButtonContainer>
+                    <FilterContainer>
+                      <FilterBox
+                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                      >
+                        <tbody>
+                          <tr>
+                            <th>관리번호ID</th>
+                            <td>
+                              <Input
+                                name="numbering_id"
+                                type="text"
+                                value={filters.numbering_id}
+                                onChange={filterInputChange}
+                              />
+                            </td>
+                            <th>관리번호명</th>
+                            <td>
+                              <Input
+                                name="numbering_name"
+                                type="text"
+                                value={filters.numbering_name}
+                                onChange={filterInputChange}
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FilterBox>
+                    </FilterContainer>
                     {permissions && (
                       <TopButtons
                         search={search}
@@ -1170,41 +1202,17 @@ const SY_A0025W: React.FC = () => {
                     )}
                   </ButtonContainer>
                 </TitleContainer>
-                <FilterContainer>
-                  <FilterBox
-                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                  >
-                    <tbody>
-                      <tr>
-                        <th>관리번호ID</th>
-                        <td>
-                          <Input
-                            name="numbering_id"
-                            type="text"
-                            value={filters.numbering_id}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>관리번호명</th>
-                        <td>
-                          <Input
-                            name="numbering_name"
-                            type="text"
-                            value={filters.numbering_name}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FilterBox>
-                </FilterContainer>
+
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
                   data={mainDataResult.data}
                   fileName="관리번호 채번정보"
                 >
                   <Grid
-                    style={{ height: "78vh" }}
+                    style={{
+                      height: `${deviceHeight - 140}px`,
+                      overflow: "scroll",
+                    }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1271,7 +1279,7 @@ const SY_A0025W: React.FC = () => {
             <SwiperSlide
               key={1}
               className="leading_PDA_custom"
-              style={{ display: "flex", flexDirection: "column", paddingTop:"25vh"}}
+              style={{ display: "flex", flexDirection: "column", overflow: "scroll"}}
             >
               <div
                 style={{
@@ -1304,8 +1312,8 @@ const SY_A0025W: React.FC = () => {
               <GridContainer
                 style={{
                   minHeight: "60vh",
-                  width: `${deviceWidth - 30}px`
-                  , overflow: "scroll"
+                  width: `${deviceWidth - 30}px`,
+                  overflow: "scroll",
                 }}
               >
                 <GridTitleContainer>
@@ -1328,7 +1336,10 @@ const SY_A0025W: React.FC = () => {
                     </Button>
                   </ButtonContainer>
                 </GridTitleContainer>
-                <FormBoxWrap border={true} style={{ minHeight: "50vh", width: `${deviceWidth - 30}px` }}>
+                <FormBoxWrap
+                  border={true}
+                  style={{ minHeight: "50vh", width: `${deviceWidth - 30}px` }}
+                >
                   <FormBox>
                     <tbody>
                       <tr>
@@ -1644,7 +1655,7 @@ const SY_A0025W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide
               key={2}
-              className="leading_PDA"
+              className="leading_PDA_custom"
               style={{ display: "flex", flexDirection: "column" }}
             >
               <div
@@ -1667,9 +1678,7 @@ const SY_A0025W: React.FC = () => {
               </div>
               <GridContainer
                 style={{
-                  minHeight: "70vh",
                   width: `${deviceWidth - 30}px`,
-                  overflow: "scroll",
                 }}
               >
                 <GridTitleContainer>
@@ -1703,7 +1712,10 @@ const SY_A0025W: React.FC = () => {
                   fileName="관리번호 채번정보"
                 >
                   <Grid
-                    style={{ height: "77vh" }}
+                    style={{
+                      height: `${deviceHeight - 170}px`,
+                      overflow: "scroll",
+                    }}
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
@@ -2006,7 +2018,7 @@ const SY_A0025W: React.FC = () => {
                 <FormBoxWrap
                   border={true}
                   style={{
-                    minHeight:  "59vh",
+                    minHeight: "59vh",
                     display: "flex",
                     alignItems: "center",
                   }}
@@ -2269,7 +2281,7 @@ const SY_A0025W: React.FC = () => {
                 fileName="관리번호 채번정보"
               >
                 <Grid
-                  style={{ height: isMobile ? "50vh" : "81.6vh" }}
+                  style={{ height: "81.6vh" }}
                   data={process(
                     subDataResult.data.map((row) => ({
                       ...row,

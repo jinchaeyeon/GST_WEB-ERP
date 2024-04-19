@@ -105,6 +105,7 @@ const Page: React.FC = () => {
   const [group, setGroup] = React.useState(initialGroup);
   const [total, setTotal] = useState(0);
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight;
   let isMobile = deviceWidth <= 1200;
 
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1211,6 +1212,7 @@ const Page: React.FC = () => {
         <GridContainerWrap>
           <Swiper
             className="leading_PDA_container"
+            autoHeight={true} 
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1218,12 +1220,92 @@ const Page: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA">
-              <GridContainer>
+            <SwiperSlide key={0} className="leading_PDA_custom">
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "scroll" }}
+              >
                 <TitleContainer>
                   <Title>공통코드정보</Title>
 
                   <ButtonContainer>
+                    <FilterContainer>
+                      <FilterBox
+                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                      >
+                        <tbody>
+                          <tr>
+                            <th>유형분류</th>
+                            <td>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="group_category"
+                                  value={filters.group_category}
+                                  customOptionData={customOptionData}
+                                  changeData={filterComboBoxChange}
+                                />
+                              )}
+                            </td>
+
+                            <th>그룹코드</th>
+                            <td>
+                              <Input
+                                name="group_code"
+                                type="text"
+                                value={filters.group_code}
+                                onChange={filterInputChange}
+                              />
+                            </td>
+                            <th>그룹코드명</th>
+                            <td>
+                              <Input
+                                name="group_name"
+                                type="text"
+                                value={filters.group_name}
+                                onChange={filterInputChange}
+                              />
+                            </td>
+                            <th>필드 캡션</th>
+                            <td>
+                              <Input
+                                name="field_caption"
+                                type="text"
+                                value={filters.field_caption}
+                                onChange={filterInputChange}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th>세부코드</th>
+                            <td>
+                              <Input
+                                name="sub_code"
+                                type="text"
+                                value={filters.sub_code}
+                                onChange={filterInputChange}
+                              />
+                            </td>
+                            <th>세부코드명</th>
+                            <td>
+                              <Input
+                                name="subcode_name"
+                                type="text"
+                                value={filters.subcode_name}
+                                onChange={filterInputChange}
+                              />
+                            </td>
+                            <th>메모</th>
+                            <td colSpan={3}>
+                              <Input
+                                name="memo"
+                                type="text"
+                                value={filters.memo}
+                                onChange={filterInputChange}
+                              />
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FilterBox>
+                    </FilterContainer>
                     {permissions !== null && (
                       <TopButtons
                         search={search}
@@ -1234,84 +1316,7 @@ const Page: React.FC = () => {
                     )}
                   </ButtonContainer>
                 </TitleContainer>
-                <FilterContainer>
-                  <FilterBox
-                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                  >
-                    <tbody>
-                      <tr>
-                        <th>유형분류</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="group_category"
-                              value={filters.group_category}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange}
-                            />
-                          )}
-                        </td>
 
-                        <th>그룹코드</th>
-                        <td>
-                          <Input
-                            name="group_code"
-                            type="text"
-                            value={filters.group_code}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>그룹코드명</th>
-                        <td>
-                          <Input
-                            name="group_name"
-                            type="text"
-                            value={filters.group_name}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>필드 캡션</th>
-                        <td>
-                          <Input
-                            name="field_caption"
-                            type="text"
-                            value={filters.field_caption}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>세부코드</th>
-                        <td>
-                          <Input
-                            name="sub_code"
-                            type="text"
-                            value={filters.sub_code}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>세부코드명</th>
-                        <td>
-                          <Input
-                            name="subcode_name"
-                            type="text"
-                            value={filters.subcode_name}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>메모</th>
-                        <td colSpan={3}>
-                          <Input
-                            name="memo"
-                            type="text"
-                            value={filters.memo}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FilterBox>
-                </FilterContainer>
                 <GridTitleContainer>
                   {permissions !== null && (
                     <ButtonContainer>
@@ -1350,7 +1355,10 @@ const Page: React.FC = () => {
                         scrollRef.current = node; // BetterScroll을 위한 ref 저장
                       }
                     }}
-                    style={{ height: "72vh" }}
+                    style={{
+                      height: `${deviceHeight - 170}px`,
+                      overflow: "scroll",
+                    }}
                     data={newData.map((item: { items: any[] }) => ({
                       ...item,
                       items: item.items.map((row: any) => ({
@@ -1416,23 +1424,29 @@ const Page: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide
               key={1}
-              className="leading_PDA"
+              className="leading_PDA_custom"
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <Button
-                style={{ marginRight: "85%" }}
-                onClick={() => {
-                  if (swiper) {
-                    swiper.slideTo(0);
-                  }
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "left",
+                  width: "100%",
                 }}
-                icon="arrow-left"
               >
-                이전
-              </Button>
+                <Button
+                  onClick={() => {
+                    if (swiper) {
+                      swiper.slideTo(0);
+                    }
+                  }}
+                  icon="arrow-left"
+                >
+                  이전
+                </Button>
+              </div>
               <GridContainer
                 style={{
-                  minHeight: "70vh",
                   width: `${deviceWidth - 30}px`,
                   overflow: "scroll",
                 }}
@@ -1443,7 +1457,10 @@ const Page: React.FC = () => {
                   fileName="공통코드정보"
                 >
                   <Grid
-                    style={{ height: "85vh" }}
+                    style={{
+                      height: `${deviceHeight - 100}px`,
+                      overflow: "scroll",
+                    }}
                     data={process(
                       detailDataResult.data.map((row) => ({
                         ...row,

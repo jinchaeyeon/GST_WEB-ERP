@@ -504,6 +504,11 @@ const CustomRadioCell = (props: GridCellProps) => {
 };
 
 const SY_A0120: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight;
+
+  let isMobile = deviceWidth <= 1200;
+
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1503,7 +1508,7 @@ const SY_A0120: React.FC = () => {
           >
             <GridContainer width="100%">
               <GridTitleContainer>
-                <GridTitle>사용자 리스트</GridTitle>
+                {isMobile ?null:<GridTitle>사용자 리스트</GridTitle>}
 
                 {permissions && (
                   <ButtonContainer>
@@ -1539,7 +1544,7 @@ const SY_A0120: React.FC = () => {
                 fileName="사용자 정보"
               >
                 <Grid
-                  style={{ height: "77.8vh" }}
+                  style={{ height: isMobile ? `${deviceHeight - 200}px` : "77.8vh" }}
                   data={process(
                     mainDataResult.data.map((row, idx) => ({
                       ...row,

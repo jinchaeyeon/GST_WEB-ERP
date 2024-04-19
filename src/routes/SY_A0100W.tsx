@@ -69,6 +69,11 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 };
 
 const App: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight;
+
+  let isMobile = deviceWidth <= 1200;
+
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");
@@ -520,7 +525,7 @@ const App: React.FC = () => {
           group={group}
         >
           <Grid
-            style={{ height: "77.8vh" }}
+            style={{ height: isMobile? `${deviceHeight * 0.73}px` : "77.8vh" }}
             data={newData.map((item) => ({
               ...item,
               items: item.items.map((row: any) => ({

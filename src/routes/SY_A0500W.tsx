@@ -73,6 +73,7 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/SY_A0500W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import FilterContainer from "../components/Containers/FilterContainer";
 
 export interface AppState {
   position: [number, number];
@@ -90,8 +91,8 @@ const boardStyle: CSSProperties = {
   flexWrap: "wrap",
 };
 const containerStyle: CSSProperties = {
-  width: "100%",
-  height: "80vh",
+  width: window.innerWidth <= 1200 ? `${window.innerWidth - 30}px` : "100%",
+  height: window.innerWidth <= 1200 ? `${window.innerHeight * 0.8}px` : "80vh",
   border: "1px solid gray",
 };
 /** Styling properties applied to each square element */
@@ -106,6 +107,7 @@ const SY_A0500W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight;
   let isMobile = deviceWidth <= 1200;
 
   //커스텀 옵션 조회
@@ -1206,7 +1208,8 @@ const SY_A0500W: React.FC = () => {
       {isMobile ? (
         <GridContainerWrap onClick={deletemenu}>
           <Swiper
-            className="leading_PDA_Swiper"
+            className="leading_PDA_container"
+            autoHeight={true}
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1214,7 +1217,7 @@ const SY_A0500W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA">
+            <SwiperSlide key={0} className="leading_PDA_custom">
               <TitleContainer>
                 <Title>레이아웃 설정</Title>
 
@@ -1229,12 +1232,17 @@ const SY_A0500W: React.FC = () => {
                   )}
                 </ButtonContainer>
               </TitleContainer>
-              <GridContainer>
-                <FormBoxWrap>
+              <GridContainer
+                style={{
+                  width: `${deviceWidth - 30}px`,
+                  height: `${deviceHeight - 100}px`,
+                }}
+              >
+                <FilterContainer>
                   <FormBox>
                     <tbody>
                       <tr>
-                        <th style={{ width: "10%" }}>사업장</th>
+                        <th>사업장</th>
                         <td>
                           {customOptionData !== null && (
                             <CustomOptionComboBox
@@ -1248,14 +1256,17 @@ const SY_A0500W: React.FC = () => {
                       </tr>
                     </tbody>
                   </FormBox>
-                </FormBoxWrap>
+                </FilterContainer>
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
                   data={mainDataResult.data}
                   fileName="레이아웃 설정"
                 >
                   <Grid
-                    style={{ height: "70.5vh" }}
+                    style={{
+                      height: `${deviceHeight - 170}px`,
+                      overflow: "scroll",
+                    }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1318,22 +1329,30 @@ const SY_A0500W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide
               key={1}
+              className="leading_PDA_custom"
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <Button
-                style={{ marginRight: "85%" }}
-                onClick={() => {
-                  if (swiper) {
-                    swiper.slideTo(0);
-                  }
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "left",
+                  width: "100%",
                 }}
-                icon="arrow-left"
               >
-                이전
-              </Button>
+                <Button
+                  onClick={() => {
+                    if (swiper) {
+                      swiper.slideTo(0);
+                    }
+                  }}
+                  icon="arrow-left"
+                >
+                  이전
+                </Button>
+              </div>
               <GridContainer
                 style={{
-                  minHeight: "70vh",
+                  height: `${deviceHeight - 100}px`,
                   width: `${deviceWidth - 30}px`,
                   overflow: "scroll",
                 }}
