@@ -1,4 +1,4 @@
-import { Card, CardContent, Typography } from "@mui/material";
+import { Card, CardContent, TextField, Typography } from "@mui/material";
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
@@ -13,7 +13,7 @@ import {
   GridSelectionChangeEvent,
   getSelectedState,
 } from "@progress/kendo-react-grid";
-import { Input, TextArea } from "@progress/kendo-react-inputs";
+import { Input } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
 import { bytesToBase64 } from "byte-base64";
 import { Column, ColumnEditorOptions } from "primereact/column";
@@ -46,7 +46,6 @@ import {
   convertDateToStr,
   convertDateToStrWithTime2,
   getQueryFromBizComponent,
-  setDefaultDate,
   toDate,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -2101,115 +2100,111 @@ const BA_A0020_603: React.FC = () => {
                 <GridTitleContainer>
                   <GridTitle>컴플레인 사유</GridTitle>
                 </GridTitleContainer>
-                <GridContainerWrap>
-                  <GridContainer width="30%">
-                    <Typography
-                      style={{
-                        color: "black",
+                <Typography
+                  style={{
+                    color: "black",
 
-                        fontWeight: 500,
-                        marginBottom: "10px",
-                        display: "flex",
-                      }}
-                    >
-                      <p style={{ minWidth: "70px" }}>작성자 :</p>
-                      {customOptionData !== null && (
-                        <CustomOptionComboBox
-                          name="devperson"
-                          value={Information.devperson}
-                          type="new"
-                          customOptionData={customOptionData}
-                          changeData={ComboBoxChange}
-                          textField="user_name"
-                          valueField="user_id"
-                        />
-                      )}
-                    </Typography>
-                    <TextArea
-                      value={Information.requiretext}
-                      name="requiretext"
-                      rows={14}
-                      onChange={InputChange}
-                      style={{ backgroundColor: "rgba(34, 137, 195, 0.25)" }}
+                    fontWeight: 500,
+                    marginBottom: "10px",
+                    display: "flex",
+                  }}
+                >
+                  <p style={{ minWidth: "70px" }}>작성자 :</p>
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="devperson"
+                      value={Information.devperson}
+                      type="new"
+                      customOptionData={customOptionData}
+                      changeData={ComboBoxChange}
+                      textField="user_name"
+                      valueField="user_id"
                     />
-                  </GridContainer>
-                  <GridContainer width={`calc(70% - ${GAP}px)`}>
-                    <Card
-                      style={{
-                        width: "100%",
-                        marginRight: "15px",
-                        borderRadius: "10px",
-                        backgroundColor: "white",
+                  )}
+                </Typography>
+                <TextField
+                  value={Information.requiretext}
+                  name="requiretext"
+                  multiline
+                  rows={10}
+                  fullWidth
+                  onChange={InputChange}
+                  style={{ backgroundColor: "rgba(34, 137, 195, 0.25)" }}
+                />
+                <Card
+                  style={{
+                    width: "100%",
+                    marginRight: "15px",
+                    borderRadius: "10px",
+                    backgroundColor: "white",
+                  }}
+                >
+                  <CardContent>
+                    <GridTitleContainer>
+                      <GridTitle>COMMENT</GridTitle>
+                      <ButtonContainer>
+                        <Button
+                          onClick={onCommentAddClick}
+                          themeColor={"primary"}
+                          icon="plus"
+                          title="행 추가"
+                        ></Button>
+                        <Button
+                          onClick={onCommentRemoveClick}
+                          fillMode="outline"
+                          themeColor={"primary"}
+                          icon="minus"
+                          title="행 삭제"
+                        ></Button>
+                      </ButtonContainer>
+                    </GridTitleContainer>
+                    <DataTable
+                      value={commentDataResult.data}
+                      tableStyle={{ marginTop: "5px", fontSize: "14px" }}
+                      selectionMode="single"
+                      dataKey={COMMENT_DATA_ITEM_KEY}
+                      emptyMessage="No DATA."
+                      footer={footer}
+                      selection={commentselectedState}
+                      onSelectionChange={(e: any) => {
+                        setCommentSelectedState(e.value);
                       }}
+                      columnResizeMode="expand"
+                      resizableColumns
+                      reorderableColumns
+                      scrollable
+                      scrollHeight="25vh"
+                      editMode="cell"
+                      showGridlines
                     >
-                      <CardContent>
-                        <GridTitleContainer>
-                          <GridTitle></GridTitle>
-                          <ButtonContainer>
-                            <Button
-                              onClick={onCommentAddClick}
-                              themeColor={"primary"}
-                              icon="plus"
-                              title="행 추가"
-                            ></Button>
-                            <Button
-                              onClick={onCommentRemoveClick}
-                              fillMode="outline"
-                              themeColor={"primary"}
-                              icon="minus"
-                              title="행 삭제"
-                            ></Button>
-                          </ButtonContainer>
-                        </GridTitleContainer>
-                        <DataTable
-                          value={commentDataResult.data}
-                          tableStyle={{ marginTop: "5px", fontSize: "14px" }}
-                          selectionMode="single"
-                          dataKey={COMMENT_DATA_ITEM_KEY}
-                          emptyMessage="No DATA."
-                          footer={footer}
-                          selection={commentselectedState}
-                          onSelectionChange={(e: any) => {
-                            setCommentSelectedState(e.value);
-                          }}
-                          columnResizeMode="expand"
-                          resizableColumns
-                          reorderableColumns
-                          scrollable
-                          scrollHeight="25vh"
-                          editMode="cell"
-                          showGridlines
-                        >
-                          <Column
-                            field="rowstatus"
-                            header=" "
-                            style={{ width: "50px" }}
-                          />
-                          {customOptionData !== null &&
-                            customOptionData.menuCustomColumnOptions[
-                              "grdList2"
-                            ].map(
-                              (item: any, idx: number) =>
-                                item.sortOrder !== -1 && (
-                                  <Column
-                                    field={item.fieldName}
-                                    header={item.caption}
-                                    editor={(options) => cellEditor(options)}
-                                    style={{
-                                      width: item.width,
-                                      whiteSpace: "nowrap",
-                                      textOverflow: "ellipsis",
-                                      overflow: "hidden",
-                                      minWidth: item.width,
-                                    }}
-                                  />
-                                )
-                            )}
-                        </DataTable>
-                      </CardContent>
-                    </Card>
-                  </GridContainer>
-                </GridContainerWrap>
+                      <Column
+                        field="rowstatus"
+                        header=" "
+                        style={{ width: "50px" }}
+                      />
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions[
+                          "grdList2"
+                        ].map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <Column
+                                field={item.fieldName}
+                                header={item.caption}
+                                editor={(options) => cellEditor(options)}
+                                style={{
+                                  width: item.width,
+                                  whiteSpace: "nowrap",
+                                  textOverflow: "ellipsis",
+                                  overflow: "hidden",
+                                  minWidth: item.width,
+                                }}
+                              />
+                            )
+                        )}
+                    </DataTable>
+                  </CardContent>
+                </Card>
               </FormBoxWrap>
               <FormBoxWrap border={true}>
                 <GridContainer style={{ marginTop: "5px" }}>
@@ -2238,10 +2233,12 @@ const BA_A0020_603: React.FC = () => {
                       />
                     )}
                   </Typography>
-                  <TextArea
+                  <TextField
                     value={Information.protext}
                     name="protext"
-                    rows={3}
+                    multiline
+                    rows={10}
+                    fullWidth
                     onChange={InputChange}
                     style={{ backgroundColor: "rgba(34, 137, 195, 0.25)" }}
                   />
@@ -2256,7 +2253,7 @@ const BA_A0020_603: React.FC = () => {
                   >
                     <CardContent>
                       <GridTitleContainer>
-                        <GridTitle></GridTitle>
+                        <GridTitle>COMMENT</GridTitle>
                         <ButtonContainer>
                           <Button
                             onClick={onCommentAddClick2}
@@ -2349,10 +2346,12 @@ const BA_A0020_603: React.FC = () => {
                       />
                     )}
                   </Typography>
-                  <TextArea
+                  <TextField
                     value={Information.errtext}
                     name="errtext"
-                    rows={3}
+                    multiline
+                    rows={10}
+                    fullWidth
                     onChange={InputChange}
                     style={{ backgroundColor: "rgba(34, 137, 195, 0.25)" }}
                   />
@@ -2367,7 +2366,7 @@ const BA_A0020_603: React.FC = () => {
                   >
                     <CardContent>
                       <GridTitleContainer>
-                        <GridTitle></GridTitle>
+                        <GridTitle>COMMENT</GridTitle>
                         <ButtonContainer>
                           <Button
                             onClick={onCommentAddClick3}

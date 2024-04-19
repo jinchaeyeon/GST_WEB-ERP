@@ -6,40 +6,40 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList",
     columns: [
       {
+        id: "col_quokey_list",
+        field: "quokey",
+        caption: "PJT NO.",
+        width: 150,
+      },
+      {
+        id: "col_ordnum_list",
+        field: "ordnum",
+        caption: "수주번호",
+        width: 150,
+      },
+      {
         id: "col_contractno_list",
         field: "contractno",
         caption: "계약번호",
         width: 120,
       },
       {
-        id: "col_quokey_list",
-        field: "quokey",
-        caption: "프로젝트번호",
+        id: "col_strdt_list",
+        field: "strdt",
+        caption: "계약시작일",
         width: 120,
       },
       {
-        id: "col_person_list",
-        field: "person",
-        caption: "담당자",
+        id: "col_enddt_list",
+        field: "enddt",
+        caption: "계약종료일",
         width: 120,
       },
       {
-        id: "col_dptcd_list",
-        field: "dptcd",
-        caption: "부서",
+        id: "col_project_list",
+        field: "project",
+        caption: "계약명",
         width: 120,
-      },
-      {
-        id: "col_chkperson_list",
-        field: "chkperson",
-        caption: "CS담당자",
-        width: 120,
-      },
-      {
-        id: "col_custcd_list",
-        field: "custcd",
-        caption: "업체코드",
-        width: 150,
       },
       {
         id: "col_custnm_list",
@@ -48,9 +48,27 @@ export const gridList: Array<TGrid> = [
         width: 150,
       },
       {
+        id: "col_custprsnnm_list",
+        field: "custprsnnm",
+        caption: "의뢰자",
+        width: 150,
+      },
+      {
+        id: "col_chkperson_list",
+        field: "chkperson",
+        caption: "영업담당자",
+        width: 120,
+      },
+      {
         id: "col_materialtype_list",
         field: "materialtype",
-        caption: "물질분류",
+        caption: "물질분야",
+        width: 120,
+      },
+      {
+        id: "col_extra_field2_list",
+        field: "extra_field2",
+        caption: "물질상세분야",
         width: 120,
       },
       {
@@ -60,13 +78,109 @@ export const gridList: Array<TGrid> = [
         width: 150,
       },
       {
-        id: "col_materialindt_list",
-        field: "materialindt",
-        caption: "물질입고예상일",
-        width: 120,
+        id: "col_cnt1_list",
+        field: "cnt1",
+        caption: "계약품목수",
+        width: 100,
       },
       {
         id: "col_amt",
+        field: "amt",
+        caption: "금액",
+        width: 100,
+      },
+      {
+        id: "col_taxamt",
+        field: "taxamt",
+        caption: "세액",
+        width: 100,
+      },
+      {
+        id: "col_contraamt",
+        field: "contraamt",
+        caption: "계약금액",
+        width: 100,
+      },
+      {
+        id: "col_change_contraamt",
+        field: "change_contraamt",
+        caption: "변경계약금액",
+        width: 100,
+      },
+      {
+        id: "col_fin_contraamt",
+        field: "fin_contraamt",
+        caption: "최종계약금액",
+        width: 100,
+      },
+    ],
+  },
+  {
+    // 시험리스트
+    gridName: "grdList2",
+    columns: [
+      {
+        id: "col_seq",
+        field: "seq",
+        caption: "No",
+        width: 100,
+      },
+      {
+        id: "col_ordnum",
+        field: "ordnum",
+        caption: "수주번호",
+        width: 150,
+      },
+      {
+        id: "col_testnum",
+        field: "testnum",
+        caption: "시험번호",
+        width: 150,
+      },
+      {
+        id: "col_itemcd",
+        field: "itemcd",
+        caption: "품목코드",
+        width: 150,
+      },
+      {
+        id: "col_itemnm",
+        field: "itemnm",
+        caption: "품목명",
+        width: 150,
+      },
+      {
+        id: "col_week_b",
+        field: "week_b",
+        caption: "기본(주차)",
+        width: 100,
+      },
+      {
+        id: "col_week_r",
+        field: "week_r",
+        caption: "기본(회복)",
+        width: 100,
+      },
+      {
+        id: "col_qty_t",
+        field: "qty_t",
+        caption: "TK",
+        width: 100,
+      },
+      {
+        id: "col_totqty",
+        field: "totqty",
+        caption: "총 마리수",
+        width: 100,
+      },
+      {
+        id: "col_contractgb",
+        field: "contractgb",
+        caption: "계약형태",
+        width: 120,
+      },
+      {
+        id: "col_amt2",
         field: "amt",
         caption: "금액",
         width: 100,
@@ -78,7 +192,7 @@ export const gridList: Array<TGrid> = [
         width: 100,
       },
       {
-        id: "col_taxamt",
+        id: "col_taxamt2",
         field: "taxamt",
         caption: "세액",
         width: 100,
@@ -91,83 +205,17 @@ export const gridList: Array<TGrid> = [
       },
     ],
   },
-  {
-    // 시험리스트
-    gridName: "grdList2",
-    columns: [
-      {
-        id: "col_quotestnum",
-        field: "quotestnum",
-        caption: "시험번호",
-        width: 150,
-      },
-      {
-        id: "col_quonum",
-        field: "quonum",
-        caption: "견적번호",
-        width: 150,
-      },
-      {
-        id: "col_quorev",
-        field: "quorev",
-        caption: "리비전번호",
-        width: 100,
-      },
-      {
-        id: "col_quoseq",
-        field: "quoseq",
-        caption: "No",
-        width: 100,
-      },
-      {
-        id: "col_itemnm",
-        field: "itemnm",
-        caption: "품목명",
-        width: 150,
-      },
-      {
-        id: "col_contractgb",
-        field: "contractgb",
-        caption: "출고형태",
-        width: 120,
-      },
-      {
-        id: "col_amt_detail",
-        field: "amt",
-        caption: "금액",
-        width: 100,
-      },
-      {
-        id: "col_wonamt_detail",
-        field: "wonamt",
-        caption: "원화금액",
-        width: 100,
-      },
-      {
-        id: "col_taxamt_detail",
-        field: "taxamt",
-        caption: "세액",
-        width: 100,
-      },
-      {
-        id: "col_totamt_detail",
-        field: "totamt",
-        caption: "합계금액",
-        width: 100,
-      },
-      {
-        id: "col_remark_adj",
-        field: "remark",
-        caption: "비고",
-        width: 200,
-      },
-    ],
-  },
 
   {
     // 코멘트
     gridName: "grdList3",
     columns: [
+      {
+        id: "col_num_com",
+        field: "num",
+        caption: "NO",
+        width: 100,
+      },
       {
         id: "col_recdt_com",
         field: "recdt",
@@ -183,74 +231,8 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_comment_com",
         field: "comment",
-        caption: "코멘트",
+        caption: "내용",
         width: 200,
-      },
-    ],
-  },
-  {
-    // 기존 거래내역
-    gridName: "grdList4",
-    columns: [
-      {
-        id: "col_quokey_sale",
-        field: "quokey",
-        caption: "프로젝트번호",
-        width: 150,
-      },
-      {
-        id: "col_ordamt_sale",
-        field: "ordamt",
-        caption: "수주금액",
-        width: 100,
-      },
-      {
-        id: "col_saleamt_sale",
-        field: "saleamt",
-        caption: "거래금액",
-        width: 100,
-      },
-      {
-        id: "col_collamt_sale",
-        field: "collamt",
-        caption: "수금금액",
-        width: 100,
-      },
-      {
-        id: "col_janamt_sale",
-        field: "janamt",
-        caption: "미수잔액",
-        width: 100,
-      },
-    ],
-  },
-  {
-    // 회의록
-    gridName: "grdList5",
-    columns: [
-      {
-        id: "col_meetingnum_meet",
-        field: "meetingnum",
-        caption: "회의록번호",
-        width: 150,
-      },
-      {
-        id: "col_recdt_meet",
-        field: "recdt",
-        caption: "회의일",
-        width: 120,
-      },
-      {
-        id: "col_person_meet",
-        field: "person",
-        caption: "작성자",
-        width: 120,
-      },
-      {
-        id: "col_title_meet",
-        field: "title",
-        caption: "제목",
-        width: 150,
       },
     ],
   },
@@ -259,16 +241,16 @@ export const gridList: Array<TGrid> = [
     gridName: "grdList6",
     columns: [
       {
+        id: "col_num",
+        field: "num",
+        caption: "차수",
+        width: 100,
+      },
+      {
         id: "col_payment",
         field: "payment",
         caption: "지급항목",
         width: 120,
-      },
-      {
-        id: "col_content",
-        field: "content",
-        caption: "내용",
-        width: 150,
       },
       {
         id: "col_paydt",
