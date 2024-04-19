@@ -44,6 +44,11 @@ var index = 0;
 const SY_A0060W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight;
+
+  let isMobile = deviceWidth <= 1200;
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const setLoading = useSetRecoilState(isLoading);
@@ -263,7 +268,10 @@ const SY_A0060W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <TabStrip
-        style={{ width: "100%" }}
+        style={{
+          width: isMobile ? `${deviceWidth - 30}px` : "100%",
+          height: isMobile ? `${deviceHeight - 150}px` : "",
+        }}
         selected={tabSelected}
         onSelect={handleSelectTab}
       >

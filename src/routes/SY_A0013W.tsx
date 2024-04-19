@@ -2026,7 +2026,7 @@ const Page: React.FC = () => {
         <GridContainerWrap>
           <Swiper
             className="leading_PDA_container"
-            autoHeight={true} 
+            autoHeight={true}
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}

@@ -663,6 +663,7 @@ const Page: React.FC = () => {
     }));
     if (swiper && isMobile) {
       swiper.slideTo(1);
+      swiper.update();
     }
   };
 
@@ -1381,7 +1382,6 @@ const Page: React.FC = () => {
         <GridContainerWrap>
           <Swiper
             className="leading_PDA_container"
-            autoHeight={true} 
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1389,53 +1389,58 @@ const Page: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA">
-              <GridContainer>
+            <SwiperSlide key={0} className="leading_PDA_custom">
+              <GridContainer
+                style={{
+                  width: `${deviceWidth - 30}px`,
+                  overflow: "scroll",
+                }}
+              >
                 <TitleContainer>
                   <Title>사용자 그룹</Title>
 
                   <ButtonContainer>
                   <FilterContainer>
-                  <FilterBox
-                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                  >
-                    <tbody>
-                      <tr>
-                        <th>사용자그룹ID</th>
-                        <td>
-                          <Input
-                            name="user_group_id"
-                            type="text"
-                            value={filters.user_group_id}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>사용자그룹명</th>
-                        <td>
-                          <Input
-                            name="user_group_name"
-                            type="text"
-                            value={filters.user_group_name}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>사용유무</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="use_yn"
-                              value={filters.use_yn}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange}
-                              textField="name"
-                              valueField="code"
-                            />
-                          )}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FilterBox>
-                </FilterContainer>
+                      <FilterBox
+                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                      >
+                        <tbody>
+                          <tr>
+                            <th>사용자그룹ID</th>
+                            <td>
+                              <Input
+                                name="user_group_id"
+                                type="text"
+                                value={filters.user_group_id}
+                                onChange={filterInputChange}
+                              />
+                            </td>
+                            <th>사용자그룹명</th>
+                            <td>
+                              <Input
+                                name="user_group_name"
+                                type="text"
+                                value={filters.user_group_name}
+                                onChange={filterInputChange}
+                              />
+                            </td>
+                            <th>사용유무</th>
+                            <td>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="use_yn"
+                                  value={filters.use_yn}
+                                  customOptionData={customOptionData}
+                                  changeData={filterComboBoxChange}
+                                  textField="name"
+                                  valueField="code"
+                                />
+                              )}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FilterBox>
+                    </FilterContainer>
                     {permissions && (
                       <TopButtons
                         search={search}
@@ -1446,7 +1451,7 @@ const Page: React.FC = () => {
                     )}
                   </ButtonContainer>
                 </TitleContainer>
-                
+
                 <GridTitleContainer>
                   {permissions && (
                     <ButtonContainer>
@@ -1476,7 +1481,7 @@ const Page: React.FC = () => {
                   fileName="사용자 그룹"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight - 170}px`, overflow: "scroll"}}
+                    style={{ height: `${deviceHeight - 170}px` }}
                     data={process(
                       mainDataResult.data.map((row, idx) => ({
                         ...row,
@@ -1548,17 +1553,26 @@ const Page: React.FC = () => {
               className="leading_PDA"
               style={{ display: "flex", flexDirection: "column" }}
             >
-              <Button
-                style={{ marginRight: "85%" }}
-                onClick={() => {
-                  if (swiper) {
-                    swiper.slideTo(0);
-                  }
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "left",
+                  width: "100%",
                 }}
-                icon="arrow-left"
               >
-                이전
-              </Button>
+                <Button
+                  onClick={() => {
+                    if (swiper) {
+                      swiper.slideTo(0);
+                      swiper.update();
+
+                    }
+                  }}
+                  icon="arrow-left"
+                >
+                  이전
+                </Button>
+              </div>
               <GridContainer
                 style={{
                   width: `${deviceWidth - 30}px`,
@@ -1584,7 +1598,10 @@ const Page: React.FC = () => {
                   fileName="사용자 그룹"
                 >
                   <TreeList
-                    style={{ height: `${deviceHeight * 0.35}px`, overflow: "auto" }}
+                    style={{
+                      height: `${deviceHeight * 0.35}px`,
+                      overflow: "auto",
+                    }}
                     data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                       extendDataItem(item, SUB_ITEMS_FIELD, {
                         [EXPANDED_FIELD]: expanded.includes(
@@ -1635,7 +1652,10 @@ const Page: React.FC = () => {
                   fileName="사용자 그룹"
                 >
                   <TreeList
-                    style={{ height: `${deviceHeight * 0.40}px`, overflowY: "scroll" }}
+                    style={{
+                      height: `${deviceHeight * 0.4}px`,
+                      overflowY: "scroll",
+                    }}
                     data={mapTree(data2, SUB_ITEMS_FIELD, (item) =>
                       extendDataItem(item, SUB_ITEMS_FIELD, {
                         [EXPANDED_FIELD]: expanded2.includes(

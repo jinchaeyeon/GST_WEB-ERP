@@ -915,6 +915,7 @@ const Page: React.FC = () => {
     //setPage(initialPageState);
     if (swiper && isMobile) {
       swiper.slideTo(1);
+      swiper.update();
     }
   };
 
@@ -1212,7 +1213,6 @@ const Page: React.FC = () => {
         <GridContainerWrap>
           <Swiper
             className="leading_PDA_container"
-            autoHeight={true} 
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1438,6 +1438,7 @@ const Page: React.FC = () => {
                   onClick={() => {
                     if (swiper) {
                       swiper.slideTo(0);
+                      swiper.update();
                     }
                   }}
                   icon="arrow-left"
