@@ -330,14 +330,12 @@ input.readonly {
   justify-content: center !important;
   align-items: center !important;
   flex-direction: column !important;
-  overflow: scroll;
-  height: 92vh !important;
 }
 
 
 .leading_PDA_container {
   width: 100% !important;
-  overflow: scroll;
+  height: 100% !important;
 }
 
 .leading_PDA_Swiper {

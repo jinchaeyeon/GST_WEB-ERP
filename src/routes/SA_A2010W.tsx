@@ -62,6 +62,9 @@ import { useApi } from "../hooks/api";
 import { deletedAttadatnumsState, isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A2010W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import { Swiper, SwiperSlide } from "swiper/react";
+import SwiperCore from "swiper";
+import "swiper/css";
 
 const DATA_ITEM_KEY = "ordnum";
 const DETAIL_DATA_ITEM_KEY = "ordseq";
@@ -101,6 +104,10 @@ const SA_B2000: React.FC = () => {
   const userId = UseGetValueFromSessionItem("user_id");
   UseParaPc(setPc);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
+  let deviceWidth = window.innerWidth;
+  let isMobile = deviceWidth <= 1200;
+  var index = 0;
+  const [swiper, setSwiper] = useState<SwiperCore>();
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -779,6 +786,10 @@ const SA_B2000: React.FC = () => {
       find_row_value: "",
       isSearch: true,
     }));
+
+    if (swiper) {
+      swiper.slideTo(1);
+    }
   };
 
   const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
@@ -1112,420 +1123,879 @@ const SA_B2000: React.FC = () => {
     } catch (e) {
       alert(e);
     }
+
+    if (swiper) {
+      swiper.slideTo(0);
+    }
   };
 
   return (
     <>
-      <TitleContainer>
-        <Title>수주처리</Title>
+      {isMobile ? (
+        <>
+          <TitleContainer>
+            <Title>수주처리</Title>
 
-        <ButtonContainer>
-          {permissions && (
-            <TopButtons
-              search={search}
-              exportExcel={exportExcel}
-              permissions={permissions}
-              pathname="SA_A2010W"
-            />
-          )}
-        </ButtonContainer>
-      </TitleContainer>
-      <FilterContainer>
-        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-          <tbody>
-            <tr>
-              <th>납기일자</th>
-              <td>
-                <CommonDateRangePicker
-                  value={{
-                    start: filters.ymdFrdt,
-                    end: filters.ymdTodt,
-                  }}
-                  onChange={(e: { value: { start: any; end: any } }) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      ymdFrdt: e.value.start,
-                      ymdTodt: e.value.end,
-                    }))
-                  }
-                  className="required"
-                />
-              </td>
-
-              <th>사업장</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboLocation"
-                    value={filters.cboLocation}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-              <th>부서</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboDptcd"
-                    value={filters.cboDptcd}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                    textField="dptnm"
-                    valueField="dptcd"
-                  />
-                )}
-              </td>
-
-              <th>담당자</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboPerson"
-                    value={filters.cboPerson}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                    textField="user_name"
-                    valueField="user_id"
-                  />
-                )}
-              </td>
-
-              <th>PO번호</th>
-              <td>
-                <Input
-                  name="poregnum"
-                  type="text"
-                  value={filters.poregnum}
-                  onChange={filterInputChange}
-                />
-              </td>
-            </tr>
-
-            <tr>
-              <th>품목코드</th>
-              <td>
-                <Input
-                  name="itemcd"
-                  type="text"
-                  value={filters.itemcd}
-                  onChange={filterInputChange}
-                />
-                <ButtonInInput>
-                  <Button
-                    onClick={onItemWndClick}
-                    icon="more-horizontal"
-                    fillMode="flat"
-                  />
-                </ButtonInInput>
-              </td>
-              <th>품목명</th>
-              <td>
-                <Input
-                  name="itemnm"
-                  type="text"
-                  value={filters.itemnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-
-              <th>수주상태</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboOrdsts"
-                    value={filters.cboOrdsts}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-
-              <th>수주형태</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboOrdtype"
-                    value={filters.cboOrdtype}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-
-              <th>내수구분</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="cboDoexdiv"
-                    value={filters.cboDoexdiv}
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
-              </td>
-            </tr>
-            <tr>
-              <th>업체코드</th>
-              <td>
-                <Input
-                  name="custcd"
-                  type="text"
-                  value={filters.custcd}
-                  onChange={filterInputChange}
-                />
-                <ButtonInInput>
-                  <Button
-                    onClick={onCustWndClick}
-                    icon="more-horizontal"
-                    fillMode="flat"
-                  />
-                </ButtonInInput>
-              </td>
-              <th>업체명</th>
-              <td>
-                <Input
-                  name="custnm"
-                  type="text"
-                  value={filters.custnm}
-                  onChange={filterInputChange}
-                />
-              </td>
-
-              <th>수주번호</th>
-              <td>
-                <Input
-                  name="ordnum"
-                  type="text"
-                  value={filters.ordnum}
-                  onChange={filterInputChange}
-                />
-              </td>
-
-              <th>완료여부</th>
-              <td colSpan={3}>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="radFinyn"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
-            </tr>
-          </tbody>
-        </FilterBox>
-      </FilterContainer>
-      <GridContainerWrap>
-        <GridContainer width={`50%`}>
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
             <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="file-add"
-              >
-                수주생성
-              </Button>
-              <Button
-                onClick={onDeleteClick}
-                icon="delete"
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                수주삭제
-              </Button>
-              <Button
-                onClick={onCopyClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="copy"
-              >
-                수주복사
-              </Button>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="SA_A2010W"
+                />
+              )}
             </ButtonContainer>
-          </GridTitleContainer>
-          <ExcelExport
-            data={mainDataResult.data}
-            ref={(exporter) => {
-              _export = exporter;
-            }}
-            fileName="수주처리"
-          >
-            <Grid
-              style={{ height: "72.5vh" }}
-              data={process(
-                mainDataResult.data.map((row) => ({
-                  ...row,
-                  ordsts: ordstsListData.find(
-                    (item: any) => item.sub_code === row.ordsts
-                  )?.code_name,
-                  doexdiv: doexdivListData.find(
-                    (item: any) => item.sub_code === row.doexdiv
-                  )?.code_name,
-                  taxdiv: taxdivListData.find(
-                    (item: any) => item.sub_code === row.taxdiv
-                  )?.code_name,
-                  location: locationListData.find(
-                    (item: any) => item.sub_code === row.location
-                  )?.code_name,
-                  person: usersListData.find(
-                    (item: any) => item.user_id === row.person
-                  )?.user_name,
-                  dptcd: departmentsListData.find(
-                    (item: any) => item.dptcd === row.dptcd
-                  )?.dptnm,
-                  finyn: finynListData.find(
-                    (item: any) => item.code === row.finyn
-                  )?.name,
-                  [SELECTED_FIELD]: selectedState[idGetter(row)],
-                })),
-                mainDataState
-              )}
-              {...mainDataState}
-              onDataStateChange={onMainDataStateChange}
-              //선택 기능
-              dataItemKey={DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
+          </TitleContainer>
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>납기일자</th>
+                  <td>
+                    <CommonDateRangePicker
+                      value={{
+                        start: filters.ymdFrdt,
+                        end: filters.ymdTodt,
+                      }}
+                      onChange={(e: { value: { start: any; end: any } }) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          ymdFrdt: e.value.start,
+                          ymdTodt: e.value.end,
+                        }))
+                      }
+                      className="required"
+                    />
+                  </td>
+
+                  <th>사업장</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="cboLocation"
+                        value={filters.cboLocation}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>부서</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="cboDptcd"
+                        value={filters.cboDptcd}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                        textField="dptnm"
+                        valueField="dptcd"
+                      />
+                    )}
+                  </td>
+
+                  <th>담당자</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="cboPerson"
+                        value={filters.cboPerson}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                        textField="user_name"
+                        valueField="user_id"
+                      />
+                    )}
+                  </td>
+
+                  <th>PO번호</th>
+                  <td>
+                    <Input
+                      name="poregnum"
+                      type="text"
+                      value={filters.poregnum}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>품목코드</th>
+                  <td>
+                    <Input
+                      name="itemcd"
+                      type="text"
+                      value={filters.itemcd}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onItemWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>품목명</th>
+                  <td>
+                    <Input
+                      name="itemnm"
+                      type="text"
+                      value={filters.itemnm}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+
+                  <th>수주상태</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="cboOrdsts"
+                        value={filters.cboOrdsts}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+
+                  <th>수주형태</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="cboOrdtype"
+                        value={filters.cboOrdtype}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+
+                  <th>내수구분</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="cboDoexdiv"
+                        value={filters.cboDoexdiv}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>업체코드</th>
+                  <td>
+                    <Input
+                      name="custcd"
+                      type="text"
+                      value={filters.custcd}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onCustWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>업체명</th>
+                  <td>
+                    <Input
+                      name="custnm"
+                      type="text"
+                      value={filters.custnm}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+
+                  <th>수주번호</th>
+                  <td>
+                    <Input
+                      name="ordnum"
+                      type="text"
+                      value={filters.ordnum}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+
+                  <th>완료여부</th>
+                  <td colSpan={3}>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="radFinyn"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+          <GridContainerWrap>
+            <Swiper
+              className="leading_80_Swiper"
+              onSwiper={(swiper) => {
+                setSwiper(swiper);
               }}
-              onSelectionChange={onSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={mainDataResult.total}
-              skip={page.skip}
-              take={page.take}
-              pageable={true}
-              onPageChange={pageChange}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onMainSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
-            >
-              <GridColumn cell={CommandCell} width="50px" />
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : dateField.includes(item.fieldName)
-                            ? DateCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.fieldName == "orddt"
-                            ? mainTotalFooterCell
-                            : numberField.includes(item.fieldName)
-                            ? gridSumQtyFooterCell
-                            : undefined
-                        }
-                      ></GridColumn>
-                    )
-                )}
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
-        <GridContainer width={`calc(50% - ${GAP}px)`}>
-          <GridTitleContainer>
-            <GridTitle>상세정보</GridTitle>
-          </GridTitleContainer>
-          <ExcelExport
-            data={detailDataResult.data}
-            ref={(exporter) => {
-              _export2 = exporter;
-            }}
-            fileName="수주처리"
-          >
-            <Grid
-              style={{ height: "72.8vh" }}
-              data={process(
-                detailDataResult.data.map((row) => ({
-                  ...row,
-                  itemacnt: itemacntListData.find(
-                    (item: any) => item.sub_code === row.itemacnt
-                  )?.code_name,
-                  qtyunit: qtyunitListData.find(
-                    (item: any) => item.sub_code === row.qtyunit
-                  )?.code_name,
-                  [SELECTED_FIELD]: detailSelectedState[detailIdGetter(row)],
-                })),
-                detailDataState
-              )}
-              {...detailDataState}
-              onDataStateChange={onDetailDataStateChange}
-              dataItemKey={DETAIL_DATA_ITEM_KEY}
-              selectedField={SELECTED_FIELD}
-              selectable={{
-                enabled: true,
-                mode: "single",
+              onActiveIndexChange={(swiper) => {
+                index = swiper.activeIndex;
               }}
-              onSelectionChange={onDetailSelectionChange}
-              //스크롤 조회 기능
-              fixedScroll={true}
-              total={detailDataResult.total}
-              skip={page2.skip}
-              take={page2.take}
-              pageable={true}
-              onPageChange={pageChange2}
-              //원하는 행 위치로 스크롤 기능
-              ref={gridRef2}
-              rowHeight={30}
-              //정렬기능
-              sortable={true}
-              onSortChange={onDetailSortChange}
-              //컬럼순서조정
-              reorderable={true}
-              //컬럼너비조정
-              resizable={true}
             >
-              {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"].map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : dateField.includes(item.fieldName)
-                            ? DateCell
-                            : undefined
+              <SwiperSlide key={0} className="swiper-slide">
+                <GridContainer className="leading_80_Swiper" width={`50%`}>
+                  <GridTitleContainer>
+                    <GridTitle>요약정보</GridTitle>
+                    <ButtonContainer>
+                      <Button
+                        onClick={onAddClick}
+                        themeColor={"primary"}
+                        icon="file-add"
+                      >
+                        수주생성
+                      </Button>
+                      <Button
+                        onClick={onDeleteClick}
+                        icon="delete"
+                        fillMode="outline"
+                        themeColor={"primary"}
+                      >
+                        수주삭제
+                      </Button>
+                      <Button
+                        onClick={onCopyClick}
+                        fillMode="outline"
+                        themeColor={"primary"}
+                        icon="copy"
+                      >
+                        수주복사
+                      </Button>
+                    </ButtonContainer>
+                  </GridTitleContainer>
+                  <ExcelExport
+                    data={mainDataResult.data}
+                    ref={(exporter) => {
+                      _export = exporter;
+                    }}
+                    fileName="수주처리"
+                  >
+                    <Grid
+                      style={{ height: "72.5vh" }}
+                      data={process(
+                        mainDataResult.data.map((row) => ({
+                          ...row,
+                          ordsts: ordstsListData.find(
+                            (item: any) => item.sub_code === row.ordsts
+                          )?.code_name,
+                          doexdiv: doexdivListData.find(
+                            (item: any) => item.sub_code === row.doexdiv
+                          )?.code_name,
+                          taxdiv: taxdivListData.find(
+                            (item: any) => item.sub_code === row.taxdiv
+                          )?.code_name,
+                          location: locationListData.find(
+                            (item: any) => item.sub_code === row.location
+                          )?.code_name,
+                          person: usersListData.find(
+                            (item: any) => item.user_id === row.person
+                          )?.user_name,
+                          dptcd: departmentsListData.find(
+                            (item: any) => item.dptcd === row.dptcd
+                          )?.dptnm,
+                          finyn: finynListData.find(
+                            (item: any) => item.code === row.finyn
+                          )?.name,
+                          [SELECTED_FIELD]: selectedState[idGetter(row)],
+                        })),
+                        mainDataState
+                      )}
+                      {...mainDataState}
+                      onDataStateChange={onMainDataStateChange}
+                      //선택 기능
+                      dataItemKey={DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={mainDataResult.total}
+                      skip={page.skip}
+                      take={page.take}
+                      pageable={true}
+                      onPageChange={pageChange}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onMainSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      <GridColumn cell={CommandCell} width="50px" />
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions["grdList"].map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.fieldName == "orddt"
+                                    ? mainTotalFooterCell
+                                    : numberField.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell
+                                    : undefined
+                                }
+                              ></GridColumn>
+                            )
+                        )}
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </SwiperSlide>
+
+              <SwiperSlide key={1} className="swiper-slide">
+                <GridContainer className="leading_80_Swiper" width={`calc(50% - ${GAP}px)`}>
+                  <GridTitleContainer>
+                    <GridTitle>상세정보</GridTitle>
+                  </GridTitleContainer>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "left",
+                      width: "100%",
+                    }}
+                  >
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
                         }
-                        footerCell={
-                          item.fieldName == "itemcd"
-                            ? detailTotalFooterCell
-                            : numberField2.includes(item.fieldName)
-                            ? gridSumQtyFooterCell2
-                            : undefined
-                        }
-                      ></GridColumn>
-                    )
-                )}
-            </Grid>
-          </ExcelExport>
-        </GridContainer>
-      </GridContainerWrap>
-      <div
-        style={{ paddingBottom: "13px" }}/>
+                      }}
+                      icon="arrow-left"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      이전
+                    </Button>
+                  </div>
+                  <ExcelExport
+                    data={detailDataResult.data}
+                    ref={(exporter) => {
+                      _export2 = exporter;
+                    }}
+                    fileName="수주처리"
+                  >
+                    <Grid
+                      style={{ height: "72.8vh" }}
+                      data={process(
+                        detailDataResult.data.map((row) => ({
+                          ...row,
+                          itemacnt: itemacntListData.find(
+                            (item: any) => item.sub_code === row.itemacnt
+                          )?.code_name,
+                          qtyunit: qtyunitListData.find(
+                            (item: any) => item.sub_code === row.qtyunit
+                          )?.code_name,
+                          [SELECTED_FIELD]:
+                            detailSelectedState[detailIdGetter(row)],
+                        })),
+                        detailDataState
+                      )}
+                      {...detailDataState}
+                      onDataStateChange={onDetailDataStateChange}
+                      dataItemKey={DETAIL_DATA_ITEM_KEY}
+                      selectedField={SELECTED_FIELD}
+                      selectable={{
+                        enabled: true,
+                        mode: "single",
+                      }}
+                      onSelectionChange={onDetailSelectionChange}
+                      //스크롤 조회 기능
+                      fixedScroll={true}
+                      total={detailDataResult.total}
+                      skip={page2.skip}
+                      take={page2.take}
+                      pageable={true}
+                      onPageChange={pageChange2}
+                      //원하는 행 위치로 스크롤 기능
+                      ref={gridRef2}
+                      rowHeight={30}
+                      //정렬기능
+                      sortable={true}
+                      onSortChange={onDetailSortChange}
+                      //컬럼순서조정
+                      reorderable={true}
+                      //컬럼너비조정
+                      resizable={true}
+                    >
+                      {customOptionData !== null &&
+                        customOptionData.menuCustomColumnOptions[
+                          "grdList2"
+                        ].map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  numberField.includes(item.fieldName)
+                                    ? NumberCell
+                                    : dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.fieldName == "itemcd"
+                                    ? detailTotalFooterCell
+                                    : numberField2.includes(item.fieldName)
+                                    ? gridSumQtyFooterCell2
+                                    : undefined
+                                }
+                              ></GridColumn>
+                            )
+                        )}
+                    </Grid>
+                  </ExcelExport>
+                </GridContainer>
+              </SwiperSlide>
+            </Swiper>
+          </GridContainerWrap>
+          <div style={{ paddingBottom: "13px" }} />
+        </>
+      ) : (
+        <>
+          <TitleContainer>
+            <Title>수주처리</Title>
+
+            <ButtonContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="SA_A2010W"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th>납기일자</th>
+                  <td>
+                    <CommonDateRangePicker
+                      value={{
+                        start: filters.ymdFrdt,
+                        end: filters.ymdTodt,
+                      }}
+                      onChange={(e: { value: { start: any; end: any } }) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          ymdFrdt: e.value.start,
+                          ymdTodt: e.value.end,
+                        }))
+                      }
+                      className="required"
+                    />
+                  </td>
+
+                  <th>사업장</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="cboLocation"
+                        value={filters.cboLocation}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>부서</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="cboDptcd"
+                        value={filters.cboDptcd}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                        textField="dptnm"
+                        valueField="dptcd"
+                      />
+                    )}
+                  </td>
+
+                  <th>담당자</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="cboPerson"
+                        value={filters.cboPerson}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                        textField="user_name"
+                        valueField="user_id"
+                      />
+                    )}
+                  </td>
+
+                  <th>PO번호</th>
+                  <td>
+                    <Input
+                      name="poregnum"
+                      type="text"
+                      value={filters.poregnum}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>품목코드</th>
+                  <td>
+                    <Input
+                      name="itemcd"
+                      type="text"
+                      value={filters.itemcd}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onItemWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>품목명</th>
+                  <td>
+                    <Input
+                      name="itemnm"
+                      type="text"
+                      value={filters.itemnm}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+
+                  <th>수주상태</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="cboOrdsts"
+                        value={filters.cboOrdsts}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+
+                  <th>수주형태</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="cboOrdtype"
+                        value={filters.cboOrdtype}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+
+                  <th>내수구분</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="cboDoexdiv"
+                        value={filters.cboDoexdiv}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th>업체코드</th>
+                  <td>
+                    <Input
+                      name="custcd"
+                      type="text"
+                      value={filters.custcd}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onCustWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>업체명</th>
+                  <td>
+                    <Input
+                      name="custnm"
+                      type="text"
+                      value={filters.custnm}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+
+                  <th>수주번호</th>
+                  <td>
+                    <Input
+                      name="ordnum"
+                      type="text"
+                      value={filters.ordnum}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+
+                  <th>완료여부</th>
+                  <td colSpan={3}>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="radFinyn"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+          <GridContainerWrap>
+            <GridContainer width={`50%`}>
+              <GridTitleContainer>
+                <GridTitle>요약정보</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="file-add"
+                  >
+                    수주생성
+                  </Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    icon="delete"
+                    fillMode="outline"
+                    themeColor={"primary"}
+                  >
+                    수주삭제
+                  </Button>
+                  <Button
+                    onClick={onCopyClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="copy"
+                  >
+                    수주복사
+                  </Button>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <ExcelExport
+                data={mainDataResult.data}
+                ref={(exporter) => {
+                  _export = exporter;
+                }}
+                fileName="수주처리"
+              >
+                <Grid
+                  style={{ height: "72.5vh" }}
+                  data={process(
+                    mainDataResult.data.map((row) => ({
+                      ...row,
+                      ordsts: ordstsListData.find(
+                        (item: any) => item.sub_code === row.ordsts
+                      )?.code_name,
+                      doexdiv: doexdivListData.find(
+                        (item: any) => item.sub_code === row.doexdiv
+                      )?.code_name,
+                      taxdiv: taxdivListData.find(
+                        (item: any) => item.sub_code === row.taxdiv
+                      )?.code_name,
+                      location: locationListData.find(
+                        (item: any) => item.sub_code === row.location
+                      )?.code_name,
+                      person: usersListData.find(
+                        (item: any) => item.user_id === row.person
+                      )?.user_name,
+                      dptcd: departmentsListData.find(
+                        (item: any) => item.dptcd === row.dptcd
+                      )?.dptnm,
+                      finyn: finynListData.find(
+                        (item: any) => item.code === row.finyn
+                      )?.name,
+                      [SELECTED_FIELD]: selectedState[idGetter(row)],
+                    })),
+                    mainDataState
+                  )}
+                  {...mainDataState}
+                  onDataStateChange={onMainDataStateChange}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult.total}
+                  skip={page.skip}
+                  take={page.take}
+                  pageable={true}
+                  onPageChange={pageChange}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn cell={CommandCell} width="50px" />
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : dateField.includes(item.fieldName)
+                                ? DateCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.fieldName == "orddt"
+                                ? mainTotalFooterCell
+                                : numberField.includes(item.fieldName)
+                                ? gridSumQtyFooterCell
+                                : undefined
+                            }
+                          ></GridColumn>
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+            <GridContainer width={`calc(50% - ${GAP}px)`}>
+              <GridTitleContainer>
+                <GridTitle>상세정보</GridTitle>
+              </GridTitleContainer>
+              <ExcelExport
+                data={detailDataResult.data}
+                ref={(exporter) => {
+                  _export2 = exporter;
+                }}
+                fileName="수주처리"
+              >
+                <Grid
+                  style={{ height: "72.8vh" }}
+                  data={process(
+                    detailDataResult.data.map((row) => ({
+                      ...row,
+                      itemacnt: itemacntListData.find(
+                        (item: any) => item.sub_code === row.itemacnt
+                      )?.code_name,
+                      qtyunit: qtyunitListData.find(
+                        (item: any) => item.sub_code === row.qtyunit
+                      )?.code_name,
+                      [SELECTED_FIELD]:
+                        detailSelectedState[detailIdGetter(row)],
+                    })),
+                    detailDataState
+                  )}
+                  {...detailDataState}
+                  onDataStateChange={onDetailDataStateChange}
+                  dataItemKey={DETAIL_DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onDetailSelectionChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={detailDataResult.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //원하는 행 위치로 스크롤 기능
+                  ref={gridRef2}
+                  rowHeight={30}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onDetailSortChange}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              numberField.includes(item.fieldName)
+                                ? NumberCell
+                                : dateField.includes(item.fieldName)
+                                ? DateCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.fieldName == "itemcd"
+                                ? detailTotalFooterCell
+                                : numberField2.includes(item.fieldName)
+                                ? gridSumQtyFooterCell2
+                                : undefined
+                            }
+                          ></GridColumn>
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
+          </GridContainerWrap>
+          <div style={{ paddingBottom: "13px" }} />
+        </>
+      )}
+
       {detailWindowVisible && (
         <DetailWindow
           getVisible={setDetailWindowVisible}

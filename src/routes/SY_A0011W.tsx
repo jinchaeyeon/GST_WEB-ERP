@@ -120,6 +120,7 @@ const Page: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const userId = UseGetValueFromSessionItem("user_id");
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight;
   let isMobile = deviceWidth <= 1200;
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -1380,6 +1381,7 @@ const Page: React.FC = () => {
         <GridContainerWrap>
           <Swiper
             className="leading_PDA_container"
+            autoHeight={true} 
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1393,17 +1395,7 @@ const Page: React.FC = () => {
                   <Title>사용자 그룹</Title>
 
                   <ButtonContainer>
-                    {permissions && (
-                      <TopButtons
-                        search={search}
-                        exportExcel={exportExcel}
-                        permissions={permissions}
-                        pathname="SY_A0011W"
-                      />
-                    )}
-                  </ButtonContainer>
-                </TitleContainer>
-                <FilterContainer>
+                  <FilterContainer>
                   <FilterBox
                     onKeyPress={(e) => handleKeyPressSearch(e, search)}
                   >
@@ -1444,6 +1436,17 @@ const Page: React.FC = () => {
                     </tbody>
                   </FilterBox>
                 </FilterContainer>
+                    {permissions && (
+                      <TopButtons
+                        search={search}
+                        exportExcel={exportExcel}
+                        permissions={permissions}
+                        pathname="SY_A0011W"
+                      />
+                    )}
+                  </ButtonContainer>
+                </TitleContainer>
+                
                 <GridTitleContainer>
                   {permissions && (
                     <ButtonContainer>
@@ -1473,7 +1476,7 @@ const Page: React.FC = () => {
                   fileName="사용자 그룹"
                 >
                   <Grid
-                    style={{ height: "75vh" }}
+                    style={{ height: `${deviceHeight - 170}px`, overflow: "scroll"}}
                     data={process(
                       mainDataResult.data.map((row, idx) => ({
                         ...row,
@@ -1581,7 +1584,7 @@ const Page: React.FC = () => {
                   fileName="사용자 그룹"
                 >
                   <TreeList
-                    style={{ height: "35vh", overflow: "auto" }}
+                    style={{ height: `${deviceHeight * 0.35}px`, overflow: "auto" }}
                     data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
                       extendDataItem(item, SUB_ITEMS_FIELD, {
                         [EXPANDED_FIELD]: expanded.includes(
@@ -1632,7 +1635,7 @@ const Page: React.FC = () => {
                   fileName="사용자 그룹"
                 >
                   <TreeList
-                    style={{ height: "40vh", overflowY: "scroll" }}
+                    style={{ height: `${deviceHeight * 0.40}px`, overflowY: "scroll" }}
                     data={mapTree(data2, SUB_ITEMS_FIELD, (item) =>
                       extendDataItem(item, SUB_ITEMS_FIELD, {
                         [EXPANDED_FIELD]: expanded2.includes(
