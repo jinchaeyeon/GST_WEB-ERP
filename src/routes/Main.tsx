@@ -823,7 +823,6 @@ const Main: React.FC = () => {
         <GridContainerWrap>
           <Swiper
             className="leading_PDA_container"
-            autoHeight={true} 
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -862,10 +861,9 @@ const Main: React.FC = () => {
                   >
                     퇴근
                   </Button>
-                  
                 </MainWorkStartEndContainer>
               </MainTopContainer>
-              <ApprovalBox>
+              <ApprovalBox style={{ width: `${deviceWidth - 30}px` }}>
                 <ApprovalInner>
                   <div>미결</div>
                   <div>{approvalValueState.app}</div>
@@ -879,24 +877,32 @@ const Main: React.FC = () => {
                   <div>{approvalValueState.rtr}</div>
                 </ApprovalInner>
                 <Button
-                    onClick={() => {
-                      if (swiper) {
-                        swiper.slideTo(1);
-                      }
-                    }}
-                    icon="info"
-                  >
-                    공지
-                  </Button>
+                  onClick={() => {
+                    if (swiper) {
+                      swiper.slideTo(1);
+                      swiper.update();
+                    }
+                  }}
+                  icon="info"
+                >
+                  공지
+                </Button>
               </ApprovalBox>
-              <GridContainer style={{ width: `${deviceWidth - 30}px`, marginTop: "2vh" }}>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, marginTop: "2vh" }}
+              >
                 <TabStrip
                   style={{ width: "100%" }}
                   selected={tabSelected}
                   onSelect={handleSelectTab}
                 >
                   <TabStripTab title="업무 달력">
-                    <GridContainer style={{overflow:"scroll", height: `${deviceHeight * 0.60}px`}}>
+                    <GridContainer
+                      style={{
+                        overflow: "scroll",
+                        height: `${deviceHeight * 0.6}px`,
+                      }}
+                    >
                       {osstate == true ? (
                         <div
                           style={{
@@ -959,7 +965,7 @@ const Main: React.FC = () => {
               className="leading_PDA"
               style={{ display: "flex", flexDirection: "column" }}
             >
-                      <div
+              <div
                 style={{
                   display: "flex",
                   justifyContent: "left",
@@ -1033,7 +1039,7 @@ const Main: React.FC = () => {
                     <GridTitle>업무지시요청</GridTitle>
                   </GridTitleContainer>
                   <Grid
-                    style={{ height: `${deviceHeight * 0.40}px` }}
+                    style={{ height: `${deviceHeight * 0.4}px` }}
                     data={process(workOrderDataResult.data, workOrderDataState)}
                     {...workOrderDataState}
                     onDataStateChange={onWorkOrderDataStateChange}

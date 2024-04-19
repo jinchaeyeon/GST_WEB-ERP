@@ -49,6 +49,8 @@ const SY_B0060W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight;
+
   let isMobile = deviceWidth <= 1200;
 
   const idGetter = getter(DATA_ITEM_KEY);
@@ -565,6 +567,7 @@ const SY_B0060W: React.FC = () => {
         <GridContainerWrap>
           <Swiper
             className="leading_PDA_container"
+            autoHeight={true}
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -572,10 +575,7 @@ const SY_B0060W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide
-              key={0}
-              className="leading_PDA"
-            >
+            <SwiperSlide key={0} className="leading_PDA_custom">
               <MainTopContainer>
                 <ButtonContainer>
                   <Button
@@ -618,18 +618,8 @@ const SY_B0060W: React.FC = () => {
                     >
                       퇴근
                     </Button>
-                    <Button
-                    onClick={() => {
-                      if (swiper) {
-                        swiper.slideTo(1);
-                      }
-                    }}
-                    icon="info"
-                  >
-                    공지사항
-                  </Button>
                   </MainWorkStartEndContainer>
-                  <ApprovalBox>
+                  <ApprovalBox style={{ width: `${deviceWidth - 30}px` }}>
                     <ApprovalInner>
                       <div>미결</div>
                       <div>{approvalValueState.app}</div>
@@ -642,13 +632,25 @@ const SY_B0060W: React.FC = () => {
                       <div>반려</div>
                       <div>{approvalValueState.rtr}</div>
                     </ApprovalInner>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(1);
+                          swiper.update();
+                        }
+                      }}
+                      icon="info"
+                    >
+                      공지
+                    </Button>
                   </ApprovalBox>
                 </>
               ) : (
                 ""
               )}
               <GridContainer
-              style={{ height: "71vh" ,width: `${deviceWidth-30}px`}}>
+                style={{ width: `${deviceWidth - 30}px`, marginTop: "2vh" }}
+              >
                 <GridTitleContainer>
                   <GridTitle>레이아웃</GridTitle>
                 </GridTitleContainer>
@@ -675,6 +677,7 @@ const SY_B0060W: React.FC = () => {
                   onClick={() => {
                     if (swiper) {
                       swiper.slideTo(0);
+                      swiper.update();
                     }
                   }}
                   icon="arrow-left"
@@ -695,7 +698,7 @@ const SY_B0060W: React.FC = () => {
                     <GridTitle>공지사항</GridTitle>
                   </GridTitleContainer>
                   <Grid
-                    style={{ height: "40vh" }}
+                    style={{ height: `${deviceHeight * 0.35}px` }}
                     data={process(
                       noticeDataResult.data.map((row) => ({
                         ...row,
@@ -745,7 +748,7 @@ const SY_B0060W: React.FC = () => {
                     <GridTitle>업무지시요청</GridTitle>
                   </GridTitleContainer>
                   <Grid
-                    style={{ height: "40vh" }}
+                    style={{ height: `${deviceHeight * 0.4}px` }}
                     data={process(workOrderDataResult.data, workOrderDataState)}
                     {...workOrderDataState}
                     onDataStateChange={onWorkOrderDataStateChange}
@@ -834,101 +837,106 @@ const SY_B0060W: React.FC = () => {
               ""
             )}
           </MainTopContainer>
-          <GridContainer width="65%">
-            <GridTitleContainer>
-              <GridTitle>레이아웃</GridTitle>
-            </GridTitleContainer>
-            <FlowChartReadOnly data={mainDataResult2.data} filters={filters2} />
-          </GridContainer>
-          <GridContainer width={`calc(35% - ${GAP}px)`}>
-            <GridContainer>
+          <GridContainerWrap>
+            <GridContainer width="65%">
               <GridTitleContainer>
-                <GridTitle>공지사항</GridTitle>
+                <GridTitle>레이아웃</GridTitle>
               </GridTitleContainer>
-              <Grid
-                style={{ height: "380px" }}
-                data={process(
-                  noticeDataResult.data.map((row) => ({
-                    ...row,
-                    [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
-                  })),
-                  noticeDataState
-                )}
-                {...noticeDataState}
-                onDataStateChange={onNoticeDataStateChange}
-                //선택기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                //정렬기능
-                sortable={true}
-                onSortChange={onNoticeSortChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={noticeDataResult.total}
-                onScroll={onNoticeScrollHandler}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-              >
-                <GridColumn
-                  field="recdt_week"
-                  title="작성일"
-                  cell={CenterCell}
-                  footerCell={noticeTotalFooterCell}
-                  width="140px"
-                />
-                <GridColumn
-                  field="person"
-                  title="작성자"
-                  cell={CenterCell}
-                  width="120px"
-                />
-                <GridColumn field="title" title="제목" />
-              </Grid>
+              <FlowChartReadOnly
+                data={mainDataResult2.data}
+                filters={filters2}
+              />
             </GridContainer>
-            <GridContainer>
-              <GridTitleContainer>
-                <GridTitle>업무지시요청</GridTitle>
-              </GridTitleContainer>
-              <Grid
-                style={{ height: "380px" }}
-                data={process(workOrderDataResult.data, workOrderDataState)}
-                {...workOrderDataState}
-                onDataStateChange={onWorkOrderDataStateChange}
-                //정렬기능
-                sortable={true}
-                onSortChange={onWorkOrderSortChange}
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={workOrderDataResult.total}
-                onScroll={onWorkOrderScrollHandler}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-              >
-                <GridColumn
-                  field="recdt_week"
-                  title="작성일"
-                  cell={CenterCell}
-                  footerCell={workOrderTotalFooterCell}
-                  width="140px"
-                />
-                <GridColumn
-                  field="user_name"
-                  title="작성자"
-                  cell={CenterCell}
-                  width="120px"
-                />
-                <GridColumn field="title" title="제목" />
-              </Grid>
+            <GridContainer width={`calc(35% - ${GAP}px)`}>
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>공지사항</GridTitle>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: "380px" }}
+                  data={process(
+                    noticeDataResult.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: detailSelectedState[idGetter(row)],
+                    })),
+                    noticeDataState
+                  )}
+                  {...noticeDataState}
+                  onDataStateChange={onNoticeDataStateChange}
+                  //선택기능
+                  dataItemKey={DATA_ITEM_KEY}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onNoticeSortChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={noticeDataResult.total}
+                  onScroll={onNoticeScrollHandler}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="recdt_week"
+                    title="작성일"
+                    cell={CenterCell}
+                    footerCell={noticeTotalFooterCell}
+                    width="140px"
+                  />
+                  <GridColumn
+                    field="person"
+                    title="작성자"
+                    cell={CenterCell}
+                    width="120px"
+                  />
+                  <GridColumn field="title" title="제목" />
+                </Grid>
+              </GridContainer>
+              <GridContainer>
+                <GridTitleContainer>
+                  <GridTitle>업무지시요청</GridTitle>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: "380px" }}
+                  data={process(workOrderDataResult.data, workOrderDataState)}
+                  {...workOrderDataState}
+                  onDataStateChange={onWorkOrderDataStateChange}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onWorkOrderSortChange}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={workOrderDataResult.total}
+                  onScroll={onWorkOrderScrollHandler}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                >
+                  <GridColumn
+                    field="recdt_week"
+                    title="작성일"
+                    cell={CenterCell}
+                    footerCell={workOrderTotalFooterCell}
+                    width="140px"
+                  />
+                  <GridColumn
+                    field="user_name"
+                    title="작성자"
+                    cell={CenterCell}
+                    width="120px"
+                  />
+                  <GridColumn field="title" title="제목" />
+                </Grid>
+              </GridContainer>
             </GridContainer>
-          </GridContainer>
+          </GridContainerWrap>
         </>
       )}
     </>

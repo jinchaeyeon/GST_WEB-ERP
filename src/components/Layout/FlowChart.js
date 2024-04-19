@@ -74,8 +74,9 @@ let id = 0;
 const getId = () => `${++id}`;
 
 const FlowChart = (props) => {
-
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight;
+
   let isMobile = deviceWidth <= 1200;
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
   const [bizComponentData, setBizComponentData] = useState(null);
@@ -878,249 +879,489 @@ const FlowChart = (props) => {
   return (
     <>
       {isMobile ? (
-        <GridContainerWrap>
-          <Swiper
-            className="leading_70_Swiper"
-            onSwiper={(swiper) => {
-              setSwiper(swiper);
-            }}
-            onActiveIndexChange={(swiper) => {
-              index = swiper.activeIndex;
+        <Swiper
+          className="leading_PDA_container"
+          onSwiper={(swiper) => {
+            setSwiper(swiper);
+          }}
+          onActiveIndexChange={(swiper) => {
+            index = swiper.activeIndex;
+          }}
+        >
+          <SwiperSlide key={0} className="leading_PDA_custom">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "right",
+                width: "100%",
+              }}
+            >
+              <Button
+                onClick={() => {
+                  if (swiper) {
+                    swiper.slideTo(1);
+                    swiper.update();
+                  }
+                }}
+                icon="arrow-right"
+              >
+                노드편집
+              </Button>
+            </div>
+            <GridContainer
+              width="65%"
+              height={isMobile ? `${deviceHeight - 150}px` : "70vh"}
+              style={{ border: "1px solid #d3d3d3" }}
+            >
+              <div
+                ref={ref}
+                className="simple-floatingedges"
+                style={{ backgroundColor: "white" }}
+              >
+                <ReactFlow
+                  nodes={nodes}
+                  edges={edges}
+                  onNodesChange={onNodesChange}
+                  onEdgesChange={onEdgesChange}
+                  onConnect={
+                    EdgeType == "straight"
+                      ? onConnect
+                      : EdgeType == "step"
+                      ? onConnect2
+                      : EdgeType == "smoothstep"
+                      ? onConnect3
+                      : EdgeType == "default"
+                      ? onConnect4
+                      : EdgeType == "straight_a"
+                      ? onConnect5
+                      : EdgeType == "step_a"
+                      ? onConnect6
+                      : EdgeType == "smoothstep_a"
+                      ? onConnect7
+                      : onConnect8
+                  }
+                  nodeTypes={nodeTypes}
+                  connectionMode={ConnectionMode.Loose}
+                  onNodeClick={onNodeClick}
+                  onEdgeClick={onEdgeClick}
+                  onNodeDragStart={onChangeSeq}
+                  onEdgeUpdate={onEdgeUpdate}
+                  onPaneClick={onPaneClick}
+                >
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    {Information.background_image != "" ? (
+                      <img src={`${Information.background_image}`} />
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                </ReactFlow>
+              </div>
+            </GridContainer>
+          </SwiperSlide>
+          <SwiperSlide
+            key={1}
+            className="leading_PDA"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              width: `${deviceWidth - 30}px`,
             }}
           >
-            <SwiperSlide
-              key={0}
-              className="leading_PDA"
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "left",
+                width: "100%",
+              }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "right",
-                  width: "100%",
+              <Button
+                onClick={() => {
+                  if (swiper) {
+                    swiper.slideTo(0);
+                    swiper.update();
+                  }
                 }}
+                icon="arrow-left"
               >
-                <Button
-                  onClick={() => {
-                    if (swiper) {
-                      swiper.slideTo(1);
-                    }
-                  }}
-                  icon="arrow-right"
-                >
-                  노드편집
-                </Button>
-              </div>
-              <GridContainer
-                width="65%"
-                height={"70vh"}
-                style={{ border: "1px solid #d3d3d3" }}
-              >
-                <div
-                  ref={ref}
-                  className="simple-floatingedges"
-                  style={{ backgroundColor: "white" }}
-                >
-                  <ReactFlow
-                    nodes={nodes}
-                    edges={edges}
-                    onNodesChange={onNodesChange}
-                    onEdgesChange={onEdgesChange}
-                    onConnect={
-                      EdgeType == "straight"
-                        ? onConnect
-                        : EdgeType == "step"
-                        ? onConnect2
-                        : EdgeType == "smoothstep"
-                        ? onConnect3
-                        : EdgeType == "default"
-                        ? onConnect4
-                        : EdgeType == "straight_a"
-                        ? onConnect5
-                        : EdgeType == "step_a"
-                        ? onConnect6
-                        : EdgeType == "smoothstep_a"
-                        ? onConnect7
-                        : onConnect8
-                    }
-                    nodeTypes={nodeTypes}
-                    connectionMode={ConnectionMode.Loose}
-                    onNodeClick={onNodeClick}
-                    onEdgeClick={onEdgeClick}
-                    onNodeDragStart={onChangeSeq}
-                    onEdgeUpdate={onEdgeUpdate}
-                    onPaneClick={onPaneClick}
+                이전
+              </Button>
+            </div>
+            <GridContainer
+              style={{
+                height: "67vh",
+                width: `100%`,
+                overflow: "scroll",
+              }}
+            >
+              <GridTitleContainer>
+                <GridTitle>편집</GridTitle>
+                <ButtonContainer style={{ marginBottom: "5px" }}>
+                  <ButtonKendo
+                    onClick={onDeleteClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="delete"
                   >
-                    <div
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      {Information.background_image != "" ? (
-                        <img src={`${Information.background_image}`} />
-                      ) : (
-                        ""
-                      )}
-                    </div>
-                  </ReactFlow>
-                </div>
-              </GridContainer>
-            </SwiperSlide>
-            <SwiperSlide
-              key={1}
-              className="leading_PDA"
-              style={{ display: "flex", flexDirection: "column", width: `${deviceWidth-30}px` }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "left",
-                  width: "100%",
-                }}
-              >
-                <Button
-                  onClick={() => {
-                    if (swiper) {
-                      swiper.slideTo(0);
-                    }
-                  }}
-                  icon="arrow-left"
-                >
-                  이전
-                </Button>
-              </div>
-              <GridContainer
-                style={{
-                  minHeight: "67vh",
-                  width: `100%`,
-                  overflow: "scroll",
-                }}
-              >
-                <GridTitleContainer                >
-                  <GridTitle>편집</GridTitle>
-                  <ButtonContainer style={{ marginBottom: "5px" }}>
-                    <ButtonKendo
-                      onClick={onDeleteClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="delete"
-                    >
-                      삭제
-                    </ButtonKendo>
-                    <ButtonKendo
-                      onClick={onSaveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                    >
-                      저장
-                    </ButtonKendo>
-                  </ButtonContainer>
-                </GridTitleContainer>
-                <GridContainer
-                  style={{ marginRight: isMobile ? "0px" : "5px" }}
-                >
-                  <Accordion defaultExpanded>
-                    <AccordionSummary
-                      expandIcon={<ExpandMoreIcon />}
-                      aria-controls="panel1-content"
-                      id="panel1-header"
-                      style={{ backgroundColor: "#edf4fb" }}
-                    >
-                      <Typography>정보</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails
-                      style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
-                    >
-                      <FormBoxWrap>
-                        <FormBox>
-                          <tbody>
-                            <tr>
-                              <th style={{ minWidth: "40px", width: "30%" }}>
-                                사업장
-                              </th>
-                              <td>
-                                {customOptionData !== null && (
-                                  <CustomOptionComboBox
-                                    name="location"
-                                    value={Information.location}
-                                    customOptionData={customOptionData}
-                                    changeData={ComboBoxChange2}
-                                    className="required"
-                                  />
-                                )}
-                              </td>
-                            </tr>
-                            <tr>
-                              <th style={{ minWidth: "40px", width: "30%" }}>
-                                레이아웃ID
-                              </th>
-                              <td>
-                                {workType == "N" ? (
-                                  <Input
-                                    name="layout_id"
-                                    type="text"
-                                    value={Information.layout_id}
-                                    onChange={InputChange3}
-                                    className="required"
-                                  />
-                                ) : (
-                                  <Input
-                                    name="layout_id"
-                                    type="text"
-                                    value={Information.layout_id}
-                                    className="readonly"
-                                  />
-                                )}
-                              </td>
-                            </tr>
-                            <tr>
-                              <th style={{ minWidth: "40px", width: "30%" }}>
-                                레이아웃명
-                              </th>
-                              <td>
-                                <Input
-                                  name="layout_name"
-                                  type="text"
-                                  value={Information.layout_name}
-                                  onChange={InputChange3}
+                    삭제
+                  </ButtonKendo>
+                  <ButtonKendo
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                  >
+                    저장
+                  </ButtonKendo>
+                </ButtonContainer>
+              </GridTitleContainer>
+              <GridContainer style={{ marginRight: isMobile ? "0px" : "5px" }}>
+                <Accordion defaultExpanded>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1-content"
+                    id="panel1-header"
+                    style={{ backgroundColor: "#edf4fb" }}
+                  >
+                    <Typography>정보</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails
+                    style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
+                  >
+                    <FormBoxWrap>
+                      <FormBox>
+                        <tbody>
+                          <tr>
+                            <th style={{ minWidth: "40px", width: "30%" }}>
+                              사업장
+                            </th>
+                            <td>
+                              {customOptionData !== null && (
+                                <CustomOptionComboBox
+                                  name="location"
+                                  value={Information.location}
+                                  customOptionData={customOptionData}
+                                  changeData={ComboBoxChange2}
+                                  className="required"
                                 />
-                              </td>
-                            </tr>
-                            <tr>
-                              <th style={{ minWidth: "40px", width: "30%" }}>
-                                배경화면
-                              </th>
-                              <td>
-                                <ButtonKendo
-                                  onClick={upload2}
-                                  themeColor={"primary"}
-                                  icon={"upload"}
-                                  style={{ width: "100%" }}
-                                >
-                                  이미지 등록
-                                  <input
-                                    id="uploadAttachment2"
-                                    style={{ display: "none" }}
-                                    type="file"
-                                    accept=".png, .jpg, .jpeg"
-                                    ref={excelInput2}
-                                    onChange={(event) => {
-                                      handleFileUpload2(event.target.files);
-                                    }}
-                                  />
-                                </ButtonKendo>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </FormBox>
-                      </FormBoxWrap>
-                    </AccordionDetails>
-                  </Accordion>
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th style={{ minWidth: "40px", width: "30%" }}>
+                              레이아웃ID
+                            </th>
+                            <td>
+                              {workType == "N" ? (
+                                <Input
+                                  name="layout_id"
+                                  type="text"
+                                  value={Information.layout_id}
+                                  onChange={InputChange3}
+                                  className="required"
+                                />
+                              ) : (
+                                <Input
+                                  name="layout_id"
+                                  type="text"
+                                  value={Information.layout_id}
+                                  className="readonly"
+                                />
+                              )}
+                            </td>
+                          </tr>
+                          <tr>
+                            <th style={{ minWidth: "40px", width: "30%" }}>
+                              레이아웃명
+                            </th>
+                            <td>
+                              <Input
+                                name="layout_name"
+                                type="text"
+                                value={Information.layout_name}
+                                onChange={InputChange3}
+                              />
+                            </td>
+                          </tr>
+                          <tr>
+                            <th style={{ minWidth: "40px", width: "30%" }}>
+                              배경화면
+                            </th>
+                            <td>
+                              <ButtonKendo
+                                onClick={upload2}
+                                themeColor={"primary"}
+                                icon={"upload"}
+                                style={{ width: "100%" }}
+                              >
+                                이미지 등록
+                                <input
+                                  id="uploadAttachment2"
+                                  style={{ display: "none" }}
+                                  type="file"
+                                  accept=".png, .jpg, .jpeg"
+                                  ref={excelInput2}
+                                  onChange={(event) => {
+                                    handleFileUpload2(event.target.files);
+                                  }}
+                                />
+                              </ButtonKendo>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </FormBox>
+                    </FormBoxWrap>
+                  </AccordionDetails>
+                </Accordion>
 
+                <Accordion defaultExpanded>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1-content"
+                    id="panel1-header"
+                    style={{ backgroundColor: "#edf4fb" }}
+                  >
+                    <Typography>기능</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails
+                    style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
+                  >
+                    <FormBoxWrap>
+                      <Grid container spacing={2}>
+                        <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                          <Button
+                            style={{ color: "rgba(0, 0, 0, .725)" }}
+                            variant="text"
+                            onClick={() => onCopy()}
+                            fullWidth
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                              }}
+                            >
+                              <CropPortraitIcon />
+                              <Typography variant="caption">
+                                노드 복사
+                              </Typography>
+                            </div>
+                          </Button>
+                        </Grid>
+                        <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                          <Button
+                            style={{ color: "rgba(0, 0, 0, .725)" }}
+                            variant="text"
+                            onClick={() => onCopyAll()}
+                            fullWidth
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                              }}
+                            >
+                              <ContentCopyIcon />
+                              <Typography variant="caption">
+                                전체 노드 복사
+                              </Typography>
+                            </div>
+                          </Button>
+                        </Grid>
+                        <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                          <Button
+                            style={{
+                              color:
+                                copyNode.length == 0
+                                  ? "rgba(0, 0, 0, .325)"
+                                  : "rgba(0, 0, 0, .725)",
+                            }}
+                            variant="text"
+                            onClick={() => onPaste()}
+                            fullWidth
+                            disabled={copyNode.length == 0 ? true : false}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                              }}
+                            >
+                              <ContentPasteIcon />
+                              <Typography variant="caption">
+                                붙여넣기
+                              </Typography>
+                            </div>
+                          </Button>
+                        </Grid>
+                        <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                          <Button
+                            style={{
+                              color: "rgba(0, 0, 0, .725)",
+                            }}
+                            variant="text"
+                            onClick={() => onBack()}
+                            fullWidth
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                              }}
+                            >
+                              <FlipToBackIcon />
+                              <Typography variant="caption">
+                                맨뒤로 정렬
+                              </Typography>
+                            </div>
+                          </Button>
+                        </Grid>
+                        <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                          <Button
+                            style={{
+                              color: "rgba(0, 0, 0, .725)",
+                            }}
+                            variant="text"
+                            onClick={() => onFront()}
+                            fullWidth
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                              }}
+                            >
+                              <FlipToFrontIcon />
+                              <Typography variant="caption">
+                                맨앞으로 정렬
+                              </Typography>
+                            </div>
+                          </Button>
+                        </Grid>
+                        <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                          {/* 삭제 버튼 추가 */}
+                          <Button
+                            style={{ color: "rgba(0, 0, 0, .725)" }}
+                            variant="text"
+                            onClick={() => onDelete()}
+                            fullWidth
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                              }}
+                            >
+                              <DeleteIcon />{" "}
+                              {/* 이 아이콘을 프로젝트에 맞게 변경해주세요 */}
+                              <Typography variant="caption">
+                                노드 삭제
+                              </Typography>
+                            </div>
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </FormBoxWrap>
+                  </AccordionDetails>
+                </Accordion>
+                <Accordion defaultExpanded>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1-content"
+                    id="panel1-header"
+                    style={{ backgroundColor: "#edf4fb" }}
+                  >
+                    <Typography>노드</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails
+                    style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
+                  >
+                    <FormBoxWrap>
+                      <Grid container spacing={2}>
+                        <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                          <Button
+                            style={{ color: "rgba(0, 0, 0, .725)" }}
+                            variant="text"
+                            onClick={() => onNodeAdd()}
+                            fullWidth
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                              }}
+                            >
+                              <Crop32Icon />
+                              <Typography variant="caption">
+                                노드생성
+                              </Typography>
+                            </div>
+                          </Button>
+                        </Grid>
+                        <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                          <Button
+                            style={{ color: "rgba(0, 0, 0, .725)" }}
+                            variant="text"
+                            onClick={() => onGroupNodeAdd()}
+                            fullWidth
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                              }}
+                            >
+                              <WebAssetIcon />
+                              <Typography variant="caption">
+                                그룹 노드 생성
+                              </Typography>
+                            </div>
+                          </Button>
+                        </Grid>
+                        <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                          <Button
+                            style={{ color: "rgba(0, 0, 0, .725)" }}
+                            variant="text"
+                            onClick={() => onImageNodeAdd()}
+                            fullWidth
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                              }}
+                            >
+                              <ImageIcon />
+                              <Typography variant="caption">
+                                이미지 노드 생성
+                              </Typography>
+                            </div>
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </FormBoxWrap>
+                  </AccordionDetails>
+                </Accordion>
+                {edges.filter((item) => item.selected == true).length > 1 ? (
+                  ""
+                ) : (
                   <Accordion defaultExpanded>
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
@@ -1128,7 +1369,7 @@ const FlowChart = (props) => {
                       id="panel1-header"
                       style={{ backgroundColor: "#edf4fb" }}
                     >
-                      <Typography>기능</Typography>
+                      <Typography>선</Typography>
                     </AccordionSummary>
                     <AccordionDetails
                       style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
@@ -1137,9 +1378,14 @@ const FlowChart = (props) => {
                         <Grid container spacing={2}>
                           <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
                             <Button
-                              style={{ color: "rgba(0, 0, 0, .725)" }}
+                              style={{
+                                color:
+                                  EdgeType == "straight"
+                                    ? "rgba(0, 0, 0, .725)"
+                                    : "rgba(0, 0, 0, .325)",
+                              }}
                               variant="text"
-                              onClick={() => onCopy()}
+                              onClick={() => onChangeEdgeType("straight")}
                               fullWidth
                             >
                               <div
@@ -1149,18 +1395,21 @@ const FlowChart = (props) => {
                                   alignItems: "center",
                                 }}
                               >
-                                <CropPortraitIcon />
-                                <Typography variant="caption">
-                                  노드 복사
-                                </Typography>
+                                <StraightIcon />
+                                <Typography variant="caption">직선</Typography>
                               </div>
                             </Button>
                           </Grid>
                           <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
                             <Button
-                              style={{ color: "rgba(0, 0, 0, .725)" }}
+                              style={{
+                                color:
+                                  EdgeType == "step"
+                                    ? "rgba(0, 0, 0, .725)"
+                                    : "rgba(0, 0, 0, .325)",
+                              }}
                               variant="text"
-                              onClick={() => onCopyAll()}
+                              onClick={() => onChangeEdgeType("step")}
                               fullWidth
                             >
                               <div
@@ -1170,9 +1419,9 @@ const FlowChart = (props) => {
                                   alignItems: "center",
                                 }}
                               >
-                                <ContentCopyIcon />
+                                <TrendingUpIcon />
                                 <Typography variant="caption">
-                                  전체 노드 복사
+                                  꺽은선
                                 </Typography>
                               </div>
                             </Button>
@@ -1181,14 +1430,13 @@ const FlowChart = (props) => {
                             <Button
                               style={{
                                 color:
-                                  copyNode.length == 0
-                                    ? "rgba(0, 0, 0, .325)"
-                                    : "rgba(0, 0, 0, .725)",
+                                  EdgeType == "smoothstep"
+                                    ? "rgba(0, 0, 0, .725)"
+                                    : "rgba(0, 0, 0, .325)",
                               }}
                               variant="text"
-                              onClick={() => onPaste()}
+                              onClick={() => onChangeEdgeType("smoothstep")}
                               fullWidth
-                              disabled={copyNode.length == 0 ? true : false}
                             >
                               <div
                                 style={{
@@ -1197,9 +1445,9 @@ const FlowChart = (props) => {
                                   alignItems: "center",
                                 }}
                               >
-                                <ContentPasteIcon />
+                                <MovingIcon />
                                 <Typography variant="caption">
-                                  붙여넣기
+                                  부드러운 꺽은선
                                 </Typography>
                               </div>
                             </Button>
@@ -1207,10 +1455,13 @@ const FlowChart = (props) => {
                           <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
                             <Button
                               style={{
-                                color: "rgba(0, 0, 0, .725)",
+                                color:
+                                  EdgeType == "default"
+                                    ? "rgba(0, 0, 0, .725)"
+                                    : "rgba(0, 0, 0, .325)",
                               }}
                               variant="text"
-                              onClick={() => onBack()}
+                              onClick={() => onChangeEdgeType("default")}
                               fullWidth
                             >
                               <div
@@ -1220,9 +1471,57 @@ const FlowChart = (props) => {
                                   alignItems: "center",
                                 }}
                               >
-                                <FlipToBackIcon />
+                                <RedoIcon />
+                                <Typography variant="caption">곡선</Typography>
+                              </div>
+                            </Button>
+                          </Grid>
+                          <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                            <Button
+                              style={{
+                                color:
+                                  EdgeType == "straight_a"
+                                    ? "rgba(0, 0, 0, .725)"
+                                    : "rgba(0, 0, 0, .325)",
+                              }}
+                              variant="text"
+                              onClick={() => onChangeEdgeType("straight_a")}
+                              fullWidth
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <StraightIcon />
+                                <Typography variant="caption">실선</Typography>
+                              </div>
+                            </Button>
+                          </Grid>
+                          <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
+                            <Button
+                              style={{
+                                color:
+                                  EdgeType == "step_a"
+                                    ? "rgba(0, 0, 0, .725)"
+                                    : "rgba(0, 0, 0, .325)",
+                              }}
+                              variant="text"
+                              onClick={() => onChangeEdgeType("step_a")}
+                              fullWidth
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <TrendingUpIcon />
                                 <Typography variant="caption">
-                                  맨뒤로 정렬
+                                  꺽은선(실선)
                                 </Typography>
                               </div>
                             </Button>
@@ -1230,10 +1529,13 @@ const FlowChart = (props) => {
                           <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
                             <Button
                               style={{
-                                color: "rgba(0, 0, 0, .725)",
+                                color:
+                                  EdgeType == "smoothstep_a"
+                                    ? "rgba(0, 0, 0, .725)"
+                                    : "rgba(0, 0, 0, .325)",
                               }}
                               variant="text"
-                              onClick={() => onFront()}
+                              onClick={() => onChangeEdgeType("smoothstep_a")}
                               fullWidth
                             >
                               <div
@@ -1243,19 +1545,23 @@ const FlowChart = (props) => {
                                   alignItems: "center",
                                 }}
                               >
-                                <FlipToFrontIcon />
+                                <MovingIcon />
                                 <Typography variant="caption">
-                                  맨앞으로 정렬
+                                  부드러운 꺽은선(실선)
                                 </Typography>
                               </div>
                             </Button>
                           </Grid>
                           <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
-                            {/* 삭제 버튼 추가 */}
                             <Button
-                              style={{ color: "rgba(0, 0, 0, .725)" }}
+                              style={{
+                                color:
+                                  EdgeType == "default_a"
+                                    ? "rgba(0, 0, 0, .725)"
+                                    : "rgba(0, 0, 0, .325)",
+                              }}
                               variant="text"
-                              onClick={() => onDelete()}
+                              onClick={() => onChangeEdgeType("default_a")}
                               fullWidth
                             >
                               <div
@@ -1265,10 +1571,9 @@ const FlowChart = (props) => {
                                   alignItems: "center",
                                 }}
                               >
-                                <DeleteIcon />{" "}
-                                {/* 이 아이콘을 프로젝트에 맞게 변경해주세요 */}
+                                <RedoIcon />
                                 <Typography variant="caption">
-                                  노드 삭제
+                                  곡선(실선)
                                 </Typography>
                               </div>
                             </Button>
@@ -1277,6 +1582,13 @@ const FlowChart = (props) => {
                       </FormBoxWrap>
                     </AccordionDetails>
                   </Accordion>
+                )}
+                {Type == "B" ||
+                nodes.filter((item) => item.selected == true).length +
+                  edges.filter((item) => item.selected == true).length >
+                  1 ? (
+                  ""
+                ) : (
                   <Accordion defaultExpanded>
                     <AccordionSummary
                       expandIcon={<ExpandMoreIcon />}
@@ -1284,369 +1596,72 @@ const FlowChart = (props) => {
                       id="panel1-header"
                       style={{ backgroundColor: "#edf4fb" }}
                     >
-                      <Typography>노드</Typography>
+                      <Typography>속성</Typography>
                     </AccordionSummary>
                     <AccordionDetails
                       style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
                     >
                       <FormBoxWrap>
-                        <Grid container spacing={2}>
-                          <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
-                            <Button
-                              style={{ color: "rgba(0, 0, 0, .725)" }}
-                              variant="text"
-                              onClick={() => onNodeAdd()}
-                              fullWidth
-                            >
-                              <div
-                                style={{
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                }}
-                              >
-                                <Crop32Icon />
-                                <Typography variant="caption">
-                                  노드생성
-                                </Typography>
-                              </div>
-                            </Button>
-                          </Grid>
-                          <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
-                            <Button
-                              style={{ color: "rgba(0, 0, 0, .725)" }}
-                              variant="text"
-                              onClick={() => onGroupNodeAdd()}
-                              fullWidth
-                            >
-                              <div
-                                style={{
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                }}
-                              >
-                                <WebAssetIcon />
-                                <Typography variant="caption">
-                                  그룹 노드 생성
-                                </Typography>
-                              </div>
-                            </Button>
-                          </Grid>
-                          <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
-                            <Button
-                              style={{ color: "rgba(0, 0, 0, .725)" }}
-                              variant="text"
-                              onClick={() => onImageNodeAdd()}
-                              fullWidth
-                            >
-                              <div
-                                style={{
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  alignItems: "center",
-                                }}
-                              >
-                                <ImageIcon />
-                                <Typography variant="caption">
-                                  이미지 노드 생성
-                                </Typography>
-                              </div>
-                            </Button>
-                          </Grid>
-                        </Grid>
-                      </FormBoxWrap>
-                    </AccordionDetails>
-                  </Accordion>
-                  {edges.filter((item) => item.selected == true).length > 1 ? (
-                    ""
-                  ) : (
-                    <Accordion defaultExpanded>
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1-content"
-                        id="panel1-header"
-                        style={{ backgroundColor: "#edf4fb" }}
-                      >
-                        <Typography>선</Typography>
-                      </AccordionSummary>
-                      <AccordionDetails
-                        style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
-                      >
-                        <FormBoxWrap>
-                          <Grid container spacing={2}>
-                            <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
-                              <Button
-                                style={{
-                                  color:
-                                    EdgeType == "straight"
-                                      ? "rgba(0, 0, 0, .725)"
-                                      : "rgba(0, 0, 0, .325)",
-                                }}
-                                variant="text"
-                                onClick={() => onChangeEdgeType("straight")}
-                                fullWidth
-                              >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <StraightIcon />
-                                  <Typography variant="caption">
-                                    직선
-                                  </Typography>
-                                </div>
-                              </Button>
-                            </Grid>
-                            <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
-                              <Button
-                                style={{
-                                  color:
-                                    EdgeType == "step"
-                                      ? "rgba(0, 0, 0, .725)"
-                                      : "rgba(0, 0, 0, .325)",
-                                }}
-                                variant="text"
-                                onClick={() => onChangeEdgeType("step")}
-                                fullWidth
-                              >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <TrendingUpIcon />
-                                  <Typography variant="caption">
-                                    꺽은선
-                                  </Typography>
-                                </div>
-                              </Button>
-                            </Grid>
-                            <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
-                              <Button
-                                style={{
-                                  color:
-                                    EdgeType == "smoothstep"
-                                      ? "rgba(0, 0, 0, .725)"
-                                      : "rgba(0, 0, 0, .325)",
-                                }}
-                                variant="text"
-                                onClick={() => onChangeEdgeType("smoothstep")}
-                                fullWidth
-                              >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <MovingIcon />
-                                  <Typography variant="caption">
-                                    부드러운 꺽은선
-                                  </Typography>
-                                </div>
-                              </Button>
-                            </Grid>
-                            <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
-                              <Button
-                                style={{
-                                  color:
-                                    EdgeType == "default"
-                                      ? "rgba(0, 0, 0, .725)"
-                                      : "rgba(0, 0, 0, .325)",
-                                }}
-                                variant="text"
-                                onClick={() => onChangeEdgeType("default")}
-                                fullWidth
-                              >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <RedoIcon />
-                                  <Typography variant="caption">
-                                    곡선
-                                  </Typography>
-                                </div>
-                              </Button>
-                            </Grid>
-                            <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
-                              <Button
-                                style={{
-                                  color:
-                                    EdgeType == "straight_a"
-                                      ? "rgba(0, 0, 0, .725)"
-                                      : "rgba(0, 0, 0, .325)",
-                                }}
-                                variant="text"
-                                onClick={() => onChangeEdgeType("straight_a")}
-                                fullWidth
-                              >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <StraightIcon />
-                                  <Typography variant="caption">
-                                    실선
-                                  </Typography>
-                                </div>
-                              </Button>
-                            </Grid>
-                            <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
-                              <Button
-                                style={{
-                                  color:
-                                    EdgeType == "step_a"
-                                      ? "rgba(0, 0, 0, .725)"
-                                      : "rgba(0, 0, 0, .325)",
-                                }}
-                                variant="text"
-                                onClick={() => onChangeEdgeType("step_a")}
-                                fullWidth
-                              >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <TrendingUpIcon />
-                                  <Typography variant="caption">
-                                    꺽은선(실선)
-                                  </Typography>
-                                </div>
-                              </Button>
-                            </Grid>
-                            <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
-                              <Button
-                                style={{
-                                  color:
-                                    EdgeType == "smoothstep_a"
-                                      ? "rgba(0, 0, 0, .725)"
-                                      : "rgba(0, 0, 0, .325)",
-                                }}
-                                variant="text"
-                                onClick={() => onChangeEdgeType("smoothstep_a")}
-                                fullWidth
-                              >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <MovingIcon />
-                                  <Typography variant="caption">
-                                    부드러운 꺽은선(실선)
-                                  </Typography>
-                                </div>
-                              </Button>
-                            </Grid>
-                            <Grid item xs={6} sm={4} md={6} lg={6} xl={4}>
-                              <Button
-                                style={{
-                                  color:
-                                    EdgeType == "default_a"
-                                      ? "rgba(0, 0, 0, .725)"
-                                      : "rgba(0, 0, 0, .325)",
-                                }}
-                                variant="text"
-                                onClick={() => onChangeEdgeType("default_a")}
-                                fullWidth
-                              >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <RedoIcon />
-                                  <Typography variant="caption">
-                                    곡선(실선)
-                                  </Typography>
-                                </div>
-                              </Button>
-                            </Grid>
-                          </Grid>
-                        </FormBoxWrap>
-                      </AccordionDetails>
-                    </Accordion>
-                  )}
-                  {Type == "B" ||
-                  nodes.filter((item) => item.selected == true).length +
-                    edges.filter((item) => item.selected == true).length >
-                    1 ? (
-                    ""
-                  ) : (
-                    <Accordion defaultExpanded>
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1-content"
-                        id="panel1-header"
-                        style={{ backgroundColor: "#edf4fb" }}
-                      >
-                        <Typography>속성</Typography>
-                      </AccordionSummary>
-                      <AccordionDetails
-                        style={{ borderTop: "1px solid rgba(0, 0, 0, .125)" }}
-                      >
-                        <FormBoxWrap>
-                          <FormBox>
-                            {Type == "C" || Type == "G" ? (
-                              <tbody>
-                                <tr>
-                                  <th
-                                    style={{ minWidth: "40px", width: "30%" }}
-                                  >
-                                    테마
-                                  </th>
-                                  <td>
-                                    {bizComponentData !== null && (
-                                      <BizComponentComboBox
-                                        name="backgroundColor"
-                                        value={
-                                          nodes.filter(
+                        <FormBox>
+                          {Type == "C" || Type == "G" ? (
+                            <tbody>
+                              <tr>
+                                <th style={{ minWidth: "40px", width: "30%" }}>
+                                  테마
+                                </th>
+                                <td>
+                                  {bizComponentData !== null && (
+                                    <BizComponentComboBox
+                                      name="backgroundColor"
+                                      value={
+                                        nodes.filter(
+                                          (item) => item.selected == true
+                                        )[0] == undefined
+                                          ? ""
+                                          : nodes.filter(
+                                              (item) => item.selected == true
+                                            )[0].data.color
+                                      }
+                                      bizComponentId="L_SY060_COLOR"
+                                      bizComponentData={bizComponentData}
+                                      changeData={ComboBoxChange}
+                                      para="SY_A0060W"
+                                      className="required"
+                                    />
+                                  )}
+                                </td>
+                              </tr>
+                              <tr>
+                                <th style={{ minWidth: "40px", width: "30%" }}>
+                                  텍스트
+                                </th>
+                                <td>
+                                  <Input
+                                    name="label"
+                                    type="text"
+                                    value={
+                                      nodes.filter(
+                                        (item) => item.selected == true
+                                      )[0] == undefined
+                                        ? ""
+                                        : nodes.filter(
                                             (item) => item.selected == true
-                                          )[0] == undefined
-                                            ? ""
-                                            : nodes.filter(
-                                                (item) => item.selected == true
-                                              )[0].data.color
-                                        }
-                                        bizComponentId="L_SY060_COLOR"
-                                        bizComponentData={bizComponentData}
-                                        changeData={ComboBoxChange}
-                                        para="SY_A0060W"
-                                        className="required"
-                                      />
-                                    )}
-                                  </td>
-                                </tr>
+                                          )[0].data.label
+                                    }
+                                    onChange={InputChange}
+                                  />
+                                </td>
+                              </tr>
+                              {Type == "C" ? (
                                 <tr>
                                   <th
                                     style={{ minWidth: "40px", width: "30%" }}
                                   >
-                                    텍스트
+                                    링크
                                   </th>
                                   <td>
                                     <Input
-                                      name="label"
+                                      name="link"
                                       type="text"
                                       value={
                                         nodes.filter(
@@ -1655,114 +1670,85 @@ const FlowChart = (props) => {
                                           ? ""
                                           : nodes.filter(
                                               (item) => item.selected == true
-                                            )[0].data.label
+                                            )[0].data.link
                                       }
                                       onChange={InputChange}
                                     />
                                   </td>
                                 </tr>
-                                {Type == "C" ? (
-                                  <tr>
-                                    <th
-                                      style={{ minWidth: "40px", width: "30%" }}
-                                    >
-                                      링크
-                                    </th>
-                                    <td>
-                                      <Input
-                                        name="link"
-                                        type="text"
-                                        value={
-                                          nodes.filter(
-                                            (item) => item.selected == true
-                                          )[0] == undefined
-                                            ? ""
-                                            : nodes.filter(
-                                                (item) => item.selected == true
-                                              )[0].data.link
-                                        }
-                                        onChange={InputChange}
-                                      />
-                                    </td>
-                                  </tr>
-                                ) : (
-                                  ""
-                                )}
-                              </tbody>
-                            ) : Type == "I" ? (
-                              <tbody>
-                                <tr>
-                                  <th
-                                    style={{ minWidth: "40px", width: "30%" }}
+                              ) : (
+                                ""
+                              )}
+                            </tbody>
+                          ) : Type == "I" ? (
+                            <tbody>
+                              <tr>
+                                <th style={{ minWidth: "40px", width: "30%" }}>
+                                  첨부파일
+                                </th>
+                                <td>
+                                  <ButtonKendo
+                                    onClick={upload}
+                                    themeColor={"primary"}
+                                    icon={"upload"}
+                                    style={{ width: "100%" }}
                                   >
-                                    첨부파일
-                                  </th>
-                                  <td>
-                                    <ButtonKendo
-                                      onClick={upload}
-                                      themeColor={"primary"}
-                                      icon={"upload"}
-                                      style={{ width: "100%" }}
-                                    >
-                                      이미지 등록
-                                      <input
-                                        id="uploadAttachment"
-                                        style={{ display: "none" }}
-                                        type="file"
-                                        accept=".png, .jpg, .jpeg"
-                                        ref={excelInput}
-                                        onChange={(event) => {
-                                          handleFileUpload(event.target.files);
-                                        }}
-                                      />
-                                    </ButtonKendo>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            ) : Type == "E" ? (
-                              <tbody>
-                                <tr>
-                                  <th
-                                    style={{ minWidth: "40px", width: "30%" }}
-                                  >
-                                    텍스트
-                                  </th>
-                                  <td>
-                                    <Input
-                                      name="label"
-                                      type="text"
-                                      value={
-                                        edges.filter(
-                                          (item) => item.selected == true
-                                        )[0] == undefined
-                                          ? ""
-                                          : edges.filter(
-                                              (item) => item.selected == true
-                                            )[0].label
-                                      }
-                                      onChange={InputChange2}
+                                    이미지 등록
+                                    <input
+                                      id="uploadAttachment"
+                                      style={{ display: "none" }}
+                                      type="file"
+                                      accept=".png, .jpg, .jpeg"
+                                      ref={excelInput}
+                                      onChange={(event) => {
+                                        handleFileUpload(event.target.files);
+                                      }}
                                     />
-                                  </td>
-                                </tr>
-                              </tbody>
-                            ) : (
-                              ""
-                            )}
-                          </FormBox>
-                        </FormBoxWrap>
-                      </AccordionDetails>
-                    </Accordion>
-                  )}
-                </GridContainer>
+                                  </ButtonKendo>
+                                </td>
+                              </tr>
+                            </tbody>
+                          ) : Type == "E" ? (
+                            <tbody>
+                              <tr>
+                                <th style={{ minWidth: "40px", width: "30%" }}>
+                                  텍스트
+                                </th>
+                                <td>
+                                  <Input
+                                    name="label"
+                                    type="text"
+                                    value={
+                                      edges.filter(
+                                        (item) => item.selected == true
+                                      )[0] == undefined
+                                        ? ""
+                                        : edges.filter(
+                                            (item) => item.selected == true
+                                          )[0].label
+                                    }
+                                    onChange={InputChange2}
+                                  />
+                                </td>
+                              </tr>
+                            </tbody>
+                          ) : (
+                            ""
+                          )}
+                        </FormBox>
+                      </FormBoxWrap>
+                    </AccordionDetails>
+                  </Accordion>
+                )}
               </GridContainer>
-            </SwiperSlide>
-          </Swiper>
-        </GridContainerWrap>
+            </GridContainer>
+          </SwiperSlide>
+        </Swiper>
       ) : (
         <GridContainerWrap>
           <GridContainer
             width="65%"
-            height={isMobile ? "100%" : ""}
+            height="84vh"
             style={{ border: "1px solid #d3d3d3" }}
           >
             <div
@@ -1820,8 +1806,8 @@ const FlowChart = (props) => {
           </GridContainer>
           <GridContainer
             width={`calc(35% - ${GAP}px)`}
-            height={isMobile ? "100%" : ""}
             style={{ overflowY: "scroll" }}
+            height="84vh"
           >
             <GridTitleContainer
               style={{ marginRight: isMobile ? "0px" : "5px" }}

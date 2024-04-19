@@ -1063,6 +1063,7 @@ const BA_A0080: React.FC = () => {
     }));
     if (swiper && isMobile) {
       swiper.slideTo(1);
+      swiper.update();
     }
 
   };
@@ -1944,6 +1945,7 @@ const BA_A0080: React.FC = () => {
                     onClick={() => {
                       if (swiper) {
                         swiper.slideTo(0);
+                        swiper.update();
                       }
                     }}
                     icon="arrow-left"

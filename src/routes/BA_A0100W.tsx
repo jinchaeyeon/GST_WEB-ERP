@@ -102,6 +102,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
 const BA_A0100W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
+
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
 
@@ -515,6 +516,7 @@ const BA_A0100W: React.FC = () => {
     }));
     if (swiper && isMobile) {
       swiper.slideTo(1);
+      swiper.update();
     }
   };
 
@@ -1621,6 +1623,7 @@ const BA_A0100W: React.FC = () => {
                   onClick={() => {
                     if (swiper) {
                       swiper.slideTo(0);
+                      swiper.update();
                     }
                   }}
                   icon="arrow-left"

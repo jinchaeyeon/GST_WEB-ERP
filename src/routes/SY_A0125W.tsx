@@ -723,6 +723,7 @@ const SY_A0125W: React.FC = () => {
       });
       if (swiper && isMobile) {
         swiper.slideTo(1);
+        swiper.update();
       }
       setPage(initialPageState);
       setsubFilters((prev) => ({
@@ -1272,6 +1273,8 @@ const SY_A0125W: React.FC = () => {
   const { data, expanded, editItem, editItemField } = allMenuDataResult;
   const editItemId = editItem ? editItem[ALL_MENU_DATA_ITEM_KEY] : null;
 
+
+  
   return (
     <>
       {isMobile ? (
@@ -1404,6 +1407,7 @@ const SY_A0125W: React.FC = () => {
                   onClick={() => {
                     if (swiper) {
                       swiper.slideTo(0);
+                      swiper.update();
                     }
                   }}
                   icon="arrow-left"
