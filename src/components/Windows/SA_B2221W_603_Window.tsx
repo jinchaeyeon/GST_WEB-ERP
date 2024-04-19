@@ -133,7 +133,7 @@ const CopyWindow = ({
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    workType: "ORDLIST",
+    workType: "ITEMLIST",
     orgdiv: "01",
     itemcd: itemcd,
     itemnm: itemnm,
@@ -200,7 +200,7 @@ const CopyWindow = ({
     let data: any;
     setLoading(true);
     const parameters: Iparameters = {
-      procedureName: "P_SA_B2221W_Q",
+      procedureName: "P_SA_B2221W_603_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -211,6 +211,7 @@ const CopyWindow = ({
         "@p_itemcd": filters.itemcd,
         "@p_itemnm": filters.itemnm,
         "@p_itemacnt": "",
+        "@p_itemlvl2": "",
         "@p_amtgb": "",
         "@p_yyyy": convertDateToStr(filters.yyyy).substring(0, 4),
         "@p_mm": convertDateToStr(filters.mm).substring(4, 6),

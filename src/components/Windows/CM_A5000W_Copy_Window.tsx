@@ -2,7 +2,12 @@ import { DataResult, State, getter, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { Window, WindowMoveEvent } from "@progress/kendo-react-dialogs";
 import {
+  MultiSelect,
+  MultiSelectChangeEvent,
+} from "@progress/kendo-react-dropdowns";
+import {
   Grid,
+  GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
@@ -24,12 +29,15 @@ import {
   GridContainer,
   GridTitle,
   GridTitleContainer,
+  StatusIcon,
   TitleContainer,
 } from "../../CommonStyled";
 import { useApi } from "../../hooks/api";
 import { ICustData, IWindowPosition } from "../../hooks/interfaces";
 import { isLoading } from "../../store/atoms";
-import { Iparameters, TPermissions } from "../../store/types";
+import { gridList } from "../../store/columns/CM_A5000W_C";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../../store/types";
+import CheckBoxReadOnlyCell from "../Cells/CheckBoxReadOnlyCell";
 import DateCell from "../Cells/DateCell";
 import CustomOptionComboBox from "../ComboBoxes/CustomOptionComboBox";
 import {
@@ -54,12 +62,41 @@ import {
 } from "../CommonString";
 import FilterContainer from "../Containers/FilterContainer";
 import CommonDateRangePicker from "../DateRangePicker/CommonDateRangePicker";
+import CustomOptionRadioGroup from "../RadioGroups/CustomOptionRadioGroup";
 import CustomersWindow from "./CommonWindows/CustomersWindow";
 import PrsnnumWindow from "./CommonWindows/PrsnnumWindow";
 
 const DATA_ITEM_KEY = "num";
-let targetRowIndex: null | number = null;
+const DateField = ["request_date", "finexpdt", "completion_date"];
+const StatusField = ["status"];
+const checkboxField = ["is_emergency"];
 
+const StatusCell = (props: GridCellProps) => {
+  const { ariaColumnIndex, columnIndex, dataItem, field = "" } = props;
+
+  return (
+    <td
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={{ textAlign: "left", display: "flex", alignItems: "center" }}
+    >
+      <StatusIcon status={dataItem[field]} />{" "}
+      {dataItem[field] === "001"
+        ? "컨설팅 요청"
+        : dataItem[field] === "002"
+        ? "담당자지정"
+        : dataItem[field] === "003"
+        ? "요청취소"
+        : dataItem[field] === "004"
+        ? "대응불가"
+        : dataItem[field] === "005"
+        ? "검토 중"
+        : dataItem[field] === "006"
+        ? "답변 완료"
+        : ""}
+    </td>
+  );
+};
 type TKendoWindow = {
   setVisible(isVisible: boolean): void;
   setData(data: object): void; //data : 선택한 품목 데이터를 전달하는 함수
@@ -117,6 +154,16 @@ const KendoWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
+        dtgb1: defaultOption.find((item: any) => item.id === "dtgb1").valueCode,
+        is_emergency: defaultOption.find(
+          (item: any) => item.id === "is_emergency"
+        ).valueCode,
+        materialtype: defaultOption.find(
+          (item: any) => item.id === "materialtype"
+        ).valueCode,
+        require_type: defaultOption.find(
+          (item: any) => item.id === "require_type"
+        ).valueCode,
         isSearch: true,
       }));
     }
@@ -124,7 +171,10 @@ const KendoWindow = ({
 
   //비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
-  UseBizComponent("L_CM501_603, L_CM502_603", setBizComponentData);
+  UseBizComponent(
+    "L_CM500_603_Q, L_CM501_603, L_CM502_603",
+    setBizComponentData
+  );
   // 의약품상세분류, 문의 분야
 
   const [meditypeListData, setMeditypeListData] = React.useState([
@@ -133,7 +183,9 @@ const KendoWindow = ({
   const [requireListData, setRequireListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [statusListData, setStatusListData] = React.useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
       const meditypeQueryStr = getQueryFromBizComponent(
@@ -141,13 +193,17 @@ const KendoWindow = ({
           (item: any) => item.bizComponentId == "L_CM501_603"
         )
       );
-
+      const statusQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_CM500_603_Q"
+        )
+      );
       const requireQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId == "L_CM502_603"
         )
       );
-
+      fetchQueryData(statusQueryStr, setStatusListData);
       fetchQueryData(meditypeQueryStr, setMeditypeListData);
       fetchQueryData(requireQueryStr, setRequireListData);
     }
@@ -207,6 +263,25 @@ const KendoWindow = ({
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const filterMultiSelectChange = (event: MultiSelectChangeEvent) => {
+    const values = event.value;
+    const name = event.target.props.name ?? "";
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: values,
+    }));
+  };
+
+  const filterRadioChange = (e: any) => {
     const { name, value } = e;
 
     setFilters((prev) => ({
@@ -278,25 +353,42 @@ const KendoWindow = ({
   // 조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
-    workType: "Q",
+    workType: "LIST",
+    document_id: "",
     frdt: new Date(),
     todt: new Date(),
-    medicine_type: "",
+    dtgb1: "",
+    status: [{ sub_code: "%", code_name: "전체" }],
+    custnm: "",
     user_id: "",
     user_name: "",
+    project: "",
     customer_code: "",
-    customernm: "",
+    materialtype: "",
+    is_emergency: "Y",
+    extra_field2: "",
     require_type: "",
-    title: "",
-    find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
+
+  function getName(data: { sub_code: string }[]) {
+    let str = "";
+    data.map((item: { sub_code: string }) => (str += item.sub_code + "|"));
+    return data.length > 0 ? str.slice(0, -1) : str;
+  }
 
   const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
+
+    const status =
+      filters.status.length == 0
+        ? getName(statusListData)
+        : filters.status.length == 1
+        ? filters.status[0].sub_code
+        : getName(filters.status);
 
     //조회조건 파라미터
     const parameters: Iparameters = {
@@ -304,14 +396,21 @@ const KendoWindow = ({
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
+        "@p_work_type": filters.workType,
+        "@p_document_id": filters.document_id,
+        "@p_dtgb": filters.dtgb1,
+        "@p_status": status,
+        "@p_extra_field2": filters.extra_field2,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
-        "@p_medicine_type": filters.medicine_type,
         "@p_user_id": filters.user_id,
         "@p_user_name": filters.user_name,
-        "@p_customer_code": filters.customer_code,
+        "@p_customer_code": filters.custnm == "" ? "" : filters.customer_code,
+        "@p_customernm": filters.custnm,
+        "@p_project": filters.project,
+        "@p_materialtype": filters.materialtype,
+        "@p_is_emergency": filters.is_emergency,
         "@p_require_type": filters.require_type,
-        "@p_find_row_value": filters.find_row_value,
       },
     };
 
@@ -325,27 +424,6 @@ const KendoWindow = ({
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
-      if (filters.find_row_value !== "") {
-        // find_row_value 행으로 스크롤 이동
-        if (gridRef.current) {
-          const findRowIndex = rows.findIndex(
-            (row: any) => row.document_id == filters.find_row_value
-          );
-          targetRowIndex = findRowIndex;
-        }
-
-        // find_row_value 데이터가 존재하는 페이지로 설정
-        setPage({
-          skip: PAGE_SIZE * (data.pageNumber - 1),
-          take: PAGE_SIZE,
-        });
-      } else {
-        // 첫번째 행으로 스크롤 이동
-        if (gridRef.current) {
-          targetRowIndex = 0;
-        }
-      }
-
       setMainDataResult((prev) => {
         return {
           data: rows,
@@ -354,18 +432,7 @@ const KendoWindow = ({
       });
 
       if (totalRowCnt > 0) {
-        const selectedRow =
-          filters.find_row_value == ""
-            ? rows[0]
-            : rows.find(
-                (row: any) => row.document_id == filters.find_row_value
-              );
-
-        if (selectedRow != undefined) {
-          setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
-        } else {
-          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-        }
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
       }
     } else {
       console.log("[오류 발생]");
@@ -388,18 +455,10 @@ const KendoWindow = ({
     if (filters.isSearch) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
-      setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
+      setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters, permissions]);
-
-  //메인 그리드 데이터 변경 되었을 때
-  useEffect(() => {
-    if (targetRowIndex !== null && gridRef.current) {
-      gridRef.current.scrollIntoView({ rowIndex: targetRowIndex });
-      targetRowIndex = null;
-    }
-  }, [mainDataResult]);
 
   //그리드 리셋
   const resetAllGrid = () => {
@@ -476,13 +535,17 @@ const KendoWindow = ({
 
   // 부모로 데이터 전달, 창 닫기 (여러 행을 추가하는 경우 Close 제외)
   const onConfirmBtnClick = (props: any) => {
-    const selectedRowData = mainDataResult.data.filter(
-      (item) =>
-        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-    )[0];
+    if (mainDataResult.total == 0) {
+      alert("데이터가 없습니다.");
+    } else {
+      const selectedRowData = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
 
-    setData(selectedRowData);
-    onClose();
+      setData(selectedRowData);
+      onClose();
+    }
   };
 
   const onRowDoubleClick = (event: GridRowDoubleClickEvent) => {
@@ -515,7 +578,21 @@ const KendoWindow = ({
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
-              <th>문의일자</th>
+              <th>일자구분</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="dtgb1"
+                    value={filters.dtgb1}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                    valueField="code"
+                    textField="name"
+                    className="required"
+                  />
+                )}
+              </td>
+              <th>조회일자</th>
               <td>
                 <CommonDateRangePicker
                   value={{
@@ -532,38 +609,34 @@ const KendoWindow = ({
                   className="required"
                 />
               </td>
-              <th>의약품 상세분류</th>
+              <th>상태</th>
               <td>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="medicine_type"
-                    value={filters.medicine_type}
-                    type="new"
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
+                <MultiSelect
+                  name="status"
+                  data={statusListData}
+                  onChange={filterMultiSelectChange}
+                  value={filters.status}
+                  textField="code_name"
+                  dataItemKey="sub_code"
+                />
               </td>
-              <th>문의분야</th>
-              <td colSpan={3}>
-                {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="require_type"
-                    value={filters.require_type}
-                    type="new"
-                    customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                  />
-                )}
+              <th>물질상세분야</th>
+              <td>
+                <Input
+                  name="extra_field2"
+                  type="text"
+                  value={filters.extra_field2}
+                  onChange={filterInputChange}
+                />
               </td>
             </tr>
             <tr>
-              <th>SM담당자코드</th>
+              <th>영업담당자</th>
               <td>
                 <Input
-                  name="user_id"
+                  name="user_name"
                   type="text"
-                  value={filters.user_id}
+                  value={filters.user_name}
                   onChange={filterInputChange}
                 />
                 <ButtonInInput>
@@ -575,21 +648,12 @@ const KendoWindow = ({
                   />
                 </ButtonInInput>
               </td>
-              <th>SM담당자명</th>
+              <th>업체명</th>
               <td>
                 <Input
-                  name="user_nm"
+                  name="custnm"
                   type="text"
-                  value={filters.user_name}
-                  onChange={filterInputChange}
-                />
-              </td>
-              <th>회사코드</th>
-              <td>
-                <Input
-                  name="customer_code"
-                  type="text"
-                  value={filters.customer_code}
+                  value={filters.custnm}
                   onChange={filterInputChange}
                 />
                 <ButtonInInput>
@@ -601,14 +665,48 @@ const KendoWindow = ({
                   />
                 </ButtonInInput>
               </td>
-              <th>회사명</th>
+              <th>PJT NO.</th>
               <td>
                 <Input
-                  name="customernm"
+                  name="project"
                   type="text"
-                  value={filters.customernm}
+                  value={filters.project}
                   onChange={filterInputChange}
                 />
+              </td>
+            </tr>
+            <tr>
+              <th>물질분야</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="materialtype"
+                    value={filters.materialtype}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
+              </td>
+              <th>긴급여부</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="is_emergency"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
+                  />
+                )}
+              </td>
+              <th>문의분야</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionComboBox
+                    name="require_type"
+                    value={filters.require_type}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
               </td>
             </tr>
           </tbody>
@@ -623,9 +721,6 @@ const KendoWindow = ({
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
-              medicine_type: meditypeListData.find(
-                (items: any) => items.sub_code == row.medicine_type
-              )?.code_name,
               requrie_type: requireListData.find(
                 (items: any) => items.sub_code == row.requrie_type
               )?.code_name,
@@ -663,23 +758,31 @@ const KendoWindow = ({
           onItemChange={onMainItemChange}
           editField={EDIT_FIELD}
         >
-          <GridColumn
-            field="request_date"
-            title="문의일"
-            width="120px"
-            cell={DateCell}
-            footerCell={mainTotalFooterCell}
-          />
-          <GridColumn
-            field="medicine_type"
-            title="의약품 상세분류"
-            width="150px"
-          />
-          <GridColumn field="cpmnum" title="CPM관리번호" width="120px" />
-          <GridColumn field="user_name" title="SM담당자" width="100px" />
-          <GridColumn field="customernm" title="회사명" width="120px" />
-          <GridColumn field="require_type" title="문의분야" width="120px" />
-          <GridColumn field="title" title="제목" width="200px" />
+          {customOptionData !== null &&
+            customOptionData.menuCustomColumnOptions["grdList"].map(
+              (item: any, idx: number) =>
+                item.sortOrder !== -1 && (
+                  <GridColumn
+                    key={idx}
+                    id={item.id}
+                    field={item.fieldName}
+                    title={item.caption}
+                    width={item.width}
+                    cell={
+                      DateField.includes(item.fieldName)
+                        ? DateCell
+                        : StatusField.includes(item.fieldName)
+                        ? StatusCell
+                        : checkboxField.includes(item.fieldName)
+                        ? CheckBoxReadOnlyCell
+                        : undefined
+                    }
+                    footerCell={
+                      item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                    }
+                  />
+                )
+            )}
         </Grid>
         <BottomContainer>
           <ButtonContainer>
@@ -709,6 +812,19 @@ const KendoWindow = ({
           workType={"N"}
           setData={setUserData}
         />
+      )}
+      {gridList.map((grid: TGrid) =>
+        grid.columns.map((column: TColumn) => (
+          <div
+            key={column.id}
+            id={column.id}
+            data-grid-name={grid.gridName}
+            data-field={column.field}
+            data-caption={column.caption}
+            data-width={column.width}
+            hidden
+          />
+        ))
       )}
     </Window>
   );
