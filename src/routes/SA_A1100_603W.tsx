@@ -46,22 +46,26 @@ import {
   UsePermissions,
   convertDateToStr,
   dateformat,
+  dateformat2,
   getGridItemChangedData,
   getQueryFromBizComponent,
   numberWithCommas,
   numberWithCommas3,
+  setDefaultDate,
+  toDate,
 } from "../components/CommonFunction";
 import FilterContainer from "../components/Containers/FilterContainer";
 import { useApi } from "../hooks/api";
 import { gridList } from "../store/columns/SA_A1100_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { bytesToBase64 } from "byte-base64";
 import { useHistory, useLocation } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import TopButtons from "../components/Buttons/TopButtons";
+import CenterCell from "../components/Cells/CenterCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import NumberCommaCell from "../components/Cells/NumberCommaCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -70,9 +74,18 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
-import { isLoading } from "../store/atoms";
+import { IAttachmentData } from "../hooks/interfaces";
+import {
+  deletedAttadatnumsState,
+  deletedNameState,
+  isLoading,
+  unsavedAttadatnumsState,
+  unsavedNameState,
+} from "../store/atoms";
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -90,7 +103,6 @@ type TdataArr2 = {
   rowstatus_s: string[];
   seq_s: string[];
   payment_s: string[];
-  content_s: string[];
   amt_s: string[];
   paydt_s: string[];
   remark_s: string[];
@@ -99,30 +111,31 @@ type TdataArr2 = {
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY3 = "num";
-const DATA_ITEM_KEY4 = "num";
-const DATA_ITEM_KEY5 = "num";
 const DATA_ITEM_KEY6 = "num";
 let targetRowIndex: null | number = null;
-let targetRowIndex4: null | number = null;
-let targetRowIndex5: null | number = null;
-const DateField = ["materialindt", "recdt", "paydt"];
+const DateField = ["strdt", "enddt", "recdt", "paydt"];
 const NumberField = [
+  "cnt1",
   "amt",
-  "wonamt",
   "taxamt",
+  "contraamt",
+  "change_contraamt",
+  "fin_contraamt",
+  "wonamt",
   "totamt",
-  "ordamt",
-  "saleamt",
-  "collamt",
-  "janamt",
-  "ordseq",
+  "week_b",
+  "week_r",
+  "qty_t",
+  "totqty",
 ];
-
-const NumberCommaField = ["amt"];
 
 const NumberField2 = ["wonamt", "taxamt", "amt", "totamt"];
 
 const customField = ["insert_userid"];
+
+const centerField = ["num"];
+const centerField2 = ["seq"];
+
 let temp = 0;
 let temp2 = 0;
 let temp6 = 0;
@@ -161,14 +174,10 @@ let deletedMainRows: any[] = [];
 let deletedMainRows2: any[] = [];
 let deletedMainRows6: any[] = [];
 const SA_A1100_603W: React.FC = () => {
-  let deviceWidth = window.innerWidth;
-  let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
   const idGetter3 = getter(DATA_ITEM_KEY3);
-  const idGetter4 = getter(DATA_ITEM_KEY4);
-  const idGetter5 = getter(DATA_ITEM_KEY5);
   const idGetter6 = getter(DATA_ITEM_KEY6);
   const processApi = useApi();
   const userId = UseGetValueFromSessionItem("user_id");
@@ -181,8 +190,6 @@ const SA_A1100_603W: React.FC = () => {
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
-  const [page4, setPage4] = useState(initialPageState);
-  const [page5, setPage5] = useState(initialPageState);
   const [page6, setPage6] = useState(initialPageState);
   const [checked, setChecked] = useState(false);
 
@@ -222,16 +229,18 @@ const SA_A1100_603W: React.FC = () => {
       pgNum: 1,
     }));
   };
-
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent(
-    "L_dptcd_001,L_sysUserMaster_001, L_SA001_603, L_BA037",
+    "L_sysUserMaster_001, L_SA001_603, L_BA037",
     setBizComponentData
   );
-  const [dptcdListData, setdptcdListData] = useState([
-    { dptcd: "", dptnm: "" },
-  ]);
+
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
@@ -252,11 +261,6 @@ const SA_A1100_603W: React.FC = () => {
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
         )
       );
-      const dptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
-        )
-      );
 
       const materialtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
@@ -266,7 +270,6 @@ const SA_A1100_603W: React.FC = () => {
       fetchQueryData(contractgbQueryStr, setcontractgbListData);
       fetchQueryData(userQueryStr, setUserListData);
       fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
-      fetchQueryData(dptcdQueryStr, setdptcdListData);
     }
   }, [bizComponentData]);
 
@@ -296,14 +299,20 @@ const SA_A1100_603W: React.FC = () => {
   );
 
   // 조회조건
-  const [filters, setFilters] = useState<{ [name: string]: any }>({
+  const [filters, setFilters] = useState({
     orgdiv: "01",
     location: "01",
+    frdt: new Date(),
+    todt: new Date(),
     quokey: "",
     custcd: "",
     custnm: "",
-    quotestnum: "",
-    finyn: "",
+    custprsnnm: "",
+    contractno: "",
+    project: "",
+    chkperson: "",
+    materialtype: "",
+    extra_field2: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -314,7 +323,6 @@ const SA_A1100_603W: React.FC = () => {
     workType: "",
     orgdiv: "01",
     location: "01",
-    quokey: "",
     contractno: "",
     groupgb: "A",
     find_row_value: "",
@@ -327,57 +335,54 @@ const SA_A1100_603W: React.FC = () => {
     workType: "",
     orgdiv: "01",
     location: "01",
-    quokey: "",
     contractno: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
     pgSize: PAGE_SIZE,
   });
-  const [subFilters3, setSubFilters3] = useState<{ [name: string]: any }>({
-    workType: "",
-    orgdiv: "01",
-    location: "01",
-    quokey: "",
-    contractno: "",
-    find_row_value: "",
-    pgNum: 1,
-    isSearch: true,
-    pgSize: PAGE_SIZE,
-  });
-  const [subFilters4, setSubFilters4] = useState<{ [name: string]: any }>({
-    workType: "",
-    orgdiv: "01",
-    location: "01",
-    quokey: "",
-    contractno: "",
-    find_row_value: "",
-    pgNum: 1,
-    isSearch: true,
-    pgSize: PAGE_SIZE,
-  });
+
   const [subFilters6, setSubFilters6] = useState<{ [name: string]: any }>({
     workType: "",
     orgdiv: "01",
     location: "01",
-    quokey: "",
     contractno: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
     pgSize: PAGE_SIZE,
   });
-  const [Information, setInformation] = useState<{ [name: string]: any }>({
-    project: "",
-    materialnm: "",
-    totamt: 0,
-    ordamt: 0,
-    saleamt: 0,
-    collamt: 0,
-    janamt: 0,
-    wonchgrat: 0,
+  const [Information, setInformation] = useState({
     amtunit: "",
+    change_contraamt: 0,
+    contraamt: 0,
+    contractno: "",
+    custcd: "",
+    custnm: "",
+    custprsnnm: "",
+    enddt: new Date(),
+    fin_contraamt: 0,
+    project: "",
+    strdt: new Date(),
+    wonchgrat: 0,
+    insert_time: "",
+    materialtype: "",
+    extra_field2: "",
+    cotracdt: new Date(),
+    attdatnum: "",
+    files: "",
   });
+  // 삭제할 첨부파일 리스트를 담는 함수
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
 
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
@@ -386,12 +391,6 @@ const SA_A1100_603W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
   const [selectedState3, setSelectedState3] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-  const [selectedState4, setSelectedState4] = useState<{
-    [id: string]: boolean | number[];
-  }>({});
-  const [selectedState5, setSelectedState5] = useState<{
     [id: string]: boolean | number[];
   }>({});
   const [selectedState6, setSelectedState6] = useState<{
@@ -424,12 +423,6 @@ const SA_A1100_603W: React.FC = () => {
   const [mainDataState3, setMainDataState3] = useState<State>({
     sort: [],
   });
-  const [mainDataState4, setMainDataState4] = useState<State>({
-    sort: [],
-  });
-  const [mainDataState5, setMainDataState5] = useState<State>({
-    sort: [],
-  });
   const [mainDataState6, setMainDataState6] = useState<State>({
     sort: [],
   });
@@ -441,12 +434,6 @@ const SA_A1100_603W: React.FC = () => {
   );
   const [mainDataResult3, setMainDataResult3] = useState<DataResult>(
     process([], mainDataState3)
-  );
-  const [mainDataResult4, setMainDataResult4] = useState<DataResult>(
-    process([], mainDataState4)
-  );
-  const [mainDataResult5, setMainDataResult5] = useState<DataResult>(
-    process([], mainDataState5)
   );
   const [mainDataResult6, setMainDataResult6] = useState<DataResult>(
     process([], mainDataState6)
@@ -465,7 +452,6 @@ const SA_A1100_603W: React.FC = () => {
     setSubFilters((prev) => ({
       ...prev,
       workType: "DETAIL",
-      quokey: selectedRowData.quokey,
       contractno: selectedRowData.contractno,
       groupgb: "A",
       pgNum: 1,
@@ -474,23 +460,6 @@ const SA_A1100_603W: React.FC = () => {
     setSubFilters2((prev) => ({
       ...prev,
       workType: "COMMENT",
-      quokey: selectedRowData.quokey,
-      contractno: selectedRowData.contractno,
-      pgNum: 1,
-      isSearch: true,
-    }));
-    setSubFilters3((prev) => ({
-      ...prev,
-      workType: "SALE",
-      quokey: selectedRowData.quokey,
-      contractno: selectedRowData.contractno,
-      pgNum: 1,
-      isSearch: true,
-    }));
-    setSubFilters4((prev) => ({
-      ...prev,
-      workType: "MEETING",
-      quokey: selectedRowData.quokey,
       contractno: selectedRowData.contractno,
       pgNum: 1,
       isSearch: true,
@@ -498,7 +467,6 @@ const SA_A1100_603W: React.FC = () => {
     setSubFilters6((prev) => ({
       ...prev,
       workType: "PAYMENT",
-      quokey: selectedRowData.quokey,
       contractno: selectedRowData.contractno,
       pgNum: 1,
       isSearch: true,
@@ -633,12 +601,27 @@ const SA_A1100_603W: React.FC = () => {
         history.replace({}, "");
         setFilters((prev) => ({
           ...prev,
+          frdt: setDefaultDate(customOptionData, "frdt"),
+          todt: setDefaultDate(customOptionData, "todt"),
+          materialtype: defaultOption.find(
+            (item: any) => item.id === "materialtype"
+          ).valueCode,
+          chkperson: defaultOption.find((item: any) => item.id === "chkperson")
+            .valueCode,
           isSearch: true,
           find_row_value: queryParams.get("go") as string,
         }));
       } else {
         setFilters((prev) => ({
           ...prev,
+          frdt: setDefaultDate(customOptionData, "frdt"),
+          todt: setDefaultDate(customOptionData, "todt"),
+          materialtype: defaultOption.find(
+            (item: any) => item.id === "materialtype"
+          ).valueCode,
+          chkperson: defaultOption.find((item: any) => item.id === "chkperson")
+            .valueCode,
+          isSearch: true,
         }));
       }
     }
@@ -678,28 +661,6 @@ const SA_A1100_603W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (subFilters3.isSearch && permissions !== null) {
-      const _ = require("lodash");
-      const deepCopiedFilters = _.cloneDeep(subFilters3);
-
-      setSubFilters3((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
-      fetchSubGrid3(deepCopiedFilters);
-    }
-  }, [subFilters3, permissions]);
-
-  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
-  useEffect(() => {
-    if (subFilters4.isSearch && permissions !== null) {
-      const _ = require("lodash");
-      const deepCopiedFilters = _.cloneDeep(subFilters4);
-
-      setSubFilters4((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
-      fetchSubGrid4(deepCopiedFilters);
-    }
-  }, [subFilters4, permissions]);
-
-  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
-  useEffect(() => {
     if (subFilters6.isSearch && permissions !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(subFilters6);
@@ -710,8 +671,6 @@ const SA_A1100_603W: React.FC = () => {
   }, [subFilters6, permissions]);
 
   let gridRef: any = useRef(null);
-  let gridRef4: any = useRef(null);
-  let gridRef5: any = useRef(null);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -721,22 +680,6 @@ const SA_A1100_603W: React.FC = () => {
     }
   }, [mainDataResult]);
 
-  useEffect(() => {
-    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
-    if (targetRowIndex4 !== null && gridRef4.current) {
-      gridRef4.current.scrollIntoView({ rowIndex: targetRowIndex4 });
-      targetRowIndex4 = null;
-    }
-  }, [mainDataResult4]);
-
-  useEffect(() => {
-    // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
-    if (targetRowIndex5 !== null && gridRef5.current) {
-      gridRef5.current.scrollIntoView({ rowIndex: targetRowIndex5 });
-      targetRowIndex5 = null;
-    }
-  }, [mainDataResult5]);
-
   //그리드 리셋
   const resetAllGrid = () => {
     deletedMainRows = [];
@@ -745,14 +688,10 @@ const SA_A1100_603W: React.FC = () => {
     setPage(initialPageState);
     setPage2(initialPageState);
     setPage3(initialPageState);
-    setPage4(initialPageState);
-    setPage5(initialPageState);
     setPage6(initialPageState);
     setMainDataResult(process([], mainDataState));
     setMainDataResult2(process([], mainDataState2));
     setMainDataResult3(process([], mainDataState3));
-    setMainDataResult4(process([], mainDataState4));
-    setMainDataResult5(process([], mainDataState5));
     setMainDataResult6(process([], mainDataState6));
   };
 
@@ -771,14 +710,19 @@ const SA_A1100_603W: React.FC = () => {
         "@p_work_type": "LIST",
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
         "@p_quokey": filters.quokey,
         "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
         "@p_custnm": filters.custnm,
-        "@p_quotestnum": filters.quotestnum,
-        "@p_finyn": filters.finyn,
-        "@p_groupgb": "",
-        "@p_contractno": "",
+        "@p_custprsnnm": filters.custprsnnm,
+        "@p_contractno": filters.contractno,
+        "@p_project": filters.project,
+        "@p_chkperson": filters.chkperson,
+        "@p_materialtype": filters.materialtype,
+        "@p_extra_field2": filters.extra_field2,
         "@p_find_row_value": filters.find_row_value,
+        "@p_groupgb": "",
       },
     };
 
@@ -860,16 +804,21 @@ const SA_A1100_603W: React.FC = () => {
       pageSize: subFilters.pgSize,
       parameters: {
         "@p_work_type": "DETAIL",
-        "@p_orgdiv": subFilters.orgdiv,
-        "@p_location": subFilters.location,
-        "@p_quokey": subFilters.quokey,
-        "@p_custcd": "",
-        "@p_custnm": "",
-        "@p_quotestnum": "",
-        "@p_finyn": "",
-        "@p_groupgb": subFilters.groupgb,
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_quokey": filters.quokey,
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_custprsnnm": filters.custprsnnm,
         "@p_contractno": subFilters.contractno,
-        "@p_find_row_value": subFilters.find_row_value,
+        "@p_project": filters.project,
+        "@p_chkperson": filters.chkperson,
+        "@p_materialtype": filters.materialtype,
+        "@p_extra_field2": filters.extra_field2,
+        "@p_find_row_value": filters.find_row_value,
+        "@p_groupgb": subFilters.groupgb,
       },
     };
     try {
@@ -882,22 +831,55 @@ const SA_A1100_603W: React.FC = () => {
       const totalRowCnt = data.tables[1].TotalRowCount;
       const rows = data.tables[1].Rows;
 
-      if (data.tables[0].TotalRowCount > 0) {
+      if (data.tables[0].RowCount > 0) {
         setInformation((prev) => ({
           ...prev,
-          project: data.tables[0].Rows[0].project,
-          materialnm: data.tables[0].Rows[0].materialnm,
-          totamt: data.tables[0].Rows[0].totamt,
-          wonchgrat: data.tables[0].Rows[0].wonchgrat,
           amtunit: data.tables[0].Rows[0].amtunit,
+          change_contraamt: data.tables[0].Rows[0].change_contraamt,
+          contraamt: data.tables[0].Rows[0].contraamt,
+          contractno: data.tables[0].Rows[0].contractno,
+          custcd: data.tables[0].Rows[0].custcd,
+          custnm: data.tables[0].Rows[0].custnm,
+          custprsnnm: data.tables[0].Rows[0].custprsnnm,
+          enddt:
+            data.tables[0].Rows[0].enddt == ""
+              ? new Date()
+              : toDate(data.tables[0].Rows[0].enddt),
+          fin_contraamt: data.tables[0].Rows[0].fin_contraamt,
+          project: data.tables[0].Rows[0].project,
+          strdt:
+            data.tables[0].Rows[0].strdt == ""
+              ? new Date()
+              : toDate(data.tables[0].Rows[0].strdt),
+          wonchgrat: data.tables[0].Rows[0].wonchgrat,
+          insert_time: data.tables[0].Rows[0].insert_time.substring(0, 10),
+          materialtype: data.tables[0].Rows[0].materialtype,
+          extra_field2: data.tables[0].Rows[0].extra_field2,
+          cotracdt: toDate(data.tables[0].Rows[0].cotracdt),
+          attdatnum: data.tables[0].Rows[0].attdatnum,
+          files: data.tables[0].Rows[0].files,
         }));
       } else {
         setInformation((prev) => ({
           ...prev,
+          amtunit: "",
+          change_contraamt: 0,
+          contraamt: 0,
+          contractno: "",
+          custcd: "",
+          custnm: "",
+          custprsnnm: "",
+          enddt: new Date(),
+          fin_contraamt: 0,
           project: "",
-          materialnm: "",
-          totamt: 0,
+          strdt: new Date(),
           wonchgrat: 0,
+          insert_time: "",
+          materialtype: "",
+          extra_field2: "",
+          cotracdt: new Date(),
+          attdatnum: "",
+          files: "",
         }));
       }
       setMainDataResult2({
@@ -936,16 +918,21 @@ const SA_A1100_603W: React.FC = () => {
       pageSize: subFilters2.pgSize,
       parameters: {
         "@p_work_type": "COMMENT",
-        "@p_orgdiv": subFilters2.orgdiv,
-        "@p_location": subFilters2.location,
-        "@p_quokey": subFilters2.quokey,
-        "@p_custcd": "",
-        "@p_custnm": "",
-        "@p_quotestnum": "",
-        "@p_finyn": "",
-        "@p_groupgb": "",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_quokey": filters.quokey,
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_custprsnnm": filters.custprsnnm,
         "@p_contractno": subFilters2.contractno,
-        "@p_find_row_value": subFilters2.find_row_value,
+        "@p_project": filters.project,
+        "@p_chkperson": filters.chkperson,
+        "@p_materialtype": filters.materialtype,
+        "@p_extra_field2": filters.extra_field2,
+        "@p_find_row_value": filters.find_row_value,
+        "@p_groupgb": "",
       },
     };
     try {
@@ -982,195 +969,6 @@ const SA_A1100_603W: React.FC = () => {
   };
 
   //그리드 데이터 조회
-  const fetchSubGrid3 = async (subFilters3: any) => {
-    let data: any;
-    setLoading(true);
-
-    //조회프로시저  파라미터
-    const parameters3: Iparameters = {
-      procedureName: "P_SA_A1100_603W_Q",
-      pageNumber: subFilters3.pgNum,
-      pageSize: subFilters3.pgSize,
-      parameters: {
-        "@p_work_type": "SALE",
-        "@p_orgdiv": subFilters3.orgdiv,
-        "@p_location": subFilters3.location,
-        "@p_quokey": subFilters3.quokey,
-        "@p_custcd": "",
-        "@p_custnm": "",
-        "@p_quotestnum": "",
-        "@p_finyn": "",
-        "@p_groupgb": "",
-        "@p_contractno": subFilters3.contractno,
-        "@p_find_row_value": subFilters3.find_row_value,
-      },
-    };
-    try {
-      data = await processApi<any>("procedure", parameters3);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
-      if (subFilters3.find_row_value !== "") {
-        // find_row_value 행으로 스크롤 이동
-        if (gridRef4.current) {
-          const findRowIndex = rows.findIndex(
-            (row: any) => row.quonum == subFilters3.find_row_value
-          );
-          targetRowIndex4 = findRowIndex;
-        }
-
-        // find_row_value 데이터가 존재하는 페이지로 설정
-        setPage4({
-          skip: PAGE_SIZE * (data.pageNumber - 1),
-          take: PAGE_SIZE,
-        });
-      } else {
-        // 첫번째 행으로 스크롤 이동
-        if (gridRef4.current) {
-          targetRowIndex4 = 0;
-        }
-      }
-      if (data.tables[0].TotalRowCount > 0) {
-        setInformation((prev) => ({
-          ...prev,
-          ordamt: data.tables[0].Rows[0].ordamt,
-          saleamt: data.tables[0].Rows[0].saleamt,
-          collamt: data.tables[0].Rows[0].collamt,
-          janamt: data.tables[0].Rows[0].janamt,
-        }));
-      } else {
-        setInformation((prev) => ({
-          ...prev,
-          ordamt: 0,
-          saleamt: 0,
-          collamt: 0,
-          janamt: 0,
-        }));
-      }
-      setMainDataResult4({
-        data: rows,
-        total: totalRowCnt == -1 ? 0 : totalRowCnt,
-      });
-      if (totalRowCnt > 0) {
-        const selectedRow =
-          subFilters3.find_row_value === ""
-            ? rows[0]
-            : rows.find((row: any) => row.quonum == subFilters3.find_row_value);
-        if (selectedRow != undefined) {
-          setSelectedState4({ [selectedRow[DATA_ITEM_KEY4]]: true });
-        } else {
-          setSelectedState4({ [rows[0][DATA_ITEM_KEY4]]: true });
-        }
-      }
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
-    // 필터 isSearch false처리, pgNum 세팅
-    setSubFilters3((prev) => ({
-      ...prev,
-      pgNum:
-        data && data.hasOwnProperty("pageNumber")
-          ? data.pageNumber
-          : prev.pgNum,
-      isSearch: false,
-    }));
-    setLoading(false);
-  };
-
-  //그리드 데이터 조회
-  const fetchSubGrid4 = async (subFilters4: any) => {
-    let data: any;
-    setLoading(true);
-
-    //조회프로시저  파라미터
-    const parameters4: Iparameters = {
-      procedureName: "P_SA_A1100_603W_Q",
-      pageNumber: subFilters4.pgNum,
-      pageSize: subFilters4.pgSize,
-      parameters: {
-        "@p_work_type": "MEETING",
-        "@p_orgdiv": subFilters4.orgdiv,
-        "@p_location": subFilters4.location,
-        "@p_quokey": subFilters4.quokey,
-        "@p_custcd": "",
-        "@p_custnm": "",
-        "@p_quotestnum": "",
-        "@p_finyn": "",
-        "@p_groupgb": "",
-        "@p_contractno": subFilters4.contractno,
-        "@p_find_row_value": subFilters4.find_row_value,
-      },
-    };
-    try {
-      data = await processApi<any>("procedure", parameters4);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess === true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
-      if (subFilters4.find_row_value !== "") {
-        // find_row_value 행으로 스크롤 이동
-        if (gridRef5.current) {
-          const findRowIndex = rows.findIndex(
-            (row: any) => row.meetingnum == subFilters4.find_row_value
-          );
-          targetRowIndex5 = subFilters4;
-        }
-
-        // find_row_value 데이터가 존재하는 페이지로 설정
-        setPage5({
-          skip: PAGE_SIZE * (data.pageNumber - 1),
-          take: PAGE_SIZE,
-        });
-      } else {
-        // 첫번째 행으로 스크롤 이동
-        if (gridRef5.current) {
-          targetRowIndex5 = 0;
-        }
-      }
-
-      setMainDataResult5({
-        data: rows,
-        total: totalRowCnt == -1 ? 0 : totalRowCnt,
-      });
-
-      if (totalRowCnt > 0) {
-        const selectedRow =
-          subFilters4.find_row_value === ""
-            ? rows[0]
-            : rows.find(
-                (row: any) => row.meetingnum == subFilters4.find_row_value
-              );
-        if (selectedRow != undefined) {
-          setSelectedState5({ [selectedRow[DATA_ITEM_KEY5]]: true });
-        } else {
-          setSelectedState5({ [rows[0][DATA_ITEM_KEY5]]: true });
-        }
-      }
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
-    // 필터 isSearch false처리, pgNum 세팅
-    setSubFilters4((prev) => ({
-      ...prev,
-      pgNum:
-        data && data.hasOwnProperty("pageNumber")
-          ? data.pageNumber
-          : prev.pgNum,
-      isSearch: false,
-    }));
-    setLoading(false);
-  };
-
-  //그리드 데이터 조회
   const fetchSubGrid6 = async (subFilters6: any) => {
     let data: any;
     setLoading(true);
@@ -1183,16 +981,21 @@ const SA_A1100_603W: React.FC = () => {
       pageSize: subFilters6.pgSize,
       parameters: {
         "@p_work_type": "PAYMENT",
-        "@p_orgdiv": subFilters6.orgdiv,
-        "@p_location": subFilters6.location,
-        "@p_quokey": subFilters6.quokey,
-        "@p_custcd": "",
-        "@p_custnm": "",
-        "@p_quotestnum": "",
-        "@p_finyn": "",
-        "@p_groupgb": "",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_quokey": filters.quokey,
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_custprsnnm": filters.custprsnnm,
         "@p_contractno": subFilters6.contractno,
-        "@p_find_row_value": subFilters6.find_row_value,
+        "@p_project": filters.project,
+        "@p_chkperson": filters.chkperson,
+        "@p_materialtype": filters.materialtype,
+        "@p_extra_field2": filters.extra_field2,
+        "@p_find_row_value": filters.find_row_value,
+        "@p_groupgb": "",
       },
     };
     try {
@@ -1270,34 +1073,6 @@ const SA_A1100_603W: React.FC = () => {
     });
   };
 
-  const pageChange4 = (event: GridPageChangeEvent) => {
-    const { page } = event;
-
-    setSubFilters3((prev) => ({
-      ...prev,
-      pgNum: page.skip / page.take + 1,
-      isSearch: true,
-    }));
-
-    setPage4({
-      ...event.page,
-    });
-  };
-
-  const pageChange5 = (event: GridPageChangeEvent) => {
-    const { page } = event;
-
-    setSubFilters4((prev) => ({
-      ...prev,
-      pgNum: page.skip / page.take + 1,
-      isSearch: true,
-    }));
-
-    setPage5({
-      ...event.page,
-    });
-  };
-
   const pageChange6 = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -1321,6 +1096,13 @@ const SA_A1100_603W: React.FC = () => {
     });
 
     setSelectedState(newSelectedState);
+
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
+    if (unsavedAttadatnums.length > 0) {
+      setDeletedAttadatnums(unsavedAttadatnums);
+    }
   };
 
   const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
@@ -1343,25 +1125,6 @@ const SA_A1100_603W: React.FC = () => {
     setSelectedState3(newSelectedState);
   };
 
-  const onSelectionChange4 = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedState4,
-      dataItemKey: DATA_ITEM_KEY4,
-    });
-
-    setSelectedState4(newSelectedState);
-  };
-
-  const onSelectionChange5 = (event: GridSelectionChangeEvent) => {
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedState5,
-      dataItemKey: DATA_ITEM_KEY5,
-    });
-
-    setSelectedState5(newSelectedState);
-  };
   const onSelectionChange6 = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -1385,6 +1148,12 @@ const SA_A1100_603W: React.FC = () => {
       setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
       setTabSelected(0);
       setChecked(false);
+      if (unsavedName.length > 0) {
+        setDeletedName(unsavedName);
+      }
+      if (unsavedAttadatnums.length > 0) {
+        setDeletedAttadatnums(unsavedAttadatnums);
+      }
     } catch (e) {
       alert(e);
     }
@@ -1402,13 +1171,6 @@ const SA_A1100_603W: React.FC = () => {
     setMainDataState3(event.dataState);
   };
 
-  const onMainDataStateChange4 = (event: GridDataStateChangeEvent) => {
-    setMainDataState4(event.dataState);
-  };
-
-  const onMainDataStateChange5 = (event: GridDataStateChangeEvent) => {
-    setMainDataState5(event.dataState);
-  };
   const onMainDataStateChange6 = (event: GridDataStateChangeEvent) => {
     setMainDataState6(event.dataState);
   };
@@ -1451,31 +1213,6 @@ const SA_A1100_603W: React.FC = () => {
     );
   };
 
-  //그리드 푸터
-  const mainTotalFooterCell4 = (props: GridFooterCellProps) => {
-    var parts = mainDataResult4.total.toString().split(".");
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-        건
-      </td>
-    );
-  };
-
-  //그리드 푸터
-  const mainTotalFooterCell5 = (props: GridFooterCellProps) => {
-    var parts = mainDataResult5.total.toString().split(".");
-    return (
-      <td colSpan={props.colSpan} style={props.style}>
-        총{" "}
-        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
-          (parts[1] ? "." + parts[1] : "")}
-        건
-      </td>
-    );
-  };
   const mainTotalFooterCell6 = (props: GridFooterCellProps) => {
     var parts = mainDataResult6.total.toString().split(".");
     return (
@@ -1547,8 +1284,6 @@ const SA_A1100_603W: React.FC = () => {
   let _export: any;
   let _export2: any;
   let _export3: any;
-  let _export4: any;
-  let _export5: any;
   let _export6: any;
   const exportExcel = () => {
     if (_export !== null && _export !== undefined) {
@@ -1566,19 +1301,9 @@ const SA_A1100_603W: React.FC = () => {
         optionsGridTwo.sheets[1] = optionsGridThree.sheets[0];
         optionsGridTwo.sheets[2] = optionsGridSix.sheets[0];
         optionsGridTwo.sheets[0].title = "계약에 대한 코멘트";
-        optionsGridTwo.sheets[1].title = "시험리스트";
+        optionsGridTwo.sheets[1].title = "계약 상세내용";
         optionsGridTwo.sheets[2].title = "지급조건";
         _export2.save(optionsGridTwo);
-      }
-    }
-    if (_export4 !== null && _export4 !== undefined) {
-      if (tabSelected == 2) {
-        const optionsGridFour = _export4.workbookOptions();
-        const optionsGridFive = _export5.workbookOptions();
-        optionsGridFour.sheets[1] = optionsGridFive.sheets[0];
-        optionsGridFour.sheets[0].title = "기존거래내역";
-        optionsGridFour.sheets[1].title = "회의록 리스트";
-        _export4.save(optionsGridFour);
       }
     }
   };
@@ -1701,7 +1426,7 @@ const SA_A1100_603W: React.FC = () => {
     }
   };
   const enterEdit6 = (dataItem: any, field: string) => {
-    if (field != "rowstatus") {
+    if (field != "rowstatus" && field != "num") {
       const newData = mainDataResult6.data.map((item) =>
         item[DATA_ITEM_KEY6] == dataItem[DATA_ITEM_KEY6]
           ? {
@@ -1853,7 +1578,7 @@ const SA_A1100_603W: React.FC = () => {
   };
 
   const enterEdit2 = (dataItem: any, field: string) => {
-    if (field != "rowstatus" && field != "recdt") {
+    if (field != "rowstatus" && field != "recdt" && field != "seq") {
       const newData = mainDataResult3.data.map((item) =>
         item[DATA_ITEM_KEY3] == dataItem[DATA_ITEM_KEY3]
           ? {
@@ -1944,28 +1669,8 @@ const SA_A1100_603W: React.FC = () => {
     setMainDataState3((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  const onMainSortChange4 = (e: any) => {
-    setMainDataState4((prev) => ({ ...prev, sort: e.sort }));
-  };
-
-  const onMainSortChange5 = (e: any) => {
-    setMainDataState((prev) => ({ ...prev, sort: e.sort }));
-  };
-
   const onMainSortChange6 = (e: any) => {
     setMainDataState6((prev) => ({ ...prev, sort: e.sort }));
-  };
-
-  const onLinkChange = (event: GridRowDoubleClickEvent) => {
-    const selectedRowData = event.dataItem;
-    const origin = window.location.origin;
-    window.open(
-      origin +
-        `/CM_A7000W?go=` +
-        selectedRowData.orgdiv +
-        "_" +
-        selectedRowData.meetingnum
-    );
   };
 
   const onAddClick = () => {
@@ -2004,10 +1709,10 @@ const SA_A1100_603W: React.FC = () => {
       [DATA_ITEM_KEY6]: ++temp6,
       orgdiv: "01",
       payment: "",
-      content: "",
       seq: 0,
       paydt: convertDateToStr(new Date()),
       amt: 0,
+      remark: "",
       rowstatus: "N",
     };
     setSelectedState6({ [newDataItem[DATA_ITEM_KEY6]]: true });
@@ -2067,7 +1772,6 @@ const SA_A1100_603W: React.FC = () => {
     quoseq_s: "",
     seq_s: "",
     payment_s: "",
-    content_s: "",
     paydt_s: "",
     remark_s: "",
   });
@@ -2082,19 +1786,23 @@ const SA_A1100_603W: React.FC = () => {
       "@p_contractno": subFilters.contractno,
       "@p_location": "01",
       "@p_project": Information.project,
+      "@p_cotracdt": convertDateToStr(Information.cotracdt),
+      "@p_strdt": convertDateToStr(Information.strdt),
+      "@p_enddt": convertDateToStr(Information.enddt),
       "@p_wonchgrat": Information.wonchgrat,
       "@p_amtunit": Information.amtunit,
+      "@p_attdatnum": Information.attdatnum,
       "@p_rowstatus_s": ParaData.rowstatus_s,
-      "@p_amt_s": ParaData.amt_s,
+      "@p_seq_s": ParaData.seq_s,
       "@p_wonamt_s": ParaData.wonamt_s,
       "@p_taxamt_s": ParaData.taxamt_s,
+      "@p_amt_s": ParaData.amt_s,
       "@p_contractgb_s": ParaData.contractgb_s,
       "@p_quonum_s": ParaData.quonum_s,
       "@p_quorev_s": ParaData.quorev_s,
       "@p_quoseq_s": ParaData.quoseq_s,
-      "@p_seq_s": ParaData.seq_s,
+
       "@p_payment_s": ParaData.payment_s,
-      "@p_content_s": ParaData.content_s,
       "@p_paydt_s": ParaData.paydt_s,
       "@p_remark_s": ParaData.remark_s,
       "@p_userid": userId,
@@ -2205,7 +1913,6 @@ const SA_A1100_603W: React.FC = () => {
       rowstatus_s: [],
       seq_s: [],
       payment_s: [],
-      content_s: [],
       amt_s: [],
       paydt_s: [],
       remark_s: [],
@@ -2216,7 +1923,6 @@ const SA_A1100_603W: React.FC = () => {
         rowstatus = "",
         seq = "",
         payment = "",
-        content = "",
         amt = "",
         paydt = "",
         remark = "",
@@ -2225,7 +1931,6 @@ const SA_A1100_603W: React.FC = () => {
       dataArr.rowstatus_s.push(rowstatus);
       dataArr.seq_s.push(seq);
       dataArr.payment_s.push(payment);
-      dataArr.content_s.push(content);
       dataArr.amt_s.push(amt);
       dataArr.paydt_s.push(paydt);
       dataArr.remark_s.push(remark);
@@ -2236,7 +1941,6 @@ const SA_A1100_603W: React.FC = () => {
         rowstatus = "",
         seq = "",
         payment = "",
-        content = "",
         amt = "",
         paydt = "",
         remark = "",
@@ -2245,7 +1949,6 @@ const SA_A1100_603W: React.FC = () => {
       dataArr.rowstatus_s.push("D");
       dataArr.seq_s.push(seq);
       dataArr.payment_s.push(payment);
-      dataArr.content_s.push(content);
       dataArr.amt_s.push(amt);
       dataArr.paydt_s.push(paydt);
       dataArr.remark_s.push(remark);
@@ -2257,7 +1960,6 @@ const SA_A1100_603W: React.FC = () => {
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       seq_s: dataArr.seq_s.join("|"),
       payment_s: dataArr.payment_s.join("|"),
-      content_s: dataArr.content_s.join("|"),
       amt_s: dataArr.amt_s.join("|"),
       paydt_s: dataArr.paydt_s.join("|"),
       remark_s: dataArr.remark_s.join("|"),
@@ -2281,37 +1983,41 @@ const SA_A1100_603W: React.FC = () => {
       data = null;
     }
     if (data.isSuccess === true) {
-      setSubFilters((prev) => ({
-        ...prev,
-        workType: "DETAIL",
-        groupgb: "A",
-        pgNum: 1,
-        isSearch: true,
-      }));
-      setSubFilters2((prev) => ({
-        ...prev,
-        workType: "COMMENT",
-        pgNum: 1,
-        isSearch: true,
-      }));
-      setSubFilters3((prev) => ({
-        ...prev,
-        workType: "SALE",
-        pgNum: 1,
-        isSearch: true,
-      }));
-      setSubFilters4((prev) => ({
-        ...prev,
-        workType: "MEETING",
-        pgNum: 1,
-        isSearch: true,
-      }));
-      setSubFilters6((prev) => ({
-        ...prev,
-        workType: "PAYMENT",
-        pgNum: 1,
-        isSearch: true,
-      }));
+      if (ParaData.workType == "D") {
+        setDeletedAttadatnums([Information.attdatnum]);
+        setTabSelected(0);
+        setFilters((prev) => ({
+          ...prev,
+          pgNum: 1,
+          isSearch: true,
+        }));
+      } else {
+        if (unsavedName.length > 0) {
+          setDeletedName(unsavedName);
+        }
+        if (unsavedAttadatnums.length > 0) {
+          setDeletedAttadatnums(unsavedAttadatnums);
+        }
+        setSubFilters((prev) => ({
+          ...prev,
+          workType: "DETAIL",
+          groupgb: "A",
+          pgNum: 1,
+          isSearch: true,
+        }));
+        setSubFilters2((prev) => ({
+          ...prev,
+          workType: "COMMENT",
+          pgNum: 1,
+          isSearch: true,
+        }));
+        setSubFilters6((prev) => ({
+          ...prev,
+          workType: "PAYMENT",
+          pgNum: 1,
+          isSearch: true,
+        }));
+      }
       setParaData({
         workType: "",
         rowstatus_s: "",
@@ -2324,7 +2030,6 @@ const SA_A1100_603W: React.FC = () => {
         quoseq_s: "",
         seq_s: "",
         payment_s: "",
-        content_s: "",
         paydt_s: "",
         remark_s: "",
       });
@@ -2457,18 +2162,6 @@ const SA_A1100_603W: React.FC = () => {
         pgNum: 1,
         isSearch: true,
       }));
-      setSubFilters3((prev) => ({
-        ...prev,
-        workType: "SALE",
-        pgNum: 1,
-        isSearch: true,
-      }));
-      setSubFilters4((prev) => ({
-        ...prev,
-        workType: "MEETING",
-        pgNum: 1,
-        isSearch: true,
-      }));
       setParaDataSaved((prev) => ({ ...prev, work_type: "" }));
     } else {
       console.log("[오류 발생]");
@@ -2499,18 +2192,24 @@ const SA_A1100_603W: React.FC = () => {
       const newDataItem = {
         [DATA_ITEM_KEY2]: ++temp2,
         amt: selectRow.amt,
-        itemnm: selectRow.itemnm,
         contractgb: "B",
         contractno: selectRow.contractno,
+        itemcd: selectRow.itemcd,
+        itemnm: selectRow.itemnm,
+        ordnum: selectRow.ordnum,
+        qty_t: selectRow.qty_t,
         quonum: selectRow.quonum,
         quorev: selectRow.quorev,
         quoseq: selectRow.quoseq,
         recdt: selectRow.recdt,
         remark: selectRow.remark,
-        seq: 0,
+        seq: temp2,
         taxamt: selectRow.taxamt,
+        testnum: selectRow.testnum,
         totamt: selectRow.totamt,
-        quotestnum: selectRow.quotestnum,
+        totqty: selectRow.totqty,
+        week_b: selectRow.week_b,
+        week_r: selectRow.week_r,
         wonamt: selectRow.wonamt,
         rowstatus: "N",
       };
@@ -2605,6 +2304,33 @@ const SA_A1100_603W: React.FC = () => {
     }
   };
 
+  const onDeleteClick3 = (e: any) => {
+    if (!window.confirm("계약 삭제 하시겠습니까?")) {
+      return false;
+    }
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "D",
+    }));
+  };
+
+  const getAttachmentsData = (data: IAttachmentData) => {
+    if (!Information.attdatnum) {
+      setUnsavedAttadatnums((prev) => [...prev, data.attdatnum]);
+    }
+
+    setInformation((prev) => {
+      return {
+        ...prev,
+        attdatnum: data.attdatnum,
+        files:
+          data.original_name +
+          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
+      };
+    });
+  };
+
   return (
     <>
       <TitleContainer>
@@ -2630,7 +2356,24 @@ const SA_A1100_603W: React.FC = () => {
             <FilterBox style={{ height: "10%" }}>
               <tbody>
                 <tr>
-                  <th>프로젝트번호</th>
+                  <th>계약일자</th>
+                  <td>
+                    <CommonDateRangePicker
+                      value={{
+                        start: filters.frdt,
+                        end: filters.todt,
+                      }}
+                      onChange={(e: { value: { start: any; end: any } }) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          frdt: e.value.start,
+                          todt: e.value.end,
+                        }))
+                      }
+                      className="required"
+                    />
+                  </td>
+                  <th>PJT NO.</th>
                   <td>
                     <Input
                       name="quokey"
@@ -2639,7 +2382,7 @@ const SA_A1100_603W: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
-                  <th> 고객사</th>
+                  <th>업체명</th>
                   <td>
                     <Input
                       name="custnm"
@@ -2656,12 +2399,67 @@ const SA_A1100_603W: React.FC = () => {
                       />
                     </ButtonInInput>
                   </td>
-                  <th>예약시험번호</th>
+                </tr>
+                <tr>
+                  <th>의뢰자</th>
                   <td>
                     <Input
-                      name="quotestnum"
+                      name="custprsnnm"
                       type="text"
-                      value={filters.quotestnum}
+                      value={filters.custprsnnm}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>계약번호</th>
+                  <td>
+                    <Input
+                      name="contractno"
+                      type="text"
+                      value={filters.contractno}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>계약명</th>
+                  <td>
+                    <Input
+                      name="project"
+                      type="text"
+                      value={filters.project}
+                      onChange={InputChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>영업담당자</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="chkperson"
+                        value={filters.chkperson}
+                        customOptionData={customOptionData}
+                        textField="user_name"
+                        valueField="user_id"
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>물질분야</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="materialtype"
+                        value={filters.materialtype}
+                        customOptionData={customOptionData}
+                        changeData={ComboBoxChange}
+                      />
+                    )}
+                  </td>
+                  <th>물질상세분야</th>
+                  <td>
+                    <Input
+                      name="extra_field2"
+                      type="text"
+                      value={filters.extra_field2}
                       onChange={InputChange}
                     />
                   </td>
@@ -2678,16 +2476,10 @@ const SA_A1100_603W: React.FC = () => {
               fileName="계약관리"
             >
               <Grid
-                style={{ height: "77vh" }}
+                style={{ height: "65vh" }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
-                    person: userListData.find(
-                      (items: any) => items.user_id == row.person
-                    )?.user_name,
-                    dptcd: dptcdListData.find(
-                      (items: any) => items.dptcd == row.dptcd
-                    )?.dptnm,
                     chkperson: userListData.find(
                       (items: any) => items.user_id == row.chkperson
                     )?.user_name,
@@ -2769,6 +2561,66 @@ const SA_A1100_603W: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
+                      <th>등록일자</th>
+                      <td>
+                        <Input
+                          name="insert_time"
+                          type="text"
+                          value={dateformat2(Information.insert_time)}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>업체명</th>
+                      <td>
+                        <Input
+                          name="custnm"
+                          type="text"
+                          value={Information.custnm}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>의뢰자</th>
+                      <td>
+                        <Input
+                          name="custprsnnm"
+                          type="text"
+                          value={Information.custprsnnm}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>물질분야</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="materialtype"
+                            type="new"
+                            value={Information.materialtype}
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            className="readonly"
+                            disabled={true}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>물질세부분야</th>
+                      <td>
+                        <Input
+                          name="extra_field2"
+                          type="text"
+                          value={Information.extra_field2}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
                       <th>계약명 </th>
                       <td>
                         {subFilters.groupgb == "B" ? (
@@ -2789,24 +2641,106 @@ const SA_A1100_603W: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th> 시험물질명 </th>
+                      <th>계약번호</th>
                       <td>
                         <Input
-                          name="materialnm"
+                          name="contractno"
                           type="text"
-                          value={Information.materialnm}
+                          value={Information.contractno}
                           className="readonly"
                         />
                       </td>
                     </tr>
-
                     <tr>
-                      <th> 합계금액 </th>
+                      <th>계약일자</th>
+                      <td>
+                        {subFilters.groupgb == "B" ? (
+                          <DatePicker
+                            name="cotracdt"
+                            value={Information.cotracdt}
+                            format="yyyy-MM-dd"
+                            className="readonly"
+                            disabled={true}
+                            placeholder=""
+                          />
+                        ) : (
+                          <DatePicker
+                            name="cotracdt"
+                            value={Information.cotracdt}
+                            format="yyyy-MM-dd"
+                            placeholder=""
+                            onChange={InfoInputChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>계약기간</th>
+                      <td>
+                        {subFilters.groupgb == "B" ? (
+                          <CommonDateRangePicker
+                            value={{
+                              start: Information.strdt,
+                              end: Information.enddt,
+                            }}
+                            disabled={true}
+                          />
+                        ) : (
+                          <CommonDateRangePicker
+                            value={{
+                              start: Information.strdt,
+                              end: Information.enddt,
+                            }}
+                            onChange={(e: {
+                              value: { start: any; end: any };
+                            }) =>
+                              setInformation((prev) => ({
+                                ...prev,
+                                strdt: e.value.start,
+                                enddt: e.value.end,
+                              }))
+                            }
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>계약금액</th>
                       <td>
                         <Input
-                          name="totamt"
+                          name="contraamt"
                           type="text"
-                          value={numberWithCommas3(Information.totamt)}
+                          value={numberWithCommas3(Information.contraamt)}
+                          style={{
+                            textAlign: "end",
+                          }}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>변경계약금액</th>
+                      <td>
+                        <Input
+                          name="change_contraamt"
+                          type="text"
+                          value={numberWithCommas3(
+                            Information.change_contraamt
+                          )}
+                          style={{
+                            textAlign: "end",
+                          }}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>최종계약금액</th>
+                      <td>
+                        <Input
+                          name="fin_contraamt"
+                          type="text"
+                          value={numberWithCommas3(Information.fin_contraamt)}
                           style={{
                             textAlign: "end",
                           }}
@@ -2844,27 +2778,45 @@ const SA_A1100_603W: React.FC = () => {
                       <th> 환율 </th>
                       <td>
                         {subFilters.groupgb == "B" ? (
-                          <NumericTextBox
+                          <Input
                             name="wonchgrat"
-                            value={
-                              Information.wonchgrat == null
-                                ? 0
-                                : Information.wonchgrat.toString()
-                            }
-                            format="n2"
+                            type="text"
+                            value={numberWithCommas3(Information.wonchgrat)}
+                            style={{
+                              textAlign: "end",
+                            }}
                             className="readonly"
                           />
                         ) : (
                           <NumericTextBox
                             name="wonchgrat"
-                            value={
-                              Information.wonchgrat == null
-                                ? 0
-                                : Information.wonchgrat.toString()
-                            }
+                            value={Information.wonchgrat}
                             format="n2"
                             onChange={InfoInputChange2}
                           />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>첨부파일</th>
+                      <td>
+                        <Input
+                          name="files"
+                          type="text"
+                          value={Information.files}
+                          className="readonly"
+                        />
+                        {subFilters.groupgb != "B" ? (
+                          <ButtonInInput>
+                            <Button
+                              type={"button"}
+                              onClick={onAttachmentsWndClick}
+                              icon="more-horizontal"
+                              fillMode="flat"
+                            />
+                          </ButtonInInput>
+                        ) : (
+                          ""
                         )}
                       </td>
                     </tr>
@@ -2960,6 +2912,8 @@ const SA_A1100_603W: React.FC = () => {
                                   ? DateCell
                                   : NumberField.includes(item.fieldName)
                                   ? NumberCell
+                                  : centerField.includes(item.fieldName)
+                                  ? CenterCell
                                   : undefined
                               }
                               footerCell={
@@ -3061,6 +3015,8 @@ const SA_A1100_603W: React.FC = () => {
                                   ? DateCell
                                   : customField.includes(item.fieldName)
                                   ? CustomComboBoxCell
+                                  : centerField.includes(item.fieldName)
+                                  ? CenterCell
                                   : undefined
                               }
                               footerCell={
@@ -3077,7 +3033,7 @@ const SA_A1100_603W: React.FC = () => {
             </GridContainer>
             <GridContainer width={`calc(70% - ${GAP}px)`}>
               <GridTitleContainer>
-                <GridTitle>시험리스트</GridTitle>
+                <GridTitle>계약 상세내용</GridTitle>
                 <ButtonContainer>
                   <RadioGroup
                     data={data}
@@ -3086,30 +3042,38 @@ const SA_A1100_603W: React.FC = () => {
                     style={{ flexDirection: "row" }}
                   />
                   <Button
+                    themeColor={"primary"}
+                    fillMode="outline"
+                    onClick={onDeleteClick3}
+                    disabled={subFilters.groupgb == "B" ? true : false}
+                  >
+                    계약삭제
+                  </Button>
+                  <Button
+                    themeColor={"primary"}
+                    fillMode="outline"
+                    onClick={onCopyClick}
+                    disabled={subFilters.groupgb == "B" ? true : false}
+                  >
+                    계약변경
+                  </Button>
+                  <Button
+                    onClick={onDeleteClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    disabled={subFilters.groupgb == "B" ? true : false}
+                  >
+                    변경계약 삭제
+                  </Button>
+                  <Button
                     onClick={onSaveClick}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
                     disabled={subFilters.groupgb == "B" ? true : false}
                   >
-                    상세정보 저장
+                    저장
                   </Button>
-                  <Button
-                    themeColor={"primary"}
-                    fillMode="outline"
-                    onClick={onCopyClick}
-                    icon="copy"
-                    title="행 복사"
-                    disabled={subFilters.groupgb == "B" ? true : false}
-                  ></Button>
-                  <Button
-                    onClick={onDeleteClick2}
-                    fillMode="outline"
-                    themeColor={"primary"}
-                    icon="minus"
-                    title="행 삭제"
-                    disabled={subFilters.groupgb == "B" ? true : false}
-                  ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
               <ExcelExport
@@ -3120,7 +3084,7 @@ const SA_A1100_603W: React.FC = () => {
                 fileName="계약관리"
               >
                 <Grid
-                  style={{ height: "120vh" }}
+                  style={{ height: "162.5vh" }}
                   data={process(
                     mainDataResult2.data.map((row) => ({
                       ...row,
@@ -3180,10 +3144,8 @@ const SA_A1100_603W: React.FC = () => {
                             title={item.caption}
                             width={item.width}
                             cell={
-                              DateField.includes(item.fieldName)
-                                ? DateCell
-                                : NumberCommaField.includes(item.fieldName)
-                                ? NumberCommaCell
+                              centerField2.includes(item.fieldName)
+                                ? CenterCell
                                 : NumberField.includes(item.fieldName)
                                 ? NumberCell
                                 : customField.includes(item.fieldName)
@@ -3205,289 +3167,20 @@ const SA_A1100_603W: React.FC = () => {
             </GridContainer>
           </GridContainerWrap>
         </TabStripTab>
-        <TabStripTab title="세부내용" disabled={checked == true ? false : true}>
-          <GridContainerWrap>
-            <GridContainer>
-              <GridTitleContainer>
-                <GridTitle>기존거래내역</GridTitle>
-              </GridTitleContainer>
-              <FormBoxWrap border={true}>
-                <FormBox>
-                  {isMobile ? (
-                    <tbody>
-                      <tr>
-                        <th style={{ textAlign: "center" }}>거래금액</th>
-                        <td>
-                          <Input
-                            name="saleamt"
-                            type="text"
-                            value={numberWithCommas3(Information.saleamt)}
-                            style={{
-                              textAlign: "end",
-                            }}
-                            readOnly={true}
-                          />
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <th style={{ textAlign: "center" }}>수금금액</th>
-                        <td>
-                          <Input
-                            name="collamt"
-                            type="text"
-                            value={numberWithCommas3(Information.collamt)}
-                            style={{
-                              textAlign: "end",
-                            }}
-                            readOnly={true}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th style={{ textAlign: "center" }}>수주금액</th>
-                        <td>
-                          <Input
-                            name="ordamt"
-                            type="text"
-                            value={numberWithCommas3(Information.ordamt)}
-                            style={{
-                              textAlign: "end",
-                            }}
-                            readOnly={true}
-                          />
-                        </td>
-                      </tr>
-                      <tr>
-                        <th style={{ textAlign: "center" }}>미수잔액</th>
-                        <td>
-                          <Input
-                            name="janamt"
-                            type="text"
-                            value={numberWithCommas3(Information.janamt)}
-                            style={{
-                              textAlign: "end",
-                            }}
-                            readOnly={true}
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  ) : (
-                    <tbody>
-                      <tr>
-                        <th style={{ textAlign: "center" }}>거래금액</th>
-                        <th style={{ textAlign: "center" }}>수금금액</th>
-                        <th style={{ textAlign: "center" }}>수주금액</th>
-                        <th style={{ textAlign: "center" }}>미수잔액</th>
-                      </tr>
-                      <tr>
-                        <td>
-                          <Input
-                            name="saleamt"
-                            type="text"
-                            value={numberWithCommas3(Information.saleamt)}
-                            style={{
-                              textAlign: "end",
-                            }}
-                            readOnly={true}
-                          />
-                        </td>
-                        <td>
-                          <Input
-                            name="collamt"
-                            type="text"
-                            value={numberWithCommas3(Information.collamt)}
-                            style={{
-                              textAlign: "end",
-                            }}
-                            readOnly={true}
-                          />
-                        </td>
-                        <td>
-                          <Input
-                            name="ordamt"
-                            type="text"
-                            value={numberWithCommas3(Information.ordamt)}
-                            style={{
-                              textAlign: "end",
-                            }}
-                            readOnly={true}
-                          />
-                        </td>
-                        <td>
-                          <Input
-                            name="janamt"
-                            type="text"
-                            value={numberWithCommas3(Information.janamt)}
-                            style={{
-                              textAlign: "end",
-                            }}
-                            readOnly={true}
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  )}
-                </FormBox>
-              </FormBoxWrap>
-              <ExcelExport
-                data={mainDataResult4.data}
-                ref={(exporter) => {
-                  _export4 = exporter;
-                }}
-                fileName="계약관리"
-              >
-                <Grid
-                  style={{ height: "69vh" }}
-                  data={process(
-                    mainDataResult4.data.map((row) => ({
-                      ...row,
-                      [SELECTED_FIELD]: selectedState4[idGetter4(row)],
-                    })),
-                    mainDataState4
-                  )}
-                  {...mainDataState4}
-                  onDataStateChange={onMainDataStateChange4}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY4}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onSelectionChange4}
-                  fixedScroll={true}
-                  total={mainDataResult4.total}
-                  skip={page4.skip}
-                  take={page4.take}
-                  pageable={true}
-                  onPageChange={pageChange4}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef4}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange4}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                >
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList4"].map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              DateField.includes(item.fieldName)
-                                ? DateCell
-                                : NumberField.includes(item.fieldName)
-                                ? NumberCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder === 0
-                                ? mainTotalFooterCell4
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-            <GridContainer>
-              <GridTitleContainer>
-                <GridTitle>회의록 리스트</GridTitle>
-              </GridTitleContainer>
-              <ExcelExport
-                data={mainDataResult5.data}
-                ref={(exporter) => {
-                  _export5 = exporter;
-                }}
-                fileName="계약관리"
-              >
-                <Grid
-                  style={{ height: "78vh" }}
-                  data={process(
-                    mainDataResult5.data.map((row) => ({
-                      ...row,
-                      person: userListData.find(
-                        (items: any) => items.user_id == row.person
-                      )?.user_name,
-                      [SELECTED_FIELD]: selectedState5[idGetter5(row)],
-                    })),
-                    mainDataState5
-                  )}
-                  {...mainDataState5}
-                  onDataStateChange={onMainDataStateChange5}
-                  //선택 기능
-                  dataItemKey={DATA_ITEM_KEY5}
-                  selectedField={SELECTED_FIELD}
-                  selectable={{
-                    enabled: true,
-                    mode: "single",
-                  }}
-                  onSelectionChange={onSelectionChange5}
-                  onRowDoubleClick={onLinkChange}
-                  //스크롤 조회 기능
-                  fixedScroll={true}
-                  total={mainDataResult5.total}
-                  skip={page5.skip}
-                  take={page5.take}
-                  pageable={true}
-                  onPageChange={pageChange5}
-                  //원하는 행 위치로 스크롤 기능
-                  ref={gridRef5}
-                  rowHeight={30}
-                  //정렬기능
-                  sortable={true}
-                  onSortChange={onMainSortChange5}
-                  //컬럼순서조정
-                  reorderable={true}
-                  //컬럼너비조정
-                  resizable={true}
-                >
-                  {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList5"].map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            id={item.id}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              DateField.includes(item.fieldName)
-                                ? DateCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder === 0
-                                ? mainTotalFooterCell5
-                                : undefined
-                            }
-                          />
-                        )
-                    )}
-                </Grid>
-              </ExcelExport>
-            </GridContainer>
-          </GridContainerWrap>
-        </TabStripTab>
       </TabStrip>
       {custWindowVisible && (
         <CustomersWindow
           setVisible={setCustWindowVisible}
           workType={"N"}
           setData={setCustData}
+          modal={true}
+        />
+      )}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={Information.attdatnum}
           modal={true}
         />
       )}
