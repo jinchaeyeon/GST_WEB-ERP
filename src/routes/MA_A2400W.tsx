@@ -1353,7 +1353,7 @@ const MA_A2400W: React.FC = () => {
           fileName="외주발주"
         >
           <Grid
-            style={{ height: "39vh" }}
+            style={{ height: "37vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
