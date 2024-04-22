@@ -703,7 +703,6 @@ const SY_A0500W: React.FC = () => {
     }));
     if (swiper && isMobile) {
       swiper.slideTo(1);
-      swiper.update();
     }
   };
 
@@ -1344,7 +1343,6 @@ const SY_A0500W: React.FC = () => {
                   onClick={() => {
                     if (swiper) {
                       swiper.slideTo(0);
-                      swiper.update();
                     }
                   }}
                   icon="arrow-left"

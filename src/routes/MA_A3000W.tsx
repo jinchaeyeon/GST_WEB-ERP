@@ -2272,7 +2272,7 @@ const MA_A3000W: React.FC = () => {
           fileName="장비관리"
         >
           <Grid
-            style={{ height: "40vh" }}
+            style={{ height: "38vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

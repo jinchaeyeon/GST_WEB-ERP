@@ -880,7 +880,6 @@ const Main: React.FC = () => {
                   onClick={() => {
                     if (swiper) {
                       swiper.slideTo(1);
-                      swiper.update();
                     }
                   }}
                   icon="info"

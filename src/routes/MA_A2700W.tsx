@@ -1427,7 +1427,7 @@ const MA_A2700W: React.FC = () => {
           fileName="직접입고"
         >
           <Grid
-            style={{ height: "38vh" }}
+            style={{ height: "37vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1528,7 +1528,7 @@ const MA_A2700W: React.FC = () => {
           fileName="직접입고"
         >
           <Grid
-            style={{ height: "32.5vh" }}
+            style={{ height: "31.5vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,

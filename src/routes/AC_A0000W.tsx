@@ -549,7 +549,6 @@ const AC_A0000W: React.FC = () => {
     });
     if (swiper && isMobile) {
       swiper.slideTo(1);
-      swiper.update();
     }
   };
 
@@ -622,7 +621,6 @@ const AC_A0000W: React.FC = () => {
     });
     if (swiper && isMobile) {
       swiper.slideTo(1);
-      swiper.update();
     }
   };
 
@@ -1096,7 +1094,6 @@ const AC_A0000W: React.FC = () => {
                   onClick={() => {
                     if (swiper) {
                       swiper.slideTo(0);
-                      swiper.update();
                     }
                   }}
                   icon="arrow-left"

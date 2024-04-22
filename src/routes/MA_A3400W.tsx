@@ -1121,7 +1121,7 @@ const MA_A3400W: React.FC = () => {
           fileName="기타출고"
         >
           <Grid
-            style={{ height: "38vh" }}
+            style={{ height: "36vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
@@ -1201,7 +1201,7 @@ const MA_A3400W: React.FC = () => {
           fileName="기타출고"
         >
           <Grid
-            style={{ height: "37vh" }}
+            style={{ height: "36vh" }}
             data={process(
               detailDataResult.data.map((row) => ({
                 ...row,

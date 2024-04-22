@@ -580,7 +580,6 @@ const SY_A0025W: React.FC = () => {
     });
     if (swiper && isMobile) {
       swiper.slideTo(1);
-      swiper.update();
     }
   };
 
@@ -1295,7 +1294,6 @@ const SY_A0025W: React.FC = () => {
                   onClick={() => {
                     if (swiper) {
                       swiper.slideTo(0);
-                      swiper.update();
                     }
                   }}
                   icon="arrow-left"
@@ -1306,7 +1304,6 @@ const SY_A0025W: React.FC = () => {
                   onClick={() => {
                     if (swiper) {
                       swiper.slideTo(2);
-                      swiper.update();
                     }
                   }}
                   icon="arrow-right"
@@ -1651,7 +1648,6 @@ const SY_A0025W: React.FC = () => {
                   onClick={() => {
                     if (swiper) {
                       swiper.slideTo(1);
-                      swiper.update();
                     }
                   }}
                   icon="arrow-left"

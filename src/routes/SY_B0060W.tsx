@@ -636,7 +636,6 @@ const SY_B0060W: React.FC = () => {
                       onClick={() => {
                         if (swiper) {
                           swiper.slideTo(1);
-                          swiper.update();
                         }
                       }}
                       icon="info"
@@ -677,7 +676,6 @@ const SY_B0060W: React.FC = () => {
                   onClick={() => {
                     if (swiper) {
                       swiper.slideTo(0);
-                      swiper.update();
                     }
                   }}
                   icon="arrow-left"

@@ -1073,7 +1073,7 @@ const MA_A2410W: React.FC = () => {
           fileName="외주처리"
         >
           <Grid
-            style={{ height: "35vh" }}
+            style={{ height: "34vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

@@ -821,7 +821,7 @@ const MA_A0010W: React.FC = () => {
           fileName="적재장소마스터"
         >
           <Grid
-            style={{ height: "81vh" }}
+            style={{ height: "80vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

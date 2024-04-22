@@ -1365,7 +1365,6 @@ const BA_A0020: React.FC = () => {
     setTabSelected(0);
     if (swiper) {
       swiper.slideTo(1);
-      swiper.update();
     }
   };
 
@@ -3441,7 +3440,6 @@ const BA_A0020: React.FC = () => {
         window.kakao.maps.event.addListener(marker, "click", () => {
           if (swiper && isMobile) {
             swiper.slideTo(1);
-            swiper.update();
           }
 
           // 선택된 행의 키 저장
@@ -3770,7 +3768,6 @@ const BA_A0020: React.FC = () => {
                   onClick={() => {
                     if (swiper) {
                       swiper.slideTo(0);
-                      swiper.update();
                     }
                   }}
                   icon="arrow-left"

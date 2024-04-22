@@ -1141,7 +1141,7 @@ const MA_A2500W: React.FC = () => {
           fileName="외주입고"
         >
           <Grid
-            style={{ height: "39vh" }}
+            style={{ height: "37vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
