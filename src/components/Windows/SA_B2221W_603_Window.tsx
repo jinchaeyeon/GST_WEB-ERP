@@ -137,6 +137,7 @@ const CopyWindow = ({
     orgdiv: "01",
     itemcd: itemcd,
     itemnm: itemnm,
+    itemlvl2: itemcd,
     yyyy: yyyy,
     mm: new Date(),
     pgNum: 1,
@@ -208,10 +209,10 @@ const CopyWindow = ({
         "@p_orgdiv": filters.orgdiv,
         "@p_location": "",
         "@p_amtunit": "",
-        "@p_itemcd": filters.itemcd,
-        "@p_itemnm": filters.itemnm,
+        "@p_itemcd": "",
+        "@p_itemnm": "",
         "@p_itemacnt": "",
-        "@p_itemlvl2": "",
+        "@p_itemlvl2": filters.itemlvl2,
         "@p_amtgb": "",
         "@p_yyyy": convertDateToStr(filters.yyyy).substring(0, 4),
         "@p_mm": convertDateToStr(filters.mm).substring(4, 6),
@@ -342,7 +343,7 @@ const CopyWindow = ({
           <FilterBox>
             <tbody>
               <tr>
-                <th>품목코드</th>
+                <th>시험유형</th>
                 <td>
                   <Input
                     name="itemcd"
@@ -351,7 +352,7 @@ const CopyWindow = ({
                     className="readonly"
                   />
                 </td>
-                <th>품목명</th>
+                <th>시험유형명</th>
                 <td>
                   <Input
                     name="itemnm"
