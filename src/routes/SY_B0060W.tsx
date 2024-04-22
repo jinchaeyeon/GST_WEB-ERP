@@ -567,7 +567,6 @@ const SY_B0060W: React.FC = () => {
         <GridContainerWrap>
           <Swiper
             className="leading_PDA_container"
-            autoHeight={true}
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -690,7 +689,6 @@ const SY_B0060W: React.FC = () => {
                   overflow: "scroll",
                 }}
               >
-                {" "}
                 <GridContainer>
                   <GridTitleContainer>
                     <GridTitle>공지사항</GridTitle>

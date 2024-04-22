@@ -171,6 +171,7 @@ export const MainWorkStartEndContainer = styled.div`
     margin-left: 0;
     margin-bottom: 10px;
     margin-right: 0;
+    margin-top: 0;
   }
 `;
 

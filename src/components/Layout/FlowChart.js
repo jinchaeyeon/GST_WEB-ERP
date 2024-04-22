@@ -995,7 +995,6 @@ const FlowChart = (props) => {
             </div>
             <GridContainer
               style={{
-                height: "67vh",
                 width: `100%`,
                 overflow: "scroll",
               }}
