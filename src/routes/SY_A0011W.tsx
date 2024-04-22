@@ -663,7 +663,6 @@ const Page: React.FC = () => {
     }));
     if (swiper && isMobile) {
       swiper.slideTo(1);
-      swiper.update();
     }
   };
 
@@ -1551,7 +1550,7 @@ const Page: React.FC = () => {
             <SwiperSlide
               key={1}
               className="leading_PDA"
-              style={{ display: "flex", flexDirection: "column" }}
+              style={{ display: "flex", flexDirection: "column"}}
             >
               <div
                 style={{
@@ -1564,8 +1563,6 @@ const Page: React.FC = () => {
                   onClick={() => {
                     if (swiper) {
                       swiper.slideTo(0);
-                      swiper.update();
-
                     }
                   }}
                   icon="arrow-left"

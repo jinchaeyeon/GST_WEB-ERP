@@ -915,10 +915,10 @@ const Page: React.FC = () => {
     //setPage(initialPageState);
     if (swiper && isMobile) {
       swiper.slideTo(1);
-      swiper.update();
     }
   };
 
+ 
   const onDetailSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
       event,
@@ -1205,14 +1205,15 @@ const Page: React.FC = () => {
       _export.save(optionsGridOne);
     }
   };
-  const scrollRef: any = useBetterScroll();
 
+  
   return (
     <>
       {isMobile ? (
         <GridContainerWrap>
           <Swiper
             className="leading_PDA_container"
+            autoHeight={true}
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1349,12 +1350,7 @@ const Page: React.FC = () => {
                   group={group}
                 >
                   <Grid
-                    ref={(node) => {
-                      gridRef.current = node; // Grid 기능을 위한 ref 저장
-                      if (node) {
-                        scrollRef.current = node; // BetterScroll을 위한 ref 저장
-                      }
-                    }}
+                    ref={gridRef}
                     style={{
                       height: `${deviceHeight - 170}px`,
                       overflow: "scroll",
@@ -1438,7 +1434,6 @@ const Page: React.FC = () => {
                   onClick={() => {
                     if (swiper) {
                       swiper.slideTo(0);
-                      swiper.update();
                     }
                   }}
                   icon="arrow-left"
@@ -1492,12 +1487,7 @@ const Page: React.FC = () => {
                     take={page2.take}
                     pageable={true}
                     onPageChange={pageChange2}
-                    ref={(node) => {
-                      gridRef2.current = node; // Grid 기능을 위한 ref 저장
-                      if (node) {
-                        scrollRef.current = node; // BetterScroll을 위한 ref 저장
-                      }
-                    }}
+                    ref={gridRef}
                     rowHeight={30}
                     //정렬기능
                     sortable={true}
@@ -1780,12 +1770,7 @@ const Page: React.FC = () => {
                 group={group}
               >
                 <Grid
-                  ref={(node) => {
-                    gridRef.current = node; // Grid 기능을 위한 ref 저장
-                    if (node) {
-                      scrollRef.current = node; // BetterScroll을 위한 ref 저장
-                    }
-                  }}
+                  ref={gridRef}
                   style={{ height: "77.8vh" }}
                   data={newData.map((item: { items: any[] }) => ({
                     ...item,
@@ -1890,12 +1875,7 @@ const Page: React.FC = () => {
                   take={page2.take}
                   pageable={true}
                   onPageChange={pageChange2}
-                  ref={(node) => {
-                    gridRef2.current = node; // Grid 기능을 위한 ref 저장
-                    if (node) {
-                      scrollRef.current = node; // BetterScroll을 위한 ref 저장
-                    }
-                  }}
+                  ref={gridRef}
                   rowHeight={30}
                   //정렬기능
                   sortable={true}

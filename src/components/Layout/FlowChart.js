@@ -900,7 +900,6 @@ const FlowChart = (props) => {
                 onClick={() => {
                   if (swiper) {
                     swiper.slideTo(1);
-                    swiper.update();
                   }
                 }}
                 icon="arrow-right"
@@ -987,7 +986,6 @@ const FlowChart = (props) => {
                 onClick={() => {
                   if (swiper) {
                     swiper.slideTo(0);
-                    swiper.update();
                   }
                 }}
                 icon="arrow-left"
