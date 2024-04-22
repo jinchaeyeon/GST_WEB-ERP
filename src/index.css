@@ -340,13 +340,11 @@ input.readonly {
   align-items: center !important;
   flex-direction: column !important;
   height: fit-content;
-  border: 1px solid blue;
 }
 
 
 .leading_PDA_container {
   width: 100% !important;
-  border: 1px solid red;
 }
 
 .leading_PDA_Swiper {
