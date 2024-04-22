@@ -340,11 +340,19 @@ input.readonly {
   align-items: center !important;
   flex-direction: column !important;
   height: fit-content;
+  padding-bottom: 10px;
 }
 
 
 .leading_PDA_container {
   width: 100% !important;
+}
+
+.leading_PDA_container_custom  {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 93vh;  
+  overflow-y: auto;
 }
 
 .leading_PDA_Swiper {

@@ -1264,7 +1264,7 @@ const SY_A0500W: React.FC = () => {
                   <Grid
                     style={{
                       height: `${deviceHeight * 0.75}px`,
-                      overflow: "scroll",
+                     overflow: "auto",
                     }}
                     data={process(
                       mainDataResult.data.map((row) => ({
@@ -1353,7 +1353,7 @@ const SY_A0500W: React.FC = () => {
                 style={{
                   height: `${deviceHeight * 0.85}px`,
                   width: `${deviceWidth - 30}px`,
-                  overflow: "scroll",
+                 overflow: "auto",
                 }}
               >
                 <GridTitleContainer>

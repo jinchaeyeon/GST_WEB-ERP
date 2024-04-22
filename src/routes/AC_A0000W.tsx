@@ -940,7 +940,7 @@ const AC_A0000W: React.FC = () => {
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "scroll" }}
+                style={{ width: `${deviceWidth - 30}px`,overflow: "auto" }}
               >
                 <TitleContainer>
                   <Title>법인기본</Title>
@@ -1113,7 +1113,7 @@ const AC_A0000W: React.FC = () => {
                 style={{
                   minHeight: "70vh",
                   width: `${deviceWidth - 30}px`,
-                  overflow: "scroll",
+                 overflow: "auto",
                 }}
               >
                 <FormBoxWrap border={true}>

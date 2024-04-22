@@ -1418,7 +1418,7 @@ const BA_A0100W: React.FC = () => {
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "scroll" }}
+                style={{ width: `${deviceWidth - 30}px`,overflow: "auto" }}
               >
                 <TitleContainer>
                   <Title>동물실관리</Title>
@@ -1633,7 +1633,7 @@ const BA_A0100W: React.FC = () => {
                 style={{
                   minHeight: "65vh",
                   width: `${deviceWidth - 30}px`,
-                  overflow: "scroll",
+                 overflow: "auto",
                 }}
               >
                 <GridTitleContainer>

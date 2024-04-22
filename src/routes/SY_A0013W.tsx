@@ -2035,7 +2035,7 @@ const Page: React.FC = () => {
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "scroll" }}
+                style={{ width: `${deviceWidth - 30}px`,overflow: "auto" }}
               >
                 <TitleContainer>
                   <Title>사용자 권한</Title>
@@ -2273,7 +2273,7 @@ const Page: React.FC = () => {
                 style={{
                   height: `${deviceHeight  * 0.85}px`,
                   width: `${deviceWidth - 30}px`,
-                  overflow: "scroll",
+                 overflow: "auto",
                 }}
               >
                 <GridTitleContainer>
@@ -2392,7 +2392,7 @@ const Page: React.FC = () => {
                 </Button>
               </div>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "scroll" }}
+                style={{ width: `${deviceWidth - 30}px`,overflow: "auto" }}
               >
                 <GridTitleContainer>
                   <GridTitle>사용자별 메뉴 권한</GridTitle>

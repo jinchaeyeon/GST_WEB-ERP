@@ -2008,7 +2008,7 @@ const BA_A0040: React.FC = () => {
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "scroll" }}
+                style={{ width: `${deviceWidth - 30}px`,overflow: "auto" }}
               >
                 <TitleContainer>
                   <Title>품목관리</Title>

@@ -1564,7 +1564,7 @@ const EA_A2000W: React.FC = () => {
           <GridContainer
             style={{
               height: "79vh",
-              overflow: "scroll",
+             overflow: "auto",
               border: "solid 1px #e6e6e6",
               margin: "5px 0",
             }}

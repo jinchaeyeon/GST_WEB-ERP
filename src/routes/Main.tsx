@@ -898,7 +898,7 @@ const Main: React.FC = () => {
                   <TabStripTab title="업무 달력">
                     <GridContainer
                       style={{
-                        overflow: "scroll",
+                       overflow: "auto",
                         height: `${deviceHeight * 0.6}px`,
                       }}
                     >

@@ -3651,7 +3651,7 @@ const BA_A0020: React.FC = () => {
           >
             <SwiperSlide key={0} className="leading_PDA">
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "scroll" }}
+                style={{ width: `${deviceWidth - 30}px`,overflow: "auto" }}
               >
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
@@ -3779,7 +3779,7 @@ const BA_A0020: React.FC = () => {
                 style={{
                   minHeight: "70vh",
                   width: `${deviceWidth - 30}px`,
-                  overflow: "scroll",
+                 overflow: "auto",
                 }}
               >
                 <TabStrip

@@ -1417,7 +1417,7 @@ const SY_A0125W: React.FC = () => {
                 style={{
                   minHeight: "68vh",
                   width: `${deviceWidth - 30}px`,
-                  overflow: "scroll",
+                 overflow: "auto",
                 }}
               >
                 <GridTitleContainer>

@@ -1281,7 +1281,7 @@ const BA_A0070W: React.FC = () => {
           >
             <SwiperSlide key={0} className="leading_PDA">
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "scroll" }}
+                style={{ width: `${deviceWidth - 30}px`,overflow: "auto" }}
               >
                 <GridTitleContainer>
                   <ButtonContainer>
@@ -1388,7 +1388,7 @@ const BA_A0070W: React.FC = () => {
                 style={{
                   minHeight: "70vh",
                   width: `${deviceWidth - 30}px`,
-                  overflow: "scroll",
+                 overflow: "auto",
                 }}
               >
                 <GridTitleContainer>

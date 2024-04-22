@@ -1222,7 +1222,7 @@ const Page: React.FC = () => {
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "scroll" }}
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto", height:"100%" }}
               >
                 <TitleContainer>
                   <Title>공통코드정보</Title>
@@ -1352,7 +1352,7 @@ const Page: React.FC = () => {
                     ref={gridRef}
                     style={{
                       height: `${deviceHeight * 0.75}px`,
-                      overflow: "scroll",
+                     overflow: "auto",
                     }}
                     data={newData.map((item: { items: any[] }) => ({
                       ...item,
@@ -1443,7 +1443,7 @@ const Page: React.FC = () => {
               <GridContainer
                 style={{
                   width: `${deviceWidth - 30}px`,
-                  overflow: "scroll",
+                 overflow: "auto",
                 }}
               >
                 <ExcelExport
@@ -1454,7 +1454,7 @@ const Page: React.FC = () => {
                   <Grid
                     style={{
                       height: `${deviceHeight  * 0.85}px`,
-                      overflow: "scroll",
+                     overflow: "auto",
                     }}
                     data={process(
                       detailDataResult.data.map((row) => ({

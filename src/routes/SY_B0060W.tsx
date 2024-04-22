@@ -686,7 +686,7 @@ const SY_B0060W: React.FC = () => {
                 style={{
                   minHeight: "70vh",
                   width: `${deviceWidth - 30}px`,
-                  overflow: "scroll",
+                 overflow: "auto",
                 }}
               >
                 <GridContainer>

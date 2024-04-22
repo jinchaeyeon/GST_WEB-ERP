@@ -1764,7 +1764,7 @@ const BA_A0080: React.FC = () => {
             }}
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
-              <GridContainer style={{ width: `${deviceWidth - 30}px`, overflow: "scroll"}}>
+              <GridContainer style={{ width: `${deviceWidth - 30}px`,overflow: "auto"}}>
                 <TitleContainer>
                   <Title>단가관리</Title>
 
@@ -1955,7 +1955,7 @@ const BA_A0080: React.FC = () => {
                   style={{
                     minHeight: "70vh",
                     width: `${deviceWidth - 30}px`,
-                    overflow: "scroll",
+                   overflow: "auto",
                   }}
                 >
                   <GridTitleContainer>

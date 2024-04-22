@@ -996,7 +996,7 @@ const FlowChart = (props) => {
             <GridContainer
               style={{
                 width: `100%`,
-                overflow: "scroll",
+               overflow: "auto",
               }}
             >
               <GridTitleContainer>

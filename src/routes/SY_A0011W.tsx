@@ -1391,8 +1391,8 @@ const Page: React.FC = () => {
             <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`,
-                  overflow: "scroll",
+                  width: `${deviceWidth - 30}px`
+                  , overflow: "auto", height:"100%"
                 }}
               >
                 <TitleContainer>
