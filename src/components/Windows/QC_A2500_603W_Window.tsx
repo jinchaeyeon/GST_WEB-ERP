@@ -115,7 +115,8 @@ const CopyWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        custcd: defaultOption.find((item: any) => item.id === "custcd").valueCode,
+        custcd: defaultOption.find((item: any) => item.id === "custcd")
+          .valueCode,
         isSearch: true,
       }));
     }
@@ -299,6 +300,9 @@ const CopyWindow = ({
     testnum: "",
     chkperson: "",
     chkpersonnm: "",
+    smperson: "",
+    smpersonnm: "",
+    custprsnnm: "",
     isSearch: false,
     pgNum: 1,
   });
@@ -328,6 +332,9 @@ const CopyWindow = ({
         "@p_testnum": filters.testnum,
         "@p_chkperson": filters.chkperson,
         "@p_chkpersonnm": filters.chkpersonnm,
+        "@p_smperson": filters.smperson,
+        "@p_smpersonnm": filters.smpersonnm,
+        "@p_custprsnnm": filters.custprsnnm,
         "@p_find_row_value": "",
       },
     };
@@ -462,8 +469,12 @@ const CopyWindow = ({
   };
 
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
+  const [userWindowVisible2, setuserWindowVisible2] = useState<boolean>(false);
 
   const onUserWndClick = () => {
+    setuserWindowVisible(true);
+  };
+  const onUserWndClick2 = () => {
     setuserWindowVisible(true);
   };
   const setUserData = (data: IPrsnnum) => {
@@ -473,11 +484,17 @@ const CopyWindow = ({
       chkpersonnm: data.prsnnm,
     }));
   };
-
+  const setUserData2 = (data: IPrsnnum) => {
+    setFilters((prev) => ({
+      ...prev,
+      smperson: data.prsnnum,
+      smpersonnm: data.prsnnm,
+    }));
+  };
   return (
     <>
       <Window
-        title={"견적참조팝업"}
+        title={"의뢰참조팝업"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -500,7 +517,7 @@ const CopyWindow = ({
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
-                <th>의뢰기간</th>
+                <th>의뢰일자기간</th>
                 <td>
                   <CommonDateRangePicker
                     value={{
@@ -517,7 +534,7 @@ const CopyWindow = ({
                     className="required"
                   />
                 </td>
-                <th>프로젝트번호</th>
+                <th>PJT NO.</th>
                 <td>
                   <Input
                     name="quonum"
@@ -535,7 +552,7 @@ const CopyWindow = ({
                     onChange={filterInputChange}
                   />
                 </td>
-                <th>예약시험번호</th>
+                <th>예약번호</th>
                 <td>
                   <Input
                     name="quotestnum"
@@ -571,7 +588,7 @@ const CopyWindow = ({
                     />
                   </ButtonInInput>
                 </td>
-                <th>고객사</th>
+                <th>업체명</th>
                 <td>
                   {customOptionData !== null && (
                     <CustomOptionComboBox
@@ -601,13 +618,38 @@ const CopyWindow = ({
                   </ButtonInInput>
                 </td>
                 <th>품목명</th>
-                <td colSpan={3}>
+                <td>
                   <Input
                     name="itemnm"
                     type="text"
                     value={filters.itemnm}
                     onChange={filterInputChange}
                   />
+                </td>
+                <th>의뢰자</th>
+                <td>
+                  <Input
+                    name="custprsnnm"
+                    type="text"
+                    value={filters.custprsnnm}
+                    onChange={filterInputChange}
+                  />
+                </td>
+                <th>영업담당자</th>
+                <td>
+                  <Input
+                    name="smpersonnm"
+                    type="text"
+                    value={filters.smpersonnm}
+                    onChange={filterInputChange}
+                  />
+                  <ButtonInInput>
+                    <Button
+                      onClick={onUserWndClick2}
+                      icon="more-horizontal"
+                      fillMode="flat"
+                    />
+                  </ButtonInInput>
                 </td>
               </tr>
             </tbody>
@@ -660,18 +702,19 @@ const CopyWindow = ({
           >
             <GridColumn
               field="quokey"
-              title="프로젝트 번호"
+              title="PJT NO."
               width="150px"
               footerCell={mainTotalFooterCell}
             />
             <GridColumn field="ordnum" title="수주번호" width="150px" />
-            <GridColumn field="quotestnum" title="예약시험번호" width="150px" />
+            <GridColumn field="quotestnum" title="예약번호" width="150px" />
             <GridColumn field="testnum" title="시험번호" width="150px" />
-            <GridColumn field="person" title="SM담당자" width="120px" />
-            <GridColumn field="cpmperson" title="CPM담당자" width="120px" />
+            <GridColumn field="person" title="영업담당자" width="120px" />
             <GridColumn field="chkperson" title="시험책임자" width="120px" />
             <GridColumn field="itemcd" title="품목코드" width="120px" />
             <GridColumn field="itemnm" title="품목명" width="180px" />
+            <GridColumn field="custnm" title="업체명" width="150px" />
+            <GridColumn field="custprsnnm" title="의뢰자" width="150px" />
           </Grid>
         </GridContainer>
         <BottomContainer>
@@ -703,7 +746,7 @@ const CopyWindow = ({
                     )
               }
             >
-              프로젝트만 참조
+              PJT NO. 참조
             </Button>
             <Button
               themeColor={"primary"}
@@ -744,6 +787,9 @@ const CopyWindow = ({
       )}
       {userWindowVisible && (
         <UserWindow setVisible={setuserWindowVisible} setData={setUserData} />
+      )}
+      {userWindowVisible2 && (
+        <UserWindow setVisible={setuserWindowVisible2} setData={setUserData2} />
       )}
     </>
   );
