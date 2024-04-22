@@ -229,6 +229,15 @@ input.readonly {
   left: 0px !important;
 }
 
+.swiper-container {
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100 - 20);
+}
+
+:root {
+  --vh: 100%;
+}
+
 /*Prime table css*/
 .incell-input {
   height: 70% !important;
@@ -330,12 +339,12 @@ input.readonly {
   justify-content: center !important;
   align-items: center !important;
   flex-direction: column !important;
+  height: fit-content;
 }
 
 
 .leading_PDA_container {
   width: 100% !important;
-  height: 93vh !important;
 }
 
 .leading_PDA_Swiper {

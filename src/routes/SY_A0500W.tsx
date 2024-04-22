@@ -1234,7 +1234,7 @@ const SY_A0500W: React.FC = () => {
               <GridContainer
                 style={{
                   width: `${deviceWidth - 30}px`,
-                  height: `${deviceHeight - 100}px`,
+                  height: `${deviceHeight  * 0.85}px`,
                 }}
               >
                 <FilterContainer>
@@ -1263,7 +1263,7 @@ const SY_A0500W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight - 170}px`,
+                      height: `${deviceHeight * 0.75}px`,
                       overflow: "scroll",
                     }}
                     data={process(
@@ -1351,7 +1351,7 @@ const SY_A0500W: React.FC = () => {
               </div>
               <GridContainer
                 style={{
-                  height: `${deviceHeight - 100}px`,
+                  height: `${deviceHeight * 0.85}px`,
                   width: `${deviceWidth - 30}px`,
                   overflow: "scroll",
                 }}

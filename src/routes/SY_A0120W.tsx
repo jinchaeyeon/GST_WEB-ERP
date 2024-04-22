@@ -511,7 +511,7 @@ const SY_A0120: React.FC = () => {
             {isMobile?null:<GridTitle>요약정보</GridTitle>}
           </GridTitleContainer>
           <Grid
-            style={{ height:isMobile? `${deviceHeight - 190}px` : "78vh" }}
+            style={{ height:isMobile? `${deviceHeight * 0.72}px` : "78vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

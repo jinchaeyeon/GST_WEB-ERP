@@ -1544,7 +1544,7 @@ const SY_A0120: React.FC = () => {
                 fileName="사용자 정보"
               >
                 <Grid
-                  style={{ height: isMobile ? `${deviceHeight - 200}px` : "77.8vh" }}
+                  style={{ height: isMobile ? `${deviceHeight  * 0.7}px` : "77.8vh" }}
                   data={process(
                     mainDataResult.data.map((row, idx) => ({
                       ...row,

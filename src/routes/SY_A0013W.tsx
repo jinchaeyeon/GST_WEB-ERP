@@ -2157,7 +2157,7 @@ const Page: React.FC = () => {
                   fileName="사용자 권한"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight - 170}px` }}
+                    style={{ height: `${deviceHeight * 0.75}px` }}
                     data={process(
                       mainDataResult.data.map((row, idx) => ({
                         ...row,
@@ -2271,7 +2271,7 @@ const Page: React.FC = () => {
               </div>
               <GridContainer
                 style={{
-                  height: `${deviceHeight - 100}px`,
+                  height: `${deviceHeight  * 0.85}px`,
                   width: `${deviceWidth - 30}px`,
                   overflow: "scroll",
                 }}
@@ -2297,7 +2297,7 @@ const Page: React.FC = () => {
                   fileName="사용자 권한"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight - 170}px` }}
+                    style={{ height: `${deviceHeight  * 0.75}px` }}
                     data={process(
                       detailDataResult.data.map((item: any) => ({
                         ...item,
@@ -2416,7 +2416,7 @@ const Page: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: `${deviceHeight * 0.35}px`,
+                      height: `${deviceHeight * 0.32}px`,
                       overflow: "auto",
                     }}
                     data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
@@ -2464,7 +2464,7 @@ const Page: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: `${deviceHeight * 0.4}px`,
+                      height: `${deviceHeight * 0.38}px`,
                       overflowY: "scroll",
                     }}
                     data={mapTree(

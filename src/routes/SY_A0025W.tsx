@@ -1206,7 +1206,7 @@ const SY_A0025W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight - 140}px`,
+                      height: `${deviceHeight  * 0.8}px`,
                       overflow: "scroll",
                     }}
                     data={process(
@@ -1693,7 +1693,7 @@ const SY_A0025W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight - 170}px`,
+                      height: `${deviceHeight * 0.75}px`,
                       overflow: "scroll",
                     }}
                     data={process(

@@ -270,7 +270,7 @@ const SY_A0060W: React.FC = () => {
       <TabStrip
         style={{
           width: isMobile ? `${deviceWidth - 30}px` : "100%",
-          height: isMobile ? `${deviceHeight - 150}px` : "",
+          height: isMobile ? `${deviceHeight  * 0.8}px` : "",
         }}
         selected={tabSelected}
         onSelect={handleSelectTab}
