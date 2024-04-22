@@ -253,7 +253,7 @@ const KendoWindow = ({
     });
   };
 
-  // 예약시험번호 데이터
+  // 예약번호 데이터
   const setProjectData = (data: any) => {
     setFilters((prev: any) => {
       return {
@@ -518,7 +518,7 @@ const KendoWindow = ({
                   />
                 </ButtonInInput>
               </td>
-              <th>예약시험번호</th>
+              <th>예약번호</th>
               <td>
                 <Input
                   name="quotestnum"

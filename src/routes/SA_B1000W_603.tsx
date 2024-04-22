@@ -809,7 +809,7 @@ const SA_B1000W_603: React.FC = () => {
                       dataItemKey="sub_code"
                     />
                   </td>
-                  <th>SM담당자</th>
+                  <th>영업담당자</th>
                   <td>
                     <Input
                       name="smpersonnm"

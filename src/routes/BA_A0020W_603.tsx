@@ -3214,7 +3214,7 @@ const BA_A0020W_603: React.FC = () => {
                       </>
                     )}
                   </td>
-                  <th>회사명</th>
+                  <th>업체명</th>
                   <td>
                     <Input
                       name="custnm"
