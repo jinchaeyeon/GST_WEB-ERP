@@ -1834,7 +1834,7 @@ const MA_A3600W: React.FC = () => {
           fileName="전용처리"
         >
           <Grid
-            style={{ height: "37vh" }}
+            style={{ height: "36vh" }}
             data={process(
               mainDataResult3.data.map((row) => ({
                 ...row,

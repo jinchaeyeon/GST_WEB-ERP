@@ -2650,7 +2650,7 @@ const MA_A3500W: React.FC = () => {
       <GridContainerWrap>
         <GridContainer width="55%">
           <TabStrip
-            style={{ width: "100%" }}
+            style={{ width: "100%", height: "48.5vh" }}
             selected={tabSelected}
             onSelect={handleSelectTab}
           >
@@ -2729,7 +2729,7 @@ const MA_A3500W: React.FC = () => {
                   fileName="자재불출"
                 >
                   <Grid
-                    style={{ height: "32vh" }}
+                    style={{ height: "29.8vh" }}
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
@@ -2861,7 +2861,7 @@ const MA_A3500W: React.FC = () => {
                     fileName="자재불출"
                   >
                     <Grid
-                      style={{ height: "34.1vh" }}
+                      style={{ height: "33.1vh" }}
                       data={process(
                         BOMDataResult.data.map((row) => ({
                           ...row,
@@ -2993,7 +2993,7 @@ const MA_A3500W: React.FC = () => {
                     fileName="자재불출"
                   >
                     <Grid
-                      style={{ height: "26.4vh" }}
+                      style={{ height: "25.5vh" }}
                       data={process(
                         BOMDataResult2.data.map((row) => ({
                           ...row,
@@ -3116,7 +3116,7 @@ const MA_A3500W: React.FC = () => {
             fileName="자재불출"
           >
             <Grid
-              style={{ height: "47.1vh" }}
+              style={{ height: "45vh" }}
               data={process(
                 subDataResult2.data.map((row) => ({
                   ...row,

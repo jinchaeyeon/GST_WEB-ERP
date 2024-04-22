@@ -1196,7 +1196,7 @@ const MA_A2000W: React.FC = () => {
           fileName="자재입고"
         >
           <Grid
-            style={{ height: "39vh" }}
+            style={{ height: "37vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

@@ -1165,7 +1165,7 @@ const MA_A1000W: React.FC = () => {
           fileName="구매요청관리"
         >
           <Grid
-            style={{ height: "39vh" }}
+            style={{ height: "37.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

@@ -1839,7 +1839,7 @@ const MA_B7200W: React.FC = () => {
       <TabStrip
         selected={tabSelected}
         onSelect={handleSelectTab}
-        style={{ width: "100%", height: "81.5vh" }}
+        style={{ width: "100%", height: "81vh" }}
       >
         <TabStripTab title="재고현황">
           <GridContainerWrap>
@@ -1856,7 +1856,7 @@ const MA_B7200W: React.FC = () => {
                 group={group}
               >
                 <Grid
-                  style={{ height: "70vh" }}
+                  style={{ height: "69vh" }}
                   data={newData.map((item: { items: any[] }) => ({
                     ...item,
                     items: item.items.map((row: any) => ({
@@ -2013,7 +2013,7 @@ const MA_B7200W: React.FC = () => {
                   fileName="기간재고조회"
                 >
                   <Grid
-                    style={{ height: "33vh" }}
+                    style={{ height: "32vh" }}
                     data={process(
                       detailDataResult2.data.map((row) => ({
                         ...row,
@@ -2102,7 +2102,7 @@ const MA_B7200W: React.FC = () => {
                   <GridTitle>제공품재고</GridTitle>
                 </GridTitleContainer>
                 <Grid
-                  style={{ height: "70vh" }}
+                  style={{ height: "69vh" }}
                   data={newData2.map((item: { items: any[] }) => ({
                     ...item,
                     items: item.items.map((row: any) => ({
@@ -2255,7 +2255,7 @@ const MA_B7200W: React.FC = () => {
                   fileName="기간재고조회"
                 >
                   <Grid
-                    style={{ height: "33vh" }}
+                    style={{ height: "32vh" }}
                     data={process(
                       detailDataResult4.data.map((row) => ({
                         ...row,

@@ -1138,6 +1138,11 @@ const SA_A1100_603W: React.FC = () => {
   const handleSelectTab = (e: any) => {
     if (e.selected == 0) {
       setChecked(false);
+      setFilters((prev) => ({
+        ...prev,
+        pgNum: 1,
+        isSearch: true,
+      }));
     }
     setTabSelected(e.selected);
   };
