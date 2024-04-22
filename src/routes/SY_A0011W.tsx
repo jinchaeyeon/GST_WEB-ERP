@@ -1480,7 +1480,7 @@ const Page: React.FC = () => {
                   fileName="사용자 그룹"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight - 170}px` }}
+                    style={{ height: `${deviceHeight * 0.75}px` }}
                     data={process(
                       mainDataResult.data.map((row, idx) => ({
                         ...row,
@@ -1549,7 +1549,7 @@ const Page: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide
               key={1}
-              className="leading_PDA"
+              className="leading_PDA_custom"
               style={{ display: "flex", flexDirection: "column"}}
             >
               <div
@@ -1596,7 +1596,7 @@ const Page: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: `${deviceHeight * 0.35}px`,
+                      height: `${deviceHeight * 0.32}px`,
                       overflow: "auto",
                     }}
                     data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
@@ -1650,7 +1650,7 @@ const Page: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: `${deviceHeight * 0.4}px`,
+                      height: `${deviceHeight * 0.38}px`,
                       overflowY: "scroll",
                     }}
                     data={mapTree(data2, SUB_ITEMS_FIELD, (item) =>
