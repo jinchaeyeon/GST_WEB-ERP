@@ -1459,7 +1459,7 @@ const CM_A7000W: React.FC = () => {
                       onChange={filterInputChange}
                     />
                   </td>
-                  <th>제목 및 내용</th>
+                  <th>제목</th>
                   <td>
                     <Input
                       name="title"

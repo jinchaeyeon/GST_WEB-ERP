@@ -171,7 +171,6 @@ const SA_B2200W_603: React.FC = () => {
         todt: setDefaultDate(customOptionData, "todt"),
         ordsts: defaultOption.find((item: any) => item.id === "ordsts")
           .valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
         itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
           .valueCode,
       }));
@@ -339,7 +338,6 @@ const SA_B2200W_603: React.FC = () => {
     itemnm: "",
     itemacnt: "",
     testnum: "",
-    finyn: "%",
     ordsts: "",
     custcd: "",
     custnm: "",
@@ -373,7 +371,6 @@ const SA_B2200W_603: React.FC = () => {
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_ordsts": filters.ordsts,
-        "@p_finyn": filters.finyn,
         "@p_ordnum": filters.ordnum,
         "@p_testnum": filters.testnum,
         "@p_project": filters.project,
@@ -574,16 +571,6 @@ const SA_B2200W_603: React.FC = () => {
               </td>
             </tr>
             <tr>
-              <th>완료여부</th>
-              <td>
-                {customOptionData !== null && (
-                  <CustomOptionRadioGroup
-                    name="finyn"
-                    customOptionData={customOptionData}
-                    changeData={filterRadioChange}
-                  />
-                )}
-              </td>
               <th>업체</th>
               <td>
                 <Input
