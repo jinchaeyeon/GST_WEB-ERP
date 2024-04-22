@@ -66,6 +66,7 @@ import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import RichEditor from "../components/RichEditor";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
+import CustomersPersonMultiWindow from "../components/Windows/CommonWindows/CustomersPersonMultiWindow";
 import CustomersPersonWindow from "../components/Windows/CommonWindows/CustomersPersonWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import PrsnnumMultiWindow from "../components/Windows/CommonWindows/PrsnnumMultiWindow";
@@ -288,11 +289,6 @@ const CM_A7000W: React.FC = () => {
       };
     });
   };
-
-  interface IPrsnnum {
-    user_id: string;
-    user_name: string;
-  }
 
   const setCustData = (data: ICustData) => {
     setInformation((prev: any) => {
@@ -519,6 +515,15 @@ const CM_A7000W: React.FC = () => {
     }));
   };
 
+  const InputChange2 = (e: any) => {
+    const { value, name } = e.target;
+
+    setInformation2((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   const ComboBoxChange = (e: any) => {
     const { name, value } = e;
 
@@ -607,6 +612,10 @@ const CM_A7000W: React.FC = () => {
     type: "",
     extra_field2: "",
     place: "",
+  });
+
+  const [information2, setInformation2] = useState({
+    user_name: "",
   });
 
   //그리드 데이터 조회
@@ -860,6 +869,9 @@ const CM_A7000W: React.FC = () => {
     setPage(initialPageState); // 페이지 초기화
     setMainDataResult(process([], mainDataState));
     setDetailDataResult(process([], detailDataState));
+    setInformation2({
+      user_name: ""
+    })
   };
 
   const search = () => {
@@ -963,7 +975,6 @@ const CM_A7000W: React.FC = () => {
     );
 
     setSelectedState({ [selectedRowData[DATA_ITEM_KEY]]: true });
-    setTabSelected(1);
 
     setWorkType("U");
     setFilters2((prev) => ({
@@ -1001,6 +1012,7 @@ const CM_A7000W: React.FC = () => {
       type: selectedRowData.type,
     });
     fetchDetail();
+    setTabSelected(1);
   };
 
   //저장 파라미터 초기 값
@@ -1025,7 +1037,7 @@ const CM_A7000W: React.FC = () => {
     extra_field2: "",
     rowstatus_s: "",
     seq_s: "",
-    prsnnum_s: "",
+    prsnnm_s: "",
     userid: userId,
     pc: pc,
     formid: "CM_A7000W",
@@ -1060,20 +1072,20 @@ const CM_A7000W: React.FC = () => {
 
     let dataArr: any = {
       rowstatus_s: [],
-      prsnnum_s: [],
+      prsnnm_s: [],
       seq_s: [],
     };
 
     dataItem.forEach((item: any, idx: number) => {
-      const { rowstatus = "", prsnnum = "" } = item;
+      const { rowstatus = "", prsnnm = "" } = item;
       dataArr.rowstatus_s.push(rowstatus);
-      dataArr.prsnnum_s.push(prsnnum);
+      dataArr.prsnnm_s.push(prsnnm);
       dataArr.seq_s.push("0");
     });
     deletedMainRows.forEach((item: any, idx: number) => {
-      const { rowstatus = "", prsnnum = "", seq = "" } = item;
+      const { rowstatus = "", prsnnm = "", seq = "" } = item;
       dataArr.rowstatus_s.push("D");
-      dataArr.prsnnum_s.push(prsnnum);
+      dataArr.prsnnm_s.push(prsnnm);
       dataArr.seq_s.push(seq);
     });
     setParaDataSaved({
@@ -1097,7 +1109,7 @@ const CM_A7000W: React.FC = () => {
       contents: "",
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       seq_s: dataArr.seq_s.join("|"),
-      prsnnum_s: dataArr.prsnnum_s.join("|"),
+      prsnnm_s: dataArr.prsnnm_s.join("|"),
       userid: userId,
       pc: pc,
       formid: "CM_A7000W",
@@ -1156,7 +1168,7 @@ const CM_A7000W: React.FC = () => {
         "@p_extra_field2": paraDataSaved.extra_field2,
         "@p_rowstatus_s": paraDataSaved.rowstatus_s,
         "@p_seq_s": paraDataSaved.seq_s,
-        "@p_prsnnum_s": paraDataSaved.prsnnum_s,
+        "@p_prsnnm_s": paraDataSaved.prsnnm_s,
         "@p_userid": userId,
         "@p_pc": pc,
         "@p_form_id": "CM_A7000W",
@@ -1184,7 +1196,9 @@ const CM_A7000W: React.FC = () => {
         setTabSelected(1);
         fetchDetail();
       }
-
+      setInformation2({
+        user_name: ""
+      })
       setParaDataSaved({
         workType: "",
         orgdiv: "01",
@@ -1206,7 +1220,7 @@ const CM_A7000W: React.FC = () => {
         contents: "",
         rowstatus_s: "",
         seq_s: "",
-        prsnnum_s: "",
+        prsnnm_s: "",
         userid: userId,
         pc: pc,
         formid: "CM_A7000W",
@@ -1328,14 +1342,22 @@ const CM_A7000W: React.FC = () => {
 
   const [PrsnnumWindowVisible, setPrsnnumWindowVisible] =
     useState<boolean>(false);
-
-  interface IPrsnnum {
-    user_id: string;
-    user_name: string;
-  }
+  const [PrsnnumWindowVisible2, setPrsnnumWindowVisible2] =
+    useState<boolean>(false);
 
   const onPrsnnumWndClick = () => {
     setPrsnnumWindowVisible(true);
+  };
+  const onPrsnnumWndClick2 = () => {
+    if (
+      information.custcd == "" ||
+      information.custcd == undefined ||
+      information.custcd == null
+    ) {
+      alert("업체를 선택해주세요.");
+    } else {
+      setPrsnnumWindowVisible2(true);
+    }
   };
 
   const setPrsnnumData = (data: any[]) => {
@@ -1348,8 +1370,31 @@ const CM_A7000W: React.FC = () => {
 
       const newDataItem = {
         [DATA_ITEM_KEY]: ++temp,
-        prsnnum: items.user_id,
         prsnnm: items.user_name,
+        rowstatus: "N",
+      };
+
+      setSelectedState2({ [newDataItem[DATA_ITEM_KEY2]]: true });
+      setDetailDataResult((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+    });
+  };
+
+  const setPrsnnumData2 = (data: any[]) => {
+    data.map((items) => {
+      detailDataResult.data.map((item) => {
+        if (item.num > temp) {
+          temp = item.num;
+        }
+      });
+
+      const newDataItem = {
+        [DATA_ITEM_KEY]: ++temp,
+        prsnnm: items.prsnnm,
         rowstatus: "N",
       };
 
@@ -1410,6 +1455,19 @@ const CM_A7000W: React.FC = () => {
           {loginResult.companyCode == "2302BA03" ? "상담일지" : "회의록관리"}
         </Title>
         <ButtonContainer>
+          {tabSelected == 1 ? (
+            <Button
+              onClick={onSaveClick}
+              fillMode="outline"
+              themeColor={"primary"}
+              icon="save"
+            >
+              저장
+            </Button>
+          ) : (
+            ""
+          )}
+
           {permissions && (
             <TopButtons
               search={search}
@@ -1673,19 +1731,6 @@ const CM_A7000W: React.FC = () => {
             mainDataResult.data.length == 0 && workType == "" ? true : false
           }
         >
-          <GridTitleContainer>
-            <GridTitle> </GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onSaveClick}
-                fillMode="outline"
-                themeColor={"primary"}
-                icon="save"
-              >
-                저장
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <GridContainerWrap>
             <GridContainer width="40%">
               <GridTitleContainer>
@@ -1752,16 +1797,8 @@ const CM_A7000W: React.FC = () => {
                           />
                         )}
                       </td>
-                      <th>참석자</th>
-                      <td>
-                        <Button
-                          themeColor={"primary"}
-                          style={{ width: "100%" }}
-                          onClick={() => onPrsnnumWndClick()}
-                        >
-                          등록
-                        </Button>
-                      </td>
+                      <th></th>
+                      <td></td>
                     </tr>
                     <tr>
                       <th>제목</th>
@@ -2055,7 +2092,20 @@ const CM_A7000W: React.FC = () => {
               <GridTitleContainer>
                 <GridTitle>참석자 리스트</GridTitle>
                 <ButtonContainer>
-                  {" "}
+                  <Button
+                    themeColor={"primary"}
+                    style={{ width: "100%" }}
+                    onClick={() => onPrsnnumWndClick()}
+                  >
+                    참석자등록
+                  </Button>
+                  <Button
+                    themeColor={"primary"}
+                    style={{ width: "100%" }}
+                    onClick={() => onPrsnnumWndClick2()}
+                  >
+                    업체참석자등록
+                  </Button>
                   <Button
                     onClick={onDeleteClick2}
                     fillMode="outline"
@@ -2065,13 +2115,53 @@ const CM_A7000W: React.FC = () => {
                   ></Button>
                 </ButtonContainer>
               </GridTitleContainer>
+              <FormBoxWrap>
+                <FormBox>
+                  <tbody>
+                    <th>참석자</th>
+                    <td>
+                      <Input
+                        name="user_name"
+                        type="text"
+                        value={information2.user_name}
+                        onChange={InputChange2}
+                      />
+                    </td>
+                    <td colSpan={2} style={{ textAlign: "center" }}>
+                      <Button
+                        themeColor={"primary"}
+                        onClick={() => {
+                          const newDataItem = {
+                            [DATA_ITEM_KEY]: ++temp,
+                            prsnnm: information2.user_name,
+                            rowstatus: "N",
+                          };
+                          setSelectedState2({
+                            [newDataItem[DATA_ITEM_KEY2]]: true,
+                          });
+                          setDetailDataResult((prev) => {
+                            return {
+                              data: [newDataItem, ...prev.data],
+                              total: prev.total + 1,
+                            };
+                          });
+                          setInformation2({
+                            user_name: "",
+                          });
+                        }}
+                      >
+                        등록
+                      </Button>
+                    </td>
+                  </tbody>
+                </FormBox>
+              </FormBoxWrap>
               <GridContainer>
                 <Grid
-                  style={{ height: "25vh" }}
+                  style={{ height: "18.5vh" }}
                   data={process(
                     detailDataResult.data.map((row) => ({
                       ...row,
-
                       [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
                     })),
                     detailDataState
@@ -2098,12 +2188,11 @@ const CM_A7000W: React.FC = () => {
                   resizable={true}
                 >
                   <GridColumn
-                    title="사번"
-                    field="prsnnum"
+                    title="성명"
+                    field="prsnnm"
                     width={"120px"}
                     footerCell={mainTotalFooterCell2}
                   />
-                  <GridColumn title="성명" field="prsnnm" width={"120px"} />
                 </Grid>
               </GridContainer>
               <GridTitleContainer>
@@ -2153,6 +2242,14 @@ const CM_A7000W: React.FC = () => {
           setVisible={setPrsnnumWindowVisible}
           workType="N"
           setData={setPrsnnumData}
+          modal={true}
+        />
+      )}
+      {PrsnnumWindowVisible2 && (
+        <CustomersPersonMultiWindow
+          setVisible={setPrsnnumWindowVisible2}
+          custcd={information.custcd}
+          setData={setPrsnnumData2}
           modal={true}
         />
       )}

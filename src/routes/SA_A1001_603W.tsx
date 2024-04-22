@@ -996,6 +996,9 @@ const SA_A1001_603W: React.FC = () => {
   };
 
   const onSALTRN = () => {
+    if(!window.confirm("계약 전환 하시겠습니까?")) {
+      return false;
+    }
     const dataItem = mainDataResult2.data.filter((item) => item.chk == true);
 
     if (dataItem.length === 0) {
