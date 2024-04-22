@@ -525,7 +525,7 @@ const App: React.FC = () => {
           group={group}
         >
           <Grid
-            style={{ height: isMobile? `${deviceHeight * 0.70}px` : "77.8vh" }}
+            style={{ height: isMobile? `${deviceHeight * 0.65}px` : "77.8vh" }}
             data={newData.map((item) => ({
               ...item,
               items: item.items.map((row: any) => ({

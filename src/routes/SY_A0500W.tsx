@@ -1209,7 +1209,6 @@ const SY_A0500W: React.FC = () => {
         <GridContainerWrap onClick={deletemenu}>
           <Swiper
             className="leading_PDA_container"
-            autoHeight={true}
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}

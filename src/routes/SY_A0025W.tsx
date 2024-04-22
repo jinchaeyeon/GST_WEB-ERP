@@ -1147,7 +1147,6 @@ const SY_A0025W: React.FC = () => {
         <GridContainerWrap>
           <Swiper
             className="leading_PDA_container"
-            autoHeight={true}
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1278,9 +1277,7 @@ const SY_A0025W: React.FC = () => {
               className="leading_PDA_custom"
               style={{
                 display: "flex",
-                minHeight: `${deviceHeight}px`,
                 flexDirection: "column",
-                overflow: "scroll",
               }}
             >
               <div
@@ -1317,6 +1314,11 @@ const SY_A0025W: React.FC = () => {
                   overflow: "scroll",
                 }}
               >
+              <GridContainer
+                style={{
+                  width: `${deviceWidth - 30}px`,
+                }}
+              >
                 <GridTitleContainer>
                   <GridTitle>기본정보</GridTitle>
                   <ButtonContainer>
@@ -1339,7 +1341,7 @@ const SY_A0025W: React.FC = () => {
                 </GridTitleContainer>
                 <FormBoxWrap
                   border={true}
-                  style={{ width: `${deviceWidth - 30}px` }}
+                  style={{ width: `${deviceWidth - 30}px`}}
                 >
                   <FormBox>
                     <tbody>
@@ -1421,10 +1423,7 @@ const SY_A0025W: React.FC = () => {
                 </GridTitleContainer>
                 <FormBoxWrap
                   border={true}
-                  style={{
-                    display: "block",
-                    alignItems: "center",
-                  }}
+                  style={{ width: `${deviceWidth - 30}px`}}
                 >
                   <FormBox>
                     <tbody>
@@ -1630,6 +1629,7 @@ const SY_A0025W: React.FC = () => {
                     </tbody>
                   </FormBox>
                 </FormBoxWrap>
+              </GridContainer>
               </GridContainer>
             </SwiperSlide>
             <SwiperSlide
