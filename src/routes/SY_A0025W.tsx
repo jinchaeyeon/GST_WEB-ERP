@@ -1147,7 +1147,6 @@ const SY_A0025W: React.FC = () => {
         <GridContainerWrap>
           <Swiper
             className="leading_PDA_container"
-            autoHeight={true}
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
