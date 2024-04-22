@@ -36,6 +36,7 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import DateCell from "../components/Cells/DateCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
@@ -46,6 +47,7 @@ import {
   convertDateToStr,
   convertDateToStrWithTime2,
   getQueryFromBizComponent,
+  setDefaultDate,
   toDate,
   useSysMessage,
 } from "../components/CommonFunction";
@@ -55,6 +57,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import QC_A2500_603W_Window from "../components/Windows/QC_A2500_603W_Window";
@@ -89,6 +92,8 @@ type TdataArr = {
   seq_feed_s: string[];
   comment_feed_s: string[];
 };
+
+const DateField = ["baddt", "qcdt"];
 
 const BA_A0020_603: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
@@ -137,6 +142,8 @@ const BA_A0020_603: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
+        frdt: setDefaultDate(customOptionData, "frdt"),
+        todt: setDefaultDate(customOptionData, "todt"),
         status: defaultOption.find((item: any) => item.id === "status")
           .valueCode,
       }));
@@ -299,6 +306,12 @@ const BA_A0020_603: React.FC = () => {
         [name]: value,
         cpmperson: value == "" ? "" : prev.cpmperson,
       }));
+    } else if (name == "chkpersonnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        chkperson: value == "" ? "" : prev.chkperson,
+      }));
     } else if (name == "custnm") {
       setFilters((prev) => ({
         ...prev,
@@ -403,6 +416,8 @@ const BA_A0020_603: React.FC = () => {
     orgdiv: "01",
     location: "01",
     ref_key: "",
+    frdt: new Date(),
+    todt: new Date(),
     ordnum: "",
     quotestnum: "",
     custcd: "",
@@ -413,6 +428,8 @@ const BA_A0020_603: React.FC = () => {
     smpersonnm: "",
     cpmperson: "",
     cpmpersonnm: "",
+    chkperson: "",
+    chkpersonnm: "",
     datnum: "",
     find_row_value: "",
     pgNum: 1,
@@ -429,7 +446,7 @@ const BA_A0020_603: React.FC = () => {
   });
 
   //조회조건 초기값
-  const [Information, setInformation] = useState({
+  const [Information, setInformation] = useState<{ [name: string]: any }>({
     orgdiv: "01",
     ref_key: "",
     quotestnum: "",
@@ -454,6 +471,8 @@ const BA_A0020_603: React.FC = () => {
     devperson: "",
     apperson: "",
     chkperson2: "",
+    custprsnnm: "",
+    qcdt: new Date(),
   });
 
   //그리드 데이터 조회
@@ -471,6 +490,8 @@ const BA_A0020_603: React.FC = () => {
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
         "@p_ref_key": filters.ref_key,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
         "@p_testnum": filters.testnum,
         "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
         "@p_custnm": filters.custnm,
@@ -478,6 +499,8 @@ const BA_A0020_603: React.FC = () => {
         "@p_smpersonnm": filters.smpersonnm,
         "@p_cpmperson": filters.cpmpersonnm == "" ? "" : filters.cpmperson,
         "@p_cpmpersonnm": filters.cpmpersonnm,
+        "@p_chkperson": filters.chkpersonnm == "" ? "" : filters.chkperson,
+        "@p_chkpersonnm": filters.chkpersonnm,
         "@p_status": filters.status,
         "@p_quotestnum": filters.quotestnum,
         "@p_datnum": filters.datnum,
@@ -580,6 +603,8 @@ const BA_A0020_603: React.FC = () => {
         "@p_work_type": commentFilter.workType,
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
         "@p_ref_key": filters.ref_key,
         "@p_testnum": filters.testnum,
         "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
@@ -588,6 +613,8 @@ const BA_A0020_603: React.FC = () => {
         "@p_smpersonnm": filters.smpersonnm,
         "@p_cpmperson": filters.cpmpersonnm == "" ? "" : filters.cpmperson,
         "@p_cpmpersonnm": filters.cpmpersonnm,
+        "@p_chkperson": filters.chkpersonnm == "" ? "" : filters.chkperson,
+        "@p_chkpersonnm": filters.chkpersonnm,
         "@p_status": filters.status,
         "@p_datnum": commentFilter.datnum,
         "@p_quotestnum": filters.quotestnum,
@@ -658,6 +685,8 @@ const BA_A0020_603: React.FC = () => {
         devperson: rows[0].devperson,
         apperson: rows[0].apperson,
         chkperson2: rows[0].chkperson2,
+        custprsnnm: rows[0].custprsnnm,
+        qcdt: rows[0].qcdt == "" ? null : toDate(rows[0].qcdt),
       });
 
       setCommentDataResult((prev) => {
@@ -908,6 +937,8 @@ const BA_A0020_603: React.FC = () => {
           ? defaultOption.find((item: any) => item.id === "chkperson2")
               .valueCode
           : data.chkperson2,
+      custprsnnm: data.custprsnnm,
+      qcdt: null,
     });
     deletedMainRows = [];
     deletedMainRows2 = [];
@@ -1238,6 +1269,8 @@ const BA_A0020_603: React.FC = () => {
         id_feed_s: dataArr.id_feed_s.join("|"),
         seq_feed_s: dataArr.seq_feed_s.join("|"),
         comment_feed_s: dataArr.comment_feed_s.join("|"),
+        qcdt:
+          Information.qcdt == null ? "" : convertDateToStr(Information.qcdt),
         userid: userId,
         pc: pc,
         form_id: "QC_A2500_603W",
@@ -1276,6 +1309,7 @@ const BA_A0020_603: React.FC = () => {
     id_feed_s: "",
     seq_feed_s: "",
     comment_feed_s: "",
+    qcdt: "",
     userid: userId,
     pc: pc,
     form_id: "QC_A2500_603W",
@@ -1316,6 +1350,7 @@ const BA_A0020_603: React.FC = () => {
       "@p_id_feed_s": paraData.id_feed_s,
       "@p_seq_feed_s": paraData.seq_feed_s,
       "@p_comment_feed_s": paraData.comment_feed_s,
+      "@p_qcdt": paraData.qcdt,
       "@p_userid": userId,
       "@p_pc": pc,
       "@p_form_id": "QC_A2500_603W",
@@ -1379,6 +1414,7 @@ const BA_A0020_603: React.FC = () => {
         id_feed_s: "",
         seq_feed_s: "",
         comment_feed_s: "",
+        qcdt: "",
         userid: userId,
         pc: pc,
         form_id: "QC_A2500_603W",
@@ -1515,14 +1551,17 @@ const BA_A0020_603: React.FC = () => {
     useState<boolean>(false);
   const [PrsnnumWindowVisible2, setPrsnnumWindowVisible2] =
     useState<boolean>(false);
-
+  const [PrsnnumWindowVisible3, setPrsnnumWindowVisible3] =
+    useState<boolean>(false);
   const onPrsnnumWndClick = () => {
     setPrsnnumWindowVisible(true);
   };
   const onPrsnnumWndClick2 = () => {
     setPrsnnumWindowVisible2(true);
   };
-
+  const onPrsnnumWndClick3 = () => {
+    setPrsnnumWindowVisible3(true);
+  };
   interface IPrsnnum {
     user_id: string;
     user_name: string;
@@ -1544,6 +1583,16 @@ const BA_A0020_603: React.FC = () => {
         ...prev,
         cpmperson: data.user_id,
         cpmpersonnm: data.user_name,
+      };
+    });
+  };
+
+  const setPrsnnumData3 = (data: IPrsnnum) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        chkperson: data.user_id,
+        chkpersonnm: data.user_name,
       };
     });
   };
@@ -1588,6 +1637,7 @@ const BA_A0020_603: React.FC = () => {
         id_feed_s: "",
         seq_feed_s: "",
         comment_feed_s: "",
+        qcdt: "",
         userid: userId,
         pc: pc,
         form_id: "QC_A2500_603W",
@@ -1624,7 +1674,7 @@ const BA_A0020_603: React.FC = () => {
             <FilterBox>
               <tbody>
                 <tr>
-                  <th>프로젝트번호</th>
+                  <th>PJT NO.</th>
                   <td>
                     <Input
                       name="ref_key"
@@ -1640,6 +1690,23 @@ const BA_A0020_603: React.FC = () => {
                       />
                     </ButtonInInput>
                   </td>
+                  <th>등록일자</th>
+                  <td>
+                    <CommonDateRangePicker
+                      value={{
+                        start: filters.frdt,
+                        end: filters.todt,
+                      }}
+                      onChange={(e: { value: { start: any; end: any } }) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          frdt: e.value.start,
+                          todt: e.value.end,
+                        }))
+                      }
+                      className="required"
+                    />
+                  </td>
                   <th>수주번호</th>
                   <td>
                     <Input
@@ -1649,7 +1716,7 @@ const BA_A0020_603: React.FC = () => {
                       onChange={filterInputChange}
                     />
                   </td>
-                  <th>예약시험번호</th>
+                  <th>예약번호</th>
                   <td>
                     <Input
                       name="quotestnum"
@@ -1676,7 +1743,7 @@ const BA_A0020_603: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
-                  <th>고객사</th>
+                  <th>업체명</th>
                   <td>
                     <Input
                       name="custnm"
@@ -1704,7 +1771,7 @@ const BA_A0020_603: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>SM담당자</th>
+                  <th>영업담당자</th>
                   <td>
                     <Input
                       name="smpersonnm"
@@ -1721,7 +1788,7 @@ const BA_A0020_603: React.FC = () => {
                       />
                     </ButtonInInput>
                   </td>
-                  <th>CPM담당자</th>
+                  <th>PM담당자</th>
                   <td>
                     <Input
                       name="cpmpersonnm"
@@ -1735,6 +1802,23 @@ const BA_A0020_603: React.FC = () => {
                         icon="more-horizontal"
                         fillMode="flat"
                         onClick={onPrsnnumWndClick2}
+                      />
+                    </ButtonInInput>
+                  </td>
+                  <th>시험책임자</th>
+                  <td>
+                    <Input
+                      name="chkpersonnm"
+                      type="text"
+                      value={filters.chkpersonnm}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        type="button"
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onPrsnnumWndClick3}
                       />
                     </ButtonInInput>
                   </td>
@@ -1836,6 +1920,11 @@ const BA_A0020_603: React.FC = () => {
                           field={item.fieldName}
                           title={item.caption}
                           width={item.width}
+                          cell={
+                            DateField.includes(item.fieldName)
+                              ? DateCell
+                              : undefined
+                          }
                           footerCell={
                             item.sortOrder === 0
                               ? mainTotalFooterCell
@@ -1876,7 +1965,7 @@ const BA_A0020_603: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th style={{ width: isMobile ? "" : "15%" }}>등록일</th>
+                      <th style={{ width: isMobile ? "" : "15%" }}>등록일자</th>
                       <td>
                         <DatePicker
                           name="baddt"
@@ -1884,11 +1973,12 @@ const BA_A0020_603: React.FC = () => {
                           format="yyyy-MM-dd"
                           onChange={InputChange}
                           placeholder=""
+                          className="required"
                         />
                       </td>
                     </tr>
                     <tr>
-                      <th>프로젝트번호</th>
+                      <th>PJT NO.</th>
                       <td>
                         <Input
                           name="ref_key"
@@ -1910,7 +2000,7 @@ const BA_A0020_603: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>예약시험번호</th>
+                      <th>예약번호</th>
                       <td>
                         <Input
                           name="quotestnum"
@@ -1932,7 +2022,7 @@ const BA_A0020_603: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>고객사명</th>
+                      <th>업체명</th>
                       <td>
                         {Information.ref_key == "" ? (
                           <>
@@ -1962,7 +2052,18 @@ const BA_A0020_603: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>SM담당자</th>
+                      <th>의뢰자</th>
+                      <td>
+                        <Input
+                          name="smperson"
+                          type="text"
+                          value={Information.custprsnnm}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>영업담당자</th>
                       <td>
                         <Input
                           name="smperson"
@@ -1980,7 +2081,7 @@ const BA_A0020_603: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>CPM담당자</th>
+                      <th>PM담당자</th>
                       <td>
                         <Input
                           name="cpmperson"
@@ -2057,6 +2158,18 @@ const BA_A0020_603: React.FC = () => {
                               : ""
                           }
                           className="readonly"
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>완료일자</th>
+                      <td>
+                        <DatePicker
+                          name="qcdt"
+                          value={Information.qcdt}
+                          format="yyyy-MM-dd"
+                          onChange={InputChange}
+                          placeholder=""
                         />
                       </td>
                     </tr>
@@ -2481,6 +2594,14 @@ const BA_A0020_603: React.FC = () => {
           setVisible={setPrsnnumWindowVisible2}
           workType="N"
           setData={setPrsnnumData2}
+          modal={true}
+        />
+      )}
+      {PrsnnumWindowVisible3 && (
+        <PrsnnumWindow
+          setVisible={setPrsnnumWindowVisible3}
+          workType="N"
+          setData={setPrsnnumData3}
           modal={true}
         />
       )}

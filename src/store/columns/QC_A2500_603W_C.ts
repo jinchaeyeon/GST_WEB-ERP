@@ -7,7 +7,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_ref_key",
         field: "ref_key",
-        caption: "프로젝트번호",
+        caption: "PJT NO.",
         width: 120,
       },
       {
@@ -19,7 +19,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_quotestnum",
         field: "quotestnum",
-        caption: "예약시험번호",
+        caption: "예약번호",
         width: 120,
       },
       {
@@ -49,7 +49,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_custnm",
         field: "custnm",
-        caption: "고객사",
+        caption: "업체명",
         width: 120,
       },
       {
@@ -67,13 +67,25 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_smperson",
         field: "smperson",
-        caption: "SM담당자",
+        caption: "영업담당자",
         width: 120,
       },
       {
         id: "col_cpmperson",
         field: "cpmperson",
-        caption: "CPM담당자",
+        caption: "PM담당자",
+        width: 120,
+      },
+      {
+        id: "col_baddt",
+        field: "baddt",
+        caption: "등록일자",
+        width: 120,
+      },
+      {
+        id: "col_qcdt",
+        field: "qcdt",
+        caption: "완료일자",
         width: 120,
       },
     ],
