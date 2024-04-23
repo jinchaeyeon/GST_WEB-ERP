@@ -350,6 +350,21 @@ const PanelBarNavContainer = (props: any) => {
         });
       });
 
+    let valid = menus
+    .filter((menu: any) => menu.formId === "Home").length > 0;
+
+    if(valid != true) {
+      paths.push({
+        path: "/Home",
+        menuName: "HOME",
+        index: "." + 0,
+        menuId: "M2022121411504753035",
+        parentMenuId: "M2022062210224011070",
+        menuCategory: "WEB",
+        isFavorite: false,
+      });
+    }
+
     // 즐겨찾기 그룹 push
     paths.push({
       path: "",
