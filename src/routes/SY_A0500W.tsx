@@ -93,7 +93,7 @@ const boardStyle: CSSProperties = {
 const containerStyle: CSSProperties = {
   width: window.innerWidth <= 1200 ? `${window.innerWidth - 30}px` : "100%",
   height:
-    window.innerWidth <= 1200 ? `${window.innerHeight * 0.5}px` : "80vh",
+    window.innerWidth <= 1200 ? `${(window.innerHeight - 50) * 0.6}px` : "80vh",
   border: "1px solid gray",
 };
 /** Styling properties applied to each square element */

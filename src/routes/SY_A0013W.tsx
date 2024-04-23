@@ -2293,7 +2293,7 @@ const Page: React.FC = () => {
                   fileName="사용자 권한"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.72}px` }}
+                    style={{ height: `${deviceHeight * 0.75}px` }}
                     data={process(
                       detailDataResult.data.map((item: any) => ({
                         ...item,

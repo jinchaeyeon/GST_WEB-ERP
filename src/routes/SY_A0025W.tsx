@@ -1288,6 +1288,7 @@ const SY_A0025W: React.FC = () => {
                   display: "flex",
                   justifyContent: "space-between",
                   width: "100%",
+                  marginBottom:"5px"
                 }}
               >
                 <Button
@@ -1314,7 +1315,6 @@ const SY_A0025W: React.FC = () => {
               <GridContainer
                 style={{
                   width: `${deviceWidth - 30}px`,
-                  overflow: "auto",
                 }}
               >
                 <GridTitleContainer>
@@ -1338,7 +1338,7 @@ const SY_A0025W: React.FC = () => {
                 </GridTitleContainer>
                 <FormBoxWrap
                   border={true}
-                  style={{ width: `${deviceWidth - 30}px` }}
+                  style={{ width: `${deviceWidth - 30}px`, height: `${deviceHeight * 0.73}px`}}
                 >
                   <FormBox>
                     <tbody>
@@ -1686,7 +1686,7 @@ const SY_A0025W: React.FC = () => {
                 <Button
                   onClick={() => {
                     if (swiper) {
-                      swiper.slideTo(1);
+                      swiper.slideTo(2);
                     }
                   }}
                   icon="arrow-left"
@@ -2211,6 +2211,7 @@ const SY_A0025W: React.FC = () => {
                           )}
                         </tr>
                       </>
+                      \{" "}
                       <tr>
                         <th>시작채번연변</th>
                         <td colSpan={3}>

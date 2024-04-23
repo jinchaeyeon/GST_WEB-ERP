@@ -618,7 +618,7 @@ const SY_B0060W: React.FC = () => {
                       퇴근
                     </Button>
                   </MainWorkStartEndContainer>
-                  <ApprovalBox style={{ width: `${deviceWidth - 30}px` }}>
+                  <ApprovalBox style={{ width: `${deviceWidth - 30}px` , fontSize:"0.8em"}}>
                     <ApprovalInner>
                       <div>미결</div>
                       <div>{approvalValueState.app}</div>

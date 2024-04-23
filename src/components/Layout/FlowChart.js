@@ -905,7 +905,6 @@ const FlowChart = (props) => {
                 }}
                 themeColor={"primary"}
                 fillMode="outline"
-                icon="arrow-right"
               >
                 노드편집
               </ButtonKendo>

@@ -1453,7 +1453,7 @@ const Page: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight  * 0.9}px`,
+                      height: `${deviceHeight  * 0.8}px`,
                      overflow: "auto",
                     }}
                     data={process(
