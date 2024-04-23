@@ -120,7 +120,7 @@ const Page: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
   const userId = UseGetValueFromSessionItem("user_id");
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -984,23 +984,23 @@ const Page: React.FC = () => {
 
   const [dragDataItem, setDragDataItem] = useState<any>(null);
 
-  const allMenuRowRender = (tr: any, props: any) => (
-    <RowRenderForDragging
-      props={props}
-      row={tr}
-      onDrop={handleAllMenuDrop}
-      onDragStart={handleAllMenuDragStart}
-      exitEdit={exitEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
   const userMenuRowRender = (tr: any, props: any) => (
     <RowRenderForDragging
       props={props}
       row={tr}
       onDrop={handleUserMenuDrop}
       onDragStart={handleUserMenuDragStart}
+      exitEdit={exitEdit}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const allMenuRowRender = (tr: any, props: any) => (
+    <RowRenderForDragging
+      props={props}
+      row={tr}
+      onDrop={handleAllMenuDrop}
+      onDragStart={handleAllMenuDragStart}
       exitEdit={exitEdit}
       editField={EDIT_FIELD}
     />
@@ -1378,9 +1378,62 @@ const Page: React.FC = () => {
   return (
     <>
       {isMobile ? (
-        <GridContainerWrap>
+        <>
+          <TitleContainer>
+            <Title>사용자 그룹</Title>
+            <ButtonContainer>
+              <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                  <tbody>
+                    <tr>
+                      <th>사용자그룹ID</th>
+                      <td>
+                        <Input
+                          name="user_group_id"
+                          type="text"
+                          value={filters.user_group_id}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>사용자그룹명</th>
+                      <td>
+                        <Input
+                          name="user_group_name"
+                          type="text"
+                          value={filters.user_group_name}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>사용유무</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="use_yn"
+                            value={filters.use_yn}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                            textField="name"
+                            valueField="code"
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </FilterBox>
+              </FilterContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="SY_A0011W"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
+
           <Swiper
-            className="leading_PDA_container"
+            className="leading_80_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1391,66 +1444,11 @@ const Page: React.FC = () => {
             <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer
                 style={{
-                  width: `${deviceWidth - 30}px`
-                  , overflow: "auto", height:"100%"
+                  width: `${deviceWidth - 30}px`,
+                  overflow: "auto",
+                  height: "100%",
                 }}
               >
-                <TitleContainer>
-                  <Title>사용자 그룹</Title>
-
-                  <ButtonContainer>
-                  <FilterContainer>
-                      <FilterBox
-                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                      >
-                        <tbody>
-                          <tr>
-                            <th>사용자그룹ID</th>
-                            <td>
-                              <Input
-                                name="user_group_id"
-                                type="text"
-                                value={filters.user_group_id}
-                                onChange={filterInputChange}
-                              />
-                            </td>
-                            <th>사용자그룹명</th>
-                            <td>
-                              <Input
-                                name="user_group_name"
-                                type="text"
-                                value={filters.user_group_name}
-                                onChange={filterInputChange}
-                              />
-                            </td>
-                            <th>사용유무</th>
-                            <td>
-                              {customOptionData !== null && (
-                                <CustomOptionComboBox
-                                  name="use_yn"
-                                  value={filters.use_yn}
-                                  customOptionData={customOptionData}
-                                  changeData={filterComboBoxChange}
-                                  textField="name"
-                                  valueField="code"
-                                />
-                              )}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </FilterBox>
-                    </FilterContainer>
-                    {permissions && (
-                      <TopButtons
-                        search={search}
-                        exportExcel={exportExcel}
-                        permissions={permissions}
-                        pathname="SY_A0011W"
-                      />
-                    )}
-                  </ButtonContainer>
-                </TitleContainer>
-
                 <GridTitleContainer>
                   {permissions && (
                     <ButtonContainer>
@@ -1480,7 +1478,7 @@ const Page: React.FC = () => {
                   fileName="사용자 그룹"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.75}px` }}
+                    style={{ height: `${deviceHeight * 0.8}px` }}
                     data={process(
                       mainDataResult.data.map((row, idx) => ({
                         ...row,
@@ -1550,7 +1548,7 @@ const Page: React.FC = () => {
             <SwiperSlide
               key={1}
               className="leading_PDA_custom"
-              style={{ display: "flex", flexDirection: "column"}}
+              style={{ display: "flex", flexDirection: "column" }}
             >
               <div
                 style={{
@@ -1650,7 +1648,7 @@ const Page: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: `${deviceHeight * 0.38}px`,
+                      height: `${deviceHeight * 0.28}px`,
                       overflowY: "scroll",
                     }}
                     data={mapTree(data2, SUB_ITEMS_FIELD, (item) =>
@@ -1685,7 +1683,7 @@ const Page: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
           </Swiper>
-        </GridContainerWrap>
+        </>
       ) : (
         <>
           <TitleContainer>

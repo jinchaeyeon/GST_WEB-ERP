@@ -70,7 +70,7 @@ const processWithGroups = (data: any[], group: GroupDescriptor[]) => {
 
 const App: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight;
+  let deviceHeight = window.innerHeight -50;
 
   let isMobile = deviceWidth <= 1200;
 
@@ -525,7 +525,7 @@ const App: React.FC = () => {
           group={group}
         >
           <Grid
-            style={{ height: isMobile? `${deviceHeight * 0.65}px` : "77.8vh" }}
+            style={{ height: isMobile? `${deviceHeight * 0.62}px` : "77.8vh"}}
             data={newData.map((item) => ({
               ...item,
               items: item.items.map((row: any) => ({

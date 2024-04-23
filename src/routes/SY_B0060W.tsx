@@ -618,7 +618,7 @@ const SY_B0060W: React.FC = () => {
                       퇴근
                     </Button>
                   </MainWorkStartEndContainer>
-                  <ApprovalBox style={{ width: `${deviceWidth - 30}px` }}>
+                  <ApprovalBox style={{ width: `${deviceWidth - 30}px` , fontSize:"0.8em"}}>
                     <ApprovalInner>
                       <div>미결</div>
                       <div>{approvalValueState.app}</div>
@@ -647,7 +647,10 @@ const SY_B0060W: React.FC = () => {
                 ""
               )}
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, marginTop: "2vh" }}
+                style={{
+                  width: `${deviceWidth - 30}px`,
+                  marginTop: "2vh",
+                }}
               >
                 <GridTitleContainer>
                   <GridTitle>레이아웃</GridTitle>
@@ -684,9 +687,8 @@ const SY_B0060W: React.FC = () => {
               </div>
               <GridContainer
                 style={{
-                  minHeight: "70vh",
                   width: `${deviceWidth - 30}px`,
-                 overflow: "auto",
+                  overflow: "auto",
                 }}
               >
                 <GridContainer>
@@ -694,7 +696,7 @@ const SY_B0060W: React.FC = () => {
                     <GridTitle>공지사항</GridTitle>
                   </GridTitleContainer>
                   <Grid
-                    style={{ height: `${deviceHeight * 0.35}px` }}
+                    style={{ height: `${deviceHeight * 0.32}px` }}
                     data={process(
                       noticeDataResult.data.map((row) => ({
                         ...row,

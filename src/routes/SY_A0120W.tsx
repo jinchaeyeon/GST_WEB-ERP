@@ -59,7 +59,7 @@ let targetRowIndex: null | number = null;
 
 const SY_A0120: React.FC = () => {
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight;
+  let deviceHeight = window.innerHeight - 50 - 50;
 
   let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
@@ -508,10 +508,10 @@ const SY_A0120: React.FC = () => {
           fileName="로그인 현황"
         >
           <GridTitleContainer>
-            {isMobile?null:<GridTitle>요약정보</GridTitle>}
+            {isMobile ? null : <GridTitle>요약정보</GridTitle>}
           </GridTitleContainer>
           <Grid
-            style={{ height:isMobile? `${deviceHeight * 0.72}px` : "78vh" }}
+            style={{ height: isMobile ? `${deviceHeight * 0.82}px` : "78vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

@@ -92,7 +92,8 @@ const boardStyle: CSSProperties = {
 };
 const containerStyle: CSSProperties = {
   width: window.innerWidth <= 1200 ? `${window.innerWidth - 30}px` : "100%",
-  height: window.innerWidth <= 1200 ? `${window.innerHeight * 0.8}px` : "80vh",
+  height:
+    window.innerWidth <= 1200 ? `${(window.innerHeight - 50) * 0.6}px` : "80vh",
   border: "1px solid gray",
 };
 /** Styling properties applied to each square element */
@@ -107,7 +108,7 @@ const SY_A0500W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
 
   //커스텀 옵션 조회
@@ -1206,9 +1207,42 @@ const SY_A0500W: React.FC = () => {
   return (
     <>
       {isMobile ? (
-        <GridContainerWrap onClick={deletemenu}>
+        <GridContainerWrap onClick={deletemenu} style={{ gap: 0 }}>
+          <TitleContainer>
+            <Title>레이아웃 설정</Title>
+
+            <ButtonContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  permissions={permissions}
+                  exportExcel={exportExcel}
+                  pathname="SY_A0500W"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
+          <FilterContainer>
+            <FormBox>
+              <tbody>
+                <tr>
+                  <th>사업장</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="location"
+                        value={filters.location}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </FormBox>
+          </FilterContainer>
           <Swiper
-            className="leading_PDA_container"
+            className="leading_75_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1217,45 +1251,11 @@ const SY_A0500W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
-              <TitleContainer>
-                <Title>레이아웃 설정</Title>
-
-                <ButtonContainer>
-                  {permissions && (
-                    <TopButtons
-                      search={search}
-                      permissions={permissions}
-                      exportExcel={exportExcel}
-                      pathname="SY_A0500W"
-                    />
-                  )}
-                </ButtonContainer>
-              </TitleContainer>
               <GridContainer
                 style={{
                   width: `${deviceWidth - 30}px`,
-                  height: `${deviceHeight  * 0.85}px`,
                 }}
               >
-                <FilterContainer>
-                  <FormBox>
-                    <tbody>
-                      <tr>
-                        <th>사업장</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="location"
-                              value={filters.location}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FormBox>
-                </FilterContainer>
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
                   data={mainDataResult.data}
@@ -1263,8 +1263,8 @@ const SY_A0500W: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight * 0.75}px`,
-                     overflow: "auto",
+                      height: `${deviceHeight * 0.77}px`,
+                      overflow: "auto",
                     }}
                     data={process(
                       mainDataResult.data.map((row) => ({
@@ -1351,13 +1351,12 @@ const SY_A0500W: React.FC = () => {
               </div>
               <GridContainer
                 style={{
-                  height: `${deviceHeight * 0.85}px`,
                   width: `${deviceWidth - 30}px`,
-                 overflow: "auto",
+                  height: `${deviceHeight * 0.72}px`,
+                  overflow: "auto",
                 }}
               >
                 <GridTitleContainer>
-                  <GridTitle>프로세스 레이아웃</GridTitle>
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick2}
