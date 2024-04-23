@@ -880,7 +880,7 @@ const FlowChart = (props) => {
     <>
       {isMobile ? (
         <Swiper
-          className="leading_PDA_container"
+          className="leading_63_Swiper"
           onSwiper={(swiper) => {
             setSwiper(swiper);
           }}
@@ -894,23 +894,24 @@ const FlowChart = (props) => {
                 display: "flex",
                 justifyContent: "right",
                 width: "100%",
+                marginBottom:"5px"
               }}
             >
-              <Button
+              <ButtonKendo
                 onClick={() => {
                   if (swiper) {
                     swiper.slideTo(1);
                   }
                 }}
+                themeColor={"primary"}
+                fillMode="outline"
                 icon="arrow-right"
               >
                 노드편집
-              </Button>
+              </ButtonKendo>
             </div>
             <GridContainer
-              width="65%"
-              height={isMobile ? `${deviceHeight - 150}px` : "70vh"}
-              style={{ border: "1px solid #d3d3d3" }}
+              style={{ border: "1px solid #d3d3d3", height:`${deviceHeight * 0.6}px` }}
             >
               <div
                 ref={ref}
@@ -950,7 +951,6 @@ const FlowChart = (props) => {
                   <div
                     style={{
                       width: "100%",
-                      height: "100%",
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center",
@@ -980,18 +980,21 @@ const FlowChart = (props) => {
                 display: "flex",
                 justifyContent: "left",
                 width: "100%",
+                marginBottom:"5px"
               }}
             >
-              <Button
+              <ButtonKendo
                 onClick={() => {
                   if (swiper) {
                     swiper.slideTo(0);
                   }
                 }}
                 icon="arrow-left"
+                fillMode="outline"
+                themeColor={"primary"}
               >
                 이전
-              </Button>
+              </ButtonKendo>
             </div>
             <GridContainer
               style={{

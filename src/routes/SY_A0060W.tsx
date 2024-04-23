@@ -45,7 +45,7 @@ const SY_A0060W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight;
+  let deviceHeight = window.innerHeight - 50;
 
   let isMobile = deviceWidth <= 1200;
 
@@ -253,130 +253,261 @@ const SY_A0060W: React.FC = () => {
 
   return (
     <>
-      <TitleContainer>
-        <Title>레이아웃 설정(NEW)</Title>
-
-        <ButtonContainer>
-          {permissions && (
-            <TopButtons
-              search={search}
-              permissions={permissions}
-              disable={true}
-              pathname="SY_A0060W"
-            />
-          )}
-        </ButtonContainer>
-      </TitleContainer>
-      <TabStrip
-        style={{
-          width: isMobile ? `${deviceWidth - 30}px` : "100%",
-          height: isMobile ? `${deviceHeight  * 0.8}px` : "",
-        }}
-        selected={tabSelected}
-        onSelect={handleSelectTab}
-      >
-        <TabStripTab title="레이아웃 리스트">
-          <FilterContainer>
-            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-              <tbody>
-                <tr>
-                  <th>사업장</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="location"
-                        value={filters.location}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                  <th></th>
-                  <td></td>
-                </tr>
-              </tbody>
-            </FilterBox>
-          </FilterContainer>
-          <Box className="overflow_scrollhidden" style={{ height: "78vh" }}>
-            <GridTitleContainer>
-              <GridTitle></GridTitle>
-              <ButtonContainer>
-                <Button
-                  onClick={onNewClick}
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="file-add"
-                >
-                  신규
-                </Button>
-              </ButtonContainer>
-            </GridTitleContainer>
-            <Grid style={{ marginBottom: "30px" }} container spacing={2}>
-              {mainDataResult.data.map((item) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
-                  <Card onClick={(e) => DetailView(item)}>
-                    <CardActionArea>
-                      {item.preview_image == "" ||
-                      item.preview_image == undefined ||
-                      item.preview_image == null ? (
-                        <div style={{ height: "250px" }}></div>
-                      ) : (
-                        <CardMedia
-                          component="img"
-                          height="250"
-                          image={item.preview_image}
-                          alt="layout"
+      {isMobile ? (
+        <>
+          <TitleContainer>
+            <Title>레이아웃 설정(NEW)</Title>
+            <FilterContainer>
+              <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                <tbody>
+                  <tr>
+                    <th>사업장</th>
+                    <td>
+                      {customOptionData !== null && (
+                        <CustomOptionComboBox
+                          name="location"
+                          value={filters.location}
+                          customOptionData={customOptionData}
+                          changeData={filterComboBoxChange}
                         />
                       )}
-                      <CardContent style={{ backgroundColor: "#f0f5fa" }}>
-                        <Typography
-                          gutterBottom
-                          variant="subtitle1"
-                          component="div"
-                          style={{ fontWeight: 600 }}
-                        >
-                          {item.layout_name}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          style={{ fontWeight: 400, color: "#b0adac" }}
-                        >
-                          {item.last_update_time == null
-                            ? "--"
-                            : dateformat7(item.last_update_time)}
-                        </Typography>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-        </TabStripTab>
-        <TabStripTab title="레이아웃 설정" disabled={clicks}>
-          <FlowChart
-            data={mainDataResult2.data}
-            filters={filters2}
-            workType={workType}
-            setData={(bool: any) => {
-              if (bool == true) {
-                setFilters((prev) => ({
-                  ...prev,
-                  isSearch: true,
-                }));
-              } else {
-                setTabSelected(0);
-                setClicks(true);
-                setWorkType("U");
-                setFilters((prev) => ({
-                  ...prev,
-                  isSearch: true,
-                }));
-              }
+                    </td>
+                    <th></th>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </FilterBox>
+            </FilterContainer>
+            <ButtonContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  permissions={permissions}
+                  disable={true}
+                  pathname="SY_A0060W"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
+          <TabStrip
+            style={{
+              width: isMobile ? `${deviceWidth - 30}px` : "100%",
+              height: isMobile ? `${deviceHeight * 0.8}px` : "",
             }}
-          />
-        </TabStripTab>
-      </TabStrip>
+            selected={tabSelected}
+            onSelect={handleSelectTab}
+          >
+            <TabStripTab title="레이아웃 리스트">
+              <Box className="overflow_scrollhidden">
+                <GridTitleContainer>
+                  <GridTitle></GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onNewClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="file-add"
+                      style={{ marginBottom: "5px" }}
+                    >
+                      신규
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid style={{ marginBottom: "30px" }} container spacing={2}>
+                  {mainDataResult.data.map((item) => (
+                    <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+                      <Card onClick={(e) => DetailView(item)}>
+                        <CardActionArea>
+                          {item.preview_image == "" ||
+                          item.preview_image == undefined ||
+                          item.preview_image == null ? (
+                            <div style={{ height: "250px" }}></div>
+                          ) : (
+                            <CardMedia
+                              component="img"
+                              height="250"
+                              image={item.preview_image}
+                              alt="layout"
+                            />
+                          )}
+                          <CardContent style={{ backgroundColor: "#f0f5fa" }}>
+                            <Typography
+                              gutterBottom
+                              variant="subtitle1"
+                              component="div"
+                              style={{ fontWeight: 600 }}
+                            >
+                              {item.layout_name}
+                            </Typography>
+                            <Typography
+                              variant="caption"
+                              style={{ fontWeight: 400, color: "#b0adac" }}
+                            >
+                              {item.last_update_time == null
+                                ? "--"
+                                : dateformat7(item.last_update_time)}
+                            </Typography>
+                          </CardContent>
+                        </CardActionArea>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+            </TabStripTab>
+            <TabStripTab title="레이아웃 설정" disabled={clicks}>
+              <FlowChart
+                data={mainDataResult2.data}
+                filters={filters2}
+                workType={workType}
+                setData={(bool: any) => {
+                  if (bool == true) {
+                    setFilters((prev) => ({
+                      ...prev,
+                      isSearch: true,
+                    }));
+                  } else {
+                    setTabSelected(0);
+                    setClicks(true);
+                    setWorkType("U");
+                    setFilters((prev) => ({
+                      ...prev,
+                      isSearch: true,
+                    }));
+                  }
+                }}
+              />
+            </TabStripTab>
+          </TabStrip>
+        </>
+      ) : (
+        <>
+          <TitleContainer>
+            <Title>레이아웃 설정(NEW)</Title>
+
+            <ButtonContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  permissions={permissions}
+                  disable={true}
+                  pathname="SY_A0060W"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
+          <TabStrip
+            style={{
+              width: isMobile ? `${deviceWidth - 30}px` : "100%",
+              height: isMobile ? `${deviceHeight * 0.8}px` : "",
+            }}
+            selected={tabSelected}
+            onSelect={handleSelectTab}
+          >
+            <TabStripTab title="레이아웃 리스트">
+              <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                  <tbody>
+                    <tr>
+                      <th>사업장</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="location"
+                            value={filters.location}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </FilterBox>
+              </FilterContainer>
+              <Box className="overflow_scrollhidden" style={{ height: "78vh" }}>
+                <GridTitleContainer>
+                  <GridTitle></GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onNewClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="file-add"
+                    >
+                      신규
+                    </Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid style={{ marginBottom: "30px" }} container spacing={2}>
+                  {mainDataResult.data.map((item) => (
+                    <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+                      <Card onClick={(e) => DetailView(item)}>
+                        <CardActionArea>
+                          {item.preview_image == "" ||
+                          item.preview_image == undefined ||
+                          item.preview_image == null ? (
+                            <div style={{ height: "250px" }}></div>
+                          ) : (
+                            <CardMedia
+                              component="img"
+                              height="250"
+                              image={item.preview_image}
+                              alt="layout"
+                            />
+                          )}
+                          <CardContent style={{ backgroundColor: "#f0f5fa" }}>
+                            <Typography
+                              gutterBottom
+                              variant="subtitle1"
+                              component="div"
+                              style={{ fontWeight: 600 }}
+                            >
+                              {item.layout_name}
+                            </Typography>
+                            <Typography
+                              variant="caption"
+                              style={{ fontWeight: 400, color: "#b0adac" }}
+                            >
+                              {item.last_update_time == null
+                                ? "--"
+                                : dateformat7(item.last_update_time)}
+                            </Typography>
+                          </CardContent>
+                        </CardActionArea>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+            </TabStripTab>
+            <TabStripTab title="레이아웃 설정" disabled={clicks}>
+              <FlowChart
+                data={mainDataResult2.data}
+                filters={filters2}
+                workType={workType}
+                setData={(bool: any) => {
+                  if (bool == true) {
+                    setFilters((prev) => ({
+                      ...prev,
+                      isSearch: true,
+                    }));
+                  } else {
+                    setTabSelected(0);
+                    setClicks(true);
+                    setWorkType("U");
+                    setFilters((prev) => ({
+                      ...prev,
+                      isSearch: true,
+                    }));
+                  }
+                }}
+              />
+            </TabStripTab>
+          </TabStrip>
+        </>
+      )}
     </>
   );
 };

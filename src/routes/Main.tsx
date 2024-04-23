@@ -75,7 +75,7 @@ const Main: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight;
+  let deviceHeight = window.innerHeight -50;
   let isMobile = deviceWidth <= 1200;
 
   const idGetter = getter(DATA_ITEM_KEY);
@@ -863,7 +863,7 @@ const Main: React.FC = () => {
                   </Button>
                 </MainWorkStartEndContainer>
               </MainTopContainer>
-              <ApprovalBox style={{ width: `${deviceWidth - 30}px` }}>
+              <ApprovalBox style={{ width: `${deviceWidth - 30}px`, fontSize:"0.8em"}}>
                 <ApprovalInner>
                   <div>미결</div>
                   <div>{approvalValueState.app}</div>
@@ -888,7 +888,7 @@ const Main: React.FC = () => {
                 </Button>
               </ApprovalBox>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, marginTop: "2vh" }}
+                style={{ width: `${deviceWidth - 30}px`, marginTop: "1vh" }}
               >
                 <TabStrip
                   style={{ width: "100%" }}
@@ -906,7 +906,7 @@ const Main: React.FC = () => {
                         <div
                           style={{
                             backgroundColor: "#ccc",
-                            height: "600px",
+                            // height: "500px",
                             width: "100%",
                             display: "flex",
                             alignItems: "center",
@@ -949,7 +949,7 @@ const Main: React.FC = () => {
                     disabled={mainDataResult.total == 0 ? true : false}
                   >
                     <TabStrip
-                      style={{ width: "100%" }}
+                      style={{ width: "100%", height: `${deviceHeight * 0.6}px`}}
                       selected={tabSelected2}
                       onSelect={handleSelectTab2}
                     >
@@ -988,7 +988,7 @@ const Main: React.FC = () => {
                     <GridTitle>공지사항</GridTitle>
                   </GridTitleContainer>
                   <Grid
-                    style={{ height: `${deviceHeight * 0.35}px` }}
+                    style={{ height: `${deviceHeight * 0.37}px` }}
                     data={process(
                       noticeDataResult.data.map((row) => ({
                         ...row,
@@ -1038,7 +1038,7 @@ const Main: React.FC = () => {
                     <GridTitle>업무지시요청</GridTitle>
                   </GridTitleContainer>
                   <Grid
-                    style={{ height: `${deviceHeight * 0.4}px` }}
+                    style={{ height: `${deviceHeight * 0.42}px` }}
                     data={process(workOrderDataResult.data, workOrderDataState)}
                     {...workOrderDataState}
                     onDataStateChange={onWorkOrderDataStateChange}

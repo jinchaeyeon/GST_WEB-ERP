@@ -749,6 +749,7 @@ export const ApprovalBox = styled.div`
     margin-top: 10px;
     margin-left: 0;
     width: 100%;
+    height: 40px;
   }
 `;
 

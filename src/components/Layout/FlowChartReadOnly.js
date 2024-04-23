@@ -21,6 +21,7 @@ const nodeTypes = {
 
 const FlowChartReadOnly = (props) => {
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight;
   let isMobile = deviceWidth <= 1200;
   const [bizComponentData, setBizComponentData] = useState(null);
   UseBizComponent(
@@ -118,7 +119,7 @@ const FlowChartReadOnly = (props) => {
 
   return (
     <>
-      <GridContainerWrap height={isMobile ? "67vh" : "84vh"}>
+      <GridContainerWrap height={isMobile ? `${deviceHeight * 0.6}px` : "84vh"}>
         <GridContainer
           width="100%"
           height={isMobile ? "100%" : ""}

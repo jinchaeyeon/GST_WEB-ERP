@@ -105,7 +105,7 @@ const Page: React.FC = () => {
   const [group, setGroup] = React.useState(initialGroup);
   const [total, setTotal] = useState(0);
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight;
+  let deviceHeight = window.innerHeight -50;
   let isMobile = deviceWidth <= 1200;
 
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1210,9 +1210,101 @@ const Page: React.FC = () => {
   return (
     <>
       {isMobile ? (
-        <GridContainerWrap>
+        <>
+            <TitleContainer>
+              <Title>공통코드정보</Title>
+
+              <ButtonContainer>
+                <FilterContainer>
+                  <FilterBox
+                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
+                  >
+                    <tbody>
+                      <tr>
+                        <th>유형분류</th>
+                        <td>
+                          {customOptionData !== null && (
+                            <CustomOptionComboBox
+                              name="group_category"
+                              value={filters.group_category}
+                              customOptionData={customOptionData}
+                              changeData={filterComboBoxChange}
+                            />
+                          )}
+                        </td>
+
+                        <th>그룹코드</th>
+                        <td>
+                          <Input
+                            name="group_code"
+                            type="text"
+                            value={filters.group_code}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                        <th>그룹코드명</th>
+                        <td>
+                          <Input
+                            name="group_name"
+                            type="text"
+                            value={filters.group_name}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                        <th>필드 캡션</th>
+                        <td>
+                          <Input
+                            name="field_caption"
+                            type="text"
+                            value={filters.field_caption}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>세부코드</th>
+                        <td>
+                          <Input
+                            name="sub_code"
+                            type="text"
+                            value={filters.sub_code}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                        <th>세부코드명</th>
+                        <td>
+                          <Input
+                            name="subcode_name"
+                            type="text"
+                            value={filters.subcode_name}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                        <th>메모</th>
+                        <td colSpan={3}>
+                          <Input
+                            name="memo"
+                            type="text"
+                            value={filters.memo}
+                            onChange={filterInputChange}
+                          />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </FilterBox>
+                </FilterContainer>
+                {permissions !== null && (
+                  <TopButtons
+                    search={search}
+                    exportExcel={exportExcel}
+                    permissions={permissions}
+                    pathname="SY_A0010W"
+                  />
+                )}
+              </ButtonContainer>
+            </TitleContainer>
           <Swiper
-            className="leading_PDA_container"
+            className="leading_80_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1224,98 +1316,6 @@ const Page: React.FC = () => {
               <GridContainer
                 style={{ width: `${deviceWidth - 30}px`, overflow: "auto", height:"100%" }}
               >
-                <TitleContainer>
-                  <Title>공통코드정보</Title>
-
-                  <ButtonContainer>
-                    <FilterContainer>
-                      <FilterBox
-                        onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                      >
-                        <tbody>
-                          <tr>
-                            <th>유형분류</th>
-                            <td>
-                              {customOptionData !== null && (
-                                <CustomOptionComboBox
-                                  name="group_category"
-                                  value={filters.group_category}
-                                  customOptionData={customOptionData}
-                                  changeData={filterComboBoxChange}
-                                />
-                              )}
-                            </td>
-
-                            <th>그룹코드</th>
-                            <td>
-                              <Input
-                                name="group_code"
-                                type="text"
-                                value={filters.group_code}
-                                onChange={filterInputChange}
-                              />
-                            </td>
-                            <th>그룹코드명</th>
-                            <td>
-                              <Input
-                                name="group_name"
-                                type="text"
-                                value={filters.group_name}
-                                onChange={filterInputChange}
-                              />
-                            </td>
-                            <th>필드 캡션</th>
-                            <td>
-                              <Input
-                                name="field_caption"
-                                type="text"
-                                value={filters.field_caption}
-                                onChange={filterInputChange}
-                              />
-                            </td>
-                          </tr>
-                          <tr>
-                            <th>세부코드</th>
-                            <td>
-                              <Input
-                                name="sub_code"
-                                type="text"
-                                value={filters.sub_code}
-                                onChange={filterInputChange}
-                              />
-                            </td>
-                            <th>세부코드명</th>
-                            <td>
-                              <Input
-                                name="subcode_name"
-                                type="text"
-                                value={filters.subcode_name}
-                                onChange={filterInputChange}
-                              />
-                            </td>
-                            <th>메모</th>
-                            <td colSpan={3}>
-                              <Input
-                                name="memo"
-                                type="text"
-                                value={filters.memo}
-                                onChange={filterInputChange}
-                              />
-                            </td>
-                          </tr>
-                        </tbody>
-                      </FilterBox>
-                    </FilterContainer>
-                    {permissions !== null && (
-                      <TopButtons
-                        search={search}
-                        exportExcel={exportExcel}
-                        permissions={permissions}
-                        pathname="SY_A0010W"
-                      />
-                    )}
-                  </ButtonContainer>
-                </TitleContainer>
 
                 <GridTitleContainer>
                   {permissions !== null && (
@@ -1351,7 +1351,7 @@ const Page: React.FC = () => {
                   <Grid
                     ref={gridRef}
                     style={{
-                      height: `${deviceHeight * 0.75}px`,
+                      height: `${deviceHeight * 0.8}px`,
                      overflow: "auto",
                     }}
                     data={newData.map((item: { items: any[] }) => ({
@@ -1453,7 +1453,7 @@ const Page: React.FC = () => {
                 >
                   <Grid
                     style={{
-                      height: `${deviceHeight  * 0.85}px`,
+                      height: `${deviceHeight  * 0.9}px`,
                      overflow: "auto",
                     }}
                     data={process(
@@ -1641,7 +1641,7 @@ const Page: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
           </Swiper>
-        </GridContainerWrap>
+        </>
       ) : (
         <>
           <TitleContainer>
