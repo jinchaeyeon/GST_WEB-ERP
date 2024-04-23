@@ -2131,6 +2131,12 @@ const CM_A7000W: React.FC = () => {
                       <Button
                         themeColor={"primary"}
                         onClick={() => {
+                          detailDataResult.data.map((item) => {
+                            if (item.num > temp) {
+                              temp = item.num;
+                            }
+                          });
+                          
                           const newDataItem = {
                             [DATA_ITEM_KEY]: ++temp,
                             prsnnm: information2.user_name,

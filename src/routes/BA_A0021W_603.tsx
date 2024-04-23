@@ -78,8 +78,17 @@ const numberField = [
   "contraamt",
   "change_contraamt",
   "fin_contraamt",
+  "finalquowonamt",
+  "quorev",
+  "quounp",
+  "margin",
+  "discount",
+  "itemcnt",
+  "designcnt",
+  "marginamt",
+  "discountamt",
 ];
-const dateField = ["quodt", "recdt", "strdt", "enddt"];
+const dateField = ["recdt", "strdt", "enddt"];
 
 const BA_A0021W_603: React.FC = () => {
   const setLoading = useSetRecoilState(isLoading);
@@ -1529,6 +1538,12 @@ const BA_A0021W_603: React.FC = () => {
                     data={process(
                       mainDataResult3.data.map((row) => ({
                         ...row,
+                        person: userListData.find(
+                          (items: any) => items.user_id == row.person
+                        )?.user_name,
+                        materialtype: materialtypeListData.find(
+                          (items: any) => items.sub_code == row.materialtype
+                        )?.code_name,
                         [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
                       })),
                       mainDataState3

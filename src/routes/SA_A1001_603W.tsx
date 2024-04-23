@@ -33,14 +33,13 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
-import CenterCell from "../components/Cells/CenterCell";
 import CheckBoxCell from "../components/Cells/CheckBoxCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
+import NumberCommaCell from "../components/Cells/NumberCommaCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
-  ThreeNumberceil,
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
@@ -82,22 +81,30 @@ import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
 
-const dateField = ["quodt"];
+const dateField = ["pubdt"];
 
 const numberField = [
-  "quoamt",
+  "finalquowonamt",
   "quorev",
   "quounp",
   "margin",
   "discount",
-  "finalquowonamt",
+  "itemcnt",
+  "designcnt",
+  "marginamt",
+  "discountamt",
 ];
 
 const iconField = ["confinyn"];
 
-const centerField = ["designyn"];
-
-const numberField2 = ["quounp", "finalquowonamt"];
+const numberField2 = [
+  "finalquowonamt",
+  "quounp",
+  "margin",
+  "discount",
+  "marginamt",
+  "discountamt",
+];
 
 let targetRowIndex: null | number = null;
 let targetRowIndex2: null | number = null;
@@ -107,7 +114,9 @@ type TdataArr = {
   itemcd_s: string[];
   quowonamt_s: string[];
   margin_s: string[];
+  marginamt_s: string[];
   discount_s: string[];
+  discountamt_s: string[];
   amt_s: string[];
 };
 
@@ -202,10 +211,11 @@ const SA_A1001_603W: React.FC = () => {
             (item: any) => item.id === "materialtype"
           ).valueCode,
           rev: defaultOption.find((item: any) => item.id === "rev").valueCode,
-          designyn: defaultOption.find((item: any) => item.id === "designyn")
-            .valueCode,
           quocalyn: defaultOption.find((item: any) => item.id === "quocalyn")
             .valueCode,
+          contractyn: defaultOption.find(
+            (item: any) => item.id === "contractyn"
+          ).valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
           isSearch: true,
@@ -217,10 +227,11 @@ const SA_A1001_603W: React.FC = () => {
           materialtype: defaultOption.find(
             (item: any) => item.id === "materialtype"
           ).valueCode,
-          designyn: defaultOption.find((item: any) => item.id === "designyn")
-            .valueCode,
           quocalyn: defaultOption.find((item: any) => item.id === "quocalyn")
             .valueCode,
+          contractyn: defaultOption.find(
+            (item: any) => item.id === "contractyn"
+          ).valueCode,
           rev: defaultOption.find((item: any) => item.id === "rev").valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
@@ -323,10 +334,12 @@ const SA_A1001_603W: React.FC = () => {
         custprsnnm: data.custprsnnm,
         materialtype: data.materialtype,
         requestgb: data.requestgb,
-        quofinyn: data.quofinyn,
+        itemcnt: data.itemcnt,
+        contractyn: data.contractyn,
         quorev: data.quorev,
-        quodt: data.quodt,
-        quoamt: data.quoamt,
+        pubdt: data.pubdt,
+        finalquowonamt: data.finalquowonamt,
+        quocalyn: data.quocalyn,
       }));
     }
 
@@ -342,6 +355,12 @@ const SA_A1001_603W: React.FC = () => {
         ...prev,
         [name]: value,
         person: value == "" ? "" : prev.person,
+      }));
+    } else if (name == "chkpersonnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        chkperson: value == "" ? "" : prev.chkperson,
       }));
     } else {
       setFilters((prev) => ({
@@ -377,24 +396,21 @@ const SA_A1001_603W: React.FC = () => {
     orgdiv: "01",
     frdt: new Date(),
     todt: new Date(),
-    quonum: "",
-    quorev: 0,
-    quoseq: 0,
     custcd: "",
     custnm: "",
     custprsnnm: "",
     materialtype: "",
-    designyn: "",
+    extra_field2: "",
     quocalyn: "",
-    quofinyn: "",
-    //quodt fetchMainGrid에서 셋팅해야함
-    quodt: new Date(),
-    quoamt_str: 0,
-    quoamt_end: 0,
+    contractyn: "",
     person: "",
     personnm: "",
-    remark: "",
+    chkperson: "",
+    chkpersonnm: "",
     rev: "",
+    quonum: "",
+    quorev: 0,
+    quoseq: 0,
     find_row_value: "",
     pgNum: 1,
     isSearch: false,
@@ -460,16 +476,17 @@ const SA_A1001_603W: React.FC = () => {
   }
 
   const [information, setInformation] = useState<{ [name: string]: any }>({
-    num: 1,
     quonum: "",
     custnm: "",
     custprsnnm: "",
     materialtype: "",
     requestgb: "",
-    quofinyn: "",
+    itemcnt: 0,
+    contractyn: "",
     quorev: 0,
-    quodt: "",
-    quoamt: 0,
+    pubdt: "",
+    finalquowonamt: 0,
+    quocalyn: "",
   });
 
   const setCustData = (data: ICustData) => {
@@ -528,16 +545,14 @@ const SA_A1001_603W: React.FC = () => {
         "@p_custnm": filters.custnm,
         "@p_custprsnnm": filters.custprsnnm,
         "@p_materialtype": filters.materialtype,
-        "@p_designyn": filters.designyn,
+        "@p_extra_field2": filters.extra_field2,
         "@p_quocalyn": filters.quocalyn,
-        "@p_quofinyn": filters.quofinyn,
-        "@p_quodt": "",
-        "@p_quoamt_str": filters.quoamt_str,
-        "@p_quoamt_end": filters.quoamt_end,
         "@p_person": filters.personnm == "" ? "" : filters.person,
         "@p_personnm": filters.personnm,
-        "@p_remark": filters.remark,
         "@p_rev": filters.rev,
+        "@p_chkperson": filters.chkpersonnm == "" ? "" : filters.chkperson,
+        "@p_chkpersonnm": filters.chkpersonnm,
+        "@p_contractyn": filters.contractyn,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -593,10 +608,12 @@ const SA_A1001_603W: React.FC = () => {
             custprsnnm: selectedRow.custprsnnm,
             materialtype: selectedRow.materialtype,
             requestgb: selectedRow.requestgb,
-            quofinyn: selectedRow.quofinyn,
+            itemcnt: selectedRow.itemcnt,
+            contractyn: selectedRow.contractyn,
             quorev: selectedRow.quorev,
-            quodt: selectedRow.quodt,
-            quoamt: selectedRow.quoamt,
+            pubdt: selectedRow.pubdt,
+            finalquowonamt: selectedRow.finalquowonamt,
+            quocalyn: selectedRow.quocalyn,
           }));
 
           setSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -608,10 +625,12 @@ const SA_A1001_603W: React.FC = () => {
             custprsnnm: rows[0].custprsnnm,
             materialtype: rows[0].materialtype,
             requestgb: rows[0].requestgb,
-            quofinyn: rows[0].quofinyn,
+            itemcnt: rows[0].itemcnt,
+            contractyn: rows[0].contractyn,
             quorev: rows[0].quorev,
-            quodt: rows[0].quodt,
-            quoamt: rows[0].quoamt,
+            pubdt: rows[0].pubdt,
+            finalquowonamt: rows[0].finalquowonamt,
+            quocalyn: rows[0].quocalyn,
           }));
 
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
@@ -647,26 +666,24 @@ const SA_A1001_603W: React.FC = () => {
       parameters: {
         "@p_work_type": "DETAIL",
         "@p_orgdiv": "01",
-        "@p_frdt": "",
-        "@p_todt": "",
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
         "@p_quonum": filters2.quonum,
         "@p_quorev": filters2.quorev,
         "@p_quoseq": 0,
-        "@p_custcd": "",
-        "@p_custnm": "",
-        "@p_custprsnnm": "",
-        "@p_materialtype": "",
-        "@p_designyn": filters.designyn,
+        "@p_custcd": filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_custprsnnm": filters.custprsnnm,
+        "@p_materialtype": filters.materialtype,
+        "@p_extra_field2": filters.extra_field2,
         "@p_quocalyn": filters.quocalyn,
-        "@p_quofinyn": filters.quofinyn,
-        "@p_quodt": "",
-        "@p_quoamt_str": filters.quoamt_str,
-        "@p_quoamt_end": filters.quoamt_end,
-        "@p_person": "",
-        "@p_personnm": "",
-        "@p_remark": "",
-        "@p_rev": "",
-        "@p_find_row_value": "",
+        "@p_person": filters.personnm == "" ? "" : filters.person,
+        "@p_personnm": filters.personnm,
+        "@p_rev": filters.rev,
+        "@p_chkperson": filters.chkpersonnm == "" ? "" : filters.chkperson,
+        "@p_chkpersonnm": filters.chkpersonnm,
+        "@p_contractyn": filters.contractyn,
+        "@p_find_row_value": filters.find_row_value,
       },
     };
 
@@ -865,15 +882,6 @@ const SA_A1001_603W: React.FC = () => {
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "SA_A1001_603W_001");
-      } else if (
-        filters.quoamt_str == null ||
-        filters.quoamt_str == undefined ||
-        filters.quoamt_end == null ||
-        filters.quoamt_end == undefined
-      ) {
-        throw findMessage(messagesData, "SA_A1001_603W_002");
-      } else if (filters.quoamt_str > filters.quoamt_end) {
-        throw findMessage(messagesData, "SA_A1001_603W_003");
       } else {
         setValues2(false);
         setPage(initialPageState); // 페이지 초기화
@@ -905,10 +913,12 @@ const SA_A1001_603W: React.FC = () => {
       custprsnnm: datas.custprsnnm,
       materialtype: datas.materialtype,
       requestgb: datas.requestgb,
-      quofinyn: datas.quofinyn,
+      itemcnt: datas.itemcnt,
+      contractyn: datas.contractyn,
       quorev: datas.quorev,
-      quodt: datas.quodt,
-      quoamt: datas.quoamt,
+      pubdt: datas.pubdt,
+      finalquowonamt: datas.finalquowonamt,
+      quocalyn: datas.quocalyn,
     }));
     setTabSelected(1);
   };
@@ -926,11 +936,14 @@ const SA_A1001_603W: React.FC = () => {
 
   const [PrsnnumWindowVisible, setPrsnnumWindowVisible] =
     useState<boolean>(false);
-
+  const [PrsnnumWindowVisible2, setPrsnnumWindowVisible2] =
+    useState<boolean>(false);
   const onPrsnnumWndClick = () => {
     setPrsnnumWindowVisible(true);
   };
-
+  const onPrsnnumWndClick2 = () => {
+    setPrsnnumWindowVisible2(true);
+  };
   interface IPrsnnum {
     user_id: string;
     user_name: string;
@@ -946,6 +959,16 @@ const SA_A1001_603W: React.FC = () => {
     });
   };
 
+  const setPrsnnumData2 = (data: IPrsnnum) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        chkpersonnm: data.user_name,
+        chkperson: data.user_id,
+      };
+    });
+  };
+
   const onCal = () => {
     const dataItem = mainDataResult2.data.filter((item) => item.chk == true);
 
@@ -954,12 +977,32 @@ const SA_A1001_603W: React.FC = () => {
       return false;
     }
 
+    let valid = true;
+
+    dataItem.map((item) => {
+      if (item.confinyn == "Y") {
+        valid = false;
+      }
+    });
+
+    if (valid != true) {
+      if (
+        !window.confirm(
+          `견적 재산출을 진행하시겠습니까? \n (계약건에는 반영이 되지 않습니다.)`
+        )
+      ) {
+        return false;
+      }
+    }
+
     let dataArr: TdataArr = {
       quoseq_s: [],
       itemcd_s: [],
       quowonamt_s: [],
       margin_s: [],
+      marginamt_s: [],
       discount_s: [],
+      discountamt_s: [],
       amt_s: [],
     };
 
@@ -969,7 +1012,9 @@ const SA_A1001_603W: React.FC = () => {
         itemcd = "",
         quounp = "",
         margin = "",
+        marginamt = "",
         discount = "",
+        discountamt = "",
         finalquowonamt = "",
       } = item;
 
@@ -977,7 +1022,9 @@ const SA_A1001_603W: React.FC = () => {
       dataArr.itemcd_s.push(itemcd);
       dataArr.quowonamt_s.push(quounp);
       dataArr.margin_s.push(margin);
+      dataArr.marginamt_s.push(marginamt);
       dataArr.discount_s.push(discount);
+      dataArr.discountamt_s.push(discountamt);
       dataArr.amt_s.push(finalquowonamt);
     });
 
@@ -990,19 +1037,53 @@ const SA_A1001_603W: React.FC = () => {
       itemcd_s: dataArr.itemcd_s.join("|"),
       quowonamt_s: dataArr.quowonamt_s.join("|"),
       margin_s: dataArr.margin_s.join("|"),
+      marginamt_s: dataArr.marginamt_s.join("|"),
       discount_s: dataArr.discount_s.join("|"),
+      discountamt_s: dataArr.discountamt_s.join("|"),
       amt_s: dataArr.amt_s.join("|"),
     });
   };
 
   const onSALTRN = () => {
-    if(!window.confirm("계약 전환 하시겠습니까?")) {
+    if (!window.confirm("계약 확정하시겠습니까?")) {
       return false;
     }
+
     const dataItem = mainDataResult2.data.filter((item) => item.chk == true);
 
     if (dataItem.length === 0) {
       alert("선택된 데이터가 없습니다.");
+      return false;
+    }
+
+    let valid = false;
+    let valid2 = false;
+    let valid3 = false;
+
+    dataItem.map((item) => {
+      if (item.quounp == 0) {
+        valid = true;
+      }
+      if (item.confinyn == "Y") {
+        valid2 = true;
+      }
+      if (item.finyn != "Y") {
+        valid3 = true;
+      }
+    });
+
+    if (valid2 != false) {
+      alert("이미 처리된 계약입니다.");
+      return false;
+    }
+
+    if (valid3 != false) {
+      alert("견적 산출을 진행해주세요.");
+      return false;
+    }
+
+    if (valid != false) {
+      alert("견적원가가 0인 항목은 산출이 불가능합니다.");
       return false;
     }
 
@@ -1011,7 +1092,9 @@ const SA_A1001_603W: React.FC = () => {
       itemcd_s: [],
       quowonamt_s: [],
       margin_s: [],
+      marginamt_s: [],
       discount_s: [],
+      discountamt_s: [],
       amt_s: [],
     };
 
@@ -1021,7 +1104,9 @@ const SA_A1001_603W: React.FC = () => {
         itemcd = "",
         quounp = "",
         margin = "",
+        marginamt = "",
         discount = "",
+        discountamt = "",
         finalquowonamt = "",
       } = item;
 
@@ -1029,7 +1114,9 @@ const SA_A1001_603W: React.FC = () => {
       dataArr.itemcd_s.push(itemcd);
       dataArr.quowonamt_s.push(quounp);
       dataArr.margin_s.push(margin);
+      dataArr.marginamt_s.push(marginamt);
       dataArr.discount_s.push(discount);
+      dataArr.discountamt_s.push(discountamt);
       dataArr.amt_s.push(finalquowonamt);
     });
 
@@ -1042,7 +1129,9 @@ const SA_A1001_603W: React.FC = () => {
       itemcd_s: dataArr.itemcd_s.join("|"),
       quowonamt_s: dataArr.quowonamt_s.join("|"),
       margin_s: dataArr.margin_s.join("|"),
+      marginamt_s: dataArr.marginamt_s.join("|"),
       discount_s: dataArr.discount_s.join("|"),
+      discountamt_s: dataArr.discountamt_s.join("|"),
       amt_s: dataArr.amt_s.join("|"),
     });
   };
@@ -1057,12 +1146,32 @@ const SA_A1001_603W: React.FC = () => {
 
     if (dataItem.length === 0) return false;
 
+    let valid = true;
+
+    dataItem.map((item) => {
+      if (item.confinyn == "Y") {
+        valid = false;
+      }
+    });
+
+    if (valid != true) {
+      if (
+        !window.confirm(
+          `저장하시겠습니까? \n (계약건에는 반영이 되지 않습니다.)`
+        )
+      ) {
+        return false;
+      }
+    }
+
     let dataArr: TdataArr = {
       quoseq_s: [],
       itemcd_s: [],
       quowonamt_s: [],
       margin_s: [],
+      marginamt_s: [],
       discount_s: [],
+      discountamt_s: [],
       amt_s: [],
     };
 
@@ -1072,7 +1181,9 @@ const SA_A1001_603W: React.FC = () => {
         itemcd = "",
         quounp = "",
         margin = "",
+        marginamt = "",
         discount = "",
+        discountamt = "",
         finalquowonamt = "",
       } = item;
 
@@ -1080,7 +1191,9 @@ const SA_A1001_603W: React.FC = () => {
       dataArr.itemcd_s.push(itemcd);
       dataArr.quowonamt_s.push(quounp);
       dataArr.margin_s.push(margin);
+      dataArr.marginamt_s.push(marginamt);
       dataArr.discount_s.push(discount);
+      dataArr.discountamt_s.push(discountamt);
       dataArr.amt_s.push(finalquowonamt);
     });
 
@@ -1093,7 +1206,9 @@ const SA_A1001_603W: React.FC = () => {
       itemcd_s: dataArr.itemcd_s.join("|"),
       quowonamt_s: dataArr.quowonamt_s.join("|"),
       margin_s: dataArr.margin_s.join("|"),
+      marginamt_s: dataArr.marginamt_s.join("|"),
       discount_s: dataArr.discount_s.join("|"),
+      discountamt_s: dataArr.discountamt_s.join("|"),
       amt_s: dataArr.amt_s.join("|"),
     });
   };
@@ -1107,7 +1222,9 @@ const SA_A1001_603W: React.FC = () => {
     itemcd_s: "",
     quowonamt_s: "",
     margin_s: "",
+    marginamt_s: "",
     discount_s: "",
+    discountamt_s: "",
     amt_s: "",
   });
 
@@ -1124,7 +1241,9 @@ const SA_A1001_603W: React.FC = () => {
       "@p_itemcd_s": ParaData.itemcd_s,
       "@p_quowonamt_s": ParaData.quowonamt_s,
       "@p_margin_s": ParaData.margin_s,
+      "@p_marginamt_s": ParaData.marginamt_s,
       "@p_discount_s": ParaData.discount_s,
+      "@p_discountamt_s": ParaData.discountamt_s,
       "@p_amt_s": ParaData.amt_s,
       "@p_userid": userId,
       "@p_pc": pc,
@@ -1171,7 +1290,9 @@ const SA_A1001_603W: React.FC = () => {
         itemcd_s: "",
         quowonamt_s: "",
         margin_s: "",
+        marginamt_s: "",
         discount_s: "",
+        discountamt_s: "",
         amt_s: "",
       });
     } else {
@@ -1237,10 +1358,11 @@ const SA_A1001_603W: React.FC = () => {
 
   const enterEdit = (dataItem: any, field: string) => {
     if (
-      field != "rowstatus" &&
-      field != "itemcd" &&
-      field != "testitem" &&
-      field != "confinyn"
+      field == "margin" ||
+      field == "marginamt" ||
+      field == "discount" ||
+      field == "discountamt" ||
+      field == "chk"
     ) {
       const newData = mainDataResult2.data.map((item) =>
         item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
@@ -1283,20 +1405,38 @@ const SA_A1001_603W: React.FC = () => {
           ? {
               ...item,
               rowstatus: item.rowstatus == "N" ? "N" : "U",
+              marginamt:
+                editedField == "margin"
+                  ? item.quounp * (item.margin / 100) + item.quounp
+                  : item.marginamt == 0
+                  ? item.quounp
+                  : item.marginamt,
+              discountamt:
+                editedField == "discount"
+                  ? (item.marginamt == 0 ? item.quounp : item.marginamt) -
+                    (item.marginamt == 0 ? item.quounp : item.marginamt) *
+                      (item.discount / 100)
+                  : editedField == "margin"
+                  ? item.quounp * (item.margin / 100) +
+                    item.quounp -
+                    (item.quounp * (item.margin / 100) + item.quounp) *
+                      (item.discount / 100)
+                  : editedField == "marginamt"
+                  ? item.marginamt - item.marginamt * (item.discount / 100)
+                  : item.discountamt,
               finalquowonamt:
-                editedField != "finalquowonamt"
-                  ? ThreeNumberceil(
-                      item.quounp +
-                        ThreeNumberceil(item.quounp * (item.margin / 100)) -
-                        ThreeNumberceil(
-                          (item.quounp +
-                            ThreeNumberceil(
-                              item.quounp * (item.margin / 100)
-                            )) *
-                            (item.discount / 100)
-                        )
-                    )
-                  : item.finalquowonamt,
+                editedField == "discount"
+                  ? (item.marginamt == 0 ? item.quounp : item.marginamt) -
+                    (item.marginamt == 0 ? item.quounp : item.marginamt) *
+                      (item.discount / 100)
+                  : editedField == "margin"
+                  ? item.quounp * (item.margin / 100) +
+                    item.quounp -
+                    (item.quounp * (item.margin / 100) + item.quounp) *
+                      (item.discount / 100)
+                  : editedField == "marginamt"
+                  ? item.marginamt - item.marginamt * (item.discount / 100)
+                  : item.discountamt,
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -1364,7 +1504,7 @@ const SA_A1001_603W: React.FC = () => {
             >
               <tbody>
                 <tr>
-                  <th>의뢰기간</th>
+                  <th>의뢰일자</th>
                   <td>
                     <CommonDateRangePicker
                       value={{
@@ -1381,7 +1521,7 @@ const SA_A1001_603W: React.FC = () => {
                       className="required"
                     />
                   </td>
-                  <th>프로젝트번호</th>
+                  <th>PJT NO.</th>
                   <td>
                     <Input
                       name="quonum"
@@ -1390,7 +1530,7 @@ const SA_A1001_603W: React.FC = () => {
                       onChange={filterInputChange}
                     />
                   </td>
-                  <th>의뢰기관코드</th>
+                  <th>업체코드</th>
                   <td>
                     <Input
                       name="custcd"
@@ -1406,7 +1546,7 @@ const SA_A1001_603W: React.FC = () => {
                       />
                     </ButtonInInput>
                   </td>
-                  <th>의뢰기관명</th>
+                  <th>업체명</th>
                   <td>
                     <Input
                       name="custnm"
@@ -1415,7 +1555,9 @@ const SA_A1001_603W: React.FC = () => {
                       onChange={filterInputChange}
                     />
                   </td>
-                  <th>의뢰자명</th>
+                </tr>
+                <tr>
+                  <th>의뢰자</th>
                   <td>
                     <Input
                       name="custprsnnm"
@@ -1424,8 +1566,6 @@ const SA_A1001_603W: React.FC = () => {
                       onChange={filterInputChange}
                     />
                   </td>
-                </tr>
-                <tr>
                   <th>물질분야</th>
                   <td>
                     {customOptionData !== null && (
@@ -1437,7 +1577,16 @@ const SA_A1001_603W: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>담당자</th>
+                  <th>물질상세분야</th>
+                  <td>
+                    <Input
+                      name="extra_field2"
+                      type="text"
+                      value={filters.extra_field2}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>등록자</th>
                   <td>
                     <Input
                       name="personnm"
@@ -1454,16 +1603,9 @@ const SA_A1001_603W: React.FC = () => {
                       />
                     </ButtonInInput>
                   </td>
-                  <th>비고</th>
-                  <td>
-                    <Input
-                      name="remark"
-                      type="text"
-                      value={filters.remark}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                  <th>리비전번호</th>
+                </tr>
+                <tr>
+                  <th>REV</th>
                   <td>
                     {customOptionData !== null && (
                       <CustomOptionRadioGroup
@@ -1473,18 +1615,6 @@ const SA_A1001_603W: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>디자인 입력 여부</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionRadioGroup
-                        name="designyn"
-                        customOptionData={customOptionData}
-                        changeData={filterRadioChange}
-                      />
-                    )}
-                  </td>
-                </tr>
-                <tr>
                   <th>견적산출여부</th>
                   <td>
                     {customOptionData !== null && (
@@ -1495,29 +1625,32 @@ const SA_A1001_603W: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>견적확정여부</th>
-                  <td></td>
-                  <th>견적발행일</th>
-                  <td></td>
-                  <th>견적금액</th>
+                  <th>계약확정여부</th>
                   <td>
-                    <div className="filter-item-wrap">
-                      <Input
-                        name="quoamt_str"
-                        type="number"
-                        value={filters.quoamt_str}
-                        onChange={filterInputChange}
-                        className="required"
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="contractyn"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
                       />
-                      ~
-                      <Input
-                        name="quoamt_end"
-                        type="number"
-                        value={filters.quoamt_end}
-                        onChange={filterInputChange}
-                        className="required"
+                    )}
+                  </td>
+                  <th>영업담당자</th>
+                  <td>
+                    <Input
+                      name="chkpersonnm"
+                      type="text"
+                      value={filters.chkpersonnm}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        type="button"
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onPrsnnumWndClick2}
                       />
-                    </div>
+                    </ButtonInInput>
                   </td>
                 </tr>
               </tbody>
@@ -1593,8 +1726,6 @@ const SA_A1001_603W: React.FC = () => {
                               ? DateCell
                               : numberField.includes(item.fieldName)
                               ? NumberCell
-                              : centerField.includes(item.fieldName)
-                              ? CenterCell
                               : undefined
                           }
                           footerCell={
@@ -1662,7 +1793,7 @@ const SA_A1001_603W: React.FC = () => {
             <FormBox>
               <tbody>
                 <tr>
-                  <th>프로젝트번호</th>
+                  <th>PJT NO.</th>
                   <td>
                     <Input
                       name="quonum"
@@ -1671,7 +1802,7 @@ const SA_A1001_603W: React.FC = () => {
                       className="readonly"
                     />
                   </td>
-                  <th>의뢰기관</th>
+                  <th>업체명</th>
                   <td>
                     <Input
                       name="custnm"
@@ -1719,7 +1850,7 @@ const SA_A1001_603W: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
-                  <th>리비전번호</th>
+                  <th>REV</th>
                   <td>
                     <Input
                       name="quorev"
@@ -1728,31 +1859,43 @@ const SA_A1001_603W: React.FC = () => {
                       className="readonly"
                     />
                   </td>
-                  <th>견적 발행일</th>
+                  <th>의뢰품목수</th>
                   <td>
                     <Input
-                      name="quodt"
+                      name="itemcnt"
                       type="text"
-                      value={dateformat2(information.quodt)}
-                      className="readonly"
-                    />
-                  </td>
-                  <th>견적금액</th>
-                  <td>
-                    <Input
-                      name="quoamt"
-                      type="text"
-                      value={numberWithCommas(parseFloat(information.quoamt))}
+                      value={numberWithCommas(parseFloat(information.itemcnt))}
                       className="readonly"
                       style={{ textAlign: "end" }}
                     />
                   </td>
-                  <th>견적확정여부</th>
+                  <th>견적 발행일</th>
                   <td>
                     <Input
-                      name="quofinyn"
+                      name="pubdt"
                       type="text"
-                      value={information.quofinyn}
+                      value={dateformat2(information.pubdt)}
+                      className="readonly"
+                    />
+                  </td>
+                  <th>최종견적금액</th>
+                  <td>
+                    <Input
+                      name="finalquowonamt"
+                      type="text"
+                      value={numberWithCommas(
+                        parseFloat(information.finalquowonamt)
+                      )}
+                      className="readonly"
+                      style={{ textAlign: "end" }}
+                    />
+                  </td>
+                  <th>계약확정여부</th>
+                  <td>
+                    <Input
+                      name="contractyn"
+                      type="text"
+                      value={information.contractyn}
                       className="readonly"
                     />
                   </td>
@@ -1831,7 +1974,9 @@ const SA_A1001_603W: React.FC = () => {
                           title={item.caption}
                           width={item.width}
                           cell={
-                            numberField.includes(item.fieldName)
+                            numberField2.includes(item.fieldName)
+                              ? NumberCommaCell
+                              : numberField.includes(item.fieldName)
                               ? NumberCell
                               : iconField.includes(item.fieldName)
                               ? iconCell
@@ -1929,6 +2074,14 @@ const SA_A1001_603W: React.FC = () => {
           setVisible={setPrsnnumWindowVisible}
           workType="N"
           setData={setPrsnnumData}
+          modal={true}
+        />
+      )}
+      {PrsnnumWindowVisible2 && (
+        <PrsnnumWindow
+          setVisible={setPrsnnumWindowVisible2}
+          workType="N"
+          setData={setPrsnnumData2}
           modal={true}
         />
       )}
