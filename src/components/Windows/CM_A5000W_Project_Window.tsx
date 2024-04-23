@@ -504,7 +504,7 @@ const CopyWindow = ({
                     onChange={filterInputChange}
                   />
                 </td>
-                <th>예약시험번호</th>
+                <th>예약번호</th>
                 <td>
                   <Input
                     name="quotestnum"
@@ -541,7 +541,7 @@ const CopyWindow = ({
                     />
                   )}
                 </td>
-                <th>SM담당자</th>
+                <th>영업담당자</th>
                 <td>
                   {customOptionData !== null && (
                     <CustomOptionComboBox
@@ -634,7 +634,7 @@ const CopyWindow = ({
               width="150px"
               footerCell={mainTotalFooterCell}
             />
-            <GridColumn field="quotestnum" title="예약시험번호" width="150px" />
+            <GridColumn field="quotestnum" title="예약번호" width="150px" />
             <GridColumn field="testnum" title="시험번호" width="150px" />
             <GridColumn field="quotype" title="견적형태" width="120px" />
             <GridColumn field="quosts" title="견적상태" width="120px" />
@@ -645,7 +645,7 @@ const CopyWindow = ({
               cell={DateCell}
             />
             <GridColumn field="person" title="담당자" width="120px" />
-            <GridColumn field="smperson" title="SM담당자" width="120px" />
+            <GridColumn field="smperson" title="영업담당자" width="120px" />
             <GridColumn field="custnm" title="업체명" width="150px" />
             <GridColumn field="materialnm" title="시험물질명" width="150px" />
             <GridColumn

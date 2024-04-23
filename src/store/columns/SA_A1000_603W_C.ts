@@ -269,7 +269,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_quotestnum2",
         field: "quotestnum",
-        caption: "예약시험번호",
+        caption: "예약번호",
         width: 150,
       },
       {

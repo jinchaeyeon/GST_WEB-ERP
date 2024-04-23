@@ -1032,7 +1032,7 @@ const BA_A0021W_603: React.FC = () => {
                       calendar={YearCalendar}
                     />
                   </td>
-                  <th>회사코드</th>
+                  <th>업체코드</th>
                   <td>
                     <Input
                       name="custcd"
@@ -1048,7 +1048,7 @@ const BA_A0021W_603: React.FC = () => {
                       />
                     </ButtonInInput>
                   </td>
-                  <th>회사명</th>
+                  <th>업체명</th>
                   <td>
                     <Input
                       name="custnm"
@@ -1184,7 +1184,7 @@ const BA_A0021W_603: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th>회사명</th>
+                      <th>업체명</th>
                       <td>
                         <Input
                           name="custnm"

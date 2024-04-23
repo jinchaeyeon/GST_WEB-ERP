@@ -763,7 +763,7 @@ const SA_B2229W: React.FC = () => {
           <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
             <tbody>
               <tr>
-                <th>회사코드</th>
+                <th>업체코드</th>
                 <td>
                   <div className="filter-item-wrap">
                     <Input
@@ -781,7 +781,7 @@ const SA_B2229W: React.FC = () => {
                     </ButtonInInput>
                   </div>
                 </td>
-                <th>회사명</th>
+                <th>업체명</th>
                 <td>
                   <Input
                     name="custnm"

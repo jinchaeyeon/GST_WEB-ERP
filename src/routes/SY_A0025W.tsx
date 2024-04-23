@@ -2211,7 +2211,6 @@ const SY_A0025W: React.FC = () => {
                           )}
                         </tr>
                       </>
-                      \{" "}
                       <tr>
                         <th>시작채번연변</th>
                         <td colSpan={3}>

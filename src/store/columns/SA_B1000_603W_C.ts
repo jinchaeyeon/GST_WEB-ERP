@@ -20,7 +20,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_smperson",
         field: "smperson",
-        caption: "SM담당자",
+        caption: "영업담당자",
         width: 120,
       },
       {
@@ -74,7 +74,7 @@ export const gridList: Array<TGrid> = [
       {
         id: "col_user_id",
         field: "user_id",
-        caption: "SM담당자",
+        caption: "영업담당자",
         width: 120,
       },
       {

@@ -2098,7 +2098,7 @@ const CM_A5000W: React.FC = () => {
                               />
                             )}
                           </td>
-                          <th>회사명</th>
+                          <th>업체명</th>
                           <td colSpan={3}>
                             <Input
                               name="customernm"
@@ -2118,7 +2118,7 @@ const CM_A5000W: React.FC = () => {
                               className="readonly"
                             />
                           </td>
-                          <th>예약시험번호</th>
+                          <th>예약번호</th>
                           <td colSpan={3}>
                             <Input
                               name="quotestnum"
@@ -2313,7 +2313,7 @@ const CM_A5000W: React.FC = () => {
                               />
                             )}
                           </td>
-                          <th>회사명</th>
+                          <th>업체명</th>
                           <td colSpan={3}>
                             <Input
                               name="customernm"
@@ -2348,7 +2348,7 @@ const CM_A5000W: React.FC = () => {
                               />
                             </ButtonInInput>
                           </td>
-                          <th>예약시험번호</th>
+                          <th>예약번호</th>
                           <td colSpan={3}>
                             <Input
                               name="quotestnum"

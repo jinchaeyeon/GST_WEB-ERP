@@ -4439,7 +4439,7 @@ const SA_A1000_603W: React.FC = () => {
             <FormBox>
               <tbody>
                 <tr>
-                  <th>회사명</th>
+                  <th>업체명</th>
                   <td>
                     <Input
                       name="custnm"
@@ -4483,7 +4483,7 @@ const SA_A1000_603W: React.FC = () => {
             <FormBox>
               <tbody>
                 <tr>
-                  <th>회사명</th>
+                  <th>업체명</th>
                   <td>
                     <Input
                       name="rcvcustnm"
