@@ -214,7 +214,7 @@ const CM_A1600W_603: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("CM_A1600W", setMessagesData);
+  UseMessages("CM_A1600W_603", setMessagesData);
   const [osstate, setOSState] = useRecoilState(OSState);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -883,7 +883,7 @@ const CM_A1600W_603: React.FC = () => {
     deleted,
   }: SchedulerDataChangeEvent) => {
     if (schedulerFilter.person !== userId) {
-      alert(findMessage(messagesData, "CM_A1600W_001"));
+      alert(findMessage(messagesData, "CM_A1600W_603_001"));
       return false;
     }
 
@@ -1570,11 +1570,11 @@ const CM_A1600W_603: React.FC = () => {
     try {
       dataItem.forEach((item: any) => {
         if (!item.strtime) {
-          throw new Error(findMessage(messagesData, "CM_A1600W_003"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_002"));
         }
 
         if (!item.contents) {
-          throw new Error(findMessage(messagesData, "CM_A1600W_004"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_003"));
         }
       });
     } catch (e) {
@@ -1848,20 +1848,20 @@ const CM_A1600W_603: React.FC = () => {
           convertDateToStr(todoFilter.frdt).substring(6, 8) < "01" ||
           convertDateToStr(todoFilter.frdt).substring(6, 8).length != 2
         ) {
-          throw findMessage(messagesData, "CM_A1600W_003");
+          throw findMessage(messagesData, "CM_A1600W_603_002");
         } else if (
           convertDateToStr(todoFilter.todt).substring(0, 4) < "1997" ||
           convertDateToStr(todoFilter.todt).substring(6, 8) > "31" ||
           convertDateToStr(todoFilter.todt).substring(6, 8) < "01" ||
           convertDateToStr(todoFilter.todt).substring(6, 8).length != 2
         ) {
-          throw findMessage(messagesData, "CM_A1600W_003");
+          throw findMessage(messagesData, "CM_A1600W_603_002");
         } else if (
           schedulerFilter.person == "" ||
           schedulerFilter.person == undefined ||
           schedulerFilter.person == null
         ) {
-          throw findMessage(messagesData, "CM_A1600W_005");
+          throw findMessage(messagesData, "CM_A1600W_603_004");
         } else {
           setTodoFilter((prev) => ({
             ...prev,
@@ -1888,20 +1888,20 @@ const CM_A1600W_603: React.FC = () => {
           convertDateToStr(userFilter.frdt).substring(6, 8) < "01" ||
           convertDateToStr(userFilter.frdt).substring(6, 8).length != 2
         ) {
-          throw findMessage(messagesData, "CM_A1600W_003");
+          throw findMessage(messagesData, "CM_A1600W_603_002");
         } else if (
           convertDateToStr(userFilter.todt).substring(0, 4) < "1997" ||
           convertDateToStr(userFilter.todt).substring(6, 8) > "31" ||
           convertDateToStr(userFilter.todt).substring(6, 8) < "01" ||
           convertDateToStr(userFilter.todt).substring(6, 8).length != 2
         ) {
-          throw findMessage(messagesData, "CM_A1600W_003");
+          throw findMessage(messagesData, "CM_A1600W_603_002");
         } else if (
           userFilter.person == "" ||
           userFilter.person == undefined ||
           userFilter.person == null
         ) {
-          throw findMessage(messagesData, "CM_A1600W_005");
+          throw findMessage(messagesData, "CM_A1600W_603_004");
         } else {
           setUserFilter((prev) => ({
             ...prev,
@@ -2003,7 +2003,7 @@ const CM_A1600W_603: React.FC = () => {
     });
 
     if (userFilter.person !== userId) {
-      alert(findMessage(messagesData, "CM_A1600W_001"));
+      alert(findMessage(messagesData, "CM_A1600W_603_001"));
       ok = false;
       return false;
     }
@@ -2012,34 +2012,34 @@ const CM_A1600W_603: React.FC = () => {
     try {
       dataItem.forEach((item: any) => {
         if (item.title == "") {
-          throw new Error(findMessage(messagesData, "CM_A1600W_006"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_005"));
           valid = false;
         }
         if (item.strtime == "") {
-          throw new Error(findMessage(messagesData, "CM_A1600W_003"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_002"));
           valid = false;
         }
         if (item.endtime == "") {
-          throw new Error(findMessage(messagesData, "CM_A1600W_003"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_002"));
           valid = false;
         }
         if (item.strhh < 0 || item.strhh > 23) {
-          throw new Error(findMessage(messagesData, "CM_A1600W_007"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_006"));
           valid = false;
         }
 
         if (item.strmm < 0 || item.strmm > 59) {
-          throw new Error(findMessage(messagesData, "CM_A1600W_007"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_006"));
           valid = false;
         }
 
         if (item.endhh < 0 || item.endhh > 23) {
-          throw new Error(findMessage(messagesData, "CM_A1600W_007"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_006"));
           valid = false;
         }
 
         if (item.endmm < 0 || item.endmm > 59) {
-          throw new Error(findMessage(messagesData, "CM_A1600W_007"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_006"));
           valid = false;
         }
       });
