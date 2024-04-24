@@ -90,9 +90,9 @@ const AC_A3100W: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv").valueCode,
+        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv")?.valueCode,
         fxdepsts: defaultOption.find((item: any) => item.id == "fxdepsts")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -689,7 +689,7 @@ const AC_A3100W: React.FC = () => {
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

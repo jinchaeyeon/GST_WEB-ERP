@@ -656,13 +656,13 @@ const HU_A3080W: React.FC = () => {
         payyrmm: setDefaultDate(customOptionData, "payyrmm"),
         paydeductdiv: defaultOption.find(
           (item: any) => item.id == "paydeductdiv"
-        ).valueCode,
+        )?.valueCode,
         payitemcd: defaultOption.find((item: any) => item.id == "payitemcd")
-          .valueCode,
+          ?.valueCode,
         paytype: defaultOption.find((item: any) => item.id == "paytype")
-          .valueCode,
+          ?.valueCode,
         rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
-          .valueCode,
+          ?.valueCode,
         isSearch: true,
       }));
       setFilters2((prev) => ({
@@ -670,13 +670,13 @@ const HU_A3080W: React.FC = () => {
         payyrmm: setDefaultDate(customOptionData, "payyrmm"),
         paydeductdiv: defaultOption.find(
           (item: any) => item.id == "paydeductdiv"
-        ).valueCode,
+        )?.valueCode,
         payitemcd: defaultOption.find((item: any) => item.id == "payitemcd")
-          .valueCode,
+          ?.valueCode,
         paytype: defaultOption.find((item: any) => item.id == "paytype")
-          .valueCode,
+          ?.valueCode,
         rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
-          .valueCode,
+          ?.valueCode,
         isSearch: true,
       }));
       setFilters3((prev) => ({
@@ -684,13 +684,13 @@ const HU_A3080W: React.FC = () => {
         payyrmm: setDefaultDate(customOptionData, "payyrmm"),
         paydeductdiv: defaultOption.find(
           (item: any) => item.id == "paydeductdiv"
-        ).valueCode,
+        )?.valueCode,
         payitemcd: defaultOption.find((item: any) => item.id == "payitemcd")
-          .valueCode,
+          ?.valueCode,
         paytype: defaultOption.find((item: any) => item.id == "paytype")
-          .valueCode,
+          ?.valueCode,
         rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
-          .valueCode,
+          ?.valueCode,
         isSearch: true,
       }));
       setFilters4((prev) => ({
@@ -698,13 +698,13 @@ const HU_A3080W: React.FC = () => {
         payyrmm: setDefaultDate(customOptionData, "payyrmm"),
         paydeductdiv: defaultOption.find(
           (item: any) => item.id == "paydeductdiv"
-        ).valueCode,
+        )?.valueCode,
         payitemcd: defaultOption.find((item: any) => item.id == "payitemcd")
-          .valueCode,
+          ?.valueCode,
         paytype: defaultOption.find((item: any) => item.id == "paytype")
-          .valueCode,
+          ?.valueCode,
         rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
-          .valueCode,
+          ?.valueCode,
         isSearch: true,
       }));
       setFilters5((prev) => ({
@@ -712,13 +712,13 @@ const HU_A3080W: React.FC = () => {
         payyrmm: setDefaultDate(customOptionData, "payyrmm"),
         paydeductdiv: defaultOption.find(
           (item: any) => item.id == "paydeductdiv"
-        ).valueCode,
+        )?.valueCode,
         payitemcd: defaultOption.find((item: any) => item.id == "payitemcd")
-          .valueCode,
+          ?.valueCode,
         paytype: defaultOption.find((item: any) => item.id == "paytype")
-          .valueCode,
+          ?.valueCode,
         rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
-          .valueCode,
+          ?.valueCode,
         isSearch: true,
       }));
     }
@@ -4631,7 +4631,7 @@ const HU_A3080W: React.FC = () => {
                     cell={CheckBoxCell}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -4784,7 +4784,7 @@ const HU_A3080W: React.FC = () => {
                     cell={CheckBoxCell}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -4939,7 +4939,7 @@ const HU_A3080W: React.FC = () => {
                     cell={CheckBoxCell}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList3"].map(
+                    customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -5087,7 +5087,7 @@ const HU_A3080W: React.FC = () => {
                     cell={CheckBoxCell}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList4"].map(
+                    customOptionData.menuCustomColumnOptions["grdList4"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -5235,7 +5235,7 @@ const HU_A3080W: React.FC = () => {
                     cell={CheckBoxCell}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList5"].map(
+                    customOptionData.menuCustomColumnOptions["grdList5"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn

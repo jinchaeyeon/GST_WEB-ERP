@@ -482,9 +482,9 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         person: defaultOption.find((item: any) => item.id == "person")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

@@ -99,13 +99,13 @@ const TO_B0011W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         itemlvl1: defaultOption.find((item: any) => item.id == "itemlvl1")
-          .valueCode,
+          ?.valueCode,
         itemlvl2: defaultOption.find((item: any) => item.id == "itemlvl2")
-          .valueCode,
+          ?.valueCode,
         itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -702,31 +702,29 @@ const TO_B0011W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]
-                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                .map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0
-                            ? mainTotalFooterCell
-                            : numberField.includes(item.fieldName)
-                            ? gridSumQtyFooterCell2
-                            : undefined
-                        }
-                      ></GridColumn>
-                    )
-                )}
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        numberField.includes(item.fieldName)
+                          ? NumberCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder == 0
+                          ? mainTotalFooterCell
+                          : numberField.includes(item.fieldName)
+                          ? gridSumQtyFooterCell2
+                          : undefined
+                      }
+                    ></GridColumn>
+                  )
+              )}
           </Grid>
         </ExcelExport>
       </GridContainer>

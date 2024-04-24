@@ -116,11 +116,11 @@ const CopyWindow = ({
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         position: defaultOption.find((item: any) => item.id == "position")
-          .valueCode,
+          ?.valueCode,
         decdiv: defaultOption.find((item: any) => item.id == "decdiv")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

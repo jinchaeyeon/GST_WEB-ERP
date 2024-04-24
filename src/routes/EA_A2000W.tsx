@@ -204,17 +204,17 @@ const EA_A2000W: React.FC = () => {
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
           dptcd: defaultOption.find((item: any) => item.id == "dptcd")
-            .valueCode,
+            ?.valueCode,
           person: defaultOption.find((item: any) => item.id == "person")
-            .valueCode,
+            ?.valueCode,
           stddiv: defaultOption.find((item: any) => item.id == "stddiv")
-            .valueCode,
+            ?.valueCode,
           pgmgb: defaultOption.find((item: any) => item.id == "pgmgb")
-            .valueCode,
+            ?.valueCode,
           appyn: defaultOption.find((item: any) => item.id == "appyn")
-            .valueCode,
+            ?.valueCode,
           appgb: defaultOption.find((item: any) => item.id == "appgb")
-            .valueCode,
+            ?.valueCode,
         }));
       }
     }
@@ -1340,7 +1340,7 @@ const EA_A2000W: React.FC = () => {
                 )}
 
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1426,7 +1426,7 @@ const EA_A2000W: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1512,7 +1512,7 @@ const EA_A2000W: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList3"].map(
+                      customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn

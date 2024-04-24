@@ -188,9 +188,9 @@ const CM_A3000W: React.FC = () => {
         ...prev,
         recdt_s: setDefaultDate(customOptionData, "recdt_s"),
         recdt_e: setDefaultDate(customOptionData, "recdt_e"),
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         person: defaultOption.find((item: any) => item.id == "person")
-          .valueCode,
+          ?.valueCode,
         isSearch: true,
       }));
     }
@@ -1539,7 +1539,7 @@ const CM_A3000W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn

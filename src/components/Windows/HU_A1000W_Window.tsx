@@ -3566,36 +3566,36 @@ const CopyWindow = ({
         setInformation((prev) => ({
           ...prev,
           abilcd: defaultOption.find((item: any) => item.id == "abilcd")
-            .valueCode,
+            ?.valueCode,
           dptcd: defaultOption.find((item: any) => item.id == "dptcd")
-            .valueCode,
+            ?.valueCode,
           emptype: defaultOption.find((item: any) => item.id == "emptype")
-            .valueCode,
+            ?.valueCode,
           nationcd: defaultOption.find((item: any) => item.id == "nationcd")
-            .valueCode,
-          path: defaultOption.find((item: any) => item.id == "path").valueCode,
+            ?.valueCode,
+          path: defaultOption.find((item: any) => item.id == "path")?.valueCode,
           postcd: defaultOption.find((item: any) => item.id == "postcd")
-            .valueCode,
+            ?.valueCode,
           regcd: defaultOption.find((item: any) => item.id == "regcd")
-            .valueCode,
+            ?.valueCode,
           rtrrsn: defaultOption.find((item: any) => item.id == "rtrrsn")
-            .valueCode,
+            ?.valueCode,
           schcd: defaultOption.find((item: any) => item.id == "schcd")
-            .valueCode,
+            ?.valueCode,
           sexcd: defaultOption.find((item: any) => item.id == "sexcd")
-            .valueCode,
+            ?.valueCode,
           bircd: defaultOption.find((item: any) => item.id == "bircd")
-            .valueCode,
+            ?.valueCode,
           jobcd: defaultOption.find((item: any) => item.id == "jobcd")
-            .valueCode,
+            ?.valueCode,
           location: defaultOption.find((item: any) => item.id == "location")
-            .valueCode,
+            ?.valueCode,
           paycd: defaultOption.find((item: any) => item.id == "paycd")
-            .valueCode,
+            ?.valueCode,
           workgb: defaultOption.find((item: any) => item.id == "workgb")
-            .valueCode,
+            ?.valueCode,
           workcls: defaultOption.find((item: any) => item.id == "workcls")
-            .valueCode,
+            ?.valueCode,
         }));
       }
     }

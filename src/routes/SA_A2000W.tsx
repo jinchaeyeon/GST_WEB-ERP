@@ -172,19 +172,19 @@ const SA_B2000: React.FC = () => {
         ymdTodt: setDefaultDate(customOptionData, "ymdTodt"),
         cboLocation: defaultOption.find(
           (item: any) => item.id == "cboLocation"
-        ).valueCode,
+        )?.valueCode,
         cboDptcd: defaultOption.find((item: any) => item.id == "cboDptcd")
-          .valueCode,
+          ?.valueCode,
         cboPerson: defaultOption.find((item: any) => item.id == "cboPerson")
-          .valueCode,
+          ?.valueCode,
         cboDoexdiv: defaultOption.find((item: any) => item.id == "cboDoexdiv")
-          .valueCode,
+          ?.valueCode,
         cboOrdtype: defaultOption.find((item: any) => item.id == "cboOrdtype")
-          .valueCode,
+          ?.valueCode,
         cboOrdsts: defaultOption.find((item: any) => item.id == "cboOrdsts")
-          .valueCode,
+          ?.valueCode,
         radFinyn: defaultOption.find((item: any) => item.id == "radFinyn")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1441,7 +1441,7 @@ const SA_B2000: React.FC = () => {
                 >
                   <GridColumn cell={CommandCell} width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -1549,7 +1549,7 @@ const SA_B2000: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -1921,7 +1921,7 @@ const SA_B2000: React.FC = () => {
               >
                 <GridColumn cell={CommandCell} width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -2004,7 +2004,7 @@ const SA_B2000: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

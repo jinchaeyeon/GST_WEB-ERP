@@ -514,7 +514,7 @@ const BA_A0020W_603: React.FC = () => {
         ...prev,
         custdiv: "B",
         itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1929,37 +1929,37 @@ const BA_A0020W_603: React.FC = () => {
       "new"
     );
     setInformation({
-      area: defaultOption.find((item: any) => item.id == "area").valueCode,
+      area: defaultOption.find((item: any) => item.id == "area")?.valueCode,
       custabbr: "",
       custdiv: defaultOption.find((item: any) => item.id == "custdiv")
-        .valueCode,
+        ?.valueCode,
       listringyn: true,
       listringdiv: defaultOption.find((item: any) => item.id == "listringdiv")
-        .valueCode,
+        ?.valueCode,
       inunpitem: defaultOption.find((item: any) => item.id == "inunpitem")
-        .valueCode,
+        ?.valueCode,
       unpitem: defaultOption.find((item: any) => item.id == "unpitem")
-        .valueCode,
+        ?.valueCode,
       custcd: "자동생성",
       custnm: "",
-      bizdiv: defaultOption.find((item: any) => item.id == "bizdiv").valueCode,
+      bizdiv: defaultOption.find((item: any) => item.id == "bizdiv")?.valueCode,
       bizregnum: "",
       repreregno: "",
       compclass: defaultOption.find((item: any) => item.id == "compclass")
-        .valueCode,
+        ?.valueCode,
       comptype: "",
       countrycd: defaultOption.find((item: any) => item.id == "countrycd")
-        .valueCode,
+        ?.valueCode,
       groupnm: "",
       itemlvl1: defaultOption.find((item: any) => item.id == "itemlvl1")
-        .valueCode,
+        ?.valueCode,
       ceonm: "",
       itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
-        .valueCode,
+        ?.valueCode,
       address: "",
       address_sub: "",
       itemlvl2: defaultOption.find((item: any) => item.id == "itemlvl2")
-        .valueCode,
+        ?.valueCode,
       files: "",
       attdatnum: "",
       remark: "",
@@ -2987,7 +2987,7 @@ const BA_A0020W_603: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -3609,7 +3609,7 @@ const BA_A0020W_603: React.FC = () => {
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -3723,7 +3723,7 @@ const BA_A0020W_603: React.FC = () => {
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList3"].map(
+                  customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -3831,7 +3831,7 @@ const BA_A0020W_603: React.FC = () => {
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList4"].map(
+                  customOptionData.menuCustomColumnOptions["grdList4"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

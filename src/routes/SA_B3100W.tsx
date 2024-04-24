@@ -213,9 +213,9 @@ const SA_B3100W: React.FC = () => {
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
         itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
-          .valueCode,
+          ?.valueCode,
         rdoAmtdiv: defaultOption.find((item: any) => item.id == "rdoAmtdiv")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -903,7 +903,7 @@ const SA_B3100W: React.FC = () => {
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grdAllList"
-                            ].map(
+                            ]?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 && (
                                   <GridColumn
@@ -1011,7 +1011,7 @@ const SA_B3100W: React.FC = () => {
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grdMonthList"
-                            ].map(
+                            ]?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 &&
                                 (numberField.includes(item.fieldName) ? (
@@ -1268,7 +1268,7 @@ const SA_B3100W: React.FC = () => {
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grdQuarterList"
-                            ].map(
+                            ]?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 &&
                                 (item.fieldName !== "itemcd" &&
@@ -1660,7 +1660,7 @@ const SA_B3100W: React.FC = () => {
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grd5YearList"
-                            ].map(
+                            ]?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 &&
                                 (item.fieldName !== "itemcd" &&
@@ -2247,7 +2247,7 @@ const SA_B3100W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdAllList"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -2330,7 +2330,7 @@ const SA_B3100W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdMonthList"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 &&
                             (numberField.includes(item.fieldName) ? (
@@ -2498,7 +2498,7 @@ const SA_B3100W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdQuarterList"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 &&
                             (item.fieldName !== "itemcd" &&
@@ -2798,7 +2798,7 @@ const SA_B3100W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grd5YearList"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 &&
                             (item.fieldName !== "itemcd" &&

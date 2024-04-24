@@ -92,13 +92,13 @@ const KendoWindow = ({
       );
       setInitialVal((prev) => ({
         ...prev,
-        class: defaultOption.find((item: any) => item.id == "class").valueCode,
+        class: defaultOption.find((item: any) => item.id == "class")?.valueCode,
         gender: defaultOption.find((item: any) => item.id == "gender")
-          .valueCode,
+          ?.valueCode,
         manager: defaultOption.find((item: any) => item.id == "manager")
-          .valueCode,
+          ?.valueCode,
         species: defaultOption.find((item: any) => item.id == "species")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

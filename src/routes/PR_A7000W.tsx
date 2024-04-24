@@ -305,14 +305,14 @@ const PR_A7000W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         proccd: defaultOption.find((item: any) => item.id == "proccd")
-          .valueCode,
+          ?.valueCode,
         prodmac: defaultOption.find((item: any) => item.id == "prodmac")
-          .valueCode,
+          ?.valueCode,
         prodemp: defaultOption.find((item: any) => item.id == "prodemp")
-          .valueCode,
-        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
+          ?.valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -2648,7 +2648,7 @@ const PR_A7000W: React.FC = () => {
                   editField={EDIT_FIELD}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
                       (item: any, num: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -2751,7 +2751,7 @@ const PR_A7000W: React.FC = () => {
                     cell={CheckBoxCell}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                       (item: any, num: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -2870,7 +2870,7 @@ const PR_A7000W: React.FC = () => {
                   cell={CustomCheckBoxCell}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList3"].map(
+                  customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                     (item: any, num: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -3153,7 +3153,7 @@ const PR_A7000W: React.FC = () => {
                   cell={CustomCheckBoxCell5}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList4"].map(
+                  customOptionData.menuCustomColumnOptions["grdList4"]?.map(
                     (item: any, num: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

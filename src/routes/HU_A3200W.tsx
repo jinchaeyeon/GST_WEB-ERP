@@ -1087,7 +1087,7 @@ const HU_A3200W: React.FC = () => {
             >
               <GridColumn field="rowstatus" title=" " width="50px" />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn

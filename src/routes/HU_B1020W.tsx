@@ -188,12 +188,12 @@ const HU_B1020W: React.FC = () => {
         ...prev,
 
         cboDptcd: defaultOption.find((item: any) => item.id == "cboDptcd")
-          .valueCode,
+          ?.valueCode,
         cboLocation: defaultOption.find(
           (item: any) => item.id == "cboLocation"
-        ).valueCode,
+        )?.valueCode,
         cboPaycd: defaultOption.find((item: any) => item.id == "cboPaycd")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -477,7 +477,7 @@ const HU_B1020W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

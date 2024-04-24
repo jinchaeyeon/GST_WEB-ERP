@@ -204,16 +204,16 @@ const HU_A2070W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         orgdiv: defaultOption.find((item: any) => item.id == "orgdiv")
-          .valueCode,
+          ?.valueCode,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
-          .valueCode,
+          ?.valueCode,
         prsnnum: defaultOption.find((item: any) => item.id == "prsnnum")
-          .valueCode,
+          ?.valueCode,
         latechk: defaultOption.find((item: any) => item.id == "latechk")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
       }));
@@ -1435,7 +1435,7 @@ const HU_A2070W: React.FC = () => {
                 editable={false}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn

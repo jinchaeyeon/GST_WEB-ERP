@@ -110,11 +110,11 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         raduseyn: defaultOption.find((item: any) => item.id == "raduseyn")
-          .valueCode,
+          ?.valueCode,
         itemacnt:
           itemacnt == ""
             ? defaultOption.find((item: any) => item.id == "itemacnt")
-                .valueCode
+                ?.valueCode
             : itemacnt,
       }));
     }

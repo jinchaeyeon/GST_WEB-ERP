@@ -116,14 +116,14 @@ const CM_A0000W: React.FC = () => {
         ...prev,
         cbocategory: defaultOption.find(
           (item: any) => item.id == "cbocategory"
-        ).valueCode,
+        )?.valueCode,
         cboPerson: defaultOption.find((item: any) => item.id == "cboPerson")
-          .valueCode,
+          ?.valueCode,
         radPublish_yn: defaultOption.find(
           (item: any) => item.id == "radPublish_yn"
-        ).valueCode,
+        )?.valueCode,
         cbodtgb: defaultOption.find((item: any) => item.id == "cbodtgb")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -850,7 +850,7 @@ const CM_A0000W: React.FC = () => {
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

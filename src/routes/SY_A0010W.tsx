@@ -150,7 +150,7 @@ const Page: React.FC = () => {
         ...prev,
         group_category: defaultOption.find(
           (item: any) => item.id == "group_category"
-        ).valueCode,
+        )?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1391,7 +1391,7 @@ const Page: React.FC = () => {
                     {customOptionData !== null &&
                       customOptionData.menuCustomColumnOptions[
                         "grdHeaderList"
-                      ].map(
+                      ]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1808,7 +1808,7 @@ const Page: React.FC = () => {
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions[
                       "grdHeaderList"
-                    ].map(
+                    ]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn

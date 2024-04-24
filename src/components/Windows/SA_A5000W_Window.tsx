@@ -230,11 +230,11 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         person: defaultOption.find((item: any) => item.id == "person")
-          .valueCode,
+          ?.valueCode,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         position: defaultOption.find((item: any) => item.id == "position")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

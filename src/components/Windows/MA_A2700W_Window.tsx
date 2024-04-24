@@ -544,21 +544,21 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         position: defaultOption.find((item: any) => item.id == "position")
-          .valueCode,
+          ?.valueCode,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         person: defaultOption.find((item: any) => item.id == "person")
-          .valueCode,
+          ?.valueCode,
         doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
-          .valueCode,
+          ?.valueCode,
         taxdiv: defaultOption.find((item: any) => item.id == "taxdiv")
-          .valueCode,
+          ?.valueCode,
         auto_transfer: defaultOption.find(
           (item: any) => item.id == "auto_transfer"
-        ).valueCode,
-        inuse: defaultOption.find((item: any) => item.id == "inuse").valueCode,
+        )?.valueCode,
+        inuse: defaultOption.find((item: any) => item.id == "inuse")?.valueCode,
         amtunit: defaultOption.find((item: any) => item.id == "amtunit")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

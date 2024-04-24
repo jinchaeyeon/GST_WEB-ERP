@@ -85,9 +85,9 @@ const AC_B1260W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         acntnm: defaultOption.find((item: any) => item.id == "acntnm")
-          .valueCode,
+          ?.valueCode,
         amtunit: defaultOption.find((item: any) => item.id == "amtunit")
-          .valueCode,
+          ?.valueCode,
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
       }));
     }

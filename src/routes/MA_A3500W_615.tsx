@@ -67,7 +67,7 @@ const MA_A3500W_615: React.FC = () => {
       );
       setInformation((prev) => ({
         ...prev,
-        out: defaultOption.find((item: any) => item.id == "out").valueCode,
+        out: defaultOption.find((item: any) => item.id == "out")?.valueCode,
       }));
     }
   }, [customOptionData]);

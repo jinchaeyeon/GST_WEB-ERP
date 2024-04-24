@@ -107,11 +107,11 @@ const CopyWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
         inkind: defaultOption.find((item: any) => item.id == "inkind")
-          .valueCode,
+          ?.valueCode,
         zeroyn: defaultOption.find((item: any) => item.id == "zeroyn")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

@@ -187,21 +187,21 @@ const CopyWindow = ({
         ...prev,
         cboLocation:
           defaultOption.find((item: any) => item.id == "cboLocation")
-            .valueCode == ""
+            ?.valueCode == ""
             ? "01"
             : defaultOption.find((item: any) => item.id == "cboLocation")
-                .valueCode,
+                ?.valueCode,
         cboPerson:
           defaultOption.find((item: any) => item.id == "cboPerson")
-            .valueCode == ""
+            ?.valueCode == ""
             ? "admin"
             : defaultOption.find((item: any) => item.id == "cboPerson")
-                .valueCode,
+                ?.valueCode,
         outuse:
-          defaultOption.find((item: any) => item.id == "outuse").valueCode ==
+          defaultOption.find((item: any) => item.id == "outuse")?.valueCode ==
           ""
             ? "10"
-            : defaultOption.find((item: any) => item.id == "outuse").valueCode,
+            : defaultOption.find((item: any) => item.id == "outuse")?.valueCode,
       }));
     }
   }, [customOptionData]);

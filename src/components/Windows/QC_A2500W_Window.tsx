@@ -130,7 +130,7 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         causedcd: defaultOption.find((item: any) => item.id == "causedcd")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

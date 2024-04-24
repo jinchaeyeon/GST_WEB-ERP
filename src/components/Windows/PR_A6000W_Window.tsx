@@ -101,11 +101,11 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         prodmac: defaultOption.find((item: any) => item.id == "prodmac")
-          .valueCode,
+          ?.valueCode,
         stopcd: defaultOption.find((item: any) => item.id == "stopcd")
-          .valueCode,
+          ?.valueCode,
         prodemp: defaultOption.find((item: any) => item.id == "prodemp")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

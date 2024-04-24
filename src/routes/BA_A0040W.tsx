@@ -184,9 +184,9 @@ const BA_A0040: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         raduseyn: defaultOption.find((item: any) => item.id == "raduseyn")
-          .valueCode,
+          ?.valueCode,
         itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -2213,7 +2213,7 @@ const BA_A0040: React.FC = () => {
                     rowHeight={30}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"].map(
+                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2650,7 +2650,7 @@ const BA_A0040: React.FC = () => {
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grdList2"
-                            ].map(
+                            ]?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 && (
                                   <GridColumn
@@ -2897,7 +2897,7 @@ const BA_A0040: React.FC = () => {
                 rowHeight={30}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -3306,7 +3306,7 @@ const BA_A0040: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList2"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn

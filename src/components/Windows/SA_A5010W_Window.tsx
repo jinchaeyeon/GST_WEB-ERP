@@ -491,13 +491,13 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         person: defaultOption.find((item: any) => item.id == "person2")
-          .valueCode,
+          ?.valueCode,
         doexdiv: defaultOption.find((item: any) => item.id == "doexdiv2")
-          .valueCode,
+          ?.valueCode,
         taxdiv: defaultOption.find((item: any) => item.id == "taxdiv2")
-          .valueCode,
+          ?.valueCode,
         amtunit: defaultOption.find((item: any) => item.id == "amtunit")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

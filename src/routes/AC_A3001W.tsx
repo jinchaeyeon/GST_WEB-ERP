@@ -45,8 +45,8 @@ const AC_A3001W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         fxyrmm: setDefaultDate(customOptionData, "fxyrmm"),
-        gubun: defaultOption.find((item: any) => item.id == "gubun").valueCode,
-        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv").valueCode,
+        gubun: defaultOption.find((item: any) => item.id == "gubun")?.valueCode,
+        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv")?.valueCode,
       }));
     }
   }, [customOptionData]);

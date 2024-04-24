@@ -122,9 +122,9 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
       setFilters((prev) => ({
         ...prev,
         unpitem: defaultOption.find((item: any) => item.id == "unpitem")
-          .valueCode,
+          ?.valueCode,
         unpitem2: defaultOption.find((item: any) => item.id == "unpitem2")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

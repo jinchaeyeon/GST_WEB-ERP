@@ -114,7 +114,7 @@ const PR_B1104W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         option: defaultOption.find((item: any) => item.id == "option")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

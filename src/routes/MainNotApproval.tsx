@@ -631,7 +631,7 @@ const Main: React.FC = () => {
         ...prev,
         cboSchedulerType: defaultOption.find(
           (item: any) => item.id == "cboSchedulerType"
-        ).valueCode,
+        )?.valueCode,
         isSearch: true,
       }));
       setLayoutFilter((prev) => ({

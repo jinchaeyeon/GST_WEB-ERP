@@ -248,14 +248,14 @@ const Page: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         cboOrgdiv: defaultOption.find((item: any) => item.id == "cboOrgdiv")
-          .valueCode,
+          ?.valueCode,
         cboLocation: defaultOption.find(
           (item: any) => item.id == "cboLocation"
-        ).valueCode,
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+        )?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         user_category: defaultOption.find(
           (item: any) => item.id == "user_category"
-        ).valueCode,
+        )?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -2212,7 +2212,7 @@ const Page: React.FC = () => {
                       cell={CheckBoxCell}
                     />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"].map(
+                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2343,7 +2343,7 @@ const Page: React.FC = () => {
                       cell={CheckBoxCell}
                     />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2681,7 +2681,7 @@ const Page: React.FC = () => {
                     cell={CheckBoxCell}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -2774,7 +2774,7 @@ const Page: React.FC = () => {
                       cell={CheckBoxCell}
                     />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn

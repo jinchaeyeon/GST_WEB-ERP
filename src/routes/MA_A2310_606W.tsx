@@ -168,7 +168,7 @@ const MA_A2310_606W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1272,7 +1272,7 @@ const MA_A2310_606W: React.FC = () => {
                 cell={CheckBoxCell}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1366,7 +1366,7 @@ const MA_A2310_606W: React.FC = () => {
           resizable={true}
         >
           {customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["grdList"].map(
+            customOptionData.menuCustomColumnOptions["grdList"]?.map(
               (item: any, idx: number) =>
                 item.sortOrder !== -1 && (
                   <GridColumn

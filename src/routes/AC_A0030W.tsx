@@ -1359,7 +1359,7 @@ const AC_A0030W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
+                customOptionData.menuCustomColumnOptions["grdHeaderList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1764,7 +1764,7 @@ const AC_A0030W: React.FC = () => {
                     {customOptionData !== null &&
                       customOptionData.menuCustomColumnOptions[
                         "grdDetailList"
-                      ].map(
+                      ]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn

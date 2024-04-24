@@ -156,7 +156,7 @@ const SY_A0125W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1608,7 +1608,7 @@ const SY_A0125W: React.FC = () => {
                     {customOptionData !== null &&
                       customOptionData.menuCustomColumnOptions[
                         "grdAllList"
-                      ].map(
+                      ]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1920,7 +1920,7 @@ const SY_A0125W: React.FC = () => {
                     editable={false}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdAllList"].map(
+                    customOptionData.menuCustomColumnOptions["grdAllList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn

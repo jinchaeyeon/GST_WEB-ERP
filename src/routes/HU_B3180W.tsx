@@ -177,7 +177,7 @@ const HU_B3180W: React.FC = () => {
         ...prev,
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
         rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

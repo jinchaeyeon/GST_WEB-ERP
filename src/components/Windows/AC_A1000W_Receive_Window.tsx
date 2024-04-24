@@ -170,7 +170,7 @@ const CopyWindow = ({
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         notests: defaultOption.find((item: any) => item.id == "notests")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

@@ -296,38 +296,38 @@ const CopyWindow = ({
         setInformation((prev) => ({
           ...prev,
           abilcd: defaultOption.find((item: any) => item.id == "abilcd")
-            .valueCode,
+            ?.valueCode,
           bircd: defaultOption.find((item: any) => item.id == "bircd")
-            .valueCode,
+            ?.valueCode,
           dptcd: defaultOption.find((item: any) => item.id == "dptcd")
-            .valueCode,
+            ?.valueCode,
           emptype: defaultOption.find((item: any) => item.id == "emptype")
-            .valueCode,
+            ?.valueCode,
           gradutype: defaultOption.find((item: any) => item.id == "gradutype")
-            .valueCode,
+            ?.valueCode,
           location: defaultOption.find((item: any) => item.id == "location")
-            .valueCode,
+            ?.valueCode,
           nationcd: defaultOption.find((item: any) => item.id == "nationcd")
-            .valueCode,
+            ?.valueCode,
           paycd: defaultOption.find((item: any) => item.id == "paycd")
-            .valueCode,
+            ?.valueCode,
           payprovflg: defaultOption.find(
             (item: any) => item.id == "payprovflg"
-          ).valueCode,
+          )?.valueCode,
           payprovyn: defaultOption.find((item: any) => item.id == "payprovyn")
-            .valueCode,
+            ?.valueCode,
           postcd: defaultOption.find((item: any) => item.id == "postcd")
-            .valueCode,
+            ?.valueCode,
           regcd: defaultOption.find((item: any) => item.id == "regcd")
-            .valueCode,
+            ?.valueCode,
           rtrrsn: defaultOption.find((item: any) => item.id == "rtrrsn")
-            .valueCode,
+            ?.valueCode,
           schcd: defaultOption.find((item: any) => item.id == "schcd")
-            .valueCode,
+            ?.valueCode,
           sexcd: defaultOption.find((item: any) => item.id == "sexcd")
-            .valueCode,
+            ?.valueCode,
           workerdiv: defaultOption.find((item: any) => item.id == "workerdiv")
-            .valueCode,
+            ?.valueCode,
         }));
       }
     }

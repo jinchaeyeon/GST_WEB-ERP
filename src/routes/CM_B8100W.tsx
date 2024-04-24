@@ -131,7 +131,7 @@ const CM_B8100W: React.FC = () => {
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
         rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -482,7 +482,7 @@ const CM_B8100W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

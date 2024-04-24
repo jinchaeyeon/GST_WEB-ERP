@@ -1121,10 +1121,10 @@ const CM_A1600: React.FC = () => {
                 .sessionItem == "UserId"
               ? sessionUserId
               : defaultOption.find((item: any) => item.id == "person")
-                  .valueCode
-            : defaultOption.find((item: any) => item.id == "person").valueCode,
+                  ?.valueCode
+            : defaultOption.find((item: any) => item.id == "person")?.valueCode,
         rdoplandiv: defaultOption.find((item: any) => item.id == "rdoplandiv")
-          .valueCode,
+          ?.valueCode,
         isSearch: true,
       }));
       setSchedulerFilter2((prev) => ({
@@ -1136,11 +1136,11 @@ const CM_A1600: React.FC = () => {
                 .sessionItem == "UserId"
               ? sessionUserId
               : defaultOption.find((item: any) => item.id == "person")
-                  .valueCode
-            : defaultOption.find((item: any) => item.id == "person").valueCode,
+                  ?.valueCode
+            : defaultOption.find((item: any) => item.id == "person")?.valueCode,
         rdoplandiv2: defaultOption.find(
           (item: any) => item.id == "rdoplandiv2"
-        ).valueCode,
+        )?.valueCode,
         isSearch: true,
       }));
 
@@ -1149,7 +1149,7 @@ const CM_A1600: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         rdofinyn: defaultOption.find((item: any) => item.id == "rdofinyn")
-          .valueCode,
+          ?.valueCode,
         isSearch: true,
       }));
       setUserFilter((prev) => ({
@@ -1157,7 +1157,7 @@ const CM_A1600: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         rdofinyn: defaultOption.find((item: any) => item.id == "rdofinyn")
-          .valueCode,
+          ?.valueCode,
         isSearch: true,
       }));
     }
@@ -2402,7 +2402,7 @@ const CM_A1600: React.FC = () => {
                     editable={false}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -2725,7 +2725,7 @@ const CM_A1600: React.FC = () => {
                   editable={false}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

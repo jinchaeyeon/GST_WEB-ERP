@@ -148,11 +148,11 @@ const QC_A0060W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         proccd: defaultOption.find((item: any) => item.id == "proccd")
-          .valueCode,
-        qcgb: defaultOption.find((item: any) => item.id == "qcgb").valueCode,
-        rev: defaultOption.find((item: any) => item.id == "rev").valueCode,
+          ?.valueCode,
+        qcgb: defaultOption.find((item: any) => item.id == "qcgb")?.valueCode,
+        rev: defaultOption.find((item: any) => item.id == "rev")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1072,7 +1072,7 @@ const QC_A0060W: React.FC = () => {
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -1151,7 +1151,7 @@ const QC_A0060W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList2"].map(
+              customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

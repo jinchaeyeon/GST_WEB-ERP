@@ -192,19 +192,19 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         person: defaultOption.find((item: any) => item.id == "person")
-          .valueCode,
+          ?.valueCode,
         doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
-          .valueCode,
+          ?.valueCode,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         custprsncd: defaultOption.find((item: any) => item.id == "custprsncd")
-          .valueCode,
+          ?.valueCode,
         taxdiv: defaultOption.find((item: any) => item.id == "taxdiv")
-          .valueCode,
+          ?.valueCode,
         pursts: defaultOption.find((item: any) => item.id == "pursts")
-          .valueCode,
+          ?.valueCode,
         amtunit: defaultOption.find((item: any) => item.id == "amtunit")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

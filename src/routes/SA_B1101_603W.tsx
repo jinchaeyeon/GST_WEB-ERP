@@ -100,7 +100,7 @@ const SA_B1101_603W: React.FC = () => {
         todt: setDefaultDate(customOptionData, "todt"),
         reqdt: setDefaultDate(customOptionData, "reqdt"),
         chkperson: defaultOption.find((item: any) => item.id == "chkperson")
-          .valueCode,
+          ?.valueCode,
         isSearch: true,
       }));
     }
@@ -597,7 +597,7 @@ const SA_B1101_603W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

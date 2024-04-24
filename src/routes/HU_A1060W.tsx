@@ -252,13 +252,13 @@ const HU_A1060W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        kind: defaultOption.find((item: any) => item.id == "kind").valueCode,
+        kind: defaultOption.find((item: any) => item.id == "kind")?.valueCode,
       }));
 
       setFilters2((prev) => ({
         ...prev,
         radType: defaultOption.find((item: any) => item.id == "radType")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1226,7 +1226,7 @@ const HU_A1060W: React.FC = () => {
                   editable={false}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

@@ -235,14 +235,14 @@ const AC_A1040W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         position: defaultOption.find((item: any) => item.id == "position")
-          .valueCode,
+          ?.valueCode,
         appsts: defaultOption.find((item: any) => item.id == "appsts")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         acntdiv: defaultOption.find((item: any) => item.id == "acntdiv")
-          .valueCode,
+          ?.valueCode,
       }));
       setFilters2((prev) => ({
         ...prev,
@@ -1653,7 +1653,7 @@ const AC_A1040W: React.FC = () => {
               cell={CheckBoxCell}
             />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -1755,7 +1755,7 @@ const AC_A1040W: React.FC = () => {
               cell={CheckBoxCell}
             />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList2"].map(
+              customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

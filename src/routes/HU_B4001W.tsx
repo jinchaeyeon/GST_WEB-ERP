@@ -99,7 +99,7 @@ const HU_B4001W: React.FC = () => {
 
       let prsnnum = defaultOption.find(
         (item: any) => item.id == "cboPrsnnum"
-      ).valueCode;
+      )?.valueCode;
 
       setFilters((prev) => ({
         ...prev,
@@ -901,7 +901,7 @@ const HU_B4001W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdUse"].map(
+                customOptionData.menuCustomColumnOptions["grdUse"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -982,7 +982,7 @@ const HU_B4001W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdAdj"].map(
+                customOptionData.menuCustomColumnOptions["grdAdj"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn

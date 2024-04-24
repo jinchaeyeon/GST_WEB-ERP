@@ -473,10 +473,9 @@ const HU_A4000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
-        Interviewee: defaultOption.find(
-          (item: any) => item.id == "Interviewee"
-        ).valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
+        Interviewee: defaultOption.find((item: any) => item.id == "Interviewee")
+          ?.valueCode,
         Interviewer: userId,
         isSearch: true,
       }));
@@ -484,10 +483,9 @@ const HU_A4000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
-        Interviewee: defaultOption.find(
-          (item: any) => item.id == "Interviewee"
-        ).valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
+        Interviewee: defaultOption.find((item: any) => item.id == "Interviewee")
+          ?.valueCode,
         Interviewer: userId,
         isSearch: true,
       }));
@@ -4772,7 +4770,7 @@ const HU_A4000W: React.FC = () => {
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -4931,7 +4929,7 @@ const HU_A4000W: React.FC = () => {
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -5123,7 +5121,7 @@ const HU_A4000W: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList3"].map(
+                    customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -5577,7 +5575,7 @@ const HU_A4000W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdList5"
-                          ].map(
+                          ]?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <GridColumn
@@ -5701,7 +5699,7 @@ const HU_A4000W: React.FC = () => {
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grdList6"
-                            ].map(
+                            ]?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 && (
                                   <GridColumn
@@ -5830,7 +5828,7 @@ const HU_A4000W: React.FC = () => {
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grdList7"
-                            ].map(
+                            ]?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 && (
                                   <GridColumn
@@ -5967,7 +5965,7 @@ const HU_A4000W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdList8"
-                          ].map(
+                          ]?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <GridColumn
@@ -6066,7 +6064,7 @@ const HU_A4000W: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdList9"
-                          ].map(
+                          ]?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <GridColumn

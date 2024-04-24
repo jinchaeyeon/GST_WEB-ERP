@@ -115,7 +115,7 @@ const QC_B0100W: React.FC = () => {
         ...prev,
         frym: setDefaultDate(customOptionData, "frym"),
         toym: setDefaultDate(customOptionData, "toym"),
-        gubun: defaultOption.find((item: any) => item.id == "gubun").valueCode,
+        gubun: defaultOption.find((item: any) => item.id == "gubun")?.valueCode,
       }));
     }
   }, [customOptionData]);

@@ -234,11 +234,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   //수량단위, 적재장소
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field == "qtyunit"
-      ? "L_BA015"
-      : field == "load_place"
-      ? "L_LOADPLACE"
-      : "";
+    field == "qtyunit" ? "L_BA015" : field == "load_place" ? "L_LOADPLACE" : "";
 
   const bizComponent = bizComponentData.find(
     (item: any) => item.bizComponentId == bizComponentIdVal
@@ -460,11 +456,11 @@ const MA_A7000W: React.FC = () => {
         ...prev,
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
-          .valueCode,
+          ?.valueCode,
         position: defaultOption.find((item: any) => item.id == "position")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1927,40 +1923,38 @@ const MA_A7000W: React.FC = () => {
                 cell={CheckBoxCell}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"]
-                  .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                  .map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : customField.includes(item.fieldName)
-                              ? CustomComboBoxCell
-                              : itemcdField.includes(item.fieldName)
-                              ? ColumnCommandCell
-                              : undefined
-                          }
-                          headerCell={
-                            requiredfield.includes(item.fieldName)
-                              ? RequiredHeader
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : numberField2.includes(item.fieldName)
-                              ? editNumberFooterCell
-                              : undefined
-                          }
-                        ></GridColumn>
-                      )
-                  )}
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : customField.includes(item.fieldName)
+                            ? CustomComboBoxCell
+                            : itemcdField.includes(item.fieldName)
+                            ? ColumnCommandCell
+                            : undefined
+                        }
+                        headerCell={
+                          requiredfield.includes(item.fieldName)
+                            ? RequiredHeader
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0
+                            ? mainTotalFooterCell
+                            : numberField2.includes(item.fieldName)
+                            ? editNumberFooterCell
+                            : undefined
+                        }
+                      ></GridColumn>
+                    )
+                )}
             </Grid>
           </ExcelExport>
         </GridContainer>

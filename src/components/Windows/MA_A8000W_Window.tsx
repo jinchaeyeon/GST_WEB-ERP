@@ -554,9 +554,9 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         position: defaultOption.find((item: any) => item.id == "position")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

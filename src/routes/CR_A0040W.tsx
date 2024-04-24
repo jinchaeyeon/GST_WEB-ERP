@@ -252,7 +252,7 @@ const CR_A0040W: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           finyn: defaultOption.find((item: any) => item.id == "finyn")
-            .valueCode,
+            ?.valueCode,
         }));
       }
     }

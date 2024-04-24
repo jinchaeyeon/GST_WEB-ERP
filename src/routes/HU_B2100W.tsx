@@ -140,7 +140,7 @@ const HU_B2100W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -694,7 +694,7 @@ const HU_B2100W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -770,7 +770,7 @@ const HU_B2100W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList2"].map(
+              customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

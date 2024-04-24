@@ -194,18 +194,18 @@ const SA_A5001W: React.FC = () => {
         outdt: setDefaultDate(customOptionData, "outdt"),
         outdt2: setDefaultDate(customOptionData, "outdt2"),
         gubun1: defaultOption.find((item: any) => item.id == "gubun1")
-          .valueCode,
+          ?.valueCode,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
-        taxyn: defaultOption.find((item: any) => item.id == "taxyn").valueCode,
+          ?.valueCode,
+        taxyn: defaultOption.find((item: any) => item.id == "taxyn")?.valueCode,
         cargocd: defaultOption.find((item: any) => item.id == "cargocd")
-          .valueCode,
+          ?.valueCode,
         taxdiv: defaultOption.find((item: any) => item.id == "taxdiv")
-          .valueCode,
+          ?.valueCode,
         person: defaultOption.find((item: any) => item.id == "person")
-          .valueCode,
+          ?.valueCode,
         doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1475,7 +1475,7 @@ const SA_A5001W: React.FC = () => {
                   >
                     <GridColumn cell={CommandCell} width="50px" />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"].map(
+                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1598,7 +1598,7 @@ const SA_A5001W: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1926,7 +1926,7 @@ const SA_A5001W: React.FC = () => {
               >
                 <GridColumn cell={CommandCell} width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -2027,7 +2027,7 @@ const SA_A5001W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

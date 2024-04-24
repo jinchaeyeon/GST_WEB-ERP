@@ -65,9 +65,9 @@ const CopyWindow = ({
         ...prev,
         todt: lastMonth(new Date()),
         depdiv: defaultOption.find((item: any) => item.id == "depdiv")
-          .valueCode,
+          ?.valueCode,
         fxcode: defaultOption.find((item: any) => item.id == "fxcode")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

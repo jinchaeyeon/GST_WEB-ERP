@@ -461,7 +461,7 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
           resizable={true}
         >
           {customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["grdList"].map(
+            customOptionData.menuCustomColumnOptions["grdList"]?.map(
               (item: any, idx: number) =>
                 item.sortOrder !== -1 && (
                   <GridColumn

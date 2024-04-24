@@ -188,10 +188,10 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         proccd: defaultOption.find((item: any) => item.id == "proccd")
-          .valueCode,
-        qcgb: defaultOption.find((item: any) => item.id == "qcgb").valueCode,
+          ?.valueCode,
+        qcgb: defaultOption.find((item: any) => item.id == "qcgb")?.valueCode,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         recdt: setDefaultDate(customOptionData, "recdt"),
       }));
     }

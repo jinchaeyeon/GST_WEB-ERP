@@ -155,9 +155,9 @@ const MA_A3400W: React.FC = () => {
         todt: setDefaultDate(customOptionData, "todt"),
         cboLocation: defaultOption.find(
           (item: any) => item.id == "cboLocation"
-        ).valueCode,
+        )?.valueCode,
         cboPerson: defaultOption.find((item: any) => item.id == "cboPerson")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1165,7 +1165,7 @@ const MA_A3400W: React.FC = () => {
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -1237,7 +1237,7 @@ const MA_A3400W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList2"].map(
+              customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

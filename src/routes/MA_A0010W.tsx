@@ -863,34 +863,32 @@ const MA_A0010W: React.FC = () => {
           >
             <GridColumn field="rowstatus" title=" " width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]
-                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                .map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : checkboxField.includes(item.fieldName)
-                            ? CheckBoxCell
-                            : undefined
-                        }
-                        headerCell={
-                          requiredfield.includes(item.fieldName)
-                            ? RequiredHeader
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
-                        }
-                      ></GridColumn>
-                    )
-                )}
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        numberField.includes(item.fieldName)
+                          ? NumberCell
+                          : checkboxField.includes(item.fieldName)
+                          ? CheckBoxCell
+                          : undefined
+                      }
+                      headerCell={
+                        requiredfield.includes(item.fieldName)
+                          ? RequiredHeader
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
+                      }
+                    ></GridColumn>
+                  )
+              )}
           </Grid>
         </ExcelExport>
       </GridContainer>

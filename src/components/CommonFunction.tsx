@@ -331,7 +331,7 @@ export const GetPropertyValueByName = (target: any, name: string) => {
   );
   const propertyValue = propertyName ? target[propertyName] : undefined;
 
-  return propertyValue;
+  return propertyValue == undefined ? [] : propertyValue;
 };
 
 //현재 경로를 받아서 커스텀 옵션 조회 후 결과값을 반환
@@ -381,8 +381,8 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
       // sessionItem 데이터 있고 지정된 value 값이 없는 경우, 세션 값 참조하여 value 업데이트
       if (newOptionsData) {
         newOptionsData.forEach((optionsItem: any) => {
-          if (optionsItem.sessionItem !== "" && optionsItem.valueCode == "") {
-            optionsItem.valueCode = sessionItem.find(
+          if (optionsItem.sessionItem !== "" && optionsItem?.valueCode == "") {
+            optionsItem?.valueCode = sessionItem.find(
               (sessionItem) => sessionItem.code == optionsItem.sessionItem
             )?.value;
           }
@@ -390,8 +390,8 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
       }
       if (queryOptionsData) {
         queryOptionsData.forEach((optionsItem: any) => {
-          if (optionsItem.sessionItem !== "" && optionsItem.valueCode == "") {
-            optionsItem.valueCode = sessionItem.find(
+          if (optionsItem.sessionItem !== "" && optionsItem?.valueCode == "") {
+            optionsItem?.valueCode = sessionItem.find(
               (sessionItem) => sessionItem.code == optionsItem.sessionItem
             )?.value;
           }

@@ -427,15 +427,15 @@ const CM_A7000W: React.FC = () => {
           todt: setDefaultDate(customOptionData, "todt"),
           custprsncd: defaultOption.find(
             (item: any) => item.id == "custprsncd"
-          ).valueCode,
+          )?.valueCode,
           materialtype: defaultOption.find(
             (item: any) => item.id == "materialtype"
-          ).valueCode,
+          )?.valueCode,
           person: defaultOption.find((item: any) => item.id == "person")
-            .valueCode,
+            ?.valueCode,
           usegb: defaultOption.find((item: any) => item.id == "usegb")
-            .valueCode,
-          type: defaultOption.find((item: any) => item.id == "type").valueCode,
+            ?.valueCode,
+          type: defaultOption.find((item: any) => item.id == "type")?.valueCode,
           find_row_value: queryParams.get("go") as string,
         }));
       } else {
@@ -445,15 +445,15 @@ const CM_A7000W: React.FC = () => {
           todt: setDefaultDate(customOptionData, "todt"),
           custprsncd: defaultOption.find(
             (item: any) => item.id == "custprsncd"
-          ).valueCode,
+          )?.valueCode,
           materialtype: defaultOption.find(
             (item: any) => item.id == "materialtype"
-          ).valueCode,
+          )?.valueCode,
           person: defaultOption.find((item: any) => item.id == "person")
-            .valueCode,
+            ?.valueCode,
           usegb: defaultOption.find((item: any) => item.id == "usegb")
-            .valueCode,
-          type: defaultOption.find((item: any) => item.id == "type").valueCode,
+            ?.valueCode,
+          type: defaultOption.find((item: any) => item.id == "type")?.valueCode,
           isSearch: true,
         }));
       }
@@ -1253,7 +1253,7 @@ const CM_A7000W: React.FC = () => {
     setInformation({
       orgdiv: "01",
       meetingnum: "",
-      usegb: defaultOption.find((item: any) => item.id == "usegb").valueCode,
+      usegb: defaultOption.find((item: any) => item.id == "usegb")?.valueCode,
       person: userId,
       personnm: userName,
       recdt: setDefaultDate2(customOptionData, "recdt"),
@@ -1261,7 +1261,7 @@ const CM_A7000W: React.FC = () => {
       files: "",
       attdatnum: "",
       ref_key: "",
-      custcd: defaultOption.find((item: any) => item.id == "custcd").valueCode,
+      custcd: defaultOption.find((item: any) => item.id == "custcd")?.valueCode,
       custnm: "",
       custprsncd: "",
       custprsnnm: "",
@@ -1272,13 +1272,13 @@ const CM_A7000W: React.FC = () => {
       phoneno: "",
       email: "",
       testtype: defaultOption.find((item: any) => item.id == "testtype")
-        .valueCode,
+        ?.valueCode,
       requestgb: defaultOption.find((item: any) => item.id == "requestgb")
-        .valueCode,
+        ?.valueCode,
       materialtype: defaultOption.find(
         (item: any) => item.id == "materialtype"
-      ).valueCode,
-      type: defaultOption.find((item: any) => item.id == "type").valueCode,
+      )?.valueCode,
+      type: defaultOption.find((item: any) => item.id == "type")?.valueCode,
       extra_field2: "",
       place: "",
     });
@@ -1698,7 +1698,7 @@ const CM_A7000W: React.FC = () => {
                 editField={EDIT_FIELD}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

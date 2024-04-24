@@ -522,12 +522,12 @@ const CR_A0010W: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           cboOrgdiv: defaultOption.find((item: any) => item.id == "cboOrgdiv")
-            .valueCode,
+            ?.valueCode,
           cboLocation: defaultOption.find(
             (item: any) => item.id == "cboLocation"
-          ).valueCode,
+          )?.valueCode,
           radUsediv: defaultOption.find((item: any) => item.id == "radUsediv")
-            .valueCode,
+            ?.valueCode,
           isSearch: true,
         }));
       }

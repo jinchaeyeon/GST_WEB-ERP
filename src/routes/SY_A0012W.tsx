@@ -625,18 +625,18 @@ const SY_A0120: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         cboOrgdiv: defaultOption.find((item: any) => item.id == "cboOrgdiv")
-          .valueCode,
+          ?.valueCode,
         cboLocation: defaultOption.find(
           (item: any) => item.id == "cboLocation"
-        ).valueCode,
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+        )?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         radRtrchk: defaultOption.find((item: any) => item.id == "radRtrchk")
-          .valueCode,
+          ?.valueCode,
         radUsediv: defaultOption.find((item: any) => item.id == "radUsediv")
-          .valueCode,
+          ?.valueCode,
         user_category: defaultOption.find(
           (item: any) => item.id == "user_category"
-        ).valueCode,
+        )?.valueCode,
         isSearch: true,
       }));
     }
@@ -1606,7 +1606,7 @@ const SY_A0120: React.FC = () => {
                     editable={false}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
                       (item: any, idx: number) => {
                         const caption = getCaption(item.id, item.caption);
                         return (

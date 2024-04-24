@@ -116,7 +116,7 @@ const CopyWindow = ({
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         custcd: defaultOption.find((item: any) => item.id == "custcd")
-          .valueCode,
+          ?.valueCode,
         isSearch: true,
       }));
     }

@@ -114,9 +114,9 @@ const PS_A0060_301W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         orgdiv: defaultOption.find((item: any) => item.id == "orgdiv")
-          .valueCode,
+          ?.valueCode,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
       }));
     }
@@ -1110,7 +1110,7 @@ const PS_A0060_301W: React.FC = () => {
               editable={false}
             />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

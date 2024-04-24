@@ -66,7 +66,7 @@ const SY_A0060W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

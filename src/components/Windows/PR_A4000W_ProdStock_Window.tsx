@@ -113,7 +113,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
       );
       setFilters((prev) => ({
         ...prev,
-        div: defaultOption.find((item: any) => item.id == "div").valueCode,
+        div: defaultOption.find((item: any) => item.id == "div")?.valueCode,
         isSearch: true,
       }));
     }

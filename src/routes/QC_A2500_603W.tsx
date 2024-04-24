@@ -145,7 +145,7 @@ const BA_A0020_603: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         status: defaultOption.find((item: any) => item.id == "status")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -903,10 +903,10 @@ const BA_A0020_603: React.FC = () => {
             ? ""
             : data.cpmperson
           : cpmperson.user_id,
-      ncrdiv: defaultOption.find((item: any) => item.id == "ncrdiv").valueCode,
+      ncrdiv: defaultOption.find((item: any) => item.id == "ncrdiv")?.valueCode,
       combytype: defaultOption.find((item: any) => item.id == "combytype")
-        .valueCode,
-      status: defaultOption.find((item: any) => item.id == "status").valueCode,
+        ?.valueCode,
+      status: defaultOption.find((item: any) => item.id == "status")?.valueCode,
       chkperson:
         chkperson == undefined
           ? data.chkperson == undefined
@@ -926,16 +926,16 @@ const BA_A0020_603: React.FC = () => {
       ordseq: data.ordseq == undefined ? 0 : data.ordseq,
       devperson:
         data.devperson == undefined
-          ? defaultOption.find((item: any) => item.id == "devperson").valueCode
+          ? defaultOption.find((item: any) => item.id == "devperson")?.valueCode
           : data.devperson,
       apperson:
         data.apperson == undefined
-          ? defaultOption.find((item: any) => item.id == "apperson").valueCode
+          ? defaultOption.find((item: any) => item.id == "apperson")?.valueCode
           : data.apperson,
       chkperson2:
         data.chkperson2 == undefined
           ? defaultOption.find((item: any) => item.id == "chkperson2")
-              .valueCode
+              ?.valueCode
           : data.chkperson2,
       custprsnnm: data.custprsnnm,
       qcdt: null,
@@ -1911,7 +1911,7 @@ const BA_A0020_603: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -2298,7 +2298,7 @@ const BA_A0020_603: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList2"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <Column
@@ -2410,7 +2410,7 @@ const BA_A0020_603: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdList3"
-                          ].map(
+                          ]?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <Column
@@ -2523,7 +2523,7 @@ const BA_A0020_603: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdList4"
-                          ].map(
+                          ]?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <Column

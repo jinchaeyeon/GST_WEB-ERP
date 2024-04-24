@@ -224,11 +224,11 @@ const KendoWindow = ({
           category: GetPropertyValueByName(
             customOptionData.menuCustomDefaultOptions,
             "new"
-          ).find((item: any) => item.id == "category").valueCode,
+          ).find((item: any) => item.id == "category")?.valueCode,
           publish_yn: GetPropertyValueByName(
             customOptionData.menuCustomDefaultOptions,
             "new"
-          ).find((item: any) => item.id == "publish_yn").valueCode,
+          ).find((item: any) => item.id == "publish_yn")?.valueCode,
           person: user_name,
         };
       });

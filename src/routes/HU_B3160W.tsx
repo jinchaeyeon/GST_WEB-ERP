@@ -93,7 +93,7 @@ const HU_B3160W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         paytype: defaultOption.find((item: any) => item.id == "paytype")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -443,7 +443,7 @@ const HU_B3160W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

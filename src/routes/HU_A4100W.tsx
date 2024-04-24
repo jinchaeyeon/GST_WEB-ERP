@@ -268,10 +268,10 @@ const HU_A4100W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         prsnnum: defaultOption.find((item: any) => item.id == "prsnnum")
-          .valueCode,
+          ?.valueCode,
         Semiannualgb: defaultOption.find(
           (item: any) => item.id == "Semiannualgb"
-        ).valueCode,
+        )?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1226,7 +1226,7 @@ const HU_A4100W: React.FC = () => {
             >
               <GridColumn field="rowstatus" title=" " width="50px" />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn

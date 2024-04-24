@@ -116,12 +116,12 @@ const QC_B0300W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
-        qcno: defaultOption.find((item: any) => item.id == "qcno").valueCode,
+          ?.valueCode,
+        qcno: defaultOption.find((item: any) => item.id == "qcno")?.valueCode,
         proccd: defaultOption.find((item: any) => item.id == "proccd")
-          .valueCode,
+          ?.valueCode,
         inspeccd: defaultOption.find((item: any) => item.id == "inspeccd")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -674,7 +674,7 @@ const QC_B0300W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

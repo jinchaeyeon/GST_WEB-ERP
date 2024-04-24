@@ -103,16 +103,16 @@ const AC_A1020W: React.FC = () => {
         ...prev,
         strdt: setDefaultDate(customOptionData, "strdt"),
         enddt: setDefaultDate(customOptionData, "enddt"),
-        dtgb: defaultOption.find((item: any) => item.id == "dtgb").valueCode,
+        dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         position: defaultOption.find((item: any) => item.id == "position")
-          .valueCode,
+          ?.valueCode,
         appsts: defaultOption.find((item: any) => item.id == "appsts")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         acntdiv: defaultOption.find((item: any) => item.id == "acntdiv")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -912,7 +912,7 @@ const AC_A1020W: React.FC = () => {
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

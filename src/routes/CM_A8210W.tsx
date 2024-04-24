@@ -236,8 +236,8 @@ const CM_A8210W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         fxcode: defaultOption.find((item: any) => item.id == "fxcode")
-          .valueCode,
-        useyn: defaultOption.find((item: any) => item.id == "useyn").valueCode,
+          ?.valueCode,
+        useyn: defaultOption.find((item: any) => item.id == "useyn")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1613,7 +1613,7 @@ const CM_A8210W: React.FC = () => {
                     editable={false}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -1861,7 +1861,7 @@ const CM_A8210W: React.FC = () => {
                     editable={false}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn

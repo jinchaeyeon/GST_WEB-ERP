@@ -173,7 +173,7 @@ const CopyWindow = ({
         ...prev,
         recdt: setDefaultDate2(customOptionData, "recdt"),
         rcvperson: defaultOption.find((item: any) => item.id == "rcvperson")
-          .valueCode,
+          ?.valueCode,
         reqdt: setDefaultDate2(customOptionData, "reqdt"),
       }));
     }

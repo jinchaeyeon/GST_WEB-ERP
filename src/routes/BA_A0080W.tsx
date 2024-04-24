@@ -404,9 +404,9 @@ const BA_A0080: React.FC = () => {
       setSubFilters((prev) => ({
         ...prev,
         unpitem: defaultOption.find((item: any) => item.id == "unpitem")
-          .valueCode,
+          ?.valueCode,
         amtunit: defaultOption.find((item: any) => item.id == "amtunit")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1901,7 +1901,7 @@ const BA_A0080: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2083,7 +2083,7 @@ const BA_A0080: React.FC = () => {
                         editable={false}
                       />
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions["grdList"].map(
+                        customOptionData.menuCustomColumnOptions["grdList"]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -2266,7 +2266,7 @@ const BA_A0080: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -2419,7 +2419,7 @@ const BA_A0080: React.FC = () => {
                       editable={false}
                     />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"].map(
+                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
