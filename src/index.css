@@ -519,11 +519,12 @@ div.k-animation-container {
   min-height: 150px !important;
 }
 
-.k-scheduler-edit-dialog>.k-window,
+/* 스케줄러 팝업 하단 여백 제거  */
+/* .k-scheduler-edit-dialog>.k-window,
 .k-dialog>.k-window-content,
 .k-prompt-container {
   padding-bottom: 70px !important;
-}
+} */
 
 .k-scheduler-edit-dialog>.k-window,
 .k-dialog>.k-window-actions {
