@@ -383,6 +383,7 @@ const BA_A0080: React.FC = () => {
   //FormContext에서 받아오기위해 state
   const [itemInfo, setItemInfo] = useState<TItemInfo>(defaultItemInfo);
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
   UsePermissions(setPermissions);
 
@@ -1064,7 +1065,6 @@ const BA_A0080: React.FC = () => {
     if (swiper && isMobile) {
       swiper.slideTo(1);
     }
-
   };
 
   //엑셀 내보내기
@@ -1753,9 +1753,88 @@ const BA_A0080: React.FC = () => {
   return (
     <>
       {isMobile ? (
-        <GridContainerWrap>
+        <>
+          <TitleContainer>
+            <Title>단가관리</Title>
+
+            <ButtonContainer>
+              <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                  <tbody>
+                    <tr>
+                      <th>단가항목</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="unpitem"
+                            value={subfilters.unpitem}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                            className="required"
+                          />
+                        )}
+                      </td>
+                      <th>화폐단위</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="amtunit"
+                            value={subfilters.amtunit}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>규격</th>
+                      <td>
+                        <Input
+                          name="insiz"
+                          type="text"
+                          value={subfilters.insiz}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>품목코드</th>
+                      <td>
+                        <Input
+                          name="itemcd"
+                          type="text"
+                          value={subfilters.itemcd}
+                          onChange={filterInputChange}
+                        />
+                        <ButtonInInput>
+                          <Button
+                            onClick={onItemWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>품목명</th>
+                      <td>
+                        <Input
+                          name="itemnm"
+                          type="text"
+                          value={subfilters.itemnm}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FilterBox>
+              </FilterContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="BA_A0080W"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
           <Swiper
-            className="leading_95_Swiper"
+            className="leading_80_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1764,88 +1843,9 @@ const BA_A0080: React.FC = () => {
             }}
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
-              <GridContainer style={{ width: `${deviceWidth - 30}px`,overflow: "auto"}}>
-                <TitleContainer>
-                  <Title>단가관리</Title>
-
-                  <ButtonContainer>
-                    {permissions && (
-                      <TopButtons
-                        search={search}
-                        exportExcel={exportExcel}
-                        permissions={permissions}
-                        pathname="BA_A0080W"
-                      />
-                    )}
-                  </ButtonContainer>
-                </TitleContainer>
-                <FilterContainer>
-                  <FilterBox
-                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                  >
-                    <tbody>
-                      <tr>
-                        <th>단가항목</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="unpitem"
-                              value={subfilters.unpitem}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange}
-                              className="required"
-                            />
-                          )}
-                        </td>
-                        <th>화폐단위</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="amtunit"
-                              value={subfilters.amtunit}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange}
-                            />
-                          )}
-                        </td>
-                        <th>규격</th>
-                        <td>
-                          <Input
-                            name="insiz"
-                            type="text"
-                            value={subfilters.insiz}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>품목코드</th>
-                        <td>
-                          <Input
-                            name="itemcd"
-                            type="text"
-                            value={subfilters.itemcd}
-                            onChange={filterInputChange}
-                          />
-                          <ButtonInInput>
-                            <Button
-                              onClick={onItemWndClick}
-                              icon="more-horizontal"
-                              fillMode="flat"
-                            />
-                          </ButtonInInput>
-                        </td>
-                        <th>품목명</th>
-                        <td>
-                          <Input
-                            name="itemnm"
-                            type="text"
-                            value={subfilters.itemnm}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FilterBox>
-                </FilterContainer>
+              <GridContainer
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+              >
                 <GridTitleContainer>
                   <GridTitle>품목계정</GridTitle>
                   <ButtonContainer>
@@ -1864,7 +1864,7 @@ const BA_A0080: React.FC = () => {
                   fileName="단가관리"
                 >
                   <Grid
-                    style={{ height: "69vh" }}
+                    style={{ height: `${deviceHeight * 0.75}px` }}
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
@@ -1938,6 +1938,7 @@ const BA_A0080: React.FC = () => {
                     display: "flex",
                     justifyContent: "left",
                     width: "100%",
+                    marginBottom: "5px",
                   }}
                 >
                   <Button
@@ -1953,9 +1954,8 @@ const BA_A0080: React.FC = () => {
                 </div>
                 <GridContainer
                   style={{
-                    minHeight: "70vh",
                     width: `${deviceWidth - 30}px`,
-                   overflow: "auto",
+                    overflow: "auto",
                   }}
                 >
                   <GridTitleContainer>
@@ -2017,7 +2017,7 @@ const BA_A0080: React.FC = () => {
                     fileName="단가관리"
                   >
                     <Grid
-                      style={{ height: "82vh" }}
+                      style={{ height: `${deviceHeight * 0.7}px` }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -2127,7 +2127,7 @@ const BA_A0080: React.FC = () => {
               </SwiperSlide>
             </FormContext.Provider>
           </Swiper>
-        </GridContainerWrap>
+        </>
       ) : (
         <>
           <TitleContainer>
