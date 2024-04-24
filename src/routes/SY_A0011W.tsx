@@ -148,7 +148,7 @@ const Page: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         use_yn: defaultOption.find((item: any) => item.id == "use_yn")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1524,7 +1524,7 @@ const Page: React.FC = () => {
                     {customOptionData !== null &&
                       customOptionData.menuCustomColumnOptions[
                         "grdHeaderList"
-                      ].map(
+                      ]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1818,7 +1818,7 @@ const Page: React.FC = () => {
                   {customOptionData !== null &&
                     customOptionData.menuCustomColumnOptions[
                       "grdHeaderList"
-                    ].map(
+                    ]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn

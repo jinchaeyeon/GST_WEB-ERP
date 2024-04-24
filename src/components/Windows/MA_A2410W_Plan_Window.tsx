@@ -113,9 +113,9 @@ const CopyWindow = ({
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         finyn: defaultOption.find((item: any) => item.id == "finyn_plan")
-          .valueCode,
+          ?.valueCode,
         proccd: defaultOption.find((item: any) => item.id == "proccd")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

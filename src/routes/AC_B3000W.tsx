@@ -76,9 +76,9 @@ const AC_B3000W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
-        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv").valueCode,
+        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv")?.valueCode,
         fxdepsts: defaultOption.find((item: any) => item.id == "fxdepsts")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

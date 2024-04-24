@@ -108,21 +108,21 @@ const HU_A4110W: React.FC = () => {
         strdt: setDefaultDate(customOptionData, "strdt"),
         enddt: setDefaultDate(customOptionData, "enddt"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         position: defaultOption.find((item: any) => item.id == "position")
-          .valueCode,
+          ?.valueCode,
         appsts: defaultOption.find((item: any) => item.id == "appsts")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         acntdiv: defaultOption.find((item: any) => item.id == "acntdiv")
-          .valueCode,
+          ?.valueCode,
       }));
       setSubFilters((prev) => ({
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
         semiannualgb: defaultOption.find(
           (item: any) => item.id == "semiannualgb"
-        ).valueCode,
+        )?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1070,7 +1070,7 @@ const HU_A4110W: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdSubList"].map(
+                    customOptionData.menuCustomColumnOptions["grdSubList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -1298,7 +1298,7 @@ const HU_A4110W: React.FC = () => {
               >
                 <GridColumn cell={CommandCell} width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

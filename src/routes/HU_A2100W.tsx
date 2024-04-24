@@ -147,13 +147,13 @@ const HU_A2100W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         stddiv: defaultOption.find((item: any) => item.id == "stddiv")
-          .valueCode,
+          ?.valueCode,
         workcls: defaultOption.find((item: any) => item.id == "workcls")
-          .valueCode,
+          ?.valueCode,
         workdiv: defaultOption.find((item: any) => item.id == "workdiv")
-          .valueCode,
+          ?.valueCode,
         workgb: defaultOption.find((item: any) => item.id == "workgb")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1001,7 +1001,7 @@ const HU_A2100W: React.FC = () => {
           >
             <GridColumn field="rowstatus" title=" " width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

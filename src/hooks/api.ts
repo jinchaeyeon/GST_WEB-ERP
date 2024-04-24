@@ -243,6 +243,13 @@ export const useApi = () => {
                       "일치하는 로그인 정보를 찾을 수 없습니다.\r\n올바른 회사코드, 아이디, 비밀번호를 입력해주세요."
                     )
                   );
+                } else if(!token) {
+                  reject(
+                    new Error(
+                      "토큰이 만기되었습니다. 다시 로그인부탁드립니다."
+                    )
+                  );
+                  window.location.href = "/"
                 } else {
                   reject(res.data);
                 }
@@ -345,6 +352,13 @@ export const useApi = () => {
                     "일치하는 로그인 정보를 찾을 수 없습니다.\r\n올바른 회사코드, 아이디, 비밀번호를 입력해주세요."
                   )
                 );
+              } else if(!token) {
+                reject(
+                  new Error(
+                    "토큰이 만기되었습니다. 다시 로그인부탁드립니다."
+                  )
+                );
+                window.location.href = "/"
               } else {
                 reject(res.data);
               }

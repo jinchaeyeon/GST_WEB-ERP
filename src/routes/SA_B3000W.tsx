@@ -217,11 +217,11 @@ const SA_B3000W: React.FC = () => {
         yyyy: setDefaultDate(customOptionData, "yyyy"),
         cboLocation: defaultOption.find(
           (item: any) => item.id == "cboLocation"
-        ).valueCode,
+        )?.valueCode,
         cboDiv: defaultOption.find((item: any) => item.id == "cboDiv")
-          .valueCode,
+          ?.valueCode,
         rdoAmtdiv: defaultOption.find((item: any) => item.id == "rdoAmtdiv")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -936,7 +936,7 @@ const SA_B3000W: React.FC = () => {
                             {customOptionData !== null &&
                               customOptionData.menuCustomColumnOptions[
                                 "grdAllList"
-                              ].map(
+                              ]?.map(
                                 (item: any, idx: number) =>
                                   item.sortOrder !== -1 && (
                                     <GridColumn
@@ -1051,7 +1051,7 @@ const SA_B3000W: React.FC = () => {
                             {customOptionData !== null &&
                               customOptionData.menuCustomColumnOptions[
                                 "grdMonthList"
-                              ].map(
+                              ]?.map(
                                 (item: any, idx: number) =>
                                   item.sortOrder !== -1 &&
                                   (numberField.includes(item.fieldName) ? (
@@ -1314,7 +1314,7 @@ const SA_B3000W: React.FC = () => {
                             {customOptionData !== null &&
                               customOptionData.menuCustomColumnOptions[
                                 "grdQuarterList"
-                              ].map(
+                              ]?.map(
                                 (item: any, idx: number) =>
                                   item.sortOrder !== -1 &&
                                   (item.fieldName !== "custcd" &&
@@ -1723,7 +1723,7 @@ const SA_B3000W: React.FC = () => {
                             {customOptionData !== null &&
                               customOptionData.menuCustomColumnOptions[
                                 "grd5YearList"
-                              ].map(
+                              ]?.map(
                                 (item: any, idx: number) =>
                                   item.sortOrder !== -1 &&
                                   (item.fieldName !== "custcd" &&
@@ -2348,7 +2348,7 @@ const SA_B3000W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdAllList"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -2431,7 +2431,7 @@ const SA_B3000W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdMonthList"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 &&
                             (numberField.includes(item.fieldName) ? (
@@ -2600,7 +2600,7 @@ const SA_B3000W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdQuarterList"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 &&
                             (item.fieldName !== "custcd" &&
@@ -2897,7 +2897,7 @@ const SA_B3000W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grd5YearList"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 &&
                             (item.fieldName !== "custcd" &&

@@ -172,7 +172,7 @@ const DetailWindow = ({
       setFilters((prev) => ({
         ...prev,
         person: defaultOption.find((item: any) => item.id == "person")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

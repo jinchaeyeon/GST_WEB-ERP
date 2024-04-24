@@ -178,16 +178,16 @@ const CM_A5000W: React.FC = () => {
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
           dtgb1: defaultOption.find((item: any) => item.id == "dtgb1")
-            .valueCode,
+            ?.valueCode,
           is_emergency: defaultOption.find(
             (item: any) => item.id == "is_emergency"
-          ).valueCode,
+          )?.valueCode,
           require_type: defaultOption.find(
             (item: any) => item.id == "require_type"
-          ).valueCode,
+          )?.valueCode,
           materialtype: defaultOption.find(
             (item: any) => item.id == "materialtype"
-          ).valueCode,
+          )?.valueCode,
           isSearch: true,
           find_row_value: queryParams.get("go") as string,
         }));
@@ -197,16 +197,16 @@ const CM_A5000W: React.FC = () => {
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
           dtgb1: defaultOption.find((item: any) => item.id == "dtgb1")
-            .valueCode,
+            ?.valueCode,
           is_emergency: defaultOption.find(
             (item: any) => item.id == "is_emergency"
-          ).valueCode,
+          )?.valueCode,
           materialtype: defaultOption.find(
             (item: any) => item.id == "materialtype"
-          ).valueCode,
+          )?.valueCode,
           require_type: defaultOption.find(
             (item: any) => item.id == "require_type"
-          ).valueCode,
+          )?.valueCode,
           isSearch: true,
         }));
       }
@@ -1603,17 +1603,17 @@ const CM_A5000W: React.FC = () => {
       finexpdt: setDefaultDate2(customOptionData, "finexpdt"),
       require_type: defaultOption.find(
         (item: any) => item.id == "require_type"
-      ).valueCode,
+      )?.valueCode,
       completion_method: defaultOption.find(
         (item: any) => item.id == "completion_method"
-      ).valueCode,
-      status: defaultOption.find((item: any) => item.id == "status").valueCode,
+      )?.valueCode,
+      status: defaultOption.find((item: any) => item.id == "status")?.valueCode,
       customer_code: "",
       customernm: "",
       title: "",
       is_emergency: defaultOption.find(
         (item: any) => item.id == "is_emergency"
-      ).valueCode,
+      )?.valueCode,
       quotestnum: "",
       testnum: "",
       attdatnum: "",
@@ -1621,7 +1621,7 @@ const CM_A5000W: React.FC = () => {
       ref_document_id: "",
       materialtype: defaultOption.find(
         (item: any) => item.id == "materialtype"
-      ).valueCode,
+      )?.valueCode,
       extra_field2: "",
       custprsnnm: "",
     });
@@ -1630,7 +1630,7 @@ const CM_A5000W: React.FC = () => {
       attdatnum: "",
       files: "",
       ref_document_id: "",
-      person: defaultOption.find((item: any) => item.id == "person").valueCode,
+      person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
       recdt: null,
     });
   };
@@ -1943,7 +1943,7 @@ const CM_A5000W: React.FC = () => {
                 editField={EDIT_FIELD}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

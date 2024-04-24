@@ -194,15 +194,15 @@ const MA_B2800W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         inkind: defaultOption.find((item: any) => item.id == "inkind")
-          .valueCode,
+          ?.valueCode,
         position: defaultOption.find((item: any) => item.id == "position")
-          .valueCode,
-        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
+          ?.valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
         doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
-          .valueCode,
-        purdt: defaultOption.find((item: any) => item.id == "purdt").valueCode,
+          ?.valueCode,
+        purdt: defaultOption.find((item: any) => item.id == "purdt")?.valueCode,
       }));
     }
   }, [customOptionData]);

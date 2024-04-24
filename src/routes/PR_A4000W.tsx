@@ -180,16 +180,16 @@ const PR_A4000W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"), // 생산실적관리 일자
         todt: setDefaultDate(customOptionData, "todt"), // 생산실적관리 일자
         prodemp: defaultOption.find((item: any) => item.id == "prodemp")
-          .valueCode,
+          ?.valueCode,
         itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         prodmac: defaultOption.find((item: any) => item.id == "prodmac")
-          .valueCode,
+          ?.valueCode,
         proccd: defaultOption.find((item: any) => item.id == "proccd")
-          .valueCode,
+          ?.valueCode,
       }));
       setGoFilters((prev) => ({
         ...prev,
@@ -2090,7 +2090,7 @@ const PR_A4000W: React.FC = () => {
                   footerCell={mainTotalFooterCell}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -2203,7 +2203,7 @@ const PR_A4000W: React.FC = () => {
                   editField={EDIT_FIELD}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList1"].map(
+                    customOptionData.menuCustomColumnOptions["grdList1"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -2297,7 +2297,7 @@ const PR_A4000W: React.FC = () => {
                     editField={EDIT_FIELD}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn

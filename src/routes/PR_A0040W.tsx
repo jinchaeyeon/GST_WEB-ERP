@@ -238,10 +238,10 @@ const PR_A0040W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         proccd2: defaultOption.find((item: any) => item.id == "proccd2")
-          .valueCode,
+          ?.valueCode,
         itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
-          .valueCode,
-        gubun: defaultOption.find((item: any) => item.id == "gubun").valueCode,
+          ?.valueCode,
+        gubun: defaultOption.find((item: any) => item.id == "gubun")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1892,7 +1892,7 @@ const PR_A0040W: React.FC = () => {
               cell={CheckBoxCell}
             />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -1970,7 +1970,7 @@ const PR_A0040W: React.FC = () => {
               }}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"].map(
+                customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -2131,7 +2131,7 @@ const PR_A0040W: React.FC = () => {
             >
               <GridColumn field="rowstatus" title=" " width="50px" />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList3"].map(
+                customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn

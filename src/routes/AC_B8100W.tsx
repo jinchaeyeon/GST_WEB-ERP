@@ -59,7 +59,7 @@ const AC_B8100W: React.FC = () => {
         todt: setDefaultDate(customOptionData, "todt"),
         taxdt: setDefaultDate(customOptionData, "taxdt"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

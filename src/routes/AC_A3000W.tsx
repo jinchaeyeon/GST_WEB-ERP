@@ -105,8 +105,8 @@ const AC_A3000W: React.FC = () => {
         ...prev,
         fxyrmm: setDefaultDate(customOptionData, "fxyrmm"),
         costgb1: defaultOption.find((item: any) => item.id == "costgb1")
-          .valueCode,
-        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv").valueCode,
+          ?.valueCode,
+        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -643,7 +643,7 @@ const AC_A3000W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -716,7 +716,7 @@ const AC_A3000W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList2"].map(
+              customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

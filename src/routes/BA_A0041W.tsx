@@ -187,17 +187,17 @@ const BA_A0041W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         raduseyn: defaultOption.find((item: any) => item.id == "raduseyn")
-          .valueCode,
+          ?.valueCode,
         itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
-          .valueCode,
+          ?.valueCode,
         itemlvl1: defaultOption.find((item: any) => item.id == "itemlvl1")
-          .valueCode,
+          ?.valueCode,
         itemlvl2: defaultOption.find((item: any) => item.id == "itemlvl2")
-          .valueCode,
+          ?.valueCode,
         itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
-          .valueCode,
+          ?.valueCode,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -2002,7 +2002,7 @@ const BA_A0041W: React.FC = () => {
               cell={CheckBoxCell}
             />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

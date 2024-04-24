@@ -287,7 +287,7 @@ const HU_A2140W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        dtgb: defaultOption.find((item: any) => item.id == "dtgb").valueCode,
+        dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1570,7 +1570,7 @@ const HU_A2140W: React.FC = () => {
                 cell={CheckBoxCell}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn

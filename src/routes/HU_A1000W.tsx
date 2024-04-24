@@ -60,12 +60,9 @@ import {
   loginResultState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/HU_A1000W_C";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import sigData from "../store/map/sig.json";
 import sidoData from "../store/map/sido.json";
-import { CSSProperties } from "styled-components";
-import { TabStripSelectEventArguments } from "@progress/kendo-react-layout";
-import { Container } from "@mui/material";
+import sigData from "../store/map/sig.json";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 var index = 0;
 
@@ -220,8 +217,8 @@ const HU_A1000W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1633,7 +1630,7 @@ const HU_A1000W: React.FC = () => {
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`,overflow: "auto" }}
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
                 <TitleContainer>
                   <Title>인사관리</Title>
@@ -1816,29 +1813,27 @@ const HU_A1000W: React.FC = () => {
                     >
                       <GridColumn cell={CommandCell} width="50px" />
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions["grdList"]
-                          .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                          .map(
-                            (item: any, idx: number) =>
-                              item.sortOrder !== -1 && (
-                                <GridColumn
-                                  key={idx}
-                                  field={item.fieldName}
-                                  title={item.caption}
-                                  width={item.width}
-                                  cell={
-                                    dateField.includes(item.fieldName)
-                                      ? DateCell
-                                      : undefined
-                                  }
-                                  footerCell={
-                                    item.sortOrder == 0
-                                      ? mainTotalFooterCell
-                                      : undefined
-                                  }
-                                ></GridColumn>
-                              )
-                          )}
+                        customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                          (item: any, idx: number) =>
+                            item.sortOrder !== -1 && (
+                              <GridColumn
+                                key={idx}
+                                field={item.fieldName}
+                                title={item.caption}
+                                width={item.width}
+                                cell={
+                                  dateField.includes(item.fieldName)
+                                    ? DateCell
+                                    : undefined
+                                }
+                                footerCell={
+                                  item.sortOrder == 0
+                                    ? mainTotalFooterCell
+                                    : undefined
+                                }
+                              ></GridColumn>
+                            )
+                        )}
                     </Grid>
                   </ExcelExport>
                 )}
@@ -2027,29 +2022,27 @@ const HU_A1000W: React.FC = () => {
                 >
                   <GridColumn cell={CommandCell} width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"]
-                      .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                      .map(
-                        (item: any, idx: number) =>
-                          item.sortOrder !== -1 && (
-                            <GridColumn
-                              key={idx}
-                              field={item.fieldName}
-                              title={item.caption}
-                              width={item.width}
-                              cell={
-                                dateField.includes(item.fieldName)
-                                  ? DateCell
-                                  : undefined
-                              }
-                              footerCell={
-                                item.sortOrder == 0
-                                  ? mainTotalFooterCell
-                                  : undefined
-                              }
-                            ></GridColumn>
-                          )
-                      )}
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              dateField.includes(item.fieldName)
+                                ? DateCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder == 0
+                                ? mainTotalFooterCell
+                                : undefined
+                            }
+                          ></GridColumn>
+                        )
+                    )}
                 </Grid>
               </ExcelExport>
             )}

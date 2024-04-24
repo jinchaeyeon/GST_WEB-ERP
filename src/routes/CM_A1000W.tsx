@@ -121,11 +121,11 @@ const CM_A1000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        kind1: defaultOption.find((item: any) => item.id == "kind1").valueCode,
+        kind1: defaultOption.find((item: any) => item.id == "kind1")?.valueCode,
         person: defaultOption.find((item: any) => item.id == "person")
-          .valueCode,
+          ?.valueCode,
         planyn: defaultOption.find((item: any) => item.id == "planyn")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1163,13 +1163,13 @@ const CM_A1000W: React.FC = () => {
       amt: 0,
       attdatnum: "",
       contents: "",
-      custcd: defaultOption.find((item: any) => item.id == "custnm").valueCode,
-      custnm: defaultOption.find((item: any) => item.id == "custnm").valueCode,
+      custcd: defaultOption.find((item: any) => item.id == "custnm")?.valueCode,
+      custnm: defaultOption.find((item: any) => item.id == "custnm")?.valueCode,
       custperson: "",
       datnum: "",
       enddt: filters.todt,
-      endhh: defaultOption.find((item: any) => item.id == "endhh").valueCode,
-      endmm: defaultOption.find((item: any) => item.id == "endmm").valueCode,
+      endhh: defaultOption.find((item: any) => item.id == "endhh")?.valueCode,
+      endmm: defaultOption.find((item: any) => item.id == "endmm")?.valueCode,
       endtime: "",
       exphh: 0,
       expmm: 0,
@@ -1177,8 +1177,8 @@ const CM_A1000W: React.FC = () => {
       finyn: false,
       insert_user_id: "",
       key_id: "",
-      kind1: defaultOption.find((item: any) => item.id == "kind1").valueCode,
-      kind2: defaultOption.find((item: any) => item.id == "kind2").valueCode,
+      kind1: defaultOption.find((item: any) => item.id == "kind1")?.valueCode,
+      kind2: defaultOption.find((item: any) => item.id == "kind2")?.valueCode,
       opengb: "",
       person: "",
       pgmid: "",
@@ -1187,8 +1187,8 @@ const CM_A1000W: React.FC = () => {
       project: "",
       ref_key: "",
       strdt: filters.todt,
-      strhh: defaultOption.find((item: any) => item.id == "strhh").valueCode,
-      strmm: defaultOption.find((item: any) => item.id == "strmm").valueCode,
+      strhh: defaultOption.find((item: any) => item.id == "strhh")?.valueCode,
+      strmm: defaultOption.find((item: any) => item.id == "strmm")?.valueCode,
       strtime: "",
       title: "",
       usehh: 0,
@@ -1602,33 +1602,31 @@ const CM_A1000W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]
-                    .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                    .map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              checkField.includes(item.fieldName)
-                                ? CheckBoxReadOnlyCell
-                                : centerField.includes(item.fieldName)
-                                ? CenterCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder == 0
-                                ? mainTotalFooterCell
-                                : item.sortOrder == 6
-                                ? gridSumQtyFooterCell2
-                                : undefined
-                            }
-                          ></GridColumn>
-                        )
-                    )}
+                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            checkField.includes(item.fieldName)
+                              ? CheckBoxReadOnlyCell
+                              : centerField.includes(item.fieldName)
+                              ? CenterCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : item.sortOrder == 6
+                              ? gridSumQtyFooterCell2
+                              : undefined
+                          }
+                        ></GridColumn>
+                      )
+                  )}
               </Grid>
             </ExcelExport>
           </GridContainer>

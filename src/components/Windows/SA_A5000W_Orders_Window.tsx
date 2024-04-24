@@ -126,15 +126,15 @@ const CopyWindow = ({
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         person: defaultOption.find((item: any) => item.id == "person")
-          .valueCode,
+          ?.valueCode,
         cboDoexdiv: defaultOption.find((item: any) => item.id == "cboDoexdiv")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         ordsts: defaultOption.find((item: any) => item.id == "ordsts")
-          .valueCode,
-        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
+          ?.valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
         saledtgb: defaultOption.find((item: any) => item.id == "saledtgb")
-          .valueCode,
+          ?.valueCode,
         isSearch: true,
       }));
     }

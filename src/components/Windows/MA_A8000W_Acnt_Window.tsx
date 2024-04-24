@@ -96,12 +96,12 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         acntses: defaultOption.find((item: any) => item.id == "acntses")
-          .valueCode,
+          ?.valueCode,
         inoutdiv: defaultOption.find((item: any) => item.id == "inoutdiv")
-          .valueCode,
+          ?.valueCode,
         bookregyn: defaultOption.find((item: any) => item.id == "bookregyn")
-          .valueCode,
-        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
+          ?.valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
       }));
     }
   }, [customOptionData]);

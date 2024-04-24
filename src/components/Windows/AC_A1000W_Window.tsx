@@ -684,24 +684,24 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         position: defaultOption.find((item: any) => item.id == "position")
-          .valueCode,
+          ?.valueCode,
         inoutdiv: defaultOption.find((item: any) => item.id == "inoutdiv")
-          .valueCode,
+          ?.valueCode,
         usedptcd: defaultOption.find((item: any) => item.id == "usedptcd")
-          .valueCode,
+          ?.valueCode,
         propertykind: defaultOption.find(
           (item: any) => item.id == "propertykind"
-        ).valueCode,
+        )?.valueCode,
         evidentialkind: defaultOption.find(
           (item: any) => item.id == "evidentialkind"
-        ).valueCode,
+        )?.valueCode,
         creditcd: defaultOption.find((item: any) => item.id == "creditcd")
-          .valueCode,
+          ?.valueCode,
         reason_intax_deduction: defaultOption.find(
           (item: any) => item.id == "reason_intax_deduction"
-        ).valueCode,
+        )?.valueCode,
       }));
     }
   }, [customOptionData]);

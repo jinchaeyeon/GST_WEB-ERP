@@ -281,11 +281,11 @@ const HU_A2000W: React.FC = () => {
         ...prev,
         stddt: setDefaultDate(customOptionData, "stddt"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         workgb: defaultOption.find((item: any) => item.id == "workgb")
-          .valueCode,
+          ?.valueCode,
         workcls: defaultOption.find((item: any) => item.id == "workcls")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1095,7 +1095,7 @@ const HU_A2000W: React.FC = () => {
               editable={false}
             />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

@@ -178,9 +178,9 @@ const HU_B3140W: React.FC = () => {
         fryyyymm: DATE,
         toyyyymm: DATE2,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
-        rtrdt: defaultOption.find((item: any) => item.id == "rtrdt").valueCode,
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+          ?.valueCode,
+        rtrdt: defaultOption.find((item: any) => item.id == "rtrdt")?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1754,7 +1754,7 @@ const HU_B3140W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1833,7 +1833,7 @@ const HU_B3140W: React.FC = () => {
                 onPageChange={pageChange}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

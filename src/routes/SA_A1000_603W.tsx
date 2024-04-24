@@ -601,9 +601,9 @@ const SA_A1000_603W: React.FC = () => {
           ...prev,
           materialtype: defaultOption.find(
             (item: any) => item.id == "materialtype"
-          ).valueCode,
+          )?.valueCode,
           quotype: defaultOption.find((item: any) => item.id == "quotype")
-            .valueCode,
+            ?.valueCode,
           targetdt: setDefaultDate(customOptionData, "targetdt"),
           find_row_value: queryParams.get("go") as string,
           isSearch: true,
@@ -613,9 +613,9 @@ const SA_A1000_603W: React.FC = () => {
           ...prev,
           materialtype: defaultOption.find(
             (item: any) => item.id == "materialtype"
-          ).valueCode,
+          )?.valueCode,
           quotype: defaultOption.find((item: any) => item.id == "quotype")
-            .valueCode,
+            ?.valueCode,
           targetdt: setDefaultDate(customOptionData, "targetdt"),
         }));
       }
@@ -3119,7 +3119,7 @@ const SA_A1000_603W: React.FC = () => {
 
     setInformation({
       chkperson: defaultOption.find((item: any) => item.id == "person")
-        .valueCode,
+        ?.valueCode,
       custcd: "",
       custnm: "",
       custprsnnm: "",
@@ -3140,19 +3140,19 @@ const SA_A1000_603W: React.FC = () => {
       materialnm: "",
       materialtype: defaultOption.find(
         (item: any) => item.id == "materialtype"
-      ).valueCode,
+      )?.valueCode,
       numbering_id: defaultOption.find(
         (item: any) => item.id == "numbering_id"
-      ).valueCode,
+      )?.valueCode,
       ordsts: "",
-      person: defaultOption.find((item: any) => item.id == "person").valueCode,
+      person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
       person1: "",
       quodt: setDefaultDate2(customOptionData, "quodt"),
       quonum: "",
       quorev: 0,
       quosts: "",
       quotype: defaultOption.find((item: any) => item.id == "quotype")
-        .valueCode,
+        ?.valueCode,
       rcvcustnm: "",
       rcvcustprsnnm: "",
       remark: "",
@@ -3164,11 +3164,11 @@ const SA_A1000_603W: React.FC = () => {
       report4: "",
       report5: "",
       requestgb: defaultOption.find((item: any) => item.id == "requestgb")
-        .valueCode,
+        ?.valueCode,
       testenddt: setDefaultDate2(customOptionData, "testenddt"),
       teststdt: setDefaultDate2(customOptionData, "teststdt"),
       testtype: defaultOption.find((item: any) => item.id == "testtype")
-        .valueCode,
+        ?.valueCode,
       translate1: "",
       translate2: "",
       translate3: "",
@@ -4227,7 +4227,7 @@ const SA_A1000_603W: React.FC = () => {
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -4954,7 +4954,7 @@ const SA_A1000_603W: React.FC = () => {
                   >
                     <GridColumn field="rowstatus" title=" " width="50px" />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -5351,7 +5351,7 @@ const SA_A1000_603W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList4"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -5436,7 +5436,7 @@ const SA_A1000_603W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList5"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -5512,7 +5512,7 @@ const SA_A1000_603W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList6"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -5605,7 +5605,7 @@ const SA_A1000_603W: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList7"].map(
+                    customOptionData.menuCustomColumnOptions["grdList7"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn

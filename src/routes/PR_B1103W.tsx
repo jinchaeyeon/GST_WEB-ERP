@@ -104,13 +104,13 @@ const PR_B1103W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         option: defaultOption.find((item: any) => item.id == "option")
-          .valueCode,
+          ?.valueCode,
         itemlvl1: defaultOption.find((item: any) => item.id == "itemlvl1")
-          .valueCode,
+          ?.valueCode,
         itemlvl2: defaultOption.find((item: any) => item.id == "itemlvl2")
-          .valueCode,
+          ?.valueCode,
         itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

@@ -100,7 +100,7 @@ const AC_A1000W_Note_Window = ({
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         notediv: defaultOption.find((item: any) => item.id == "notediv")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

@@ -88,9 +88,9 @@ const SY_A0120: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         orgdiv: defaultOption.find((item: any) => item.id == "orgdiv")
-          .valueCode,
+          ?.valueCode,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
       }));
@@ -558,7 +558,7 @@ const SY_A0120: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdAllList"].map(
+              customOptionData.menuCustomColumnOptions["grdAllList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

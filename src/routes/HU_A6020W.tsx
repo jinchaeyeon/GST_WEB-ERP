@@ -413,18 +413,18 @@ const HU_A6020W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
       }));
       setFilters2((prev) => ({
         ...prev,
-        gubun: defaultOption.find((item: any) => item.id == "gubun").valueCode,
+        gubun: defaultOption.find((item: any) => item.id == "gubun")?.valueCode,
         paydt: setDefaultDate(customOptionData, "paydt"),
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
       }));
       setFilters3((prev) => ({
         ...prev,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         frdt: setDefaultDate(customOptionData, "frdt"),
       }));
     }
@@ -2906,7 +2906,7 @@ FROM HU072T WHERE paycd = '4'`;
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -3090,7 +3090,7 @@ FROM HU072T WHERE paycd = '4'`;
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList3"].map(
+                  customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

@@ -176,25 +176,25 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv").valueCode,
+        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv")?.valueCode,
         fxdepsts: defaultOption.find((item: any) => item.id == "fxdepsts")
-          .valueCode,
+          ?.valueCode,
       }));
 
       setFilters2((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv").valueCode,
+        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv")?.valueCode,
         fxdepsts: defaultOption.find((item: any) => item.id == "fxdepsts")
-          .valueCode,
+          ?.valueCode,
       }));
 
       setFilters3((prev) => ({
         ...prev,
-        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv").valueCode,
+        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv")?.valueCode,
         fxdepsts: defaultOption.find((item: any) => item.id == "fxdepsts")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

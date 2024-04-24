@@ -231,7 +231,7 @@ const HU_B3120W: React.FC = () => {
         frdt: frdts,
         todt: todt,
         paytype: defaultOption.find((item: any) => item.id == "paytype")
-          .valueCode,
+          ?.valueCode,
       }));
       setFilters2((prev) => ({
         ...prev,
@@ -250,7 +250,7 @@ const HU_B3120W: React.FC = () => {
         prdate: setDefaultDate(customOptionData, "prdate"),
         paytypeCombo: defaultOption.find(
           (item: any) => item.id == "paytypeCombo"
-        ).valueCode,
+        )?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1155,7 +1155,7 @@ const HU_B3120W: React.FC = () => {
                   cell={CustomCheckBoxCell}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1297,7 +1297,7 @@ const HU_B3120W: React.FC = () => {
                     //더블클릭
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1376,7 +1376,7 @@ const HU_B3120W: React.FC = () => {
                     //더블클릭
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList3"].map(
+                      customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn

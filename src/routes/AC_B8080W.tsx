@@ -58,9 +58,9 @@ const AC_B8080W: React.FC = () => {
         reqdt: setDefaultDate(customOptionData, "reqdt"),
         taxyy: setDefaultDate(customOptionData, "taxyy"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
-        chasu: defaultOption.find((item: any) => item.id == "chasu").valueCode,
-        gisu: defaultOption.find((item: any) => item.id == "gisu").valueCode,
+          ?.valueCode,
+        chasu: defaultOption.find((item: any) => item.id == "chasu")?.valueCode,
+        gisu: defaultOption.find((item: any) => item.id == "gisu")?.valueCode,
       }));
     }
   }, [customOptionData]);

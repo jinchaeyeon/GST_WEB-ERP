@@ -184,8 +184,8 @@ const SA_A6000W: React.FC = () => {
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
         position: defaultOption.find((item: any) => item.id == "position")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -941,7 +941,7 @@ const SA_A6000W: React.FC = () => {
           >
             <GridColumn field="rowstatus" title=" " width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

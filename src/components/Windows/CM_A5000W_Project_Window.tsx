@@ -113,11 +113,11 @@ const CopyWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        dtgb: defaultOption.find((item: any) => item.id == "dtgb").valueCode,
-        quosts: defaultOption.find((item: any) => item.id == "quosts").valueCode,
-        person: defaultOption.find((item: any) => item.id == "person").valueCode,
-        smperson: defaultOption.find((item: any) => item.id == "smperson").valueCode,
-        custcd: defaultOption.find((item: any) => item.id == "custcd").valueCode,
+        dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
+        quosts: defaultOption.find((item: any) => item.id == "quosts")?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
+        smperson: defaultOption.find((item: any) => item.id == "smperson")?.valueCode,
+        custcd: defaultOption.find((item: any) => item.id == "custcd")?.valueCode,
         isSearch: true,
       }));
     }

@@ -214,17 +214,17 @@ const CopyWindow = ({
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         person: defaultOption.find((item: any) => item.id == "person")
-          .valueCode,
+          ?.valueCode,
         doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         ordsts: defaultOption.find((item: any) => item.id == "ordsts")
-          .valueCode,
+          ?.valueCode,
         finyn: defaultOption.find((item: any) => item.id == "finyn2")
-          .valueCode,
-        dtgb: defaultOption.find((item: any) => item.id == "dtgb").valueCode,
+          ?.valueCode,
+        dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
       }));
     }
   }, [customOptionData]);

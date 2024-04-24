@@ -280,18 +280,18 @@ const HU_B4000W: React.FC = () => {
         ...prev,
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
         cboPrsnnum: defaultOption.find((item: any) => item.id == "cboPrsnnum")
-          .valueCode,
+          ?.valueCode,
         radRtryn: defaultOption.find((item: any) => item.id == "radRtryn")
-          .valueCode,
+          ?.valueCode,
       }));
       setAdjFilters((prev) => ({
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
         prsnnum_adj: defaultOption.find(
           (item: any) => item.id == "prsnnum_adj"
-        ).valueCode,
+        )?.valueCode,
         adjdiv: defaultOption.find((item: any) => item.id == "adjdiv")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1991,7 +1991,7 @@ const HU_B4000W: React.FC = () => {
                     {customOptionData !== null &&
                       customOptionData.menuCustomColumnOptions[
                         "grdUserAdj"
-                      ].map(
+                      ]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2072,7 +2072,7 @@ const HU_B4000W: React.FC = () => {
                     {customOptionData !== null &&
                       customOptionData.menuCustomColumnOptions[
                         "grdAdjDetail"
-                      ].map(
+                      ]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2213,7 +2213,7 @@ const HU_B4000W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdJournalList"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -2387,7 +2387,7 @@ const HU_B4000W: React.FC = () => {
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdAdjList"].map(
+                    customOptionData.menuCustomColumnOptions["grdAdjList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn

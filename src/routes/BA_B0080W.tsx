@@ -73,9 +73,9 @@ const BA_B0080W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
-          .valueCode,
+          ?.valueCode,
         amtunit: defaultOption.find((item: any) => item.id == "amtunit")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

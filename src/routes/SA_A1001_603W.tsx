@@ -209,13 +209,13 @@ const SA_A1001_603W: React.FC = () => {
           ...prev,
           materialtype: defaultOption.find(
             (item: any) => item.id == "materialtype"
-          ).valueCode,
-          rev: defaultOption.find((item: any) => item.id == "rev").valueCode,
+          )?.valueCode,
+          rev: defaultOption.find((item: any) => item.id == "rev")?.valueCode,
           quocalyn: defaultOption.find((item: any) => item.id == "quocalyn")
-            .valueCode,
+            ?.valueCode,
           contractyn: defaultOption.find(
             (item: any) => item.id == "contractyn"
-          ).valueCode,
+          )?.valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
           isSearch: true,
@@ -226,13 +226,13 @@ const SA_A1001_603W: React.FC = () => {
           ...prev,
           materialtype: defaultOption.find(
             (item: any) => item.id == "materialtype"
-          ).valueCode,
+          )?.valueCode,
           quocalyn: defaultOption.find((item: any) => item.id == "quocalyn")
-            .valueCode,
+            ?.valueCode,
           contractyn: defaultOption.find(
             (item: any) => item.id == "contractyn"
-          ).valueCode,
-          rev: defaultOption.find((item: any) => item.id == "rev").valueCode,
+          )?.valueCode,
+          rev: defaultOption.find((item: any) => item.id == "rev")?.valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
           isSearch: true,
@@ -1712,7 +1712,7 @@ const SA_A1001_603W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1964,7 +1964,7 @@ const SA_A1001_603W: React.FC = () => {
                   cell={CheckBoxCell}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

@@ -197,17 +197,17 @@ const QC_A3000: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         proccd: defaultOption.find((item: any) => item.id == "proccd")
-          .valueCode,
+          ?.valueCode,
         prodemp: defaultOption.find((item: any) => item.id == "prodemp")
-          .valueCode,
+          ?.valueCode,
         prodmac: defaultOption.find((item: any) => item.id == "prodmac")
-          .valueCode,
+          ?.valueCode,
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
-        qcyn: defaultOption.find((item: any) => item.id == "qcyn").valueCode,
-        qcno: defaultOption.find((item: any) => item.id == "qcno").valueCode,
+          ?.valueCode,
+        qcyn: defaultOption.find((item: any) => item.id == "qcyn")?.valueCode,
+        qcno: defaultOption.find((item: any) => item.id == "qcno")?.valueCode,
         person: defaultOption.find((item: any) => item.id == "person")
-          .valueCode,
+          ?.valueCode,
         isSearch: true,
       }));
     }
@@ -2174,7 +2174,7 @@ const QC_A3000: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -2278,7 +2278,7 @@ const QC_A3000: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"].map(
+                customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn

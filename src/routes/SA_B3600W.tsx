@@ -110,9 +110,9 @@ const SA_B3600W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
-        dtgb: defaultOption.find((item: any) => item.id == "dtgb").valueCode,
-        dtdiv: defaultOption.find((item: any) => item.id == "dtdiv").valueCode,
+          ?.valueCode,
+        dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
+        dtdiv: defaultOption.find((item: any) => item.id == "dtdiv")?.valueCode,
       }));
     }
   }, [customOptionData]);

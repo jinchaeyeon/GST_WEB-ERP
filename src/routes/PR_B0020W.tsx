@@ -578,7 +578,7 @@ const PR_B0020W: React.FC = () => {
       window.addEventListener("resize", handleResize);
 
       //가장작은 그리드 이름
-      customOptionData.menuCustomColumnOptions["grdList"].map((item: TColumn) =>
+      customOptionData.menuCustomColumnOptions["grdList"]?.map((item: TColumn) =>
         item.width !== undefined
           ? (minGridWidth.current += item.width)
           : minGridWidth.current
@@ -751,7 +751,7 @@ const PR_B0020W: React.FC = () => {
                 cell={CustomCheckBoxCell1}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn

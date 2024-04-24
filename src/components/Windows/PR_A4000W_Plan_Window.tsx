@@ -113,7 +113,7 @@ const PlanWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt2"),
         todt: setDefaultDate(customOptionData, "todt2"),
-        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
       }));
     }
   }, [customOptionData]);

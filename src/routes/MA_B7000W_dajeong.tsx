@@ -1,29 +1,63 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ButtonContainer, ButtonInInput, FilterBox, GridContainer, GridContainerWrap, GridTitle, GridTitleContainer, Title, TitleContainer } from "../CommonStyled";
-import TopButtons from "../components/Buttons/TopButtons";
-import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { GetPropertyValueByName, UseBizComponent, UseCustomOption, UseMessages, UsePermissions, convertDateToStr, findMessage, getQueryFromBizComponent, handleKeyPressSearch, setDefaultDate } from "../components/CommonFunction";
-import FilterContainer from "../components/Containers/FilterContainer";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
-import { Input } from "@progress/kendo-react-inputs";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
-import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import { COM_CODE_DEFAULT_VALUE, GAP, PAGE_SIZE, SELECTED_FIELD } from "../components/CommonString";
-import YearCalendar from "../components/Calendars/YearCalendar";
-import { Button } from "@progress/kendo-react-buttons";
-import { IItemData } from "../hooks/interfaces";
-import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { DataResult, State, process } from "@progress/kendo-data-query";
-import { Grid, GridColumn, GridDataStateChangeEvent, GridFooterCellProps, GridPageChangeEvent, GridSelectionChangeEvent, getSelectedState } from "@progress/kendo-react-grid";
-import { ExcelExport } from "@progress/kendo-react-excel-export";
-import { gridList } from "../store/columns/MA_B7000W_C_dajeong";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { isLoading, loginResultState } from "../store/atoms";
-import { useApi } from "../hooks/api";
+import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
+import { ExcelExport } from "@progress/kendo-react-excel-export";
+import {
+  Grid,
+  GridColumn,
+  GridDataStateChangeEvent,
+  GridFooterCellProps,
+  GridPageChangeEvent,
+  GridSelectionChangeEvent,
+  getSelectedState,
+} from "@progress/kendo-react-grid";
+import { Input } from "@progress/kendo-react-inputs";
 import { bytesToBase64 } from "byte-base64";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import {
+  ButtonContainer,
+  ButtonInInput,
+  FilterBox,
+  GridContainer,
+  GridContainerWrap,
+  GridTitle,
+  GridTitleContainer,
+  Title,
+  TitleContainer,
+} from "../CommonStyled";
+import TopButtons from "../components/Buttons/TopButtons";
+import YearCalendar from "../components/Calendars/YearCalendar";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
+import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import {
+  GetPropertyValueByName,
+  UseBizComponent,
+  UseCustomOption,
+  UseMessages,
+  UsePermissions,
+  convertDateToStr,
+  findMessage,
+  getQueryFromBizComponent,
+  handleKeyPressSearch,
+  setDefaultDate,
+} from "../components/CommonFunction";
+import {
+  COM_CODE_DEFAULT_VALUE,
+  GAP,
+  PAGE_SIZE,
+  SELECTED_FIELD,
+} from "../components/CommonString";
+import FilterContainer from "../components/Containers/FilterContainer";
+import CommonRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
+import { useApi } from "../hooks/api";
+import { IItemData } from "../hooks/interfaces";
+import { isLoading, loginResultState } from "../store/atoms";
+import { gridList } from "../store/columns/MA_B7000W_C_dajeong";
+import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const numberField = [
   "safeqty",
@@ -87,13 +121,13 @@ const MA_B7000W_dajeong: React.FC = () => {
   ]);
   const [itemgradeListData, setItemgradeListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
-  ]); 
+  ]);
   const [loactionListData, setLocationListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
-  ]); 
+  ]);
   const [loadPlaceListData, setLoadPlaceListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
-  ]);   
+  ]);
 
   useEffect(() => {
     if (bizComponentData !== null) {
@@ -111,10 +145,12 @@ const MA_B7000W_dajeong: React.FC = () => {
       );
       const locationQueryStr = getQueryFromBizComponent(
         bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
-      ); 
+      );
       const loadPlaceQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId == "L_LOADPLACE")
-      );     
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_LOADPLACE"
+        )
+      );
 
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
@@ -135,7 +171,7 @@ const MA_B7000W_dajeong: React.FC = () => {
       query: convertedQueryStr,
     };
     try {
-      data = await processApi<any>("query", query);      
+      data = await processApi<any>("query", query);
       console.log(data);
     } catch (error) {
       data = null;
@@ -215,9 +251,9 @@ const MA_B7000W_dajeong: React.FC = () => {
     }));
   };
 
-  //페이지네이션 세팅  
-  const initialPageState = { skip: 0, take: PAGE_SIZE }; // 초기 페이지 상태 변수 
-  const [page, setPage] = useState(initialPageState);  // 현재 페이지 값 상태 함수
+  //페이지네이션 세팅
+  const initialPageState = { skip: 0, take: PAGE_SIZE }; // 초기 페이지 상태 변수
+  const [page, setPage] = useState(initialPageState); // 현재 페이지 값 상태 함수
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
   // 페이지를 클릭(변경)되었을 때 해당 그리드 검색 로직 실행
@@ -234,14 +270,14 @@ const MA_B7000W_dajeong: React.FC = () => {
     }));
 
     setPage2(initialPageState);
-    setPage3(initialPageState); 
-    
+    setPage3(initialPageState);
+
     setFilters((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
       isSearch: true,
     }));
-    
+
     setPage({
       skip: page.skip,
       take: initialPageState.take,
@@ -306,7 +342,7 @@ const MA_B7000W_dajeong: React.FC = () => {
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
-    itemgrade: "",  
+    itemgrade: "",
   });
 
   const [detailFilters1, setDetailFilters1] = useState({
@@ -332,7 +368,7 @@ const MA_B7000W_dajeong: React.FC = () => {
   const fetchMainGrid = async (filters: any) => {
     //if (!permissions?.view) return;
     let data: any;
-    setLoading(true);    
+    setLoading(true);
 
     //조회조건 파라미터
     const parameters: Iparameters = {
@@ -838,7 +874,7 @@ const MA_B7000W_dajeong: React.FC = () => {
       ids.forEach((id) =>
         setFilters((prev) => ({
           ...prev,
-          [id]: defaultOption.find((item: any) => item.id == id).valueCode,
+          [id]: defaultOption.find((item: any) => item.id == id)?.valueCode,
         }))
       );
 
@@ -870,71 +906,78 @@ const MA_B7000W_dajeong: React.FC = () => {
       alert(e);
     }
   };
-  
 
   return (
-    <><TitleContainer>
-      <Title>재고조회</Title>
-      <ButtonContainer>
-        {permissions && (
-          <TopButtons
-            search={search}
-            exportExcel={exportExcel}
-            permissions={permissions}
-            pathname="MA_B7000W_dajeong" />
-        )}
-      </ButtonContainer>
-    </TitleContainer><FilterContainer>
+    <>
+      <TitleContainer>
+        <Title>재고조회</Title>
+        <ButtonContainer>
+          {permissions && (
+            <TopButtons
+              search={search}
+              exportExcel={exportExcel}
+              permissions={permissions}
+              pathname="MA_B7000W_dajeong"
+            />
+          )}
+        </ButtonContainer>
+      </TitleContainer>
+      <FilterContainer>
         <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>재고년도</th>
-              <td><DatePicker
-                    name="ymdyyyy"
-                    value={filters.ymdyyyy}
-                    format="yyyy"
-                    onChange={filterInputChange}
-                    calendar={YearCalendar}
-                    className="required"
-                    placeholder=""
-                  />
+              <td>
+                <DatePicker
+                  name="ymdyyyy"
+                  value={filters.ymdyyyy}
+                  format="yyyy"
+                  onChange={filterInputChange}
+                  calendar={YearCalendar}
+                  className="required"
+                  placeholder=""
+                />
               </td>
               <th>품목코드</th>
-              <td><Input
-                     name="itemcd"
-                     type="text"
-                     value={filters.itemcd}
-                     onChange={filterInputChange}
+              <td>
+                <Input
+                  name="itemcd"
+                  type="text"
+                  value={filters.itemcd}
+                  onChange={filterInputChange}
+                />
+                <ButtonInInput>
+                  <Button
+                    onClick={onItemWndClick}
+                    icon="more-horizontal"
+                    fillMode="flat"
                   />
-                  <ButtonInInput>
-                    <Button
-                      onClick={onItemWndClick}
-                      icon="more-horizontal"
-                      fillMode="flat"
-                    />
-                  </ButtonInInput>
-                  </td>
+                </ButtonInInput>
+              </td>
               <th>품목명</th>
-              <td><Input
-                    name="itemnm"
-                    type="text"
-                    value={filters.itemnm}
-                    onChange={filterInputChange}
-                  />
+              <td>
+                <Input
+                  name="itemnm"
+                  type="text"
+                  value={filters.itemnm}
+                  onChange={filterInputChange}
+                />
               </td>
               <th>품목계정</th>
-              <td>{customOptionData !== null && (
-                // 커스텀옵션으로 비즈니스컴포넌트 가져와서 셋팅
-                    <CustomOptionComboBox
-                      name="cboItemacnt"
-                      value={filters.cboItemacnt}
-                      customOptionData={customOptionData}
-                      changeData={filterComboBoxChange}
-                    />
-                  )}
+              <td>
+                {customOptionData !== null && (
+                  // 커스텀옵션으로 비즈니스컴포넌트 가져와서 셋팅
+                  <CustomOptionComboBox
+                    name="cboItemacnt"
+                    value={filters.cboItemacnt}
+                    customOptionData={customOptionData}
+                    changeData={filterComboBoxChange}
+                  />
+                )}
               </td>
               <th>LOT NO</th>
-              <td><Input
+              <td>
+                <Input
                   name="lotnum"
                   type="text"
                   value={filters.lotnum}
@@ -973,10 +1016,10 @@ const MA_B7000W_dajeong: React.FC = () => {
                     changeData={filterComboBoxChange}
                   />
                 )}
-              </td>              
+              </td>
             </tr>
             <tr>
-            <th>재고수량</th>
+              <th>재고수량</th>
               <td colSpan={3}>
                 {customOptionData !== null && (
                   <CommonRadioGroup
@@ -990,7 +1033,7 @@ const MA_B7000W_dajeong: React.FC = () => {
               <td>
                 {customOptionData !== null && (
                   <CustomOptionComboBox
-                    name="load_place"                  
+                    name="load_place"
                     value={filters.load_place}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
@@ -1033,7 +1076,7 @@ const MA_B7000W_dajeong: React.FC = () => {
               <td colSpan={3}>
                 {customOptionData !== null && (
                   <CommonRadioGroup
-                    name="radUseyn"                    
+                    name="radUseyn"
                     customOptionData={customOptionData}
                     changeData={filterRadioChange}
                   />
@@ -1069,13 +1112,13 @@ const MA_B7000W_dajeong: React.FC = () => {
                 )?.code_name,
                 itemgrade: itemgradeListData.find(
                   (item: any) => item.sub_code == row.itemgrade
-                )?.code_name,   
+                )?.code_name,
                 location: loactionListData.find(
                   (item: any) => item.sub_code == row.location
                 )?.code_name,
                 load_place: loadPlaceListData.find(
                   (item: any) => item.sub_code == row.load_place
-                )?.code_name,                  
+                )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -1105,39 +1148,37 @@ const MA_B7000W_dajeong: React.FC = () => {
             //컬럼순서조정
             reorderable={true}
             //컬럼너비조정
-            resizable={true}            
+            resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]
-                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                .map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : dateField.includes(item.fieldName)
-                            ? DateCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder == 0
-                            ? mainTotalFooterCell
-                            : numberField.includes(item.fieldName)
-                            ? gridSumQtyFooterCell
-                            : undefined
-                        }
-                        locked={item.fixed == "None" ? false : true}
-                      ></GridColumn>
-                    )
-                )}
-          </Grid>        
-        </ExcelExport>         
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        numberField.includes(item.fieldName)
+                          ? NumberCell
+                          : dateField.includes(item.fieldName)
+                          ? DateCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder == 0
+                          ? mainTotalFooterCell
+                          : numberField.includes(item.fieldName)
+                          ? gridSumQtyFooterCell
+                          : undefined
+                      }
+                      locked={item.fixed == "None" ? false : true}
+                    ></GridColumn>
+                  )
+              )}
+          </Grid>
+        </ExcelExport>
       </GridContainer>
       <GridContainerWrap>
         <GridContainer width={`20%`}>
@@ -1189,48 +1230,46 @@ const MA_B7000W_dajeong: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"]
-                  .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                  .map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : dateField.includes(item.fieldName)
-                              ? DateCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? detail1TotalFooterCell
-                              : numberField.includes(item.fieldName)
-                              ? gridSumQtyFooterCell2
-                              : undefined
-                          }
-                          locked={item.fixed == "None" ? false : true}
-                        />
-                      )
-                  )}
+                customOptionData.menuCustomColumnOptions["grdList2"]?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : dateField.includes(item.fieldName)
+                            ? DateCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0
+                            ? detail1TotalFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell2
+                            : undefined
+                        }
+                        locked={item.fixed == "None" ? false : true}
+                      />
+                    )
+                )}
             </Grid>
           </ExcelExport>
-        </GridContainer>        
+        </GridContainer>
         <GridContainer width={`calc(80% - ${GAP}px)`}>
           <GridTitleContainer>
             <GridTitle>LOT별 상세이력</GridTitle>
-          </GridTitleContainer>  
+          </GridTitleContainer>
           <ExcelExport
             data={detail2DataResult.data}
             ref={(exporter) => {
               _export3 = exporter;
             }}
             fileName="재고조회"
-          >        
+          >
             <Grid
               style={{ height: "35vh" }}
               data={process(
@@ -1268,40 +1307,38 @@ const MA_B7000W_dajeong: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList3"]
-                  .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                  .map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            numberField.includes(item.fieldName)
-                              ? NumberCell
-                              : dateField.includes(item.fieldName)
-                              ? DateCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? detail2TotalFooterCell
-                              : numberField.includes(item.fieldName)
-                              ? gridSumQtyFooterCell3
-                              : undefined
-                          }
-                          locked={item.fixed == "None" ? false : true}
-                        ></GridColumn>
-                      )
-                  )}
-            </Grid>     
-          </ExcelExport>  
+                customOptionData.menuCustomColumnOptions["grdList3"]?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        cell={
+                          numberField.includes(item.fieldName)
+                            ? NumberCell
+                            : dateField.includes(item.fieldName)
+                            ? DateCell
+                            : undefined
+                        }
+                        footerCell={
+                          item.sortOrder == 0
+                            ? detail2TotalFooterCell
+                            : numberField.includes(item.fieldName)
+                            ? gridSumQtyFooterCell3
+                            : undefined
+                        }
+                        locked={item.fixed == "None" ? false : true}
+                      ></GridColumn>
+                    )
+                )}
+            </Grid>
+          </ExcelExport>
         </GridContainer>
-      </GridContainerWrap>                        
+      </GridContainerWrap>
       {/* 품목코드 팝업 */}
-      {itemWindowVisible && ( 
+      {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
           workType="FILTER"
@@ -1325,6 +1362,6 @@ const MA_B7000W_dajeong: React.FC = () => {
         ))
       )}
     </>
-  );  
+  );
 };
 export default MA_B7000W_dajeong;

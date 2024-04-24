@@ -154,16 +154,16 @@ const KendoWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        dtgb1: defaultOption.find((item: any) => item.id == "dtgb1").valueCode,
+        dtgb1: defaultOption.find((item: any) => item.id == "dtgb1")?.valueCode,
         is_emergency: defaultOption.find(
           (item: any) => item.id == "is_emergency"
-        ).valueCode,
+        )?.valueCode,
         materialtype: defaultOption.find(
           (item: any) => item.id == "materialtype"
-        ).valueCode,
+        )?.valueCode,
         require_type: defaultOption.find(
           (item: any) => item.id == "require_type"
-        ).valueCode,
+        )?.valueCode,
         isSearch: true,
       }));
     }
@@ -759,7 +759,7 @@ const KendoWindow = ({
           editField={EDIT_FIELD}
         >
           {customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["grdList"].map(
+            customOptionData.menuCustomColumnOptions["grdList"]?.map(
               (item: any, idx: number) =>
                 item.sortOrder !== -1 && (
                   <GridColumn

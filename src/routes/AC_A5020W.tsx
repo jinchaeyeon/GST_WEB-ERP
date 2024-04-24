@@ -238,13 +238,13 @@ const AC_A5020W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
-        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
+          ?.valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
         taxtype: defaultOption.find((item: any) => item.id == "taxtype")
-          .valueCode,
+          ?.valueCode,
         inoutdiv: defaultOption.find((item: any) => item.id == "inoutdiv")
-          .valueCode,
-        etax: defaultOption.find((item: any) => item.id == "etax").valueCode,
+          ?.valueCode,
+        etax: defaultOption.find((item: any) => item.id == "etax")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -968,7 +968,7 @@ const AC_A5020W: React.FC = () => {
           >
             <GridColumn field="rowstatus" title=" " width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

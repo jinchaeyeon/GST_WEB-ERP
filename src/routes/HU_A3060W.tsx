@@ -199,9 +199,9 @@ const HU_A3060W: React.FC = () => {
       }));
       setFilters4((prev) => ({
         ...prev,
-        paycd: defaultOption.find((item: any) => item.id == "paycd").valueCode,
+        paycd: defaultOption.find((item: any) => item.id == "paycd")?.valueCode,
         payitemcd: defaultOption.find((item: any) => item.id == "payitemcd")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -3314,7 +3314,7 @@ const HU_A3060W: React.FC = () => {
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -3908,7 +3908,7 @@ const HU_A3060W: React.FC = () => {
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList4"].map(
+                  customOptionData.menuCustomColumnOptions["grdList4"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

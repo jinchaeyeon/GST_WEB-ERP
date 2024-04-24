@@ -240,11 +240,11 @@ const CM_A8000W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         itemlvl1: defaultOption.find((item: any) => item.id == "itemlvl1")
-          .valueCode,
+          ?.valueCode,
         itemlvl2: defaultOption.find((item: any) => item.id == "itemlvl2")
-          .valueCode,
+          ?.valueCode,
         itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
-          .valueCode,
+          ?.valueCode,
       }));
       setFilters1((prev) => ({
         ...prev,
@@ -1970,7 +1970,7 @@ const CM_A8000W: React.FC = () => {
                 editable={false}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn

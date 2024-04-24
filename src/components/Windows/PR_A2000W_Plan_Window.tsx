@@ -101,7 +101,7 @@ const KendoWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
       }));
     }
   }, [customOptionData]);

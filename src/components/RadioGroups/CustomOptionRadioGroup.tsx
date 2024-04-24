@@ -26,17 +26,18 @@ const CustomOptionRadioGroup = ({
   const dataList =
     customOptionData !== null
       ? GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, type)
-      : null;
+      : [];
 
   let defaultValue = "";
   let newRadioGroup = RADIO_GROUP_DEFAULT_DATA;
 
   if (dataList) {
-    defaultValue = dataList.find((item: any) => item.id == name).valueCode;
+    defaultValue = dataList.find((item: any) => item.id == name)?.valueCode;
 
-    const radioGroup = dataList.find((item: any) => item.id == name).Rows;
+    const radioGroup = dataList.find((item: any) => item.id == name)?.Rows;
 
-    newRadioGroup = radioGroup
+    if(radioGroup != undefined) {
+      newRadioGroup = radioGroup
       .filter((item: any) => !excludedCodes.includes(item.code))
       // 제외 처리 (filter)
       .filter(
@@ -61,6 +62,7 @@ const CustomOptionRadioGroup = ({
         value: column.code,
         label: column.caption,
       }));
+    }
   }
 
   const [state, setState] = useState(defaultValue); //상태

@@ -425,7 +425,7 @@ const PR_A9100W: React.FC = () => {
         ymdYyymm: setDefaultDate(customOptionData, "ymdYyymm"),
         cboLocation: defaultOption.find(
           (item: any) => item.id == "cboLocation"
-        ).valueCode,
+        )?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1727,7 +1727,7 @@ const PR_A9100W: React.FC = () => {
                 editable={false}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, num: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn

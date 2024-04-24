@@ -123,14 +123,14 @@ const App: React.FC = () => {
         ...prev,
         cboViewType: defaultOption.find(
           (item: any) => item.id == "cboViewType"
-        ).valueCode,
+        )?.valueCode,
       }));
       setFilters((prev) => ({
         ...prev,
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
         cboLocation: defaultOption.find(
           (item: any) => item.id == "cboLocation"
-        ).valueCode,
+        )?.valueCode,
       }));
     }
   }, [customOptionData]);

@@ -331,7 +331,7 @@ export const GetPropertyValueByName = (target: any, name: string) => {
   );
   const propertyValue = propertyName ? target[propertyName] : undefined;
 
-  return propertyValue;
+  return propertyValue == undefined ? [] : propertyValue;
 };
 
 //현재 경로를 받아서 커스텀 옵션 조회 후 결과값을 반환

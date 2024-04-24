@@ -127,7 +127,7 @@ const CM_A1710W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         user_id: defaultOption.find((item: any) => item.id == "user_id")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -746,7 +746,7 @@ const CM_A1710W: React.FC = () => {
           >
             <GridColumn field="rowstatus" title=" " width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

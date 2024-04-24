@@ -184,10 +184,10 @@ const PR_A6000W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
         stopcd: defaultOption.find((item: any) => item.id == "stopcd")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         isSearch: true,
       }));
       setFilters2((prev) => ({
@@ -1174,13 +1174,13 @@ const PR_A6000W: React.FC = () => {
 
       window.addEventListener("resize", handleResize);
 
-      customOptionData.menuCustomColumnOptions["grdList2"].map(
+      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
         (item: TColumn) =>
           item.width !== undefined
             ? (minGridWidth2.current += item.width)
             : minGridWidth2.current
       );
-      customOptionData.menuCustomColumnOptions["grdList3"].map(
+      customOptionData.menuCustomColumnOptions["grdList3"]?.map(
         (item: TColumn) =>
           item.width !== undefined
             ? (minGridWidth3.current += item.width)
@@ -1397,7 +1397,7 @@ const PR_A6000W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1465,7 +1465,7 @@ const PR_A6000W: React.FC = () => {
               id="grdList2"
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"].map(
+                customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1561,7 +1561,7 @@ const PR_A6000W: React.FC = () => {
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList3"].map(
+              customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

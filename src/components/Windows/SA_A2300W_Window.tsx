@@ -217,11 +217,11 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         person: defaultOption.find((item: any) => item.id == "person")
-          .valueCode,
+          ?.valueCode,
         doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
-          .valueCode,
+          ?.valueCode,
         cargocd: defaultOption.find((item: any) => item.id == "cargocd")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

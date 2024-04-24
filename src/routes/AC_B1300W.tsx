@@ -93,7 +93,7 @@ const AC_B1300W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         closeyn: defaultOption.find((item: any) => item.id == "closeyn")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);

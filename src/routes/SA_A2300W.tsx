@@ -155,15 +155,15 @@ const SA_A2300: React.FC = () => {
         todt: setDefaultDate(customOptionData, "todt"),
         cboLocation: defaultOption.find(
           (item: any) => item.id == "cboLocation"
-        ).valueCode,
+        )?.valueCode,
         cboPerson: defaultOption.find((item: any) => item.id == "cboPerson")
-          .valueCode,
+          ?.valueCode,
         cboDoexdiv: defaultOption.find((item: any) => item.id == "cboDoexdiv")
-          .valueCode,
+          ?.valueCode,
         gubun1: defaultOption.find((item: any) => item.id == "gubun1")
-          .valueCode,
+          ?.valueCode,
         gubun2: defaultOption.find((item: any) => item.id == "gubun2")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -1295,7 +1295,7 @@ const SA_A2300: React.FC = () => {
                   >
                     <GridColumn cell={CommandCell} width="50px" />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"].map(
+                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1400,7 +1400,7 @@ const SA_A2300: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1669,7 +1669,7 @@ const SA_A2300: React.FC = () => {
               >
                 <GridColumn cell={CommandCell} width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1752,7 +1752,7 @@ const SA_A2300: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn

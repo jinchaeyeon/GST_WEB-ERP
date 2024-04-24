@@ -52,7 +52,7 @@ const AC_B6040W: React.FC = () => {
         ...prev,
         actdt: setDefaultDate(customOptionData, "actdt"),
         location: defaultOption.find((item: any) => item.id == "location")
-          .valueCode,
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
