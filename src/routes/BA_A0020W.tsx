@@ -3,6 +3,9 @@ import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
+import SwiperCore from "swiper";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import {
   Grid,
   GridCellProps,
@@ -32,9 +35,6 @@ import React, {
   useState,
 } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import SwiperCore from "swiper";
-import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -97,9 +97,9 @@ import {
   unsavedNameState,
 } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0020W_C";
-import sidoData from "../store/map/sido.json";
-import sigData from "../store/map/sig.json";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import sigData from "../store/map/sig.json";
+import sidoData from "../store/map/sido.json";
 
 var index = 0;
 
@@ -324,7 +324,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
 const BA_A0020: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
-
+  
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(SUB_DATA_ITEM_KEY);
@@ -375,9 +375,9 @@ const BA_A0020: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         raduseyn: defaultOption.find((item: any) => item.id == "raduseyn")
-          ?.valueCode,
+          .valueCode,
         custdiv: defaultOption.find((item: any) => item.id == "custdiv")
-          ?.valueCode,
+          .valueCode,
       }));
     }
   }, [customOptionData]);
@@ -3651,7 +3651,7 @@ const BA_A0020: React.FC = () => {
           >
             <SwiperSlide key={0} className="leading_PDA">
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
+                style={{ width: `${deviceWidth - 30}px`,overflow: "auto" }}
               >
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
@@ -3725,9 +3725,7 @@ const BA_A0020: React.FC = () => {
                       resizable={true}
                     >
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions[
-                          "grdList"
-                        ]?.map(
+                        customOptionData.menuCustomColumnOptions["grdList"].map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -3781,7 +3779,7 @@ const BA_A0020: React.FC = () => {
                 style={{
                   minHeight: "70vh",
                   width: `${deviceWidth - 30}px`,
-                  overflow: "auto",
+                 overflow: "auto",
                 }}
               >
                 <TabStrip
@@ -4465,7 +4463,7 @@ const BA_A0020: React.FC = () => {
                             {customOptionData !== null &&
                               customOptionData.menuCustomColumnOptions[
                                 "grdList2"
-                              ]?.map(
+                              ].map(
                                 (item: any, idx: number) =>
                                   item.sortOrder !== -1 && (
                                     <GridColumn
@@ -4606,7 +4604,7 @@ const BA_A0020: React.FC = () => {
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grdList3"
-                            ]?.map(
+                            ].map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 && (
                                   <GridColumn
@@ -4720,7 +4718,7 @@ const BA_A0020: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                    customOptionData.menuCustomColumnOptions["grdList"].map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -5418,7 +5416,7 @@ const BA_A0020: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdList2"
-                          ]?.map(
+                          ].map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <GridColumn
@@ -5551,7 +5549,7 @@ const BA_A0020: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList3"
-                        ]?.map(
+                        ].map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
