@@ -112,12 +112,12 @@ const CM_A2000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        person: defaultOption.find((item: any) => item.id === "person")
+        person: defaultOption.find((item: any) => item.id == "person")
           .valueCode,
-        rcvperson: defaultOption.find((item: any) => item.id === "rcvperson")
+        rcvperson: defaultOption.find((item: any) => item.id == "rcvperson")
           .valueCode,
-        endyn: defaultOption.find((item: any) => item.id === "endyn").valueCode,
-        loadyn: defaultOption.find((item: any) => item.id === "loadyn")
+        endyn: defaultOption.find((item: any) => item.id == "endyn").valueCode,
+        loadyn: defaultOption.find((item: any) => item.id == "loadyn")
           .valueCode,
       }));
     }
@@ -139,7 +139,7 @@ const CM_A2000W: React.FC = () => {
     if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(userQueryStr, setUserListData);
@@ -162,7 +162,7 @@ const CM_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -260,7 +260,7 @@ const CM_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -510,9 +510,9 @@ const CM_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       );
@@ -723,7 +723,7 @@ const CM_A2000W: React.FC = () => {
                 chooses: row.chooses == 0 ? false : true,
                 loadok: row.loadok == 0 ? false : true,
                 rcvperson: userListData.find(
-                  (item: any) => item.user_id === row.rcvperson
+                  (item: any) => item.user_id == row.rcvperson
                 )?.user_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -779,7 +779,7 @@ const CM_A2000W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
                         }
                       ></GridColumn>
                     )

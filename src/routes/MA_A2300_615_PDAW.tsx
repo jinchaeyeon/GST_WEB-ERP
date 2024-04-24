@@ -594,7 +594,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAll();
       setParaData({
         workType: "",
@@ -776,7 +776,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                   <Button
                     onClick={() => {
                       if (
-                        Object.entries(checkDataResult.data).toString() ===
+                        Object.entries(checkDataResult.data).toString() ==
                         Object.entries(mainDataResult.data).toString()
                       ) {
                         setCheckDataResult((prev) => ({
@@ -1254,7 +1254,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
                   id="allcheck"
                   onClick={() => {
                     if (
-                      Object.entries(checkDataResult.data).toString() ===
+                      Object.entries(checkDataResult.data).toString() ==
                       Object.entries(mainDataResult.data).toString()
                     ) {
                       setCheckDataResult((prev) => ({

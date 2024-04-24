@@ -135,12 +135,12 @@ const CopyWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
+        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
           .valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
       }));
     }
@@ -163,11 +163,11 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(itemacntQueryStr, setItemacntListData);
@@ -191,7 +191,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -408,7 +408,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -427,9 +427,9 @@ const CopyWindow = ({
           groupId: row.purnum + "purnum",
           group_category_name: "발주번호" + " : " + row.purnum,
           itemacnt: itemacntListData.find(
-            (item: any) => item.sub_code === row.itemacnt
+            (item: any) => item.sub_code == row.itemacnt
           )?.code_name,
-          person: usersListData.find((item: any) => item.user_id === row.person)
+          person: usersListData.find((item: any) => item.user_id == row.person)
             ?.user_name,
         };
       });
@@ -1099,10 +1099,10 @@ const CopyWindow = ({
               subDataResult.data.map((row) => ({
                 ...row,
                 itemacnt: itemacntListData.find(
-                  (items: any) => items.sub_code === row.itemacnt
+                  (items: any) => items.sub_code == row.itemacnt
                 )?.code_name,
                 person: usersListData.find(
-                  (item: any) => item.user_id === row.person
+                  (item: any) => item.user_id == row.person
                 )?.user_name,
                 [SELECTED_FIELD]: subselectedState[idGetter2(row)], //선택된 데이터
               })),

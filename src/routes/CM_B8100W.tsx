@@ -149,7 +149,7 @@ const CM_B8100W: React.FC = () => {
     if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(userQueryStr, setUserListData);
@@ -172,7 +172,7 @@ const CM_B8100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -243,14 +243,14 @@ const CM_B8100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.user_id === filters.find_row_value
+            (row: any) => row.user_id == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -450,7 +450,7 @@ const CM_B8100W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 user_id: userListData.find(
-                  (item: any) => item.user_id === row.user_id
+                  (item: any) => item.user_id == row.user_id
                 )?.user_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -497,7 +497,7 @@ const CM_B8100W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )

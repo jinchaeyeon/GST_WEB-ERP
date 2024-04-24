@@ -219,7 +219,7 @@ const PR_B0020W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -347,7 +347,7 @@ const PR_B0020W: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values,
         [EDIT_FIELD]: props.field,
       }));
@@ -369,7 +369,7 @@ const PR_B0020W: React.FC = () => {
 
   const CustomCheckBoxCell1 = (props: GridCellProps) => {
     const { dataItem, field } = props;
-    if (props.rowType === "groupHeader") {
+    if (props.rowType == "groupHeader") {
       return null;
     }
 
@@ -378,7 +378,7 @@ const PR_B0020W: React.FC = () => {
         item.num == dataItem.num
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               chk:
                 typeof item.chk == "boolean"
                   ? !item.chk
@@ -427,7 +427,7 @@ const PR_B0020W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -494,7 +494,7 @@ const PR_B0020W: React.FC = () => {
       // 추가된 바코드는 체크되어 있어도 추가되지 않게 불일치 요소
       const cardtest = selectRows.filter((item) => {
         return !cardField.some(
-          (x) => x.code === item.code && x.name === item.name
+          (x) => x.code == item.code && x.name == item.name
         );
       });
 
@@ -765,7 +765,7 @@ const PR_B0020W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
                         }
                       />
                     )

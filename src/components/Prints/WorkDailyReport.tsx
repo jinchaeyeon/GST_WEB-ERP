@@ -48,7 +48,7 @@ const WorkDailyReport = (data: any) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       //요약
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
@@ -100,7 +100,7 @@ const WorkDailyReport = (data: any) => {
 
         {mainDataResult !== null &&
           mainDataResult.map((item1: any, idx1: number) =>
-            idx1 === 0 || idx1 % 10 === 0 ? (
+            idx1 == 0 || idx1 % 10 == 0 ? (
               <>
                 <table className="main_tb">
                   <colgroup>

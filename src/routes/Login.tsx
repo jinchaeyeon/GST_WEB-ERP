@@ -137,7 +137,7 @@ const Login: React.FC = () => {
         // const md5 = require("md5");
         // para.password = sha256(md5(para.password));
         // const response = await processApi<any>(
-        //   para.companyCode === "2207C612" ? "login-old" : "login",
+        //   para.companyCode == "2207C612" ? "login-old" : "login",
         //   para
         // );
 
@@ -218,7 +218,7 @@ const Login: React.FC = () => {
   );
 
   const companyCodesKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.ctrlKey && e.key === "'") {
+    if (e.ctrlKey && e.key == "'") {
       setIfShowCompanyList((prev) => !prev);
     }
   };

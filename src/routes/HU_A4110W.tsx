@@ -107,21 +107,21 @@ const HU_A4110W: React.FC = () => {
         ...prev,
         strdt: setDefaultDate(customOptionData, "strdt"),
         enddt: setDefaultDate(customOptionData, "enddt"),
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
-        appsts: defaultOption.find((item: any) => item.id === "appsts")
+        appsts: defaultOption.find((item: any) => item.id == "appsts")
           .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
-        acntdiv: defaultOption.find((item: any) => item.id === "acntdiv")
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+        acntdiv: defaultOption.find((item: any) => item.id == "acntdiv")
           .valueCode,
       }));
       setSubFilters((prev) => ({
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
         semiannualgb: defaultOption.find(
-          (item: any) => item.id === "semiannualgb"
+          (item: any) => item.id == "semiannualgb"
         ).valueCode,
       }));
     }
@@ -142,11 +142,11 @@ const HU_A4110W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       fetchQuery(locationQueryStr, setLocationListData);
@@ -170,7 +170,7 @@ const HU_A4110W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -456,7 +456,7 @@ const HU_A4110W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[2].TotalRowCount;
       const rows = data.tables[0].Rows;
       const rows2 = data.tables[1].Rows;
@@ -533,7 +533,7 @@ const HU_A4110W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -567,7 +567,7 @@ const HU_A4110W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.expenseno == filters.find_row_value);
         if (selectedRow != undefined) {
@@ -828,9 +828,9 @@ const HU_A4110W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       );
@@ -896,7 +896,7 @@ const HU_A4110W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   return (
@@ -1088,7 +1088,7 @@ const HU_A4110W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? subTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSubSumQtyFooterCell
@@ -1262,7 +1262,7 @@ const HU_A4110W: React.FC = () => {
                       (item: any) => item.sub_code == row.location
                     )?.code_name,
                     dptcd: dptcdListData.find(
-                      (item: any) => item.dptcd === row.dptcd
+                      (item: any) => item.dptcd == row.dptcd
                     )?.dptnm,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),

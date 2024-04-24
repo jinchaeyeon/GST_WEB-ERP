@@ -18,7 +18,7 @@ const DateCell = (props: CustomCellProps) => {
     className = "",
     color = "black",
   } = props;
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
 
   if (className.includes("read-only")) {
     isInEdit = false;
@@ -45,7 +45,7 @@ const DateCell = (props: CustomCellProps) => {
         dataItem: dataItem,
         field: "rowstatus",
         syntheticEvent: e.syntheticEvent,
-        value: dataItem["rowstatus"] === "N" ? "N" : "U",
+        value: dataItem["rowstatus"] == "N" ? "N" : "U",
       });
     }
   };
@@ -59,20 +59,20 @@ const DateCell = (props: CustomCellProps) => {
       {isInEdit ? (
         <DatePicker
           name={field}
-          defaultValue={typeof value === "string" ? new Date() : value}
+          defaultValue={typeof value == "string" ? new Date() : value}
           format={"yyyy-MM-dd"}
           onChange={onDateChange}
           calendar={Calendars}
           placeholder=""
           show={true}
         />
-      ) : typeof value === "object" ? (
+      ) : typeof value == "object" ? (
         convertDateToStr(value) == "99991231" ? (
           ""
         ) : (
           dateformat2(convertDateToStr(value))
         )
-      ) : typeof value === "string" && value !== "" ? (
+      ) : typeof value == "string" && value !== "" ? (
         dateformat2(value)
       ) : (
         ""
@@ -81,8 +81,8 @@ const DateCell = (props: CustomCellProps) => {
   );
 
   //return defaultRendering;
-  //return typeof value === "string"
-  return !(value instanceof Date) || render === undefined
+  //return typeof value == "string"
+  return !(value instanceof Date) || render == undefined
     ? defaultRendering
     : render?.call(undefined, defaultRendering, props);
 };

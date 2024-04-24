@@ -167,18 +167,18 @@ const SA_A5000: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         cboLocation: defaultOption.find(
-          (item: any) => item.id === "cboLocation"
+          (item: any) => item.id == "cboLocation"
         ).valueCode,
-        cboPerson: defaultOption.find((item: any) => item.id === "cboPerson")
+        cboPerson: defaultOption.find((item: any) => item.id == "cboPerson")
           .valueCode,
-        cboDoexdiv: defaultOption.find((item: any) => item.id === "cboDoexdiv")
+        cboDoexdiv: defaultOption.find((item: any) => item.id == "cboDoexdiv")
           .valueCode,
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        dtgb: defaultOption.find((item: any) => item.id == "dtgb").valueCode,
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
-        taxdiv: defaultOption.find((item: any) => item.id === "taxdiv")
+        taxdiv: defaultOption.find((item: any) => item.id == "taxdiv")
           .valueCode,
-        taxyn: defaultOption.find((item: any) => item.id === "taxyn").valueCode,
+        taxyn: defaultOption.find((item: any) => item.id == "taxyn").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -207,18 +207,18 @@ const SA_A5000: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const unpcalmethQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA019")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA019")
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
 
       fetchQuery(unpcalmethQueryStr, setUnpcalmethListData);
@@ -244,7 +244,7 @@ const SA_A5000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -481,7 +481,7 @@ const SA_A5000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -593,7 +593,7 @@ const SA_A5000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (detailFilters.find_row_value !== "") {
@@ -679,7 +679,7 @@ const SA_A5000: React.FC = () => {
   }, [detailFilters]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   let gridRef: any = useRef(null);
@@ -880,9 +880,9 @@ const SA_A5000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -1314,7 +1314,7 @@ const SA_A5000: React.FC = () => {
                       mainDataResult.data.map((row) => ({
                         ...row,
                         person: usersListData.find(
-                          (item: any) => item.user_id === row.person
+                          (item: any) => item.user_id == row.person
                         )?.user_name,
                         [SELECTED_FIELD]: selectedState[idGetter(row)],
                       })),
@@ -1366,7 +1366,7 @@ const SA_A5000: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell
@@ -1421,13 +1421,13 @@ const SA_A5000: React.FC = () => {
                       detailDataResult.data.map((row) => ({
                         ...row,
                         itemacnt: itemacntListData.find(
-                          (item: any) => item.sub_code === row.itemacnt
+                          (item: any) => item.sub_code == row.itemacnt
                         )?.code_name,
                         qtyunit: qtyunitListData.find(
-                          (item: any) => item.sub_code === row.qtyunit
+                          (item: any) => item.sub_code == row.qtyunit
                         )?.code_name,
                         unpcalmeth: unpcalmethListData.find(
-                          (item: any) => item.sub_code === row.unpcalmeth
+                          (item: any) => item.sub_code == row.unpcalmeth
                         )?.code_name,
                         [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
                       })),
@@ -1477,7 +1477,7 @@ const SA_A5000: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? detailTotalFooterCell
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell2
@@ -1742,7 +1742,7 @@ const SA_A5000: React.FC = () => {
                   mainDataResult.data.map((row) => ({
                     ...row,
                     person: usersListData.find(
-                      (item: any) => item.user_id === row.person
+                      (item: any) => item.user_id == row.person
                     )?.user_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
@@ -1794,7 +1794,7 @@ const SA_A5000: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell
@@ -1824,13 +1824,13 @@ const SA_A5000: React.FC = () => {
                   detailDataResult.data.map((row) => ({
                     ...row,
                     itemacnt: itemacntListData.find(
-                      (item: any) => item.sub_code === row.itemacnt
+                      (item: any) => item.sub_code == row.itemacnt
                     )?.code_name,
                     qtyunit: qtyunitListData.find(
-                      (item: any) => item.sub_code === row.qtyunit
+                      (item: any) => item.sub_code == row.qtyunit
                     )?.code_name,
                     unpcalmeth: unpcalmethListData.find(
-                      (item: any) => item.sub_code === row.unpcalmeth
+                      (item: any) => item.sub_code == row.unpcalmeth
                     )?.code_name,
                     [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
                   })),
@@ -1880,7 +1880,7 @@ const SA_A5000: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? detailTotalFooterCell
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell2

@@ -119,10 +119,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "gubun" ? "L_AC230" : field === "dptcd" ? "L_dptcd_001" : "";
+    field == "gubun" ? "L_AC230" : field == "dptcd" ? "L_dptcd_001" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   const textField = field == "dptcd" ? "dptnm" : "code_name";
@@ -176,8 +176,8 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        fxdiv: defaultOption.find((item: any) => item.id === "fxdiv").valueCode,
-        fxdepsts: defaultOption.find((item: any) => item.id === "fxdepsts")
+        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv").valueCode,
+        fxdepsts: defaultOption.find((item: any) => item.id == "fxdepsts")
           .valueCode,
       }));
 
@@ -185,15 +185,15 @@ const CopyWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        fxdiv: defaultOption.find((item: any) => item.id === "fxdiv").valueCode,
-        fxdepsts: defaultOption.find((item: any) => item.id === "fxdepsts")
+        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv").valueCode,
+        fxdepsts: defaultOption.find((item: any) => item.id == "fxdepsts")
           .valueCode,
       }));
 
       setFilters3((prev) => ({
         ...prev,
-        fxdiv: defaultOption.find((item: any) => item.id === "fxdiv").valueCode,
-        fxdepsts: defaultOption.find((item: any) => item.id === "fxdepsts")
+        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv").valueCode,
+        fxdepsts: defaultOption.find((item: any) => item.id == "fxdepsts")
           .valueCode,
       }));
     }
@@ -370,7 +370,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -425,7 +425,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -482,7 +482,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -607,12 +607,12 @@ const CopyWindow = ({
     } else if (tabSelected == 1) {
       const dataItem = mainDataResult.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
 
-      if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
+      if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
       let dataArr: TdataArr = {
         rowstatus_s: [],
@@ -689,12 +689,12 @@ const CopyWindow = ({
     } else if (tabSelected == 2) {
       const dataItem = mainDataResult2.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
 
-      if (dataItem.length === 0 && deletedMainRows2.length == 0) return false;
+      if (dataItem.length == 0 && deletedMainRows2.length == 0) return false;
 
       let dataArr: TdataArr2 = {
         rowstatus_s: [],
@@ -783,12 +783,12 @@ const CopyWindow = ({
     } else if (tabSelected == 3) {
       const dataItem = mainDataResult3.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
 
-      if (dataItem.length === 0 && deletedMainRows3.length == 0) return false;
+      if (dataItem.length == 0 && deletedMainRows3.length == 0) return false;
 
       let dataArr: TdataArr3 = {
         rowstatus_s: [],
@@ -1033,7 +1033,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setData(data.returnString);
       deletedMainRows = [];
       deletedMainRows2 = [];
@@ -1137,7 +1137,7 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (workType === "U" && data != undefined) {
+    if (workType == "U" && data != undefined) {
       setInformation((prev) => ({
         ...prev,
         acseq1: data.acseq1,
@@ -2018,7 +2018,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "고정자산생성" : "고정자산정보"}
+        title={workType == "N" ? "고정자산생성" : "고정자산정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}

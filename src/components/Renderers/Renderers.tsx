@@ -4,7 +4,7 @@ export const CellRender = (props: any) => {
   const cellField = props.originalProps.field;
   const inEditField = dataItem[props.editField || ""];
   const additionalProps =
-    cellField && cellField === inEditField
+    cellField && cellField == inEditField
       ? {
           ref: (td: any) => {
             const input = td && td.querySelector("input");
@@ -13,13 +13,13 @@ export const CellRender = (props: any) => {
             if (
               !input ||
               !activeElement ||
-              input === activeElement ||
+              input == activeElement ||
               !activeElement.contains(input)
             ) {
               return;
             }
 
-            if (input.type === "checkbox") {
+            if (input.type == "checkbox") {
               input.focus();
             } else {
               input.select();
@@ -46,7 +46,7 @@ export const RowRender = (props: any) => {
       // setTimeout(() => {
       //   const activeElement = document.activeElement;
 
-      //   if (activeElement === null) return false;
+      //   if (activeElement == null) return false;
 
       //    if (activeElement.className.indexOf("k-calendar") < 0) {
       //      props.exitEdit();

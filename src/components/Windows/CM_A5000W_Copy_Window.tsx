@@ -81,17 +81,17 @@ const StatusCell = (props: GridCellProps) => {
       style={{ textAlign: "left", display: "flex", alignItems: "center" }}
     >
       <StatusIcon status={dataItem[field]} />{" "}
-      {dataItem[field] === "001"
+      {dataItem[field] == "001"
         ? "컨설팅 요청"
-        : dataItem[field] === "002"
+        : dataItem[field] == "002"
         ? "담당자지정"
-        : dataItem[field] === "003"
+        : dataItem[field] == "003"
         ? "요청취소"
-        : dataItem[field] === "004"
+        : dataItem[field] == "004"
         ? "대응불가"
-        : dataItem[field] === "005"
+        : dataItem[field] == "005"
         ? "검토 중"
-        : dataItem[field] === "006"
+        : dataItem[field] == "006"
         ? "답변 완료"
         : ""}
     </td>
@@ -154,15 +154,15 @@ const KendoWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        dtgb1: defaultOption.find((item: any) => item.id === "dtgb1").valueCode,
+        dtgb1: defaultOption.find((item: any) => item.id == "dtgb1").valueCode,
         is_emergency: defaultOption.find(
-          (item: any) => item.id === "is_emergency"
+          (item: any) => item.id == "is_emergency"
         ).valueCode,
         materialtype: defaultOption.find(
-          (item: any) => item.id === "materialtype"
+          (item: any) => item.id == "materialtype"
         ).valueCode,
         require_type: defaultOption.find(
-          (item: any) => item.id === "require_type"
+          (item: any) => item.id == "require_type"
         ).valueCode,
         isSearch: true,
       }));
@@ -226,7 +226,7 @@ const KendoWindow = ({
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -420,7 +420,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -778,7 +778,7 @@ const KendoWindow = ({
                         : undefined
                     }
                     footerCell={
-                      item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                      item.sortOrder == 0 ? mainTotalFooterCell : undefined
                     }
                   />
                 )

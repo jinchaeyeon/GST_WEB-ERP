@@ -121,15 +121,15 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "inspeccd"
+    field == "inspeccd"
       ? "L_QC100"
-      : field === "qc_gubun"
+      : field == "qc_gubun"
       ? "L_QC120"
-      : field === "chkmed"
+      : field == "chkmed"
       ? "L_QC017"
       : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -187,10 +187,10 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        proccd: defaultOption.find((item: any) => item.id === "proccd")
+        proccd: defaultOption.find((item: any) => item.id == "proccd")
           .valueCode,
-        qcgb: defaultOption.find((item: any) => item.id === "qcgb").valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
+        qcgb: defaultOption.find((item: any) => item.id == "qcgb").valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
         recdt: setDefaultDate(customOptionData, "recdt"),
       }));
@@ -359,13 +359,13 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) =>
         workType == "R"
           ? {
               ...row,
-              rowstatus: row.rowstatus === undefined ? "N" : row.rowstatus,
+              rowstatus: row.rowstatus == undefined ? "N" : row.rowstatus,
             }
           : {
               ...row,
@@ -460,11 +460,11 @@ const CopyWindow = ({
   const setCopyData = (data: any) => {
     const dataItem = data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     mainDataResult.data.map((item) => {
       if (item.num > temp2) {
@@ -575,7 +575,7 @@ const CopyWindow = ({
 
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -817,7 +817,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = []; //초기화
       if (workType == "U") {
         reloadData(data.returnString);
@@ -996,7 +996,7 @@ const CopyWindow = ({
 
       if (valid == true) {
         const newData = mainDataResult.data.map((item) =>
-          item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
             ? {
                 ...item,
                 [EDIT_FIELD]: field,
@@ -1176,7 +1176,7 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const qcgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC003")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_QC003")
       );
 
       fetchQuery(qcgbQueryStr, setQcgbListData);
@@ -1199,7 +1199,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -1249,7 +1249,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "검사표준서생성" : "검사표준서정보"}
+        title={workType == "N" ? "검사표준서생성" : "검사표준서정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -1350,7 +1350,7 @@ const CopyWindow = ({
                       type="text"
                       value={
                         qcgbListData.find(
-                          (item: any) => item.sub_code === filters.qcgb
+                          (item: any) => item.sub_code == filters.qcgb
                         )?.code_name
                       }
                       className="readonly"

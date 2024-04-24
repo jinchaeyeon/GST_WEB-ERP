@@ -17,7 +17,7 @@ module.exports = {
     client: {
       overlay: {
         runtimeErrors: (error) => {
-          if (error.message === "ResizeObserver loop limit exceeded") {
+          if (error.message == "ResizeObserver loop limit exceeded") {
             return false;
           }
           return true;

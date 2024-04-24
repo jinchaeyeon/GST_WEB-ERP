@@ -140,24 +140,24 @@ const PR_B3000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
       const prodmacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_fxcode")
       );
       const prodempQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       fetchQuery(proccdQueryStr, setProccdListData);
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
@@ -184,7 +184,7 @@ const PR_B3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -257,9 +257,9 @@ const PR_B3000W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "Q",
-    orgdiv: sessionItem.find((sessionItem) => sessionItem.code === "orgdiv")
+    orgdiv: sessionItem.find((sessionItem) => sessionItem.code == "orgdiv")
       ?.value,
-    location: sessionItem.find((sessionItem) => sessionItem.code === "location")
+    location: sessionItem.find((sessionItem) => sessionItem.code == "location")
       ?.value,
     ymdFrdt: new Date(),
     ymdTodt: new Date(),
@@ -312,7 +312,7 @@ const PR_B3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -631,13 +631,13 @@ const PR_B3000W: React.FC = () => {
                   (item: any) => item.sub_code == row.itemlvl3
                 )?.code_name,
                 prodmac: prodmacListData.find(
-                  (items: any) => items.fxcode === row.prodmac
+                  (items: any) => items.fxcode == row.prodmac
                 )?.fxfull,
                 prodemp: prodempListData.find(
-                  (items: any) => items.user_id === row.prodemp
+                  (items: any) => items.user_id == row.prodemp
                 )?.user_name,
                 proccd: proccdListData.find(
-                  (item: any) => item.sub_code === row.proccd
+                  (item: any) => item.sub_code == row.proccd
                 )?.code_name,
                 proddt: dateformat2(row.proddt),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
@@ -689,7 +689,7 @@ const PR_B3000W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : numberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell2

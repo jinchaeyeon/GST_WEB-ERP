@@ -47,7 +47,7 @@ function App(props) {
       datas = null;
     }
 
-    if (datas.isSuccess === true) {
+    if (datas.isSuccess == true) {
       const rowCount = datas.tables[0].RowCount;
       const row = datas.tables[0].Rows;
 
@@ -98,7 +98,7 @@ function App(props) {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult((prev) => {

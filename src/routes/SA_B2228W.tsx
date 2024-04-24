@@ -120,7 +120,7 @@ const SA_B2228W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
 
       setItemList(rows);
@@ -133,7 +133,7 @@ const SA_B2228W: React.FC = () => {
       data2 = null;
     }
 
-    if (data2.isSuccess === true) {
+    if (data2.isSuccess == true) {
       const rows2 = data2.tables[0].Rows;
 
       setAllPanel(rows2[0]);
@@ -146,14 +146,14 @@ const SA_B2228W: React.FC = () => {
       data3 = null;
     }
 
-    if (data3.isSuccess === true) {
+    if (data3.isSuccess == true) {
       const rows3 = data3.tables[0].Rows;
 
       setChartList(rows3);
       let array = rows3
         .filter(
           (arr: { series: any }, index: any, callback: any[]) =>
-            index === callback.findIndex((t) => t.series === arr.series)
+            index == callback.findIndex((t) => t.series == arr.series)
         )
         .map((item: { series: any }) => {
           return item.series;
@@ -165,7 +165,7 @@ const SA_B2228W: React.FC = () => {
             item.series ==
             rows3.filter(
               (arr: { series: any }, index: any, callback: any[]) =>
-                index === callback.findIndex((t) => t.series === arr.series)
+                index == callback.findIndex((t) => t.series == arr.series)
             )[0].series
         )
         .map((items: { argument: any }) => {

@@ -222,7 +222,7 @@ const KendoWindow = ({
 
   const onConfirmClick = (props: any) => {
     const rowData = mainDataResult.data.find(
-      (row: any) => row.stdrmkcd === Object.keys(selectedState)[0]
+      (row: any) => row.stdrmkcd == Object.keys(selectedState)[0]
     );
 
     // 부모로 데이터 전달, 창 닫기

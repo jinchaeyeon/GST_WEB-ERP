@@ -32,9 +32,9 @@ const CustomOptionRadioGroup = ({
   let newRadioGroup = RADIO_GROUP_DEFAULT_DATA;
 
   if (dataList) {
-    defaultValue = dataList.find((item: any) => item.id === name).valueCode;
+    defaultValue = dataList.find((item: any) => item.id == name).valueCode;
 
-    const radioGroup = dataList.find((item: any) => item.id === name).Rows;
+    const radioGroup = dataList.find((item: any) => item.id == name).Rows;
 
     newRadioGroup = radioGroup
       .filter((item: any) => !excludedCodes.includes(item.code))
@@ -42,19 +42,19 @@ const CustomOptionRadioGroup = ({
       .filter(
         (item: any) =>
           !(
-            name === "radWorkType" && //결재표시형식
-            (item.code === "D" ||
-              item.code === "E" ||
-              item.code === "G" ||
-              item.code === "H" ||
-              item.code === "I")
+            name == "radWorkType" && //결재표시형식
+            (item.code == "D" ||
+              item.code == "E" ||
+              item.code == "G" ||
+              item.code == "H" ||
+              item.code == "I")
           )
       )
       .filter(
         (item: any) =>
           !(
-            name === "radAppyn" && //결재유무
-            (item.code === "B" || item.code === "M")
+            name == "radAppyn" && //결재유무
+            (item.code == "B" || item.code == "M")
           )
       )
       .map((column: any) => ({

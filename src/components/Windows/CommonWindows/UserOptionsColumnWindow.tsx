@@ -98,7 +98,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       e.preventDefault();
 
       const root = document.getElementById("root");
-      if (root === null) {
+      if (root == null) {
         alert("오류가 발생하였습니다. 새로고침 후 다시 시도해주세요.");
         return false;
       }
@@ -108,7 +108,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       let ifDataAdded = false;
 
       columnArr.forEach((item: any) => {
-        if (item.dataset.gridName === option_id) {
+        if (item.dataset.gridName == option_id) {
           fieldArrayRenderProps.onPush({
             value: {
               srcPgName: "USER_OPTIONS_COLUMN_WINDOW",
@@ -202,7 +202,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       index: dataItem[FORM_DATA_INDEX],
       value: {
         ...dataItem,
-        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
+        rowstatus: dataItem.rowstatus == "N" ? dataItem.rowstatus : "U",
         [EDIT_FIELD]: field,
       },
     });
@@ -315,7 +315,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
         selectedIdx = index;
       }
     });
-    if (selectedIdx === -1) {
+    if (selectedIdx == -1) {
       msg = "행을 선택해주세요.";
       isValid = false;
     }
@@ -340,7 +340,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       let { msg, isValid, selectedIdx } = checkValidMove();
 
       // 첫번째 행 up하려는 경우 예외처리
-      if (selectedIdx === 0) {
+      if (selectedIdx == 0) {
         isValid = false;
       }
 
@@ -363,7 +363,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       let { msg, isValid, selectedIdx } = checkValidMove();
 
       // 마지막 행 down하려는 경우 예외처리
-      if (fieldArrayRenderProps.value.length - 1 === selectedIdx) {
+      if (fieldArrayRenderProps.value.length - 1 == selectedIdx) {
         isValid = false;
       }
 
@@ -458,7 +458,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             headerSelectionValue={
               dataWithIndexes.findIndex(
                 (item: any) => !selectedState[idGetter(item)]
-              ) === -1
+              ) == -1
             }
           />
           <GridColumn field="rowstatus" title=" " width="40px" />
@@ -575,7 +575,7 @@ const KendoWindow = ({
       "@p_work_type": "detail",
       "@p_form_id": pathname,
       "@p_type": "Column",
-      "@p_option_id": workType === "U" ? option_id : "",
+      "@p_option_id": workType == "U" ? option_id : "",
       "@p_option_name": "",
       "@p_remarks": "",
       "@p_company_code": "",
@@ -663,7 +663,7 @@ const KendoWindow = ({
 
   //조회
   useEffect(() => {
-    if (workType === "U") {
+    if (workType == "U") {
       fetchMain();
     }
   }, []);
@@ -694,14 +694,14 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowsCnt = data.tables[0].Rows.length;
       let rows = data.tables[0].Rows;
 
       rows = rows.map((row: any) => {
         return {
           ...row,
-          fixed: row.fixed === "None" ? "N" : "Y",
+          fixed: row.fixed == "None" ? "N" : "Y",
           hidden: row.sort_order < 0 ? "Y" : "N",
         };
       });
@@ -726,8 +726,8 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
-      if (workType === "U") {
+    if (data.isSuccess == true) {
+      if (workType == "U") {
         fetchMain();
         reloadData();
       } else {
@@ -794,12 +794,12 @@ const KendoWindow = ({
       detailArr.caption.push(item.caption);
       detailArr.word_id.push(item.word_id);
       detailArr.sort_order.push(
-        getYn(item.hidden) === "Y" ? "-1" : String(idx)
+        getYn(item.hidden) == "Y" ? "-1" : String(idx)
       );
       detailArr.user_editable.push(getYn(item.user_editable));
       detailArr.column_id.push(item.column_id);
       detailArr.width.push(item.width);
-      detailArr.fixed.push(getYn(item.fixed) === "Y" ? "Left" : "None");
+      detailArr.fixed.push(getYn(item.fixed) == "Y" ? "Left" : "None");
     });
 
     setParaData((prev) => ({
@@ -824,7 +824,7 @@ const KendoWindow = ({
   return (
     <Window
       title={
-        workType === "N"
+        workType == "N"
           ? "사용자 옵션 컬럼 생성 (관리자)"
           : "사용자 옵션 컬럼 수정 (관리자)"
       }
@@ -860,9 +860,9 @@ const KendoWindow = ({
                 <Field
                   label={"영역ID"}
                   name={"option_id"}
-                  component={workType === "U" ? FormReadOnly : FormInput}
+                  component={workType == "U" ? FormReadOnly : FormInput}
                   validator={validator}
-                  className={workType === "U" ? "readonly" : "required"}
+                  className={workType == "U" ? "readonly" : "required"}
                 />
                 <Field
                   label={"영역명"}

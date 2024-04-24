@@ -30,7 +30,7 @@ const CustomOptionComboBox = ({
     customOptionData.menuCustomDefaultOptions,
     type
   );
-  const dataItem = dataList.find((item: any) => item.id === name);
+  const dataItem = dataList.find((item: any) => item.id == name);
   const listData = dataItem.Rows;
 
   let newColumns = [];
@@ -54,7 +54,7 @@ const CustomOptionComboBox = ({
     }
   }
   const onChangeHandle = (e: ComboBoxChangeEvent) => {
-    let value = e.target.value === null ? "" : e.target.value[valueField];
+    let value = e.target.value == null ? "" : e.target.value[valueField];
     changeData({ name, value, e });
   };
 

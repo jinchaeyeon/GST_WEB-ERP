@@ -84,9 +84,9 @@ const AC_B1260W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        acntnm: defaultOption.find((item: any) => item.id === "acntnm")
+        acntnm: defaultOption.find((item: any) => item.id == "acntnm")
           .valueCode,
-        amtunit: defaultOption.find((item: any) => item.id === "amtunit")
+        amtunit: defaultOption.find((item: any) => item.id == "amtunit")
           .valueCode,
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
       }));
@@ -152,15 +152,15 @@ const AC_B1260W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
 
       if (
-        workType === "LIST1" ||
-        workType === "LIST2" ||
-        workType === "LIST3" ||
-        workType === "LIST4" ||
-        workType === "LIST5"
+        workType == "LIST1" ||
+        workType == "LIST2" ||
+        workType == "LIST3" ||
+        workType == "LIST4" ||
+        workType == "LIST5"
       ) {
         const totalRowCnt = data.tables[0].TotalRowCount;
         setGridDataResult((prev) => {
@@ -206,11 +206,11 @@ const AC_B1260W: React.FC = () => {
 
       // 전체 탭 그래프 (업체별 데이터로 가공)
       else if (
-        workType === "CHART1" ||
-        workType === "CHART2" ||
-        workType === "CHART3" ||
-        workType === "CHART4" ||
-        workType === "CHART5"
+        workType == "CHART1" ||
+        workType == "CHART2" ||
+        workType == "CHART3" ||
+        workType == "CHART4" ||
+        workType == "CHART5"
       ) {
         let newRows: any = { companies: [], series: [] };
 
@@ -243,19 +243,19 @@ const AC_B1260W: React.FC = () => {
     if (customOptionData != null && filters.isSearch && permissions !== null) {
       setFilters((prev) => ({ ...prev, isSearch: false }));
 
-      if (tabSelected === 0) {
+      if (tabSelected == 0) {
         fetchGrid("LIST1");
         fetchGrid("CHART1");
-      } else if (tabSelected === 1) {
+      } else if (tabSelected == 1) {
         fetchGrid("LIST2");
         fetchGrid("CHART2");
-      } else if (tabSelected === 2) {
+      } else if (tabSelected == 2) {
         fetchGrid("LIST3");
         fetchGrid("CHART3");
-      } else if (tabSelected === 3) {
+      } else if (tabSelected == 3) {
         fetchGrid("LIST4");
         fetchGrid("CHART4");
-      } else if (tabSelected === 4) {
+      } else if (tabSelected == 4) {
         fetchGrid("LIST5");
         fetchGrid("CHART5");
       }

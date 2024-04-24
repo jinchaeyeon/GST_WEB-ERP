@@ -129,7 +129,7 @@ const PR_A2200W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
@@ -180,7 +180,7 @@ const PR_A2200W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
@@ -209,7 +209,7 @@ const PR_A2200W: React.FC = () => {
     //if (!permissions?.view) return;
     let data: any;
     setLoading(true);
-    if (filters3.attdatnum === "") {
+    if (filters3.attdatnum == "") {
       setMainDataResult3({
         data: [
           {
@@ -651,7 +651,7 @@ const PR_A2200W: React.FC = () => {
 
   const onSaveClick = async () => {
     const dataItem: any = mainDataResult3.data[0].image.filter((item: any) => {
-      return item.rowstatus === "N" && item.rowstatus !== undefined;
+      return item.rowstatus == "N" && item.rowstatus !== undefined;
     });
     let newAttachmentNumber = "";
     const promises = [];
@@ -757,7 +757,7 @@ const PR_A2200W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setFilters2((prev) => ({
         ...prev,
         isSearch: true,

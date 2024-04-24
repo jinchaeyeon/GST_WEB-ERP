@@ -273,7 +273,7 @@ const CM_B1101W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -332,7 +332,7 @@ const CM_B1101W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -392,7 +392,7 @@ const CM_B1101W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -450,7 +450,7 @@ const CM_B1101W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -913,7 +913,7 @@ const CM_B1101W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : centerField.includes(item.fieldName)
                               ? gridSumQtyFooterCell
@@ -987,7 +987,7 @@ const CM_B1101W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell2
                               : centerField.includes(item.fieldName)
                               ? gridSumQtyFooterCell2
@@ -1061,7 +1061,7 @@ const CM_B1101W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? detailTotalFooterCell : undefined
+                        item.sortOrder == 0 ? detailTotalFooterCell : undefined
                       }
                     />
                   )

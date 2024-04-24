@@ -147,12 +147,12 @@ const QC_A0060W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        proccd: defaultOption.find((item: any) => item.id === "proccd")
+        proccd: defaultOption.find((item: any) => item.id == "proccd")
           .valueCode,
-        qcgb: defaultOption.find((item: any) => item.id === "qcgb").valueCode,
-        rev: defaultOption.find((item: any) => item.id === "rev").valueCode,
+        qcgb: defaultOption.find((item: any) => item.id == "qcgb").valueCode,
+        rev: defaultOption.find((item: any) => item.id == "rev").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -183,21 +183,21 @@ const QC_A0060W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const qcgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC003")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_QC003")
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       const inspeccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC100")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_QC100")
       );
       const qc_gubunQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC120")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_QC120")
       );
       fetchQuery(qcgbQueryStr, setQcgbListData);
       fetchQuery(usersQueryStr, setUsersListData);
@@ -223,7 +223,7 @@ const QC_A0060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -420,7 +420,7 @@ const QC_A0060W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -521,7 +521,7 @@ const QC_A0060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -613,7 +613,7 @@ const QC_A0060W: React.FC = () => {
   }, [detailFilters]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   useEffect(() => {
@@ -769,9 +769,9 @@ const QC_A0060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       );
@@ -1027,16 +1027,16 @@ const QC_A0060W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 qcgb: qcgbListData.find(
-                  (item: any) => item.sub_code === row.qcgb
+                  (item: any) => item.sub_code == row.qcgb
                 )?.code_name,
                 insert_userid: usersListData.find(
-                  (item: any) => item.user_id === row.insert_userid
+                  (item: any) => item.user_id == row.insert_userid
                 )?.user_name,
                 update_userid: usersListData.find(
-                  (item: any) => item.user_id === row.update_userid
+                  (item: any) => item.user_id == row.update_userid
                 )?.user_name,
                 proccd: proccdListData.find(
-                  (items: any) => items.sub_code === row.proccd
+                  (items: any) => items.sub_code == row.proccd
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -1088,7 +1088,7 @@ const QC_A0060W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )
@@ -1114,10 +1114,10 @@ const QC_A0060W: React.FC = () => {
               detailDataResult.data.map((row) => ({
                 ...row,
                 inspeccd: inspeccdListData.find(
-                  (items: any) => items.sub_code === row.inspeccd
+                  (items: any) => items.sub_code == row.inspeccd
                 )?.code_name,
                 qc_gubun: qc_gubunListData.find(
-                  (items: any) => items.sub_code === row.qc_gubun
+                  (items: any) => items.sub_code == row.qc_gubun
                 )?.code_name,
                 [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
               })),
@@ -1172,7 +1172,7 @@ const QC_A0060W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? detailTotalFooterCell : undefined
+                        item.sortOrder == 0 ? detailTotalFooterCell : undefined
                       }
                     />
                   )

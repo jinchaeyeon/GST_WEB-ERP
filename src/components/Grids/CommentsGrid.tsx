@@ -113,7 +113,7 @@ const CommentsGrid = (props: {
 
   const enterEdit = (dataItem: any, field: string) => {
     const newData = dataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+      item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
         ? {
             ...item,
             [EDIT_FIELD]: field,
@@ -248,7 +248,7 @@ const CommentsGrid = (props: {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -372,7 +372,7 @@ const CommentsGrid = (props: {
       Number(Object.getOwnPropertyNames(selectedState)[0]) ??
       //Number(plandataResult.data[0].idx) ??
       null;
-    if (idx === null) return false;
+    if (idx == null) return false;
     const selectedRowData = dataResult.data.find(
       (item) => item[DATA_ITEM_KEY] == idx
     );
@@ -438,12 +438,12 @@ const CommentsGrid = (props: {
     const dataItem: { [name: string]: any } = dataResult.data.filter(
       (item: any) => {
         return (
-          (item.row_status === "N" || item.row_status === "U") &&
+          (item.row_status == "N" || item.row_status == "U") &&
           item.row_status !== undefined
         );
       }
     );
-    if (dataItem.length === 0 && deletedRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedRows.length == 0) return false;
 
     type TData = {
       row_status: string[];
@@ -508,7 +508,7 @@ const CommentsGrid = (props: {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
         dataResult.data.length == 0 && filters.pgNum > 1;
       if (isLastDataDeleted) {

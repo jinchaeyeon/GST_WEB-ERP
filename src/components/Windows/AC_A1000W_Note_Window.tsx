@@ -99,7 +99,7 @@ const AC_A1000W_Note_Window = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        notediv: defaultOption.find((item: any) => item.id === "notediv")
+        notediv: defaultOption.find((item: any) => item.id == "notediv")
           .valueCode,
       }));
     }
@@ -194,7 +194,7 @@ const AC_A1000W_Note_Window = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -251,7 +251,7 @@ const AC_A1000W_Note_Window = ({
   // 부모로 데이터 전달, 창 닫기 (그리드 인라인 오픈 제외)
   const selectData = (selectedData: any) => {
     setData(selectedData);
-    if (workType === "ROW_ADD") onClose();
+    if (workType == "ROW_ADD") onClose();
   };
 
   //메인 그리드 선택 이벤트

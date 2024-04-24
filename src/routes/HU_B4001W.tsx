@@ -98,12 +98,12 @@ const HU_B4001W: React.FC = () => {
       );
 
       let prsnnum = defaultOption.find(
-        (item: any) => item.id === "cboPrsnnum"
+        (item: any) => item.id == "cboPrsnnum"
       ).valueCode;
 
       setFilters((prev) => ({
         ...prev,
-        cboPrsnnum: prsnnum === "" || prsnnum === undefined ? userId : prsnnum,
+        cboPrsnnum: prsnnum == "" || prsnnum == undefined ? userId : prsnnum,
         isSearch: true,
       }));
     }
@@ -127,10 +127,10 @@ const HU_B4001W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU250T")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU250T")
       );
       const adjdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU092")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU092")
       );
 
       fetchQuery(personQueryStr, setPersonListData);
@@ -154,7 +154,7 @@ const HU_B4001W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -315,7 +315,7 @@ const HU_B4001W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const row = data.tables[0].Rows;
       if (totalRowCnt > 0) {
@@ -386,7 +386,7 @@ const HU_B4001W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -394,7 +394,7 @@ const HU_B4001W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (grdUse.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.reckey === usefilters.find_row_value
+            (row: any) => row.reckey == usefilters.find_row_value
           );
           useTargetRowIndex = findRowIndex;
         }
@@ -472,7 +472,7 @@ const HU_B4001W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -480,7 +480,7 @@ const HU_B4001W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (grdAdj.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.reckey === adjfilters.find_row_value
+            (row: any) => row.reckey == adjfilters.find_row_value
           );
           adjTargetRowIndex = findRowIndex;
         }
@@ -603,22 +603,22 @@ const HU_B4001W: React.FC = () => {
   //그리드 푸터
   const grdTotalFooterCell = (props: GridFooterCellProps) => {
     let dataResult: DataResult =
-      props.field === "yyyymm"
+      props.field == "yyyymm"
         ? adjDataResult
-        : props.field === "qty"
+        : props.field == "qty"
         ? adjDataResult
         : useDataResult;
 
-    if (props.field === "yyyymm" || props.field === "startdate") {
+    if (props.field == "yyyymm" || props.field == "startdate") {
       return (
         <td colSpan={props.colSpan} style={props.style}>
           총 {dataResult.total}건
         </td>
       );
-    } else if (props.field === "qty" || props.field === "cnt") {
+    } else if (props.field == "qty" || props.field == "cnt") {
       let sumqty = 0;
       dataResult.data.forEach((element) => {
-        sumqty += props.field === "qty" ? element.qty : element.cnt;
+        sumqty += props.field == "qty" ? element.qty : element.cnt;
       });
 
       return (
@@ -660,13 +660,13 @@ const HU_B4001W: React.FC = () => {
 
   const search = () => {
     try {
-      if (convertDateToStr(filters.ymdFrdt) === "") {
+      if (convertDateToStr(filters.ymdFrdt) == "") {
         throw findMessage(messagesData, "HU_B4001W_001"); //적용일은 필수 입력 항목입니다.
       }
       if (
-        filters.cboPrsnnum === null ||
-        filters.cboPrsnnum === "" ||
-        filters.cboPrsnnum === undefined
+        filters.cboPrsnnum == null ||
+        filters.cboPrsnnum == "" ||
+        filters.cboPrsnnum == undefined
       ) {
         throw findMessage(messagesData, "HU_B4001W_002"); //성명은 필수 입력 항목입니다.
       }

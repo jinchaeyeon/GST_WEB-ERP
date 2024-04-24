@@ -208,33 +208,33 @@ const AC_B8000W: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        gisu: defaultOption.find((item: any) => item.id === "gisu").valueCode,
-        chasu: defaultOption.find((item: any) => item.id === "chasu").valueCode,
+        gisu: defaultOption.find((item: any) => item.id == "gisu").valueCode,
+        chasu: defaultOption.find((item: any) => item.id == "chasu").valueCode,
       }));
       setFilters2((prev) => ({
         ...prev,
-        gisu: defaultOption.find((item: any) => item.id === "gisu").valueCode,
-        chasu: defaultOption.find((item: any) => item.id === "chasu").valueCode,
+        gisu: defaultOption.find((item: any) => item.id == "gisu").valueCode,
+        chasu: defaultOption.find((item: any) => item.id == "chasu").valueCode,
       }));
       setFilters3((prev) => ({
         ...prev,
-        gisu: defaultOption.find((item: any) => item.id === "gisu").valueCode,
-        chasu: defaultOption.find((item: any) => item.id === "chasu").valueCode,
+        gisu: defaultOption.find((item: any) => item.id == "gisu").valueCode,
+        chasu: defaultOption.find((item: any) => item.id == "chasu").valueCode,
       }));
       setFilters4((prev) => ({
         ...prev,
-        gisu: defaultOption.find((item: any) => item.id === "gisu").valueCode,
-        chasu: defaultOption.find((item: any) => item.id === "chasu").valueCode,
+        gisu: defaultOption.find((item: any) => item.id == "gisu").valueCode,
+        chasu: defaultOption.find((item: any) => item.id == "chasu").valueCode,
       }));
       setFilters5((prev) => ({
         ...prev,
-        gisu: defaultOption.find((item: any) => item.id === "gisu").valueCode,
-        chasu: defaultOption.find((item: any) => item.id === "chasu").valueCode,
+        gisu: defaultOption.find((item: any) => item.id == "gisu").valueCode,
+        chasu: defaultOption.find((item: any) => item.id == "chasu").valueCode,
       }));
       setFilters6((prev) => ({
         ...prev,
-        gisu: defaultOption.find((item: any) => item.id === "gisu").valueCode,
-        chasu: defaultOption.find((item: any) => item.id === "chasu").valueCode,
+        gisu: defaultOption.find((item: any) => item.id == "gisu").valueCode,
+        chasu: defaultOption.find((item: any) => item.id == "chasu").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -260,16 +260,16 @@ const AC_B8000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const mngdata3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
       );
       const compclassQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA025")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA025")
       );
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       const bizdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA027")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA027")
       );
       fetchQuery(mngdata3QueryStr, setMngdata3ListData);
       fetchQuery(locationQueryStr, setLocationListData);
@@ -294,7 +294,7 @@ const AC_B8000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -535,7 +535,7 @@ const AC_B8000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -594,7 +594,7 @@ const AC_B8000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -653,7 +653,7 @@ const AC_B8000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -712,7 +712,7 @@ const AC_B8000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -771,7 +771,7 @@ const AC_B8000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -830,7 +830,7 @@ const AC_B8000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -2363,10 +2363,10 @@ const AC_B8000W: React.FC = () => {
                     mainDataResult.data.map((row) => ({
                       ...row,
                       location: locationListData.find(
-                        (item: any) => item.sub_code === row.location
+                        (item: any) => item.sub_code == row.location
                       )?.code_name,
                       compclass: compclassListData.find(
-                        (item: any) => item.sub_code === row.compclass
+                        (item: any) => item.sub_code == row.compclass
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState[idGetter(row)],
                     })),
@@ -2416,7 +2416,7 @@ const AC_B8000W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder == 1
                                 ? mainTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell
@@ -2445,10 +2445,10 @@ const AC_B8000W: React.FC = () => {
                     mainDataResult2.data.map((row) => ({
                       ...row,
                       location: locationListData.find(
-                        (item: any) => item.sub_code === row.location
+                        (item: any) => item.sub_code == row.location
                       )?.code_name,
                       compclass: compclassListData.find(
-                        (item: any) => item.sub_code === row.compclass
+                        (item: any) => item.sub_code == row.compclass
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                     })),
@@ -2498,7 +2498,7 @@ const AC_B8000W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder == 1
                                 ? mainTotalFooterCell2
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell2
@@ -2529,7 +2529,7 @@ const AC_B8000W: React.FC = () => {
                     mainDataResult3.data.map((row) => ({
                       ...row,
                       location: locationListData.find(
-                        (item: any) => item.sub_code === row.location
+                        (item: any) => item.sub_code == row.location
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState3[idGetter3(row)],
                     })),
@@ -2590,7 +2590,7 @@ const AC_B8000W: React.FC = () => {
                     mainDataResult4.data.map((row) => ({
                       ...row,
                       location: locationListData.find(
-                        (item: any) => item.sub_code === row.location
+                        (item: any) => item.sub_code == row.location
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState4[idGetter4(row)],
                     })),
@@ -2653,7 +2653,7 @@ const AC_B8000W: React.FC = () => {
                     mainDataResult5.data.map((row) => ({
                       ...row,
                       location: locationListData.find(
-                        (item: any) => item.sub_code === row.location
+                        (item: any) => item.sub_code == row.location
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState5[idGetter5(row)],
                     })),
@@ -2714,7 +2714,7 @@ const AC_B8000W: React.FC = () => {
                     mainDataResult6.data.map((row) => ({
                       ...row,
                       location: locationListData.find(
-                        (item: any) => item.sub_code === row.location
+                        (item: any) => item.sub_code == row.location
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState6[idGetter6(row)],
                     })),
@@ -2839,10 +2839,10 @@ const AC_B8000W: React.FC = () => {
                     mainDataResult.data.map((row) => ({
                       ...row,
                       location: locationListData.find(
-                        (item: any) => item.sub_code === row.location
+                        (item: any) => item.sub_code == row.location
                       )?.code_name,
                       compclass: compclassListData.find(
-                        (item: any) => item.sub_code === row.compclass
+                        (item: any) => item.sub_code == row.compclass
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState[idGetter(row)],
                     })),
@@ -2892,7 +2892,7 @@ const AC_B8000W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 1
+                              item.sortOrder == 1
                                 ? mainTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell
@@ -2922,10 +2922,10 @@ const AC_B8000W: React.FC = () => {
                       mainDataResult2.data.map((row) => ({
                         ...row,
                         location: locationListData.find(
-                          (item: any) => item.sub_code === row.location
+                          (item: any) => item.sub_code == row.location
                         )?.code_name,
                         compclass: compclassListData.find(
-                          (item: any) => item.sub_code === row.compclass
+                          (item: any) => item.sub_code == row.compclass
                         )?.code_name,
                         [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                       })),
@@ -2975,7 +2975,7 @@ const AC_B8000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 1
+                                item.sortOrder == 1
                                   ? mainTotalFooterCell
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell
@@ -3004,7 +3004,7 @@ const AC_B8000W: React.FC = () => {
                       mainDataResult3.data.map((row) => ({
                         ...row,
                         location: locationListData.find(
-                          (item: any) => item.sub_code === row.location
+                          (item: any) => item.sub_code == row.location
                         )?.code_name,
                         [SELECTED_FIELD]: selectedState3[idGetter3(row)],
                       })),
@@ -3054,7 +3054,7 @@ const AC_B8000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell
@@ -3083,7 +3083,7 @@ const AC_B8000W: React.FC = () => {
                       mainDataResult4.data.map((row) => ({
                         ...row,
                         location: locationListData.find(
-                          (item: any) => item.sub_code === row.location
+                          (item: any) => item.sub_code == row.location
                         )?.code_name,
                         [SELECTED_FIELD]: selectedState4[idGetter4(row)],
                       })),
@@ -3133,7 +3133,7 @@ const AC_B8000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell
@@ -3228,10 +3228,10 @@ const AC_B8000W: React.FC = () => {
                       mainDataResult.data.map((row) => ({
                         ...row,
                         location: locationListData.find(
-                          (item: any) => item.sub_code === row.location
+                          (item: any) => item.sub_code == row.location
                         )?.code_name,
                         compclass: compclassListData.find(
-                          (item: any) => item.sub_code === row.compclass
+                          (item: any) => item.sub_code == row.compclass
                         )?.code_name,
                         [SELECTED_FIELD]: selectedState[idGetter(row)],
                       })),
@@ -3281,7 +3281,7 @@ const AC_B8000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell
@@ -3310,10 +3310,10 @@ const AC_B8000W: React.FC = () => {
                       mainDataResult2.data.map((row) => ({
                         ...row,
                         location: locationListData.find(
-                          (item: any) => item.sub_code === row.location
+                          (item: any) => item.sub_code == row.location
                         )?.code_name,
                         compclass: compclassListData.find(
-                          (item: any) => item.sub_code === row.compclass
+                          (item: any) => item.sub_code == row.compclass
                         )?.code_name,
                         [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                       })),
@@ -3363,7 +3363,7 @@ const AC_B8000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell2
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell2
@@ -3393,10 +3393,10 @@ const AC_B8000W: React.FC = () => {
                     mainDataResult3.data.map((row) => ({
                       ...row,
                       location: locationListData.find(
-                        (item: any) => item.sub_code === row.location
+                        (item: any) => item.sub_code == row.location
                       )?.code_name,
                       bizdiv: bizdivListData.find(
-                        (item: any) => item.sub_code === row.bizdiv
+                        (item: any) => item.sub_code == row.bizdiv
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState3[idGetter3(row)],
                     })),
@@ -3446,7 +3446,7 @@ const AC_B8000W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell3
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell3
@@ -3476,7 +3476,7 @@ const AC_B8000W: React.FC = () => {
                       mainDataResult4.data.map((row) => ({
                         ...row,
                         location: locationListData.find(
-                          (item: any) => item.sub_code === row.location
+                          (item: any) => item.sub_code == row.location
                         )?.code_name,
                         [SELECTED_FIELD]: selectedState4[idGetter4(row)],
                       })),
@@ -3526,7 +3526,7 @@ const AC_B8000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell4
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell4
@@ -3555,7 +3555,7 @@ const AC_B8000W: React.FC = () => {
                       mainDataResult5.data.map((row) => ({
                         ...row,
                         location: locationListData.find(
-                          (item: any) => item.sub_code === row.location
+                          (item: any) => item.sub_code == row.location
                         )?.code_name,
                         [SELECTED_FIELD]: selectedState5[idGetter5(row)],
                       })),
@@ -3605,7 +3605,7 @@ const AC_B8000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell5
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell5
@@ -3635,7 +3635,7 @@ const AC_B8000W: React.FC = () => {
                     mainDataResult6.data.map((row) => ({
                       ...row,
                       location: locationListData.find(
-                        (item: any) => item.sub_code === row.location
+                        (item: any) => item.sub_code == row.location
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState6[idGetter6(row)],
                     })),
@@ -3685,7 +3685,7 @@ const AC_B8000W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell6
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell6
@@ -3770,7 +3770,7 @@ const AC_B8000W: React.FC = () => {
                   mainDataResult.data.map((row) => ({
                     ...row,
                     location: locationListData.find(
-                      (item: any) => item.sub_code === row.location
+                      (item: any) => item.sub_code == row.location
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
@@ -3837,10 +3837,10 @@ const AC_B8000W: React.FC = () => {
                   mainDataResult2.data.map((row) => ({
                     ...row,
                     location: locationListData.find(
-                      (item: any) => item.sub_code === row.location
+                      (item: any) => item.sub_code == row.location
                     )?.code_name,
                     mngdata3: mngdata3ListData.find(
-                      (item: any) => item.sub_code === row.mngdata3
+                      (item: any) => item.sub_code == row.mngdata3
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                   })),
@@ -3892,7 +3892,7 @@ const AC_B8000W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell2
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell2
@@ -3921,10 +3921,10 @@ const AC_B8000W: React.FC = () => {
                   mainDataResult3.data.map((row) => ({
                     ...row,
                     location: locationListData.find(
-                      (item: any) => item.sub_code === row.location
+                      (item: any) => item.sub_code == row.location
                     )?.code_name,
                     mngdata3: mngdata3ListData.find(
-                      (item: any) => item.sub_code === row.mngdata3
+                      (item: any) => item.sub_code == row.mngdata3
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState3[idGetter3(row)],
                   })),
@@ -3976,7 +3976,7 @@ const AC_B8000W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell3
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell3

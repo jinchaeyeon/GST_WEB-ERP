@@ -75,7 +75,7 @@ const Main: React.FC = () => {
 
   useEffect(() => {
     fetchSessionItem();
-    // if (token && sessionUserId === "") fetchSessionItem();
+    // if (token && sessionUserId == "") fetchSessionItem();
   }, [sessionUserId]);
 
   let sessionOrgdiv = sessionItem.find(
@@ -85,8 +85,8 @@ const Main: React.FC = () => {
     (sessionItem) => sessionItem.code == "location"
   )!.value;
 
-  if (sessionOrgdiv === "") sessionOrgdiv = "01";
-  if (sessionLocation === "") sessionLocation = "01";
+  if (sessionOrgdiv == "") sessionOrgdiv = "01";
+  if (sessionLocation == "") sessionLocation = "01";
 
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -301,7 +301,7 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const row = data.tables[0].Rows[0];
       const rowCount = data.tables[0].RowCount;
 
@@ -353,7 +353,7 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       fetchWorkTime();
     } else {
       alert(data.resultMessage);
@@ -369,7 +369,7 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       const rowCount = data.tables[0].RowCount;
 
@@ -396,7 +396,7 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -419,7 +419,7 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -442,7 +442,7 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true && data.tables[0]) {
+    if (data.isSuccess == true && data.tables[0]) {
       let rows = data.tables[0].Rows.map((row: any) => ({
         ...row,
         id: row.datnum,
@@ -468,7 +468,7 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true && data.tables[0]) {
+    if (data.isSuccess == true && data.tables[0]) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
       const totalRowCnt2 = data.tables[1].RowCount;
@@ -525,13 +525,13 @@ const Main: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (schedulerFilter.isSearch === true) {
+    if (schedulerFilter.isSearch == true) {
       fetchScheduler();
     }
   }, [schedulerFilter]);
 
   useEffect(() => {
-    if (layoutFilter.isSearch === true) {
+    if (layoutFilter.isSearch == true) {
       fetchLayout();
     }
   }, [layoutFilter]);
@@ -603,11 +603,11 @@ const Main: React.FC = () => {
 
       data = await processApi<any>("procedure", para);
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setSessionItem(
           rows
-            .filter((item: any) => item.class === "Session")
+            .filter((item: any) => item.class == "Session")
             .map((item: any) => ({
               code: item.code,
               value: item.value,
@@ -630,7 +630,7 @@ const Main: React.FC = () => {
       setSchedulerFilter((prev) => ({
         ...prev,
         cboSchedulerType: defaultOption.find(
-          (item: any) => item.id === "cboSchedulerType"
+          (item: any) => item.id == "cboSchedulerType"
         ).valueCode,
         isSearch: true,
       }));
@@ -649,7 +649,7 @@ const Main: React.FC = () => {
     if (bizComponentData !== null) {
       const colorQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_APPOINTMENT_COLOR"
+          (item: any) => item.bizComponentId == "L_APPOINTMENT_COLOR"
         )
       );
 
@@ -673,7 +673,7 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }

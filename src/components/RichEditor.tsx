@@ -109,7 +109,7 @@ const RichEditor = React.forwardRef(
       const nodeType = view.state.schema.nodes.image;
 
       const position =
-        event.type === "drop"
+        event.type == "drop"
           ? view.posAtCoords({ left: event.clientX, top: event.clientY })
           : null;
 
@@ -227,7 +227,7 @@ const RichEditor = React.forwardRef(
       // 선택한 요소들을 순회
       for (const element of allElements) {
         // table 요소에 속성 설정
-        if (element.nodeName === "TABLE") {
+        if (element.nodeName == "TABLE") {
           if (!element.getAttribute("border")) {
             element.setAttribute("border", "0");
           }

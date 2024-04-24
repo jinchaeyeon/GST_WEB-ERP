@@ -11,9 +11,9 @@ const CheckBoxCell = (props: GridCellProps) => {
     onChange,
     className = "",
   } = props;
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   let value = dataItem[field ?? ""];
-  if (value === "Y" || value === true) {
+  if (value == "Y" || value == true) {
     value = true;
   } else {
     value = false;
@@ -36,7 +36,7 @@ const CheckBoxCell = (props: GridCellProps) => {
         dataItem: dataItem,
         field: "rowstatus",
         syntheticEvent: e.syntheticEvent,
-        value: dataItem["rowstatus"] === "N" ? "N" : "U",
+        value: dataItem["rowstatus"] == "N" ? "N" : "U",
       });
     }
   };
@@ -55,7 +55,7 @@ const CheckBoxCell = (props: GridCellProps) => {
     </td>
   );
 
-  return render === undefined
+  return render == undefined
     ? defaultRendering
     : render?.call(undefined, defaultRendering, props);
 };

@@ -70,13 +70,13 @@ const CHAT_BOT: React.FC = () => {
   const addNewMessage = (event: ChatMessageSendEvent) => {
     const backToInit = "처음으로";
     const welcomeAnswer = "무엇이든 물어보세요.";
-    const ifAskBackToInit = event.message.text === backToInit;
+    const ifAskBackToInit = event.message.text == backToInit;
 
     let botResponse = Object.assign({}, event.message);
 
     //id 구하기
     const id =
-      qnaData.find((item) => item.value === event.message.text)?.id ?? "";
+      qnaData.find((item) => item.value == event.message.text)?.id ?? "";
     //id 로그처리
     fetchLogSaved(id);
 
@@ -89,7 +89,7 @@ const CHAT_BOT: React.FC = () => {
 
     // 제안 질문
     let suggestedActions = qnaData.filter(
-      (item) => item.parent === event.message.text
+      (item) => item.parent == event.message.text
     );
 
     // '첫질문으로' 제안 질문에 추가
@@ -103,7 +103,7 @@ const CHAT_BOT: React.FC = () => {
 
     // '첫질문으로' 질문한 경우 첫번째 제안 질문 제시
     if (ifAskBackToInit) {
-      suggestedActions = qnaData.filter((item) => item.parent === "");
+      suggestedActions = qnaData.filter((item) => item.parent == "");
     }
 
     botResponse.suggestedActions = suggestedActions;
@@ -117,7 +117,7 @@ const CHAT_BOT: React.FC = () => {
   // 질문에 맞는 답변 찾기
   const answer = (question: any) => {
     const content: IQnaData = qnaData.find(
-      (solution) => question === solution.value
+      (solution) => question == solution.value
     )!;
 
     let answer = content ? content?.content : "다시 입력해주세요.";
@@ -143,7 +143,7 @@ const CHAT_BOT: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows: IQnaData[] = data.tables[0].Rows.map(
         (row: IData, idx: number) => ({
@@ -160,7 +160,7 @@ const CHAT_BOT: React.FC = () => {
       if (totalRowCnt > 0) {
         setQnaData(rows);
 
-        const firstActions = rows.filter((item) => item.parent === "");
+        const firstActions = rows.filter((item) => item.parent == "");
 
         setMessages((prev: any) => [
           {

@@ -97,18 +97,18 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "resno"
+    field == "resno"
       ? "L_sysUserMaster_001"
-      : field === "appline"
+      : field == "appline"
       ? "L_EA004"
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
-  const textField = field === "resno" ? "user_name" : "code_name";
-  const valueField = field === "resno" ? "user_id" : "sub_code";
+  const textField = field == "resno" ? "user_name" : "code_name";
+  const valueField = field == "resno" ? "user_id" : "sub_code";
 
   return bizComponent ? (
     <ComboBoxCell
@@ -167,14 +167,14 @@ const KendoWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
       const appgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_EA001")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_EA001")
       );
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(userQueryStr, setUserListData);
@@ -199,7 +199,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -584,7 +584,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setUnsavedName([]);
       setValues2(false);
       deletedMainRows = [];
@@ -702,35 +702,35 @@ const KendoWindow = ({
       (row) => row[DATA_ITEM_KEY] == selectedField
     );
 
-    if (rowIndex === -1) {
+    if (rowIndex == -1) {
       alert("이동시킬 행을 선택해주세요.");
       return false;
     }
 
-    if (!(rowIndex == 0 && direction === "UP")) {
+    if (!(rowIndex == 0 && direction == "UP")) {
       const newData = dataResult.data.map((item: any) => ({
         ...item,
         [EDIT_FIELD]: undefined,
       }));
       let replaceData = 0;
-      if (direction === "UP" && rowIndex != 0) {
+      if (direction == "UP" && rowIndex != 0) {
         replaceData = dataResult.data[rowIndex - 1].appseq;
       } else {
         replaceData = dataResult.data[rowIndex + 1].appseq;
       }
 
       newData.splice(rowIndex, 1);
-      newData.splice(rowIndex + (direction === "UP" ? -1 : 1), 0, rowData);
-      if (direction === "UP" && rowIndex != 0) {
+      newData.splice(rowIndex + (direction == "UP" ? -1 : 1), 0, rowData);
+      if (direction == "UP" && rowIndex != 0) {
         const newDatas = newData.map((item) =>
-          item[DATA_ITEM_KEY] === rowData[DATA_ITEM_KEY]
+          item[DATA_ITEM_KEY] == rowData[DATA_ITEM_KEY]
             ? {
                 ...item,
                 appseq: replaceData,
                 rowstatus: item.rowstatus == "N" ? "N" : "U",
                 [EDIT_FIELD]: undefined,
               }
-            : item[DATA_ITEM_KEY] === dataResult.data[rowIndex - 1].num
+            : item[DATA_ITEM_KEY] == dataResult.data[rowIndex - 1].num
             ? {
                 ...item,
                 appseq: rowData.appseq,
@@ -751,14 +751,14 @@ const KendoWindow = ({
         });
       } else {
         const newDatas = newData.map((item) =>
-          item[DATA_ITEM_KEY] === rowData[DATA_ITEM_KEY]
+          item[DATA_ITEM_KEY] == rowData[DATA_ITEM_KEY]
             ? {
                 ...item,
                 appseq: replaceData,
                 rowstatus: item.rowstatus == "N" ? "N" : "U",
                 [EDIT_FIELD]: undefined,
               }
-            : item[DATA_ITEM_KEY] === dataResult.data[rowIndex + 1].num
+            : item[DATA_ITEM_KEY] == dataResult.data[rowIndex + 1].num
             ? {
                 ...item,
                 appseq: rowData.appseq,
@@ -865,7 +865,7 @@ const KendoWindow = ({
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus" && field != "postcd" && field != "appgb") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -900,7 +900,7 @@ const KendoWindow = ({
   const enterEdit2 = (dataItem: any, field: string) => {
     if (field != "rowstatus" && field != "postcd") {
       const newData = mainDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY2] === dataItem[DATA_ITEM_KEY2]
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -935,10 +935,10 @@ const KendoWindow = ({
   const enterEdit3 = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = mainDataResult3.data.map((item) =>
-        item[DATA_ITEM_KEY3] === dataItem[DATA_ITEM_KEY3]
+        item[DATA_ITEM_KEY3] == dataItem[DATA_ITEM_KEY3]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               chk:
                 typeof item.chk == "boolean"
                   ? item.chk
@@ -1072,7 +1072,7 @@ const KendoWindow = ({
     const changeCheck = () => {
       const newData = mainDataResult3.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -1341,7 +1341,7 @@ const KendoWindow = ({
   };
 
   const handleFileUpload = async (files: FileList | null) => {
-    if (files === null) return false;
+    if (files == null) return false;
     setLoading(true)
 
     let newAttachmentNumber = "";
@@ -1414,7 +1414,7 @@ const KendoWindow = ({
   //그리드 조회
   const fetchAttdatnumGrid = async () => {
     let data: any;
-    if (attachmentNumber === "") return false;
+    if (attachmentNumber == "") return false;
     const parameters = {
       attached: "list?attachmentNumber=" + attachmentNumber,
     };
@@ -1757,7 +1757,7 @@ const KendoWindow = ({
             mainDataResult3.data.map((row) => ({
               ...row,
               person: userListData.find(
-                (item: any) => item.user_id === row.person
+                (item: any) => item.user_id == row.person
               )?.user_name,
               insert_time: convertDateToStrWithTime2(new Date(row.insert_time)),
               [SELECTED_FIELD]: selectedState3[idGetter3(row)],

@@ -209,7 +209,7 @@ const KendoWindow = ({
   });
 
   useEffect(() => {
-    if (customOptionData !== null && workType === "N") {
+    if (customOptionData !== null && workType == "N") {
       setFilters((prev) => {
         return {
           ...prev,
@@ -224,11 +224,11 @@ const KendoWindow = ({
           category: GetPropertyValueByName(
             customOptionData.menuCustomDefaultOptions,
             "new"
-          ).find((item: any) => item.id === "category").valueCode,
+          ).find((item: any) => item.id == "category").valueCode,
           publish_yn: GetPropertyValueByName(
             customOptionData.menuCustomDefaultOptions,
             "new"
-          ).find((item: any) => item.id === "publish_yn").valueCode,
+          ).find((item: any) => item.id == "publish_yn").valueCode,
           person: user_name,
         };
       });
@@ -236,7 +236,7 @@ const KendoWindow = ({
   }, [customOptionData]);
 
   useEffect(() => {
-    if (workType === "U") {
+    if (workType == "U") {
       fetchMain(para);
     }
     fetchGrid(categories == undefined ? "" : categories);
@@ -252,7 +252,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true && data.tables[0].Rows.length > 0) {
+    if (data.isSuccess == true && data.tables[0].Rows.length > 0) {
       const row = data.tables[0].Rows[0];
 
       setFilters((prev) => {
@@ -354,7 +354,7 @@ const KendoWindow = ({
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const totalRowCnt = data.tables[0].RowCount;
         const rows = data.tables[0].Rows.map((item: any) => ({
           ...item,
@@ -379,7 +379,7 @@ const KendoWindow = ({
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const totalRowCnt = data.tables[0].RowCount;
         const rows = data.tables[0].Rows;
 
@@ -460,8 +460,8 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
-      if (workType === "U") {
+    if (data.isSuccess == true) {
+      if (workType == "U") {
         resetAllGrid();
         reloadData(data.returnString);
         fetchMain(para);
@@ -490,9 +490,9 @@ const KendoWindow = ({
     mainDataResult.data.forEach((item: any) => {
       const { chooses, loadok, readok, user_id } = item;
       detailArr.chooses.push(
-        chooses === "Y" ? "Y" : chooses === true ? "Y" : "N"
+        chooses == "Y" ? "Y" : chooses == true ? "Y" : "N"
       );
-      detailArr.loadok.push(loadok === "Y" ? "Y" : loadok === true ? "Y" : "N");
+      detailArr.loadok.push(loadok == "Y" ? "Y" : loadok == true ? "Y" : "N");
       detailArr.person2.push(user_id);
       detailArr.readok.push(readok);
     });
@@ -561,11 +561,11 @@ const KendoWindow = ({
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
 
       fetchQuery(postcdQueryStr, setpostcdListData);
@@ -589,7 +589,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -702,7 +702,7 @@ const KendoWindow = ({
   };
   return (
     <Window
-      title={workType === "N" ? "공지생성" : "공지정보"}
+      title={workType == "N" ? "공지생성" : "공지정보"}
       width={position.width}
       height={position.height}
       onMove={handleMove}
@@ -846,7 +846,7 @@ const KendoWindow = ({
                   (item: any) => item.dptcd == row.dptcd
                 )?.dptnm,
                 postcd: postcdListData.find(
-                  (item: any) => item.sub_code === row.postcd
+                  (item: any) => item.sub_code == row.postcd
                 )?.code_name,
                 chooses:
                   row.chooses == "Y"

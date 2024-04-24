@@ -95,8 +95,8 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
         return {
           ...prev,
           prodmac: bizComponentData
-            .find((item: any) => item.bizComponentId === "L_fxcode")
-            .data.Rows.find((item: any) => item.fxcode === data.prodmac).fxfull,
+            .find((item: any) => item.bizComponentId == "L_fxcode")
+            .data.Rows.find((item: any) => item.fxcode == data.prodmac).fxfull,
         };
       });
     }
@@ -137,10 +137,10 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
     parameters: {
       "@p_work_type": paraData.work_type,
       "@p_orgdiv": sessionItem.find(
-        (sessionItem) => sessionItem.code === "orgdiv"
+        (sessionItem) => sessionItem.code == "orgdiv"
       )?.value,
       "@p_location": sessionItem.find(
-        (sessionItem) => sessionItem.code === "location"
+        (sessionItem) => sessionItem.code == "location"
       )?.value,
       "@p_prodemp": initialVal.prodemp,
       "@p_prodmac": data.prodmac,
@@ -165,7 +165,7 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setData();
       onClose();
     } else {
@@ -236,12 +236,12 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
                     component={FormComboBox}
                     data={
                       bizComponentData.find(
-                        (item: any) => item.bizComponentId === "L_PR011"
+                        (item: any) => item.bizComponentId == "L_PR011"
                       ).data.Rows
                     }
                     columns={
                       bizComponentData.find(
-                        (item: any) => item.bizComponentId === "L_PR011"
+                        (item: any) => item.bizComponentId == "L_PR011"
                       ).bizComponentItems
                     }
                     className="required"
@@ -257,13 +257,13 @@ const KendoWindow = ({ setVisible, data, setData, pathname }: TKendoWindow) => {
                     data={
                       bizComponentData.find(
                         (item: any) =>
-                          item.bizComponentId === "L_sysUserMaster_001"
+                          item.bizComponentId == "L_sysUserMaster_001"
                       ).data.Rows
                     }
                     columns={
                       bizComponentData.find(
                         (item: any) =>
-                          item.bizComponentId === "L_sysUserMaster_001"
+                          item.bizComponentId == "L_sysUserMaster_001"
                       ).bizComponentItems
                     }
                     valueField="user_id"

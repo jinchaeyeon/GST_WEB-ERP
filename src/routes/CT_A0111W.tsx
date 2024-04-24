@@ -134,7 +134,7 @@ const CT_A0111W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -211,7 +211,7 @@ const CT_A0111W: React.FC = () => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch === false && permissions !== null) {
+    if (isInitSearch == false && permissions !== null) {
       fetchMainGrid();
       setIsInitSearch(true);
     }

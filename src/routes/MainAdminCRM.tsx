@@ -77,7 +77,7 @@ const Main: React.FC = () => {
         bizComponentData.find((item: any) => item.bizComponentId == "L_BA310")
       );
       const categoryQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SYS007")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SYS007")
       );
       fetchQuery(categoryQueryStr, setCategoryListData);
       fetchQuery(classQueryStr, setClassListData);
@@ -158,19 +158,19 @@ const Main: React.FC = () => {
     setMainnoticeSelectedState(newSelectedState);
   };
   useEffect(() => {
-    if (sessionUserId === "") fetchSessionItem();
-    // if (token && sessionUserId === "") fetchSessionItem();
+    if (sessionUserId == "") fetchSessionItem();
+    // if (token && sessionUserId == "") fetchSessionItem();
   }, [sessionUserId]);
 
   let sessionOrgdiv = sessionItem.find(
-    (sessionItem) => sessionItem.code === "orgdiv"
+    (sessionItem) => sessionItem.code == "orgdiv"
   )!.value;
   let sessionLocation = sessionItem.find(
-    (sessionItem) => sessionItem.code === "location"
+    (sessionItem) => sessionItem.code == "location"
   )!.value;
 
-  if (sessionOrgdiv === "") sessionOrgdiv = "01";
-  if (sessionLocation === "") sessionLocation = "01";
+  if (sessionOrgdiv == "") sessionOrgdiv = "01";
+  if (sessionLocation == "") sessionLocation = "01";
 
   useEffect(() => {
     if (sessionItem) {
@@ -191,11 +191,11 @@ const Main: React.FC = () => {
 
       data = await processApi<any>("procedure", para);
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setSessionItem(
           rows
-            .filter((item: any) => item.class === "Session")
+            .filter((item: any) => item.class == "Session")
             .map((item: any) => ({
               code: item.code,
               value: item.value,
@@ -307,7 +307,7 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rowCount = data.tables[0].RowCount;
       const row = data.tables[0].Rows;
       const row2 = data.tables[1].Rows;
@@ -393,7 +393,7 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 

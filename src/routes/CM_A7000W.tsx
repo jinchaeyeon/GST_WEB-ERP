@@ -227,17 +227,17 @@ const CM_A7000W: React.FC = () => {
       );
       const testtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA019_603"
+          (item: any) => item.bizComponentId == "L_SA019_603"
         )
       );
       const requestgbQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_Requestgb"
+          (item: any) => item.bizComponentId == "L_Requestgb"
         )
       );
       const materialtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA001_603"
+          (item: any) => item.bizComponentId == "L_SA001_603"
         )
       );
       fetchQueryData(typeQueryStr, setTypeListData);
@@ -266,7 +266,7 @@ const CM_A7000W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -426,16 +426,16 @@ const CM_A7000W: React.FC = () => {
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
           custprsncd: defaultOption.find(
-            (item: any) => item.id === "custprsncd"
+            (item: any) => item.id == "custprsncd"
           ).valueCode,
           materialtype: defaultOption.find(
-            (item: any) => item.id === "materialtype"
+            (item: any) => item.id == "materialtype"
           ).valueCode,
-          person: defaultOption.find((item: any) => item.id === "person")
+          person: defaultOption.find((item: any) => item.id == "person")
             .valueCode,
-          usegb: defaultOption.find((item: any) => item.id === "usegb")
+          usegb: defaultOption.find((item: any) => item.id == "usegb")
             .valueCode,
-          type: defaultOption.find((item: any) => item.id === "type").valueCode,
+          type: defaultOption.find((item: any) => item.id == "type").valueCode,
           find_row_value: queryParams.get("go") as string,
         }));
       } else {
@@ -444,16 +444,16 @@ const CM_A7000W: React.FC = () => {
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
           custprsncd: defaultOption.find(
-            (item: any) => item.id === "custprsncd"
+            (item: any) => item.id == "custprsncd"
           ).valueCode,
           materialtype: defaultOption.find(
-            (item: any) => item.id === "materialtype"
+            (item: any) => item.id == "materialtype"
           ).valueCode,
-          person: defaultOption.find((item: any) => item.id === "person")
+          person: defaultOption.find((item: any) => item.id == "person")
             .valueCode,
-          usegb: defaultOption.find((item: any) => item.id === "usegb")
+          usegb: defaultOption.find((item: any) => item.id == "usegb")
             .valueCode,
-          type: defaultOption.find((item: any) => item.id === "type").valueCode,
+          type: defaultOption.find((item: any) => item.id == "type").valueCode,
           isSearch: true,
         }));
       }
@@ -654,7 +654,7 @@ const CM_A7000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -769,7 +769,7 @@ const CM_A7000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1065,7 +1065,7 @@ const CM_A7000W: React.FC = () => {
 
     const dataItem = detailDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -1182,7 +1182,7 @@ const CM_A7000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let array: any[] = [];
       deletedMainRows = [];
       if (workType == "D" && paraDataSaved.attdatnum != "") {
@@ -1253,7 +1253,7 @@ const CM_A7000W: React.FC = () => {
     setInformation({
       orgdiv: "01",
       meetingnum: "",
-      usegb: defaultOption.find((item: any) => item.id === "usegb").valueCode,
+      usegb: defaultOption.find((item: any) => item.id == "usegb").valueCode,
       person: userId,
       personnm: userName,
       recdt: setDefaultDate2(customOptionData, "recdt"),
@@ -1261,7 +1261,7 @@ const CM_A7000W: React.FC = () => {
       files: "",
       attdatnum: "",
       ref_key: "",
-      custcd: defaultOption.find((item: any) => item.id === "custcd").valueCode,
+      custcd: defaultOption.find((item: any) => item.id == "custcd").valueCode,
       custnm: "",
       custprsncd: "",
       custprsnnm: "",
@@ -1271,14 +1271,14 @@ const CM_A7000W: React.FC = () => {
       telno: "",
       phoneno: "",
       email: "",
-      testtype: defaultOption.find((item: any) => item.id === "testtype")
+      testtype: defaultOption.find((item: any) => item.id == "testtype")
         .valueCode,
-      requestgb: defaultOption.find((item: any) => item.id === "requestgb")
+      requestgb: defaultOption.find((item: any) => item.id == "requestgb")
         .valueCode,
       materialtype: defaultOption.find(
-        (item: any) => item.id === "materialtype"
+        (item: any) => item.id == "materialtype"
       ).valueCode,
-      type: defaultOption.find((item: any) => item.id === "type").valueCode,
+      type: defaultOption.find((item: any) => item.id == "type").valueCode,
       extra_field2: "",
       place: "",
     });
@@ -1713,7 +1713,7 @@ const CM_A7000W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : undefined
                           }
@@ -2131,6 +2131,12 @@ const CM_A7000W: React.FC = () => {
                       <Button
                         themeColor={"primary"}
                         onClick={() => {
+                          detailDataResult.data.map((item) => {
+                            if (item.num > temp) {
+                              temp = item.num;
+                            }
+                          });
+                          
                           const newDataItem = {
                             [DATA_ITEM_KEY]: ++temp,
                             prsnnm: information2.user_name,

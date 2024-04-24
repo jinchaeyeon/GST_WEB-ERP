@@ -406,7 +406,7 @@ const SA_B2220W: React.FC = () => {
         item.series ==
         ChartList.filter(
           (arr: { series: any }, index: any, callback: any[]) =>
-            index === callback.findIndex((t) => t.series === arr.series)
+            index == callback.findIndex((t) => t.series == arr.series)
         )[0].series
     ).map((items: { argument: any }) => {
       return items.argument;
@@ -414,7 +414,7 @@ const SA_B2220W: React.FC = () => {
 
     let array2 = ChartList.filter(
       (arr: { series: any }, index: any, callback: any[]) =>
-        index === callback.findIndex((t) => t.series === arr.series)
+        index == callback.findIndex((t) => t.series == arr.series)
     ).map((item: { series: any }) => {
       return item.series;
     });
@@ -426,7 +426,7 @@ const SA_B2220W: React.FC = () => {
         item.date ==
         BarData.filter(
           (arr: { date: any }, index: any, callback: any[]) =>
-            index === callback.findIndex((t) => t.date === arr.date)
+            index == callback.findIndex((t) => t.date == arr.date)
         )[0].date
     ).map((items: { series: any }) => {
       return items.series;
@@ -434,7 +434,7 @@ const SA_B2220W: React.FC = () => {
 
     let array4 = BarData.filter(
       (arr: { date: any }, index: any, callback: any[]) =>
-        index === callback.findIndex((t) => t.date === arr.date)
+        index == callback.findIndex((t) => t.date == arr.date)
     ).map((item: { date: any }) => {
       return item.date;
     });
@@ -450,7 +450,7 @@ const SA_B2220W: React.FC = () => {
     //   data = null;
     // }
 
-    // if (data.isSuccess === true) {
+    // if (data.isSuccess == true) {
     //   const rows = data.tables[0].Rows;
 
     //   setChartList(rows);
@@ -461,7 +461,7 @@ const SA_B2220W: React.FC = () => {
     //         item.series ==
     //         rows.filter(
     //           (arr: { series: any }, index: any, callback: any[]) =>
-    //             index === callback.findIndex((t) => t.series === arr.series)
+    //             index == callback.findIndex((t) => t.series == arr.series)
     //         )[0].series
     //     )
     //     .map((items: { argument: any }) => {
@@ -471,7 +471,7 @@ const SA_B2220W: React.FC = () => {
     //   let array2 = rows
     //     .filter(
     //       (arr: { series: any }, index: any, callback: any[]) =>
-    //         index === callback.findIndex((t) => t.series === arr.series)
+    //         index == callback.findIndex((t) => t.series == arr.series)
     //     )
     //     .map((item: { series: any }) => {
     //       return item.series;
@@ -487,7 +487,7 @@ const SA_B2220W: React.FC = () => {
     //   data2 = null;
     // }
 
-    // if (data2.isSuccess === true) {
+    // if (data2.isSuccess == true) {
     //   const rows2 = data2.tables[0].Rows;
 
     //   setBarData(rows2);
@@ -497,7 +497,7 @@ const SA_B2220W: React.FC = () => {
     //         item.date ==
     //         rows2.filter(
     //           (arr: { date: any }, index: any, callback: any[]) =>
-    //             index === callback.findIndex((t) => t.date === arr.date)
+    //             index == callback.findIndex((t) => t.date == arr.date)
     //         )[0].date
     //     )
     //     .map((items: { series: any }) => {
@@ -507,7 +507,7 @@ const SA_B2220W: React.FC = () => {
     //   let array2 = rows2
     //     .filter(
     //       (arr: { date: any }, index: any, callback: any[]) =>
-    //         index === callback.findIndex((t) => t.date === arr.date)
+    //         index == callback.findIndex((t) => t.date == arr.date)
     //     )
     //     .map((item: { date: any }) => {
     //       return item.date;
@@ -523,7 +523,7 @@ const SA_B2220W: React.FC = () => {
     //   data3 = null;
     // }
 
-    // if (data3.isSuccess === true) {
+    // if (data3.isSuccess == true) {
     //   const rows3 = data3.tables[0].Rows.map((item: any) => ({
     //     ...item,
     //     _percent: item._percent + "%",
@@ -540,7 +540,7 @@ const SA_B2220W: React.FC = () => {
     //   data4 = null;
     // }
 
-    // if (data4.isSuccess === true) {
+    // if (data4.isSuccess == true) {
     //   const rows4 = data4.tables[0].Rows;
 
     //   setProjectList(rows4);

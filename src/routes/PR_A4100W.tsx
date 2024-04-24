@@ -91,12 +91,12 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "outprocyn" ? "L_BA011" : field === "prodmac" ? "L_fxcode" : "";
+    field == "outprocyn" ? "L_BA011" : field == "prodmac" ? "L_fxcode" : "";
 
-  const fieldName = field === "prodmac" ? "fxfull" : undefined;
-  const filedValue = field === "prodmac" ? "fxcode" : undefined;
+  const fieldName = field == "prodmac" ? "fxfull" : undefined;
+  const filedValue = field == "prodmac" ? "fxcode" : undefined;
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -185,18 +185,18 @@ const PR_A4100W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
-        prodemp: defaultOption.find((item: any) => item.id === "prodemp")
+        dtgb: defaultOption.find((item: any) => item.id == "dtgb").valueCode,
+        prodemp: defaultOption.find((item: any) => item.id == "prodemp")
           .valueCode,
-        prodmac: defaultOption.find((item: any) => item.id === "prodmac")
+        prodmac: defaultOption.find((item: any) => item.id == "prodmac")
           .valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        proccd: defaultOption.find((item: any) => item.id === "proccd")
+        proccd: defaultOption.find((item: any) => item.id == "proccd")
           .valueCode,
-        outprocyn: defaultOption.find((item: any) => item.id === "outprocyn")
+        outprocyn: defaultOption.find((item: any) => item.id == "outprocyn")
           .valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -224,16 +224,16 @@ const PR_A4100W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       fetchQuery(proccdQueryStr, setProccdListData);
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
@@ -258,7 +258,7 @@ const PR_A4100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -391,7 +391,7 @@ const PR_A4100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
 
       const rows = data.tables[0].Rows.map((row: any) => {
@@ -655,7 +655,7 @@ const PR_A4100W: React.FC = () => {
 
   const CustomCheckBoxCell = (props: GridCellProps) => {
     const { ariaColumnIndex, columnIndex, dataItem, field } = props;
-    if (props.rowType === "groupHeader") {
+    if (props.rowType == "groupHeader") {
       return null;
     }
 
@@ -664,7 +664,7 @@ const PR_A4100W: React.FC = () => {
         item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               chk:
                 typeof item.chk == "boolean"
                   ? !item.chk
@@ -700,7 +700,7 @@ const PR_A4100W: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -742,7 +742,7 @@ const PR_A4100W: React.FC = () => {
       field == "remark"
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -851,9 +851,9 @@ const PR_A4100W: React.FC = () => {
     }
 
     const dataItem = mainDataResult.data.filter((item: any, index: number) => {
-      return item.chk === true && item.rowstatus !== undefined;
+      return item.chk == true && item.rowstatus !== undefined;
     });
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
     let dataArr: TdataArr = {
       planno_s: [],
       planseq_s: [],
@@ -925,9 +925,9 @@ const PR_A4100W: React.FC = () => {
     }
 
     const dataItem = mainDataResult.data.filter((item: any, index: number) => {
-      return item.chk === true && item.rowstatus !== undefined;
+      return item.chk == true && item.rowstatus !== undefined;
     });
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
     let dataArr: TdataArr = {
       planno_s: [],
       planseq_s: [],
@@ -997,11 +997,11 @@ const PR_A4100W: React.FC = () => {
   const onSaveClick = async (e: any) => {
     const dataItem = mainDataResult.data.filter((item: any, index: number) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
     let dataArr: TdataArr2 = {
       planno_s: [],
       planseq_s: [],
@@ -1336,16 +1336,16 @@ const PR_A4100W: React.FC = () => {
                   ? new Date(dateformat(row.finexpdt))
                   : new Date(dateformat("99991231")),
                 proccd: proccdListData.find(
-                  (items: any) => items.sub_code === row.proccd
+                  (items: any) => items.sub_code == row.proccd
                 )?.code_name,
                 itemlvl1: itemlvl1ListData.find(
-                  (items: any) => items.sub_code === row.itemlvl1
+                  (items: any) => items.sub_code == row.itemlvl1
                 )?.code_name,
                 itemlvl2: itemlvl2ListData.find(
-                  (items: any) => items.sub_code === row.itemlvl2
+                  (items: any) => items.sub_code == row.itemlvl2
                 )?.code_name,
                 itemlvl3: itemlvl3ListData.find(
-                  (items: any) => items.sub_code === row.itemlvl3
+                  (items: any) => items.sub_code == row.itemlvl3
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
@@ -1408,7 +1408,7 @@ const PR_A4100W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? editNumberFooterCell

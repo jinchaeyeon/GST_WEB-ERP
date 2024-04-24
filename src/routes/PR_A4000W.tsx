@@ -103,32 +103,32 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "proccd"
+    field == "proccd"
       ? "L_PR010"
-      : field === "prodmac"
+      : field == "prodmac"
       ? "L_fxcode"
-      : field === "prodemp"
+      : field == "prodemp"
       ? "L_sysUserMaster_001"
-      : field === "qtyunit"
+      : field == "qtyunit"
       ? "L_BA015"
-      : field === "itemacnt"
+      : field == "itemacnt"
       ? "L_BA061"
       : "";
 
   const fieldName =
-    field === "prodemp"
+    field == "prodemp"
       ? "user_name"
-      : field === "prodmac"
+      : field == "prodmac"
       ? "fxfull"
       : undefined;
   const fieldValue =
-    field === "prodemp"
+    field == "prodemp"
       ? "user_id"
-      : field === "prodmac"
+      : field == "prodmac"
       ? "fxcode"
       : undefined;
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -179,16 +179,16 @@ const PR_A4000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"), // 생산실적관리 일자
         todt: setDefaultDate(customOptionData, "todt"), // 생산실적관리 일자
-        prodemp: defaultOption.find((item: any) => item.id === "prodemp")
+        prodemp: defaultOption.find((item: any) => item.id == "prodemp")
           .valueCode,
-        itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
+        itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
           .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        prodmac: defaultOption.find((item: any) => item.id === "prodmac")
+        prodmac: defaultOption.find((item: any) => item.id == "prodmac")
           .valueCode,
-        proccd: defaultOption.find((item: any) => item.id === "proccd")
+        proccd: defaultOption.find((item: any) => item.id == "proccd")
           .valueCode,
       }));
       setGoFilters((prev) => ({
@@ -215,11 +215,11 @@ const PR_A4000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const prodmacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_fxcode")
       );
       const prodempQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(prodmacQueryStr, setProdmacListData);
@@ -243,7 +243,7 @@ const PR_A4000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -397,8 +397,8 @@ const PR_A4000W: React.FC = () => {
           qty: item.qty,
           badqty: 0,
           qtyunit: item.qtyunit,
-          gokey: custdiv === "A" ? item.keyfield : "",
-          plankey: custdiv === "A" ? item.plankey : item.keyfield,
+          gokey: custdiv == "A" ? item.keyfield : "",
+          plankey: custdiv == "A" ? item.plankey : item.keyfield,
           strtime: convertDateToStrWithTime2(new Date()),
           endtime: convertDateToStrWithTime2(new Date()),
         };
@@ -470,7 +470,7 @@ const PR_A4000W: React.FC = () => {
 
     return (
       <>
-        {props.rowType === "groupHeader" ? null : (
+        {props.rowType == "groupHeader" ? null : (
           <td className="k-command-cell">
             <Button
               className="k-grid-edit-command"
@@ -689,7 +689,7 @@ const PR_A4000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -792,7 +792,7 @@ const PR_A4000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -870,7 +870,7 @@ const PR_A4000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       const rateRowCnt = data.tables[1].TotalRowCount;
@@ -951,7 +951,7 @@ const PR_A4000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1420,12 +1420,12 @@ const PR_A4000W: React.FC = () => {
   const onSaveClick = async () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0 && deletedRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedRows.length == 0) return false;
 
     let valid = true;
     try {
@@ -1686,7 +1686,7 @@ const PR_A4000W: React.FC = () => {
       field == "qty"
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1724,7 +1724,7 @@ const PR_A4000W: React.FC = () => {
         item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -2164,10 +2164,10 @@ const PR_A4000W: React.FC = () => {
                     goDataResult.data.map((row) => ({
                       ...row,
                       prodmac: prodmacListData.find(
-                        (items: any) => items.fxcode === row.prodmac
+                        (items: any) => items.fxcode == row.prodmac
                       )?.fxfull,
                       prodemp: prodempListData.find(
-                        (items: any) => items.user_id === row.prodemp
+                        (items: any) => items.user_id == row.prodemp
                       )?.user_name,
                       [SELECTED_FIELD]: goselectedState[idGetter1(row)], //선택된 데이터
                     })),
@@ -2213,7 +2213,7 @@ const PR_A4000W: React.FC = () => {
                             title={item.caption}
                             width={item.width}
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell1
                                 : undefined
                             }
@@ -2314,7 +2314,7 @@ const PR_A4000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? detailTotalFooterCell
                                   : NumberField.includes(item.fieldName)
                                   ? editNumberFooterCell2

@@ -75,7 +75,7 @@ const KendoWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const custdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA026")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA026")
       );
 
       fetchQuery(custdivQueryStr, setCustdivListData);
@@ -98,7 +98,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -234,7 +234,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
@@ -292,7 +292,7 @@ const KendoWindow = ({
 
   const onConfirmClick = (props: any) => {
     const rowData = mainDataResult.data.find(
-      (row: any) => row[DATA_ITEM_KEY] === Object.keys(selectedState)[0]
+      (row: any) => row[DATA_ITEM_KEY] == Object.keys(selectedState)[0]
     );
 
     // 부모로 데이터 전달, 창 닫기

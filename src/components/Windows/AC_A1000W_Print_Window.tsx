@@ -70,7 +70,7 @@ const CopyWindow = ({ data, setVisible, modal = false, pathname }: IWindow) => {
       );
       setFilters((prev) => ({
         ...prev,
-        print: defaultOption.find((item: any) => item.id === "print").valueCode,
+        print: defaultOption.find((item: any) => item.id == "print").valueCode,
       }));
     }
   }, [customOptionData]);

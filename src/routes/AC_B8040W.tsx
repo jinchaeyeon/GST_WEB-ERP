@@ -160,11 +160,11 @@ const AC_B8040W: React.FC = () => {
         ...prev,
         fdate: setDefaultDate(customOptionData, "fdate"),
         tdate: setDefaultDate(customOptionData, "tdate"),
-        inoutdiv: defaultOption.find((item: any) => item.id === "inoutdiv")
+        inoutdiv: defaultOption.find((item: any) => item.id == "inoutdiv")
           .valueCode,
-        taxdiv: defaultOption.find((item: any) => item.id === "taxdiv")
+        taxdiv: defaultOption.find((item: any) => item.id == "taxdiv")
           .valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
       }));
     }
@@ -281,7 +281,7 @@ const AC_B8040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -346,7 +346,7 @@ const AC_B8040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -399,7 +399,7 @@ const AC_B8040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -872,7 +872,7 @@ const AC_B8040W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField2.includes(item.fieldName)
                             ? gridTotalFooterCell
@@ -949,7 +949,7 @@ const AC_B8040W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell2
                               : numberField2.includes(item.fieldName)
                               ? gridTotalFooterCell2
@@ -1025,7 +1025,7 @@ const AC_B8040W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell3
                               : numberField2.includes(item.fieldName)
                               ? gridTotalFooterCell3

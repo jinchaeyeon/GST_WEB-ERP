@@ -11,7 +11,7 @@ const NameTreeListCell = (props: TreeListCellProps) => {
     onChange,
     className = "",
   } = props;
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   if (className.includes("read-only")) {
     isInEdit = false;
   } else if (className.includes("editable-new-only")) {

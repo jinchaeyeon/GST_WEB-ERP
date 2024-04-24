@@ -122,7 +122,7 @@ const CustomRadioCell = (props: GridCellProps) => {
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -151,7 +151,7 @@ const HU_B1040W: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        rtrchk: defaultOption.find((item: any) => item.id === "rtrchk")
+        rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
           .valueCode,
       }));
     }
@@ -208,53 +208,53 @@ const HU_B1040W: React.FC = () => {
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
       const orgdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA001")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA001")
       );
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       const positionQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA028")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA028")
       );
       const nationcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA057")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA057")
       );
       const ocptcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU037")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU037")
       );
       const workgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU075")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU075")
       );
       const workclsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU076")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU076")
       );
       const jobcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU007")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU007")
       );
       const abilcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU006")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU006")
       );
       const regcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU012")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU012")
       );
       const rtrrsnQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU023")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU023")
       );
       const emptypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU024")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU024")
       );
       const paycdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU028")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU028")
       );
       const taxcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU029")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU029")
       );
       fetchQuery(dptcdQueryStr, setdptcdListData);
       fetchQuery(postcdQueryStr, setpostcdListData);
@@ -291,7 +291,7 @@ const HU_B1040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -381,7 +381,7 @@ const HU_B1040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -593,52 +593,52 @@ const HU_B1040W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 postcd: postcdListData.find(
-                  (item: any) => item.sub_code === row.postcd
+                  (item: any) => item.sub_code == row.postcd
                 )?.code_name,
                 orgdiv: orgdivListData.find(
-                  (item: any) => item.sub_code === row.orgdiv
+                  (item: any) => item.sub_code == row.orgdiv
                 )?.code_name,
                 location: locationListData.find(
-                  (item: any) => item.sub_code === row.location
+                  (item: any) => item.sub_code == row.location
                 )?.code_name,
                 position: positionListData.find(
-                  (item: any) => item.sub_code === row.position
+                  (item: any) => item.sub_code == row.position
                 )?.code_name,
                 nationcd: nationcdListData.find(
-                  (item: any) => item.sub_code === row.nationcd
+                  (item: any) => item.sub_code == row.nationcd
                 )?.code_name,
                 dptcd: dptcdListData.find(
                   (item: any) => item.dptcd == row.dptcd
                 )?.dptnm,
                 ocptcd: ocptcdListData.find(
-                  (item: any) => item.sub_code === row.ocptcd
+                  (item: any) => item.sub_code == row.ocptcd
                 )?.code_name,
                 workgb: workgbListData.find(
-                  (item: any) => item.sub_code === row.workgb
+                  (item: any) => item.sub_code == row.workgb
                 )?.code_name,
                 workcls: workclsListData.find(
-                  (item: any) => item.sub_code === row.workcls
+                  (item: any) => item.sub_code == row.workcls
                 )?.code_name,
                 jobcd: jobcdListData.find(
-                  (item: any) => item.sub_code === row.jobcd
+                  (item: any) => item.sub_code == row.jobcd
                 )?.code_name,
                 abilcd: abilcdListData.find(
-                  (item: any) => item.sub_code === row.abilcd
+                  (item: any) => item.sub_code == row.abilcd
                 )?.code_name,
                 regcd: regcdListData.find(
-                  (item: any) => item.sub_code === row.regcd
+                  (item: any) => item.sub_code == row.regcd
                 )?.code_name,
                 rtrrsn: rtrrsnListData.find(
-                  (item: any) => item.sub_code === row.rtrrsn
+                  (item: any) => item.sub_code == row.rtrrsn
                 )?.code_name,
                 emptype: emptypeListData.find(
-                  (item: any) => item.sub_code === row.emptype
+                  (item: any) => item.sub_code == row.emptype
                 )?.code_name,
                 paycd: paycdListData.find(
-                  (item: any) => item.sub_code === row.paycd
+                  (item: any) => item.sub_code == row.paycd
                 )?.code_name,
                 taxcd: taxcdListData.find(
-                  (item: any) => item.sub_code === row.taxcd
+                  (item: any) => item.sub_code == row.taxcd
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -699,7 +699,7 @@ const HU_B1040W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
                         }
                       ></GridColumn>
                     )

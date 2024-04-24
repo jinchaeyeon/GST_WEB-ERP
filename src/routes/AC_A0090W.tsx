@@ -91,10 +91,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   UseBizComponent("L_QC006", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "chasu" ? "L_QC006" : "";
+  const bizComponentIdVal = field == "chasu" ? "L_QC006" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -116,16 +116,16 @@ const CustomComboBoxCell2 = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "docunm"
+    field == "docunm"
       ? "L_AC070"
-      : field === "inname"
+      : field == "inname"
       ? "L_AC071"
-      : field === "paycd"
+      : field == "paycd"
       ? "L_BA020"
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -142,7 +142,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   const field = props.field ?? "";
   const bizComponentIdVal = field == "gisu" ? "R_GISU2" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -220,7 +220,7 @@ const AC_A0090W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         taxyy: setDefaultDate(customOptionData, "taxyy"),
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
       }));
     }
@@ -502,7 +502,7 @@ const AC_A0090W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -535,7 +535,7 @@ const AC_A0090W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) =>
@@ -602,7 +602,7 @@ const AC_A0090W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -859,7 +859,7 @@ const AC_A0090W: React.FC = () => {
       )
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -894,7 +894,7 @@ const AC_A0090W: React.FC = () => {
   const enterEdit2 = (dataItem: any, field: string) => {
     if (field != "rowstatus" && field != "bizregnum") {
       const newData = mainDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY2] === dataItem[DATA_ITEM_KEY2]
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1061,12 +1061,12 @@ const AC_A0090W: React.FC = () => {
 
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     dataItem.map((item) => {
       if (
@@ -1247,7 +1247,7 @@ const AC_A0090W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (ParaData.workType == "N") {
         resetAllGrid();
         const isLastDataDeleted =
@@ -1340,12 +1340,12 @@ const AC_A0090W: React.FC = () => {
 
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0 && deletedMainRows2.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows2.length == 0) return false;
 
     dataItem.map((item) => {
       if (item.docunm == "" || item.indate == "" || item.shipdt == "") {
@@ -1646,7 +1646,7 @@ const AC_A0090W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )
@@ -1805,7 +1805,7 @@ const AC_A0090W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell2
                           : numberField2.includes(item.fieldName)
                           ? gridSumQtyFooterCell2

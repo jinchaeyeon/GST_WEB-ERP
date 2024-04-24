@@ -417,7 +417,7 @@ const SA_B2229W: React.FC = () => {
         item.series ==
         ChartList.filter(
           (arr: { series: any }, index: any, callback: any[]) =>
-            index === callback.findIndex((t) => t.series === arr.series)
+            index == callback.findIndex((t) => t.series == arr.series)
         )[0].series
     ).map((items: { argument: any }) => {
       return items.argument;
@@ -427,7 +427,7 @@ const SA_B2229W: React.FC = () => {
   const [stackChartLabel, setStackChartLabel] = useState<any[]>(
     ChartList.filter(
       (arr: { series: any }, index: any, callback: any[]) =>
-        index === callback.findIndex((t) => t.series === arr.series)
+        index == callback.findIndex((t) => t.series == arr.series)
     ).map((item: { series: any }) => {
       return item.series;
     })
@@ -563,7 +563,7 @@ const SA_B2229W: React.FC = () => {
     //    data = null;
     //  }
 
-    //  if (data.isSuccess === true) {
+    //  if (data.isSuccess == true) {
     //    const totalRowCnt = data.tables[0].TotalRowCount;
     //    const rows = data.tables[0].Rows;
 

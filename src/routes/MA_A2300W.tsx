@@ -156,14 +156,14 @@ const MA_A2000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
+        person: defaultOption.find((item: any) => item.id == "person")
           .valueCode,
-        taxyn: defaultOption.find((item: any) => item.id === "taxyn").valueCode,
-        doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
+        taxyn: defaultOption.find((item: any) => item.id == "taxyn").valueCode,
+        doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
           .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
       }));
     }
@@ -200,28 +200,28 @@ const MA_A2000W: React.FC = () => {
     if (bizComponentData !== null) {
       const loadplaceQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_LOADPLACE"
+          (item: any) => item.bizComponentId == "L_LOADPLACE"
         )
       );
       const pacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA016")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA016")
       );
       const unpcalmethQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA019")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA019")
       );
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
 
       fetchQuery(pacQueryStr, setPACListData);
@@ -250,7 +250,7 @@ const MA_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -476,7 +476,7 @@ const MA_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -590,7 +590,7 @@ const MA_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
       setDetailDataResult((prev) => {
@@ -654,7 +654,7 @@ const MA_A2000W: React.FC = () => {
   }, [detailFilters]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   let gridRef: any = useRef(null);
@@ -851,9 +851,9 @@ const MA_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -1201,10 +1201,10 @@ const MA_A2000W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 person: usersListData.find(
-                  (item: any) => item.user_id === row.person
+                  (item: any) => item.user_id == row.person
                 )?.user_name,
                 location: locationListData.find(
-                  (item: any) => item.sub_code === row.location
+                  (item: any) => item.sub_code == row.location
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -1256,7 +1256,7 @@ const MA_A2000W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : numberField2.includes(item.fieldName)
                           ? gridSumQtyFooterCell
@@ -1285,21 +1285,21 @@ const MA_A2000W: React.FC = () => {
               detailDataResult.data.map((row) => ({
                 ...row,
                 itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                  (item: any) => item.sub_code == row.itemacnt
                 )?.code_name,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
                 wgtunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.wgtunit
+                  (item: any) => item.sub_code == row.wgtunit
                 )?.code_name,
                 load_place: loadplaceListData.find(
-                  (item: any) => item.sub_code === row.load_place
+                  (item: any) => item.sub_code == row.load_place
                 )?.code_name,
                 unpcalmeth: unpcalmethListData.find(
-                  (item: any) => item.sub_code === row.unpcalmeth
+                  (item: any) => item.sub_code == row.unpcalmeth
                 )?.code_name,
-                PAC: pacListData.find((item: any) => item.sub_code === row.PAC)
+                PAC: pacListData.find((item: any) => item.sub_code == row.PAC)
                   ?.code_name,
                 [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
               })),
@@ -1349,7 +1349,7 @@ const MA_A2000W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? detailTotalFooterCell
                           : numberField2.includes(item.fieldName)
                           ? gridSumQtyFooterCell2

@@ -47,7 +47,7 @@ const TaxReport = (filters: any) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -109,7 +109,7 @@ const TaxReport = (filters: any) => {
 
         {mainDataResult != null &&
           mainDataResult.data.map((item1: any, idx1: number) =>
-            idx1 === 0 || idx1 % 10 === 0 ? (
+            idx1 == 0 || idx1 % 10 == 0 ? (
               <>
                 <table className="main_tb" style={{ width: "100%" }}>
                   <colgroup>

@@ -64,9 +64,9 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         todt: lastMonth(new Date()),
-        depdiv: defaultOption.find((item: any) => item.id === "depdiv")
+        depdiv: defaultOption.find((item: any) => item.id == "depdiv")
           .valueCode,
-        fxcode: defaultOption.find((item: any) => item.id === "fxcode")
+        fxcode: defaultOption.find((item: any) => item.id == "fxcode")
           .valueCode,
       }));
     }
@@ -154,7 +154,7 @@ const CopyWindow = ({
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       reload(data.returnString);
       onClose();
     } else {

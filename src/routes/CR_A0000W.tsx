@@ -102,8 +102,8 @@ const CR_A0000W: React.FC = () => {
     return windowSize;
   }
   useEffect(() => {
-    if (sessionUserId === "") fetchSessionItem();
-    // if (token && sessionUserId === "") fetchSessionItem();
+    if (sessionUserId == "") fetchSessionItem();
+    // if (token && sessionUserId == "") fetchSessionItem();
   }, [sessionUserId]);
 
   const fetchSessionItem = useCallback(async () => {
@@ -120,11 +120,11 @@ const CR_A0000W: React.FC = () => {
 
       data = await processApi<any>("procedure", para);
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setSessionItem(
           rows
-            .filter((item: any) => item.class === "Session")
+            .filter((item: any) => item.class == "Session")
             .map((item: any) => ({
               code: item.code,
               value: item.value,
@@ -168,7 +168,7 @@ const CR_A0000W: React.FC = () => {
             datas = null;
           }
 
-          if (datas.isSuccess === true) {
+          if (datas.isSuccess == true) {
             const rowCount = datas.tables[0].RowCount;
             const row = datas.tables[0].Rows[0];
 
@@ -218,7 +218,7 @@ const CR_A0000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rowCount = data.tables[0].RowCount;
       const row = data.tables[0].Rows;
       setCardOptionData((prev) => {
@@ -283,7 +283,7 @@ const CR_A0000W: React.FC = () => {
       datas = null;
     }
 
-    if (datas.isSuccess === true) {
+    if (datas.isSuccess == true) {
       const rowCount = datas.tables[0].RowCount;
       const row = datas.tables[0].Rows.map((prev: any) => ({
         ...prev,
@@ -347,7 +347,7 @@ const CR_A0000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       alert("신청이 완료되었습니다.");
       if (isMobile) {
         if (swiper) {
@@ -416,7 +416,7 @@ const CR_A0000W: React.FC = () => {
               datas = null;
             }
 
-            if (datas.isSuccess === true) {
+            if (datas.isSuccess == true) {
               const rowCount = datas.tables[0].RowCount;
               const row = datas.tables[0].Rows[0];
 

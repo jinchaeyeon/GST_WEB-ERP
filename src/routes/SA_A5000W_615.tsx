@@ -442,7 +442,7 @@ const SA_A5000W_615: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAll();
       setParaData({
         workType: "",

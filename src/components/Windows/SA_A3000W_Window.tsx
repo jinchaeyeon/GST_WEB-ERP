@@ -211,11 +211,11 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        person: defaultOption.find((item: any) => item.id === "person")
+        person: defaultOption.find((item: any) => item.id == "person")
           .valueCode,
-        cargocd: defaultOption.find((item: any) => item.id === "cargocd")
+        cargocd: defaultOption.find((item: any) => item.id == "cargocd")
           .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
       }));
     }
@@ -238,10 +238,10 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
@@ -264,7 +264,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -437,7 +437,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -482,7 +482,7 @@ const CopyWindow = ({
   }, [filters]);
 
   useEffect(() => {
-    if (workType === "U" && data != undefined) {
+    if (workType == "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
         cargocd: data.cargocd,
@@ -690,11 +690,11 @@ const CopyWindow = ({
         if (valid == true) {
           const dataItem = mainDataResult.data.filter((item: any) => {
             return (
-              (item.rowstatus === "N" || item.rowstatus === "U") &&
+              (item.rowstatus == "N" || item.rowstatus == "U") &&
               item.rowstatus !== undefined
             );
           });
-          if (dataItem.length === 0 && deletedMainRows.length == 0) {
+          if (dataItem.length == 0 && deletedMainRows.length == 0) {
             setParaData((prev) => ({
               ...prev,
               workType: workType,
@@ -724,11 +724,11 @@ const CopyWindow = ({
           } else {
             const dataItem = mainDataResult.data.filter((item: any) => {
               return (
-                (item.rowstatus === "N" || item.rowstatus === "U") &&
+                (item.rowstatus == "N" || item.rowstatus == "U") &&
                 item.rowstatus !== undefined
               );
             });
-            if (dataItem.length === 0 && deletedMainRows.length == 0)
+            if (dataItem.length == 0 && deletedMainRows.length == 0)
               return false;
             let dataArr: TdataArr = {
               rowstatus: [],
@@ -1048,7 +1048,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = [];
       reload(data.returnString);
       if (workType == "N") {
@@ -1284,7 +1284,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "출하지시생성" : "출하지시정보"}
+        title={workType == "N" ? "출하지시생성" : "출하지시정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}

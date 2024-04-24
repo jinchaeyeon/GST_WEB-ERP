@@ -104,9 +104,9 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   UseBizComponent("L_MA034 ", setBizComponentData);
   //합부판정
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "qcresult1" ? "L_MA034" : "";
+  const bizComponentIdVal = field == "qcresult1" ? "L_MA034" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -196,17 +196,17 @@ const QC_A3000: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        proccd: defaultOption.find((item: any) => item.id === "proccd")
+        proccd: defaultOption.find((item: any) => item.id == "proccd")
           .valueCode,
-        prodemp: defaultOption.find((item: any) => item.id === "prodemp")
+        prodemp: defaultOption.find((item: any) => item.id == "prodemp")
           .valueCode,
-        prodmac: defaultOption.find((item: any) => item.id === "prodmac")
+        prodmac: defaultOption.find((item: any) => item.id == "prodmac")
           .valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        qcyn: defaultOption.find((item: any) => item.id === "qcyn").valueCode,
-        qcno: defaultOption.find((item: any) => item.id === "qcno").valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
+        qcyn: defaultOption.find((item: any) => item.id == "qcyn").valueCode,
+        qcno: defaultOption.find((item: any) => item.id == "qcno").valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
           .valueCode,
         isSearch: true,
       }));
@@ -252,20 +252,20 @@ const QC_A3000: React.FC = () => {
     if (bizComponentData !== null) {
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const prodmacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_fxcode")
       );
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       const qcnoQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC006")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_QC006")
       );
       const inspeccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC100")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_QC100")
       );
 
       fetchQuery(usersQueryStr, setUsersListData);
@@ -292,7 +292,7 @@ const QC_A3000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -535,7 +535,7 @@ const QC_A3000: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -652,7 +652,7 @@ const QC_A3000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (detailFilters.find_row_value !== "") {
@@ -858,7 +858,7 @@ const QC_A3000: React.FC = () => {
     )[0];
 
     if (
-      data.isSuccess === true &&
+      data.isSuccess == true &&
       data.resultMessage != "조회된 자료가 없습니다."
     ) {
       if (datas.qcyn == "등록" && information.workType == "N") {
@@ -1018,7 +1018,7 @@ const QC_A3000: React.FC = () => {
   }, [detailFilters2, permissions]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   let gridRef: any = useRef(null);
@@ -1084,11 +1084,11 @@ const QC_A3000: React.FC = () => {
       setDeletedAttadatnums(unsavedAttadatnums);
     }
     const user = usersListData.find(
-      (item: any) => item.user_name === selectedRowData.person
+      (item: any) => item.user_name == selectedRowData.person
     )?.user_id;
 
     const qcno = qcnoListData.find(
-      (item: any) => item.name === selectedRowData.qcno
+      (item: any) => item.name == selectedRowData.qcno
     )?.code;
 
     setInformation((prev) => ({
@@ -1312,9 +1312,9 @@ const QC_A3000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted2 =
-        detailDataResult.data.length === 1 && detailFilters.pgNum == 1;
+        detailDataResult.data.length == 1 && detailFilters.pgNum == 1;
       const findRow2 = mainDataResult.data.filter(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       )[0];
@@ -1350,7 +1350,7 @@ const QC_A3000: React.FC = () => {
         }
       } else {
         const isLastDataDeleted =
-          detailDataResult.data.length === 1 && detailFilters.pgNum > 0;
+          detailDataResult.data.length == 1 && detailFilters.pgNum > 0;
         const findRowIndex = detailDataResult.data.findIndex(
           (row: any) =>
             row.num == Object.getOwnPropertyNames(detailSelectedState)[0]
@@ -1579,7 +1579,7 @@ const QC_A3000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setUnsavedName([]);
       setUnsavedAttadatnums([]);
       setDetailFilters((prev) => ({
@@ -1681,7 +1681,7 @@ const QC_A3000: React.FC = () => {
       field != "rowstatus"
     ) {
       const newData = detailDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1865,7 +1865,7 @@ const QC_A3000: React.FC = () => {
       } else {
         const dataItem = detailDataResult2.data.filter((item: any) => {
           return (
-            (item.rowstatus === "N" || item.rowstatus === "U") &&
+            (item.rowstatus == "N" || item.rowstatus == "U") &&
             item.rowstatus !== undefined
           );
         });
@@ -2133,13 +2133,13 @@ const QC_A3000: React.FC = () => {
                 mainDataResult.data.map((row) => ({
                   ...row,
                   prodemp: usersListData.find(
-                    (item: any) => item.user_id === row.prodemp
+                    (item: any) => item.user_id == row.prodemp
                   )?.user_name,
                   proccd: proccdListData.find(
-                    (item: any) => item.sub_code === row.proccd
+                    (item: any) => item.sub_code == row.proccd
                   )?.code_name,
                   prodmac: prodmacListData.find(
-                    (item: any) => item.fxcode === row.prodmac
+                    (item: any) => item.fxcode == row.prodmac
                   )?.fxfull,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
@@ -2190,7 +2190,7 @@ const QC_A3000: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell
@@ -2242,9 +2242,9 @@ const QC_A3000: React.FC = () => {
                 detailDataResult.data.map((row) => ({
                   ...row,
                   person: usersListData.find(
-                    (item: any) => item.user_id === row.person
+                    (item: any) => item.user_id == row.person
                   )?.user_name,
-                  qcno: qcnoListData.find((item: any) => item.code === row.qcno)
+                  qcno: qcnoListData.find((item: any) => item.code == row.qcno)
                     ?.name,
                   [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
                 })),
@@ -2292,7 +2292,7 @@ const QC_A3000: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? detailTotalFooterCell
                             : undefined
                         }
@@ -2464,7 +2464,7 @@ const QC_A3000: React.FC = () => {
                   detailDataResult2.data.map((row) => ({
                     ...row,
                     inspeccd: inspeccdListData.find(
-                      (item: any) => item.sub_code === row.inspeccd
+                      (item: any) => item.sub_code == row.inspeccd
                     )?.code_name,
                     [SELECTED_FIELD]: detailSelectedState2[idGetter3(row)],
                   })),

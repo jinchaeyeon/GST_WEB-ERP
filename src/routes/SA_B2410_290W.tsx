@@ -224,7 +224,7 @@ const SA_B2410: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
     }
@@ -246,7 +246,7 @@ const SA_B2410: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -390,7 +390,7 @@ const SA_B2410: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (tabSelected == 0) {
@@ -591,7 +591,7 @@ const SA_B2410: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
@@ -679,7 +679,7 @@ const SA_B2410: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
       if (detailFilters2.find_row_value !== "") {
@@ -1450,7 +1450,7 @@ const SA_B2410: React.FC = () => {
                                           : undefined
                                       }
                                       footerCell={
-                                        item.sortOrder === 0
+                                        item.sortOrder == 0
                                           ? mainTotalFooterCell
                                           : numberField.includes(item.fieldName)
                                           ? gridSumQtyFooterCell
@@ -1478,7 +1478,7 @@ const SA_B2410: React.FC = () => {
                             mainDataResult.data.map((row) => ({
                               ...row,
                               qtyunit: qtyunitListData.find(
-                                (item: any) => item.sub_code === row.qtyunit
+                                (item: any) => item.sub_code == row.qtyunit
                               )?.code_name,
                               [SELECTED_FIELD]: selectedState[idGetter(row)],
                             })),
@@ -1531,7 +1531,7 @@ const SA_B2410: React.FC = () => {
                                           : undefined
                                       }
                                       footerCell={
-                                        item.sortOrder === 0
+                                        item.sortOrder == 0
                                           ? mainTotalFooterCell
                                           : numberField.includes(item.fieldName)
                                           ? gridSumQtyFooterCell
@@ -1612,7 +1612,7 @@ const SA_B2410: React.FC = () => {
                                             : undefined
                                         }
                                         footerCell={
-                                          item.sortOrder === 0
+                                          item.sortOrder == 0
                                             ? mainTotalFooterCell
                                             : numberField.includes(
                                                 item.fieldName
@@ -1695,7 +1695,7 @@ const SA_B2410: React.FC = () => {
                                             : undefined
                                         }
                                         footerCell={
-                                          item.sortOrder === 0
+                                          item.sortOrder == 0
                                             ? subTotalFooterCell
                                             : numberField.includes(
                                                 item.fieldName
@@ -1758,7 +1758,7 @@ const SA_B2410: React.FC = () => {
                       detail1DataResult.data.map((row) => ({
                         ...row,
                         qtyunit: qtyunitListData.find(
-                          (item: any) => item.sub_code === row.qtyunit
+                          (item: any) => item.sub_code == row.qtyunit
                         )?.code_name,
                         [SELECTED_FIELD]:
                           detailSelectedState[detailIdGetter(row)],
@@ -1812,7 +1812,7 @@ const SA_B2410: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? detailTotalFooterCell
                                     : numberField2.includes(item.fieldName)
                                     ? gridSumQtyFooterCell2
@@ -2027,7 +2027,7 @@ const SA_B2410: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? mainTotalFooterCell
                                     : numberField.includes(item.fieldName)
                                     ? gridSumQtyFooterCell
@@ -2055,7 +2055,7 @@ const SA_B2410: React.FC = () => {
                       mainDataResult.data.map((row) => ({
                         ...row,
                         qtyunit: qtyunitListData.find(
-                          (item: any) => item.sub_code === row.qtyunit
+                          (item: any) => item.sub_code == row.qtyunit
                         )?.code_name,
                         [SELECTED_FIELD]: selectedState[idGetter(row)],
                       })),
@@ -2106,7 +2106,7 @@ const SA_B2410: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? mainTotalFooterCell
                                     : numberField.includes(item.fieldName)
                                     ? gridSumQtyFooterCell
@@ -2183,7 +2183,7 @@ const SA_B2410: React.FC = () => {
                                       : undefined
                                   }
                                   footerCell={
-                                    item.sortOrder === 0
+                                    item.sortOrder == 0
                                       ? mainTotalFooterCell
                                       : numberField.includes(item.fieldName)
                                       ? gridSumQtyFooterCell
@@ -2260,7 +2260,7 @@ const SA_B2410: React.FC = () => {
                                       : undefined
                                   }
                                   footerCell={
-                                    item.sortOrder === 0
+                                    item.sortOrder == 0
                                       ? subTotalFooterCell
                                       : numberField.includes(item.fieldName)
                                       ? gridSumQtyFooterCell3
@@ -2292,7 +2292,7 @@ const SA_B2410: React.FC = () => {
                   detail1DataResult.data.map((row) => ({
                     ...row,
                     qtyunit: qtyunitListData.find(
-                      (item: any) => item.sub_code === row.qtyunit
+                      (item: any) => item.sub_code == row.qtyunit
                     )?.code_name,
                     [SELECTED_FIELD]: detailSelectedState[detailIdGetter(row)],
                   })),
@@ -2345,7 +2345,7 @@ const SA_B2410: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? detailTotalFooterCell
                                 : numberField2.includes(item.fieldName)
                                 ? gridSumQtyFooterCell2

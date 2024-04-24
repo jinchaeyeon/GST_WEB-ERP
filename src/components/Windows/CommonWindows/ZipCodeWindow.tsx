@@ -51,7 +51,7 @@ const ZipCodeWindow = ({
     let fullAddress = data.address;
     let extraAddress = "";
 
-    if (data.addressType === "R") {
+    if (data.addressType == "R") {
       if (data.bname !== "") {
         extraAddress += data.bname;
       }

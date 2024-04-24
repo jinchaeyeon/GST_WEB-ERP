@@ -76,8 +76,8 @@ const AC_B3000W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
-        fxdiv: defaultOption.find((item: any) => item.id === "fxdiv").valueCode,
-        fxdepsts: defaultOption.find((item: any) => item.id === "fxdepsts")
+        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv").valueCode,
+        fxdepsts: defaultOption.find((item: any) => item.id == "fxdepsts")
           .valueCode,
       }));
     }
@@ -166,7 +166,7 @@ const AC_B3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -243,7 +243,7 @@ const AC_B3000W: React.FC = () => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch === false && permissions !== null) {
+    if (isInitSearch == false && permissions !== null) {
       fetchMainGrid();
       setIsInitSearch(true);
     }

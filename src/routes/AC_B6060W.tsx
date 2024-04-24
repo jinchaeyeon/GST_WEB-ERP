@@ -345,7 +345,7 @@ const AC_B6060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -403,7 +403,7 @@ const AC_B6060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -457,7 +457,7 @@ const AC_B6060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -512,7 +512,7 @@ const AC_B6060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -585,7 +585,7 @@ const AC_B6060W: React.FC = () => {
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
-    if (tabSelected === 0) {
+    if (tabSelected == 0) {
       const newSelectedState = getSelectedState({
         event,
         selectedState: selectedState,
@@ -593,7 +593,7 @@ const AC_B6060W: React.FC = () => {
       });
 
       setSelectedState(newSelectedState);
-    } else if (tabSelected === 1) {
+    } else if (tabSelected == 1) {
       const newSelectedState = getSelectedState({
         event,
         selectedState: selectedState2,
@@ -601,7 +601,7 @@ const AC_B6060W: React.FC = () => {
       });
 
       setSelectedState2(newSelectedState);
-    } else if (tabSelected === 2) {
+    } else if (tabSelected == 2) {
       const newSelectedState = getSelectedState({
         event,
         selectedState: selectedState3,
@@ -609,7 +609,7 @@ const AC_B6060W: React.FC = () => {
       });
 
       setSelectedState3(newSelectedState);
-    } else if (tabSelected === 3) {
+    } else if (tabSelected == 3) {
       const newSelectedState = getSelectedState({
         event,
         selectedState: selectedState4,

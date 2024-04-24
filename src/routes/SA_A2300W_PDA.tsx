@@ -138,7 +138,7 @@ const SA_A2300_PDA: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (data.tables[0]) {
         let rows = data.tables[0].Rows.map((row: any) => ({
           ...row,
@@ -305,7 +305,7 @@ const SA_A2300_PDA: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -649,7 +649,7 @@ const SA_A2300_PDA: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -884,7 +884,7 @@ const SA_A2300_PDA: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setLotPage({
         skip:
           lotFilters.pgNum == 1 || lotFilters.pgNum == 0
@@ -1043,7 +1043,7 @@ const SA_A2300_PDA: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const num = lotDataResult.total ? lotDataResult.total : 0;
 
       let valid = true;

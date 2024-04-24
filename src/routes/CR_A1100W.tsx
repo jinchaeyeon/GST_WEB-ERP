@@ -75,25 +75,25 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "owner"
+    field == "owner"
       ? "L_USERS_EX"
-      : field === "manager"
+      : field == "manager"
       ? "L_USERS_IN"
-      : field === "class"
+      : field == "class"
       ? "L_BA310"
-      : field === "species"
+      : field == "species"
       ? "L_BA320"
-      : field === "gender"
+      : field == "gender"
       ? "L_SEXCD"
       : "";
 
   const fieldName =
-    field === "owner" || field === "manager" || field === "gender"
+    field == "owner" || field == "manager" || field == "gender"
       ? { valueField: "code", textField: "name" }
       : { valueField: undefined, textField: undefined };
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -255,7 +255,7 @@ const CR_A1100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -479,12 +479,12 @@ const CR_A1100W: React.FC = () => {
     let valid = true;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     try {
       dataItem.map((item: any) => {
@@ -566,7 +566,7 @@ const CR_A1100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
         mainDataResult.data.length == 0 && filters.pgNum > 0;
       if (isLastDataDeleted) {
@@ -633,7 +633,7 @@ const CR_A1100W: React.FC = () => {
 
     if (valid == false) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -952,7 +952,7 @@ const CR_A1100W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )

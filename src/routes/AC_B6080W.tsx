@@ -95,13 +95,13 @@ const AC_B6080W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
-        totalamt: defaultOption.find((item: any) => item.id === "totalamt")
+        totalamt: defaultOption.find((item: any) => item.id == "totalamt")
           .valueCode,
-        taxtype: defaultOption.find((item: any) => item.id === "taxtype")
+        taxtype: defaultOption.find((item: any) => item.id == "taxtype")
           .valueCode,
-        worktype2: defaultOption.find((item: any) => item.id === "worktype2")
+        worktype2: defaultOption.find((item: any) => item.id == "worktype2")
           .valueCode,
-        worktype3: defaultOption.find((item: any) => item.id === "worktype3")
+        worktype3: defaultOption.find((item: any) => item.id == "worktype3")
           .valueCode,
       }));
 
@@ -381,7 +381,7 @@ const AC_B6080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -478,7 +478,7 @@ const AC_B6080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -569,7 +569,7 @@ const AC_B6080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -1310,7 +1310,7 @@ const AC_B6080W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell2
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell2
@@ -1628,7 +1628,7 @@ const AC_B6080W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell2
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell2
@@ -1960,7 +1960,7 @@ const AC_B6080W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell2
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell2
@@ -2278,7 +2278,7 @@ const AC_B6080W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell2
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell2

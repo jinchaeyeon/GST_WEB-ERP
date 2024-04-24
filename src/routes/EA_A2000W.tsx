@@ -120,24 +120,24 @@ const EA_A2000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_USERS")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_USERS")
       );
 
       const appynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_appyn")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_appyn")
       );
 
       const pgmgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_EA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_EA002")
       );
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
       const applineQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_EA004")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_EA004")
       );
       const appgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_EA001")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_EA001")
       );
 
       fetchQuery(userQueryStr, setPersonListData);
@@ -165,7 +165,7 @@ const EA_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -203,17 +203,17 @@ const EA_A2000W: React.FC = () => {
           ...prev,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
-          dptcd: defaultOption.find((item: any) => item.id === "dptcd")
+          dptcd: defaultOption.find((item: any) => item.id == "dptcd")
             .valueCode,
-          person: defaultOption.find((item: any) => item.id === "person")
+          person: defaultOption.find((item: any) => item.id == "person")
             .valueCode,
-          stddiv: defaultOption.find((item: any) => item.id === "stddiv")
+          stddiv: defaultOption.find((item: any) => item.id == "stddiv")
             .valueCode,
-          pgmgb: defaultOption.find((item: any) => item.id === "pgmgb")
+          pgmgb: defaultOption.find((item: any) => item.id == "pgmgb")
             .valueCode,
-          appyn: defaultOption.find((item: any) => item.id === "appyn")
+          appyn: defaultOption.find((item: any) => item.id == "appyn")
             .valueCode,
-          appgb: defaultOption.find((item: any) => item.id === "appgb")
+          appgb: defaultOption.find((item: any) => item.id == "appgb")
             .valueCode,
         }));
       }
@@ -446,7 +446,7 @@ const EA_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -537,7 +537,7 @@ const EA_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -601,7 +601,7 @@ const EA_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -842,7 +842,7 @@ const EA_A2000W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               chk:
@@ -961,7 +961,7 @@ const EA_A2000W: React.FC = () => {
       }
       dataArr.appnum.push(dataItem.appnum);
     } else {
-      if (dataItem.length === 0) {
+      if (dataItem.length == 0) {
         alert(findMessage(messagesData, "EA_A2000W_002"));
         return false;
       }
@@ -989,7 +989,7 @@ const EA_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setValues2(false);
       resetAllGrid();
       setFilters((prev) => ({
@@ -1283,13 +1283,13 @@ const EA_A2000W: React.FC = () => {
                   mainDataResult.data.map((row) => ({
                     ...row,
                     person: personListData.find(
-                      (item: any) => item.code === row.person
+                      (item: any) => item.code == row.person
                     )?.name,
                     appyn: appynListData.find(
-                      (item: any) => item.code === row.appyn
+                      (item: any) => item.code == row.appyn
                     )?.name,
                     pgmgb: pgmgbListData.find(
-                      (item: any) => item.sub_code === row.pgmgb
+                      (item: any) => item.sub_code == row.pgmgb
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
@@ -1355,11 +1355,11 @@ const EA_A2000W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : undefined
                           }
-                          locked={item.fixed === "None" ? false : true}
+                          locked={item.fixed == "None" ? false : true}
                         />
                       )
                   )}
@@ -1385,13 +1385,13 @@ const EA_A2000W: React.FC = () => {
                       mainDataResult2.data.map((row) => ({
                         ...row,
                         resno: personListData.find(
-                          (item: any) => item.code === row.resno
+                          (item: any) => item.code == row.resno
                         )?.name,
                         postcd: postcdListData.find(
-                          (item: any) => item.sub_code === row.postcd
+                          (item: any) => item.sub_code == row.postcd
                         )?.code_name,
                         appline: applineListData.find(
-                          (item: any) => item.sub_code === row.appline
+                          (item: any) => item.sub_code == row.appline
                         )?.code_name,
                         [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
                       })),
@@ -1438,13 +1438,13 @@ const EA_A2000W: React.FC = () => {
                               cell={
                                 dateField.includes(item.fieldName)
                                   ? DateCell
-                                  : item.fieldName === "appyn" ||
-                                    item.fieldName === "arbitragb"
+                                  : item.fieldName == "appyn" ||
+                                    item.fieldName == "arbitragb"
                                   ? CheckBoxReadOnlyCell
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell2
                                   : undefined
                               }
@@ -1471,13 +1471,13 @@ const EA_A2000W: React.FC = () => {
                       mainDataResult3.data.map((row) => ({
                         ...row,
                         resno: personListData.find(
-                          (item: any) => item.code === row.resno
+                          (item: any) => item.code == row.resno
                         )?.name,
                         postcd: postcdListData.find(
-                          (item: any) => item.sub_code === row.postcd
+                          (item: any) => item.sub_code == row.postcd
                         )?.code_name,
                         appgb: appgbListData.find(
-                          (item: any) => item.sub_code === row.appgb
+                          (item: any) => item.sub_code == row.appgb
                         )?.code_name,
                         [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
                       })),
@@ -1527,7 +1527,7 @@ const EA_A2000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell3
                                   : undefined
                               }
@@ -1569,9 +1569,9 @@ const EA_A2000W: React.FC = () => {
               margin: "5px 0",
             }}
           >
-            {filters2.pgmgb === "지출결의서" ||
-            filters2.pgmgb === "X" ||
-            filters2.pgmgb === "Z" ? (
+            {filters2.pgmgb == "지출결의서" ||
+            filters2.pgmgb == "X" ||
+            filters2.pgmgb == "Z" ? (
               <CashDisbursementVoucher
                 data={
                   mainDataResult.data.filter(
@@ -1587,7 +1587,7 @@ const EA_A2000W: React.FC = () => {
                       )[0]
                 }
               />
-            ) : filters2.pgmgb === "근태허가신청" || filters2.pgmgb === "W" ? (
+            ) : filters2.pgmgb == "근태허가신청" || filters2.pgmgb == "W" ? (
               <AbsenceRequest
                 data={
                   mainDataResult.data.filter(

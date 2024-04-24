@@ -90,13 +90,13 @@ const AC_B8030W: React.FC = () => {
         ...prev,
         fdate: setDefaultDate(customOptionData, "fdate"),
         tdate: setDefaultDate(customOptionData, "tdate"),
-        inoutdiv: defaultOption.find((item: any) => item.id === "inoutdiv")
+        inoutdiv: defaultOption.find((item: any) => item.id == "inoutdiv")
           .valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        taxtype1: defaultOption.find((item: any) => item.id === "taxtype1")
+        taxtype1: defaultOption.find((item: any) => item.id == "taxtype1")
           .valueCode,
-        taxtype2: defaultOption.find((item: any) => item.id === "taxtype2")
+        taxtype2: defaultOption.find((item: any) => item.id == "taxtype2")
           .valueCode,
       }));
     }
@@ -176,7 +176,7 @@ const AC_B8030W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult((prev) => {
@@ -490,7 +490,7 @@ const AC_B8030W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell2

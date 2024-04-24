@@ -66,7 +66,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
 
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
@@ -89,7 +89,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -145,7 +145,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       const rows2 = data.tables[1].Rows;

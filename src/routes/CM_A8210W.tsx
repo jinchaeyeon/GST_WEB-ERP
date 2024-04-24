@@ -90,24 +90,24 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "extra_field1"
+    field == "extra_field1"
       ? "L_BA901"
-      : field === "prodemp"
+      : field == "prodemp"
       ? "L_sysUserMaster_001"
-      : field === "prodmac"
+      : field == "prodmac"
       ? "L_fxcode"
       : "";
 
   const fieldName =
-    field === "prodemp"
+    field == "prodemp"
       ? "user_name"
       : field == "prodmac"
       ? "fxfull"
       : undefined;
   const filedValue =
-    field === "prodemp" ? "user_id" : field == "prodmac" ? "fxcode" : undefined;
+    field == "prodemp" ? "user_id" : field == "prodmac" ? "fxcode" : undefined;
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -235,9 +235,9 @@ const CM_A8210W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        fxcode: defaultOption.find((item: any) => item.id === "fxcode")
+        fxcode: defaultOption.find((item: any) => item.id == "fxcode")
           .valueCode,
-        useyn: defaultOption.find((item: any) => item.id === "useyn").valueCode,
+        useyn: defaultOption.find((item: any) => item.id == "useyn").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -270,7 +270,7 @@ const CM_A8210W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -390,7 +390,7 @@ const CM_A8210W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -519,7 +519,7 @@ const CM_A8210W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -769,7 +769,7 @@ const CM_A8210W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (!(field == "prodmac" && dataItem.rowstatus != "N")) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1062,12 +1062,12 @@ const CM_A8210W: React.FC = () => {
 
   const onSaveClick = async () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
-      return item.rowstatus === "N" && item.rowstatus !== undefined;
+      return item.rowstatus == "N" && item.rowstatus !== undefined;
     });
 
-    if (dataItem.length === 0) {
+    if (dataItem.length == 0) {
       const dataItem2 = mainDataResult.data.filter((item: any) => {
-        return item.rowstatus === "U" && item.rowstatus !== undefined;
+        return item.rowstatus == "U" && item.rowstatus !== undefined;
       });
 
       let dataArr: TdataArr = {
@@ -1289,7 +1289,7 @@ const CM_A8210W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
@@ -1630,7 +1630,7 @@ const CM_A8210W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell
                                 : NumberField.includes(item.fieldName)
                                 ? editNumberFooterCell
@@ -1878,7 +1878,7 @@ const CM_A8210W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell
                                 : NumberField.includes(item.fieldName)
                                 ? editNumberFooterCell

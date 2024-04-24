@@ -125,16 +125,16 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "paytype"
+    field == "paytype"
       ? "L_HU032"
-      : field === "payitemcd"
+      : field == "payitemcd"
       ? "L_HU130T"
-      : field === "dptcd"
+      : field == "dptcd"
       ? "L_dptcd_001"
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
   const textField =
     field == "payitemcd"
@@ -168,7 +168,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   const field = props.field ?? "";
   const bizComponentIdVal = field == "paydeductdiv" ? "R_HU038" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -262,7 +262,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     mainDataState,
     setMainDataState,
   } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
@@ -302,7 +302,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {userWindowVisible && (
@@ -336,7 +336,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
     mainDataState2,
     setMainDataState2,
   } = useContext(FormContext2);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
@@ -376,7 +376,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {userWindowVisible && (
@@ -410,7 +410,7 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
     mainDataState3,
     setMainDataState3,
   } = useContext(FormContext3);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
@@ -450,7 +450,7 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {userWindowVisible && (
@@ -484,7 +484,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
     mainDataState4,
     setMainDataState4,
   } = useContext(FormContext4);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
@@ -524,7 +524,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {userWindowVisible && (
@@ -558,7 +558,7 @@ const ColumnCommandCell5 = (props: GridCellProps) => {
     mainDataState5,
     setMainDataState5,
   } = useContext(FormContext5);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
@@ -598,7 +598,7 @@ const ColumnCommandCell5 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {userWindowVisible && (
@@ -655,13 +655,13 @@ const HU_A3080W: React.FC = () => {
         ...prev,
         payyrmm: setDefaultDate(customOptionData, "payyrmm"),
         paydeductdiv: defaultOption.find(
-          (item: any) => item.id === "paydeductdiv"
+          (item: any) => item.id == "paydeductdiv"
         ).valueCode,
-        payitemcd: defaultOption.find((item: any) => item.id === "payitemcd")
+        payitemcd: defaultOption.find((item: any) => item.id == "payitemcd")
           .valueCode,
-        paytype: defaultOption.find((item: any) => item.id === "paytype")
+        paytype: defaultOption.find((item: any) => item.id == "paytype")
           .valueCode,
-        rtrchk: defaultOption.find((item: any) => item.id === "rtrchk")
+        rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
           .valueCode,
         isSearch: true,
       }));
@@ -669,13 +669,13 @@ const HU_A3080W: React.FC = () => {
         ...prev,
         payyrmm: setDefaultDate(customOptionData, "payyrmm"),
         paydeductdiv: defaultOption.find(
-          (item: any) => item.id === "paydeductdiv"
+          (item: any) => item.id == "paydeductdiv"
         ).valueCode,
-        payitemcd: defaultOption.find((item: any) => item.id === "payitemcd")
+        payitemcd: defaultOption.find((item: any) => item.id == "payitemcd")
           .valueCode,
-        paytype: defaultOption.find((item: any) => item.id === "paytype")
+        paytype: defaultOption.find((item: any) => item.id == "paytype")
           .valueCode,
-        rtrchk: defaultOption.find((item: any) => item.id === "rtrchk")
+        rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
           .valueCode,
         isSearch: true,
       }));
@@ -683,13 +683,13 @@ const HU_A3080W: React.FC = () => {
         ...prev,
         payyrmm: setDefaultDate(customOptionData, "payyrmm"),
         paydeductdiv: defaultOption.find(
-          (item: any) => item.id === "paydeductdiv"
+          (item: any) => item.id == "paydeductdiv"
         ).valueCode,
-        payitemcd: defaultOption.find((item: any) => item.id === "payitemcd")
+        payitemcd: defaultOption.find((item: any) => item.id == "payitemcd")
           .valueCode,
-        paytype: defaultOption.find((item: any) => item.id === "paytype")
+        paytype: defaultOption.find((item: any) => item.id == "paytype")
           .valueCode,
-        rtrchk: defaultOption.find((item: any) => item.id === "rtrchk")
+        rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
           .valueCode,
         isSearch: true,
       }));
@@ -697,13 +697,13 @@ const HU_A3080W: React.FC = () => {
         ...prev,
         payyrmm: setDefaultDate(customOptionData, "payyrmm"),
         paydeductdiv: defaultOption.find(
-          (item: any) => item.id === "paydeductdiv"
+          (item: any) => item.id == "paydeductdiv"
         ).valueCode,
-        payitemcd: defaultOption.find((item: any) => item.id === "payitemcd")
+        payitemcd: defaultOption.find((item: any) => item.id == "payitemcd")
           .valueCode,
-        paytype: defaultOption.find((item: any) => item.id === "paytype")
+        paytype: defaultOption.find((item: any) => item.id == "paytype")
           .valueCode,
-        rtrchk: defaultOption.find((item: any) => item.id === "rtrchk")
+        rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
           .valueCode,
         isSearch: true,
       }));
@@ -711,13 +711,13 @@ const HU_A3080W: React.FC = () => {
         ...prev,
         payyrmm: setDefaultDate(customOptionData, "payyrmm"),
         paydeductdiv: defaultOption.find(
-          (item: any) => item.id === "paydeductdiv"
+          (item: any) => item.id == "paydeductdiv"
         ).valueCode,
-        payitemcd: defaultOption.find((item: any) => item.id === "payitemcd")
+        payitemcd: defaultOption.find((item: any) => item.id == "payitemcd")
           .valueCode,
-        paytype: defaultOption.find((item: any) => item.id === "paytype")
+        paytype: defaultOption.find((item: any) => item.id == "paytype")
           .valueCode,
-        rtrchk: defaultOption.find((item: any) => item.id === "rtrchk")
+        rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
           .valueCode,
         isSearch: true,
       }));
@@ -750,7 +750,7 @@ const HU_A3080W: React.FC = () => {
               prsnnm: prsnnm,
               prsnnum: prsnnum,
               dptcd: dptcd,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
             }
           : {
               ...item,
@@ -784,7 +784,7 @@ const HU_A3080W: React.FC = () => {
               prsnnm: prsnnm2,
               prsnnum: prsnnum2,
               dptcd: dptcd2,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
             }
           : {
               ...item,
@@ -817,7 +817,7 @@ const HU_A3080W: React.FC = () => {
               prsnnm: prsnnm3,
               prsnnum: prsnnum3,
               dptcd: dptcd3,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
             }
           : {
               ...item,
@@ -851,7 +851,7 @@ const HU_A3080W: React.FC = () => {
               prsnnm: prsnnm4,
               prsnnum: prsnnum4,
               dptcd: dptcd4,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
             }
           : {
               ...item,
@@ -885,7 +885,7 @@ const HU_A3080W: React.FC = () => {
               prsnnm: prsnnm5,
               prsnnum: prsnnum5,
               dptcd: dptcd5,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
             }
           : {
               ...item,
@@ -1361,7 +1361,7 @@ const HU_A3080W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -1452,7 +1452,7 @@ const HU_A3080W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -1543,7 +1543,7 @@ const HU_A3080W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -1634,7 +1634,7 @@ const HU_A3080W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -1725,7 +1725,7 @@ const HU_A3080W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -2329,7 +2329,7 @@ const HU_A3080W: React.FC = () => {
       valid == true
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2378,7 +2378,7 @@ const HU_A3080W: React.FC = () => {
       valid == true
     ) {
       const newData = mainDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY2] === dataItem[DATA_ITEM_KEY2]
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2428,7 +2428,7 @@ const HU_A3080W: React.FC = () => {
       valid == true
     ) {
       const newData = mainDataResult3.data.map((item) =>
-        item[DATA_ITEM_KEY3] === dataItem[DATA_ITEM_KEY3]
+        item[DATA_ITEM_KEY3] == dataItem[DATA_ITEM_KEY3]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2477,7 +2477,7 @@ const HU_A3080W: React.FC = () => {
       valid == true
     ) {
       const newData = mainDataResult4.data.map((item) =>
-        item[DATA_ITEM_KEY4] === dataItem[DATA_ITEM_KEY4]
+        item[DATA_ITEM_KEY4] == dataItem[DATA_ITEM_KEY4]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2527,7 +2527,7 @@ const HU_A3080W: React.FC = () => {
       valid == true
     ) {
       const newData = mainDataResult5.data.map((item) =>
-        item[DATA_ITEM_KEY5] === dataItem[DATA_ITEM_KEY5]
+        item[DATA_ITEM_KEY5] == dataItem[DATA_ITEM_KEY5]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -3288,7 +3288,7 @@ const HU_A3080W: React.FC = () => {
 
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -3308,7 +3308,7 @@ const HU_A3080W: React.FC = () => {
       return false;
     }
 
-    if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -3372,7 +3372,7 @@ const HU_A3080W: React.FC = () => {
 
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -3396,7 +3396,7 @@ const HU_A3080W: React.FC = () => {
       return false;
     }
 
-    if (dataItem.length === 0 && deletedMainRows2.length == 0) return false;
+    if (dataItem.length == 0 && deletedMainRows2.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -3466,7 +3466,7 @@ const HU_A3080W: React.FC = () => {
 
     const dataItem = mainDataResult3.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -3490,7 +3490,7 @@ const HU_A3080W: React.FC = () => {
       return false;
     }
 
-    if (dataItem.length === 0 && deletedMainRows3.length == 0) return false;
+    if (dataItem.length == 0 && deletedMainRows3.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -3560,7 +3560,7 @@ const HU_A3080W: React.FC = () => {
 
     const dataItem = mainDataResult4.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -3583,7 +3583,7 @@ const HU_A3080W: React.FC = () => {
       return false;
     }
 
-    if (dataItem.length === 0 && deletedMainRows4.length == 0) return false;
+    if (dataItem.length == 0 && deletedMainRows4.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -3648,7 +3648,7 @@ const HU_A3080W: React.FC = () => {
 
     const dataItem = mainDataResult5.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -3670,7 +3670,7 @@ const HU_A3080W: React.FC = () => {
       return false;
     }
 
-    if (dataItem.length === 0 && deletedMainRows5.length == 0) return false;
+    if (dataItem.length == 0 && deletedMainRows5.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -3796,7 +3796,7 @@ const HU_A3080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = [];
       deletedMainRows2 = [];
       deletedMainRows3 = [];
@@ -4263,7 +4263,7 @@ const HU_A3080W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -4339,7 +4339,7 @@ const HU_A3080W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -4656,7 +4656,7 @@ const HU_A3080W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? editNumberFooterCell
@@ -4811,7 +4811,7 @@ const HU_A3080W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell2
                                 : numberField.includes(item.fieldName)
                                 ? editNumberFooterCell2
@@ -4966,7 +4966,7 @@ const HU_A3080W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell3
                                 : numberField.includes(item.fieldName)
                                 ? editNumberFooterCell3
@@ -5114,7 +5114,7 @@ const HU_A3080W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell4
                                 : numberField.includes(item.fieldName)
                                 ? editNumberFooterCell4
@@ -5262,7 +5262,7 @@ const HU_A3080W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell5
                                 : numberField.includes(item.fieldName)
                                 ? editNumberFooterCell5

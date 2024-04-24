@@ -138,19 +138,19 @@ const AC_B5040W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const taxgubunQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC405")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC405")
       );
       const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC402")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC402")
       );
       const inoutdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC003")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC003")
       );
       const taxkindQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC403")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC403")
       );
       const balkindQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC404")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC404")
       );
       fetchQuery(taxdivQueryStr, setTaxdivListData);
       fetchQuery(inoutdivQueryStr, setInoutdivListData);
@@ -176,7 +176,7 @@ const AC_B5040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -193,7 +193,7 @@ const AC_B5040W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        inoutdiv: defaultOption.find((item: any) => item.id === "inoutdiv")
+        inoutdiv: defaultOption.find((item: any) => item.id == "inoutdiv")
           .valueCode,
       }));
     }
@@ -403,7 +403,7 @@ const AC_B5040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -1071,7 +1071,7 @@ const AC_B5040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
@@ -1316,7 +1316,7 @@ const AC_B5040W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell

@@ -189,7 +189,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     mainDataState,
     setMainDataState,
   } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -239,7 +239,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -272,7 +272,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
     detailDataState,
     setDetailDataState,
   } = useContext(FormContext2);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -322,7 +322,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -342,9 +342,9 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   UseBizComponent("L_QC002 ", setBizComponentData);
   //불량유형
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "badcd" ? "L_QC002" : "";
+  const bizComponentIdVal = field == "badcd" ? "L_QC002" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -466,13 +466,13 @@ const QC_A2000: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        proccd: defaultOption.find((item: any) => item.id === "proccd")
+        proccd: defaultOption.find((item: any) => item.id == "proccd")
           .valueCode,
-        gubun: defaultOption.find((item: any) => item.id === "gubun").valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
+        gubun: defaultOption.find((item: any) => item.id == "gubun").valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        qcdiv: defaultOption.find((item: any) => item.id === "qcdiv").valueCode,
+        qcdiv: defaultOption.find((item: any) => item.id == "qcdiv").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -495,11 +495,11 @@ const QC_A2000: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(proccdQueryStr, setProccdListData);
@@ -523,7 +523,7 @@ const QC_A2000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -690,7 +690,7 @@ const QC_A2000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -721,7 +721,7 @@ const QC_A2000: React.FC = () => {
       });
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) =>
@@ -784,7 +784,7 @@ const QC_A2000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -817,10 +817,10 @@ const QC_A2000: React.FC = () => {
       if (totalRowCnt > 0) {
         // find_row_value 행 선택, find_row_value 없는 경우 첫번째 행 선택
         const selectedRow =
-          detailFilters.find_row_value === ""
+          detailFilters.find_row_value == ""
             ? rows[0]
             : rows.find(
-                (row: any) => row.qcnum === detailFilters.find_row_value
+                (row: any) => row.qcnum == detailFilters.find_row_value
               );
         if (selectedRow != undefined) {
           setDetailSelectedState({ [selectedRow[DATA_ITEM_KEY]]: true });
@@ -891,7 +891,7 @@ const QC_A2000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -936,11 +936,11 @@ const QC_A2000: React.FC = () => {
       if (totalRowCnt > 0) {
         // find_row_value 행 선택, find_row_value 없는 경우 첫번째 행 선택
         const selectedRow =
-          detailFilters2.find_row_value === ""
+          detailFilters2.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) =>
-                  datas.qcnum + "|" + row.badnum + "-" + row.badseq ===
+                  datas.qcnum + "|" + row.badnum + "-" + row.badseq ==
                   detailFilters2.find_row_value
               );
         if (selectedRow != undefined) {
@@ -1533,7 +1533,7 @@ const QC_A2000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (ParaData.workType == "N") {
         const isLastDataDeleted =
           mainDataResult.data.length == 1 && filters.pgNum > 0;
@@ -1777,7 +1777,7 @@ const QC_A2000: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "files" || field == "remark") {
       const newData = detailDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY2] === dataItem[DATA_ITEM_KEY2]
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1806,7 +1806,7 @@ const QC_A2000: React.FC = () => {
   const enterEdit2 = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = detailDataResult2.data.map((item) =>
-        item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
+        item[SUB_DATA_ITEM_KEY] == dataItem[SUB_DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1840,7 +1840,7 @@ const QC_A2000: React.FC = () => {
       field == "chk"
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               chk:
@@ -2325,7 +2325,7 @@ const QC_A2000: React.FC = () => {
             ...item,
             attdatnum: attdatnum,
             files: files,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : { ...item }
     );
@@ -2356,7 +2356,7 @@ const QC_A2000: React.FC = () => {
             ...item,
             attdatnum: attdatnum2,
             files: files2,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : { ...item }
     );
@@ -2374,7 +2374,7 @@ const QC_A2000: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values,
         [EDIT_FIELD]: props.field,
       }));
@@ -2613,7 +2613,7 @@ const QC_A2000: React.FC = () => {
                       mainDataResult.data.map((row) => ({
                         ...row,
                         proccd: proccdListData.find(
-                          (items: any) => items.sub_code === row.proccd
+                          (items: any) => items.sub_code == row.proccd
                         )?.code_name,
                         rowstatus:
                           row.rowstatus == null ||
@@ -2723,10 +2723,10 @@ const QC_A2000: React.FC = () => {
                       detailDataResult.data.map((row) => ({
                         ...row,
                         proccd: proccdListData.find(
-                          (items: any) => items.sub_code === row.proccd
+                          (items: any) => items.sub_code == row.proccd
                         )?.code_name,
                         person: personListData.find(
-                          (item: any) => item.user_id === row.person
+                          (item: any) => item.user_id == row.person
                         )?.user_name,
                         rowstatus:
                           row.rowstatus == null ||
@@ -2790,7 +2790,7 @@ const QC_A2000: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? detailTotalFooterCell
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell2
@@ -2900,7 +2900,7 @@ const QC_A2000: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? detailTotalFooterCell2
                                 : numberField.includes(item.fieldName)
                                 ? editNumberFooterCell

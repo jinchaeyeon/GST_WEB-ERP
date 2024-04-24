@@ -65,7 +65,7 @@ const PR_A3000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
 
       fetchQuery(proccdQueryStr, setProccdListData);
@@ -88,7 +88,7 @@ const PR_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -197,7 +197,7 @@ const PR_A3000W: React.FC = () => {
     parameters: {
       "@p_work_type": filters.work_type,
       "@p_orgdiv": sessionItem.find(
-        (sessionItem) => sessionItem.code === "orgdiv"
+        (sessionItem) => sessionItem.code == "orgdiv"
       )?.value,
       "@p_plankey": filters.plankey,
       "@p_finyn": filters.finyn,
@@ -222,10 +222,10 @@ const PR_A3000W: React.FC = () => {
     parameters: {
       "@p_work_type": filtersSaved.work_type,
       "@p_orgdiv": sessionItem.find(
-        (sessionItem) => sessionItem.code === "orgdiv"
+        (sessionItem) => sessionItem.code == "orgdiv"
       )?.value,
       "@p_location": sessionItem.find(
-        (sessionItem) => sessionItem.code === "location"
+        (sessionItem) => sessionItem.code == "location"
       )?.value,
       "@p_prodemp": filtersSaved.prodemp,
       "@p_prodmac": filtersSaved.prodmac,
@@ -249,7 +249,7 @@ const PR_A3000W: React.FC = () => {
     parameters: {
       "@p_work_type": "MASTER",
       "@p_orgdiv": sessionItem.find(
-        (sessionItem) => sessionItem.code === "orgdiv"
+        (sessionItem) => sessionItem.code == "orgdiv"
       )?.value,
       "@p_plankey": filters.plankey,
       "@p_finyn": filters.finyn,
@@ -273,7 +273,7 @@ const PR_A3000W: React.FC = () => {
     setLoading(true);
     const queryStr =
       "SELECT COUNT(1) as cnt, max(strtime) strtime FROM PR230T WHERE orgdiv = '" +
-      sessionItem.find((sessionItem) => sessionItem.code === "orgdiv")?.value +
+      sessionItem.find((sessionItem) => sessionItem.code == "orgdiv")?.value +
       "' AND prodmac = '" +
       filtersSaved.prodmac +
       "' AND isnull(endtime, '') = ''";
@@ -291,7 +291,7 @@ const PR_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const cnt = data.tables[0].Rows[0].cnt;
       const strtime = data.tables[0].Rows[0].strtime;
 
@@ -312,7 +312,7 @@ const PR_A3000W: React.FC = () => {
   // 데이터 조회
   const fetchMain = async () => {
     //if (!permissions?.view) return;
-    if (filters.plankey === "") return;
+    if (filters.plankey == "") return;
     let data: any;
     setLoading(true);
     try {
@@ -321,14 +321,14 @@ const PR_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
         idx: idx,
       }));
 
-      if (totalRowCnt === 1) {
+      if (totalRowCnt == 1) {
         const { itemnm, proccd, qty, prodqty, badqty } = rows[0];
         setMainDataResult({ itemnm, proccd, qty, prodqty });
       }
@@ -353,7 +353,7 @@ const PR_A3000W: React.FC = () => {
 
     setFiltersSaved((prev) => ({ ...prev, work_type: "" }));
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -390,15 +390,15 @@ const PR_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (
-        filtersSaved.work_type === "START" ||
-        filtersSaved.work_type === "END"
+        filtersSaved.work_type == "START" ||
+        filtersSaved.work_type == "END"
       ) {
         // 생산작업 시
         setFiltersSaved((prev) => ({ ...prev, work_type: "" }));
 
-        if (startOrEnd === "start") {
+        if (startOrEnd == "start") {
           // 시작 => 시작 정보 조회
           fetchMaster();
           fetchStopData();
@@ -437,7 +437,7 @@ const PR_A3000W: React.FC = () => {
   }, [filters, permissions]);
 
   useEffect(() => {
-    if (filtersSaved.work_type === "ValueChanged") {
+    if (filtersSaved.work_type == "ValueChanged") {
       // 작업자, 설비 데이터 변경 시
       fetchMaster();
       fetchStopData();
@@ -470,15 +470,15 @@ const PR_A3000W: React.FC = () => {
   };
   const onClickWork = () => {
     //검증 처리
-    if (filters.plankey === "") {
+    if (filters.plankey == "") {
       alert("작업지시번호를 확인해주세요.");
       return;
     }
 
     if (
-      startOrEnd === "end" &&
-      filtersSaved.qty === 0 &&
-      filtersSaved.badqty === 0
+      startOrEnd == "end" &&
+      filtersSaved.qty == 0 &&
+      filtersSaved.badqty == 0
     ) {
       alert("수량을 입력하세요.");
       return;
@@ -490,9 +490,9 @@ const PR_A3000W: React.FC = () => {
     }));
   };
   const onClickStop = () => {
-    if (stopStartOrEnd === "start") {
+    if (stopStartOrEnd == "start") {
       //비가동시작
-      if (filtersSaved.prodmac === "") {
+      if (filtersSaved.prodmac == "") {
         alert("설비를 선택해주세요.");
         return;
       }
@@ -569,7 +569,7 @@ const PR_A3000W: React.FC = () => {
               <td>
                 {proccdListData
                   ? proccdListData.find(
-                      (item: any) => item.sub_code === mainDataResult.proccd
+                      (item: any) => item.sub_code == mainDataResult.proccd
                     )?.code_name
                   : ""}
               </td>
@@ -592,7 +592,7 @@ const PR_A3000W: React.FC = () => {
             <tr>
               <th>생산시작시간</th>
               <td colSpan={3}>
-                {startOrEnd === "end"
+                {startOrEnd == "end"
                   ? convertDateToStrWithTime2(
                       new Date(masterDataResult.strtime)
                     ) +
@@ -620,7 +620,7 @@ const PR_A3000W: React.FC = () => {
                 />
               </td>
             </tr>
-            {stopStartOrEnd === "end" && stopStartTime ? (
+            {stopStartOrEnd == "end" && stopStartTime ? (
               <tr>
                 <th>비가동시작시간</th>
                 <td colSpan={3}>
@@ -639,14 +639,14 @@ const PR_A3000W: React.FC = () => {
           <>
             <Button
               onClick={onClickWork}
-              icon={startOrEnd === "start" ? "play-sm" : "stop-sm"}
+              icon={startOrEnd == "start" ? "play-sm" : "stop-sm"}
               themeColor={"primary"}
               disabled={
-                permissions.save && stopStartOrEnd === "start" ? false : true
+                permissions.save && stopStartOrEnd == "start" ? false : true
               }
               className="iot-btn green"
             >
-              {startOrEnd === "start" ? "시작" : "종료"}
+              {startOrEnd == "start" ? "시작" : "종료"}
             </Button>
             <Button
               onClick={onClickDefect}
@@ -654,8 +654,8 @@ const PR_A3000W: React.FC = () => {
               themeColor={"primary"}
               disabled={
                 permissions.save &&
-                startOrEnd === "end" &&
-                stopStartOrEnd === "start"
+                startOrEnd == "end" &&
+                stopStartOrEnd == "start"
                   ? false
                   : true
               }
@@ -670,7 +670,7 @@ const PR_A3000W: React.FC = () => {
               disabled={permissions.save ? false : true}
               className="iot-btn gray"
             >
-              {stopStartOrEnd === "start" ? "비가동입력" : "비가동종료"}
+              {stopStartOrEnd == "start" ? "비가동입력" : "비가동종료"}
             </Button>
           </>
         )}

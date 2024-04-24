@@ -99,16 +99,16 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "colorID"
+    field == "colorID"
       ? "L_APPOINTMENT_COLOR"
-      : field === "kind1"
+      : field == "kind1"
       ? "L_BA400"
-      : field === "custcd"
+      : field == "custcd"
       ? "L_CUST"
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
   if (bizComponentIdVal == "L_CUST") {
     return bizComponent ? (
@@ -214,7 +214,7 @@ const CM_A1600W_603: React.FC = () => {
 
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("CM_A1600W", setMessagesData);
+  UseMessages("CM_A1600W_603", setMessagesData);
   const [osstate, setOSState] = useRecoilState(OSState);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -234,7 +234,7 @@ const CM_A1600W_603: React.FC = () => {
     if (bizComponentData !== null) {
       const colorQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_APPOINTMENT_COLOR"
+          (item: any) => item.bizComponentId == "L_APPOINTMENT_COLOR"
         )
       );
 
@@ -258,7 +258,7 @@ const CM_A1600W_603: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -470,7 +470,7 @@ const CM_A1600W_603: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => ({
         ...row,
@@ -555,7 +555,7 @@ const CM_A1600W_603: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => ({
         ...row,
@@ -642,7 +642,7 @@ const CM_A1600W_603: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let rows = data.tables[0].Rows.map((row: any) => {
         const start = new Date(row.strtime);
         const end = new Date(row.endtime);
@@ -655,7 +655,7 @@ const CM_A1600W_603: React.FC = () => {
           description: row.contents,
           start: start,
           end: end,
-          isAllDay: timeDiff === 8.64e7 ? true : false, // 24시간 차이 시 all day
+          isAllDay: timeDiff == 8.64e7 ? true : false, // 24시간 차이 시 all day
           colorID: colorData.find((item) => item.sub_code == row.colorID),
         };
       });
@@ -704,7 +704,7 @@ const CM_A1600W_603: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let rows = data.tables[0].Rows.map((row: any) => {
         const start = new Date(row.strtime);
         const end = new Date(row.endtime);
@@ -717,7 +717,7 @@ const CM_A1600W_603: React.FC = () => {
           description: row.contents,
           start: start,
           end: end,
-          isAllDay: timeDiff === 8.64e7 ? true : false, // 24시간 차이 시 all day
+          isAllDay: timeDiff == 8.64e7 ? true : false, // 24시간 차이 시 all day
           colorID: colorData.find((item) => item.sub_code == row.colorID),
         };
       });
@@ -883,7 +883,7 @@ const CM_A1600W_603: React.FC = () => {
     deleted,
   }: SchedulerDataChangeEvent) => {
     if (schedulerFilter.person !== userId) {
-      alert(findMessage(messagesData, "CM_A1600W_001"));
+      alert(findMessage(messagesData, "CM_A1600W_603_001"));
       return false;
     }
 
@@ -1090,7 +1090,7 @@ const CM_A1600W_603: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       ok = true;
       setSchedulerFilter((prev) => ({
         ...prev,
@@ -1138,31 +1138,31 @@ const CM_A1600W_603: React.FC = () => {
       setSchedulerFilter((prev) => ({
         ...prev,
         person:
-          defaultOption.find((item: any) => item.id === "person").useSession ==
+          defaultOption.find((item: any) => item.id == "person").useSession ==
           true
-            ? defaultOption.find((item: any) => item.id === "person")
+            ? defaultOption.find((item: any) => item.id == "person")
                 .sessionItem == "UserId"
               ? sessionUserId
-              : defaultOption.find((item: any) => item.id === "person")
+              : defaultOption.find((item: any) => item.id == "person")
                   .valueCode
-            : defaultOption.find((item: any) => item.id === "person").valueCode,
-        rdoplandiv: defaultOption.find((item: any) => item.id === "rdoplandiv")
+            : defaultOption.find((item: any) => item.id == "person").valueCode,
+        rdoplandiv: defaultOption.find((item: any) => item.id == "rdoplandiv")
           .valueCode,
         isSearch: true,
       }));
       setSchedulerFilter2((prev) => ({
         ...prev,
         person:
-          defaultOption.find((item: any) => item.id === "person").useSession ==
+          defaultOption.find((item: any) => item.id == "person").useSession ==
           true
-            ? defaultOption.find((item: any) => item.id === "person")
+            ? defaultOption.find((item: any) => item.id == "person")
                 .sessionItem == "UserId"
               ? sessionUserId
-              : defaultOption.find((item: any) => item.id === "person")
+              : defaultOption.find((item: any) => item.id == "person")
                   .valueCode
-            : defaultOption.find((item: any) => item.id === "person").valueCode,
+            : defaultOption.find((item: any) => item.id == "person").valueCode,
         rdoplandiv2: defaultOption.find(
-          (item: any) => item.id === "rdoplandiv2"
+          (item: any) => item.id == "rdoplandiv2"
         ).valueCode,
         isSearch: true,
       }));
@@ -1171,7 +1171,7 @@ const CM_A1600W_603: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        rdofinyn: defaultOption.find((item: any) => item.id === "rdofinyn")
+        rdofinyn: defaultOption.find((item: any) => item.id == "rdofinyn")
           .valueCode,
         isSearch: true,
       }));
@@ -1179,7 +1179,7 @@ const CM_A1600W_603: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        rdofinyn: defaultOption.find((item: any) => item.id === "rdofinyn")
+        rdofinyn: defaultOption.find((item: any) => item.id == "rdofinyn")
           .valueCode,
         isSearch: true,
       }));
@@ -1207,7 +1207,7 @@ const CM_A1600W_603: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = todoDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1308,7 +1308,7 @@ const CM_A1600W_603: React.FC = () => {
   const enterEdit2 = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = userDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY2] === dataItem[DATA_ITEM_KEY2]
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1416,9 +1416,9 @@ const CM_A1600W_603: React.FC = () => {
       Number(Object.getOwnPropertyNames(todoSelectedState)[0]) ??
       //Number(planDataResult.data[0].idx) ??
       null;
-    if (idx === null) return false;
+    if (idx == null) return false;
     const selectedRowData = todoDataResult.data.find(
-      (item) => item[DATA_ITEM_KEY] === idx
+      (item) => item[DATA_ITEM_KEY] == idx
     );
 
     const newDataItem = {
@@ -1555,12 +1555,12 @@ const CM_A1600W_603: React.FC = () => {
     const dataItem: { [name: string]: any } = todoDataResult.data.filter(
       (item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       }
     );
-    if (dataItem.length === 0 && deletedTodoRows.length === 0) {
+    if (dataItem.length == 0 && deletedTodoRows.length == 0) {
       ok = true;
       return false;
     }
@@ -1570,11 +1570,11 @@ const CM_A1600W_603: React.FC = () => {
     try {
       dataItem.forEach((item: any) => {
         if (!item.strtime) {
-          throw new Error(findMessage(messagesData, "CM_A1600W_003"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_002"));
         }
 
         if (!item.contents) {
-          throw new Error(findMessage(messagesData, "CM_A1600W_004"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_003"));
         }
       });
     } catch (e) {
@@ -1636,7 +1636,7 @@ const CM_A1600W_603: React.FC = () => {
           )
         )
       );
-      dataArr.finyn_s.push(finyn === "Y" || finyn === true ? "Y" : "N");
+      dataArr.finyn_s.push(finyn == "Y" || finyn == true ? "Y" : "N");
       dataArr.kind1_s.push(kind1);
       dataArr.custcd_s.push(custcd);
       dataArr.title_s.push(title);
@@ -1793,7 +1793,7 @@ const CM_A1600W_603: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       ok = true;
       setTodoFilter((prev) => ({
         ...prev,
@@ -1848,20 +1848,20 @@ const CM_A1600W_603: React.FC = () => {
           convertDateToStr(todoFilter.frdt).substring(6, 8) < "01" ||
           convertDateToStr(todoFilter.frdt).substring(6, 8).length != 2
         ) {
-          throw findMessage(messagesData, "CM_A1600W_003");
+          throw findMessage(messagesData, "CM_A1600W_603_002");
         } else if (
           convertDateToStr(todoFilter.todt).substring(0, 4) < "1997" ||
           convertDateToStr(todoFilter.todt).substring(6, 8) > "31" ||
           convertDateToStr(todoFilter.todt).substring(6, 8) < "01" ||
           convertDateToStr(todoFilter.todt).substring(6, 8).length != 2
         ) {
-          throw findMessage(messagesData, "CM_A1600W_003");
+          throw findMessage(messagesData, "CM_A1600W_603_002");
         } else if (
           schedulerFilter.person == "" ||
           schedulerFilter.person == undefined ||
           schedulerFilter.person == null
         ) {
-          throw findMessage(messagesData, "CM_A1600W_005");
+          throw findMessage(messagesData, "CM_A1600W_603_004");
         } else {
           setTodoFilter((prev) => ({
             ...prev,
@@ -1888,20 +1888,20 @@ const CM_A1600W_603: React.FC = () => {
           convertDateToStr(userFilter.frdt).substring(6, 8) < "01" ||
           convertDateToStr(userFilter.frdt).substring(6, 8).length != 2
         ) {
-          throw findMessage(messagesData, "CM_A1600W_003");
+          throw findMessage(messagesData, "CM_A1600W_603_002");
         } else if (
           convertDateToStr(userFilter.todt).substring(0, 4) < "1997" ||
           convertDateToStr(userFilter.todt).substring(6, 8) > "31" ||
           convertDateToStr(userFilter.todt).substring(6, 8) < "01" ||
           convertDateToStr(userFilter.todt).substring(6, 8).length != 2
         ) {
-          throw findMessage(messagesData, "CM_A1600W_003");
+          throw findMessage(messagesData, "CM_A1600W_603_002");
         } else if (
           userFilter.person == "" ||
           userFilter.person == undefined ||
           userFilter.person == null
         ) {
-          throw findMessage(messagesData, "CM_A1600W_005");
+          throw findMessage(messagesData, "CM_A1600W_603_004");
         } else {
           setUserFilter((prev) => ({
             ...prev,
@@ -1997,13 +1997,13 @@ const CM_A1600W_603: React.FC = () => {
   const onSaveClick2 = () => {
     const dataItem = userDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
     if (userFilter.person !== userId) {
-      alert(findMessage(messagesData, "CM_A1600W_001"));
+      alert(findMessage(messagesData, "CM_A1600W_603_001"));
       ok = false;
       return false;
     }
@@ -2012,34 +2012,34 @@ const CM_A1600W_603: React.FC = () => {
     try {
       dataItem.forEach((item: any) => {
         if (item.title == "") {
-          throw new Error(findMessage(messagesData, "CM_A1600W_006"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_005"));
           valid = false;
         }
         if (item.strtime == "") {
-          throw new Error(findMessage(messagesData, "CM_A1600W_003"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_002"));
           valid = false;
         }
         if (item.endtime == "") {
-          throw new Error(findMessage(messagesData, "CM_A1600W_003"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_002"));
           valid = false;
         }
         if (item.strhh < 0 || item.strhh > 23) {
-          throw new Error(findMessage(messagesData, "CM_A1600W_007"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_006"));
           valid = false;
         }
 
         if (item.strmm < 0 || item.strmm > 59) {
-          throw new Error(findMessage(messagesData, "CM_A1600W_007"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_006"));
           valid = false;
         }
 
         if (item.endhh < 0 || item.endhh > 23) {
-          throw new Error(findMessage(messagesData, "CM_A1600W_007"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_006"));
           valid = false;
         }
 
         if (item.endmm < 0 || item.endmm > 59) {
-          throw new Error(findMessage(messagesData, "CM_A1600W_007"));
+          throw new Error(findMessage(messagesData, "CM_A1600W_603_006"));
           valid = false;
         }
       });
@@ -2050,7 +2050,7 @@ const CM_A1600W_603: React.FC = () => {
     }
 
     if (
-      (dataItem.length === 0 && deletedTodoRows2.length === 0) ||
+      (dataItem.length == 0 && deletedTodoRows2.length == 0) ||
       valid == false
     ) {
       ok = true;
@@ -2449,7 +2449,7 @@ const CM_A1600W_603: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? todoTotalFooterCell
                                 : undefined
                             }
@@ -2788,7 +2788,7 @@ const CM_A1600W_603: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? userTotalFooterCell
                               : undefined
                           }
