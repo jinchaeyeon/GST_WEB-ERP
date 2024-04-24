@@ -129,7 +129,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
     </>
@@ -163,14 +163,14 @@ const AC_A1080W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
           .valueCode,
-        closeyn: defaultOption.find((item: any) => item.id === "closeyn")
+        closeyn: defaultOption.find((item: any) => item.id == "closeyn")
           .valueCode,
       }));
     }
@@ -189,11 +189,11 @@ const AC_A1080W: React.FC = () => {
     if (bizComponentData.length > 0) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const inputpathQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC006")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC006")
       );
       fetchQueryData(userQueryStr, setUserListData);
       fetchQueryData(inputpathQueryStr, setInputPathListData);
@@ -217,7 +217,7 @@ const AC_A1080W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -351,7 +351,7 @@ const AC_A1080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -386,7 +386,7 @@ const AC_A1080W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.ackey == filters.find_row_value);
         if (selectedRow != undefined) {
@@ -597,11 +597,11 @@ const AC_A1080W: React.FC = () => {
   const onSaveClick = async (e: any) => {
     const dataItem = mainDataResult.data.filter((item: any, index: number) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
       actdt_s: [],
@@ -666,7 +666,7 @@ const AC_A1080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setFilters((prev) => ({
         ...prev,
         isSearch: true,

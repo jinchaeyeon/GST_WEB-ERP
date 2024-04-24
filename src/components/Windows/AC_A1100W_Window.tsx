@@ -151,7 +151,7 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (worktype === "U" && data != undefined) {
+    if (worktype == "U" && data != undefined) {
       setInformation((prev) => ({
         ...prev,
         acseq1: data.acseq1,
@@ -281,7 +281,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -610,7 +610,7 @@ const CopyWindow = ({
   const selectData = (selectedData: any) => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -1059,7 +1059,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setData(data.returnString);
       setFilters((prev) => ({
         ...prev,
@@ -1157,7 +1157,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={worktype === "N" ? "수입신고생성" : "수입신고정보"}
+        title={worktype == "N" ? "수입신고생성" : "수입신고정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}

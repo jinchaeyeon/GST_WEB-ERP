@@ -133,7 +133,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     mainDataState,
     setMainDataState,
   } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -182,7 +182,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {custWindowVisible && (
@@ -201,14 +201,14 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   UseBizComponent("L_dptcd_001", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "dptcd" ? "L_dptcd_001" : "";
+  const bizComponentIdVal = field == "dptcd" ? "L_dptcd_001" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
-  const textField = field === "dptcd" ? "dptnm" : "code_name";
-  const valueField = field === "dptcd" ? "dptcd" : "sub_code";
+  const textField = field == "dptcd" ? "dptnm" : "code_name";
+  const valueField = field == "dptcd" ? "dptcd" : "sub_code";
 
   return bizComponent ? (
     <ComboBoxCell
@@ -324,7 +324,7 @@ const KendoWindow = ({
       item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             [name]: value,
             [EDIT_FIELD]: name,
           }
@@ -352,7 +352,7 @@ const KendoWindow = ({
       item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             [e.name]: e.name == "itemcd" ? e.values.stdrmkcd : e.value,
             itemnm: e.name == "itemcd" ? e.values.stdrmknm1 : item.itemnm,
             acntcd: e.name == "itemcd" ? e.values.acntcd : item.acntcd,
@@ -385,7 +385,7 @@ const KendoWindow = ({
       item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             [name]: value,
             taxdiv:
               name == "usekind"
@@ -469,7 +469,7 @@ const KendoWindow = ({
       item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             custcd: data.custcd,
             custnm: data.custnm,
           }
@@ -496,7 +496,7 @@ const KendoWindow = ({
       item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             attdatnum: data.attdatnum,
             files:
               data.original_name +
@@ -531,7 +531,7 @@ const KendoWindow = ({
       item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             itemcd: data.stdrmkcd,
             itemnm: data.stdrmknm1,
             acntcd: data.acntcd,
@@ -739,7 +739,7 @@ const KendoWindow = ({
             ...item,
             rcvcustcd: custcd,
             rcvcustnm: custnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -763,7 +763,7 @@ const KendoWindow = ({
   }, [filters]);
 
   useEffect(() => {
-    if ((worktype === "U" || worktype === "C") && para != undefined) {
+    if ((worktype == "U" || worktype == "C") && para != undefined) {
       setFilters((prev) => ({
         ...prev,
         expenseseq1: para.expenseseq1,
@@ -819,7 +819,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
@@ -955,7 +955,7 @@ const KendoWindow = ({
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -998,7 +998,7 @@ const KendoWindow = ({
       } else {
         const dataItem = mainDataResult.data.filter((item: any) => {
           return (
-            (item.rowstatus === "N" || item.rowstatus === "U") &&
+            (item.rowstatus == "N" || item.rowstatus == "U") &&
             item.rowstatus !== undefined
           );
         });
@@ -1255,7 +1255,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setData(data.returnString);
       setFilters((prev) => ({
         ...prev,
@@ -1315,9 +1315,9 @@ const KendoWindow = ({
   return (
     <Window
       title={
-        worktype === "N"
+        worktype == "N"
           ? "지출결의서생성"
-          : worktype === "C"
+          : worktype == "C"
           ? "지출결의서복사"
           : "지출결의서정보"
       }
@@ -1332,8 +1332,8 @@ const KendoWindow = ({
         <FormBox>
           <tbody>
             <tr>
-              <th className={worktype === "N" ? "hide-on-mobile" : ""}>결의서 No</th>
-              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>결의서 No</th>
+              <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="expenseno"
                   type="text"
@@ -1341,8 +1341,8 @@ const KendoWindow = ({
                   className="readonly"
                 />
               </td>
-              <th className={worktype === "N" ? "hide-on-mobile" : ""}>신청일자</th>
-              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>신청일자</th>
+              <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 <DatePicker
                   name="expensedt"
                   value={filters.expensedt}
@@ -1395,8 +1395,8 @@ const KendoWindow = ({
                   />
                 </ButtonInInput>
               </td>
-              <th className={worktype === "N" ? "hide-on-mobile" : ""}>요청자 성명</th>
-              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>요청자 성명</th>
+              <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="prsnnm"
                   type="text"
@@ -1404,8 +1404,8 @@ const KendoWindow = ({
                   className="readonly"
                 />
               </td>
-              <th className={worktype === "N" ? "hide-on-mobile" : ""}>요청자 부서</th>
-              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>요청자 부서</th>
+              <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="dptnm"
                   type="text"
@@ -1592,8 +1592,8 @@ const KendoWindow = ({
                   />
                 </ButtonInInput>
               </td>
-              <th className={worktype === "N" ? "hide-on-mobile" : ""}>고객사명</th>
-              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>고객사명</th>
+              <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="custnm"
                   type="text"
@@ -1768,8 +1768,8 @@ const KendoWindow = ({
                   />
                 )}
               </td>
-              <th className={worktype === "N" ? "hide-on-mobile" : ""}>계정과목코드</th>
-              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>계정과목코드</th>
+              <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="acntcd"
                   type="text"
@@ -1788,8 +1788,8 @@ const KendoWindow = ({
                   className="readonly"
                 />
               </td>
-              <th className={worktype === "N" ? "hide-on-mobile" : ""}>계정과목명</th>
-              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>계정과목명</th>
+              <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 <Input
                   name="acntnm"
                   type="text"
@@ -1834,8 +1834,8 @@ const KendoWindow = ({
                   />
                 )}
               </td>
-              <th className={worktype === "N" ? "hide-on-mobile" : ""}>카드관련</th>
-              <td className={worktype === "N" ? "hide-on-mobile" : ""}>
+              <th className={worktype == "N" ? "hide-on-mobile" : ""}>카드관련</th>
+              <td className={worktype == "N" ? "hide-on-mobile" : ""}>
                 {bizComponentData !== null && (
                   <BizComponentComboBox
                     name="cardcd"

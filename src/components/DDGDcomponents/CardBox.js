@@ -26,7 +26,7 @@ const CardBox = (props) => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const classQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item) => item.bizComponentId === "L_BA310")
+        bizComponentData.find((item) => item.bizComponentId == "L_BA310")
       );
       fetchQuery(classQueryStr, setClassListData);
     }
@@ -48,7 +48,7 @@ const CardBox = (props) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }

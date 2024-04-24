@@ -12,7 +12,7 @@ const MonthDateCell = (props: GridCellProps) => {
     onChange,
     className = "",
   } = props;
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
 
   if (className.includes("read-only")) {
     isInEdit = false;
@@ -39,7 +39,7 @@ const MonthDateCell = (props: GridCellProps) => {
         dataItem: dataItem,
         field: "rowstatus",
         syntheticEvent: e.syntheticEvent,
-        value: dataItem["rowstatus"] === "N" ? "N" : "U",
+        value: dataItem["rowstatus"] == "N" ? "N" : "U",
       });
     }
   };
@@ -54,20 +54,20 @@ const MonthDateCell = (props: GridCellProps) => {
         <DatePicker
           name={field}
           defaultValue={
-            typeof value === "string" && value !== "" ? new Date() : value
+            typeof value == "string" && value !== "" ? new Date() : value
           }
           format={"yyyy-MM"}
           onChange={onDateChange}
           calendar={MonthCalendar}
           placeholder=""
         />
-      ) : typeof value === "object" ? (
+      ) : typeof value == "object" ? (
         convertDateToStr(value) == "99991231" ? (
           ""
         ) : (
           dateformat5(convertDateToStr(value))
         )
-      ) : typeof value === "string" && value !== "" ? (
+      ) : typeof value == "string" && value !== "" ? (
         dateformat5(value)
       ) : (
         ""
@@ -76,8 +76,8 @@ const MonthDateCell = (props: GridCellProps) => {
   );
 
   //return defaultRendering;
-  //return typeof value === "string"
-  return !(value instanceof Date) || render === undefined
+  //return typeof value == "string"
+  return !(value instanceof Date) || render == undefined
     ? defaultRendering
     : render?.call(undefined, defaultRendering, props);
 };

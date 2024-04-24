@@ -11,7 +11,7 @@ const EncryptedCell = (props: GridCellProps) => {
     onChange,
   } = props;
 
-  const isInEdit = field === dataItem.inEdit;
+  const isInEdit = field == dataItem.inEdit;
   const value = dataItem[field];
 
   const handleChange = (e: InputChangeEvent) => {
@@ -38,7 +38,7 @@ const EncryptedCell = (props: GridCellProps) => {
     </td>
   );
 
-  return render === undefined
+  return render == undefined
     ? null
     : render?.call(undefined, defaultRendering, props);
 };

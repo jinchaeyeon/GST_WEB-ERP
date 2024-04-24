@@ -103,7 +103,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   const field = props.field ?? "";
   const bizComponentIdVal = field == "drcrdiv" ? "R_DRCR" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -194,7 +194,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     mainDataState,
     setMainDataState,
   } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -244,7 +244,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {accountWindowVisible && (
@@ -275,7 +275,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
     mainDataState,
     setMainDataState,
   } = useContext(FormContext2);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -324,7 +324,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {custWindowVisible && (
@@ -360,7 +360,7 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
     mainDataState,
     setMainDataState,
   } = useContext(FormContext3);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -411,7 +411,7 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {codeWindowVisible && (
@@ -439,7 +439,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
     mainDataState,
     setMainDataState,
   } = useContext(FormContext4);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -489,7 +489,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {depositWindowVisible && (
@@ -553,9 +553,9 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
       }));
     }
@@ -589,7 +589,7 @@ const CopyWindow = ({
     const newData = mainDataResult.data.map((item) => ({
       ...item,
       [name]: value,
-      rowstatus: item.rowstatus === "N" ? "N" : "U",
+      rowstatus: item.rowstatus == "N" ? "N" : "U",
     }));
 
     setMainDataResult((prev) => {
@@ -611,7 +611,7 @@ const CopyWindow = ({
     const newData = mainDataResult.data.map((item) => ({
       ...item,
       [name]: value,
-      rowstatus: item.rowstatus === "N" ? "N" : "U",
+      rowstatus: item.rowstatus == "N" ? "N" : "U",
     }));
 
     setMainDataResult((prev) => {
@@ -687,7 +687,7 @@ const CopyWindow = ({
       data2 = null;
     }
 
-    if (data2.isSuccess === true) {
+    if (data2.isSuccess == true) {
       const totalRowCnt = data2.tables[0].RowCount;
       const rows = data2.tables[0].Rows.map((row: any) => {
         return {
@@ -925,11 +925,11 @@ const CopyWindow = ({
     } else {
       const dataItem = mainDataResult.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
-      if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
+      if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
       let dataArr: TdataArr = {
         row_status_s: [],
@@ -1200,7 +1200,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       reload(data.returnString);
       deletedMainRows = [];
       if (ParaData.workType == "N") {
@@ -1291,7 +1291,7 @@ const CopyWindow = ({
       field != "taxnum"
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1330,7 +1330,7 @@ const CopyWindow = ({
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
             ? {
                 ...item,
-                rowstatus: item.rowstatus === "N" ? "N" : "U",
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
                 chk:
                   typeof item.chk == "boolean"
                     ? item.chk
@@ -1606,7 +1606,7 @@ const CopyWindow = ({
             ...item,
             acntcd: acntcd,
             acntnm: acntnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -1633,7 +1633,7 @@ const CopyWindow = ({
             ...item,
             custcd: custcd,
             custnm: custnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -1662,7 +1662,7 @@ const CopyWindow = ({
             acntnm: acntnm,
             stdrmkcd: stdrmkcd,
             stdrmknm: stdrmknm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -1689,7 +1689,7 @@ const CopyWindow = ({
             ...item,
             acntsrtnm: acntsrtnm,
             acntnum: acntnum,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,

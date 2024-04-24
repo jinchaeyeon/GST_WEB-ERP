@@ -143,13 +143,13 @@ const HU_B4010W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const reviewlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU110")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU110")
       );
       const badcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_QC002")
       );
       const rnpdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU017")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU017")
       );
       fetchQuery(reviewlvl1QueryStr, setReviewlvl1ListData);
       fetchQuery(badcdQueryStr, setBadcdListData);
@@ -173,7 +173,7 @@ const HU_B4010W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -438,7 +438,7 @@ const HU_B4010W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult((prev) => {
@@ -530,7 +530,7 @@ const HU_B4010W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[2].TotalRowCount;
       const rows = data.tables[2].Rows;
       const totalRowCnt2 = data.tables[0].TotalRowCount;
@@ -636,7 +636,7 @@ const HU_B4010W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult2((prev) => {
@@ -688,7 +688,7 @@ const HU_B4010W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult3((prev) => {
@@ -740,7 +740,7 @@ const HU_B4010W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult4((prev) => {
@@ -792,7 +792,7 @@ const HU_B4010W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult5((prev) => {
@@ -844,7 +844,7 @@ const HU_B4010W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult6((prev) => {
@@ -1523,7 +1523,7 @@ const HU_B4010W: React.FC = () => {
                         title={item.caption}
                         width={item.width}
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
                         }
                       />
                     )
@@ -1684,7 +1684,7 @@ const HU_B4010W: React.FC = () => {
                     mainDataResult3.data.map((row) => ({
                       ...row,
                       reviewlvl1: reviewlvl1ListData.find(
-                        (item: any) => item.sub_code === row.reviewlvl1
+                        (item: any) => item.sub_code == row.reviewlvl1
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState3[idGetter3(row)],
                     })),
@@ -1728,7 +1728,7 @@ const HU_B4010W: React.FC = () => {
                             title={item.caption}
                             width={item.width}
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell3
                                 : undefined
                             }
@@ -1752,7 +1752,7 @@ const HU_B4010W: React.FC = () => {
                     mainDataResult4.data.map((row) => ({
                       ...row,
                       badcd: badcdListData.find(
-                        (item: any) => item.sub_code === row.badcd
+                        (item: any) => item.sub_code == row.badcd
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState4[idGetter4(row)],
                     })),
@@ -1801,7 +1801,7 @@ const HU_B4010W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell4
                                 : undefined
                             }
@@ -1825,7 +1825,7 @@ const HU_B4010W: React.FC = () => {
                     mainDataResult5.data.map((row) => ({
                       ...row,
                       rnpdiv: rnpdivListData.find(
-                        (item: any) => item.sub_code === row.rnpdiv
+                        (item: any) => item.sub_code == row.rnpdiv
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState5[idGetter5(row)],
                     })),
@@ -1874,7 +1874,7 @@ const HU_B4010W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell5
                                 : undefined
                             }

@@ -65,7 +65,7 @@ const SY_A0060W: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
       }));
     }
@@ -131,7 +131,7 @@ const SY_A0060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 

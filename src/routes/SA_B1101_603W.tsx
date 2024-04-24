@@ -99,7 +99,7 @@ const SA_B1101_603W: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         reqdt: setDefaultDate(customOptionData, "reqdt"),
-        chkperson: defaultOption.find((item: any) => item.id === "chkperson")
+        chkperson: defaultOption.find((item: any) => item.id == "chkperson")
           .valueCode,
         isSearch: true,
       }));
@@ -127,13 +127,13 @@ const SA_B1101_603W: React.FC = () => {
     if (bizComponentData.length > 0) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
 
       const materialtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA001_603"
+          (item: any) => item.bizComponentId == "L_SA001_603"
         )
       );
       fetchQueryData(userQueryStr, setUserListData);
@@ -158,7 +158,7 @@ const SA_B1101_603W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -283,7 +283,7 @@ const SA_B1101_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -614,7 +614,7 @@ const SA_B1101_603W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : numberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell

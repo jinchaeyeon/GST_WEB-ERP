@@ -260,17 +260,17 @@ const MA_A9001W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        taxtype: defaultOption.find((item: any) => item.id === "taxtype")
+        taxtype: defaultOption.find((item: any) => item.id == "taxtype")
           .valueCode,
-        actdiv: defaultOption.find((item: any) => item.id === "actdiv")
+        actdiv: defaultOption.find((item: any) => item.id == "actdiv")
           .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
-        exceptyn: defaultOption.find((item: any) => item.id === "exceptyn")
+        exceptyn: defaultOption.find((item: any) => item.id == "exceptyn")
           .valueCode,
-        paydiv: defaultOption.find((item: any) => item.id === "paydiv")
+        paydiv: defaultOption.find((item: any) => item.id == "paydiv")
           .valueCode,
       }));
     }
@@ -303,24 +303,24 @@ const MA_A9001W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const taxtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC013")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC013")
       );
       const etaxQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC401")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC401")
       );
       const exceptynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC406")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC406")
       );
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const drcrdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC001")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC001")
       );
 
       fetchQuery(taxtypeQueryStr, setTaxtypeListData);
@@ -348,7 +348,7 @@ const MA_A9001W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -460,7 +460,7 @@ const MA_A9001W: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values,
         [EDIT_FIELD]: props.field,
       }));
@@ -651,7 +651,7 @@ const MA_A9001W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -900,7 +900,7 @@ const MA_A9001W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -964,7 +964,7 @@ const MA_A9001W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1029,7 +1029,7 @@ const MA_A9001W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1303,19 +1303,19 @@ const MA_A9001W: React.FC = () => {
     const selectedRowData = event.dataItems[selectedIdx];
 
     const taxtype = taxtypeListData.find(
-      (item: any) => item.code_name === selectedRowData.taxtype
+      (item: any) => item.code_name == selectedRowData.taxtype
     )?.sub_code;
     const etax = etaxListData.find(
-      (item: any) => item.code_name === selectedRowData.etax
+      (item: any) => item.code_name == selectedRowData.etax
     )?.sub_code;
     const exceptyn = exceptynListData.find(
-      (item: any) => item.name === selectedRowData.exceptyn
+      (item: any) => item.name == selectedRowData.exceptyn
     )?.code;
     const insert_userid = personListData.find(
-      (item: any) => item.user_name === selectedRowData.insert_userid
+      (item: any) => item.user_name == selectedRowData.insert_userid
     )?.user_id;
     const update_userid = personListData.find(
-      (item: any) => item.user_name === selectedRowData.update_userid
+      (item: any) => item.user_name == selectedRowData.update_userid
     )?.user_id;
 
     setSubFilters((prev) => ({
@@ -1698,7 +1698,7 @@ const MA_A9001W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   const fetchToDelete = async () => {
@@ -1710,9 +1710,9 @@ const MA_A9001W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -2089,7 +2089,7 @@ const MA_A9001W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
@@ -2119,7 +2119,7 @@ const MA_A9001W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setParaMaker({
         pgSize: PAGE_SIZE,
         workType: "",
@@ -2172,7 +2172,7 @@ const MA_A9001W: React.FC = () => {
   const enterEdit3 = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               chk:
@@ -2214,7 +2214,7 @@ const MA_A9001W: React.FC = () => {
   const setCopyData = (data: any, filter: any) => {
     let valid = true;
 
-    if (data.length === 0) return false;
+    if (data.length == 0) return false;
 
     let dataArr: TdataArr2 = {
       rowstatus_s: [],
@@ -2320,7 +2320,7 @@ const MA_A9001W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
@@ -2396,7 +2396,7 @@ const MA_A9001W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
@@ -2612,19 +2612,19 @@ const MA_A9001W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 taxtype: taxtypeListData.find(
-                  (item: any) => item.sub_code === row.taxtype
+                  (item: any) => item.sub_code == row.taxtype
                 )?.code_name,
                 etax: etaxListData.find(
-                  (item: any) => item.sub_code === row.etax
+                  (item: any) => item.sub_code == row.etax
                 )?.code_name,
                 exceptyn: exceptynListData.find(
-                  (item: any) => item.code === row.exceptyn
+                  (item: any) => item.code == row.exceptyn
                 )?.name,
                 insert_userid: personListData.find(
-                  (item: any) => item.user_id === row.insert_userid
+                  (item: any) => item.user_id == row.insert_userid
                 )?.user_name,
                 update_userid: personListData.find(
-                  (item: any) => item.user_id === row.update_userid
+                  (item: any) => item.user_id == row.update_userid
                 )?.user_name,
                 rtxisuyn: row.rtxisuyn == "Y" ? true : false,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
@@ -2692,7 +2692,7 @@ const MA_A9001W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : numberField2.includes(item.fieldName)
                           ? gridSumQtyFooterCell
@@ -2981,7 +2981,7 @@ const MA_A9001W: React.FC = () => {
                         subDataResult.data.map((row) => ({
                           ...row,
                           itemacnt: itemacntListData.find(
-                            (item: any) => item.sub_code === row.itemacnt
+                            (item: any) => item.sub_code == row.itemacnt
                           )?.code_name,
                           [SELECTED_FIELD]: selectedSubState[idGetter2(row)],
                         })),
@@ -3029,7 +3029,7 @@ const MA_A9001W: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? subTotalFooterCell
                                     : numberField2.includes(item.fieldName)
                                     ? gridSumQtyFooterCell2
@@ -3059,10 +3059,10 @@ const MA_A9001W: React.FC = () => {
                         subDataResult2.data.map((row) => ({
                           ...row,
                           taxtype: taxtypeListData.find(
-                            (item: any) => item.sub_code === row.taxtype
+                            (item: any) => item.sub_code == row.taxtype
                           )?.code_name,
                           drcrdiv: drcrdivListData.find(
-                            (item: any) => item.sub_code === row.drcrdiv
+                            (item: any) => item.sub_code == row.drcrdiv
                           )?.code_name,
                           [SELECTED_FIELD]: selectedSubState2[idGetter3(row)],
                         })),
@@ -3110,7 +3110,7 @@ const MA_A9001W: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? subTotalFooterCell2
                                     : numberField2.includes(item.fieldName)
                                     ? gridSumQtyFooterCell3
@@ -3140,7 +3140,7 @@ const MA_A9001W: React.FC = () => {
                         subDataResult3.data.map((row) => ({
                           ...row,
                           drcrdiv: drcrdivListData.find(
-                            (item: any) => item.sub_code === row.drcrdiv
+                            (item: any) => item.sub_code == row.drcrdiv
                           )?.code_name,
                           [SELECTED_FIELD]: selectedSubState3[idGetter4(row)],
                         })),
@@ -3188,7 +3188,7 @@ const MA_A9001W: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? subTotalFooterCell3
                                     : numberField2.includes(item.fieldName)
                                     ? gridSumQtyFooterCell4

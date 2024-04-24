@@ -166,11 +166,11 @@ const CM_A1000W_617: React.FC = () => {
           value == ""
             ? ""
             : defaultOption
-                .find((item: any) => item.id === "custnm")
+                .find((item: any) => item.id == "custnm")
                 .Rows.filter((item: any) => item.custcd == value)[0] !=
               undefined
             ? defaultOption
-                .find((item: any) => item.id === "custnm")
+                .find((item: any) => item.id == "custnm")
                 .Rows.filter((item: any) => item.custcd == value)[0].custcd
             : "",
       }));
@@ -251,7 +251,7 @@ const CM_A1000W_617: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -289,7 +289,7 @@ const CM_A1000W_617: React.FC = () => {
       if (totalRowCnt > 0) {
         setWorkType("U");
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.key_id == filters.find_row_value);
         if (selectedRow != undefined) {
@@ -421,8 +421,8 @@ const CM_A1000W_617: React.FC = () => {
       ...prev,
       datnum: "",
       recdt: new Date(),
-      custcd: defaultOption.find((item: any) => item.id === "custnm").valueCode,
-      custnm: defaultOption.find((item: any) => item.id === "custnm").valueCode,
+      custcd: defaultOption.find((item: any) => item.id == "custnm").valueCode,
+      custnm: defaultOption.find((item: any) => item.id == "custnm").valueCode,
       title: "",
       contents: "",
     }));
@@ -485,7 +485,7 @@ const CM_A1000W_617: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setWorkType("N");
       setFilters((prev) => ({
@@ -686,7 +686,7 @@ const CM_A1000W_617: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell
                                 : undefined
                             }
@@ -922,7 +922,7 @@ const CM_A1000W_617: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell
                                 : undefined
                             }

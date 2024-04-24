@@ -86,7 +86,7 @@ const Login: React.FC = () => {
         // const md5 = require("md5");
         // para.password = sha256(md5(para.password));
         // const response = await processApi<any>(
-        //   para.companyCode === "2207C612" ? "login-old" : "login",
+        //   para.companyCode == "2207C612" ? "login-old" : "login",
         //   para
         // );
 

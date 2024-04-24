@@ -138,7 +138,7 @@ const KendoWindow = ({
 
     if (name == "gubun" && bizComponentData) {
       const BA330 = bizComponentData.find(
-        (item: any) => item.bizComponentId === "L_BA330"
+        (item: any) => item.bizComponentId == "L_BA330"
       );
       const row = BA330.data.Rows.find((item: any) => item.sub_code == value);
 
@@ -227,7 +227,7 @@ const KendoWindow = ({
   const processApi = useApi();
 
   useEffect(() => {
-    if (workType === "U" || isCopy) {
+    if (workType == "U" || isCopy) {
       fetchMain();
     }
   }, []);
@@ -275,7 +275,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const row = data.tables[0].Rows[0];
 
       if (isCopy) {
@@ -360,8 +360,8 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
-      if (workType === "U") {
+    if (data.isSuccess == true) {
+      if (workType == "U") {
         setFilters((prev: any) => ({
           ...prev,
           find_row_value: data.returnString,
@@ -452,7 +452,7 @@ const KendoWindow = ({
 
   return (
     <Window
-      title={workType === "N" ? "회원권 등록" : "회원권 정보"}
+      title={workType == "N" ? "회원권 등록" : "회원권 정보"}
       width={position.width}
       height={position.height}
       onMove={handleMove}

@@ -100,11 +100,11 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        prodmac: defaultOption.find((item: any) => item.id === "prodmac")
+        prodmac: defaultOption.find((item: any) => item.id == "prodmac")
           .valueCode,
-        stopcd: defaultOption.find((item: any) => item.id === "stopcd")
+        stopcd: defaultOption.find((item: any) => item.id == "stopcd")
           .valueCode,
-        prodemp: defaultOption.find((item: any) => item.id === "prodemp")
+        prodemp: defaultOption.find((item: any) => item.id == "prodemp")
           .valueCode,
       }));
     }
@@ -211,15 +211,15 @@ const CopyWindow = ({
   });
 
   useEffect(() => {
-    if (workType === "U" && data != undefined) {
+    if (workType == "U" && data != undefined) {
       const prodmacs = prodmac.find(
-        (item: any) => item.fxfull === data.prodmac
+        (item: any) => item.fxfull == data.prodmac
       )?.fxcode;
       const stopcds = stopcd.find(
-        (item: any) => item.code_name === data.stopcd
+        (item: any) => item.code_name == data.stopcd
       )?.sub_code;
       const prodemps = prodemp.find(
-        (item: any) => item.user_name === data.prodemp
+        (item: any) => item.user_name == data.prodemp
       )?.user_id;
       setFilters((prev) => ({
         ...prev,
@@ -299,7 +299,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setData(data.returnString);
       if (workType == "N") {
         onClose();
@@ -334,7 +334,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "비가동관리생성" : "비가동관리정보"}
+        title={workType == "N" ? "비가동관리생성" : "비가동관리정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}

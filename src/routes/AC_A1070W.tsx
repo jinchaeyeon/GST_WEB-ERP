@@ -91,7 +91,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   const field = props.field ?? "";
   const bizComponentIdVal = field == "drcrdiv" ? "R_DRCR" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -128,11 +128,11 @@ const AC_A1070W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -156,13 +156,13 @@ const AC_A1070W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       const positionQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA028")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA028")
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
 
       fetchQuery(itemacntQueryStr, setItemacntListData);
@@ -187,7 +187,7 @@ const AC_A1070W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -289,7 +289,7 @@ const AC_A1070W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -321,7 +321,7 @@ const AC_A1070W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.ref_key == filters.find_row_value);
         if (selectedRow != undefined) {
@@ -399,7 +399,7 @@ const AC_A1070W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -454,7 +454,7 @@ const AC_A1070W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -886,7 +886,7 @@ const AC_A1070W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1120,7 +1120,7 @@ const AC_A1070W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setPage(initialPageState);
       setPage2(initialPageState);
@@ -1432,7 +1432,7 @@ const AC_A1070W: React.FC = () => {
                 mainDataResult2.data.map((row) => ({
                   ...row,
                   itemacnt: itemacntListData.find(
-                    (items: any) => items.sub_code === row.itemacnt
+                    (items: any) => items.sub_code == row.itemacnt
                   )?.code_name,
                   [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                 })),

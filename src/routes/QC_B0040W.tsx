@@ -198,7 +198,7 @@ const QC_B0040W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
       }));
     }
@@ -224,14 +224,14 @@ const QC_B0040W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(proccdQueryStr, setProccdListData);
@@ -256,7 +256,7 @@ const QC_B0040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -402,7 +402,7 @@ const QC_B0040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -529,7 +529,7 @@ const QC_B0040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true && data.tables.length > 0) {
+    if (data.isSuccess == true && data.tables.length > 0) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -623,7 +623,7 @@ const QC_B0040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true && data.tables.length > 0) {
+    if (data.isSuccess == true && data.tables.length > 0) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (detailFilters2.find_row_value !== "") {
@@ -717,7 +717,7 @@ const QC_B0040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true && data.tables.length > 0) {
+    if (data.isSuccess == true && data.tables.length > 0) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (detailFilters3.find_row_value !== "") {
@@ -1416,7 +1416,7 @@ const QC_B0040W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -1467,7 +1467,7 @@ const QC_B0040W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : numberField2.includes(item.fieldName)
                           ? gridSumQtyFooterCell
@@ -1496,10 +1496,10 @@ const QC_B0040W: React.FC = () => {
               detailDataResult.data.map((row) => ({
                 ...row,
                 proccd: proccdListData.find(
-                  (item: any) => item.sub_code === row.proccd
+                  (item: any) => item.sub_code == row.proccd
                 )?.code_name,
                 prodemp: userListData.find(
-                  (item: any) => item.user_id === row.prodemp
+                  (item: any) => item.user_id == row.prodemp
                 )?.user_name,
                 [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
               })),
@@ -1550,7 +1550,7 @@ const QC_B0040W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? detailTotalFooterCell
                           : numberField2.includes(item.fieldName)
                           ? gridSumQtyFooterCell2
@@ -1580,7 +1580,7 @@ const QC_B0040W: React.FC = () => {
                 detailDataResult2.data.map((row) => ({
                   ...row,
                   proccd: proccdListData.find(
-                    (item: any) => item.sub_code === row.proccd
+                    (item: any) => item.sub_code == row.proccd
                   )?.code_name,
                   [SELECTED_FIELD]: detailSelectedState2[idGetter3(row)],
                 })),
@@ -1630,7 +1630,7 @@ const QC_B0040W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? detailTotalFooterCell2
                             : numberField2.includes(item.fieldName)
                             ? gridSumQtyFooterCell3
@@ -1706,7 +1706,7 @@ const QC_B0040W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? detailTotalFooterCell3
                             : numberField2.includes(item.fieldName)
                             ? gridSumQtyFooterCell4

@@ -4,14 +4,14 @@ export const CellRender = (props: any) => {
   const cellField = props.originalProps.field;
   const inEditField = dataItem[props.editField || ""];
   const additionalProps =
-    cellField && cellField === inEditField
+    cellField && cellField == inEditField
       ? {
           ref: (td: any) => {
             const input = td && td.querySelector("input");
-            if (!input || input === document.activeElement) {
+            if (!input || input == document.activeElement) {
               return;
             }
-            if (input.type === "checkbox") {
+            if (input.type == "checkbox") {
               input.focus();
             } else {
               input.select();

@@ -43,7 +43,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
   const processApi = useApi();
   const [listData, setListData]: any = useState([]);
 
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   if (className.includes("read-only")) {
     isInEdit = false;
   } else if (className.includes("editable-new-only")) {
@@ -55,7 +55,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
   const queryStr = bizComponent ? getQueryFromBizComponent(bizComponent) : "";
   const dataValue = dataItem[field];
 
-  const value = listData.find((item: any) => item[valueField] === dataValue);
+  const value = listData.find((item: any) => item[valueField] == dataValue);
 
   useEffect(() => {
     fetchData();
@@ -85,7 +85,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     } else {
@@ -151,7 +151,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
           data = null;
         }
 
-        if (data.isSuccess === true) {
+        if (data.isSuccess == true) {
           const rows = data.tables[0].Rows;
           if (rows[0].reviewlvl1 != dataItem.reviewlvl1) {
             onChange({
@@ -275,7 +275,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
       </td>
     );
 
-  return render === undefined
+  return render == undefined
     ? null
     : render?.call(undefined, defaultRendering, props);
 };

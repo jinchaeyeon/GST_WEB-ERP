@@ -150,7 +150,7 @@ const PR_A2000W: React.FC = () => {
   };
 
   const setStopData = (workType: string | undefined) => {
-    if (workType === "end") {
+    if (workType == "end") {
       setStopStartOrEnd(workType);
       fetchStopData();
     }
@@ -178,7 +178,7 @@ const PR_A2000W: React.FC = () => {
     const { name, value } = e;
 
     // 작업자, 설비가 변경될 경우 생산실적 진행됐는지 확인
-    if ((name === "prodmac" || name === "prodemp") && value !== "") {
+    if ((name == "prodmac" || name == "prodemp") && value !== "") {
       setFilters((prev) => ({
         ...prev,
         work_type: "WORK",
@@ -268,7 +268,7 @@ const PR_A2000W: React.FC = () => {
   const fetchWorkData = async (filters: any) => {
     // 진행 중인 생산 확인
     let data: any;
-    if (filters.plankey === "") return;
+    if (filters.plankey == "") return;
 
     setLoading(true);
     const parameters: Iparameters = {
@@ -301,7 +301,7 @@ const PR_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -340,7 +340,7 @@ const PR_A2000W: React.FC = () => {
   const fetchStopData = async () => {
     // 비가동 정보
     let data: any;
-    if (filters.prodmac === "") return;
+    if (filters.prodmac == "") return;
 
     setLoading(true);
     const parameters: Iparameters = {
@@ -373,7 +373,7 @@ const PR_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -517,14 +517,14 @@ const PR_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (data.statusCode !== "MSG0000" && data.resultMessage !== "") {
         alert(data.resultMessage);
         return;
       }
 
-      if (paraSaved.work_type === "START" || paraSaved.work_type === "END") {
-        if (startOrEnd === "start") {
+      if (paraSaved.work_type == "START" || paraSaved.work_type == "END") {
+        if (startOrEnd == "start") {
           //시작 => 시작 정보 조회
           setFilters((prev) => ({
             ...prev,
@@ -555,7 +555,7 @@ const PR_A2000W: React.FC = () => {
   }, [paraSaved]);
 
   const onClickWork = () => {
-    if (startOrEnd === "end" && filters.qty === 0 && paraSaved.badqty === 0) {
+    if (startOrEnd == "end" && filters.qty == 0 && paraSaved.badqty == 0) {
       alert("수량을 입력하세요.");
       return;
     }
@@ -568,9 +568,9 @@ const PR_A2000W: React.FC = () => {
   };
 
   const onClickStop = () => {
-    if (stopStartOrEnd === "start") {
+    if (stopStartOrEnd == "start") {
       //비가동시작
-      if (filters.prodmac === "") {
+      if (filters.prodmac == "") {
         alert("설비를 선택해주세요.");
         return;
       }
@@ -687,7 +687,7 @@ const PR_A2000W: React.FC = () => {
               <tr>
                 <th>시작시간</th>
                 <td colSpan={3}>
-                  {startOrEnd === "end"
+                  {startOrEnd == "end"
                     ? masterDataResult.strtime +
                       " (경과시간 : " +
                       duration +
@@ -749,7 +749,7 @@ const PR_A2000W: React.FC = () => {
                   />
                 </td>
               </tr>
-              {stopStartOrEnd === "end" && stopStartTime ? (
+              {stopStartOrEnd == "end" && stopStartTime ? (
                 <tr>
                   <th>비가동시작시간</th>
                   <td colSpan={3}>
@@ -768,14 +768,14 @@ const PR_A2000W: React.FC = () => {
           <>
             <Button
               onClick={onClickWork}
-              icon={startOrEnd === "start" ? "play-sm" : "stop-sm"}
+              icon={startOrEnd == "start" ? "play-sm" : "stop-sm"}
               themeColor={"primary"}
               disabled={
-                permissions.save && stopStartOrEnd === "start" ? false : true
+                permissions.save && stopStartOrEnd == "start" ? false : true
               }
               className="iot-btn green"
             >
-              {startOrEnd === "start" ? "시작" : "종료"}
+              {startOrEnd == "start" ? "시작" : "종료"}
             </Button>
             <Button
               onClick={onDefectWndClick}
@@ -783,8 +783,8 @@ const PR_A2000W: React.FC = () => {
               themeColor={"primary"}
               disabled={
                 permissions.save &&
-                startOrEnd === "end" &&
-                stopStartOrEnd === "start"
+                startOrEnd == "end" &&
+                stopStartOrEnd == "start"
                   ? false
                   : true
               }
@@ -798,8 +798,8 @@ const PR_A2000W: React.FC = () => {
               themeColor={"primary"}
               disabled={
                 permissions.save &&
-                startOrEnd === "end" &&
-                stopStartOrEnd === "start"
+                startOrEnd == "end" &&
+                stopStartOrEnd == "start"
                   ? false
                   : true
               }
@@ -814,7 +814,7 @@ const PR_A2000W: React.FC = () => {
               disabled={permissions.save ? false : true}
               className="iot-btn gray"
             >
-              {stopStartOrEnd === "start" ? "비가동입력" : "비가동종료"}
+              {stopStartOrEnd == "start" ? "비가동입력" : "비가동종료"}
             </Button>
           </>
         )}

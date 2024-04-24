@@ -90,7 +90,7 @@ const MA_B2000W: React.FC = () => {
         ...prev,
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
         ymdTodt: setDefaultDate(customOptionData, "ymdTodt"),
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -113,10 +113,10 @@ const MA_B2000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const purtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_MA035")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_MA035")
       );
 
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
@@ -140,7 +140,7 @@ const MA_B2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -262,7 +262,7 @@ const MA_B2000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -705,10 +705,10 @@ const MA_B2000W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 purtype: purtypeListData.find(
-                  (item: any) => item.sub_code === row.purtype
+                  (item: any) => item.sub_code == row.purtype
                 )?.code_name,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -760,7 +760,7 @@ const MA_B2000W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField2.includes(item.fieldName)
                             ? gridSumQtyFooterCell2

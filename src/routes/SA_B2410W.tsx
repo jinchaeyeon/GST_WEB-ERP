@@ -103,15 +103,15 @@ const SA_B2410: React.FC = () => {
         ...prev,
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
         ymdTodt: setDefaultDate(customOptionData, "ymdTodt"),
-        itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
+        itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
           .valueCode,
-        itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1")
+        itemlvl1: defaultOption.find((item: any) => item.id == "itemlvl1")
           .valueCode,
-        itemlvl2: defaultOption.find((item: any) => item.id === "itemlvl2")
+        itemlvl2: defaultOption.find((item: any) => item.id == "itemlvl2")
           .valueCode,
-        itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
+        itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
           .valueCode,
-        outkind: defaultOption.find((item: any) => item.id === "outkind")
+        outkind: defaultOption.find((item: any) => item.id == "outkind")
           .valueCode,
       }));
     }
@@ -150,25 +150,25 @@ const SA_B2410: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const outkindQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA004")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA004")
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
 
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
@@ -197,7 +197,7 @@ const SA_B2410: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -302,7 +302,7 @@ const SA_B2410: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -777,25 +777,25 @@ const SA_B2410: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 outkind: outkindListData.find(
-                  (item: any) => item.sub_code === row.outkind
+                  (item: any) => item.sub_code == row.outkind
                 )?.code_name,
                 doexdiv: doexdivListData.find(
-                  (item: any) => item.sub_code === row.doexdiv
+                  (item: any) => item.sub_code == row.doexdiv
                 )?.code_name,
                 itemlvl1: itemlvl1ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl1
+                  (item: any) => item.sub_code == row.itemlvl1
                 )?.code_name,
                 itemlvl2: itemlvl2ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl2
+                  (item: any) => item.sub_code == row.itemlvl2
                 )?.code_name,
                 itemlvl3: itemlvl3ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl3
+                  (item: any) => item.sub_code == row.itemlvl3
                 )?.code_name,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
                 itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                  (item: any) => item.sub_code == row.itemacnt
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -848,7 +848,7 @@ const SA_B2410: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell

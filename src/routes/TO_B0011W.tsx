@@ -98,13 +98,13 @@ const TO_B0011W: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1")
+        itemlvl1: defaultOption.find((item: any) => item.id == "itemlvl1")
           .valueCode,
-        itemlvl2: defaultOption.find((item: any) => item.id === "itemlvl2")
+        itemlvl2: defaultOption.find((item: any) => item.id == "itemlvl2")
           .valueCode,
-        itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
+        itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
           .valueCode,
       }));
     }
@@ -134,17 +134,17 @@ const TO_B0011W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
       const loadplaceQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_LOADPLACE"
+          (item: any) => item.bizComponentId == "L_LOADPLACE"
         )
       );
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
@@ -170,7 +170,7 @@ const TO_B0011W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -271,7 +271,7 @@ const TO_B0011W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -658,16 +658,16 @@ const TO_B0011W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 itemlvl1: itemlvl1ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl1
+                  (item: any) => item.sub_code == row.itemlvl1
                 )?.code_name,
                 itemlvl2: itemlvl2ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl2
+                  (item: any) => item.sub_code == row.itemlvl2
                 )?.code_name,
                 itemlvl3: itemlvl3ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl3
+                  (item: any) => item.sub_code == row.itemlvl3
                 )?.code_name,
                 load_place: loadplaceListData.find(
-                  (item: any) => item.sub_code === row.load_place
+                  (item: any) => item.sub_code == row.load_place
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -718,7 +718,7 @@ const TO_B0011W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell2

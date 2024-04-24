@@ -111,17 +111,17 @@ const CopyWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
+        person: defaultOption.find((item: any) => item.id == "person")
           .valueCode,
-        doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
+        doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
           .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
-        ordsts: defaultOption.find((item: any) => item.id === "ordsts")
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+        ordsts: defaultOption.find((item: any) => item.id == "ordsts")
           .valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
+        dtgb: defaultOption.find((item: any) => item.id == "dtgb").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -147,14 +147,14 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
 
@@ -180,7 +180,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -492,7 +492,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -570,7 +570,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -1027,10 +1027,10 @@ const CopyWindow = ({
               mainDataResult.data.map((row) => ({
                 ...row,
                 person: personListData.find(
-                  (item: any) => item.user_id === row.person
+                  (item: any) => item.user_id == row.person
                 )?.user_name,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -1122,10 +1122,10 @@ const CopyWindow = ({
               detailDataResult.data.map((row) => ({
                 ...row,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
                 itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                  (item: any) => item.sub_code == row.itemacnt
                 )?.code_name,
                 [SELECTED_FIELD]: detailselectedState[idGetter2(row)], //선택된 데이터
               })),
@@ -1215,10 +1215,10 @@ const CopyWindow = ({
               subDataResult.data.map((row) => ({
                 ...row,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
                 itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                  (item: any) => item.sub_code == row.itemacnt
                 )?.code_name,
                 [SELECTED_FIELD]: subselectedState[idGetter3(row)], //선택된 데이터
               })),

@@ -182,7 +182,7 @@ const ItemsWindow = ({
       itemnm: filters.itemnm,
       insiz: filters.insiz,
       useyn:
-        filters.useyn === "Y" ? "사용" : filters.useyn === "N" ? "미사용" : "",
+        filters.useyn == "Y" ? "사용" : filters.useyn == "N" ? "미사용" : "",
     };
     try {
       data = await processApi<any>("popup-data", parameters);
@@ -242,7 +242,7 @@ const ItemsWindow = ({
 
   const onConfirmBtnClick = (props: any) => {
     const selectedData = mainDataResult.data.find(
-      (row: any) => row.itemcd === Object.keys(selectedState)[0]
+      (row: any) => row.itemcd == Object.keys(selectedState)[0]
     );
     selectData(selectedData);
   };

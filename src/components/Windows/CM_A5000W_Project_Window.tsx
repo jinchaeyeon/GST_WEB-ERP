@@ -113,11 +113,11 @@ const CopyWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
-        quosts: defaultOption.find((item: any) => item.id === "quosts").valueCode,
-        person: defaultOption.find((item: any) => item.id === "person").valueCode,
-        smperson: defaultOption.find((item: any) => item.id === "smperson").valueCode,
-        custcd: defaultOption.find((item: any) => item.id === "custcd").valueCode,
+        dtgb: defaultOption.find((item: any) => item.id == "dtgb").valueCode,
+        quosts: defaultOption.find((item: any) => item.id == "quosts").valueCode,
+        person: defaultOption.find((item: any) => item.id == "person").valueCode,
+        smperson: defaultOption.find((item: any) => item.id == "smperson").valueCode,
+        custcd: defaultOption.find((item: any) => item.id == "custcd").valueCode,
         isSearch: true,
       }));
     }
@@ -145,14 +145,14 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const quotypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA016")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SA016")
       );
       const quostsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA004")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SA004")
       );
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(quotypeQueryStr, setQuotypeListData);
@@ -177,7 +177,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -302,7 +302,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {

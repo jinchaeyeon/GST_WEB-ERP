@@ -219,9 +219,9 @@ const HU_A1000W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        rtrchk: defaultOption.find((item: any) => item.id === "rtrchk")
+        rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
           .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -244,11 +244,11 @@ const HU_A1000W: React.FC = () => {
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
 
       fetchQuery(postcdQueryStr, setpostcdListData);
@@ -272,7 +272,7 @@ const HU_A1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -443,7 +443,7 @@ const HU_A1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -752,9 +752,9 @@ const HU_A1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -833,7 +833,7 @@ const HU_A1000W: React.FC = () => {
     const newResults = await mainDataResult.data.reduce(
       async (accPromise, item) => {
         const acc = await accPromise;
-        if (!item.koraddr || item.koraddr.trim() === "") {
+        if (!item.koraddr || item.koraddr.trim() == "") {
           // 주소가 비어있는 경우, 변환 없이 현재 아이템을 결과에 추가하지 않음
           return acc;
         }
@@ -1105,11 +1105,11 @@ const HU_A1000W: React.FC = () => {
     if (bizComponentData !== null) {
       const dtpcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
       fetchQuery(dtpcdQueryStr, (data: any) => {
         setDptcdListData2(data);
@@ -1181,7 +1181,7 @@ const HU_A1000W: React.FC = () => {
 
     try {
       const data = await processApi<any>("procedure", parameters);
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         setInformation(data.tables[0].Rows);
       } else {
         console.log("[에러발생]");
@@ -1215,7 +1215,7 @@ const HU_A1000W: React.FC = () => {
 
       try {
         const data = await processApi<any>("procedure", subparameters);
-        if (data.isSuccess === true) {
+        if (data.isSuccess == true) {
           tempCombinedResult = [...tempCombinedResult, ...data.tables[0].Rows];
         } else {
           console.log("[에러발생]");
@@ -1248,7 +1248,7 @@ const HU_A1000W: React.FC = () => {
         "@p_user_category": picFilters.user_category,
         "@p_user_id": picFilters.user_id,
         "@p_user_name": picFilters.user_name,
-        "@p_rtrchk": picFilters.radRtrchk === "T" ? "%" : picFilters.radRtrchk,
+        "@p_rtrchk": picFilters.radRtrchk == "T" ? "%" : picFilters.radRtrchk,
         "@p_usediv": picFilters.radUsediv,
         "@p_find_row_value": picFilters.find_row_value,
       },
@@ -1260,7 +1260,7 @@ const HU_A1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       const profileImageData = rows.map((row: any) => {
         return {
@@ -1285,7 +1285,7 @@ const HU_A1000W: React.FC = () => {
 
   const Profile = ({ user_name, postcd, profile_img, color }: ProfileProps) => {
     const isProfileNeeded = (postcd: string | undefined) => {
-      return postcd === "이사" || postcd === "PM";
+      return postcd == "이사" || postcd == "PM";
     };
 
     return (
@@ -1464,7 +1464,7 @@ const HU_A1000W: React.FC = () => {
                   marginRight: "20px",
                 }}
               >
-                {info.prntdptcd === "" && (
+                {info.prntdptcd == "" && (
                   <div
                     style={{
                       marginBottom: "80px",
@@ -1492,15 +1492,15 @@ const HU_A1000W: React.FC = () => {
                       {info.dptnm}
                     </p>
                     {combinedResult
-                      .filter((person) => person.dptcd === info.dptcd)
+                      .filter((person) => person.dptcd == info.dptcd)
                       .map((person, personIndex) => {
                         const profileData = profileImg.find(
-                          (item) => item.user_id === person.user_id
+                          (item) => item.user_id == person.user_id
                         );
 
                         return (
                           <div key={personIndex}>
-                            {personIndex === 0 && (
+                            {personIndex == 0 && (
                               <div
                                 style={{
                                   width: "2px",
@@ -1514,7 +1514,7 @@ const HU_A1000W: React.FC = () => {
                               user_name={person.user_name}
                               postcd={
                                 postcdListData.find(
-                                  (item: any) => item.sub_code === person.postcd
+                                  (item: any) => item.sub_code == person.postcd
                                 )?.code_name
                               }
                               profile_img={
@@ -1543,7 +1543,7 @@ const HU_A1000W: React.FC = () => {
                   )}
                   <div>
                     {information
-                      .filter((subInfo) => subInfo.prntdptcd === info.dptcd)
+                      .filter((subInfo) => subInfo.prntdptcd == info.dptcd)
                       .map((subInfo, subIndex, array) => (
                         <div
                           key={subIndex}
@@ -1563,14 +1563,14 @@ const HU_A1000W: React.FC = () => {
                           {subIndex !== 0 || (array.length > 1 && <div />)}
                           <p className="departmentText">{subInfo.dptnm}</p>
                           {combinedResult
-                            .filter((person) => person.dptcd === subInfo.dptcd)
+                            .filter((person) => person.dptcd == subInfo.dptcd)
                             .map((person, personIndex) => {
                               const profileData = profileImg.find(
-                                (item) => item.user_id === person.user_id
+                                (item) => item.user_id == person.user_id
                               );
                               return (
                                 <div key={personIndex}>
-                                  {personIndex === 0 && (
+                                  {personIndex == 0 && (
                                     <div
                                       style={{
                                         width: "2px",
@@ -1586,7 +1586,7 @@ const HU_A1000W: React.FC = () => {
                                       postcd={
                                         postcdListData.find(
                                           (item: any) =>
-                                            item.sub_code === person.postcd
+                                            item.sub_code == person.postcd
                                         )?.code_name
                                       }
                                       profile_img={
@@ -1762,7 +1762,7 @@ const HU_A1000W: React.FC = () => {
                             (item: any) => item.dptcd == row.dptcd
                           )?.dptnm,
                           postcd: postcdListData.find(
-                            (item: any) => item.sub_code === row.postcd
+                            (item: any) => item.sub_code == row.postcd
                           )?.code_name,
                           perregnum:
                             row.perregnum == "" ||
@@ -1832,7 +1832,7 @@ const HU_A1000W: React.FC = () => {
                                       : undefined
                                   }
                                   footerCell={
-                                    item.sortOrder === 0
+                                    item.sortOrder == 0
                                       ? mainTotalFooterCell
                                       : undefined
                                   }
@@ -1973,7 +1973,7 @@ const HU_A1000W: React.FC = () => {
                         (item: any) => item.dptcd == row.dptcd
                       )?.dptnm,
                       postcd: postcdListData.find(
-                        (item: any) => item.sub_code === row.postcd
+                        (item: any) => item.sub_code == row.postcd
                       )?.code_name,
                       perregnum:
                         row.perregnum == "" ||
@@ -2043,7 +2043,7 @@ const HU_A1000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell
                                   : undefined
                               }

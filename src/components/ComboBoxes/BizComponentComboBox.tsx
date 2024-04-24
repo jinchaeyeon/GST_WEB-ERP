@@ -35,7 +35,7 @@ const CommonComboBox = ({
   const processApi = useApi();
   const [listData, setListData] = useState([]);
   bizComponentData = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentId
+    (item: any) => item.bizComponentId == bizComponentId
   );
 
   let required = false;
@@ -66,7 +66,7 @@ const CommonComboBox = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
 
       setListData(rows); //리스트 세팅
@@ -89,7 +89,7 @@ const CommonComboBox = ({
     }
   }
   const onChangeHandle = (e: ComboBoxChangeEvent) => {
-    let value = e.target.value === null ? "" : e.target.value[valueField];
+    let value = e.target.value == null ? "" : e.target.value[valueField];
     let values = e.value;
 
     if (para == "AC_A1020W") {
@@ -136,7 +136,7 @@ const CommonComboBox = ({
       id={name}
       data={listData}
       value={
-        value ? listData.find((item: any) => item[valueField] === value) : ""
+        value ? listData.find((item: any) => item[valueField] == value) : ""
       }
       columns={newColumns}
       textField={textField}

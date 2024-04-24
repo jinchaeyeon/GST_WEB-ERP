@@ -72,16 +72,16 @@ const AC_A1120W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
-        datediv: defaultOption.find((item: any) => item.id === "datediv")
+        datediv: defaultOption.find((item: any) => item.id == "datediv")
           .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
           .valueCode,
-        closeyn: defaultOption.find((item: any) => item.id === "closeyn")
+        closeyn: defaultOption.find((item: any) => item.id == "closeyn")
           .valueCode,
       }));
     }
@@ -157,7 +157,7 @@ const AC_A1120W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 

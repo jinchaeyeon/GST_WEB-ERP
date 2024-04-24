@@ -83,7 +83,7 @@ const KendoWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const custdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA026")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA026")
       );
 
       fetchQuery(custdivQueryStr, setCustdivListData);
@@ -106,7 +106,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -225,14 +225,14 @@ const KendoWindow = ({
       custcd: filters.custcd,
       custnm: filters.custnm,
       custdiv:
-        custdivListData.find((item: any) => item.sub_code === filters.custdiv)
+        custdivListData.find((item: any) => item.sub_code == filters.custdiv)
           ?.code_name == undefined
           ? ""
           : custdivListData.find(
-              (item: any) => item.sub_code === filters.custdiv
+              (item: any) => item.sub_code == filters.custdiv
             )?.code_name,
       useyn:
-        filters.useyn === "Y" ? "사용" : filters.useyn === "N" ? "미사용" : "",
+        filters.useyn == "Y" ? "사용" : filters.useyn == "N" ? "미사용" : "",
     };
 
     try {
@@ -294,7 +294,7 @@ const KendoWindow = ({
 
   const onConfirmClick = (props: any) => {
     const rowData = mainDataResult.data.find(
-      (row: any) => row.custcd === Object.keys(selectedState)[0]
+      (row: any) => row.custcd == Object.keys(selectedState)[0]
     );
 
     // 부모로 데이터 전달, 창 닫기

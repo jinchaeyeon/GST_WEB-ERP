@@ -115,7 +115,7 @@ const Badwindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const badcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_QC002")
       );
 
       fetchQuery(badcdQueryStr, setBadcdListData);
@@ -138,7 +138,7 @@ const Badwindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -252,7 +252,7 @@ const Badwindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setData(data.returnString);
       onClose();
     } else {
@@ -295,7 +295,7 @@ const Badwindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -342,11 +342,11 @@ const Badwindow = ({
         } else {
           const dataItem = mainDataResult.data.filter((item: any) => {
             return (
-              (item.rowstatus === "N" || item.rowstatus === "U") &&
+              (item.rowstatus == "N" || item.rowstatus == "U") &&
               item.rowstatus !== undefined
             );
           });
-          if (dataItem.length === 0) return false;
+          if (dataItem.length == 0) return false;
           let dataArr: TdataArr = {
             rowstatus_s: [],
             badqty_s: [],
@@ -443,7 +443,7 @@ const Badwindow = ({
   const enterEdit3 = (dataItem: any, field: string) => {
     if (field == "qty") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -481,7 +481,7 @@ const Badwindow = ({
         item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -544,7 +544,7 @@ const Badwindow = ({
                   ? ""
                   : row.rowstatus,
               badcd: badcdListData.find(
-                (item: any) => item.sub_code === row.badcd
+                (item: any) => item.sub_code == row.badcd
               )?.code_name,
               [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
             })),

@@ -7,7 +7,7 @@ const ComboBox = (props) => {
     props.option.menuCustomDefaultOptions,
     "query"
   ); //props.option.menuCustomDefaultOptions["query"];
-  const dataItem = dataList.find((item) => item.id === props.id);
+  const dataItem = dataList.find((item) => item.id == props.id);
   const listData = dataItem.Rows;
   const textField =
     props.textField == undefined ? "code_name" : props.textField;

@@ -73,8 +73,8 @@ const SY_B0060W: React.FC = () => {
     (sessionItem) => sessionItem.code == "location"
   )!.value;
 
-  if (sessionOrgdiv === "") sessionOrgdiv = "01";
-  if (sessionLocation === "") sessionLocation = "01";
+  if (sessionOrgdiv == "") sessionOrgdiv = "01";
+  if (sessionLocation == "") sessionLocation = "01";
 
   const [pc, setPc] = useState("");
   UseParaPc(setPc);
@@ -265,7 +265,7 @@ const SY_B0060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows[0];
 
@@ -328,7 +328,7 @@ const SY_B0060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const row = data.tables[0].Rows[0];
       const rowCount = data.tables[0].RowCount;
 
@@ -353,7 +353,7 @@ const SY_B0060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const row = data.tables[0].Rows[0].use_yn == "Y" ? false : true;
       setVisible(row);
     } else {
@@ -398,7 +398,7 @@ const SY_B0060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       fetchWorkTime();
     } else {
       alert(data.resultMessage);
@@ -414,7 +414,7 @@ const SY_B0060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       const rowCount = data.tables[0].RowCount;
 
@@ -441,7 +441,7 @@ const SY_B0060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -464,7 +464,7 @@ const SY_B0060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -545,11 +545,11 @@ const SY_B0060W: React.FC = () => {
 
       data = await processApi<any>("procedure", para);
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setSessionItem(
           rows
-            .filter((item: any) => item.class === "Session")
+            .filter((item: any) => item.class == "Session")
             .map((item: any) => ({
               code: item.code,
               value: item.value,

@@ -87,9 +87,9 @@ const SY_A0120: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        orgdiv: defaultOption.find((item: any) => item.id === "orgdiv")
+        orgdiv: defaultOption.find((item: any) => item.id == "orgdiv")
           .valueCode,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
@@ -105,10 +105,10 @@ const SY_A0120: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const orgdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA001")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA001")
       );
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       fetchQuery(orgdivQueryStr, setOrgdivListData);
       fetchQuery(locationQueryStr, setLocationListData);
@@ -131,7 +131,7 @@ const SY_A0120: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -239,7 +239,7 @@ const SY_A0120: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -568,7 +568,7 @@ const SY_A0120: React.FC = () => {
                       title={item.caption}
                       width={item.width}
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )

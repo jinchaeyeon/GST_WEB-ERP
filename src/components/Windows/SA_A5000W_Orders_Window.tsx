@@ -125,15 +125,15 @@ const CopyWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        person: defaultOption.find((item: any) => item.id === "person")
+        person: defaultOption.find((item: any) => item.id == "person")
           .valueCode,
-        cboDoexdiv: defaultOption.find((item: any) => item.id === "cboDoexdiv")
+        cboDoexdiv: defaultOption.find((item: any) => item.id == "cboDoexdiv")
           .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
-        ordsts: defaultOption.find((item: any) => item.id === "ordsts")
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
+        ordsts: defaultOption.find((item: any) => item.id == "ordsts")
           .valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
-        saledtgb: defaultOption.find((item: any) => item.id === "saledtgb")
+        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
+        saledtgb: defaultOption.find((item: any) => item.id == "saledtgb")
           .valueCode,
         isSearch: true,
       }));
@@ -157,11 +157,11 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
 
@@ -186,7 +186,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -412,7 +412,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -981,10 +981,10 @@ const CopyWindow = ({
               mainDataResult.data.map((row) => ({
                 ...row,
                 person: personListData.find(
-                  (item: any) => item.user_id === row.person
+                  (item: any) => item.user_id == row.person
                 )?.user_name,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -1133,10 +1133,10 @@ const CopyWindow = ({
               subDataResult.data.map((row) => ({
                 ...row,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
                 person: personListData.find(
-                  (item: any) => item.user_id === row.person
+                  (item: any) => item.user_id == row.person
                 )?.user_name,
                 [SELECTED_FIELD]: subselectedState[idGetter2(row)], //선택된 데이터
               })),

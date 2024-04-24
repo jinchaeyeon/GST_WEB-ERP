@@ -167,21 +167,21 @@ const MA_A3300W_mihyeon: React.FC = () => {
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
         // 사업장
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
         // 담당자
-        person: defaultOption.find((item: any) => item.id === "person")
+        person: defaultOption.find((item: any) => item.id == "person")
           .valueCode,
         // 내수구분
-        doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
+        doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
           .valueCode,
         // 사업부
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
         // 입고용도
-        inuse: defaultOption.find((item: any) => item.id === "inuse").valueCode,
+        inuse: defaultOption.find((item: any) => item.id == "inuse").valueCode,
         // 검사유무
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -218,27 +218,27 @@ const MA_A3300W_mihyeon: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
       );
       const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA029")
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const inuseQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_MA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_MA002")
       );
       fetchQuery(amtunitQueryStr, setAmtunitListData);
       fetchQuery(doexdivQueryStr, setDoexdivListData);
@@ -266,7 +266,7 @@ const MA_A3300W_mihyeon: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -524,7 +524,7 @@ const MA_A3300W_mihyeon: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -639,7 +639,7 @@ const MA_A3300W_mihyeon: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
       setDetailDataResult((prev) => {
@@ -705,7 +705,7 @@ const MA_A3300W_mihyeon: React.FC = () => {
 
   useEffect(() => {
     // work_type 이 D이면 삭제
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   let gridRef: any = useRef(null);
@@ -899,10 +899,10 @@ const MA_A3300W_mihyeon: React.FC = () => {
       data = null;
     }
     // 데이터가 성공적으로 삭제되면
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       // 현재 페이지의 데이터가 1개이고, 페이지번호가 0보다 클때, 마지막 데이터가 삭제됬는지 판단
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
         // 현재 선택된 데이터의 인덱스 찾기
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
@@ -1303,19 +1303,19 @@ const MA_A3300W_mihyeon: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 amtunit: amtunitListData.find(
-                  (item: any) => item.sub_code === row.amtunit
+                  (item: any) => item.sub_code == row.amtunit
                 )?.code_name,
                 doexdiv: doexdivListData.find(
-                  (item: any) => item.sub_code === row.doexdiv
+                  (item: any) => item.sub_code == row.doexdiv
                 )?.code_name,
                 taxdiv: taxdivListData.find(
-                  (item: any) => item.sub_code === row.taxdiv
+                  (item: any) => item.sub_code == row.taxdiv
                 )?.code_name,
                 inuse: inuseListData.find(
-                  (item: any) => item.sub_code === row.inuse
+                  (item: any) => item.sub_code == row.inuse
                 )?.code_name,
                 person: usersListData.find(
-                  (item: any) => item.user_id === row.person
+                  (item: any) => item.user_id == row.person
                 )?.user_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -1368,7 +1368,7 @@ const MA_A3300W_mihyeon: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : NumberField2.includes(item.fieldName)
                           ? // 각 행의 합계 표시여부
@@ -1392,10 +1392,10 @@ const MA_A3300W_mihyeon: React.FC = () => {
             detailDataResult.data.map((row) => ({
               ...row,
               itemacnt: itemacntListData.find(
-                (item: any) => item.sub_code === row.itemacnt
+                (item: any) => item.sub_code == row.itemacnt
               )?.code_name,
               qtyunit: qtyunitListData.find(
-                (item: any) => item.sub_code === row.qtyunit
+                (item: any) => item.sub_code == row.qtyunit
               )?.code_name,
               [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
             })),
@@ -1446,7 +1446,7 @@ const MA_A3300W_mihyeon: React.FC = () => {
                         : undefined
                     }
                     footerCell={
-                      item.sortOrder === 1
+                      item.sortOrder == 1
                         ? detailTotalFooterCell
                         : NumberField2.includes(item.fieldName)
                         ? gridSumQtyFooterCell2

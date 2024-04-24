@@ -99,7 +99,7 @@ const AC_A0000W: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
       }));
     }
@@ -121,10 +121,10 @@ const AC_A0000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const orgdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA001")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA001")
       );
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       fetchQuery(orgdivQueryStr, setOrgdivListData);
       fetchQuery(locationQueryStr, setLocationListData);
@@ -147,7 +147,7 @@ const AC_A0000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -281,7 +281,7 @@ const AC_A0000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -501,7 +501,7 @@ const AC_A0000W: React.FC = () => {
     const selectedRowData = event.dataItems[selectedIdx];
 
     const tax = locationListData.find(
-      (item: any) => item.code_name === selectedRowData.taxloca
+      (item: any) => item.code_name == selectedRowData.taxloca
     )?.sub_code;
 
     setInfomation({
@@ -759,7 +759,7 @@ const AC_A0000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   const fetchToDelete = async () => {
@@ -771,9 +771,9 @@ const AC_A0000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       if (isLastDataDeleted) {
         setPage({
           skip:
@@ -907,7 +907,7 @@ const AC_A0000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
@@ -1019,7 +1019,7 @@ const AC_A0000W: React.FC = () => {
                       mainDataResult.data.map((row) => ({
                         ...row,
                         taxloca: locationListData.find(
-                          (item: any) => item.sub_code === row.taxloca
+                          (item: any) => item.sub_code == row.taxloca
                         )?.code_name,
                         [SELECTED_FIELD]: selectedState[idGetter(row)],
                       })),
@@ -1064,7 +1064,7 @@ const AC_A0000W: React.FC = () => {
                               title={item.caption}
                               width={item.width}
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell
                                   : undefined
                               }
@@ -1142,7 +1142,7 @@ const AC_A0000W: React.FC = () => {
                               value={
                                 orgdivListData.find(
                                   (item: any) =>
-                                    item.sub_code === infomation.orgdiv
+                                    item.sub_code == infomation.orgdiv
                                 )?.code_name
                               }
                               className="readonly"
@@ -1173,7 +1173,7 @@ const AC_A0000W: React.FC = () => {
                               value={
                                 locationListData.find(
                                   (item: any) =>
-                                    item.sub_code === infomation.taxloca
+                                    item.sub_code == infomation.taxloca
                                 )?.code_name
                               }
                               className="readonly"
@@ -1533,7 +1533,7 @@ const AC_A0000W: React.FC = () => {
                   mainDataResult.data.map((row) => ({
                     ...row,
                     taxloca: locationListData.find(
-                      (item: any) => item.sub_code === row.taxloca
+                      (item: any) => item.sub_code == row.taxloca
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
@@ -1578,7 +1578,7 @@ const AC_A0000W: React.FC = () => {
                           title={item.caption}
                           width={item.width}
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : undefined
                           }
@@ -1616,7 +1616,7 @@ const AC_A0000W: React.FC = () => {
                         type="text"
                         value={
                           orgdivListData.find(
-                            (item: any) => item.sub_code === infomation.orgdiv
+                            (item: any) => item.sub_code == infomation.orgdiv
                           )?.code_name
                         }
                         className="readonly"
@@ -1646,7 +1646,7 @@ const AC_A0000W: React.FC = () => {
                         type="text"
                         value={
                           locationListData.find(
-                            (item: any) => item.sub_code === infomation.taxloca
+                            (item: any) => item.sub_code == infomation.taxloca
                           )?.code_name
                         }
                         className="readonly"

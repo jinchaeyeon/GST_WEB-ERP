@@ -89,7 +89,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setAttdatnum, setIs_attached } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -143,7 +143,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -315,7 +315,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -491,12 +491,12 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
     const dataItem: { [name: string]: any } = mainDataResult.data.filter(
       (item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       }
     );
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     type TData = {
       rowstatus: string[];
@@ -572,7 +572,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setFilters((prev) => ({
         ...prev,
         find_row_value: "",
@@ -615,7 +615,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
     if (bizComponentData.length > 0) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
 
@@ -640,7 +640,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -668,7 +668,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
             ...item,
             attdatnum: is_attached == "N" ? "" : attdatnum,
             is_attached: is_attached,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -718,7 +718,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
       field != "update_time"
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -805,7 +805,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
   };
 
   const handleFileUpload = async (files: FileList | null) => {
-    if (files === null) return false;
+    if (files == null) return false;
     setLoading(true)
 
     let data: any;

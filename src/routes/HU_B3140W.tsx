@@ -177,10 +177,10 @@ const HU_B3140W: React.FC = () => {
         ...prev,
         fryyyymm: DATE,
         toyyyymm: DATE2,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        rtrdt: defaultOption.find((item: any) => item.id === "rtrdt").valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
+        rtrdt: defaultOption.find((item: any) => item.id == "rtrdt").valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -207,14 +207,14 @@ const HU_B3140W: React.FC = () => {
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
       const paytypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU032")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU032")
       );
 
       fetchQuery(paytypeQueryStr, setPaytypeListData);
@@ -239,7 +239,7 @@ const HU_B3140W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -396,7 +396,7 @@ const HU_B3140W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult((prev) => {
@@ -455,7 +455,7 @@ const HU_B3140W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -517,7 +517,7 @@ const HU_B3140W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult3((prev) => {
@@ -574,7 +574,7 @@ const HU_B3140W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult4((prev) => {
@@ -630,7 +630,7 @@ const HU_B3140W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult5((prev) => {
@@ -686,7 +686,7 @@ const HU_B3140W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult6((prev) => {
@@ -764,7 +764,7 @@ const HU_B3140W: React.FC = () => {
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
-    if (tabSelected === 0) {
+    if (tabSelected == 0) {
       const newSelectedState = getSelectedState({
         event,
         selectedState: selectedState,
@@ -772,7 +772,7 @@ const HU_B3140W: React.FC = () => {
       });
 
       setSelectedState(newSelectedState);
-    } else if (tabSelected === 1) {
+    } else if (tabSelected == 1) {
       const newSelectedState = getSelectedState({
         event,
         selectedState: selectedState2,
@@ -780,7 +780,7 @@ const HU_B3140W: React.FC = () => {
       });
 
       setSelectedState2(newSelectedState);
-    } else if (tabSelected === 2) {
+    } else if (tabSelected == 2) {
       const newSelectedState = getSelectedState({
         event,
         selectedState: selectedState3,
@@ -788,7 +788,7 @@ const HU_B3140W: React.FC = () => {
       });
 
       setSelectedState3(newSelectedState);
-    } else if (tabSelected === 3) {
+    } else if (tabSelected == 3) {
       const newSelectedState = getSelectedState({
         event,
         selectedState: selectedState5,
@@ -1716,13 +1716,13 @@ const HU_B3140W: React.FC = () => {
                   mainDataResult.data.map((row) => ({
                     ...row,
                     postcd: postcdListData.find(
-                      (item: any) => item.sub_code === row.postcd
+                      (item: any) => item.sub_code == row.postcd
                     )?.code_name,
                     dptcd: dptcdListData.find(
-                      (item: any) => item.dptcd === row.dptcd
+                      (item: any) => item.dptcd == row.dptcd
                     )?.dptnm,
                     paytype: paytypeListData.find(
-                      (item: any) => item.sub_code === row.paytype
+                      (item: any) => item.sub_code == row.paytype
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
@@ -1769,7 +1769,7 @@ const HU_B3140W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 1
+                            item.sortOrder == 1
                               ? mainTotalFooterCell
                               : NumberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell
@@ -1799,13 +1799,13 @@ const HU_B3140W: React.FC = () => {
                   items: item.items.map((row: any) => ({
                     ...row,
                     postcd: postcdListData.find(
-                      (item: any) => item.sub_code === row.postcd
+                      (item: any) => item.sub_code == row.postcd
                     )?.code_name,
                     dptcd: dptcdListData.find(
-                      (item: any) => item.dptcd === row.dptcd
+                      (item: any) => item.dptcd == row.dptcd
                     )?.dptnm,
                     paytype: paytypeListData.find(
-                      (item: any) => item.sub_code === row.paytype
+                      (item: any) => item.sub_code == row.paytype
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState2[idGetter(row)], //선택된 데이터
                   })),
@@ -1848,7 +1848,7 @@ const HU_B3140W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 1
+                            item.sortOrder == 1
                               ? mainTotalFooterCell2
                               : NumberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell2
@@ -2018,7 +2018,7 @@ const HU_B3140W: React.FC = () => {
                   mainDataResult5.data.map((row) => ({
                     ...row,
                     dptcd: dptcdListData.find(
-                      (item: any) => item.dptcd === row.dptcd
+                      (item: any) => item.dptcd == row.dptcd
                     )?.dptnm,
                     [SELECTED_FIELD]: selectedState5[idGetter(row)],
                   })),
@@ -2084,7 +2084,7 @@ const HU_B3140W: React.FC = () => {
                   mainDataResult6.data.map((row) => ({
                     ...row,
                     dptcd: dptcdListData.find(
-                      (item: any) => item.dptcd === row.dptcd
+                      (item: any) => item.dptcd == row.dptcd
                     )?.dptnm,
                     [SELECTED_FIELD]: selectedState6[idGetter(row)],
                   })),

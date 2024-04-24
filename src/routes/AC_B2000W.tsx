@@ -481,7 +481,7 @@ const AC_B2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -595,7 +595,7 @@ const AC_B2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -702,7 +702,7 @@ const AC_B2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -1275,7 +1275,7 @@ const AC_B2000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell2
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell2
@@ -1347,7 +1347,7 @@ const AC_B2000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell3
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell3
@@ -1493,7 +1493,7 @@ const AC_B2000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell2
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell2
@@ -1565,7 +1565,7 @@ const AC_B2000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell3
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell3
@@ -1711,7 +1711,7 @@ const AC_B2000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell2
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell2
@@ -1783,7 +1783,7 @@ const AC_B2000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell3
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell3
@@ -1929,7 +1929,7 @@ const AC_B2000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell2
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell2
@@ -2001,7 +2001,7 @@ const AC_B2000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell3
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell3
@@ -2128,7 +2128,7 @@ const AC_B2000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell2
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell2
@@ -2200,7 +2200,7 @@ const AC_B2000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell3
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell3
@@ -2387,7 +2387,7 @@ const AC_B2000W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell2
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell2

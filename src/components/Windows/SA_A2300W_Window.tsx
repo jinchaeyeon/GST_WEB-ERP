@@ -157,9 +157,9 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "qtyunit" ? "L_BA015" : field === "itemacnt" ? "L_BA061" : "";
+    field == "qtyunit" ? "L_BA015" : field == "itemacnt" ? "L_BA061" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -216,11 +216,11 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        person: defaultOption.find((item: any) => item.id === "person")
+        person: defaultOption.find((item: any) => item.id == "person")
           .valueCode,
-        doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
+        doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
           .valueCode,
-        cargocd: defaultOption.find((item: any) => item.id === "cargocd")
+        cargocd: defaultOption.find((item: any) => item.id == "cargocd")
           .valueCode,
       }));
     }
@@ -241,7 +241,7 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
 
       fetchQuery(locationQueryStr, setLocationListData);
@@ -264,7 +264,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -479,7 +479,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult((prev) => {
@@ -520,7 +520,7 @@ const CopyWindow = ({
   }, [filters]);
 
   useEffect(() => {
-    if (workType === "U" && data != undefined) {
+    if (workType == "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
         recdt: toDate(data.recdt),
@@ -793,7 +793,7 @@ const CopyWindow = ({
         if (valid == true) {
           const dataItem = mainDataResult.data.filter((item: any) => {
             return (
-              (item.rowstatus === "N" || item.rowstatus === "U") &&
+              (item.rowstatus == "N" || item.rowstatus == "U") &&
               item.rowstatus !== undefined
             );
           });
@@ -845,7 +845,7 @@ const CopyWindow = ({
             serviceid: companyCode,
             files: filters.files,
           }));
-          if (dataItem.length === 0 && deletedMainRows.length == 0)
+          if (dataItem.length == 0 && deletedMainRows.length == 0)
             return false;
           let dataArr: TdataArr = {
             rowstatus: [],
@@ -1164,7 +1164,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = [];
       setUnsavedName([]);
       reload(data.returnString);
@@ -1345,7 +1345,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "출하처리생성" : "출하처리정보"}
+        title={workType == "N" ? "출하처리생성" : "출하처리정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -1412,7 +1412,7 @@ const CopyWindow = ({
                     type="text"
                     value={
                       locationListData.find(
-                        (item: any) => item.sub_code === filters.location
+                        (item: any) => item.sub_code == filters.location
                       )?.code_name
                     }
                     className="readonly"

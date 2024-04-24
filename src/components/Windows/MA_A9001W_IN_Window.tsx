@@ -115,11 +115,11 @@ const CopyWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
-        decdiv: defaultOption.find((item: any) => item.id === "decdiv")
+        decdiv: defaultOption.find((item: any) => item.id == "decdiv")
           .valueCode,
       }));
     }
@@ -145,13 +145,13 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       const positionQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA028")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA028")
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
 
       fetchQuery(locationQueryStr, setLocationListData);
@@ -176,7 +176,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -410,7 +410,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -496,7 +496,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -723,7 +723,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       var totalRowCnt = data.tables[0].TotalRowCount;
       var rows = data.tables[0].Rows;
 
@@ -741,7 +741,7 @@ const CopyWindow = ({
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -793,7 +793,7 @@ const CopyWindow = ({
     let valid = true;
     if (field == "chk") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               chk:
@@ -937,10 +937,10 @@ const CopyWindow = ({
               mainDataResult.data.map((row) => ({
                 ...row,
                 position: positionListData.find(
-                  (item: any) => item.sub_code === row.position
+                  (item: any) => item.sub_code == row.position
                 )?.code_name,
                 location: locationListData.find(
-                  (item: any) => item.sub_code === row.location
+                  (item: any) => item.sub_code == row.location
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -1033,7 +1033,7 @@ const CopyWindow = ({
               subDataResult.data.map((row) => ({
                 ...row,
                 itemacnt: itemacntListDATA.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                  (item: any) => item.sub_code == row.itemacnt
                 )?.code_name,
                 [SELECTED_FIELD]: subselectedState[idGetter2(row)], //선택된 데이터
               })),

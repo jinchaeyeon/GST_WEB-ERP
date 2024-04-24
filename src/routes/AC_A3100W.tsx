@@ -90,8 +90,8 @@ const AC_A3100W: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        fxdiv: defaultOption.find((item: any) => item.id === "fxdiv").valueCode,
-        fxdepsts: defaultOption.find((item: any) => item.id === "fxdepsts")
+        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv").valueCode,
+        fxdepsts: defaultOption.find((item: any) => item.id == "fxdepsts")
           .valueCode,
       }));
     }
@@ -226,7 +226,7 @@ const AC_A3100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -258,7 +258,7 @@ const AC_A3100W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.fxcode == filters.find_row_value);
         if (selectedRow != undefined) {
@@ -494,9 +494,9 @@ const AC_A3100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 1;
+        mainDataResult.data.length == 1 && filters.pgNum > 1;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -533,7 +533,7 @@ const AC_A3100W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   return (
@@ -706,7 +706,7 @@ const AC_A3100W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : numberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell

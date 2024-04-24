@@ -183,11 +183,11 @@ const PR_A6000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        stopcd: defaultOption.find((item: any) => item.id === "stopcd")
+        stopcd: defaultOption.find((item: any) => item.id == "stopcd")
           .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
         isSearch: true,
       }));
       setFilters2((prev) => ({
@@ -218,14 +218,14 @@ const PR_A6000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const stopcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR011")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR011")
       );
       const prodmacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_fxcode")
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
 
@@ -251,7 +251,7 @@ const PR_A6000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -446,7 +446,7 @@ const PR_A6000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -539,7 +539,7 @@ const PR_A6000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -552,7 +552,7 @@ const PR_A6000W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef2.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.stopnum === filters2.find_row_value
+            (row: any) => row.stopnum == filters2.find_row_value
           );
           targetRowIndex2 = findRowIndex;
         }
@@ -633,7 +633,7 @@ const PR_A6000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -651,7 +651,7 @@ const PR_A6000W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef3.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.stopnum === filters3.find_row_value
+            (row: any) => row.stopnum == filters3.find_row_value
           );
           targetRowIndex3 = findRowIndex;
         }
@@ -733,7 +733,7 @@ const PR_A6000W: React.FC = () => {
   }, [filters3]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   useEffect(() => {
@@ -915,21 +915,21 @@ const PR_A6000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult3.data.length === 1 && filters3.pgNum > 0;
+        mainDataResult3.data.length == 1 && filters3.pgNum > 0;
       const findRowIndex = mainDataResult3.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY3] == Object.getOwnPropertyNames(selectedState3)[0]
       );
       const isLastDataDeleted2 =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex2 = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
       );
       const isLastDataDeleted3 =
-        mainDataResult3.data.length === 1 && filters3.pgNum == 1;
+        mainDataResult3.data.length == 1 && filters3.pgNum == 1;
 
       if (isLastDataDeleted3) {
         //비가동데이터 없음
@@ -1410,7 +1410,7 @@ const PR_A6000W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
                         }
                       />
                     )
@@ -1479,7 +1479,7 @@ const PR_A6000W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? detail2TotalFooterCell
                             : undefined
                         }
@@ -1522,13 +1522,13 @@ const PR_A6000W: React.FC = () => {
               items: item.items.map((row: any) => ({
                 ...row,
                 prodmac: prodmacListData.find(
-                  (item: any) => item.fxcode === row.prodmac
+                  (item: any) => item.fxcode == row.prodmac
                 )?.fxfull,
                 stopcd: stopcdListData.find(
-                  (item: any) => item.sub_code === row.stopcd
+                  (item: any) => item.sub_code == row.stopcd
                 )?.code_name,
                 prodemp: usersListData.find(
-                  (item: any) => item.user_id === row.prodemp
+                  (item: any) => item.user_id == row.prodemp
                 )?.user_name,
                 [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
               })),
@@ -1577,7 +1577,7 @@ const PR_A6000W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? detailTotalFooterCell : undefined
+                        item.sortOrder == 0 ? detailTotalFooterCell : undefined
                       }
                     />
                   )

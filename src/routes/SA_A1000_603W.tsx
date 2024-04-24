@@ -164,10 +164,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   UseBizComponent("L_SA011_603", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "status" ? "L_SA011_603" : "";
+  const bizComponentIdVal = field == "status" ? "L_SA011_603" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   const style =
@@ -339,7 +339,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setItemInfo } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -464,7 +464,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {itemWindowVisible2 && (
@@ -486,7 +486,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   const field = props.field ?? "";
   const bizComponentIdVal = field == "glpyn" ? "R_GLP" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -566,7 +566,7 @@ const SA_A1000_603W: React.FC = () => {
               itemlvl4: itemInfo.itemlvl4,
               itemlvl5: itemInfo.itemlvl5,
               custitemnm: itemInfo.custitemnm,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -600,9 +600,9 @@ const SA_A1000_603W: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           materialtype: defaultOption.find(
-            (item: any) => item.id === "materialtype"
+            (item: any) => item.id == "materialtype"
           ).valueCode,
-          quotype: defaultOption.find((item: any) => item.id === "quotype")
+          quotype: defaultOption.find((item: any) => item.id == "quotype")
             .valueCode,
           targetdt: setDefaultDate(customOptionData, "targetdt"),
           find_row_value: queryParams.get("go") as string,
@@ -612,9 +612,9 @@ const SA_A1000_603W: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           materialtype: defaultOption.find(
-            (item: any) => item.id === "materialtype"
+            (item: any) => item.id == "materialtype"
           ).valueCode,
-          quotype: defaultOption.find((item: any) => item.id === "quotype")
+          quotype: defaultOption.find((item: any) => item.id == "quotype")
             .valueCode,
           targetdt: setDefaultDate(customOptionData, "targetdt"),
         }));
@@ -684,53 +684,53 @@ const SA_A1000_603W: React.FC = () => {
     if (bizComponentData.length > 0) {
       const materialgbQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA012_603"
+          (item: any) => item.bizComponentId == "L_SA012_603"
         )
       );
       const assaygbeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA013_603"
+          (item: any) => item.bizComponentId == "L_SA013_603"
         )
       );
       const startschgbQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA014_603"
+          (item: any) => item.bizComponentId == "L_SA014_603"
         )
       );
       const financegbQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA015_603"
+          (item: any) => item.bizComponentId == "L_SA015_603"
         )
       );
       const amtgbQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA016_603"
+          (item: any) => item.bizComponentId == "L_SA016_603"
         )
       );
       const addordgbQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA017_603"
+          (item: any) => item.bizComponentId == "L_SA017_603"
         )
       );
       const relationgbQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA018_603"
+          (item: any) => item.bizComponentId == "L_SA018_603"
         )
       );
       const statusQueryStr3 = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_BA016_603"
+          (item: any) => item.bizComponentId == "L_BA016_603"
         )
       );
       const ordstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SA002")
       );
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const statusQueryStr = getQueryFromBizComponent(
@@ -750,16 +750,16 @@ const SA_A1000_603W: React.FC = () => {
       );
 
       const quotypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA016")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SA016")
       );
 
       const quostsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA004")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SA004")
       );
 
       const materialtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA001_603"
+          (item: any) => item.bizComponentId == "L_SA001_603"
         )
       );
       fetchQueryData(materialgbQueryStr, setMaterialgbListData);
@@ -799,7 +799,7 @@ const SA_A1000_603W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -1082,7 +1082,7 @@ const SA_A1000_603W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
 
@@ -1698,7 +1698,7 @@ const SA_A1000_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       //status 임시
       // const rows = data.tables[0].Rows;
@@ -1825,7 +1825,7 @@ const SA_A1000_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const RowCnt = data.tables[0].RowCount;
       const row = data.tables[0].Rows;
       const totalRowCnt = data.tables[1].TotalRowCount;
@@ -2007,7 +2007,7 @@ const SA_A1000_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -2127,7 +2127,7 @@ const SA_A1000_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -2194,7 +2194,7 @@ const SA_A1000_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -2261,7 +2261,7 @@ const SA_A1000_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -2328,7 +2328,7 @@ const SA_A1000_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
@@ -2402,7 +2402,7 @@ const SA_A1000_603W: React.FC = () => {
     }
     let index = -1;
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -3118,7 +3118,7 @@ const SA_A1000_603W: React.FC = () => {
     );
 
     setInformation({
-      chkperson: defaultOption.find((item: any) => item.id === "person")
+      chkperson: defaultOption.find((item: any) => item.id == "person")
         .valueCode,
       custcd: "",
       custnm: "",
@@ -3139,19 +3139,19 @@ const SA_A1000_603W: React.FC = () => {
       materialindt: setDefaultDate2(customOptionData, "materialindt"),
       materialnm: "",
       materialtype: defaultOption.find(
-        (item: any) => item.id === "materialtype"
+        (item: any) => item.id == "materialtype"
       ).valueCode,
       numbering_id: defaultOption.find(
-        (item: any) => item.id === "numbering_id"
+        (item: any) => item.id == "numbering_id"
       ).valueCode,
       ordsts: "",
-      person: defaultOption.find((item: any) => item.id === "person").valueCode,
+      person: defaultOption.find((item: any) => item.id == "person").valueCode,
       person1: "",
       quodt: setDefaultDate2(customOptionData, "quodt"),
       quonum: "",
       quorev: 0,
       quosts: "",
-      quotype: defaultOption.find((item: any) => item.id === "quotype")
+      quotype: defaultOption.find((item: any) => item.id == "quotype")
         .valueCode,
       rcvcustnm: "",
       rcvcustprsnnm: "",
@@ -3163,11 +3163,11 @@ const SA_A1000_603W: React.FC = () => {
       report3: "",
       report4: "",
       report5: "",
-      requestgb: defaultOption.find((item: any) => item.id === "requestgb")
+      requestgb: defaultOption.find((item: any) => item.id == "requestgb")
         .valueCode,
       testenddt: setDefaultDate2(customOptionData, "testenddt"),
       teststdt: setDefaultDate2(customOptionData, "teststdt"),
-      testtype: defaultOption.find((item: any) => item.id === "testtype")
+      testtype: defaultOption.find((item: any) => item.id == "testtype")
         .valueCode,
       translate1: "",
       translate2: "",
@@ -3283,12 +3283,12 @@ const SA_A1000_603W: React.FC = () => {
   const onSaveClick = () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     try {
       let valid = true;
@@ -3335,7 +3335,7 @@ const SA_A1000_603W: React.FC = () => {
   const onSaveClick2 = () => {
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -3422,7 +3422,7 @@ const SA_A1000_603W: React.FC = () => {
           "|" +
           (Information.report5 == "" ? "N" : Information.report5);
 
-        if (dataItem.length === 0 && deletedMainRows2.length === 0) {
+        if (dataItem.length == 0 && deletedMainRows2.length == 0) {
           setParaData({
             workType: worktype,
             orgdiv: "01",
@@ -3598,7 +3598,7 @@ const SA_A1000_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (worktype == "N") {
         setTabSelected(0);
       }
@@ -3738,9 +3738,9 @@ const SA_A1000_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       setTabSelected(0);
       if (isLastDataDeleted) {
         setPage({
@@ -3809,7 +3809,7 @@ const SA_A1000_603W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   const onLinkChange = (event: GridRowDoubleClickEvent) => {
@@ -4244,7 +4244,7 @@ const SA_A1000_603W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : undefined
                           }
@@ -4975,7 +4975,7 @@ const SA_A1000_603W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell2
                                   : undefined
                               }
@@ -5366,7 +5366,7 @@ const SA_A1000_603W: React.FC = () => {
                                 }
                                 width={item.width}
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? mainTotalFooterCell4
                                     : undefined
                                 }
@@ -5451,7 +5451,7 @@ const SA_A1000_603W: React.FC = () => {
                                 }
                                 width={item.width}
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? mainTotalFooterCell5
                                     : undefined
                                 }
@@ -5529,7 +5529,7 @@ const SA_A1000_603W: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? mainTotalFooterCell6
                                     : numberField.includes(item.fieldName)
                                     ? gridSumQtyFooterCell6
@@ -5620,7 +5620,7 @@ const SA_A1000_603W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell7
                                 : undefined
                             }

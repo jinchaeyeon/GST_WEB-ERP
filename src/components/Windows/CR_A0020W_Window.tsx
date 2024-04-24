@@ -92,12 +92,12 @@ const KendoWindow = ({
       );
       setInitialVal((prev) => ({
         ...prev,
-        class: defaultOption.find((item: any) => item.id === "class").valueCode,
-        gender: defaultOption.find((item: any) => item.id === "gender")
+        class: defaultOption.find((item: any) => item.id == "class").valueCode,
+        gender: defaultOption.find((item: any) => item.id == "gender")
           .valueCode,
-        manager: defaultOption.find((item: any) => item.id === "manager")
+        manager: defaultOption.find((item: any) => item.id == "manager")
           .valueCode,
-        species: defaultOption.find((item: any) => item.id === "species")
+        species: defaultOption.find((item: any) => item.id == "species")
           .valueCode,
       }));
     }
@@ -136,7 +136,7 @@ const KendoWindow = ({
   const processApi = useApi();
 
   useEffect(() => {
-    if (workType === "U") {
+    if (workType == "U") {
       fetchMain();
     }
   }, []);
@@ -185,7 +185,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const row = data.tables[0].Rows[0];
 
       setInitialVal((prev) => {
@@ -277,8 +277,8 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
-      if (workType === "U") {
+    if (data.isSuccess == true) {
+      if (workType == "U") {
         setFilters((prev: any) => ({
           ...prev,
           find_row_value: data.returnString,
@@ -353,7 +353,7 @@ const KendoWindow = ({
 
   return (
     <Window
-      title={workType === "N" ? "반려견 등록" : "반려견 정보"}
+      title={workType == "N" ? "반려견 등록" : "반려견 정보"}
       width={position.width}
       height={position.height}
       onMove={handleMove}

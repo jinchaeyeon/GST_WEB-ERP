@@ -133,7 +133,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     mainDataState,
     setMainDataState,
   } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
@@ -173,7 +173,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {userWindowVisible && (
@@ -196,21 +196,21 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "kind"
+    field == "kind"
       ? "L_HU060"
-      : field === "usekind"
+      : field == "usekind"
       ? "L_HU061"
-      : field === "postcd"
+      : field == "postcd"
       ? "L_HU005"
-      : field === "dptcd"
+      : field == "dptcd"
       ? "L_dptcd_001"
       : "";
 
-  const valueField = field === "dptcd" ? "dptcd" : undefined;
-  const textField = field === "dptcd" ? "dptnm" : undefined;
+  const valueField = field == "dptcd" ? "dptcd" : undefined;
+  const textField = field == "dptcd" ? "dptnm" : undefined;
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -252,12 +252,12 @@ const HU_A1060W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        kind: defaultOption.find((item: any) => item.id === "kind").valueCode,
+        kind: defaultOption.find((item: any) => item.id == "kind").valueCode,
       }));
 
       setFilters2((prev) => ({
         ...prev,
-        radType: defaultOption.find((item: any) => item.id === "radType")
+        radType: defaultOption.find((item: any) => item.id == "radType")
           .valueCode,
       }));
     }
@@ -377,7 +377,7 @@ const HU_A1060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -610,7 +610,7 @@ const HU_A1060W: React.FC = () => {
       dataItem.rowstatus == "N"
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -800,7 +800,7 @@ const HU_A1060W: React.FC = () => {
               prsnnum: prsnnum,
               dptcd: dptcd,
               postcd: postcd,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
             }
           : {
               ...item,
@@ -885,7 +885,7 @@ const HU_A1060W: React.FC = () => {
     }
 
     const dataItem = mainDataResult.data.filter((item: any) => {
-      return item.rowstatus === "N" && item.rowstatus !== undefined;
+      return item.rowstatus == "N" && item.rowstatus !== undefined;
     });
 
     let valid = true;
@@ -901,7 +901,7 @@ const HU_A1060W: React.FC = () => {
       return false;
     }
 
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     let rowsArr: TRowsArr = {
       rowstatus_s: [],
@@ -1002,7 +1002,7 @@ const HU_A1060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setFilters((prev: any) => ({
         ...prev,
         find_row_value: data.returnString,
@@ -1249,7 +1249,7 @@ const HU_A1060W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : undefined
                           }

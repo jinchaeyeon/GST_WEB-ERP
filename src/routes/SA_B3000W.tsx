@@ -216,11 +216,11 @@ const SA_B3000W: React.FC = () => {
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
         cboLocation: defaultOption.find(
-          (item: any) => item.id === "cboLocation"
+          (item: any) => item.id == "cboLocation"
         ).valueCode,
-        cboDiv: defaultOption.find((item: any) => item.id === "cboDiv")
+        cboDiv: defaultOption.find((item: any) => item.id == "cboDiv")
           .valueCode,
-        rdoAmtdiv: defaultOption.find((item: any) => item.id === "rdoAmtdiv")
+        rdoAmtdiv: defaultOption.find((item: any) => item.id == "rdoAmtdiv")
           .valueCode,
       }));
     }
@@ -371,7 +371,7 @@ const SA_B3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       if (gridRef.current) {
         targetRowIndex = 0;
@@ -386,15 +386,15 @@ const SA_B3000W: React.FC = () => {
         targetRowIndex4 = 0;
       }
       // 연도 타이틀 (5년)
-      if (workType === "TITLE") {
+      if (workType == "TITLE") {
         setYearTitle(Object.values(rows[0]));
       }
       // 공통 그리드
       else if (
-        workType === "GRID" ||
-        workType === "MONTH" ||
-        workType === "QUARTER" ||
-        workType === "5year"
+        workType == "GRID" ||
+        workType == "MONTH" ||
+        workType == "QUARTER" ||
+        workType == "5year"
       ) {
         const totalRowCnt2 = data.tables[0].TotalRowCount;
         setGridDataResult((prev) => {
@@ -407,25 +407,25 @@ const SA_B3000W: React.FC = () => {
         if (totalRowCnt2 > 0) {
           // 첫번째 행 선택하기
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-          if (tabSelected === 1) {
+          if (tabSelected == 1) {
             fetchGrid("MCHART", rows[0].custcd);
-          } else if (tabSelected === 2) {
+          } else if (tabSelected == 2) {
             fetchGrid("QCHART", rows[0].custcd);
-          } else if (tabSelected === 3) {
+          } else if (tabSelected == 3) {
             fetchGrid("CHART", rows[0].custcd);
           }
         }
       }
       // 공통 차트
       else if (
-        workType === "MCHART" ||
-        workType === "QCHART" ||
-        workType === "CHART"
+        workType == "MCHART" ||
+        workType == "QCHART" ||
+        workType == "CHART"
       ) {
         setChartDataResult(rows);
       }
       // 전체 탭 그래프 (업체별 데이터로 가공)
-      else if (workType === "TOTAL") {
+      else if (workType == "TOTAL") {
         let newRows = { companies: [""], series: [0] };
 
         rows.forEach((row: any) => {
@@ -464,16 +464,16 @@ const SA_B3000W: React.FC = () => {
       setFilters((prev) => ({ ...prev, isSearch: false }));
       fetchGrid("TITLE");
 
-      if (tabSelected === 0) {
+      if (tabSelected == 0) {
         fetchGrid("TOTAL");
         fetchGrid("GRID");
-      } else if (tabSelected === 1) {
+      } else if (tabSelected == 1) {
         fetchGrid("MONTH");
         fetchGrid("MCHART");
-      } else if (tabSelected === 2) {
+      } else if (tabSelected == 2) {
         fetchGrid("QUARTER");
         fetchGrid("QCHART");
-      } else if (tabSelected === 3) {
+      } else if (tabSelected == 3) {
         fetchGrid("5year");
         fetchGrid("CHART");
       }
@@ -513,11 +513,11 @@ const SA_B3000W: React.FC = () => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
     setSelectedState(newSelectedState);
-    if (tabSelected === 1) {
+    if (tabSelected == 1) {
       fetchGrid("MCHART", selectedRowData.custcd);
-    } else if (tabSelected === 2) {
+    } else if (tabSelected == 2) {
       fetchGrid("QCHART", selectedRowData.custcd);
-    } else if (tabSelected === 3) {
+    } else if (tabSelected == 3) {
       fetchGrid("CHART", selectedRowData.custcd);
     }
     if (swiper && isMobile) {
@@ -899,7 +899,7 @@ const SA_B3000W: React.FC = () => {
                               gridDataResult.data.map((row) => ({
                                 ...row,
                                 // person: personListData.find(
-                                //   (item: any) => item.code === row.person
+                                //   (item: any) => item.code == row.person
                                 // )?.name,
                                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                               })),
@@ -952,7 +952,7 @@ const SA_B3000W: React.FC = () => {
                                           : undefined
                                       }
                                       footerCell={
-                                        item.sortOrder === 0
+                                        item.sortOrder == 0
                                           ? gridTotalFooterCell
                                           : numberField.includes(item.fieldName)
                                           ? gridSumQtyFooterCell
@@ -1014,7 +1014,7 @@ const SA_B3000W: React.FC = () => {
                               gridDataResult.data.map((row) => ({
                                 ...row,
                                 // person: personListData.find(
-                                //   (item: any) => item.code === row.person
+                                //   (item: any) => item.code == row.person
                                 // )?.name,
                                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                               })),
@@ -1060,7 +1060,7 @@ const SA_B3000W: React.FC = () => {
                                       field={item.fieldName}
                                       title={item.caption}
                                       footerCell={
-                                        item.sortOrder === 0
+                                        item.sortOrder == 0
                                           ? gridTotalFooterCell
                                           : undefined
                                       }
@@ -1091,7 +1091,7 @@ const SA_B3000W: React.FC = () => {
                                       field={item.fieldName}
                                       title={item.caption}
                                       footerCell={
-                                        item.sortOrder === 0
+                                        item.sortOrder == 0
                                           ? gridTotalFooterCell
                                           : numberField.includes(item.fieldName)
                                           ? gridSumQtyFooterCell
@@ -1277,7 +1277,7 @@ const SA_B3000W: React.FC = () => {
                               gridDataResult.data.map((row) => ({
                                 ...row,
                                 // person: personListData.find(
-                                //   (item: any) => item.code === row.person
+                                //   (item: any) => item.code == row.person
                                 // )?.name,
                                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                               })),
@@ -1324,7 +1324,7 @@ const SA_B3000W: React.FC = () => {
                                       field={item.fieldName}
                                       title={item.caption}
                                       footerCell={
-                                        item.sortOrder === 0
+                                        item.sortOrder == 0
                                           ? gridTotalFooterCell
                                           : undefined
                                       }
@@ -1335,7 +1335,7 @@ const SA_B3000W: React.FC = () => {
                                           title={"수량"}
                                           cell={NumberCell}
                                           field={
-                                            item.caption === "전기"
+                                            item.caption == "전기"
                                               ? "q1"
                                               : "q11"
                                           }
@@ -1347,7 +1347,7 @@ const SA_B3000W: React.FC = () => {
                                           title={"금액"}
                                           cell={NumberCell}
                                           field={
-                                            item.caption === "전기"
+                                            item.caption == "전기"
                                               ? "jm1"
                                               : "dm1"
                                           }
@@ -1360,7 +1360,7 @@ const SA_B3000W: React.FC = () => {
                                           title={"수량"}
                                           cell={NumberCell}
                                           field={
-                                            item.caption === "전기"
+                                            item.caption == "전기"
                                               ? "q2"
                                               : "q22"
                                           }
@@ -1372,7 +1372,7 @@ const SA_B3000W: React.FC = () => {
                                           title={"금액"}
                                           cell={NumberCell}
                                           field={
-                                            item.caption === "전기"
+                                            item.caption == "전기"
                                               ? "jm2"
                                               : "dm2"
                                           }
@@ -1385,7 +1385,7 @@ const SA_B3000W: React.FC = () => {
                                           title={"수량"}
                                           cell={NumberCell}
                                           field={
-                                            item.caption === "전기"
+                                            item.caption == "전기"
                                               ? "q3"
                                               : "q33"
                                           }
@@ -1397,7 +1397,7 @@ const SA_B3000W: React.FC = () => {
                                           title={"금액"}
                                           cell={NumberCell}
                                           field={
-                                            item.caption === "전기"
+                                            item.caption == "전기"
                                               ? "jm3"
                                               : "dm3"
                                           }
@@ -1410,7 +1410,7 @@ const SA_B3000W: React.FC = () => {
                                           title={"수량"}
                                           cell={NumberCell}
                                           field={
-                                            item.caption === "전기"
+                                            item.caption == "전기"
                                               ? "q4"
                                               : "q44"
                                           }
@@ -1422,7 +1422,7 @@ const SA_B3000W: React.FC = () => {
                                           title={"금액"}
                                           cell={NumberCell}
                                           field={
-                                            item.caption === "전기"
+                                            item.caption == "전기"
                                               ? "jm4"
                                               : "dm4"
                                           }
@@ -1435,7 +1435,7 @@ const SA_B3000W: React.FC = () => {
                                         title={"합계"}
                                         cell={NumberCell}
                                         field={
-                                          item.caption === "전기"
+                                          item.caption == "전기"
                                             ? "jtotal"
                                             : "dtotal"
                                         }
@@ -1449,7 +1449,7 @@ const SA_B3000W: React.FC = () => {
                                       field={item.fieldName}
                                       title={item.caption}
                                       footerCell={
-                                        item.sortOrder === 0
+                                        item.sortOrder == 0
                                           ? gridTotalFooterCell
                                           : numberField.includes(item.fieldName)
                                           ? gridSumQtyFooterCell
@@ -1514,7 +1514,7 @@ const SA_B3000W: React.FC = () => {
                             <ChartCategoryAxis>
                               <ChartCategoryAxisItem
                                 categories={chartDataResult
-                                  .filter((item: any) => item.series === "당기")
+                                  .filter((item: any) => item.series == "당기")
                                   .map((item: any) => item.mm)}
                               ></ChartCategoryAxisItem>
                             </ChartCategoryAxis>
@@ -1533,7 +1533,7 @@ const SA_B3000W: React.FC = () => {
                                 }}
                                 type="line"
                                 data={chartDataResult
-                                  .filter((item: any) => item.series === "당기")
+                                  .filter((item: any) => item.series == "당기")
                                   .map((item: any) => item.qty1)}
                               />
                               <ChartSeriesItem
@@ -1545,7 +1545,7 @@ const SA_B3000W: React.FC = () => {
                                 }}
                                 type="line"
                                 data={chartDataResult
-                                  .filter((item: any) => item.series === "전기")
+                                  .filter((item: any) => item.series == "전기")
                                   .map((item: any) => item.qty2)}
                               />
                               <ChartSeriesItem
@@ -1557,7 +1557,7 @@ const SA_B3000W: React.FC = () => {
                                 }}
                                 type="bar"
                                 data={chartDataResult
-                                  .filter((item: any) => item.series === "당기")
+                                  .filter((item: any) => item.series == "당기")
                                   .map((item: any) => item.amt)}
                               />
                               <ChartSeriesItem
@@ -1569,7 +1569,7 @@ const SA_B3000W: React.FC = () => {
                                 }}
                                 type="bar"
                                 data={chartDataResult
-                                  .filter((item: any) => item.series === "전기")
+                                  .filter((item: any) => item.series == "전기")
                                   .map((item: any) => item.amt)}
                               />
                             </ChartSeries>
@@ -1611,7 +1611,7 @@ const SA_B3000W: React.FC = () => {
                                   name={"전기"}
                                   data={chartDataResult
                                     .filter(
-                                      (item: any) => item.series === "전기"
+                                      (item: any) => item.series == "전기"
                                     )
                                     .map((item: any) => item)}
                                   field="amt"
@@ -1624,7 +1624,7 @@ const SA_B3000W: React.FC = () => {
                                   name={"당기"}
                                   data={chartDataResult
                                     .filter(
-                                      (item: any) => item.series === "당기"
+                                      (item: any) => item.series == "당기"
                                     )
                                     .map((item: any) => item)}
                                   field="amt"
@@ -1686,7 +1686,7 @@ const SA_B3000W: React.FC = () => {
                               gridDataResult.data.map((row) => ({
                                 ...row,
                                 // person: personListData.find(
-                                //   (item: any) => item.code === row.person
+                                //   (item: any) => item.code == row.person
                                 // )?.name,
                                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                               })),
@@ -1740,7 +1740,7 @@ const SA_B3000W: React.FC = () => {
                                         ]
                                       }
                                       footerCell={
-                                        item.sortOrder === 0
+                                        item.sortOrder == 0
                                           ? gridTotalFooterCell
                                           : undefined
                                       }
@@ -1919,7 +1919,7 @@ const SA_B3000W: React.FC = () => {
                                       field={item.fieldName}
                                       title={item.caption}
                                       footerCell={
-                                        item.sortOrder === 0
+                                        item.sortOrder == 0
                                           ? gridTotalFooterCell
                                           : numberField.includes(item.fieldName)
                                           ? gridSumQtyFooterCell
@@ -2001,14 +2001,14 @@ const SA_B3000W: React.FC = () => {
                                 labels={{
                                   visible: true,
                                   // content: (e) =>
-                                  //   typeof e.value === "number"
+                                  //   typeof e.value == "number"
                                   //     ? numberWithCommas(e.value) + ""
                                   //     : e.value,
                                 }}
                                 type="bar"
                                 data={chartDataResult
                                   .filter(
-                                    (item: any) => item.series === "(1-6)분기"
+                                    (item: any) => item.series == "(1-6)분기"
                                   )
                                   .map((item: any) => item)}
                                 field="amt"
@@ -2019,14 +2019,14 @@ const SA_B3000W: React.FC = () => {
                                 labels={{
                                   visible: true,
                                   // content: (e) =>
-                                  //   typeof e.value === "number"
+                                  //   typeof e.value == "number"
                                   //     ? numberWithCommas(e.value) + ""
                                   //     : e.value,
                                 }}
                                 type="bar"
                                 data={chartDataResult
                                   .filter(
-                                    (item: any) => item.series === "(7-12)분기"
+                                    (item: any) => item.series == "(7-12)분기"
                                   )
                                   .map((item: any) => item)}
                                 field="amt"
@@ -2037,7 +2037,7 @@ const SA_B3000W: React.FC = () => {
                                 labels={{
                                   visible: true,
                                   // content: (e) =>
-                                  //   typeof e.value === "number"
+                                  //   typeof e.value == "number"
                                   //     ? numberWithCommas(e.value) + ""
                                   //     : e.value,
                                 }}
@@ -2045,7 +2045,7 @@ const SA_B3000W: React.FC = () => {
                                 // gap={2}
                                 // spacing={0.25}
                                 data={chartDataResult
-                                  .filter((item: any) => item.series === "합계")
+                                  .filter((item: any) => item.series == "합계")
                                   .map((item: any) => item)}
                                 field="amt"
                                 categoryField="mm"
@@ -2099,7 +2099,7 @@ const SA_B3000W: React.FC = () => {
                                         name={year}
                                         data={chartDataResult
                                           .filter(
-                                            (item: any) => item.mm === year
+                                            (item: any) => item.mm == year
                                           )
                                           .map((item: any) => item)}
                                         field="amt"
@@ -2112,7 +2112,7 @@ const SA_B3000W: React.FC = () => {
                                               (item: any) => item.mm
                                             )
                                           ),
-                                        ].slice(-1)[0] === year && (
+                                        ].slice(-1)[0] == year && (
                                           <ChartSeriesLabels
                                             position="outsideEnd"
                                             background="none"
@@ -2311,7 +2311,7 @@ const SA_B3000W: React.FC = () => {
                         gridDataResult.data.map((row) => ({
                           ...row,
                           // person: personListData.find(
-                          //   (item: any) => item.code === row.person
+                          //   (item: any) => item.code == row.person
                           // )?.name,
                           [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                         })),
@@ -2364,7 +2364,7 @@ const SA_B3000W: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? gridTotalFooterCell
                                     : numberField.includes(item.fieldName)
                                     ? gridSumQtyFooterCell
@@ -2394,7 +2394,7 @@ const SA_B3000W: React.FC = () => {
                         gridDataResult.data.map((row) => ({
                           ...row,
                           // person: personListData.find(
-                          //   (item: any) => item.code === row.person
+                          //   (item: any) => item.code == row.person
                           // )?.name,
                           [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                         })),
@@ -2440,7 +2440,7 @@ const SA_B3000W: React.FC = () => {
                                 field={item.fieldName}
                                 title={item.caption}
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? gridTotalFooterCell
                                     : undefined
                                 }
@@ -2468,7 +2468,7 @@ const SA_B3000W: React.FC = () => {
                                 field={item.fieldName}
                                 title={item.caption}
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? gridTotalFooterCell
                                     : numberField.includes(item.fieldName)
                                     ? gridSumQtyFooterCell
@@ -2563,7 +2563,7 @@ const SA_B3000W: React.FC = () => {
                         gridDataResult.data.map((row) => ({
                           ...row,
                           // person: personListData.find(
-                          //   (item: any) => item.code === row.person
+                          //   (item: any) => item.code == row.person
                           // )?.name,
                           [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                         })),
@@ -2610,7 +2610,7 @@ const SA_B3000W: React.FC = () => {
                                 field={item.fieldName}
                                 title={item.caption}
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? gridTotalFooterCell
                                     : undefined
                                 }
@@ -2621,7 +2621,7 @@ const SA_B3000W: React.FC = () => {
                                     title={"수량"}
                                     cell={NumberCell}
                                     field={
-                                      item.caption === "전기" ? "q1" : "q11"
+                                      item.caption == "전기" ? "q1" : "q11"
                                     }
                                     footerCell={gridSumQtyFooterCell}
                                     width={item.width}
@@ -2631,7 +2631,7 @@ const SA_B3000W: React.FC = () => {
                                     title={"금액"}
                                     cell={NumberCell}
                                     field={
-                                      item.caption === "전기" ? "jm1" : "dm1"
+                                      item.caption == "전기" ? "jm1" : "dm1"
                                     }
                                     footerCell={gridSumQtyFooterCell}
                                     width={item.width}
@@ -2642,7 +2642,7 @@ const SA_B3000W: React.FC = () => {
                                     title={"수량"}
                                     cell={NumberCell}
                                     field={
-                                      item.caption === "전기" ? "q2" : "q22"
+                                      item.caption == "전기" ? "q2" : "q22"
                                     }
                                     footerCell={gridSumQtyFooterCell}
                                     width={item.width}
@@ -2652,7 +2652,7 @@ const SA_B3000W: React.FC = () => {
                                     title={"금액"}
                                     cell={NumberCell}
                                     field={
-                                      item.caption === "전기" ? "jm2" : "dm2"
+                                      item.caption == "전기" ? "jm2" : "dm2"
                                     }
                                     footerCell={gridSumQtyFooterCell}
                                     width={item.width}
@@ -2663,7 +2663,7 @@ const SA_B3000W: React.FC = () => {
                                     title={"수량"}
                                     cell={NumberCell}
                                     field={
-                                      item.caption === "전기" ? "q3" : "q33"
+                                      item.caption == "전기" ? "q3" : "q33"
                                     }
                                     footerCell={gridSumQtyFooterCell}
                                     width={item.width}
@@ -2673,7 +2673,7 @@ const SA_B3000W: React.FC = () => {
                                     title={"금액"}
                                     cell={NumberCell}
                                     field={
-                                      item.caption === "전기" ? "jm3" : "dm3"
+                                      item.caption == "전기" ? "jm3" : "dm3"
                                     }
                                     footerCell={gridSumQtyFooterCell}
                                     width={item.width}
@@ -2684,7 +2684,7 @@ const SA_B3000W: React.FC = () => {
                                     title={"수량"}
                                     cell={NumberCell}
                                     field={
-                                      item.caption === "전기" ? "q4" : "q44"
+                                      item.caption == "전기" ? "q4" : "q44"
                                     }
                                     footerCell={gridSumQtyFooterCell}
                                     width={item.width}
@@ -2694,7 +2694,7 @@ const SA_B3000W: React.FC = () => {
                                     title={"금액"}
                                     cell={NumberCell}
                                     field={
-                                      item.caption === "전기" ? "jm4" : "dm4"
+                                      item.caption == "전기" ? "jm4" : "dm4"
                                     }
                                     footerCell={gridSumQtyFooterCell}
                                     width={item.width}
@@ -2705,7 +2705,7 @@ const SA_B3000W: React.FC = () => {
                                   title={"합계"}
                                   cell={NumberCell}
                                   field={
-                                    item.caption === "전기"
+                                    item.caption == "전기"
                                       ? "jtotal"
                                       : "dtotal"
                                   }
@@ -2719,7 +2719,7 @@ const SA_B3000W: React.FC = () => {
                                 field={item.fieldName}
                                 title={item.caption}
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? gridTotalFooterCell
                                     : numberField.includes(item.fieldName)
                                     ? gridSumQtyFooterCell
@@ -2747,7 +2747,7 @@ const SA_B3000W: React.FC = () => {
                       <ChartCategoryAxis>
                         <ChartCategoryAxisItem
                           categories={chartDataResult
-                            .filter((item: any) => item.series === "당기")
+                            .filter((item: any) => item.series == "당기")
                             .map((item: any) => item.mm)}
                         ></ChartCategoryAxisItem>
                       </ChartCategoryAxis>
@@ -2762,7 +2762,7 @@ const SA_B3000W: React.FC = () => {
                           }}
                           type="line"
                           data={chartDataResult
-                            .filter((item: any) => item.series === "당기")
+                            .filter((item: any) => item.series == "당기")
                             .map((item: any) => item.qty1)}
                         />
                         <ChartSeriesItem
@@ -2773,7 +2773,7 @@ const SA_B3000W: React.FC = () => {
                           }}
                           type="line"
                           data={chartDataResult
-                            .filter((item: any) => item.series === "전기")
+                            .filter((item: any) => item.series == "전기")
                             .map((item: any) => item.qty2)}
                         />
                         <ChartSeriesItem
@@ -2784,7 +2784,7 @@ const SA_B3000W: React.FC = () => {
                           }}
                           type="bar"
                           data={chartDataResult
-                            .filter((item: any) => item.series === "당기")
+                            .filter((item: any) => item.series == "당기")
                             .map((item: any) => item.amt)}
                         />
                         <ChartSeriesItem
@@ -2795,7 +2795,7 @@ const SA_B3000W: React.FC = () => {
                           }}
                           type="bar"
                           data={chartDataResult
-                            .filter((item: any) => item.series === "전기")
+                            .filter((item: any) => item.series == "전기")
                             .map((item: any) => item.amt)}
                         />
                       </ChartSeries>
@@ -2814,7 +2814,7 @@ const SA_B3000W: React.FC = () => {
                             startAngle={150}
                             name={"전기"}
                             data={chartDataResult
-                              .filter((item: any) => item.series === "전기")
+                              .filter((item: any) => item.series == "전기")
                               .map((item: any) => item)}
                             field="amt"
                             categoryField="mm"
@@ -2825,7 +2825,7 @@ const SA_B3000W: React.FC = () => {
                             startAngle={150}
                             name={"당기"}
                             data={chartDataResult
-                              .filter((item: any) => item.series === "당기")
+                              .filter((item: any) => item.series == "당기")
                               .map((item: any) => item)}
                             field="amt"
                             categoryField="mm"
@@ -2860,7 +2860,7 @@ const SA_B3000W: React.FC = () => {
                         gridDataResult.data.map((row) => ({
                           ...row,
                           // person: personListData.find(
-                          //   (item: any) => item.code === row.person
+                          //   (item: any) => item.code == row.person
                           // )?.name,
                           [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                         })),
@@ -2912,7 +2912,7 @@ const SA_B3000W: React.FC = () => {
                                   ]
                                 }
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? gridTotalFooterCell
                                     : undefined
                                 }
@@ -3094,7 +3094,7 @@ const SA_B3000W: React.FC = () => {
                                 field={item.fieldName}
                                 title={item.caption}
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? gridTotalFooterCell
                                     : numberField.includes(item.fieldName)
                                     ? gridSumQtyFooterCell
@@ -3136,13 +3136,13 @@ const SA_B3000W: React.FC = () => {
                           labels={{
                             visible: true,
                             // content: (e) =>
-                            //   typeof e.value === "number"
+                            //   typeof e.value == "number"
                             //     ? numberWithCommas(e.value) + ""
                             //     : e.value,
                           }}
                           type="bar"
                           data={chartDataResult
-                            .filter((item: any) => item.series === "(1-6)분기")
+                            .filter((item: any) => item.series == "(1-6)분기")
                             .map((item: any) => item)}
                           field="amt"
                           categoryField="mm"
@@ -3152,13 +3152,13 @@ const SA_B3000W: React.FC = () => {
                           labels={{
                             visible: true,
                             // content: (e) =>
-                            //   typeof e.value === "number"
+                            //   typeof e.value == "number"
                             //     ? numberWithCommas(e.value) + ""
                             //     : e.value,
                           }}
                           type="bar"
                           data={chartDataResult
-                            .filter((item: any) => item.series === "(7-12)분기")
+                            .filter((item: any) => item.series == "(7-12)분기")
                             .map((item: any) => item)}
                           field="amt"
                           categoryField="mm"
@@ -3168,7 +3168,7 @@ const SA_B3000W: React.FC = () => {
                           labels={{
                             visible: true,
                             // content: (e) =>
-                            //   typeof e.value === "number"
+                            //   typeof e.value == "number"
                             //     ? numberWithCommas(e.value) + ""
                             //     : e.value,
                           }}
@@ -3176,7 +3176,7 @@ const SA_B3000W: React.FC = () => {
                           // gap={2}
                           // spacing={0.25}
                           data={chartDataResult
-                            .filter((item: any) => item.series === "합계")
+                            .filter((item: any) => item.series == "합계")
                             .map((item: any) => item)}
                           field="amt"
                           categoryField="mm"
@@ -3204,7 +3204,7 @@ const SA_B3000W: React.FC = () => {
                                   startAngle={150}
                                   name={year}
                                   data={chartDataResult
-                                    .filter((item: any) => item.mm === year)
+                                    .filter((item: any) => item.mm == year)
                                     .map((item: any) => item)}
                                   field="amt"
                                   categoryField="series"
@@ -3216,7 +3216,7 @@ const SA_B3000W: React.FC = () => {
                                         (item: any) => item.mm
                                       )
                                     ),
-                                  ].slice(-1)[0] === year && (
+                                  ].slice(-1)[0] == year && (
                                     <ChartSeriesLabels
                                       position="outsideEnd"
                                       background="none"

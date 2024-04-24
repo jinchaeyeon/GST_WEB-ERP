@@ -136,14 +136,14 @@ const QC_A0120: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       const prodmacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_fxcode")
       );
       const prodempQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
 
@@ -169,7 +169,7 @@ const QC_A0120: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -291,7 +291,7 @@ const QC_A0120: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
 
       setMainDataResult(rows);
@@ -336,7 +336,7 @@ const QC_A0120: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setDetail1DataResult((prev) => {
@@ -455,7 +455,7 @@ const QC_A0120: React.FC = () => {
   useEffect(() => {
     if (
       customOptionData !== null &&
-      isInitSearch === false &&
+      isInitSearch == false &&
       permissions !== null
     ) {
       fetchMainGrid(tabSelected);
@@ -520,13 +520,13 @@ const QC_A0120: React.FC = () => {
               detail1DataResult.data.map((row) => ({
                 ...row,
                 proccd: proccdListData.find(
-                  (item: any) => item.sub_code === row.proccd
+                  (item: any) => item.sub_code == row.proccd
                 )?.code_name,
                 prodmac: prodmacListData.find(
-                  (item: any) => item.fxcode === row.prodmac
+                  (item: any) => item.fxcode == row.prodmac
                 )?.fxfull,
                 prodemp: prodempListData.find(
-                  (item: any) => item.user_id === row.prodemp
+                  (item: any) => item.user_id == row.prodemp
                 )?.user_name,
                 badpct: Math.round(row.badpct),
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
@@ -790,7 +790,7 @@ const QC_A0120: React.FC = () => {
                     <ChartSeriesItem
                       type="pie"
                       data={mainDataResult.filter(
-                        (item: any) => item.gubun === "공정별"
+                        (item: any) => item.gubun == "공정별"
                       )}
                       field="value"
                       categoryField="category"
@@ -813,7 +813,7 @@ const QC_A0120: React.FC = () => {
                     <ChartSeriesItem
                       type="pie"
                       data={mainDataResult.filter(
-                        (item: any) => item.gubun === "설비별"
+                        (item: any) => item.gubun == "설비별"
                       )}
                       field="value"
                       categoryField="category"
@@ -838,7 +838,7 @@ const QC_A0120: React.FC = () => {
                     <ChartSeriesItem
                       type="pie"
                       data={mainDataResult.filter(
-                        (item: any) => item.gubun === "불량유형별"
+                        (item: any) => item.gubun == "불량유형별"
                       )}
                       field="value"
                       categoryField="category"
@@ -861,7 +861,7 @@ const QC_A0120: React.FC = () => {
                     <ChartSeriesItem
                       type="pie"
                       data={mainDataResult.filter(
-                        (item: any) => item.gubun === "품목별"
+                        (item: any) => item.gubun == "품목별"
                       )}
                       field="value"
                       categoryField="category"
@@ -890,7 +890,7 @@ const QC_A0120: React.FC = () => {
                     <ChartSeriesItem
                       type="pie"
                       data={mainDataResult.filter(
-                        (item: any) => item.gubun === "공정별"
+                        (item: any) => item.gubun == "공정별"
                       )}
                       field="value"
                       categoryField="category"
@@ -909,7 +909,7 @@ const QC_A0120: React.FC = () => {
                       type="pie"
                       width={1200}
                       data={mainDataResult.filter(
-                        (item: any) => item.gubun === "설비별"
+                        (item: any) => item.gubun == "설비별"
                       )}
                       field="value"
                       categoryField="category"
@@ -929,7 +929,7 @@ const QC_A0120: React.FC = () => {
                     <ChartSeriesItem
                       type="pie"
                       data={mainDataResult.filter(
-                        (item: any) => item.gubun === "불량유형별"
+                        (item: any) => item.gubun == "불량유형별"
                       )}
                       field="value"
                       categoryField="category"
@@ -947,7 +947,7 @@ const QC_A0120: React.FC = () => {
                     <ChartSeriesItem
                       type="pie"
                       data={mainDataResult.filter(
-                        (item: any) => item.gubun === "품목별"
+                        (item: any) => item.gubun == "품목별"
                       )}
                       field="value"
                       categoryField="category"
@@ -976,7 +976,7 @@ const QC_A0120: React.FC = () => {
                     <ChartSeriesItem
                       type="pie"
                       data={mainDataResult.filter(
-                        (item: any) => item.gubun === "불량유형별"
+                        (item: any) => item.gubun == "불량유형별"
                       )}
                       field="value"
                       categoryField="category"
@@ -996,7 +996,7 @@ const QC_A0120: React.FC = () => {
                     <ChartSeriesItem
                       type="pie"
                       data={mainDataResult.filter(
-                        (item: any) => item.gubun === "품목별"
+                        (item: any) => item.gubun == "품목별"
                       )}
                       field="value"
                       categoryField="category"

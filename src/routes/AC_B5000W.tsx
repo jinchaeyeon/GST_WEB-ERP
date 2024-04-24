@@ -97,14 +97,14 @@ const AC_B5000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        inoutdiv: defaultOption.find((item: any) => item.id === "inoutdiv")
+        inoutdiv: defaultOption.find((item: any) => item.id == "inoutdiv")
           .valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        taxtype: defaultOption.find((item: any) => item.id === "taxtype")
+        taxtype: defaultOption.find((item: any) => item.id == "taxtype")
           .valueCode,
-        prtyn: defaultOption.find((item: any) => item.id === "prtyn").valueCode,
-        prdiv: defaultOption.find((item: any) => item.id === "prdiv").valueCode,
+        prtyn: defaultOption.find((item: any) => item.id == "prtyn").valueCode,
+        prdiv: defaultOption.find((item: any) => item.id == "prdiv").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -199,7 +199,7 @@ const AC_B5000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -589,7 +589,7 @@ const AC_B5000W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell2

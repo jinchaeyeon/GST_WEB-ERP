@@ -129,20 +129,20 @@ const MA_B7000_mihyeon: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
       const itemgradeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA042")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA042")
       );
       const itemplaceQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_LOADPLACE"
+          (item: any) => item.bizComponentId == "L_LOADPLACE"
         )
       );
 
@@ -169,7 +169,7 @@ const MA_B7000_mihyeon: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -323,7 +323,7 @@ const MA_B7000_mihyeon: React.FC = () => {
     itemnm: "",
     insiz: "",
     ymdyyyy: new Date(),
-    cboItemacnt: "", //filterData.find((item: any) => item.name === "itemacnt").value,
+    cboItemacnt: "", //filterData.find((item: any) => item.name == "itemacnt").value,
     radzeroyn: "",
     lotnum: "",
     load_place: "",
@@ -331,7 +331,7 @@ const MA_B7000_mihyeon: React.FC = () => {
     cboItemlvl1: "",
     cboItemlvl2: "",
     cboItemlvl3: "",
-    radUseyn: "", //filterData.find((item: any) => item.name === "useyn").value,
+    radUseyn: "", //filterData.find((item: any) => item.name == "useyn").value,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -403,7 +403,7 @@ const MA_B7000_mihyeon: React.FC = () => {
       data = null;
     }
     // 조회 성공
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       // 조회된 데이터에 Rows에 데이터가 있어서 편하게 미리 뺌
       const rows = data.tables[0].Rows;
@@ -483,7 +483,7 @@ const MA_B7000_mihyeon: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -554,7 +554,7 @@ const MA_B7000_mihyeon: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -874,7 +874,7 @@ const MA_B7000_mihyeon: React.FC = () => {
       ids.forEach((id) =>
         setFilters((prev) => ({
           ...prev,
-          [id]: defaultOption.find((item: any) => item.id === id).valueCode,
+          [id]: defaultOption.find((item: any) => item.id == id).valueCode,
         }))
       );
 
@@ -1114,19 +1114,19 @@ const MA_B7000_mihyeon: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 itemlvl1: itemlvl1ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl1
+                  (item: any) => item.sub_code == row.itemlvl1
                 )?.code_name,
                 itemlvl2: itemlvl2ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl2
+                  (item: any) => item.sub_code == row.itemlvl2
                 )?.code_name,
                 itemlvl3: itemlvl3ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl3
+                  (item: any) => item.sub_code == row.itemlvl3
                 )?.code_name,
                 itemgrade: itemgradeListData.find(
-                  (item: any) => item.sub_code === row.itemgrade
+                  (item: any) => item.sub_code == row.itemgrade
                 )?.code_name,
                 itemplace: itemplaceQueryStr.find(
-                  (item: any) => item.sub_code === row.load_place
+                  (item: any) => item.sub_code == row.load_place
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
@@ -1179,13 +1179,13 @@ const MA_B7000_mihyeon: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell
                             : undefined
                         }
-                        locked={item.fixed === "None" ? false : true}
+                        locked={item.fixed == "None" ? false : true}
                       ></GridColumn>
                     )
                 )}
@@ -1253,13 +1253,13 @@ const MA_B7000_mihyeon: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? detail1TotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell2
                             : undefined
                         }
-                        locked={item.fixed === "None" ? false : true}
+                        locked={item.fixed == "None" ? false : true}
                       />
                     )
                 )}
@@ -1324,13 +1324,13 @@ const MA_B7000_mihyeon: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? detail2TotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell3
                             : undefined
                         }
-                        locked={item.fixed === "None" ? false : true}
+                        locked={item.fixed == "None" ? false : true}
                       ></GridColumn>
                     )
                 )}

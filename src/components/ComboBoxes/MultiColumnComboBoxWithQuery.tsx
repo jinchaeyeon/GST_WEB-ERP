@@ -49,14 +49,14 @@ const MultiColumnComboBoxWithQuery = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
 
       setListData(rows); //리스트 세팅
     }
   }, []);
   // const columns = GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, "query").find(
-  //   (item: any) => item.id === name
+  //   (item: any) => item.id == name
   // ).bizComponentItems;
 
   let newColumns = [];
@@ -71,7 +71,7 @@ const MultiColumnComboBoxWithQuery = ({
     newColumns = newColumns.filter((column: any) => column.width !== 0);
   }
   const onChangeHandle = (e: ComboBoxChangeEvent) => {
-    let value = e.target.value === null ? "" : e.target.value[valueField];
+    let value = e.target.value == null ? "" : e.target.value[valueField];
     changeData({ name, value });
   };
 
@@ -80,7 +80,7 @@ const MultiColumnComboBoxWithQuery = ({
       id={name}
       data={listData}
       value={
-        value ? listData.find((item: any) => item[valueField] === value) : ""
+        value ? listData.find((item: any) => item[valueField] == value) : ""
       }
       columns={newColumns}
       textField={textField}

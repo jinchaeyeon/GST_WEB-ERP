@@ -28,7 +28,7 @@ const TopButtons = ({
 
   useEffect(() => {
     if (menus) {
-      const menu = menus.find((menu) => menu.formId === pathname);
+      const menu = menus.find((menu) => menu.formId == pathname);
       if (menu) {
         setIsFav(menu.isFavorite);
       }

@@ -19,14 +19,14 @@ export class Renderers {
     const field = cellProps.field;
     const editedField = cellProps.dataItem[this.editFieldName];
     const additionalProps =
-      editedField && cellProps.field === editedField
+      editedField && cellProps.field == editedField
         ? {
             ref: (td: any) => {
               const input = td && td.querySelector("input");
-              if (!input || input === document.activeElement) {
+              if (!input || input == document.activeElement) {
                 return;
               }
-              if (input.type === "checkbox") {
+              if (input.type == "checkbox") {
                 input.focus();
               } else {
                 input.select();

@@ -78,7 +78,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   const field = props.field ?? "";
   const bizComponentIdVal = field == "bircd" ? "R_BIRCD" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -126,7 +126,7 @@ const CM_A1710W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        user_id: defaultOption.find((item: any) => item.id === "user_id")
+        user_id: defaultOption.find((item: any) => item.id == "user_id")
           .valueCode,
       }));
     }
@@ -213,7 +213,7 @@ const CM_A1710W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -386,7 +386,7 @@ const CM_A1710W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "user_name" && field != "user_id" && field != "rowstatus") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -469,11 +469,11 @@ const CM_A1710W: React.FC = () => {
   const onSaveClick = () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus: [],
@@ -562,7 +562,7 @@ const CM_A1710W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "U",
@@ -762,7 +762,7 @@ const CM_A1710W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )

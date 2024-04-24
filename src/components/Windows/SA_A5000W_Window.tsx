@@ -165,15 +165,15 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "qtyunit"
+    field == "qtyunit"
       ? "L_BA015"
-      : field === "wgtunit"
+      : field == "wgtunit"
       ? "L_BA015"
-      : field === "unpcalmeth"
+      : field == "unpcalmeth"
       ? "L_BA019"
       : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
   return bizComponent ? (
     <ComboBoxCell bizComponent={bizComponent} {...props} />
@@ -229,11 +229,11 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        person: defaultOption.find((item: any) => item.id === "person")
+        person: defaultOption.find((item: any) => item.id == "person")
           .valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
       }));
     }
@@ -269,19 +269,19 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
       );
       const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA029")
       );
       const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
       );
       const custcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_CUST")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_CUST")
       );
       fetchQuery(custcdQueryStr, setCustcdListData);
       fetchQuery(amtunitQueryStr, setAmtunitListData);
@@ -307,7 +307,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -496,7 +496,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -538,7 +538,7 @@ const CopyWindow = ({
   }, [filters]);
 
   useEffect(() => {
-    if (workType === "U" && data != undefined) {
+    if (workType == "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
         amt: data.amt,
@@ -888,7 +888,7 @@ const CopyWindow = ({
         if (valid == true) {
           const dataItem = mainDataResult.data.filter((item: any) => {
             return (
-              (item.rowstatus === "N" || item.rowstatus === "U") &&
+              (item.rowstatus == "N" || item.rowstatus == "U") &&
               item.rowstatus !== undefined
             );
           });
@@ -921,7 +921,7 @@ const CopyWindow = ({
             serviceid: companyCode,
             files: filters.files,
           }));
-          if (dataItem.length === 0 && deletedMainRows.length == 0)
+          if (dataItem.length == 0 && deletedMainRows.length == 0)
             return false;
           let dataArr: TdataArr = {
             rowstatus_s: [],
@@ -1209,7 +1209,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = [];
       setUnsavedName([]);
       reload(data.returnString);
@@ -1314,7 +1314,7 @@ const CopyWindow = ({
       field != "rowstatus"
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1606,7 +1606,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "판매처리생성" : "판매처리정보"}
+        title={workType == "N" ? "판매처리생성" : "판매처리정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -1716,7 +1716,7 @@ const CopyWindow = ({
                     type="text"
                     value={
                       amtunitListData.find(
-                        (item: any) => item.sub_code === filters.amtunit
+                        (item: any) => item.sub_code == filters.amtunit
                       )?.code_name
                     }
                     className="readonly"
@@ -1765,7 +1765,7 @@ const CopyWindow = ({
                     type="text"
                     value={
                       doexdivListData.find(
-                        (item: any) => item.sub_code === filters.doexdiv
+                        (item: any) => item.sub_code == filters.doexdiv
                       )?.code_name
                     }
                     className="readonly"
@@ -1824,7 +1824,7 @@ const CopyWindow = ({
                     type="text"
                     value={
                       taxdivListData.find(
-                        (item: any) => item.sub_code === filters.taxdiv
+                        (item: any) => item.sub_code == filters.taxdiv
                       )?.code_name
                     }
                     className="readonly"
@@ -1878,7 +1878,7 @@ const CopyWindow = ({
               mainDataResult.data.map((row) => ({
                 ...row,
                 itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                  (item: any) => item.sub_code == row.itemacnt
                 )?.code_name,
                 rowstatus:
                   row.rowstatus == null ||

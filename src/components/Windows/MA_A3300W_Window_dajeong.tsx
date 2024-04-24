@@ -305,7 +305,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setItemInfo } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -428,7 +428,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {itemWindowVisible2 && (
@@ -451,20 +451,20 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "pac"
+    field == "pac"
       ? "L_BA016"
-      : field === "itemlvl1"
+      : field == "itemlvl1"
       ? "L_BA171"
-      : field === "qtyunit"
+      : field == "qtyunit"
       ? "L_BA015"
-      : field === "itemacnt"
+      : field == "itemacnt"
       ? "L_BA061"
-      : field === "load_place"
+      : field == "load_place"
       ? "L_LOADPLACE"
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -526,22 +526,22 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
-        person: defaultOption.find((item: any) => item.id === "person2")
+        person: defaultOption.find((item: any) => item.id == "person2")
           .valueCode,
-        doexdiv: defaultOption.find((item: any) => item.id === "doexdiv2")
+        doexdiv: defaultOption.find((item: any) => item.id == "doexdiv2")
           .valueCode,
-        taxdiv: defaultOption.find((item: any) => item.id === "taxdiv")
+        taxdiv: defaultOption.find((item: any) => item.id == "taxdiv")
           .valueCode,
         auto_transfer: defaultOption.find(
-          (item: any) => item.id === "auto_transfer"
+          (item: any) => item.id == "auto_transfer"
         ).valueCode,
-        inuse: defaultOption.find((item: any) => item.id === "inuse2")
+        inuse: defaultOption.find((item: any) => item.id == "inuse2")
           .valueCode,
-        amtunit: defaultOption.find((item: any) => item.id === "amtunit")
+        amtunit: defaultOption.find((item: any) => item.id == "amtunit")
           .valueCode,
-        pac: defaultOption.find((item: any) => item.id === "pac").valueCode,
+        pac: defaultOption.find((item: any) => item.id == "pac").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -580,16 +580,16 @@ const CopyWindow = ({
     const newData = mainDataResult.data.map((item) => {
       let updatedItem = { ...item, rowstatus: item.rowstatus == "N" ? "N" : "U" };     
 
-      if (name === "wonchgrat") {
+      if (name == "wonchgrat") {
           updatedItem.wonamt = filters.amtunit == "KRW" ? item.amt : item.amt * value;
-        if (filters.taxdiv === "A") {
+        if (filters.taxdiv == "A") {
           updatedItem.taxamt = filters.amtunit == "KRW" ? Math.floor(item.amt / 10) : Math.floor(item.amt * value / 10);
         } else {
           updatedItem.taxamt = 0;
         }
       } else {
           mainDataResult.data.map((item: { [x: string]: any; itemcd: any }) => {
-              if (editIndex === item[DATA_ITEM_KEY]) {
+              if (editIndex == item[DATA_ITEM_KEY]) {
                   fetchItemData(item.itemcd);
               }
           });
@@ -612,9 +612,9 @@ const CopyWindow = ({
     const newData = mainDataResult.data.map((item) => {       
         let updatedItem = {
           ...item,
-          rowstatus: item.rowstatus === "N" ? "N" : "U", // rowstatus 업데이트
+          rowstatus: item.rowstatus == "N" ? "N" : "U", // rowstatus 업데이트
         }
-        if (name === "amtunit") {
+        if (name == "amtunit") {
           updatedItem.wonamt = 
                       value == "KRW"
                         ? item.amt
@@ -628,7 +628,7 @@ const CopyWindow = ({
             updatedItem.taxamt = 0;
           }
         }
-        if (name === "taxdiv") { 
+        if (name == "taxdiv") { 
           if (value !== "A") {
             updatedItem.taxamt = 0;
           } else {
@@ -712,7 +712,7 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
 
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
@@ -735,7 +735,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -783,7 +783,7 @@ const CopyWindow = ({
             itemlvl4: itemInfo.itemlvl4,
             itemlvl5: itemInfo.itemlvl5,
             custitemnm: itemInfo.custitemnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             [EDIT_FIELD]: undefined,
           }
         : {
@@ -817,7 +817,7 @@ const CopyWindow = ({
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
 
@@ -1088,7 +1088,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -1202,7 +1202,7 @@ const CopyWindow = ({
   }, [filters]);
 
   useEffect(() => {
-    if (workType === "U" && data != undefined) {
+    if (workType == "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
         orgdiv: data.orgdiv,
@@ -1275,11 +1275,11 @@ const CopyWindow = ({
   const setCopyData = (data: any) => {
     const dataItem = data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     mainDataResult.data.map((item) => {
       if (item.num > temp) {
@@ -1413,12 +1413,12 @@ const CopyWindow = ({
       if (valid == true) {
         const dataItem = mainDataResult.data.filter((item: any) => {
           return (
-            (item.rowstatus === "N" || item.rowstatus === "U") &&
+            (item.rowstatus == "N" || item.rowstatus == "U") &&
             item.rowstatus !== undefined
           );
         });
 
-        if (dataItem.length === 0 && deletedMainRows.length == 0) {
+        if (dataItem.length == 0 && deletedMainRows.length == 0) {
           setParaData((prev) => ({
             ...prev,
             workType: workType,
@@ -1946,7 +1946,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = [];
       setUnsavedName([]);
       setValues2(false);
@@ -2120,7 +2120,7 @@ const CopyWindow = ({
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus" && field != "itemnm") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2163,7 +2163,7 @@ const CopyWindow = ({
           if (item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]) {
             let updatedItem = {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U", // rowstatus 업데이트
+              rowstatus: item.rowstatus == "N" ? "N" : "U", // rowstatus 업데이트
               wonamt:
                     filters.amtunit == "KRW"
                       ? item.qty * item.unp
@@ -2245,7 +2245,7 @@ const CopyWindow = ({
         });
       } else {
         mainDataResult.data.map((item: { [x: string]: any; itemcd: any }) => {
-          if (editIndex === item[DATA_ITEM_KEY]) {
+          if (editIndex == item[DATA_ITEM_KEY]) {
             fetchItemData(item.itemcd);
           }
         });
@@ -2276,7 +2276,7 @@ const CopyWindow = ({
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -2298,7 +2298,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "기타입고생성" : "기타입고정보"}
+        title={workType == "N" ? "기타입고생성" : "기타입고정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}

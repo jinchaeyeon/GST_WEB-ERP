@@ -126,7 +126,7 @@ const KendoWindow = ({
   const fetchGrid = async () => {
     let data: any;
 
-    if (attachmentNumber === "") return false;
+    if (attachmentNumber == "") return false;
     const parameters = {
       attached: "list?attachmentNumber=" + attachmentNumber,
     };
@@ -193,7 +193,7 @@ const KendoWindow = ({
 
   const downloadFiles = async () => {
     const parameters = mainDataResult.data.filter((item) => item.chk == true);
-    if (parameters.length === 0) {
+    if (parameters.length == 0) {
       alert("선택된 자료가 없습니다.");
       return false;
     }
@@ -310,7 +310,7 @@ const KendoWindow = ({
   );
 
   const handleFileUpload = async (files: FileList | null) => {
-    if (files === null) return false;
+    if (files == null) return false;
     setLoading(true);
     let newAttachmentNumber = "";
     const promises = [];

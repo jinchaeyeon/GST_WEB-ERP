@@ -177,7 +177,7 @@ const SA_B2226W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
 
       setAllPanel(rows[0]);
@@ -190,14 +190,14 @@ const SA_B2226W: React.FC = () => {
       data2 = null;
     }
 
-    if (data2.isSuccess === true) {
+    if (data2.isSuccess == true) {
       const rows2 = data2.tables[0].Rows;
 
       setChartList(rows2);
       let array = rows2
         .filter(
           (arr: { series: any }, index: any, callback: any[]) =>
-            index === callback.findIndex((t) => t.series === arr.series)
+            index == callback.findIndex((t) => t.series == arr.series)
         )
         .map((item: { series: any }) => {
           return item.series;
@@ -208,7 +208,7 @@ const SA_B2226W: React.FC = () => {
             item.series ==
             rows2.filter(
               (arr: { series: any }, index: any, callback: any[]) =>
-                index === callback.findIndex((t) => t.series === arr.series)
+                index == callback.findIndex((t) => t.series == arr.series)
             )[0].series
         )
         .map((items: { argument: any }) => {
@@ -225,7 +225,7 @@ const SA_B2226W: React.FC = () => {
       data3 = null;
     }
 
-    if (data3.isSuccess === true) {
+    if (data3.isSuccess == true) {
       const rows3 = data3.tables[0].Rows;
 
       setItemList(rows3);
@@ -244,7 +244,7 @@ const SA_B2226W: React.FC = () => {
       data4 = null;
     }
 
-    if (data4.isSuccess === true) {
+    if (data4.isSuccess == true) {
       const rows3 = data4.tables[0].Rows;
 
       const target = ThreeNumberceil(rows3[0].target);

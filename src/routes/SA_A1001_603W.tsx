@@ -208,13 +208,13 @@ const SA_A1001_603W: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           materialtype: defaultOption.find(
-            (item: any) => item.id === "materialtype"
+            (item: any) => item.id == "materialtype"
           ).valueCode,
-          rev: defaultOption.find((item: any) => item.id === "rev").valueCode,
-          quocalyn: defaultOption.find((item: any) => item.id === "quocalyn")
+          rev: defaultOption.find((item: any) => item.id == "rev").valueCode,
+          quocalyn: defaultOption.find((item: any) => item.id == "quocalyn")
             .valueCode,
           contractyn: defaultOption.find(
-            (item: any) => item.id === "contractyn"
+            (item: any) => item.id == "contractyn"
           ).valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
@@ -225,14 +225,14 @@ const SA_A1001_603W: React.FC = () => {
         setFilters((prev) => ({
           ...prev,
           materialtype: defaultOption.find(
-            (item: any) => item.id === "materialtype"
+            (item: any) => item.id == "materialtype"
           ).valueCode,
-          quocalyn: defaultOption.find((item: any) => item.id === "quocalyn")
+          quocalyn: defaultOption.find((item: any) => item.id == "quocalyn")
             .valueCode,
           contractyn: defaultOption.find(
-            (item: any) => item.id === "contractyn"
+            (item: any) => item.id == "contractyn"
           ).valueCode,
-          rev: defaultOption.find((item: any) => item.id === "rev").valueCode,
+          rev: defaultOption.find((item: any) => item.id == "rev").valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
           isSearch: true,
@@ -259,17 +259,17 @@ const SA_A1001_603W: React.FC = () => {
     if (bizComponentData.length > 0) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const materialtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA001_603"
+          (item: any) => item.bizComponentId == "L_SA001_603"
         )
       );
       const requestgbQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_Requestgb"
+          (item: any) => item.bizComponentId == "L_Requestgb"
         )
       );
       fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
@@ -295,7 +295,7 @@ const SA_A1001_603W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -563,7 +563,7 @@ const SA_A1001_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -597,7 +597,7 @@ const SA_A1001_603W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.quokey == filters.find_row_value);
         if (selectedRow != undefined) {
@@ -693,7 +693,7 @@ const SA_A1001_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -972,7 +972,7 @@ const SA_A1001_603W: React.FC = () => {
   const onCal = () => {
     const dataItem = mainDataResult2.data.filter((item) => item.chk == true);
 
-    if (dataItem.length === 0) {
+    if (dataItem.length == 0) {
       alert("선택된 데이터가 없습니다.");
       return false;
     }
@@ -1051,7 +1051,7 @@ const SA_A1001_603W: React.FC = () => {
 
     const dataItem = mainDataResult2.data.filter((item) => item.chk == true);
 
-    if (dataItem.length === 0) {
+    if (dataItem.length == 0) {
       alert("선택된 데이터가 없습니다.");
       return false;
     }
@@ -1139,12 +1139,12 @@ const SA_A1001_603W: React.FC = () => {
   const onSave = () => {
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     let valid = true;
 
@@ -1266,7 +1266,7 @@ const SA_A1001_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setPage(initialPageState);
       setPage2(initialPageState);
       setValues2(false);
@@ -1308,7 +1308,7 @@ const SA_A1001_603W: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult2.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -1729,7 +1729,7 @@ const SA_A1001_603W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell
@@ -1983,7 +1983,7 @@ const SA_A1001_603W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell2
                               : numberField2.includes(item.fieldName)
                               ? editNumberFooterCell

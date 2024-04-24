@@ -95,13 +95,13 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        acntses: defaultOption.find((item: any) => item.id === "acntses")
+        acntses: defaultOption.find((item: any) => item.id == "acntses")
           .valueCode,
-        inoutdiv: defaultOption.find((item: any) => item.id === "inoutdiv")
+        inoutdiv: defaultOption.find((item: any) => item.id == "inoutdiv")
           .valueCode,
-        bookregyn: defaultOption.find((item: any) => item.id === "bookregyn")
+        bookregyn: defaultOption.find((item: any) => item.id == "bookregyn")
           .valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -288,7 +288,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
@@ -427,7 +427,7 @@ const CopyWindow = ({
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -478,7 +478,7 @@ const CopyWindow = ({
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,

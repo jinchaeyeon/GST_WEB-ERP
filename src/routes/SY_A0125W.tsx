@@ -155,7 +155,7 @@ const SY_A0125W: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
       }));
     }
@@ -177,11 +177,11 @@ const SY_A0125W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
       const dtpcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       fetchQuery(dtpcdQueryStr, setDptcdListData);
@@ -205,7 +205,7 @@ const SY_A0125W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -408,7 +408,7 @@ const SY_A0125W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
@@ -587,7 +587,7 @@ const SY_A0125W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -757,7 +757,7 @@ const SY_A0125W: React.FC = () => {
             extendDataItem(item, SUB_ITEMS_FIELD, {
               [EXPANDED_FIELD]: true,
               [EDIT_FIELD]:
-                item[ALL_MENU_DATA_ITEM_KEY] === editItemId
+                item[ALL_MENU_DATA_ITEM_KEY] == editItemId
                   ? editItemField
                   : undefined,
               [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
@@ -886,7 +886,7 @@ const SY_A0125W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "postcd" && field != "user_id") {
       const newData = subDataResult.data.map((item) =>
-        item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
+        item[SUB_DATA_ITEM_KEY] == dataItem[SUB_DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -925,7 +925,7 @@ const SY_A0125W: React.FC = () => {
         Object.getOwnPropertyNames(selectedsubDataState)[0]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -1102,7 +1102,7 @@ const SY_A0125W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") {
+    if (paraDataDeleted.work_type == "D") {
       fetchToDelete();
     }
   }, [paraDataDeleted]);
@@ -1110,12 +1110,12 @@ const SY_A0125W: React.FC = () => {
   const onSaveClick = async () => {
     const dataItem = subDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
     let dataArr: TdataArr = {
       userid_s: [],
       postcd_s: [],
@@ -1164,7 +1164,7 @@ const SY_A0125W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setFilters((prev) => ({
         ...prev,
         find_row_value: "",
@@ -1221,7 +1221,7 @@ const SY_A0125W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
@@ -1246,7 +1246,7 @@ const SY_A0125W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setsubFilters((prev) => ({
         ...prev,
         find_row_value: Object.getOwnPropertyNames(selectedsubDataState)[0],
@@ -1367,7 +1367,7 @@ const SY_A0125W: React.FC = () => {
                           item[ALL_MENU_DATA_ITEM_KEY]
                         ),
                         [EDIT_FIELD]:
-                          item[ALL_MENU_DATA_ITEM_KEY] === editItemId
+                          item[ALL_MENU_DATA_ITEM_KEY] == editItemId
                             ? editItemField
                             : undefined,
                         [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
@@ -1561,7 +1561,7 @@ const SY_A0125W: React.FC = () => {
                       subDataResult.data.map((row) => ({
                         ...row,
                         postcd: postcdListData.find(
-                          (item: any) => item.sub_code === row.postcd
+                          (item: any) => item.sub_code == row.postcd
                         )?.code_name,
                         [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
                       })),
@@ -1618,7 +1618,7 @@ const SY_A0125W: React.FC = () => {
                               title={item.caption}
                               width={item.width}
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? subTotalFooterCell
                                   : undefined
                               }
@@ -1714,7 +1714,7 @@ const SY_A0125W: React.FC = () => {
                         item[ALL_MENU_DATA_ITEM_KEY]
                       ),
                       [EDIT_FIELD]:
-                        item[ALL_MENU_DATA_ITEM_KEY] === editItemId
+                        item[ALL_MENU_DATA_ITEM_KEY] == editItemId
                           ? editItemField
                           : undefined,
                       [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
@@ -1875,7 +1875,7 @@ const SY_A0125W: React.FC = () => {
                     subDataResult.data.map((row) => ({
                       ...row,
                       postcd: postcdListData.find(
-                        (item: any) => item.sub_code === row.postcd
+                        (item: any) => item.sub_code == row.postcd
                       )?.code_name,
                       [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
                     })),
@@ -1930,7 +1930,7 @@ const SY_A0125W: React.FC = () => {
                             title={item.caption}
                             width={item.width}
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? subTotalFooterCell
                                 : undefined
                             }

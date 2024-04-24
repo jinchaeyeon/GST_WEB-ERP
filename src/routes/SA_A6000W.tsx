@@ -92,18 +92,18 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "orgdiv"
+    field == "orgdiv"
       ? "L_BA001"
-      : field === "position"
+      : field == "position"
       ? "L_BA028"
-      : field === "dptcd"
+      : field == "dptcd"
       ? "L_dptcd_001"
-      : field === "person"
+      : field == "person"
       ? "L_sysUserMaster_001"
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
   if (bizComponentIdVal == "L_sysUserMaster_001") {
     return bizComponent ? (
@@ -183,9 +183,9 @@ const SA_A6000W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd").valueCode,
       }));
     }
   }, [customOptionData]);
@@ -263,7 +263,7 @@ const SA_A6000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -610,7 +610,7 @@ const SA_A6000W: React.FC = () => {
 
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -625,7 +625,7 @@ const SA_A6000W: React.FC = () => {
       valid = false;
     }
     if (!valid) return false;
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
     let dataArr: TdataArr = {
       rowstatus: [],
       tragetnum: [],
@@ -745,7 +745,7 @@ const SA_A6000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
         mainDataResult.data.length == 0 && filters.pgNum > 0;
 
@@ -966,7 +966,7 @@ const SA_A6000W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : numberField.includes(item.fieldName)
                           ? editNumberFooterCell

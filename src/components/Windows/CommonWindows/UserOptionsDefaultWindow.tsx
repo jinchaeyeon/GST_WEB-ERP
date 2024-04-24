@@ -264,7 +264,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       index: dataItem[FORM_DATA_INDEX],
       value: {
         ...dataItem,
-        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
+        rowstatus: dataItem.rowstatus == "N" ? dataItem.rowstatus : "U",
         [EDIT_FIELD]: field,
       },
     });
@@ -393,7 +393,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
             headerSelectionValue={
               dataWithIndexes.findIndex(
                 (item: any) => !selectedState[idGetter(item)]
-              ) === -1
+              ) == -1
             }
           /> */}
         <GridColumn field="rowstatus" title=" " width="40px" />
@@ -545,7 +545,7 @@ const KendoWindow = ({
       "@p_work_type": "detail",
       "@p_form_id": pathname,
       "@p_type": "Default",
-      "@p_option_id": workType === "U" ? option_id : "",
+      "@p_option_id": workType == "U" ? option_id : "",
       "@p_option_name": "",
       "@p_remarks": "",
       "@p_company_code": "",
@@ -634,7 +634,7 @@ const KendoWindow = ({
 
   //조회
   useEffect(() => {
-    if (workType === "U") {
+    if (workType == "U") {
       fetchMain();
     }
   }, []);
@@ -664,7 +664,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowsCnt = data.tables[0].Rows.length;
       const rows = data.tables[0].Rows;
 
@@ -697,8 +697,8 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
-      if (workType === "U") {
+    if (data.isSuccess == true) {
+      if (workType == "U") {
         fetchMain();
         reloadData();
       } else {
@@ -733,7 +733,7 @@ const KendoWindow = ({
 
         if (
           ["Radio", "Lookup"].includes(getCodeFromValue(item.value_type)) &&
-          (item.bc_id === "" || item.bc_id === null || item.bc_id === undefined)
+          (item.bc_id == "" || item.bc_id == null || item.bc_id == undefined)
         ) {
           const errText =
             "Lookup 타입 행의 비즈니스 컴포넌트 ID를 입력해주세요";
@@ -847,7 +847,7 @@ const KendoWindow = ({
       work_type: workType,
       option_id: getCodeFromValue(option_id),
       option_name:
-        workType === "N"
+        workType == "N"
           ? getCodeFromValue(option_id, "code_name")
           : option_name,
       row_status: detailArr.row_status.join("|"),
@@ -872,7 +872,7 @@ const KendoWindow = ({
   return (
     <Window
       title={
-        workType === "N"
+        workType == "N"
           ? "사용자 옵션 기본값 생성 (관리자)"
           : "사용자 옵션 기본값 수정 (관리자)"
       }
@@ -887,8 +887,8 @@ const KendoWindow = ({
         key={formKey}
         initialValues={{
           rowstatus: "",
-          option_id: workType === "N" ? "" : option_id,
-          option_name: workType === "N" ? "" : option_name,
+          option_id: workType == "N" ? "" : option_id,
+          option_name: workType == "N" ? "" : option_name,
           optionDetails: detailDataResult.data,
         }}
         render={(formRenderProps: FormRenderProps) => (
@@ -910,7 +910,7 @@ const KendoWindow = ({
                   name={"option_id"}
                   component={FormComboBox}
                   validator={validator}
-                  className={workType === "U" ? "readonly" : "required"}
+                  className={workType == "U" ? "readonly" : "required"}
                   data={typeData}
                   columns={typeColumn}
                 />

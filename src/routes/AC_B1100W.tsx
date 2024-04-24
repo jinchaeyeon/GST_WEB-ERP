@@ -110,11 +110,11 @@ const AC_B1100W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        userid: defaultOption.find((item: any) => item.id === "userid")
+        userid: defaultOption.find((item: any) => item.id == "userid")
           .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
       }));
     }
@@ -138,11 +138,11 @@ const AC_B1100W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const inputQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC006")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC006")
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(usersQueryStr, setUsersListData);
@@ -166,7 +166,7 @@ const AC_B1100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -298,7 +298,7 @@ const AC_B1100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -589,13 +589,13 @@ const AC_B1100W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 proc_userid: usersListData.find(
-                  (item: any) => item.user_id === row.proc_userid
+                  (item: any) => item.user_id == row.proc_userid
                 )?.user_name,
                 inputpath: InputListData.find(
-                  (item: any) => item.sub_code === row.inputpath
+                  (item: any) => item.sub_code == row.inputpath
                 )?.code_name,
                 insert_userid: usersListData.find(
-                  (item: any) => item.user_id === row.insert_userid
+                  (item: any) => item.user_id == row.insert_userid
                 )?.user_name,
                 proc_time: convertDateToStrWithTime2(new Date(row.proc_time)),
                 insert_time: convertDateToStrWithTime2(
@@ -657,7 +657,7 @@ const AC_B1100W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell2

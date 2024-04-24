@@ -129,14 +129,14 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const abilcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU006")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU006")
       );
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
       fetchQuery(dptcdQueryStr, setDptcdListData);
       fetchQuery(abilcdQueryStr, setAbilcdListDate);
@@ -161,7 +161,7 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -376,13 +376,13 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
   const onConfirmBtnClick = (props: any) => {
     const newData = keepingDataResult.data.map((items) => {
       const dptcds = dptcdListData.find(
-        (item: any) => item.dptnm === items.dptcd
+        (item: any) => item.dptnm == items.dptcd
       )?.dptcd;
       const abilcds = abilcdListData.find(
-        (item: any) => item.code_name === items.abilcd
+        (item: any) => item.code_name == items.abilcd
       )?.sub_code;
       const postcds = postcdListData.find(
-        (item: any) => item.code_name === items.postcd
+        (item: any) => item.code_name == items.postcd
       )?.sub_code;
       return {
         prsnnum: items.prsnnum,
@@ -541,13 +541,13 @@ const UserMultiWindow = ({ setVisible, setData, modal = false }: IWindow) => {
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
-              dptcd: dptcdListData.find((item: any) => item.dptcd === row.dptcd)
+              dptcd: dptcdListData.find((item: any) => item.dptcd == row.dptcd)
                 ?.dptnm,
               abilcd: abilcdListData.find(
-                (item: any) => item.sub_code === row.abilcd
+                (item: any) => item.sub_code == row.abilcd
               )?.code_name,
               postcd: postcdListData.find(
-                (item: any) => item.sub_code === row.postcd
+                (item: any) => item.sub_code == row.postcd
               )?.code_name,
               [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
             })),

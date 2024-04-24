@@ -122,9 +122,9 @@ const KendoWindow = ({
 
     try {
       if (
-        paraSaved.stopcd === "" ||
-        paraSaved.stopcd === undefined ||
-        paraSaved.stopcd === null
+        paraSaved.stopcd == "" ||
+        paraSaved.stopcd == undefined ||
+        paraSaved.stopcd == null
       ) {
         throw findMessage(messagesData, "PR_A2000W_001");
       }
@@ -191,7 +191,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setData("end");
       onClose();
     } else {

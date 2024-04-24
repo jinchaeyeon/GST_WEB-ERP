@@ -52,7 +52,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
 
   const [loginResult] = useRecoilState(loginResultState);
   const role = loginResult ? loginResult.role : "";
-  const isAdmin = role === "ADMIN";
+  const isAdmin = role == "ADMIN";
 
   let deviceWidth = window.innerWidth;
   let isMobile = deviceWidth <= 1200;
@@ -132,7 +132,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -316,7 +316,7 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
       }
       if (valid == true) {
         const newData = mainDataResult.data.map((item) =>
-          item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+          item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
             ? {
                 ...item,
                 [EDIT_FIELD]: field,
@@ -480,15 +480,15 @@ const SignWindow = ({ setVisible, reference_key, modal = false }: IWindow) => {
 
   const onSave = async () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
-      return item.rowstatus === "N" && item.rowstatus !== undefined;
+      return item.rowstatus == "N" && item.rowstatus !== undefined;
     });
     const dataItem2 = mainDataResult.data.filter((item: any) => {
-      return item.rowstatus === "U" && item.rowstatus !== undefined;
+      return item.rowstatus == "U" && item.rowstatus !== undefined;
     });
     if (
-      dataItem.length === 0 &&
-      dataItem2.length === 0 &&
-      deletedMainRows.length === 0
+      dataItem.length == 0 &&
+      dataItem2.length == 0 &&
+      deletedMainRows.length == 0
     )
       return false;
 

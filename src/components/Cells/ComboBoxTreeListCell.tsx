@@ -31,7 +31,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
 
   const processApi = useApi();
   const [listData, setListData]: any = useState([]);
-  const isInEdit = readOnly ? false : field === dataItem.inEdit;
+  const isInEdit = readOnly ? false : field == dataItem.inEdit;
   const queryStr = bizComponent ? getQueryFromBizComponent(bizComponent) : "";
 
   useEffect(() => {
@@ -54,7 +54,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     } else {
@@ -82,8 +82,8 @@ const ComboBoxCell = (props: CustomCellProps) => {
   }));
   newColumns = newColumns.filter((column: any) => column.width !== 0);
 
-  const dataValue = dataItem[field] === null ? "" : dataItem[field];
-  const value = listData.find((item: any) => item[valueField] === dataValue);
+  const dataValue = dataItem[field] == null ? "" : dataItem[field];
+  const value = listData.find((item: any) => item[valueField] == dataValue);
 
   const defaultRendering = (
     <td aria-colindex={ariaColumnIndex}>
@@ -103,7 +103,7 @@ const ComboBoxCell = (props: CustomCellProps) => {
     </td>
   );
 
-  return render === undefined
+  return render == undefined
     ? null
     : render?.call(undefined, defaultRendering, props);
 };

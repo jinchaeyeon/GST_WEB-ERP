@@ -49,8 +49,8 @@ const FieldComboBox: React.FC<TFieldComboBox> = ({
       data={listData}
       textField={textField}
       value={
-        typeof value === "string"
-          ? listData.find((item: any) => item[valueField] === value)
+        typeof value == "string"
+          ? listData.find((item: any) => item[valueField] == value)
           : value
       }
       columns={newColumns}

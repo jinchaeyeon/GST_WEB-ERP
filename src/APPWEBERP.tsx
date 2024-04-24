@@ -392,7 +392,7 @@ const AppInner: React.FC = () => {
 
   const [loginResult] = useRecoilState(loginResultState);
   const role = loginResult ? loginResult.role : "";
-  const isAdmin = role === "ADMIN";
+  const isAdmin = role == "ADMIN";
   const [color, setColor] = useRecoilState(colors);
   const [osstate, setOSState] = useRecoilState(OSState);
   const [themecolor, setThemeColor] = useState<string[]>([
@@ -424,7 +424,7 @@ const AppInner: React.FC = () => {
     if (
       token &&
       userId != "" &&
-      (sessionUserId === "" || sessionUserId == null) &&
+      (sessionUserId == "" || sessionUserId == null) &&
       Link != "" &&
       Link != undefined
     )
@@ -438,8 +438,8 @@ const AppInner: React.FC = () => {
     (sessionItem) => sessionItem.code == "location"
   )!.value;
 
-  if (sessionOrgdiv === "") sessionOrgdiv = "01";
-  if (sessionLocation === "") sessionLocation = "01";
+  if (sessionOrgdiv == "") sessionOrgdiv = "01";
+  if (sessionLocation == "") sessionLocation = "01";
   const processApi = useApi();
   const fetchSessionItem = async () => {
     let data;
@@ -455,11 +455,11 @@ const AppInner: React.FC = () => {
 
       data = await processApi<any>("procedure", para);
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setSessionItem(
           rows
-            .filter((item: any) => item.class === "Session")
+            .filter((item: any) => item.class == "Session")
             .map((item: any) => ({
               code: item.code,
               value: item.value,

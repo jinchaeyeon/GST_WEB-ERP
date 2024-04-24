@@ -30,7 +30,7 @@ const BizComponentRadioGroup = ({
 }: TBizComponentRadioGroup) => {
   if (bizComponentData) {
     bizComponentData = bizComponentData.find(
-      (item: any) => item.bizComponentId === bizComponentId
+      (item: any) => item.bizComponentId == bizComponentId
     );
   }
 
@@ -47,19 +47,19 @@ const BizComponentRadioGroup = ({
       .filter(
         (item: any) =>
           !(
-            name === "radWorkType" && //결재표시형식
-            (item.code === "D" ||
-              item.code === "E" ||
-              item.code === "G" ||
-              item.code === "H" ||
-              item.code === "I")
+            name == "radWorkType" && //결재표시형식
+            (item.code == "D" ||
+              item.code == "E" ||
+              item.code == "G" ||
+              item.code == "H" ||
+              item.code == "I")
           )
       )
       .filter(
         (item: any) =>
           !(
-            name === "radAppyn" && //결재유무
-            (item.code === "B" || item.code === "M")
+            name == "radAppyn" && //결재유무
+            (item.code == "B" || item.code == "M")
           )
       )
       .map((column: any) => ({

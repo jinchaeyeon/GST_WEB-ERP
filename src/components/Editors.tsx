@@ -51,8 +51,8 @@ const DisplayComboBoxValue = (fieldRenderProps: FieldRenderProps) => {
   const { valueField, textField, listData, value } = fieldRenderProps;
 
   const valueObj =
-    typeof value === "string"
-      ? listData.find((item: any) => item[valueField] === value)
+    typeof value == "string"
+      ? listData.find((item: any) => item[valueField] == value)
       : value;
 
   return (
@@ -114,7 +114,7 @@ export const NumericTextBoxWithValidation = (
 
   const onInputChange = (e: NumericTextBoxChangeEvent) => {
     const { target, value } = e;
-    onChange({ target: target, value: value === null ? 0 : value });
+    onChange({ target: target, value: value == null ? 0 : value });
   };
 
   const required = className?.includes("required");
@@ -172,7 +172,7 @@ const CheckBoxWithValidation = (fieldRenderProps: FieldRenderProps) => {
 
   return (
     <Checkbox
-      value={value === "Y" || value === true ? true : false}
+      value={value == "Y" || value == true ? true : false}
       valid={valid}
       id={id}
       {...others}
@@ -195,7 +195,7 @@ const CheckBoxReadOnly = (fieldRenderProps: FieldRenderProps) => {
   return (
     <div>
       <Checkbox
-        value={value === "Y" || value === true ? true : false}
+        value={value == "Y" || value == true ? true : false}
         valid={valid}
         id={id}
         {...others}
@@ -208,7 +208,7 @@ const CheckBoxReadOnly = (fieldRenderProps: FieldRenderProps) => {
 //Grid Cell에서 사용되는 Number Feild
 export const FormNumberCell = (props: GridCellProps) => {
   const { field, dataItem, className, render } = props;
-  const isInEdit = field === dataItem.inEdit;
+  const isInEdit = field == dataItem.inEdit;
   const parentField = dataItem.parentField;
 
   let defaultRendering = (
@@ -229,7 +229,7 @@ export const FormNumberCell = (props: GridCellProps) => {
 //Grid Cell에서 사용되는 Name Feild
 export const FormNameCell = (props: GridCellProps) => {
   const { field, dataItem, className = "", render } = props;
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   if (className.includes("read-only")) {
     isInEdit = false;
   } else if (className.includes("editable-new-only")) {
@@ -271,7 +271,7 @@ export const FormReadOnlyNumberCell = (props: GridCellProps) => {
 //Grid Cell에서 사용되는 DropDownList Feild
 export const FormDropDownListCell = (props: GridCellProps) => {
   const { field, dataItem, className, render } = props;
-  const isInEdit = field === dataItem.inEdit;
+  const isInEdit = field == dataItem.inEdit;
   const parentField = dataItem.parentField;
 
   const queryStr = dataItem[field ?? ""];
@@ -308,7 +308,7 @@ export const FormComboBoxCell = (props: IFormComboBoxCell) => {
   } = props;
 
   const processApi = useApi();
-  const isInEdit = field === dataItem.inEdit;
+  const isInEdit = field == dataItem.inEdit;
   const parentField = dataItem.parentField;
 
   const queryStr = bizComponent ? getQueryFromBizComponent(bizComponent) : "";
@@ -321,7 +321,7 @@ export const FormComboBoxCell = (props: IFormComboBoxCell) => {
   }, []);
 
   const fetchData = useCallback(async () => {
-    if (queryStr === "") return false;
+    if (queryStr == "") return false;
     let data: any;
 
     const bytes = require("utf8-bytes");
@@ -337,7 +337,7 @@ export const FormComboBoxCell = (props: IFormComboBoxCell) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -550,7 +550,7 @@ export const FormComboBox = (fieldRenderProps: FieldRenderProps) => {
   }
 
   useEffect(() => {
-    if (data === undefined && queryStr !== "") {
+    if (data == undefined && queryStr !== "") {
       fetchData();
     }
   }, []);
@@ -571,7 +571,7 @@ export const FormComboBox = (fieldRenderProps: FieldRenderProps) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }

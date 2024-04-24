@@ -66,19 +66,19 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "div"
+    field == "div"
       ? "L_PR300200"
-      : field === "qtyunit"
+      : field == "qtyunit"
       ? "L_BA015"
-      : field === "badcd"
+      : field == "badcd"
       ? "L_QC002"
       : "";
 
-  const fieldName = field === "div" ? "code_name" : undefined;
-  const fieldValue = field === "div" ? "code" : undefined;
+  const fieldName = field == "div" ? "code_name" : undefined;
+  const fieldValue = field == "div" ? "code" : undefined;
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -312,7 +312,7 @@ const DetailWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -340,7 +340,7 @@ const DetailWindow = ({
       setInDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt === -1 ? 0 : totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
 
@@ -412,7 +412,7 @@ const DetailWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[1].TotalRowCount;
       const rows = data.tables[1].Rows;
 
@@ -440,7 +440,7 @@ const DetailWindow = ({
       setBadDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt === -1 ? 0 : totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
 
@@ -545,7 +545,7 @@ const DetailWindow = ({
 
   //그리드 데이터 변경 되었을 때
   useEffect(() => {
-    if (inDataResult.total > 0 && isInitSearch === false) {
+    if (inDataResult.total > 0 && isInitSearch == false) {
       const firstRowData = inDataResult.data[0];
       setInSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
 
@@ -559,7 +559,7 @@ const DetailWindow = ({
   }, [inDataResult]);
 
   useEffect(() => {
-    if (badDataResult.total > 0 && isInitSearch === false) {
+    if (badDataResult.total > 0 && isInitSearch == false) {
       const firstRowData = badDataResult.data[0];
       setBadSelectedState({ [firstRowData[BAD_DATA_ITEM_KEY]]: true });
 
@@ -638,7 +638,7 @@ const DetailWindow = ({
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "qty" || field == "remark" || field == "chk") {
       const newData = inDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -673,7 +673,7 @@ const DetailWindow = ({
         item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(inselectedState)[0]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -723,7 +723,7 @@ const DetailWindow = ({
       field == "chk"
     ) {
       const newData = badDataResult.data.map((item) =>
-        item[BAD_DATA_ITEM_KEY] === dataItem[BAD_DATA_ITEM_KEY]
+        item[BAD_DATA_ITEM_KEY] == dataItem[BAD_DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -758,7 +758,7 @@ const DetailWindow = ({
         item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(badselectedState)[0]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -852,7 +852,7 @@ const DetailWindow = ({
     const changeCheck = () => {
       const newData = inDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values,
         [EDIT_FIELD]: props.field,
       }));
@@ -877,7 +877,7 @@ const DetailWindow = ({
     const changeCheck = () => {
       const newData = badDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values1,
         [EDIT_FIELD]: props.field,
       }));
@@ -1001,23 +1001,23 @@ const DetailWindow = ({
   const onSaveClick = async () => {
     const dataItem = inDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
     const dataItem1 = badDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
     if (
-      dataItem.length === 0 &&
-      deletedMainRows.length === 0 &&
-      dataItem1.length === 0 &&
-      deletedMainRows1.length === 0
+      dataItem.length == 0 &&
+      deletedMainRows.length == 0 &&
+      dataItem1.length == 0 &&
+      deletedMainRows1.length == 0
     )
       return false;
 

@@ -111,7 +111,7 @@ const SA_B3101W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
-        radAmtdiv: defaultOption.find((item: any) => item.id === "radAmtdiv")
+        radAmtdiv: defaultOption.find((item: any) => item.id == "radAmtdiv")
           .valueCode,
       }));
     }
@@ -198,7 +198,7 @@ const SA_B3101W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       const totalRowCnt = data.tables[0].TotalRowCount;
       if (workType == "CHART") {
@@ -291,7 +291,7 @@ const SA_B3101W: React.FC = () => {
   const onGridScrollHandler = (event: GridEvent) => {
     if (filters.isSearch) return false;
     let pgNumWithGap =
-      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
+      filters.pgNum + (filters.scrollDirrection == "up" ? filters.pgGap : 0);
 
     //스크롤 최하단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
@@ -307,7 +307,7 @@ const SA_B3101W: React.FC = () => {
     }
 
     pgNumWithGap =
-      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
+      filters.pgNum - (filters.scrollDirrection == "down" ? filters.pgGap : 0);
     //스크롤 최상단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
       setFilters((prev) => ({
@@ -368,7 +368,7 @@ const SA_B3101W: React.FC = () => {
       find_row_value: "",
       isSearch: true,
     }));
-    const unitText = filters.radAmtdiv === "A" ? "(단위: 천원)" : "(단위: 원)";
+    const unitText = filters.radAmtdiv == "A" ? "(단위: 천원)" : "(단위: 원)";
     const chartTitle =
       convertDateToStr(filters.yyyy).substr(0, 4) + "년 매입/매출현황";
     setUnitTitle(unitText);
@@ -586,7 +586,7 @@ const SA_B3101W: React.FC = () => {
                               field={item.fieldName}
                               title={item.caption}
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? gridTotalFooterCell
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell
@@ -761,7 +761,7 @@ const SA_B3101W: React.FC = () => {
                           field={item.fieldName}
                           title={item.caption}
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? gridTotalFooterCell
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell

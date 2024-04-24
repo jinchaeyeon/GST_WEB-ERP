@@ -108,17 +108,17 @@ const AC_A1000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        slipdiv: defaultOption.find((item: any) => item.id === "slipdiv")
+        slipdiv: defaultOption.find((item: any) => item.id == "slipdiv")
           .valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
+        position: defaultOption.find((item: any) => item.id == "position")
           .valueCode,
-        inoutdiv: defaultOption.find((item: any) => item.id === "inoutdiv")
+        inoutdiv: defaultOption.find((item: any) => item.id == "inoutdiv")
           .valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
+        person: defaultOption.find((item: any) => item.id == "person")
           .valueCode,
-        inputpath: defaultOption.find((item: any) => item.id === "inputpath")
+        inputpath: defaultOption.find((item: any) => item.id == "inputpath")
           .valueCode,
       }));
     }
@@ -144,15 +144,15 @@ const AC_A1000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const inputQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC006")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC006")
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const slipdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC002")
       );
       fetchQuery(usersQueryStr, setUsersListData);
       fetchQuery(inputQueryStr, setInputListData);
@@ -176,7 +176,7 @@ const AC_A1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -330,7 +330,7 @@ const AC_A1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -361,7 +361,7 @@ const AC_A1000W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) =>
@@ -473,9 +473,9 @@ const AC_A1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 1;
+        mainDataResult.data.length == 1 && filters.pgNum > 1;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -519,7 +519,7 @@ const AC_A1000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
@@ -685,7 +685,7 @@ const AC_A1000W: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values,
         [EDIT_FIELD]: props.field,
       }));
@@ -726,7 +726,7 @@ const AC_A1000W: React.FC = () => {
   const enterEdit3 = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               chk:
@@ -1124,13 +1124,13 @@ const AC_A1000W: React.FC = () => {
                   new Date(row.update_time)
                 ),
                 inputpath: InputListData.find(
-                  (item: any) => item.sub_code === row.inputpath
+                  (item: any) => item.sub_code == row.inputpath
                 )?.code_name,
                 insert_userid: usersListData.find(
-                  (item: any) => item.user_id === row.insert_userid
+                  (item: any) => item.user_id == row.insert_userid
                 )?.user_name,
                 slipdiv: slipdivListData.find(
-                  (item: any) => item.sub_code === row.slipdiv
+                  (item: any) => item.sub_code == row.slipdiv
                 )?.code_name,
                 chk: row.chk == "" ? false : row.chk,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
@@ -1195,7 +1195,7 @@ const AC_A1000W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : numberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell

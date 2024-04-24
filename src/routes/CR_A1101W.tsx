@@ -131,7 +131,7 @@ const CR_A1101W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -183,7 +183,7 @@ const CR_A1101W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -294,7 +294,7 @@ const CR_A1101W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (data.resultMessage != "") {
         alert(data.resultMessage);
       } else {
@@ -344,7 +344,7 @@ const CR_A1101W: React.FC = () => {
     }, 1000);
 
     // 0이 되면 새로고침 및 다시 30초 카운트
-    if (count === 0) {
+    if (count == 0) {
       clearInterval(id);
       resetInput();
     }

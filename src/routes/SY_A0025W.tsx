@@ -273,7 +273,7 @@ const SY_A0025W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -412,7 +412,7 @@ const SY_A0025W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -654,7 +654,7 @@ const SY_A0025W: React.FC = () => {
       )
     ) {
       const newData = subDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -686,7 +686,7 @@ const SY_A0025W: React.FC = () => {
         Object.getOwnPropertyNames(selectedsubDataState)[0]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -803,9 +803,9 @@ const SY_A0025W: React.FC = () => {
       "@p_start_serno": infomation.start_serno,
       "@p_memo": infomation.memo,
       "@p_use_yn":
-        infomation.use_yn === true
+        infomation.use_yn == true
           ? "Y"
-          : infomation.use_yn === false
+          : infomation.use_yn == false
           ? "N"
           : infomation.use_yn,
       "@p_userid": userId,
@@ -850,7 +850,7 @@ const SY_A0025W: React.FC = () => {
         if (data.isSuccess == true && infomation.worktype != "D") {
           const dataItem = subDataResult.data.filter((item: any) => {
             return (
-              (item.rowstatus === "N" || item.rowstatus === "U") &&
+              (item.rowstatus == "N" || item.rowstatus == "U") &&
               item.rowstatus !== undefined
             );
           });
@@ -939,7 +939,7 @@ const SY_A0025W: React.FC = () => {
           }
         } else if (data.isSuccess == true && infomation.worktype == "D") {
           const isLastDataDeleted =
-            mainDataResult.data.length === 1 && filters.pgNum > 0;
+            mainDataResult.data.length == 1 && filters.pgNum > 0;
           const findRowIndex = mainDataResult.data.findIndex(
             (row: any) =>
               row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -1011,7 +1011,7 @@ const SY_A0025W: React.FC = () => {
       data = subDataResult.data[Math.min(...object) - 1];
     }
     const isLastDataDeleted =
-      subDataResult.data.length === 0 && filters2.pgNum > 1;
+      subDataResult.data.length == 0 && filters2.pgNum > 1;
 
     if (isLastDataDeleted) {
       setPage2({
@@ -1102,9 +1102,9 @@ const SY_A0025W: React.FC = () => {
         "@p_start_serno": infomation.start_serno,
         "@p_memo": infomation.memo,
         "@p_use_yn":
-          infomation.use_yn === true
+          infomation.use_yn == true
             ? "Y"
-            : infomation.use_yn === false
+            : infomation.use_yn == false
             ? "N"
             : infomation.use_yn,
         "@p_userid": userId,
@@ -1264,7 +1264,7 @@ const SY_A0025W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell
                                   : undefined
                               }
@@ -1805,7 +1805,7 @@ const SY_A0025W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? subTotalFooterCell
                                   : undefined
                               }
@@ -1924,7 +1924,7 @@ const SY_A0025W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell
                                 : undefined
                             }
@@ -2352,7 +2352,7 @@ const SY_A0025W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? subTotalFooterCell
                                 : undefined
                             }

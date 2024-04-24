@@ -196,28 +196,28 @@ const BA_A0021W_603: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const usegbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_CM700")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_CM700")
       );
       const typeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_CM701")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_CM701")
       );
       const materialtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA001_603"
+          (item: any) => item.bizComponentId == "L_SA001_603"
         )
       );
       const custdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA026")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA026")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA076")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA076")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA077")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA077")
       );
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(usegbQueryStr, setUsegbListData);
@@ -246,7 +246,7 @@ const BA_A0021W_603: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -264,9 +264,9 @@ const BA_A0021W_603: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
-        custdiv: defaultOption.find((item: any) => item.id === "custdiv")
+        custdiv: defaultOption.find((item: any) => item.id == "custdiv")
           .valueCode,
-        itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
+        itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
           .valueCode,
       }));
     }
@@ -491,7 +491,7 @@ const BA_A0021W_603: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -565,7 +565,7 @@ const BA_A0021W_603: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -621,7 +621,7 @@ const BA_A0021W_603: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -677,7 +677,7 @@ const BA_A0021W_603: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -1108,10 +1108,10 @@ const BA_A0021W_603: React.FC = () => {
                   mainDataResult.data.map((row) => ({
                     ...row,
                     custdiv: custdivListData.find(
-                      (item: any) => item.sub_code === row.custdiv
+                      (item: any) => item.sub_code == row.custdiv
                     )?.code_name,
                     itemlvl3: itemlvl3ListData.find(
-                      (item: any) => item.sub_code === row.itemlvl3
+                      (item: any) => item.sub_code == row.itemlvl3
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
@@ -1163,7 +1163,7 @@ const BA_A0021W_603: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell
@@ -1459,13 +1459,13 @@ const BA_A0021W_603: React.FC = () => {
                           (items: any) => items.user_id == row.person
                         )?.user_name,
                         materialtype: materialtypeListData.find(
-                          (item: any) => item.sub_code === row.materialtype
+                          (item: any) => item.sub_code == row.materialtype
                         )?.code_name,
                         type: typeListData.find(
-                          (item: any) => item.sub_code === row.type
+                          (item: any) => item.sub_code == row.type
                         )?.code_name,
                         usegb: usegbListData.find(
-                          (item: any) => item.sub_code === row.usegb
+                          (item: any) => item.sub_code == row.usegb
                         )?.code_name,
                         [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
                       })),
@@ -1513,7 +1513,7 @@ const BA_A0021W_603: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell2
                                   : undefined
                               }
@@ -1590,7 +1590,7 @@ const BA_A0021W_603: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell3
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell3
@@ -1669,7 +1669,7 @@ const BA_A0021W_603: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell4
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell4

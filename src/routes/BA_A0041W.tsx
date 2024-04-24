@@ -93,22 +93,22 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "itemlvl2"
+    field == "itemlvl2"
       ? "L_BA172"
-      : field === "itemlvl3"
+      : field == "itemlvl3"
       ? "L_BA173"
-      : field === "itemacnt"
+      : field == "itemacnt"
       ? "L_BA061"
-      : field === "itemlvl1"
+      : field == "itemlvl1"
       ? "L_BA171"
-      : field === "load_place"
+      : field == "load_place"
       ? "L_LOADPLACE"
-      : field === "invunit"
+      : field == "invunit"
       ? "L_BA015"
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -186,17 +186,17 @@ const BA_A0041W: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
+        raduseyn: defaultOption.find((item: any) => item.id == "raduseyn")
           .valueCode,
-        itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
+        itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
           .valueCode,
-        itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1")
+        itemlvl1: defaultOption.find((item: any) => item.id == "itemlvl1")
           .valueCode,
-        itemlvl2: defaultOption.find((item: any) => item.id === "itemlvl2")
+        itemlvl2: defaultOption.find((item: any) => item.id == "itemlvl2")
           .valueCode,
-        itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
+        itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
           .valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
+        location: defaultOption.find((item: any) => item.id == "location")
           .valueCode,
       }));
     }
@@ -231,24 +231,24 @@ const BA_A0041W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const loadplaceQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_LOADPLACE"
+          (item: any) => item.bizComponentId == "L_LOADPLACE"
         )
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
@@ -275,7 +275,7 @@ const BA_A0041W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -388,7 +388,7 @@ const BA_A0041W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -678,7 +678,7 @@ const BA_A0041W: React.FC = () => {
       (field == "auto" && dataItem.rowstatus == "N")
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -964,7 +964,7 @@ const BA_A0041W: React.FC = () => {
 
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -999,7 +999,7 @@ const BA_A0041W: React.FC = () => {
       return false;
     }
 
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
       itemcd_s: [],
@@ -1227,7 +1227,7 @@ const BA_A0041W: React.FC = () => {
 
     if (!valid) return false;
 
-    if (dataItem.length === 0) {
+    if (dataItem.length == 0) {
       alert("데이터가 없습니다.");
       return false;
     }
@@ -1379,7 +1379,7 @@ const BA_A0041W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setValues2(false);
       if (paraData.workType == "N") {
         const isLastDataDeleted =
@@ -1634,7 +1634,7 @@ const BA_A0041W: React.FC = () => {
               (item: any) => item.code_name == 소분류
             )?.sub_code;
             const invunit = qtyunitListData.find(
-              (item: any) => item.code_name === 구매단위
+              (item: any) => item.code_name == 구매단위
             )?.sub_code;
 
             dataArr.rowstatus_s.push("N");
@@ -2026,7 +2026,7 @@ const BA_A0041W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 1
+                        item.sortOrder == 1
                           ? mainTotalFooterCell
                           : NumberField2.includes(item.fieldName)
                           ? editNumberFooterCell

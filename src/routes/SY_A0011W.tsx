@@ -93,7 +93,7 @@ const RowRenderForDragging = (properties: any) => {
       setTimeout(() => {
         const activeElement = document.activeElement;
 
-        if (activeElement === null) return false;
+        if (activeElement == null) return false;
         if (activeElement.className.indexOf("k-calendar") < 0) {
           props.render();
         }
@@ -147,7 +147,7 @@ const Page: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        use_yn: defaultOption.find((item: any) => item.id === "use_yn")
+        use_yn: defaultOption.find((item: any) => item.id == "use_yn")
           .valueCode,
       }));
     }
@@ -325,7 +325,7 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -422,7 +422,7 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -528,7 +528,7 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -561,7 +561,7 @@ const Page: React.FC = () => {
         // 앱 메뉴 (최상위 메뉴) 없을 시 데이터 세팅
         // 드래그앤드롭 사용 시 그리드 내 데이터 최소 1개 필요함
 
-        const appMenuData = rows.find((item: any) => item.ParentKeyID === "");
+        const appMenuData = rows.find((item: any) => item.ParentKeyID == "");
 
         const appMenuRow = [
           {
@@ -725,11 +725,11 @@ const Page: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
 
       const useYnQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_COM013")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_COM013")
       );
 
       fetchQuery(postcdQueryStr, setPostcdListData);
@@ -753,7 +753,7 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -806,7 +806,7 @@ const Page: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   const fetchToDelete = async () => {
@@ -818,9 +818,9 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       );
@@ -875,11 +875,11 @@ const Page: React.FC = () => {
 
     const dataItem: { [name: string]: any } = flatData.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     const key = Object.getOwnPropertyNames(selectedState)[0];
 
@@ -1018,8 +1018,8 @@ const Page: React.FC = () => {
       flatData.forEach((item: any) => delete item[SUB_ITEMS_FIELD]);
 
       const newRowData =
-        dragDataItem["ParentKeyID"] === "" // 최상위 항목 선택시 전체 메뉴 삭제
-          ? flatData.filter((item: any) => item["ParentKeyID"] === "")
+        dragDataItem["ParentKeyID"] == "" // 최상위 항목 선택시 전체 메뉴 삭제
+          ? flatData.filter((item: any) => item["ParentKeyID"] == "")
           : flatData.filter((item: any) => {
               if (
                 item[USER_MENU_DATA_ITEM_KEY] !==
@@ -1056,7 +1056,7 @@ const Page: React.FC = () => {
 
   // 사용자별 메뉴에 데이터 추가
   const handleUserMenuDrop = (e: any) => {
-    if (dragDataItem === null) {
+    if (dragDataItem == null) {
       return false;
     }
 
@@ -1069,13 +1069,13 @@ const Page: React.FC = () => {
     flatAllMenuData.forEach((item: any) => delete item[SUB_ITEMS_FIELD]);
 
     let dragDataItemWithChildren: any[] =
-      dragDataItem["ParentKeyID"] === "" // 최상위 항목 선택시 전체 메뉴 추가
+      dragDataItem["ParentKeyID"] == "" // 최상위 항목 선택시 전체 메뉴 추가
         ? flatAllMenuData
         : flatAllMenuData.filter(
             (item: any) =>
-              item[USER_MENU_DATA_ITEM_KEY] === dragDataItem["ParentKeyID"] ||
-              item["ParentKeyID"] === dragDataItem[USER_MENU_DATA_ITEM_KEY] ||
-              item[USER_MENU_DATA_ITEM_KEY] ===
+              item[USER_MENU_DATA_ITEM_KEY] == dragDataItem["ParentKeyID"] ||
+              item["ParentKeyID"] == dragDataItem[USER_MENU_DATA_ITEM_KEY] ||
+              item[USER_MENU_DATA_ITEM_KEY] ==
                 dragDataItem[USER_MENU_DATA_ITEM_KEY]
           );
 
@@ -1107,7 +1107,7 @@ const Page: React.FC = () => {
 
         const sameKeyData = flatData.find(
           (item: any) =>
-            item[USER_MENU_DATA_ITEM_KEY] ===
+            item[USER_MENU_DATA_ITEM_KEY] ==
             dragDataItem[USER_MENU_DATA_ITEM_KEY]
         );
 
@@ -1168,7 +1168,7 @@ const Page: React.FC = () => {
   };
 
   const reloadData = (workType: string, group_id: string | undefined) => {
-    if (workType === "U") {
+    if (workType == "U") {
       // 일반조회
       const rows = mainDataResult.data.filter(
         (item) => Object.getOwnPropertyNames(selectedState)[0] == item.num
@@ -1200,7 +1200,7 @@ const Page: React.FC = () => {
 
     return (
       <>
-        {props.rowType === "groupHeader" ? null : (
+        {props.rowType == "groupHeader" ? null : (
           <td className="k-command-cell">
             <Button
               className="k-grid-edit-command"
@@ -1273,19 +1273,19 @@ const Page: React.FC = () => {
 
     // 데이터 업데이트
     const updatedUserMenuData =
-      level.length === 1 // 최상위 요소 change 시, 전체 데이터의 rowstatus, field 업데이트
+      level.length == 1 // 최상위 요소 change 시, 전체 데이터의 rowstatus, field 업데이트
         ? flatData.map((item: any) => ({
             ...item,
-            rowstatus: item["rowstatus"] === "N" ? "N" : "U",
+            rowstatus: item["rowstatus"] == "N" ? "N" : "U",
             [field!]: value,
           }))
         : flatData.map(
             (
               item: any // 그 외, change 된 데이터의 rowstatus 업데이트
             ) =>
-              item[USER_MENU_DATA_ITEM_KEY] ===
+              item[USER_MENU_DATA_ITEM_KEY] ==
               dataItem[USER_MENU_DATA_ITEM_KEY]
-                ? { ...item, rowstatus: item["rowstatus"] === "N" ? "N" : "U" }
+                ? { ...item, rowstatus: item["rowstatus"] == "N" ? "N" : "U" }
                 : { ...item }
           );
 
@@ -1302,7 +1302,7 @@ const Page: React.FC = () => {
       dataTree,
       SUB_ITEMS_FIELD,
       (item) =>
-        item[USER_MENU_DATA_ITEM_KEY] === dataItem[USER_MENU_DATA_ITEM_KEY],
+        item[USER_MENU_DATA_ITEM_KEY] == dataItem[USER_MENU_DATA_ITEM_KEY],
       (subItems) =>
         subItems.map((subItem) => ({
           ...subItem,
@@ -1315,7 +1315,7 @@ const Page: React.FC = () => {
     setUserMenuDataResult({
       ...userMenuDataResult,
       data: mapTree(newData, SUB_ITEMS_FIELD, (item) =>
-        dataItem[USER_MENU_DATA_ITEM_KEY] === item[USER_MENU_DATA_ITEM_KEY]
+        dataItem[USER_MENU_DATA_ITEM_KEY] == item[USER_MENU_DATA_ITEM_KEY]
           ? extendDataItem(item, SUB_ITEMS_FIELD, { [field!]: value })
           : item
       ),
@@ -1338,7 +1338,7 @@ const Page: React.FC = () => {
             extendDataItem(item, SUB_ITEMS_FIELD, {
               [EXPANDED_FIELD]: true,
               [EDIT_FIELD]:
-                item[USER_MENU_DATA_ITEM_KEY] === editItemId
+                item[USER_MENU_DATA_ITEM_KEY] == editItemId
                   ? editItemField
                   : undefined,
               [SELECTED_FIELD]: userMenuSelectedState[idGetter2(item)], //선택된 데이터
@@ -1355,7 +1355,7 @@ const Page: React.FC = () => {
             extendDataItem(item, SUB_ITEMS_FIELD, {
               [EXPANDED_FIELD]: true,
               [EDIT_FIELD]:
-                item[ALL_MENU_DATA_ITEM_KEY] === editItemId2
+                item[ALL_MENU_DATA_ITEM_KEY] == editItemId2
                   ? editItemId2
                   : undefined,
               [SELECTED_FIELD]: allMenuSelectedState[idGetter3(item)], //선택된 데이터
@@ -1483,10 +1483,10 @@ const Page: React.FC = () => {
                       mainDataResult.data.map((row, idx) => ({
                         ...row,
                         use_yn: useYnListData.find(
-                          (item: any) => item.code === row.use_yn
+                          (item: any) => item.code == row.use_yn
                         )?.name,
                         postcd: postcdListData.find(
-                          (item: any) => item.sub_code === row.postcd
+                          (item: any) => item.sub_code == row.postcd
                         )?.code_name,
                         [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                       })),
@@ -1534,7 +1534,7 @@ const Page: React.FC = () => {
                               title={item.caption}
                               width={item.width}
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell
                                   : undefined
                               }
@@ -1603,7 +1603,7 @@ const Page: React.FC = () => {
                           item[USER_MENU_DATA_ITEM_KEY]
                         ),
                         [EDIT_FIELD]:
-                          item[USER_MENU_DATA_ITEM_KEY] === editItemId
+                          item[USER_MENU_DATA_ITEM_KEY] == editItemId
                             ? editItemField
                             : undefined,
                         [SELECTED_FIELD]:
@@ -1777,10 +1777,10 @@ const Page: React.FC = () => {
                     mainDataResult.data.map((row, idx) => ({
                       ...row,
                       use_yn: useYnListData.find(
-                        (item: any) => item.code === row.use_yn
+                        (item: any) => item.code == row.use_yn
                       )?.name,
                       postcd: postcdListData.find(
-                        (item: any) => item.sub_code === row.postcd
+                        (item: any) => item.sub_code == row.postcd
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                     })),
@@ -1828,7 +1828,7 @@ const Page: React.FC = () => {
                             title={item.caption}
                             width={item.width}
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell
                                 : undefined
                             }
@@ -1869,7 +1869,7 @@ const Page: React.FC = () => {
                         item[USER_MENU_DATA_ITEM_KEY]
                       ),
                       [EDIT_FIELD]:
-                        item[USER_MENU_DATA_ITEM_KEY] === editItemId
+                        item[USER_MENU_DATA_ITEM_KEY] == editItemId
                           ? editItemField
                           : undefined,
                       [SELECTED_FIELD]: userMenuSelectedState[idGetter2(item)], //선택된 데이터

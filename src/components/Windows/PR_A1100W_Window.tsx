@@ -104,29 +104,29 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "proccd"
+    field == "proccd"
       ? "L_PR010"
-      : field === "outprocyn"
+      : field == "outprocyn"
       ? "L_BA011"
-      : field === "prodemp"
+      : field == "prodemp"
       ? "L_sysUserMaster_001"
-      : field === "prodmac"
+      : field == "prodmac"
       ? "L_fxcode"
-      : field === "outgb"
+      : field == "outgb"
       ? "L_BA041"
-      : field === "qtyunit"
+      : field == "qtyunit"
       ? "L_BA015"
       : "";
 
   const fieldName =
-    field === "prodemp"
+    field == "prodemp"
       ? "user_name"
-      : field === "prodmac"
+      : field == "prodmac"
       ? "fxfull"
       : undefined;
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -270,7 +270,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setItemInfo } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -393,7 +393,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {itemWindowVisible2 && (
@@ -569,7 +569,7 @@ const KendoWindow = ({
             itemlvl4: itemInfo.itemlvl4,
             itemlvl5: itemInfo.itemlvl5,
             custitemnm: itemInfo.custitemnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             [EDIT_FIELD]: undefined,
           }
         : {
@@ -603,7 +603,7 @@ const KendoWindow = ({
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
 
@@ -832,7 +832,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows[0];
       setInformation({
         itemcd: rows.itemcd,
@@ -896,7 +896,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -970,7 +970,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -1119,7 +1119,7 @@ const KendoWindow = ({
   const enterEdit = async (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1203,7 +1203,7 @@ const KendoWindow = ({
   const enterEdit2 = async (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = mainDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY2] === dataItem[DATA_ITEM_KEY2]
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1272,7 +1272,7 @@ const KendoWindow = ({
       } else {
         mainDataResult2.data.map(
           (item: { [x: string]: any; chlditemcd: any }) => {
-            if (editIndex === item[DATA_ITEM_KEY2]) {
+            if (editIndex == item[DATA_ITEM_KEY2]) {
               fetchItemData(item.chlditemcd);
             }
           }
@@ -1518,8 +1518,8 @@ const KendoWindow = ({
       mainDataResult.data.forEach((item: any, idx: number) => {
         mainDataResult.data.forEach((chkItem: any, chkIdx: number) => {
           if (
-            (item.proccd === chkItem.proccd ||
-              item.procseq === chkItem.procseq) &&
+            (item.proccd == chkItem.proccd ||
+              item.procseq == chkItem.procseq) &&
             idx !== chkIdx
           ) {
             throw findMessage(messagesData, "PR_A1100W_003");
@@ -1808,8 +1808,8 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
-      if (workType === "U") {
+    if (data.isSuccess == true) {
+      if (workType == "U") {
         reloadData(data.returnString);
         setFilters((prev) => ({
           ...prev,
@@ -1856,7 +1856,7 @@ const KendoWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "계획처리" : "계획처리"}
+        title={workType == "N" ? "계획처리" : "계획처리"}
         width={position.width}
         height={position.height}
         onMove={handleMove}

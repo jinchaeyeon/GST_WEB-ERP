@@ -103,13 +103,13 @@ const PR_B1103W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        option: defaultOption.find((item: any) => item.id === "option")
+        option: defaultOption.find((item: any) => item.id == "option")
           .valueCode,
-        itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1")
+        itemlvl1: defaultOption.find((item: any) => item.id == "itemlvl1")
           .valueCode,
-        itemlvl2: defaultOption.find((item: any) => item.id === "itemlvl2")
+        itemlvl2: defaultOption.find((item: any) => item.id == "itemlvl2")
           .valueCode,
-        itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
+        itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
           .valueCode,
       }));
     }
@@ -130,7 +130,7 @@ const PR_B1103W: React.FC = () => {
     if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(userQueryStr, setUserListData);
@@ -153,7 +153,7 @@ const PR_B1103W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -280,7 +280,7 @@ const PR_B1103W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
         proddt: item.proddt == "" ? "" : dateformat2(item.proddt),
@@ -302,7 +302,7 @@ const PR_B1103W: React.FC = () => {
       data2 = null;
     }
 
-    if (data2.isSuccess === true) {
+    if (data2.isSuccess == true) {
       const rows = data2.tables[0].Rows;
 
       if (rows.length > 0) {
@@ -320,7 +320,7 @@ const PR_B1103W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
       }));
@@ -328,7 +328,7 @@ const PR_B1103W: React.FC = () => {
       setMonthData(rows);
       let objects = rows.filter(
         (arr: { series: any }, index: any, callback: any[]) =>
-          index === callback.findIndex((t) => t.series === arr.series)
+          index == callback.findIndex((t) => t.series == arr.series)
       );
       setStackChartLabel(
         objects.map((item: { series: any }) => {
@@ -353,7 +353,7 @@ const PR_B1103W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
       }));

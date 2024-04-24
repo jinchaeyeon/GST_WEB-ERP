@@ -414,15 +414,15 @@ type TGridContainerWrap = {
 
 export const GridContainerWrap = styled.div<TGridContainerWrap>`
   display: flex;
-  gap: ${(props) => (props.flexDirection === "column" ? "0" : "15px")};
+  gap: ${(props) => (props.flexDirection == "column" ? "0" : "15px")};
   justify-content: space-between;
   flex-direction: ${(props) => props.flexDirection};
   max-width: ${(props) =>
-    typeof props.maxWidth === "number"
+    typeof props.maxWidth == "number"
       ? props.maxWidth + "px"
       : props.maxWidth};
   height: ${(props) =>
-    typeof props.height === "number" ? props.height + "px" : props.height};
+    typeof props.height == "number" ? props.height + "px" : props.height};
 
   @media (max-width: ${(props) =>
       props.mobilemaxWidth != undefined ? props.mobilemaxWidth : 1200}px) {
@@ -867,9 +867,9 @@ export const NumberKeypadCell = styled.div<TColor>`
   }
 `;
 
-/*=========================================================================
+/*=================================================
 	// PanelBarNavContainer 시작
-=========================================================================*/
+=================================================*/
 
 type TWrapper = {
   isMobileMenuOpend: boolean;
@@ -929,11 +929,11 @@ export const Gnv = styled.div<TGnv>`
     justify-content: space-between;
   }
 
-  /*=========================================================================
+  /*=================================================
 	미디어 쿼리
 	##Device = 모바일
 	##Screen = 1200px 이하 해상도 모바일
-  =========================================================================*/
+  =================================================*/
   @media (max-width: 1200px) {
     display: ${(props) => (props.isMobileMenuOpend ? "block" : "none")};
     z-index: 10;
@@ -964,11 +964,11 @@ export const Content = styled.div<ContentType>`
   ::-webkit-scrollbar {
   display: none;
 }
-  /*=========================================================================
+  /*=================================================
   미디어 쿼리
   ##Device = 모바일
   ##Screen = 1200px 이하 해상도 모바일
-  =========================================================================*/
+  =================================================*/
   @media (max-width: 1200px) {
     width: 100%;
     left: 0;
@@ -1073,11 +1073,11 @@ export const TopTitle = styled.div`
     height: 30px;
   }
 
-  /*=========================================================================
+  /*=================================================
   미디어 쿼리
   ##Device = 모바일
   ##Screen = 1200px 이하 해상도 모바일
-  =========================================================================*/
+  =================================================*/
   @media (max-width: 1200px) {
     display: flex;
     position: fixed;
@@ -1098,9 +1098,9 @@ export const Modal = styled.div<TModal>`
   display: ${(props) => (props.isMobileMenuOpend ? "block" : "none")};
   background-color: rgba(0, 0, 0, 0.4);
 `;
-/*=========================================================================
+/*=================================================
 	// PanelBarNavContainer 종료
-=========================================================================*/
+=================================================*/
 type TLogo = { size: string; name: string };
 
 export const Logo = styled.div<TLogo>`
@@ -1209,7 +1209,7 @@ export const ScrollableContainer = styled.div<TScrollableContainer>`
 type TStatusIcon = { status: string };
 
 export const StatusIcon = styled.span<TStatusIcon>`
-  background: url(${(props) => (props.status === "001" ? processStsSrc : "")});
+  background: url(${(props) => (props.status == "001" ? processStsSrc : "")});
   background-size: contain;
   background-repeat: no-repeat;
   width: 15px;
@@ -1223,9 +1223,9 @@ type TAnsweIcon = { status: string };
 
 export const AnswerIcon = styled.span<TAnsweIcon>`
   background: url(${(props) =>
-    props.status === "N"
+    props.status == "N"
       ? processStsSrc
-      : props.status === "Y"
+      : props.status == "Y"
       ? successStsSrc
       : processStsSrc});
   background-size: contain;

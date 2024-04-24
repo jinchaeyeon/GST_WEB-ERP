@@ -127,18 +127,18 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "custcd"
+    field == "custcd"
       ? "L_CUST"
-      : field === "outcustcd"
+      : field == "outcustcd"
       ? "L_CUST"
-      : field === "person"
+      : field == "person"
       ? "L_sysUserMaster_001"
       : field == "fxdiv"
       ? "L_BA801"
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   if (bizComponentIdVal == "L_CUST") {
@@ -266,11 +266,11 @@ const MA_A3000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const custQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_CUST")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_CUST")
       );
       const loadPlaceQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_LOADPLACE"
+          (item: any) => item.bizComponentId == "L_LOADPLACE"
         )
       );
       fetchQuery(custQueryStr, setCustListData);
@@ -294,7 +294,7 @@ const MA_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -474,7 +474,7 @@ const MA_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -584,7 +584,7 @@ const MA_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -650,7 +650,7 @@ const MA_A3000W: React.FC = () => {
   }, [detailFilters]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   let gridRef: any = useRef(null);
@@ -932,9 +932,9 @@ const MA_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -1143,12 +1143,12 @@ const MA_A3000W: React.FC = () => {
   const onSave = () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -1215,7 +1215,7 @@ const MA_A3000W: React.FC = () => {
   const onSave2 = () => {
     const dataItem = detailDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -1223,7 +1223,7 @@ const MA_A3000W: React.FC = () => {
       (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
     )[0];
 
-    if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     let valid = true;
 
@@ -1451,7 +1451,7 @@ const MA_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setValues2(false);
       deletedMainRows = [];
       setFilters((prev) => ({
@@ -1567,7 +1567,7 @@ const MA_A3000W: React.FC = () => {
     }
     if (valid == true) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1690,7 +1690,7 @@ const MA_A3000W: React.FC = () => {
     }
     if (valid == true) {
       const newData = detailDataResult.data.map((item) =>
-        item[DETAIL_DATA_ITEM_KEY] === dataItem[DETAIL_DATA_ITEM_KEY]
+        item[DETAIL_DATA_ITEM_KEY] == dataItem[DETAIL_DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1760,7 +1760,7 @@ const MA_A3000W: React.FC = () => {
         });
       } else {
         detailDataResult.data.map(async (item) => {
-          if (editIndex === item.num) {
+          if (editIndex == item.num) {
             const custcd = await fetchCustInfo(item.custcd);
             if (custcd != null && custcd != undefined) {
               const newData = detailDataResult.data.map((item) =>
@@ -1770,7 +1770,7 @@ const MA_A3000W: React.FC = () => {
                       custcd: custcd.custcd,
                       address: custcd.address,
                       phonenum: custcd.phonenum,
-                      rowstatus: item.rowstatus === "N" ? "N" : "U",
+                      rowstatus: item.rowstatus == "N" ? "N" : "U",
                       [EDIT_FIELD]: undefined,
                     }
                   : {
@@ -1815,7 +1815,7 @@ const MA_A3000W: React.FC = () => {
   };
 
   const fetchCustInfo = async (custcd: string) => {
-    if (custcd === "") return;
+    if (custcd == "") return;
     let data: any;
     let custInfo: null | { custcd: string; address: string; phonenum: string } =
       null;
@@ -1834,7 +1834,7 @@ const MA_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       if (rows.length > 0) {
         custInfo = {
@@ -1940,7 +1940,7 @@ const MA_A3000W: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -1966,10 +1966,10 @@ const MA_A3000W: React.FC = () => {
 
     const onChange = () => {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === props.dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == props.dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               chk: !item.chk,
               [EDIT_FIELD]: props.field,
             }
@@ -2286,25 +2286,25 @@ const MA_A3000W: React.FC = () => {
                   ? new Date(dateformat(row.purdt))
                   : new Date(dateformat("99991231")),
                 custcd: custListData.find(
-                  (item: any) => item.custcd === row.custcd
+                  (item: any) => item.custcd == row.custcd
                 )?.custnm,
                 custcd1: custListData.find(
-                  (item: any) => item.custcd === row.custcd1
+                  (item: any) => item.custcd == row.custcd1
                 )?.custnm,
                 custcd2: custListData.find(
-                  (item: any) => item.custcd === row.custcd2
+                  (item: any) => item.custcd == row.custcd2
                 )?.custnm,
                 custcd3: custListData.find(
-                  (item: any) => item.custcd === row.custcd3
+                  (item: any) => item.custcd == row.custcd3
                 )?.custnm,
                 load_place1: loadplaceListData.find(
-                  (item: any) => item.sub_code === row.load_place1
+                  (item: any) => item.sub_code == row.load_place1
                 )?.code_name,
                 load_place2: loadplaceListData.find(
-                  (item: any) => item.sub_code === row.load_place2
+                  (item: any) => item.sub_code == row.load_place2
                 )?.code_name,
                 load_place3: loadplaceListData.find(
-                  (item: any) => item.sub_code === row.load_place3
+                  (item: any) => item.sub_code == row.load_place3
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -2372,7 +2372,7 @@ const MA_A3000W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )
