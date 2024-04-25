@@ -255,29 +255,29 @@ const SA_B2228W: React.FC = () => {
       title: "지난달 계약금액",
       data:
         AllPanel.pastmonth_amt != null
-          ? numberWithCommas3(AllPanel.pastmonth_amt) + "원"
-          : 0 + "원",
+          ? numberWithCommas3(AllPanel.pastmonth_amt) + "억"
+          : 0 + "억",
     },
     {
       title: "이번달 계약금액",
       data:
         AllPanel.month_amt != null
-          ? numberWithCommas3(AllPanel.month_amt) + "원"
-          : 0 + "원",
+          ? numberWithCommas3(AllPanel.month_amt) + "억"
+          : 0 + "억",
     },
     {
       title: "전달대비 증감액",
       data:
         AllPanel.increase_amt != null
-          ? numberWithCommas3(AllPanel.increase_amt) + "원"
-          : 0 + "원",
+          ? numberWithCommas3(AllPanel.increase_amt) + "억"
+          : 0 + "억",
     },
     {
       title: convertDateToStr(filters.frdt).substring(0, 4) + "년 누적계약금액",
       data:
         AllPanel.year_amt != null
-          ? numberWithCommas3(AllPanel.year_amt) + "원"
-          : 0 + "원",
+          ? numberWithCommas3(AllPanel.year_amt) + "억"
+          : 0 + "억",
     },
     {
       title: "당월 최고 매출액 사업부",
@@ -328,7 +328,7 @@ const SA_B2228W: React.FC = () => {
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                   <MultiDoughnutChart
                     data={ItemList}
-                    option={"value"}
+                    option={"amt"}
                     label={ItemList.map((item) => item.testpart)}
                     random={true}
                     colorName={colorName}

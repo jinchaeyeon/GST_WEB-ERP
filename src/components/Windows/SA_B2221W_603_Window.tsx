@@ -436,16 +436,7 @@ const CopyWindow = ({
               footerCell={mainTotalFooterCell}
             />
             <GridColumn field="itemnm" title="품목명" width="150px" />
-            <GridColumn field="insiz" title="규격" width="120px" />
             <GridColumn field="itemacnt" title="품목계정" width="120px" />
-            <GridColumn
-              field="qty"
-              title="수주량"
-              width="100px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn field="qtyunit" title="단위" width="120px" />
             <GridColumn
               field="unp"
               title="단가"
@@ -473,31 +464,6 @@ const CopyWindow = ({
               cell={NumberCell}
               footerCell={gridSumQtyFooterCell}
             />
-            <GridColumn field="remark" title="비고" width="200px" />
-            <GridColumn field="purcustnm" title="발주처" width="120px" />
-            <GridColumn
-              field="outqty"
-              title="출하수량"
-              width="100px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn
-              field="sale_qty"
-              title="판매수량"
-              width="100px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn field="finyn" title="완료여부" width="100px" />
-            <GridColumn
-              field="bf_qty"
-              title="LOT수량"
-              width="100px"
-              cell={NumberCell}
-              footerCell={gridSumQtyFooterCell}
-            />
-            <GridColumn field="lotnum" title="LOT NO" width="150px" />
           </Grid>
         </GridContainer>
         <BottomContainer>
