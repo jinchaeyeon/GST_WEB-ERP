@@ -64,13 +64,13 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
+import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import { useApi } from "../hooks/api";
 import { isLoading, loginResultState } from "../store/atoms";
 import { gridList } from "../store/columns/SA_A6000W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import RequiredHeader from "../components/HeaderCells/RequiredHeader";
 
 let targetRowIndex: null | number = null;
 const DATA_ITEM_KEY = "num";
@@ -220,6 +220,7 @@ const SA_A6000W: React.FC = () => {
         isSearch: true,
       }));
     }
+    deletedMainRows = [];
     setTabSelected(e.selected);
   };
 
@@ -274,7 +275,7 @@ const SA_A6000W: React.FC = () => {
       pgNum: 1,
     }));
     setPage4(initialPageState);
-
+    deletedMainRows = [];
     setFilters3((prev) => ({
       ...prev,
       pgNum: Math.floor(page.skip / initialPageState.take) + 1,
@@ -396,6 +397,12 @@ const SA_A6000W: React.FC = () => {
         total: prev.total,
       };
     });
+    setTempResult3((prev) => {
+      return {
+        data: newData,
+        total: prev.total,
+      };
+    });
   }, [userid, username]);
 
   const [mainDataState, setMainDataState] = useState<State>({
@@ -455,6 +462,10 @@ const SA_A6000W: React.FC = () => {
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
+
+    if(name == "yyyy") {
+      deletedMainRows = [];
+    }
 
     setFilters((prev) => ({
       ...prev,
@@ -687,6 +698,12 @@ const SA_A6000W: React.FC = () => {
           total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
+      setTempResult3((prev) => {
+        return {
+          data: rows,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
+        };
+      });
 
       if (totalRowCnt > 0) {
         const selectedRow =
@@ -850,6 +867,7 @@ const SA_A6000W: React.FC = () => {
     setMainDataResult2(process([], mainDataState2));
     setMainDataResult3(process([], mainDataState3));
     setMainDataResult4(process([], mainDataState4));
+    deletedMainRows = [];
   };
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
@@ -870,40 +888,89 @@ const SA_A6000W: React.FC = () => {
     setSelectedState2(newSelectedState);
   };
 
+  const [predata, setPreData] = useState<any>(undefined);
   const onSelectionChange3 = (event: GridSelectionChangeEvent) => {
-    const datas = mainDataResult3.data.filter((item) => item[DATA_ITEM_KEY3] == Object.getOwnPropertyNames(selectedState3)[0])[0];
-
-    const newSelectedState = getSelectedState({
-      event,
-      selectedState: selectedState3,
-      dataItemKey: DATA_ITEM_KEY3,
-    });
-    setSelectedState3(newSelectedState);
-
-    let valid = true;
+    const datas = mainDataResult3.data.filter(
+      (item) =>
+        item[DATA_ITEM_KEY3] == Object.getOwnPropertyNames(selectedState3)[0]
+    )[0];
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
 
-    if(datas[DATA_ITEM_KEY3] != selectedRowData[DATA_ITEM_KEY3]) {
+    let valid = true;
+
+    if (datas[DATA_ITEM_KEY3] != selectedRowData[DATA_ITEM_KEY3]) {
       mainDataResult4.data.map((item) => {
         if (item.rowstatus == "N" || item.rowstatus == "U") {
           valid = false;
         }
       });
-  
+
       if (valid != true) {
         if (
-          !window.confirm("작성중인 내용이 초기화됩니다. 새로 조회하시겠습니까?")
+          !window.confirm(
+            "작성중인 내용이 초기화됩니다. 새로 조회하시겠습니까?"
+          )
         ) {
           return false;
         }
-      } 
+      }
+
+      const newSelectedState = getSelectedState({
+        event,
+        selectedState: selectedState3,
+        dataItemKey: DATA_ITEM_KEY3,
+      });
+      setSelectedState3(newSelectedState);
+
+      if (datas.rowstatus != "N") {
+        const newData = mainDataResult3.data.map((item) =>
+          item[DATA_ITEM_KEY3] == datas[DATA_ITEM_KEY3]
+            ? {
+                ...item,
+                rowstatus: item.rowstatus == "N" ? "N" : "",
+                amt: predata == undefined ? item.amt : predata.amt,
+                dif: predata == undefined ? item.dif : predata.dif,
+              }
+            : {
+                ...item,
+              }
+        );
+        setTempResult3((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult3((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      } else {
+        const newData = mainDataResult3.data.filter(
+          (item) => item[DATA_ITEM_KEY3] != datas[DATA_ITEM_KEY3]
+        );
+
+        setTempResult3((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+        setMainDataResult3((prev) => {
+          return {
+            data: newData,
+            total: prev.total,
+          };
+        });
+      }
 
       setFilters4((prev) => ({
         ...prev,
-        isSearch: true,
-        pgNum: 1,
         person: selectedRowData.person,
+        isSearch: true,
       }));
     }
   };
@@ -1574,6 +1641,12 @@ const SA_A6000W: React.FC = () => {
 
   const exitEdit3 = () => {
     if (tempResult4.data != mainDataResult4.data) {
+      const pre = tempResult3.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY3] == Object.getOwnPropertyNames(selectedState3)[0]
+      )[0];
+      setPreData(pre);
+
       const newData = mainDataResult4.data.map((item) =>
         item[DATA_ITEM_KEY4] == Object.getOwnPropertyNames(selectedState4)[0]
           ? {
@@ -1618,12 +1691,19 @@ const SA_A6000W: React.FC = () => {
               amt: amt,
               conamt: conamt,
               rat: amt == 0 ? 0 : Math.round((conamt / amt) * 100),
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
             }
           : {
               ...item,
             }
       );
       setMainDataResult3((prev) => {
+        return {
+          data: newData2,
+          total: prev.total,
+        };
+      });
+      setTempResult3((prev) => {
         return {
           data: newData2,
           total: prev.total,
@@ -1703,6 +1783,82 @@ const SA_A6000W: React.FC = () => {
     }));
   };
 
+  const onSave2 = () => {
+    const dataItem: { [name: string]: any } = mainDataResult4.data.filter(
+      (item: any) => {
+        return (
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
+          item.rowstatus !== undefined
+        );
+      }
+    );
+
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
+
+    const data = mainDataResult3.data.filter(
+      (item) =>
+        item[DATA_ITEM_KEY3] == Object.getOwnPropertyNames(selectedState3)[0]
+    )[0];
+
+    if (data.person == "") {
+      alert("사번을 입력해주세요.");
+      return false;
+    }
+
+    type TData = {
+      rowstatus_s: string[];
+      targetnum_s: string[];
+      yyyy_s: string[];
+      mm_s: string[];
+      amt_s: string[];
+    };
+
+    let dataArr: TData = {
+      rowstatus_s: [],
+      targetnum_s: [],
+      yyyy_s: [],
+      mm_s: [],
+      amt_s: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const {
+        rowstatus = "",
+        targetnum = "",
+        yyyy = "",
+        mm = "",
+        amt = "",
+      } = item;
+
+      dataArr.rowstatus_s.push(targetnum == "" ? "N" : "U");
+      dataArr.targetnum_s.push(targetnum);
+      dataArr.yyyy_s.push(yyyy);
+      dataArr.mm_s.push(mm);
+      dataArr.amt_s.push(amt);
+    });
+
+    deletedMainRows.forEach((items: any, idx: number) => {
+      items.map((item: any) => {
+        dataArr.rowstatus_s.push("D");
+        dataArr.targetnum_s.push(item.targetnum);
+        dataArr.yyyy_s.push(item.yyyy);
+        dataArr.mm_s.push(item.mm);
+        dataArr.amt_s.push(item.amt);
+      });
+    });
+
+    setParaDataSaved((prev) => ({
+      ...prev,
+      work_type: "N",
+      person: data.person,
+      rowstatus_s: dataArr.rowstatus_s.join("|"),
+      targetnum_s: dataArr.targetnum_s.join("|"),
+      yyyy_s: dataArr.yyyy_s.join("|"),
+      mm_s: dataArr.mm_s.join("|"),
+      amt_s: dataArr.amt_s.join("|"),
+    }));
+  };
+
   const [paraDataSaved, setParaDataSaved] = useState({
     work_type: "",
     orgdiv: "01",
@@ -1745,14 +1901,22 @@ const SA_A6000W: React.FC = () => {
     }
     if (data.isSuccess == true) {
       resetAllGrid();
-      setFilters((prev) => ({
-        ...prev,
-        isSearch: true,
-      }));
-      setFilters2((prev) => ({
-        ...prev,
-        isSearch: true,
-      }));
+      if (tabSelected == 0) {
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: true,
+        }));
+        setFilters2((prev) => ({
+          ...prev,
+          isSearch: true,
+        }));
+      } else {
+        setFilters3((prev) => ({
+          ...prev,
+          find_row_value: data.returnString,
+          isSearch: true,
+        }));
+      }
       setParaDataSaved({
         work_type: "",
         orgdiv: "01",
@@ -1788,9 +1952,7 @@ const SA_A6000W: React.FC = () => {
         Object2.push(index);
       } else {
         if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = item;
-          newData2.rowstatus = "D";
-          deletedMainRows.push(newData2);
+          deletedMainRows.push(mainDataResult4.data);
         }
         Object.push(index);
       }
@@ -1810,49 +1972,202 @@ const SA_A6000W: React.FC = () => {
       setSelectedState3({
         [data != undefined ? data[DATA_ITEM_KEY3] : newData[0]]: true,
       });
-      if (data != undefined) {
-        setFilters4((prev) => ({
-          ...prev,
-          person: data.person,
-          isSearch: true,
-        }));
-      } else {
-        setMainDataResult3(process([], mainDataState3));
-      }
+    }
+    change4(data);
+  };
+
+  const change4 = (datas: any) => {
+    const data = mainDataResult3.data.filter(
+      (item) => item[DATA_ITEM_KEY3] == datas[DATA_ITEM_KEY3]
+    )[0];
+
+    if (data != undefined) {
+      setFilters4((prev) => ({
+        ...prev,
+        person: data.person,
+        isSearch: true,
+      }));
+    } else {
+      setMainDataResult3(process([], mainDataState3));
     }
   };
 
   const onAddClick = () => {
+    let valid = true;
+
     mainDataResult3.data.map((item) => {
       if (item.num > temp) {
         temp = item.num;
       }
+      if (item.rowstatus == "N" || item.rowstatus == "U") {
+        valid = false;
+      }
     });
 
-    const newDataItem = {
-      [DATA_ITEM_KEY3]: ++temp,
-      amt: 0,
-      conamt: 0,
-      dptcd: "",
-      orgdiv: "01",
-      person: "",
-      rat: 0,
-      user_name: "",
-      rowstatus: "N",
-    };
-
-    setSelectedState3({ [newDataItem[DATA_ITEM_KEY3]]: true });
-    setMainDataResult3((prev) => {
-      return {
-        data: [newDataItem, ...prev.data],
-        total: prev.total + 1,
+    if (valid != true) {
+      alert("행 저장 후 진행해주세요.");
+    } else {
+      const newDataItem = {
+        [DATA_ITEM_KEY3]: ++temp,
+        amt: 0,
+        conamt: 0,
+        dptcd: "",
+        orgdiv: "01",
+        person: "",
+        rat: 0,
+        user_name: "",
+        rowstatus: "N",
       };
-    });
-    setFilters4((prev) => ({
-      ...prev,
-      person: "",
-      isSearch: true,
-    }));
+
+      setSelectedState3({ [newDataItem[DATA_ITEM_KEY3]]: true });
+      setMainDataResult3((prev) => {
+        return {
+          data: [newDataItem, ...prev.data],
+          total: prev.total + 1,
+        };
+      });
+
+      const datas: any[] = [
+        {
+          targetnum: "",
+          yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+          mm: "01",
+          amt: 0,
+          conamt: 0,
+          rat: 0,
+          dif: 0,
+          num: 1,
+          rowstatus: "N",
+        },
+        {
+          targetnum: "",
+          yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+          mm: "02",
+          amt: 0,
+          conamt: 0,
+          rat: 0,
+          dif: 0,
+          num: 2,
+          rowstatus: "N",
+        },
+        {
+          targetnum: "",
+          yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+          mm: "03",
+          amt: 0,
+          conamt: 0,
+          rat: 0,
+          dif: 0,
+          num: 3,
+          rowstatus: "N",
+        },
+        {
+          targetnum: "",
+          yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+          mm: "04",
+          amt: 0,
+          conamt: 0,
+          rat: 0,
+          dif: 0,
+          num: 4,
+          rowstatus: "N",
+        },
+        {
+          targetnum: "",
+          yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+          mm: "05",
+          amt: 0,
+          conamt: 0,
+          rat: 0,
+          dif: 0,
+          num: 5,
+          rowstatus: "N",
+        },
+        {
+          targetnum: "",
+          yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+          mm: "06",
+          amt: 0,
+          conamt: 0,
+          rat: 0,
+          dif: 0,
+          num: 6,
+          rowstatus: "N",
+        },
+        {
+          targetnum: "",
+          yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+          mm: "07",
+          amt: 0,
+          conamt: 0,
+          rat: 0,
+          dif: 0,
+          num: 7,
+          rowstatus: "N",
+        },
+        {
+          targetnum: "",
+          yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+          mm: "08",
+          amt: 0,
+          conamt: 0,
+          rat: 0,
+          dif: 0,
+          num: 8,
+          rowstatus: "N",
+        },
+        {
+          targetnum: "",
+          yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+          mm: "09",
+          amt: 0,
+          conamt: 0,
+          rat: 0,
+          dif: 0,
+          num: 9,
+          rowstatus: "N",
+        },
+        {
+          targetnum: "",
+          yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+          mm: "10",
+          amt: 0,
+          conamt: 0,
+          rat: 0,
+          dif: 0,
+          num: 10,
+          rowstatus: "N",
+        },
+        {
+          targetnum: "",
+          yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+          mm: "11",
+          amt: 0,
+          conamt: 0,
+          rat: 0,
+          dif: 0,
+          num: 11,
+          rowstatus: "N",
+        },
+        {
+          targetnum: "",
+          yyyy: convertDateToStr(filters.yyyy).substring(0, 4),
+          mm: "12",
+          amt: 0,
+          conamt: 0,
+          rat: 0,
+          dif: 0,
+          num: 12,
+          rowstatus: "N",
+        },
+      ];
+      setMainDataResult4((prev) => {
+        return {
+          data: datas,
+          total: datas.length,
+        };
+      });
+    }
   };
 
   return (
@@ -2130,12 +2445,6 @@ const SA_A6000W: React.FC = () => {
                   </GridTitle>
                   <ButtonContainer>
                     <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="plus"
-                      title="행 추가"
-                    ></Button>
-                    <Button
                       onClick={onDeleteClick}
                       fillMode="outline"
                       themeColor={"primary"}
@@ -2216,8 +2525,8 @@ const SA_A6000W: React.FC = () => {
                               }
                               headerCell={
                                 requireField.includes(item.fieldName)
-                                ? RequiredHeader
-                                : undefined
+                                  ? RequiredHeader
+                                  : undefined
                               }
                               footerCell={
                                 numberField.includes(item.fieldName)
@@ -2238,7 +2547,14 @@ const SA_A6000W: React.FC = () => {
                 <GridTitle></GridTitle>
                 <ButtonContainer>
                   <Button
-                    onClick={onSave}
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="file-add"
+                  >
+                    신규
+                  </Button>
+                  <Button
+                    onClick={onSave2}
                     fillMode="outline"
                     themeColor={"primary"}
                     icon="save"
