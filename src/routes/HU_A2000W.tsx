@@ -108,7 +108,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   const field = props.field ?? "";
   const bizComponentIdVal = field == "workdiv" ? "R_WORKDIV" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   const color =
@@ -130,10 +130,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   UseBizComponent("L_HU077", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "daygb" ? "L_HU077" : "";
+  const bizComponentIdVal = field == "daygb" ? "L_HU077" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   const color =
@@ -202,10 +202,10 @@ const HU_A2000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const workgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU075")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU075")
       );
       const workclsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU076")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU076")
       );
 
       fetchQuery(workgbQueryStr, setWorkgbListData);
@@ -229,7 +229,7 @@ const HU_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -280,12 +280,12 @@ const HU_A2000W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         stddt: setDefaultDate(customOptionData, "stddt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        workgb: defaultOption.find((item: any) => item.id === "workgb")
-          .valueCode,
-        workcls: defaultOption.find((item: any) => item.id === "workcls")
-          .valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        workgb: defaultOption.find((item: any) => item.id == "workgb")
+          ?.valueCode,
+        workcls: defaultOption.find((item: any) => item.id == "workcls")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -402,7 +402,7 @@ const HU_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -508,7 +508,7 @@ const HU_A2000W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "daygb" || field == "workdiv" || field == "remark") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -635,7 +635,7 @@ const HU_A2000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
 
       if (totalRowCnt > 0) {
@@ -759,12 +759,12 @@ const HU_A2000W: React.FC = () => {
   const onSaveClick = () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -869,7 +869,7 @@ const HU_A2000W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "",
@@ -1050,10 +1050,10 @@ const HU_A2000W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 workgb: workgbListData.find(
-                  (item: any) => item.sub_code === row.workgb
+                  (item: any) => item.sub_code == row.workgb
                 )?.code_name,
                 workcls: workclsListData.find(
-                  (item: any) => item.sub_code === row.workcls
+                  (item: any) => item.sub_code == row.workcls
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
@@ -1095,7 +1095,7 @@ const HU_A2000W: React.FC = () => {
               editable={false}
             />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -1115,7 +1115,7 @@ const HU_A2000W: React.FC = () => {
                           : CustomColorCell
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )

@@ -140,7 +140,7 @@ const KendoWindow = ({
   });
 
   useEffect(() => {
-    if (workType === "U") {
+    if (workType == "U") {
       fetchMain(para);
     }
   }, []);
@@ -155,7 +155,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true && data.tables[0].Rows.length > 0) {
+    if (data.isSuccess == true && data.tables[0].Rows.length > 0) {
       const row = data.tables[0].Rows[0];
 
       setFilters((prev) => {
@@ -251,8 +251,8 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
-      if (workType === "U") {
+    if (data.isSuccess == true) {
+      if (workType == "U") {
         reloadData(data.returnString);
         fetchMain(para);
       } else {
@@ -322,7 +322,7 @@ const KendoWindow = ({
 
   return (
     <Window
-      title={workType === "N" ? "공지생성" : "공지정보"}
+      title={workType == "N" ? "공지생성" : "공지정보"}
       width={position.width}
       height={position.height}
       onMove={handleMove}

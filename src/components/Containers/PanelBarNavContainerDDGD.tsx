@@ -81,7 +81,7 @@ const PanelBarNavContainer = (props: any) => {
   const userName = loginResult ? loginResult.userName : "";
   const loginKey = loginResult ? loginResult.loginKey : "";
   const role = loginResult ? loginResult.role : "";
-  const isAdmin = role === "ADMIN";
+  const isAdmin = role == "ADMIN";
   const [previousRoute, setPreviousRoute] = useState("");
   const [formKey, setFormKey] = useState("");
 
@@ -160,8 +160,8 @@ const PanelBarNavContainer = (props: any) => {
   ]);
 
   useEffect(() => {
-    // if (token && menus === null) fetchMenus();
-    if (menus === null) fetchMenus();
+    // if (token && menus == null) fetchMenus();
+    if (menus == null) fetchMenus();
   }, [menus]);
 
   // 첨부파일 삭제
@@ -250,7 +250,7 @@ const PanelBarNavContainer = (props: any) => {
         data = null;
       }
 
-      if (data === null) {
+      if (data == null) {
         console.log("An error occured to delete a file of " + attdatnum);
       }
     });
@@ -272,7 +272,7 @@ const PanelBarNavContainer = (props: any) => {
   if (menus !== null) {
     // Home push
     menus
-      .filter((menu: any) => menu.formId === "Home")
+      .filter((menu: any) => menu.formId == "Home")
       .forEach((menu: any, idx: number) => {
         paths.push({
           path: "/" + menu.formId,
@@ -298,7 +298,7 @@ const PanelBarNavContainer = (props: any) => {
 
     // 즐겨찾기 Menu push
     menus
-      .filter((menu) => menu.menuCategory === "WEB" && menu.isFavorite)
+      .filter((menu) => menu.menuCategory == "WEB" && menu.isFavorite)
       .forEach((menu, idx: number) => {
         paths.push({
           path: "/" + menu.formId,
@@ -315,7 +315,7 @@ const PanelBarNavContainer = (props: any) => {
     menus
       .filter(
         (menu: any) =>
-          menu.menuCategory === "GROUP" &&
+          menu.menuCategory == "GROUP" &&
           menu.menuName !== "Home" &&
           menu.menuName !== "PlusWin6"
       )
@@ -336,7 +336,7 @@ const PanelBarNavContainer = (props: any) => {
       menus
         .filter(
           (menu: any) =>
-            menu.menuCategory === "WEB" && path.menuId === menu.parentMenuId
+            menu.menuCategory == "WEB" && path.menuId == menu.parentMenuId
         )
         .forEach((menu: any, idx: number) => {
           paths.push({
@@ -369,7 +369,7 @@ const PanelBarNavContainer = (props: any) => {
       setSystemOptionWindowVisible(false);
       if (
         pwExpInfo &&
-        (pwExpInfo.status === "Expired" || pwExpInfo.status === "Ok")
+        (pwExpInfo.status == "Expired" || pwExpInfo.status == "Ok")
       ) {
         setChangePasswordWindowVisible(false);
       }
@@ -390,9 +390,9 @@ const PanelBarNavContainer = (props: any) => {
       const pathname = location.pathname.replace("/", "");
 
       // 폼 로그 처리
-      if (previousRoute === "") {
+      if (previousRoute == "") {
         const pathitem = paths.find(
-          (item) => item.path.replace("/", "") === pathname
+          (item) => item.path.replace("/", "") == pathname
         );
 
         //최초 오픈
@@ -404,10 +404,10 @@ const PanelBarNavContainer = (props: any) => {
         });
       } else if (pathname !== previousRoute) {
         const pathitem = paths.find(
-          (item) => item.path.replace("/", "") === pathname
+          (item) => item.path.replace("/", "") == pathname
         );
         const previousPathitem = paths.find(
-          (item) => item.path.replace("/", "") === previousRoute
+          (item) => item.path.replace("/", "") == previousRoute
         );
         // 오픈, 클로즈
         fetchToLog({
@@ -456,8 +456,8 @@ const PanelBarNavContainer = (props: any) => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
-      if (logParaVal.work_type === "OPEN") {
+    if (data.isSuccess == true) {
+      if (logParaVal.work_type == "OPEN") {
         const { form_login_key } = data.tables[0].Rows[0];
         setFormKey(form_login_key);
       }
@@ -470,7 +470,7 @@ const PanelBarNavContainer = (props: any) => {
   const setSelectedIndex = (pathName: any) => {
     let currentPath: any = paths
       .filter((item) => item.parentMenuId !== "fav")
-      .find((item: any) => item.path === pathName);
+      .find((item: any) => item.path == pathName);
 
     return currentPath ? currentPath.index : 0;
   };
@@ -497,7 +497,7 @@ const PanelBarNavContainer = (props: any) => {
     } catch (error) {
       data = null;
     }
-    if (data === null) {
+    if (data == null) {
       console.log("[An error occured to log for logout]");
       console.log(data);
     }
@@ -512,10 +512,10 @@ const PanelBarNavContainer = (props: any) => {
   };
 
   const panelBars: TPath[] = [
-    ...paths.filter((path) => path.path === "/Home"),
-    ...paths.filter((path) => path.menuCategory === "GROUP"),
+    ...paths.filter((path) => path.path == "/Home"),
+    ...paths.filter((path) => path.menuCategory == "GROUP"),
   ];
-  if (companyCode === "2207A046" && isAdmin) {
+  if (companyCode == "2207A046" && isAdmin) {
     panelBars.push({
       path: "/GANTT",
       menuName: "GANTT",
@@ -571,7 +571,7 @@ const PanelBarNavContainer = (props: any) => {
   let prgMenus: null | { id: string; text: string }[] = null;
   if (menus) {
     prgMenus = menus
-      .filter((menu) => menu.menuCategory === "WEB")
+      .filter((menu) => menu.menuCategory == "WEB")
       .map((menu) => ({ id: menu.formId, text: menu.menuName }));
   }
   const [searchedMenu, setSearchedMenu] = useState("");
@@ -580,7 +580,7 @@ const PanelBarNavContainer = (props: any) => {
     const { value } = e.target;
 
     if (prgMenus) {
-      const selectedValue = prgMenus.find((menu) => menu.text === value);
+      const selectedValue = prgMenus.find((menu) => menu.text == value);
       if (selectedValue) {
         history.push("/" + selectedValue.id);
       }
@@ -600,7 +600,7 @@ const PanelBarNavContainer = (props: any) => {
             </AppName>
             {prgMenus && (
               <MenuSearchBox>
-                {searchedMenu === "" && (
+                {searchedMenu == "" && (
                   <span className="k-icon k-i-search"></span>
                 )}
                 <AutoComplete
@@ -634,19 +634,19 @@ const PanelBarNavContainer = (props: any) => {
                       key={idx}
                       title={path.menuName}
                       icon={
-                        path.menuId === "fav"
+                        path.menuId == "fav"
                           ? "star"
-                          : path.menuId === "setting"
+                          : path.menuId == "setting"
                           ? "gear"
                           : undefined
                       }
-                      className={path.menuId === "fav" ? "fav-menu" : ""}
+                      className={path.menuId == "fav" ? "fav-menu" : ""}
                     >
                       {paths
                         .filter(
                           (childPath: TPath) =>
-                            childPath.menuCategory === "WEB" &&
-                            childPath.parentMenuId === path.menuId
+                            childPath.menuCategory == "WEB" &&
+                            childPath.parentMenuId == path.menuId
                         )
                         .map((childPath: TPath, childIdx: number) => (
                           <PanelBarItem
@@ -664,7 +664,7 @@ const PanelBarNavContainer = (props: any) => {
                               </Tooltip>
                             }
                             route={
-                              path.menuId === "setting"
+                              path.menuId == "setting"
                                 ? undefined
                                 : childPath.path
                             }
@@ -679,7 +679,7 @@ const PanelBarNavContainer = (props: any) => {
             )}
 
             {/* GST */}
-            {/* {companyCode === "2207C612" && (
+            {/* {companyCode == "2207C612" && (
         <PanelBar
           selected={selected}
           expandMode={"single"}

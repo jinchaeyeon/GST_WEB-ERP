@@ -72,17 +72,17 @@ const AC_A1120W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
-          .valueCode,
-        datediv: defaultOption.find((item: any) => item.id === "datediv")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
-        closeyn: defaultOption.find((item: any) => item.id === "closeyn")
-          .valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        position: defaultOption.find((item: any) => item.id == "position")
+          ?.valueCode,
+        datediv: defaultOption.find((item: any) => item.id == "datediv")
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
+        closeyn: defaultOption.find((item: any) => item.id == "closeyn")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -157,7 +157,7 @@ const AC_A1120W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -592,7 +592,7 @@ const AC_A1120W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

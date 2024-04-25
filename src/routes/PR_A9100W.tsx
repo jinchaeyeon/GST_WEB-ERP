@@ -205,7 +205,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setItemInfo } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -329,7 +329,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {itemWindowVisible2 && (
@@ -363,10 +363,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   UseBizComponent("L_PR010", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "proccd" ? "L_PR010" : "";
+  const bizComponentIdVal = field == "proccd" ? "L_PR010" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -424,8 +424,8 @@ const PR_A9100W: React.FC = () => {
         ...prev,
         ymdYyymm: setDefaultDate(customOptionData, "ymdYyymm"),
         cboLocation: defaultOption.find(
-          (item: any) => item.id === "cboLocation"
-        ).valueCode,
+          (item: any) => item.id == "cboLocation"
+        )?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -460,22 +460,22 @@ const PR_A9100W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
       const wgtQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA017")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA017")
       );
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
@@ -502,7 +502,7 @@ const PR_A9100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -644,7 +644,7 @@ const PR_A9100W: React.FC = () => {
               itemlvl4: itemInfo.itemlvl4,
               itemlvl5: itemInfo.itemlvl5,
               custitemnm: itemInfo.custitemnm,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -713,7 +713,7 @@ const PR_A9100W: React.FC = () => {
       parameters: {
         "@p_work_type": filters.work_type,
         "@p_orgdiv": sessionItem.find(
-          (sessionItem) => sessionItem.code === "orgdiv"
+          (sessionItem) => sessionItem.code == "orgdiv"
         )?.value,
         "@p_yyyymm": convertDateToStr(filters.ymdYyymm),
         "@p_itemcd": filters.itemcd,
@@ -733,7 +733,7 @@ const PR_A9100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -1025,7 +1025,7 @@ const PR_A9100W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
 
@@ -1266,11 +1266,11 @@ const PR_A9100W: React.FC = () => {
   const onSaveClick = async () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0 && deletedRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedRows.length == 0) return false;
 
     //검증
     let valid = true;
@@ -1321,7 +1321,7 @@ const PR_A9100W: React.FC = () => {
 
     const yyyymm = convertDateToStr(new Date()).slice(0, 4) + "00";
     const location = sessionItem.find(
-      (sessionItem) => sessionItem.code === "location"
+      (sessionItem) => sessionItem.code == "location"
     )!.value;
 
     dataItem.forEach((item: any) => {
@@ -1376,7 +1376,7 @@ const PR_A9100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedRows = []; //초기화
       const isLastDataDeleted =
         mainDataResult.data.length == 0 && filters.pgNum > 0;
@@ -1422,7 +1422,7 @@ const PR_A9100W: React.FC = () => {
   const [paraData, setParaData] = useState({
     work_type: "",
     rowstatus_s: "",
-    orgdiv: sessionItem.find((sessionItem) => sessionItem.code === "orgdiv")
+    orgdiv: sessionItem.find((sessionItem) => sessionItem.code == "orgdiv")
       ?.value,
     yyyymm_s: "",
     itemcd_s: "",
@@ -1727,7 +1727,7 @@ const PR_A9100W: React.FC = () => {
                 editable={false}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, num: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1750,7 +1750,7 @@ const PR_A9100W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField2.includes(item.fieldName)
                             ? editNumberFooterCell
@@ -1766,7 +1766,7 @@ const PR_A9100W: React.FC = () => {
       {itemWindowVisible && (
         <ItemsWindow
           setVisible={setItemWindowVisible}
-          workType={editIndex === undefined ? "FILTER" : "ROW_ADD"}
+          workType={editIndex == undefined ? "FILTER" : "ROW_ADD"}
           setData={setItemData}
           modal={true}
         />

@@ -20,7 +20,7 @@ const CheckBoxTreeListCell = (props: TreeListCellProps) => {
   const defaultRendering = (
     <td style={{ textAlign: "center" }} aria-colindex={ariaColumnIndex}>
       <Checkbox
-        value={value === "Y" || value === true ? true : false}
+        value={value == "Y" || value == true ? true : false}
         name={field}
         onChange={handleChange}
       ></Checkbox>
@@ -31,7 +31,7 @@ const CheckBoxTreeListCell = (props: TreeListCellProps) => {
     ? render.call(undefined, defaultRendering, props)
     : defaultRendering;
 
-  // return render === undefined
+  // return render == undefined
   //   ? null
   //   : render?.call(undefined, defaultRendering, props);
 };

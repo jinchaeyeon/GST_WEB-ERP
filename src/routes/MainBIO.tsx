@@ -104,7 +104,7 @@ const Main: React.FC = () => {
     if (bizComponentData !== null) {
       const colorQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_APPOINTMENT_COLOR"
+          (item: any) => item.bizComponentId == "L_APPOINTMENT_COLOR"
         )
       );
       fetchQuery(colorQueryStr, setColorData);
@@ -127,26 +127,26 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
   }, []);
 
   useEffect(() => {
-    if (sessionUserId === "") fetchSessionItem();
-    // if (token && sessionUserId === "") fetchSessionItem();
+    if (sessionUserId == "") fetchSessionItem();
+    // if (token && sessionUserId == "") fetchSessionItem();
   }, [sessionUserId]);
 
   let sessionOrgdiv = sessionItem.find(
-    (sessionItem) => sessionItem.code === "orgdiv"
+    (sessionItem) => sessionItem.code == "orgdiv"
   )!.value;
   let sessionLocation = sessionItem.find(
-    (sessionItem) => sessionItem.code === "location"
+    (sessionItem) => sessionItem.code == "location"
   )!.value;
 
-  if (sessionOrgdiv === "") sessionOrgdiv = "01";
-  if (sessionLocation === "") sessionLocation = "01";
+  if (sessionOrgdiv == "") sessionOrgdiv = "01";
+  if (sessionLocation == "") sessionLocation = "01";
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -233,7 +233,7 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true && data.tables[0]) {
+    if (data.isSuccess == true && data.tables[0]) {
       let rows = data.tables[0].Rows.map((row: any) => ({
         ...row,
         id: row.datnum,
@@ -259,7 +259,7 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let rows = data.tables[0].Rows.map((row: any) => ({
         ...row,
       }));
@@ -296,7 +296,7 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true && data.tables[0]) {
+    if (data.isSuccess == true && data.tables[0]) {
       let rows = data.tables[0].Rows.map((row: any) => ({
         ...row,
       }));
@@ -328,11 +328,11 @@ const Main: React.FC = () => {
 
       data = await processApi<any>("procedure", para);
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setSessionItem(
           rows
-            .filter((item: any) => item.class === "Session")
+            .filter((item: any) => item.class == "Session")
             .map((item: any) => ({
               code: item.code,
               value: item.value,
@@ -370,19 +370,19 @@ const Main: React.FC = () => {
   });
 
   useEffect(() => {
-    if (schedulerFilter.isSearch === true && bizComponentData !== null) {
+    if (schedulerFilter.isSearch == true && bizComponentData !== null) {
       fetchScheduler();
     }
   }, [schedulerFilter]);
 
   useEffect(() => {
-    if (filters2.isSearch === true && bizComponentData !== null) {
+    if (filters2.isSearch == true && bizComponentData !== null) {
       fetchCard();
     }
   }, [filters2]);
 
   useEffect(() => {
-    if (filters3.isSearch === true && bizComponentData !== null) {
+    if (filters3.isSearch == true && bizComponentData !== null) {
       fetchTable();
     }
   }, [filters3]);
@@ -499,7 +499,7 @@ const Main: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,

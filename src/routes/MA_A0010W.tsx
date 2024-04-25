@@ -174,7 +174,7 @@ const MA_A0010W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -407,7 +407,7 @@ const MA_A0010W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -527,7 +527,7 @@ const MA_A0010W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
         mainDataResult.data.length == 0 && filters.pgNum > 0;
       if (isLastDataDeleted) {
@@ -583,12 +583,12 @@ const MA_A0010W: React.FC = () => {
   const onSaveClick = () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     let dataArr: TdataArr = {
       row_status_s: [],
@@ -863,34 +863,32 @@ const MA_A0010W: React.FC = () => {
           >
             <GridColumn field="rowstatus" title=" " width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]
-                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                .map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : checkboxField.includes(item.fieldName)
-                            ? CheckBoxCell
-                            : undefined
-                        }
-                        headerCell={
-                          requiredfield.includes(item.fieldName)
-                            ? RequiredHeader
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
-                        }
-                      ></GridColumn>
-                    )
-                )}
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        numberField.includes(item.fieldName)
+                          ? NumberCell
+                          : checkboxField.includes(item.fieldName)
+                          ? CheckBoxCell
+                          : undefined
+                      }
+                      headerCell={
+                        requiredfield.includes(item.fieldName)
+                          ? RequiredHeader
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
+                      }
+                    ></GridColumn>
+                  )
+              )}
           </Grid>
         </ExcelExport>
       </GridContainer>

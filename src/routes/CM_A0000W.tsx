@@ -115,15 +115,15 @@ const CM_A0000W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         cbocategory: defaultOption.find(
-          (item: any) => item.id === "cbocategory"
-        ).valueCode,
-        cboPerson: defaultOption.find((item: any) => item.id === "cboPerson")
-          .valueCode,
+          (item: any) => item.id == "cbocategory"
+        )?.valueCode,
+        cboPerson: defaultOption.find((item: any) => item.id == "cboPerson")
+          ?.valueCode,
         radPublish_yn: defaultOption.find(
-          (item: any) => item.id === "radPublish_yn"
-        ).valueCode,
-        cbodtgb: defaultOption.find((item: any) => item.id === "cbodtgb")
-          .valueCode,
+          (item: any) => item.id == "radPublish_yn"
+        )?.valueCode,
+        cbodtgb: defaultOption.find((item: any) => item.id == "cbodtgb")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -147,11 +147,11 @@ const CM_A0000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const categoryQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SYS007")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SYS007")
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
 
@@ -176,7 +176,7 @@ const CM_A0000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -227,7 +227,7 @@ const CM_A0000W: React.FC = () => {
 
     return (
       <>
-        {props.rowType === "groupHeader" ? null : (
+        {props.rowType == "groupHeader" ? null : (
           <td className="k-command-cell">
             <Button
               className="k-grid-edit-command"
@@ -430,7 +430,7 @@ const CM_A0000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -510,9 +510,9 @@ const CM_A0000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       );
@@ -567,7 +567,7 @@ const CM_A0000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
@@ -811,10 +811,10 @@ const CM_A0000W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 category: categoryListData.find(
-                  (item: any) => item.sub_code === row.category
+                  (item: any) => item.sub_code == row.category
                 )?.code_name,
                 person: usersListData.find(
-                  (item: any) => item.user_id === row.person
+                  (item: any) => item.user_id == row.person
                 )?.user_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -850,7 +850,7 @@ const CM_A0000W: React.FC = () => {
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -866,9 +866,9 @@ const CM_A0000W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
                       }
-                      locked={item.fixed === "None" ? false : true}
+                      locked={item.fixed == "None" ? false : true}
                     ></GridColumn>
                   )
               )}
@@ -882,11 +882,11 @@ const CM_A0000W: React.FC = () => {
           datnum={detailFilters.datnum}
           categories={
             categoryListData.find(
-              (item: any) => item.code_name === detailFilters.category
+              (item: any) => item.code_name == detailFilters.category
             )?.sub_code == undefined
               ? "100"
               : categoryListData.find(
-                  (item: any) => item.code_name === detailFilters.category
+                  (item: any) => item.code_name == detailFilters.category
                 )?.sub_code
           }
           reloadData={(returnString: string) => {

@@ -150,29 +150,29 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "proccd"
+    field == "proccd"
       ? "L_PR010"
-      : field === "prodmac"
+      : field == "prodmac"
       ? "L_fxcode"
-      : field === "prodemp"
+      : field == "prodemp"
       ? "L_sysUserMaster_001"
       : "";
 
   const fieldName =
-    field === "prodemp"
+    field == "prodemp"
       ? "user_name"
-      : field === "prodmac"
+      : field == "prodmac"
       ? "fxfull"
       : undefined;
 
   const filedValue =
-    field === "prodemp"
+    field == "prodemp"
       ? "user_id"
-      : field === "prodmac"
+      : field == "prodmac"
       ? "fxcode"
       : undefined;
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -304,15 +304,15 @@ const PR_A7000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        proccd: defaultOption.find((item: any) => item.id === "proccd")
-          .valueCode,
-        prodmac: defaultOption.find((item: any) => item.id === "prodmac")
-          .valueCode,
-        prodemp: defaultOption.find((item: any) => item.id === "prodemp")
-          .valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        proccd: defaultOption.find((item: any) => item.id == "proccd")
+          ?.valueCode,
+        prodmac: defaultOption.find((item: any) => item.id == "prodmac")
+          ?.valueCode,
+        prodemp: defaultOption.find((item: any) => item.id == "prodemp")
+          ?.valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -341,21 +341,21 @@ const PR_A7000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const prodmacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_fxcode")
       );
       const prodempQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       fetchQuery(prodmacQueryStr, setProdmacListData);
       fetchQuery(qtyunitQueryStr, setQtyunitListData);
@@ -381,7 +381,7 @@ const PR_A7000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -581,7 +581,7 @@ const PR_A7000W: React.FC = () => {
       parameters: {
         "@p_work_type": filters.work_type,
         "@p_orgdiv": sessionItem.find(
-          (sessionItem) => sessionItem.code === "orgdiv"
+          (sessionItem) => sessionItem.code == "orgdiv"
         )?.value,
         "@p_location": filters.location,
         "@p_frdt": convertDateToStr(filters.frdt),
@@ -615,7 +615,7 @@ const PR_A7000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, num: number) => ({
         ...row,
@@ -714,7 +714,7 @@ const PR_A7000W: React.FC = () => {
       parameters: {
         "@p_work_type": "LIST",
         "@p_orgdiv": sessionItem.find(
-          (sessionItem) => sessionItem.code === "orgdiv"
+          (sessionItem) => sessionItem.code == "orgdiv"
         )?.value,
         "@p_location": filters.location,
         "@p_frdt": convertDateToStr(filters.frdt),
@@ -745,7 +745,7 @@ const PR_A7000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, num: number) => ({
         ...row,
@@ -826,7 +826,7 @@ const PR_A7000W: React.FC = () => {
       parameters: {
         "@p_work_type": detailfilters.work_type,
         "@p_orgdiv": sessionItem.find(
-          (sessionItem) => sessionItem.code === "orgdiv"
+          (sessionItem) => sessionItem.code == "orgdiv"
         )?.value,
         "@p_location": filters.location,
         "@p_frdt": convertDateToStr(filters.frdt),
@@ -860,7 +860,7 @@ const PR_A7000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, num: number) => ({
         ...row,
@@ -938,7 +938,7 @@ const PR_A7000W: React.FC = () => {
       parameters: {
         "@p_work_type": detailfilters2.work_type,
         "@p_orgdiv": sessionItem.find(
-          (sessionItem) => sessionItem.code === "orgdiv"
+          (sessionItem) => sessionItem.code == "orgdiv"
         )?.value,
         "@p_location": filters.location,
         "@p_frdt": convertDateToStr(filters.frdt),
@@ -972,7 +972,7 @@ const PR_A7000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, num: number) => ({
         ...row,
@@ -1666,7 +1666,7 @@ const PR_A7000W: React.FC = () => {
       }
     );
 
-    if (dataItem.length === 0) {
+    if (dataItem.length == 0) {
       alert("작업지시를 선택해주세요.");
       return false;
     }
@@ -1732,11 +1732,11 @@ const PR_A7000W: React.FC = () => {
   const onSaveClick = async () => {
     const dataItem = detailDataResult2.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     let dataArr: TdataArr = {
       planno_s: [],
@@ -2010,7 +2010,7 @@ const PR_A7000W: React.FC = () => {
     const changeCheck = () => {
       const newData = detailDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -2035,7 +2035,7 @@ const PR_A7000W: React.FC = () => {
     const changeCheck = () => {
       const newData = detailDataResult2.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values3,
         [EDIT_FIELD]: props.field,
       }));
@@ -2060,7 +2060,7 @@ const PR_A7000W: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult2.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values4,
         [EDIT_FIELD]: props.field,
       }));
@@ -2082,7 +2082,7 @@ const PR_A7000W: React.FC = () => {
 
   const CustomCheckBoxCell = (props: GridCellProps) => {
     const { ariaColumnIndex, columnIndex, dataItem, field } = props;
-    if (props.rowType === "groupHeader") {
+    if (props.rowType == "groupHeader") {
       return null;
     }
 
@@ -2091,7 +2091,7 @@ const PR_A7000W: React.FC = () => {
         item.num == dataItem.num
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               chk:
                 typeof item.chk == "boolean"
                   ? !item.chk
@@ -2126,7 +2126,7 @@ const PR_A7000W: React.FC = () => {
   const CustomCheckBoxCell5 = (props: GridCellProps) => {
     const { ariaColumnIndex, columnIndex, dataItem, field } = props;
 
-    if (props.rowType === "groupHeader") {
+    if (props.rowType == "groupHeader") {
       return null;
     }
 
@@ -2135,7 +2135,7 @@ const PR_A7000W: React.FC = () => {
         item[DATA_ITEM_KEY4] == dataItem[DATA_ITEM_KEY4]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               chk:
                 typeof item.chk == "boolean"
                   ? !item.chk
@@ -2168,7 +2168,7 @@ const PR_A7000W: React.FC = () => {
   };
 
   const CustomCheckBoxCell6 = (props: GridCellProps) => {
-    if (props.rowType === "groupHeader") {
+    if (props.rowType == "groupHeader") {
       return null;
     }
 
@@ -2201,7 +2201,7 @@ const PR_A7000W: React.FC = () => {
       field == "prodmac"
     ) {
       const newData = detailDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY3] === dataItem[DATA_ITEM_KEY3]
+        item[DATA_ITEM_KEY3] == dataItem[DATA_ITEM_KEY3]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2326,7 +2326,7 @@ const PR_A7000W: React.FC = () => {
     let valid = true;
     if (field == "chk") {
       const newData = mainDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY4] === dataItem[DATA_ITEM_KEY4]
+        item[DATA_ITEM_KEY4] == dataItem[DATA_ITEM_KEY4]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2648,13 +2648,13 @@ const PR_A7000W: React.FC = () => {
                   editField={EDIT_FIELD}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
                       (item: any, num: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
                             key={num}
                             field={item.fieldName}
-                            title={item.caption === "" ? " " : item.caption}
+                            title={item.caption == "" ? " " : item.caption}
                             width={item.width}
                             cell={
                               numberField.includes(item.fieldName)
@@ -2664,7 +2664,7 @@ const PR_A7000W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell
                                 : undefined
                             }
@@ -2751,13 +2751,13 @@ const PR_A7000W: React.FC = () => {
                     cell={CheckBoxCell}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                       (item: any, num: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
                             key={num}
                             field={item.fieldName}
-                            title={item.caption === "" ? " " : item.caption}
+                            title={item.caption == "" ? " " : item.caption}
                             width={item.width}
                             cell={
                               numberField.includes(item.fieldName)
@@ -2774,7 +2774,7 @@ const PR_A7000W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? detailTotalFooterCell
                                 : numberField2.includes(item.fieldName)
                                 ? editNumberFooterCell
@@ -2822,7 +2822,7 @@ const PR_A7000W: React.FC = () => {
                   items: item.items.map((row: any) => ({
                     ...row,
                     qtyunit: qtyunitListData.find(
-                      (items: any) => items.sub_code === row.qtyunit
+                      (items: any) => items.sub_code == row.qtyunit
                     )?.code_name,
                     [SELECTED_FIELD]: detailselectedState2[idGetter3(row)], //선택된 데이터
                   })),
@@ -2870,13 +2870,13 @@ const PR_A7000W: React.FC = () => {
                   cell={CustomCheckBoxCell}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList3"].map(
+                  customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                     (item: any, num: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
                           key={num}
                           field={item.fieldName}
-                          title={item.caption === "" ? " " : item.caption}
+                          title={item.caption == "" ? " " : item.caption}
                           width={item.width}
                           cell={
                             numberField.includes(item.fieldName)
@@ -2888,7 +2888,7 @@ const PR_A7000W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? detailTotalFooterCell2
                               : undefined
                           }
@@ -3102,16 +3102,16 @@ const PR_A7000W: React.FC = () => {
                   items: item.items.map((row: any) => ({
                     ...row,
                     prodmac: prodmacListData.find(
-                      (items: any) => items.fxcode === row.prodmac
+                      (items: any) => items.fxcode == row.prodmac
                     )?.fxfull,
                     prodemp: prodempListData.find(
-                      (items: any) => items.user_id === row.prodemp
+                      (items: any) => items.user_id == row.prodemp
                     )?.user_name,
                     proccd: proccdListData.find(
-                      (items: any) => items.sub_code === row.proccd
+                      (items: any) => items.sub_code == row.proccd
                     )?.code_name,
                     location: locationListData.find(
-                      (items: any) => items.sub_code === row.location
+                      (items: any) => items.sub_code == row.location
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState2[idGetter4(row)], //선택된 데이터
                   })),
@@ -3153,13 +3153,13 @@ const PR_A7000W: React.FC = () => {
                   cell={CustomCheckBoxCell5}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList4"].map(
+                  customOptionData.menuCustomColumnOptions["grdList4"]?.map(
                     (item: any, num: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
                           key={num}
                           field={item.fieldName}
-                          title={item.caption === "" ? " " : item.caption}
+                          title={item.caption == "" ? " " : item.caption}
                           width={item.width}
                           cell={
                             numberField.includes(item.fieldName)
@@ -3171,7 +3171,7 @@ const PR_A7000W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell2
                               : undefined
                           }

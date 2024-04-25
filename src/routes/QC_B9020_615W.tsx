@@ -70,8 +70,8 @@ const QC_B9020_615W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         yyyymmdd: setDefaultDate(customOptionData, "yyyymmdd"),
-        prodmac: defaultOption.find((item: any) => item.id === "prodmac")
-          .valueCode,
+        prodmac: defaultOption.find((item: any) => item.id == "prodmac")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -150,7 +150,7 @@ const QC_B9020_615W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "Q",
-    orgdiv: sessionItem.find((sessionItem) => sessionItem.code === "orgdiv")
+    orgdiv: sessionItem.find((sessionItem) => sessionItem.code == "orgdiv")
       ?.value,
     yyyymmdd: new Date(),
     prodmac: "",
@@ -181,7 +181,7 @@ const QC_B9020_615W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -377,7 +377,7 @@ const QC_B9020_615W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -393,7 +393,7 @@ const QC_B9020_615W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )

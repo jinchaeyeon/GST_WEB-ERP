@@ -141,7 +141,7 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
     mainDataState,
     setMainDataState,
   } = useContext(FormContext3);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -192,7 +192,7 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {codeWindowVisible && (
@@ -220,7 +220,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
     mainDataState,
     setMainDataState,
   } = useContext(FormContext4);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -270,7 +270,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {depositWindowVisible && (
@@ -290,7 +290,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   const field = props.field ?? "";
   const bizComponentIdVal = field == "drcrdiv" ? "R_DRCR" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -343,7 +343,7 @@ const CopyWindow = ({
             acntnm: acntnm,
             stdrmakcd: stdrmakcd,
             stdrmaknm: stdrmaknm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -370,7 +370,7 @@ const CopyWindow = ({
             ...item,
             acntnumnm: acntnumnm,
             acntnum: acntnum,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -453,7 +453,7 @@ const CopyWindow = ({
             datas = null;
           }
 
-          if (datas.isSuccess === true) {
+          if (datas.isSuccess == true) {
             const rows = datas.tables[0].Rows;
             const rowCount = datas.tables[0].RowCount;
 
@@ -567,7 +567,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -1117,7 +1117,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setData(data.returnString);
       setVisible(false);
 

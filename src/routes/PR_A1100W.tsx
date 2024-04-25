@@ -144,18 +144,18 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "proccd"
+    field == "proccd"
       ? "L_PR010"
-      : field === "outprocyn"
+      : field == "outprocyn"
       ? "L_BA011"
-      : field === "qtyunit"
+      : field == "qtyunit"
       ? "L_BA015"
-      : field === "outgb"
+      : field == "outgb"
       ? "L_BA041"
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -309,7 +309,7 @@ const PR_A1100W: React.FC = () => {
 
     return (
       <>
-        {props.rowType === "groupHeader" ? null : (
+        {props.rowType == "groupHeader" ? null : (
           <td className="k-command-cell">
             <Button
               className="k-grid-edit-command"
@@ -701,7 +701,7 @@ const PR_A1100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -814,7 +814,7 @@ const PR_A1100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -941,7 +941,7 @@ const PR_A1100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -1032,7 +1032,7 @@ const PR_A1100W: React.FC = () => {
   }, [materialFilters, permissions]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   useEffect(() => {
@@ -1475,7 +1475,7 @@ const PR_A1100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       alert(findMessage(messagesData, "PR_A1100W_001"));
 
       resetAllGrid();
@@ -1492,12 +1492,12 @@ const PR_A1100W: React.FC = () => {
     const dataItem: { [name: string]: any } = planDataResult.data.filter(
       (item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       }
     );
-    if (dataItem.length === 0 && deletedPlanRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedPlanRows.length == 0) return false;
 
     //검증
     let valid = true;
@@ -1505,10 +1505,10 @@ const PR_A1100W: React.FC = () => {
       dataItem.forEach((item: any) => {
         planDataResult.data.forEach((chkItem: any) => {
           if (
-            (item.proccd === chkItem.proccd ||
-              item.procseq === chkItem.procseq) &&
+            (item.proccd == chkItem.proccd ||
+              item.procseq == chkItem.procseq) &&
             item[PLAN_DATA_ITEM_KEY] !== chkItem[PLAN_DATA_ITEM_KEY] &&
-            item.planno === chkItem.planno
+            item.planno == chkItem.planno
           ) {
             throw findMessage(messagesData, "PR_A1100W_003");
           }
@@ -1680,12 +1680,12 @@ const PR_A1100W: React.FC = () => {
     const dataItem: { [name: string]: any } = materialDataResult.data.filter(
       (item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       }
     );
-    if (dataItem.length === 0 && deletedMaterialRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMaterialRows.length == 0) return false;
 
     type TMaterialArr = {
       rowstatus_s: string[];
@@ -1790,7 +1790,7 @@ const PR_A1100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setValues(false);
       setValues2(false);
       if (paraDataPlanSaved.work_type == "INLIST") {
@@ -1996,59 +1996,59 @@ const PR_A1100W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
       );
       const ordtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA007")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA007")
       );
       const ordstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SA002")
       );
       const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
       );
       const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA029")
       );
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_002"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_002"
         )
       );
       const departmentsQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const purtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_BA002_426"
+          (item: any) => item.bizComponentId == "L_BA002_426"
         )
       );
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
       const prodmacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_fxcode")
       );
       const prodempQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(prodempQueryStr, setProdempListData);
@@ -2084,7 +2084,7 @@ const PR_A1100W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -2140,7 +2140,7 @@ const PR_A1100W: React.FC = () => {
       field != "rowstatus"
     ) {
       const newData = planDataResult.data.map((item) =>
-        item[PLAN_DATA_ITEM_KEY] === dataItem[PLAN_DATA_ITEM_KEY]
+        item[PLAN_DATA_ITEM_KEY] == dataItem[PLAN_DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2251,7 +2251,7 @@ const PR_A1100W: React.FC = () => {
       field != "proccd"
     ) {
       const newData = materialDataResult.data.map((item) =>
-        item[MATERIAL_DATA_ITEM_KEY] === dataItem[MATERIAL_DATA_ITEM_KEY]
+        item[MATERIAL_DATA_ITEM_KEY] == dataItem[MATERIAL_DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2451,7 +2451,7 @@ const PR_A1100W: React.FC = () => {
 
   const CustomCheckBoxCell3 = (props: GridCellProps) => {
     const { ariaColumnIndex, columnIndex, dataItem, field } = props;
-    if (props.rowType === "groupHeader") {
+    if (props.rowType == "groupHeader") {
       return null;
     }
 
@@ -2460,7 +2460,7 @@ const PR_A1100W: React.FC = () => {
         item[PLAN_DATA_ITEM_KEY] == dataItem[PLAN_DATA_ITEM_KEY]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               chk:
                 typeof item.chk == "boolean"
                   ? !item.chk
@@ -2699,46 +2699,46 @@ const PR_A1100W: React.FC = () => {
                   items: item.items.map((row: any) => ({
                     ...row,
                     ordsts: ordstsListData.find(
-                      (item: any) => item.sub_code === row.ordsts
+                      (item: any) => item.sub_code == row.ordsts
                     )?.code_name,
                     doexdiv: doexdivListData.find(
-                      (item: any) => item.sub_code === row.doexdiv
+                      (item: any) => item.sub_code == row.doexdiv
                     )?.code_name,
                     taxdiv: taxdivListData.find(
-                      (item: any) => item.sub_code === row.taxdiv
+                      (item: any) => item.sub_code == row.taxdiv
                     )?.code_name,
                     location: locationListData.find(
-                      (item: any) => item.sub_code === row.location
+                      (item: any) => item.sub_code == row.location
                     )?.code_name,
                     person: usersListData.find(
-                      (item: any) => item.user_id === row.person
+                      (item: any) => item.user_id == row.person
                     )?.user_name,
                     dptcd: departmentsListData.find(
-                      (item: any) => item.dptcd === row.dptcd
+                      (item: any) => item.dptcd == row.dptcd
                     )?.dptnm,
                     itemacnt: itemacntListData.find(
-                      (item: any) => item.sub_code === row.itemacnt
+                      (item: any) => item.sub_code == row.itemacnt
                     )?.code_name,
                     qtyunit: qtyunitListData.find(
-                      (item: any) => item.sub_code === row.qtyunit
+                      (item: any) => item.sub_code == row.qtyunit
                     )?.code_name,
                     outdt: row.outdt ? row.outdt : "",
                     indt: row.indt ? row.indt : "",
                     plandt: row.plandt ? row.plandt : "",
                     itemlvl1: itemlvl1ListData.find(
-                      (item: any) => item.sub_code === row.itemlvl1
+                      (item: any) => item.sub_code == row.itemlvl1
                     )?.code_name,
                     itemlvl2: itemlvl2ListData.find(
-                      (item: any) => item.sub_code === row.itemlvl2
+                      (item: any) => item.sub_code == row.itemlvl2
                     )?.code_name,
                     itemlvl3: itemlvl3ListData.find(
-                      (item: any) => item.sub_code === row.itemlvl3
+                      (item: any) => item.sub_code == row.itemlvl3
                     )?.code_name,
                     ordtype: ordtypeListData.find(
-                      (item: any) => item.sub_code === row.ordtype
+                      (item: any) => item.sub_code == row.ordtype
                     )?.code_name,
                     amtunit: amtunitListData.find(
-                      (item: any) => item.sub_code === row.amtunit
+                      (item: any) => item.sub_code == row.amtunit
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                   })),
@@ -2770,7 +2770,7 @@ const PR_A1100W: React.FC = () => {
               >
                 <GridColumn cell={CommandCell} width="95px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -2786,7 +2786,7 @@ const PR_A1100W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : numberField2.includes(item.fieldName)
                               ? gridSumQtyFooterCell
@@ -2854,25 +2854,25 @@ const PR_A1100W: React.FC = () => {
                           ? new Date(dateformat(row.finexpdt))
                           : new Date(dateformat("99991231")),
                         qtyunit: qtyunitListData.find(
-                          (item: any) => item.sub_code === row.qtyunit
+                          (item: any) => item.sub_code == row.qtyunit
                         )?.code_name,
                         purtype: purtypeListData.find(
-                          (item: any) => item.sub_code === row.purtype
+                          (item: any) => item.sub_code == row.purtype
                         )?.code_name,
                         itemlvl1: itemlvl1ListData.find(
-                          (item: any) => item.sub_code === row.itemlvl1
+                          (item: any) => item.sub_code == row.itemlvl1
                         )?.code_name,
                         itemlvl2: itemlvl2ListData.find(
-                          (item: any) => item.sub_code === row.itemlvl2
+                          (item: any) => item.sub_code == row.itemlvl2
                         )?.code_name,
                         itemlvl3: itemlvl3ListData.find(
-                          (item: any) => item.sub_code === row.itemlvl3
+                          (item: any) => item.sub_code == row.itemlvl3
                         )?.code_name,
                         prodmac: prodmacListData.find(
-                          (items: any) => items.fxcode === row.prodmac
+                          (items: any) => items.fxcode == row.prodmac
                         )?.fxfull,
                         prodemp: prodempListData.find(
-                          (items: any) => items.user_id === row.prodemp
+                          (items: any) => items.user_id == row.prodemp
                         )?.user_name,
                         [SELECTED_FIELD]: planSelectedState[planIdGetter(row)], //선택된 데이터
                       })),
@@ -2921,7 +2921,7 @@ const PR_A1100W: React.FC = () => {
                       editable={false}
                     />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2939,7 +2939,7 @@ const PR_A1100W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? planTotalFooterCell
                                   : numberField2.includes(item.fieldName)
                                   ? gridSumQtyFooterCell2
@@ -3043,7 +3043,7 @@ const PR_A1100W: React.FC = () => {
                   />
 
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList3"].map(
+                    customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -3061,7 +3061,7 @@ const PR_A1100W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? detailTotalFooterCell
                                 : numberField2.includes(item.fieldName)
                                 ? gridSumQtyFooterCell3

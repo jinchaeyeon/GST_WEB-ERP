@@ -197,12 +197,12 @@ const QC_B0200W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        proccd: defaultOption.find((item: any) => item.id === "proccd")
-          .valueCode,
-        prodemp: defaultOption.find((item: any) => item.id === "prodemp")
-          .valueCode,
-        pgmdiv: defaultOption.find((item: any) => item.id === "pgmdiv")
-          .valueCode,
+        proccd: defaultOption.find((item: any) => item.id == "proccd")
+          ?.valueCode,
+        prodemp: defaultOption.find((item: any) => item.id == "prodemp")
+          ?.valueCode,
+        pgmdiv: defaultOption.find((item: any) => item.id == "pgmdiv")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -229,17 +229,17 @@ const QC_B0200W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       const inspeccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC100")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_QC100")
       );
       const divQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC003")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_QC003")
       );
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(divQueryStr, setDivListData);
@@ -265,7 +265,7 @@ const QC_B0200W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -429,7 +429,7 @@ const QC_B0200W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -527,7 +527,7 @@ const QC_B0200W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -660,7 +660,7 @@ const QC_B0200W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -766,7 +766,7 @@ const QC_B0200W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt2 = data.tables[0].TotalRowCount;
       const rows2 = data.tables[0].Rows.map((row: any) => {
         return {
@@ -1396,16 +1396,16 @@ const QC_B0200W: React.FC = () => {
                   mainDataResult.data.map((row) => ({
                     ...row,
                     proccd: proccdListData.find(
-                      (items: any) => items.sub_code === row.proccd
+                      (items: any) => items.sub_code == row.proccd
                     )?.code_name,
                     qcperson: personListData.find(
-                      (items: any) => items.user_id === row.qcperson
+                      (items: any) => items.user_id == row.qcperson
                     )?.user_name,
                     prodemp: personListData.find(
-                      (items: any) => items.user_id === row.prodemp
+                      (items: any) => items.user_id == row.prodemp
                     )?.user_name,
                     inspeccd: inspeccdListData.find(
-                      (items: any) => items.sub_code === row.inspeccd
+                      (items: any) => items.sub_code == row.inspeccd
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
@@ -1440,7 +1440,7 @@ const QC_B0200W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1456,7 +1456,7 @@ const QC_B0200W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : undefined
                           }
@@ -1485,16 +1485,16 @@ const QC_B0200W: React.FC = () => {
                   detailDataResult.data.map((row) => ({
                     ...row,
                     proccd: proccdListData.find(
-                      (items: any) => items.sub_code === row.proccd
+                      (items: any) => items.sub_code == row.proccd
                     )?.code_name,
                     person: personListData.find(
-                      (item: any) => item.user_id === row.person
+                      (item: any) => item.user_id == row.person
                     )?.user_name,
                     prodemp: personListData.find(
-                      (items: any) => items.user_id === row.prodemp
+                      (items: any) => items.user_id == row.prodemp
                     )?.user_name,
                     div: divListData.find(
-                      (items: any) => items.sub_code === row.div
+                      (items: any) => items.sub_code == row.div
                     )?.code_name,
                     [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
                   })),
@@ -1528,7 +1528,7 @@ const QC_B0200W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1546,7 +1546,7 @@ const QC_B0200W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? detailTotalFooterCell
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell2
@@ -1576,7 +1576,7 @@ const QC_B0200W: React.FC = () => {
                     detailDataResult2.data.map((row) => ({
                       ...row,
                       inspeccd: inspeccdListData.find(
-                        (items: any) => items.sub_code === row.inspeccd
+                        (items: any) => items.sub_code == row.inspeccd
                       )?.code_name,
                       [SELECTED_FIELD]: detailSelectedState2[idGetter3(row)],
                     })),
@@ -1610,7 +1610,7 @@ const QC_B0200W: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList3"].map(
+                    customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -1619,7 +1619,7 @@ const QC_B0200W: React.FC = () => {
                             title={item.caption}
                             width={item.width}
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? detailTotalFooterCell2
                                 : undefined
                             }
@@ -1646,7 +1646,7 @@ const QC_B0200W: React.FC = () => {
                     detailDataResult3.data.map((row) => ({
                       ...row,
                       inspeccd: inspeccdListData.find(
-                        (items: any) => items.sub_code === row.inspeccd
+                        (items: any) => items.sub_code == row.inspeccd
                       )?.code_name,
                       [SELECTED_FIELD]: detailSelectedState3[idGetter4(row)],
                     })),
@@ -1680,7 +1680,7 @@ const QC_B0200W: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList4"].map(
+                    customOptionData.menuCustomColumnOptions["grdList4"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -1698,7 +1698,7 @@ const QC_B0200W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? detailTotalFooterCell3
                                 : undefined
                             }

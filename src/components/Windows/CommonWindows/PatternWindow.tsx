@@ -215,7 +215,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -226,7 +226,7 @@ const KendoWindow = ({
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row[DATA_ITEM_KEY] === filters.find_row_value
+            (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -314,7 +314,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -325,7 +325,7 @@ const KendoWindow = ({
         // find_row_value 행으로 스크롤 이동
         if (gridRef2.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row[DATA_ITEM_KEY2] === filters2.find_row_value
+            (row: any) => row[DATA_ITEM_KEY2] == filters2.find_row_value
           );
           targetRowIndex2 = findRowIndex;
         }
@@ -396,10 +396,10 @@ const KendoWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const outprocynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA011")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA011")
       );
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
 
       fetchQuery(proccdQueryStr, setProccdListData);
@@ -423,7 +423,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -541,7 +541,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setData(rows);
@@ -619,10 +619,10 @@ const KendoWindow = ({
               detailDataResult2.data.map((row) => ({
                 ...row,
                 outprocyn: outprocynListData.find(
-                  (items: any) => items.sub_code === row.outprocyn
+                  (items: any) => items.sub_code == row.outprocyn
                 )?.code_name,
                 proccd: proccdListData.find(
-                  (items: any) => items.sub_code === row.proccd
+                  (items: any) => items.sub_code == row.proccd
                 )?.code_name,
                 [SELECTED_FIELD]: selecteddetailState2[idGetter2(row)], //선택된 데이터
               })),

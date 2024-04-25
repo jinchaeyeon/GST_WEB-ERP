@@ -58,8 +58,8 @@ const AC_B8100W: React.FC = () => {
         ),
         todt: setDefaultDate(customOptionData, "todt"),
         taxdt: setDefaultDate(customOptionData, "taxdt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -136,7 +136,7 @@ const AC_B8100W: React.FC = () => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch === false && permissions !== null) {
+    if (isInitSearch == false && permissions !== null) {
       fetchMainGrid();
       setIsInitSearch(true);
     }

@@ -97,10 +97,10 @@ const SA_B2200W_603: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const ordstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SA002")
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
 
       fetchQuery(ordstsQueryStr, setOrdstsListData);
@@ -124,7 +124,7 @@ const SA_B2200W_603: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -169,10 +169,10 @@ const SA_B2200W_603: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        ordsts: defaultOption.find((item: any) => item.id === "ordsts")
-          .valueCode,
-        itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
-          .valueCode,
+        ordsts: defaultOption.find((item: any) => item.id == "ordsts")
+          ?.valueCode,
+        itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -383,7 +383,7 @@ const SA_B2200W_603: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -646,10 +646,10 @@ const SA_B2200W_603: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 ordsts: ordstsListData.find(
-                  (item: any) => item.sub_code === row.ordsts
+                  (item: any) => item.sub_code == row.ordsts
                 )?.code_name,
                 itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                  (item: any) => item.sub_code == row.itemacnt
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -681,7 +681,7 @@ const SA_B2200W_603: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -697,7 +697,7 @@ const SA_B2200W_603: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : numberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell

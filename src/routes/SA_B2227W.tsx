@@ -96,7 +96,7 @@ const SA_B2227W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       const rows2 = data.tables[1].Rows;
       const rows3 = data.tables[2].Rows;
@@ -138,7 +138,7 @@ const SA_B2227W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       const rows2 = data.tables[1].Rows;
       const rows3 = data.tables[2].Rows;
@@ -165,7 +165,7 @@ const SA_B2227W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
 
       setMap(rows);

@@ -140,7 +140,7 @@ const HU_B2100W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -160,7 +160,7 @@ const HU_B2100W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const ordstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SA002")
       );
 
       fetchQuery(ordstsQueryStr, setOrdstsListData);
@@ -183,7 +183,7 @@ const HU_B2100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -279,7 +279,7 @@ const HU_B2100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult((prev) => {
@@ -336,7 +336,7 @@ const HU_B2100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -658,7 +658,7 @@ const HU_B2100W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 ordsts: ordstsListData.find(
-                  (item: any) => item.sub_code === row.ordsts
+                  (item: any) => item.sub_code == row.ordsts
                 )?.code_name,
                 finyn: row.finyn == "Y" ? true : false,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
@@ -694,7 +694,7 @@ const HU_B2100W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -710,7 +710,7 @@ const HU_B2100W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : numberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell
@@ -770,7 +770,7 @@ const HU_B2100W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList2"].map(
+              customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -784,7 +784,7 @@ const HU_B2100W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? detailTotalFooterCell
                           : numberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell2

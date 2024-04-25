@@ -109,10 +109,10 @@ const SA_B3600W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
-        dtdiv: defaultOption.find((item: any) => item.id === "dtdiv").valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
+        dtdiv: defaultOption.find((item: any) => item.id == "dtdiv")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -235,7 +235,7 @@ const SA_B3600W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows.map(
         (item: { okcnt: number; totcnt: number }) => ({
           ...item,
@@ -246,7 +246,7 @@ const SA_B3600W: React.FC = () => {
       setAllList(rows);
       let objects = rows.filter(
         (arr: { custcd: any }, index: any, callback: any[]) =>
-          index === callback.findIndex((t) => t.custcd === arr.custcd)
+          index == callback.findIndex((t) => t.custcd == arr.custcd)
       );
       setAllChartAllLabel(
         objects.map((item: { custnm: any }) => {
@@ -271,7 +271,7 @@ const SA_B3600W: React.FC = () => {
       data2 = null;
     }
 
-    if (data2.isSuccess === true) {
+    if (data2.isSuccess == true) {
       const rows = data2.tables[0].Rows.map(
         (item: { okcnt: number; totcnt: number }) => ({
           ...item,
@@ -289,7 +289,7 @@ const SA_B3600W: React.FC = () => {
       data3 = null;
     }
 
-    if (data3.isSuccess === true) {
+    if (data3.isSuccess == true) {
       const rows = data3.tables[0].Rows.map(
         (item: { okcnt: number; totcnt: number }) => ({
           ...item,
@@ -307,7 +307,7 @@ const SA_B3600W: React.FC = () => {
       data4 = null;
     }
 
-    if (data4.isSuccess === true) {
+    if (data4.isSuccess == true) {
       const rows = data4.tables[0].Rows;
 
       setAllPanel(rows[0]);
@@ -323,7 +323,7 @@ const SA_B3600W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
       }));
@@ -332,7 +332,7 @@ const SA_B3600W: React.FC = () => {
 
       let objects = rows.filter(
         (arr: { series: any }, index: any, callback: any[]) =>
-          index === callback.findIndex((t) => t.series === arr.series)
+          index == callback.findIndex((t) => t.series == arr.series)
       );
       setStackChartLabel(
         objects.map((item: { series: any }) => {

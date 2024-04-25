@@ -152,10 +152,10 @@ export const useApi = () => {
           let headers: any = {};
 
           if (
-            name === "file-upload" ||
-            name === "file-download" ||
-            name === "excel-view2" ||
-            name === "send-email"
+            name == "file-upload" ||
+            name == "file-download" ||
+            name == "excel-view2" ||
+            name == "send-email"
           )
             headers = {
               "Content-Type": "multipart/form-data",
@@ -163,16 +163,16 @@ export const useApi = () => {
               accept: "*/*",
             };
 
-          if (name === "manual-list" || name === "excel-view")
+          if (name == "manual-list" || name == "excel-view")
             headers = {
               ...headers,
               responseType: "application/pdf",
             };
 
-          if (name === "file-list" || name == "manual-upload")
+          if (name == "file-list" || name == "manual-upload")
             headers = { "Content-Type": "multipart/form-data", accept: "*/*" };
 
-          if (name === "platform-procedure" || name === "platform-query")
+          if (name == "platform-procedure" || name == "platform-query")
             headers = { ...headers, DBAlias: "Platform" };
 
           if (loginResult) {
@@ -195,7 +195,7 @@ export const useApi = () => {
             headers: headers,
           };
 
-          if (name === "file-download") {
+          if (name == "file-download") {
             getHeader.responseType = "blob";
             // 캐싱 방지용 타임스탬프
             url +=
@@ -230,7 +230,7 @@ export const useApi = () => {
             p
               //.then((response: any) => resolve(response.data))
               .then((response: any) => {
-                return name === "file-download"
+                return name == "file-download"
                   ? resolve(response)
                   : resolve(response.data);
               })
@@ -243,6 +243,13 @@ export const useApi = () => {
                       "일치하는 로그인 정보를 찾을 수 없습니다.\r\n올바른 회사코드, 아이디, 비밀번호를 입력해주세요."
                     )
                   );
+                } else if(!token) {
+                  reject(
+                    new Error(
+                      "토큰이 만기되었습니다. 다시 로그인부탁드립니다."
+                    )
+                  );
+                  window.location.href = "/"
                 } else {
                   reject(res.data);
                 }
@@ -255,10 +262,10 @@ export const useApi = () => {
         let headers: any = {};
 
         if (
-          name === "file-upload" ||
-          name === "file-download" ||
-          name === "excel-view2" ||
-          name === "send-email"
+          name == "file-upload" ||
+          name == "file-download" ||
+          name == "excel-view2" ||
+          name == "send-email"
         )
           headers = {
             "Content-Type": "multipart/form-data",
@@ -266,16 +273,16 @@ export const useApi = () => {
             accept: "*/*",
           };
 
-        if (name === "manual-list" || name === "excel-view")
+        if (name == "manual-list" || name == "excel-view")
           headers = {
             ...headers,
             responseType: "application/pdf",
           };
 
-        if (name === "file-list" || name == "manual-upload")
+        if (name == "file-list" || name == "manual-upload")
           headers = { "Content-Type": "multipart/form-data", accept: "*/*" };
 
-        if (name === "platform-procedure" || name === "platform-query")
+        if (name == "platform-procedure" || name == "platform-query")
           headers = { ...headers, DBAlias: "Platform" };
 
         if (loginResult) {
@@ -298,7 +305,7 @@ export const useApi = () => {
           headers: headers,
         };
 
-        if (name === "file-download") {
+        if (name == "file-download") {
           getHeader.responseType = "blob";
           // 캐싱 방지용 타임스탬프
           url +=
@@ -333,7 +340,7 @@ export const useApi = () => {
           p
             //.then((response: any) => resolve(response.data))
             .then((response: any) => {
-              return name === "file-download"
+              return name == "file-download"
                 ? resolve(response)
                 : resolve(response.data);
             })
@@ -345,6 +352,13 @@ export const useApi = () => {
                     "일치하는 로그인 정보를 찾을 수 없습니다.\r\n올바른 회사코드, 아이디, 비밀번호를 입력해주세요."
                   )
                 );
+              } else if(!token) {
+                reject(
+                  new Error(
+                    "토큰이 만기되었습니다. 다시 로그인부탁드립니다."
+                  )
+                );
+                window.location.href = "/"
               } else {
                 reject(res.data);
               }
@@ -377,7 +391,7 @@ axiosInstance.interceptors.response.use(
       errResponseURL = error.request.responseURL;
     } catch (e) {}
 
-    if (errResponseStatus === 401 && !errResponseURL.includes("auth/login")) {
+    if (errResponseStatus == 401 && !errResponseURL.includes("auth/login")) {
       if (!isTokenRefreshing) {
         let token = localStorage.getItem("accessToken");
         let refreshToken = localStorage.getItem("refreshToken");

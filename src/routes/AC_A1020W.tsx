@@ -103,16 +103,16 @@ const AC_A1020W: React.FC = () => {
         ...prev,
         strdt: setDefaultDate(customOptionData, "strdt"),
         enddt: setDefaultDate(customOptionData, "enddt"),
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
-          .valueCode,
-        appsts: defaultOption.find((item: any) => item.id === "appsts")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
-        acntdiv: defaultOption.find((item: any) => item.id === "acntdiv")
-          .valueCode,
+        dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        position: defaultOption.find((item: any) => item.id == "position")
+          ?.valueCode,
+        appsts: defaultOption.find((item: any) => item.id == "appsts")
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
+        acntdiv: defaultOption.find((item: any) => item.id == "acntdiv")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -135,11 +135,11 @@ const AC_A1020W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       fetchQuery(locationQueryStr, setLocationListData);
@@ -163,7 +163,7 @@ const AC_A1020W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -327,7 +327,7 @@ const AC_A1020W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -358,7 +358,7 @@ const AC_A1020W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.expenseno == filters.find_row_value);
         if (selectedRow != undefined) {
@@ -575,9 +575,9 @@ const AC_A1020W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       );
@@ -635,7 +635,7 @@ const AC_A1020W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   const [detailWindowVisible, setDetailWindowVisible] =
@@ -876,7 +876,7 @@ const AC_A1020W: React.FC = () => {
                   (item: any) => item.sub_code == row.location
                 )?.code_name,
                 dptcd: dptcdListData.find(
-                  (item: any) => item.dptcd === row.dptcd
+                  (item: any) => item.dptcd == row.dptcd
                 )?.dptnm,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -912,7 +912,7 @@ const AC_A1020W: React.FC = () => {
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

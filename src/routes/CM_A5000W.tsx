@@ -117,17 +117,17 @@ const StatusCell = (props: GridCellProps) => {
       style={{ textAlign: "left", display: "flex", alignItems: "center" }}
     >
       <StatusIcon status={dataItem[field]} />{" "}
-      {dataItem[field] === "001"
+      {dataItem[field] == "001"
         ? "컨설팅 요청"
-        : dataItem[field] === "002"
+        : dataItem[field] == "002"
         ? "담당자지정"
-        : dataItem[field] === "003"
+        : dataItem[field] == "003"
         ? "요청취소"
-        : dataItem[field] === "004"
+        : dataItem[field] == "004"
         ? "대응불가"
-        : dataItem[field] === "005"
+        : dataItem[field] == "005"
         ? "검토 중"
-        : dataItem[field] === "006"
+        : dataItem[field] == "006"
         ? "답변 완료"
         : ""}
     </td>
@@ -177,17 +177,17 @@ const CM_A5000W: React.FC = () => {
           ...prev,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
-          dtgb1: defaultOption.find((item: any) => item.id === "dtgb1")
-            .valueCode,
+          dtgb1: defaultOption.find((item: any) => item.id == "dtgb1")
+            ?.valueCode,
           is_emergency: defaultOption.find(
-            (item: any) => item.id === "is_emergency"
-          ).valueCode,
+            (item: any) => item.id == "is_emergency"
+          )?.valueCode,
           require_type: defaultOption.find(
-            (item: any) => item.id === "require_type"
-          ).valueCode,
+            (item: any) => item.id == "require_type"
+          )?.valueCode,
           materialtype: defaultOption.find(
-            (item: any) => item.id === "materialtype"
-          ).valueCode,
+            (item: any) => item.id == "materialtype"
+          )?.valueCode,
           isSearch: true,
           find_row_value: queryParams.get("go") as string,
         }));
@@ -196,17 +196,17 @@ const CM_A5000W: React.FC = () => {
           ...prev,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
-          dtgb1: defaultOption.find((item: any) => item.id === "dtgb1")
-            .valueCode,
+          dtgb1: defaultOption.find((item: any) => item.id == "dtgb1")
+            ?.valueCode,
           is_emergency: defaultOption.find(
-            (item: any) => item.id === "is_emergency"
-          ).valueCode,
+            (item: any) => item.id == "is_emergency"
+          )?.valueCode,
           materialtype: defaultOption.find(
-            (item: any) => item.id === "materialtype"
-          ).valueCode,
+            (item: any) => item.id == "materialtype"
+          )?.valueCode,
           require_type: defaultOption.find(
-            (item: any) => item.id === "require_type"
-          ).valueCode,
+            (item: any) => item.id == "require_type"
+          )?.valueCode,
           isSearch: true,
         }));
       }
@@ -245,7 +245,7 @@ const CM_A5000W: React.FC = () => {
       );
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const materialtypeQueryStr = getQueryFromBizComponent(
@@ -288,7 +288,7 @@ const CM_A5000W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -800,7 +800,7 @@ const CM_A5000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -962,7 +962,7 @@ const CM_A5000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1536,7 +1536,7 @@ const CM_A5000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (workType == "N" || workType == "D") {
         setTabSelected(0);
         setWorkType("");
@@ -1602,26 +1602,26 @@ const CM_A5000W: React.FC = () => {
       request_date: setDefaultDate2(customOptionData, "request_date"),
       finexpdt: setDefaultDate2(customOptionData, "finexpdt"),
       require_type: defaultOption.find(
-        (item: any) => item.id === "require_type"
-      ).valueCode,
+        (item: any) => item.id == "require_type"
+      )?.valueCode,
       completion_method: defaultOption.find(
-        (item: any) => item.id === "completion_method"
-      ).valueCode,
-      status: defaultOption.find((item: any) => item.id === "status").valueCode,
+        (item: any) => item.id == "completion_method"
+      )?.valueCode,
+      status: defaultOption.find((item: any) => item.id == "status")?.valueCode,
       customer_code: "",
       customernm: "",
       title: "",
       is_emergency: defaultOption.find(
-        (item: any) => item.id === "is_emergency"
-      ).valueCode,
+        (item: any) => item.id == "is_emergency"
+      )?.valueCode,
       quotestnum: "",
       testnum: "",
       attdatnum: "",
       files: "",
       ref_document_id: "",
       materialtype: defaultOption.find(
-        (item: any) => item.id === "materialtype"
-      ).valueCode,
+        (item: any) => item.id == "materialtype"
+      )?.valueCode,
       extra_field2: "",
       custprsnnm: "",
     });
@@ -1630,7 +1630,7 @@ const CM_A5000W: React.FC = () => {
       attdatnum: "",
       files: "",
       ref_document_id: "",
-      person: defaultOption.find((item: any) => item.id === "person").valueCode,
+      person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
       recdt: null,
     });
   };
@@ -1943,7 +1943,7 @@ const CM_A5000W: React.FC = () => {
                 editField={EDIT_FIELD}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1962,7 +1962,7 @@ const CM_A5000W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : undefined
                           }

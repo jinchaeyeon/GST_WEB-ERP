@@ -98,7 +98,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   const field = props.field ?? "";
   const bizComponentIdVal = field == "drcrdiv" ? "R_DRCR" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -177,16 +177,16 @@ const AC_A1060W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
-          .valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        position: defaultOption.find((item: any) => item.id == "position")
+          ?.valueCode,
         collectnumyn: defaultOption.find(
-          (item: any) => item.id === "collectnumyn"
-        ).valueCode,
-        dtgubun: defaultOption.find((item: any) => item.id === "dtgubun")
-          .valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+          (item: any) => item.id == "collectnumyn"
+        )?.valueCode,
+        dtgubun: defaultOption.find((item: any) => item.id == "dtgubun")
+          ?.valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -214,17 +214,17 @@ const AC_A1060W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
       );
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(itemacntQueryStr, setItemacntListData);
@@ -250,7 +250,7 @@ const AC_A1060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -396,7 +396,7 @@ const AC_A1060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -431,7 +431,7 @@ const AC_A1060W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.ref_key == filters.find_row_value);
         if (selectedRow != undefined) {
@@ -523,7 +523,7 @@ const AC_A1060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -580,7 +580,7 @@ const AC_A1060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -637,7 +637,7 @@ const AC_A1060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1195,7 +1195,7 @@ const AC_A1060W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1480,7 +1480,7 @@ const AC_A1060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setPage(initialPageState);
       setPage2(initialPageState);
@@ -1741,7 +1741,7 @@ const AC_A1060W: React.FC = () => {
               cell={CheckBoxCell}
             />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -1791,7 +1791,7 @@ const AC_A1060W: React.FC = () => {
                 mainDataResult2.data.map((row) => ({
                   ...row,
                   itemacnt: itemacntListData.find(
-                    (items: any) => items.sub_code === row.itemacnt
+                    (items: any) => items.sub_code == row.itemacnt
                   )?.code_name,
                   [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                 })),
@@ -1823,7 +1823,7 @@ const AC_A1060W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"].map(
+                customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1897,7 +1897,7 @@ const AC_A1060W: React.FC = () => {
               editField={EDIT_FIELD}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList3"].map(
+                customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1975,7 +1975,7 @@ const AC_A1060W: React.FC = () => {
               editField={EDIT_FIELD}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList4"].map(
+                customOptionData.menuCustomColumnOptions["grdList4"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn

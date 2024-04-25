@@ -144,9 +144,9 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "unpcalmeth" ? "L_BA019" : field === "qtyunit" ? "L_BA015" : "";
+    field == "unpcalmeth" ? "L_BA019" : field == "qtyunit" ? "L_BA015" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -203,8 +203,8 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -373,7 +373,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -418,7 +418,7 @@ const CopyWindow = ({
   }, [filters]);
 
   useEffect(() => {
-    if (workType === "U" && data != undefined) {
+    if (workType == "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
         reckey: data.reckey,
@@ -479,11 +479,11 @@ const CopyWindow = ({
   const setCopyData = (data: any) => {
     const dataItem = data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     mainDataResult.data.map((item) => {
       if (item.num > temp) {
@@ -575,12 +575,12 @@ const CopyWindow = ({
         if (valid == true) {
           const dataItem = mainDataResult.data.filter((item: any) => {
             return (
-              (item.rowstatus === "N" || item.rowstatus === "U") &&
+              (item.rowstatus == "N" || item.rowstatus == "U") &&
               item.rowstatus !== undefined
             );
           });
 
-          if (dataItem.length === 0 && deletedMainRows.length == 0) {
+          if (dataItem.length == 0 && deletedMainRows.length == 0) {
             setParaData((prev) => ({
               ...prev,
               workType: workType,
@@ -972,7 +972,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = [];
       setUnsavedName([]);
       reload(data.returnString);
@@ -1127,7 +1127,7 @@ const CopyWindow = ({
       field != "rowstatus"
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1233,16 +1233,16 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
       );
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA029")
       );
       const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
       );
 
       fetchQuery(doexdivQueryStr, setDoexdivListData);
@@ -1268,7 +1268,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -1277,7 +1277,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "외주입고생성" : "외주입고정보"}
+        title={workType == "N" ? "외주입고생성" : "외주입고정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -1330,7 +1330,7 @@ const CopyWindow = ({
                     type="text"
                     value={
                       doexdivListData.find(
-                        (item: any) => item.sub_code === filters.doexdiv
+                        (item: any) => item.sub_code == filters.doexdiv
                       )?.code_name
                     }
                     className="readonly"
@@ -1343,7 +1343,7 @@ const CopyWindow = ({
                     type="text"
                     value={
                       locationListData.find(
-                        (item: any) => item.sub_code === filters.location
+                        (item: any) => item.sub_code == filters.location
                       )?.code_name
                     }
                     className="readonly"
@@ -1396,7 +1396,7 @@ const CopyWindow = ({
                     type="text"
                     value={
                       taxdivListData.find(
-                        (item: any) => item.sub_code === filters.taxdiv
+                        (item: any) => item.sub_code == filters.taxdiv
                       )?.code_name
                     }
                     className="readonly"
@@ -1409,7 +1409,7 @@ const CopyWindow = ({
                     type="text"
                     value={
                       amtunitListData.find(
-                        (item: any) => item.sub_code === filters.amtunit
+                        (item: any) => item.sub_code == filters.amtunit
                       )?.code_name
                     }
                     className="readonly"

@@ -26,41 +26,43 @@ const CustomOptionRadioGroup = ({
   const dataList =
     customOptionData !== null
       ? GetPropertyValueByName(customOptionData.menuCustomDefaultOptions, type)
-      : null;
+      : [];
 
   let defaultValue = "";
   let newRadioGroup = RADIO_GROUP_DEFAULT_DATA;
 
   if (dataList) {
-    defaultValue = dataList.find((item: any) => item.id === name).valueCode;
+    defaultValue = dataList.find((item: any) => item.id == name)?.valueCode;
 
-    const radioGroup = dataList.find((item: any) => item.id === name).Rows;
+    const radioGroup = dataList.find((item: any) => item.id == name)?.Rows;
 
-    newRadioGroup = radioGroup
+    if(radioGroup != undefined) {
+      newRadioGroup = radioGroup
       .filter((item: any) => !excludedCodes.includes(item.code))
       // 제외 처리 (filter)
       .filter(
         (item: any) =>
           !(
-            name === "radWorkType" && //결재표시형식
-            (item.code === "D" ||
-              item.code === "E" ||
-              item.code === "G" ||
-              item.code === "H" ||
-              item.code === "I")
+            name == "radWorkType" && //결재표시형식
+            (item.code == "D" ||
+              item.code == "E" ||
+              item.code == "G" ||
+              item.code == "H" ||
+              item.code == "I")
           )
       )
       .filter(
         (item: any) =>
           !(
-            name === "radAppyn" && //결재유무
-            (item.code === "B" || item.code === "M")
+            name == "radAppyn" && //결재유무
+            (item.code == "B" || item.code == "M")
           )
       )
       .map((column: any) => ({
         value: column.code,
         label: column.caption,
       }));
+    }
   }
 
   const [state, setState] = useState(defaultValue); //상태

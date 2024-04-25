@@ -111,13 +111,13 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       fetchQuery(doexdivQueryStr, setDoexdivListData);
       fetchQuery(itemacntQueryStr, setItemacntListData);
@@ -142,7 +142,7 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -255,7 +255,7 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -420,13 +420,13 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
             mainDataResult.data.map((row) => ({
               ...row,
               doexdiv: doexdivListData.find(
-                (item: any) => item.sub_code === row.doexdiv
+                (item: any) => item.sub_code == row.doexdiv
               )?.code_name,
               itemacnt: itemacntListData.find(
-                (item: any) => item.sub_code === row.itemacnt
+                (item: any) => item.sub_code == row.itemacnt
               )?.code_name,
               qtyunit: qtyunitListData.find(
-                (item: any) => item.sub_code === row.qtyunit
+                (item: any) => item.sub_code == row.qtyunit
               )?.code_name,
               [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
             })),
@@ -461,7 +461,7 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
           resizable={true}
         >
           {customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["grdList"].map(
+            customOptionData.menuCustomColumnOptions["grdList"]?.map(
               (item: any, idx: number) =>
                 item.sortOrder !== -1 && (
                   <GridColumn
@@ -477,7 +477,7 @@ const KendoWindow = ({ setVisible, para, pathname }: IKendoWindow) => {
                         : undefined
                     }
                     footerCell={
-                      item.sortOrder === 0
+                      item.sortOrder == 0
                         ? mainTotalFooterCell
                         : numberField2.includes(item.fieldName)
                         ? gridSumQtyFooterCell2

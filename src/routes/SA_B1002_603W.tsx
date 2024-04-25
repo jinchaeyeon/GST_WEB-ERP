@@ -50,23 +50,35 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
+import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
+
 import { useApi } from "../hooks/api";
 import { ICustData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
-import { gridList } from "../store/columns/SA_B1101_603W_C";
+import { gridList } from "../store/columns/SA_B1002_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import { useHistory, useLocation } from "react-router-dom";
 
 const dateField = ["cotracdt", "strdt", "enddt", "paydt"];
-const numberField = ["totamt"];
+const numberField = ["totamt" , "finalquowonamt",
+"quorev",
+"quounp",
+"margin",
+"discount",
+"itemcnt",
+"designcnt",
+"marginamt",
+"discountamt",];
 
-const SA_B1101_603W: React.FC = () => {
+const SA_B1002_603W: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
-  UseCustomOption("SA_B1101_603W", setCustomOptionData);
+    UseCustomOption("SA_B1002_603W", setCustomOptionData);
   const [messagesData, setMessagesData] = React.useState<any>(null);
-  UseMessages("SA_B1101_603W", setMessagesData);
+  UseMessages("SA_B1002_603W", setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const pageChange = (event: GridPageChangeEvent) => {
@@ -87,6 +99,10 @@ const SA_B1101_603W: React.FC = () => {
   const DATA_ITEM_KEY = "num";
   const idGetter = getter(DATA_ITEM_KEY);
   const setLoading = useSetRecoilState(isLoading);
+
+  const location = useLocation();
+
+
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -94,13 +110,22 @@ const SA_B1101_603W: React.FC = () => {
         customOptionData.menuCustomDefaultOptions,
         "query"
       );
+
       setFilters((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        reqdt: setDefaultDate(customOptionData, "reqdt"),
-        chkperson: defaultOption.find((item: any) => item.id == "chkperson")
-          ?.valueCode,
+        materialtype: defaultOption.find(
+        (item: any) => item.id == "materialtype"
+        )?.valueCode,
+        quocalyn: defaultOption.find((item: any) => item.id == "quocalyn")
+        ?.valueCode,
+        contractyn: defaultOption.find(
+        (item: any) => item.id == "contractyn"
+        )?.valueCode,
+        designyn: defaultOption.find(
+          (item: any) => item.id == "designyn"
+          )?.valueCode,
         isSearch: true,
       }));
     }
@@ -115,6 +140,7 @@ const SA_B1101_603W: React.FC = () => {
     }
   };
   const [bizComponentData, setBizComponentData] = useState<any>([]);
+//   물질분류, 영업담당자
   UseBizComponent("L_SA001_603, L_sysUserMaster_001", setBizComponentData);
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
@@ -174,15 +200,29 @@ const SA_B1101_603W: React.FC = () => {
     quokey: "",
     custcd: "",
     custnm: "",
-    person: "",
-    contractno: "",
-    project: "",
+    custprsnnm: "",
+    contractyn: "",
+    materialtype: "",
+    extra_field2: "",
     chkperson: "",
-    reqdt: new Date(),
+    chkpersonnm: "",
+    designyn :"",
+    quocalyn :"",
     pgNum: 1,
     isSearch: true,
     pgSize: PAGE_SIZE,
   });
+
+  
+  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
+  const filterComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
@@ -193,7 +233,19 @@ const SA_B1101_603W: React.FC = () => {
         [name]: value,
         custcd: value == "" ? "" : prev.custcd,
       }));
-    } else {
+    } else if (name == "chkpersonnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        chkperson: value == "" ? "" : prev.chkperson,
+      }));
+    }else if (name == "custprsnnm") {
+      setFilters((prev) => ({
+        ...prev,
+        [name]: value,
+        custprsnnm: value == "" ? "" : prev.custprsnnm,
+      }));
+    }  else {
       setFilters((prev) => ({
         ...prev,
         [name]: value,
@@ -201,7 +253,7 @@ const SA_B1101_603W: React.FC = () => {
     }
   };
 
-  const filterComboBoxChange = (e: any) => {
+  const filterRadioChange = (e: any) => {
     const { name, value } = e;
 
     setFilters((prev) => ({
@@ -209,6 +261,17 @@ const SA_B1101_603W: React.FC = () => {
       [name]: value,
     }));
   };
+  const [PrsnnumWindowVisible2, setPrsnnumWindowVisible2] =
+    useState<boolean>(false);
+
+  const onPrsnnumWndClick2 = () => {
+    setPrsnnumWindowVisible2(true);
+  };
+  interface IPrsnnum {
+    user_id: string;
+    user_name: string;
+  }
+
 
   const [projectWindowVisible, setProjectWindowVisible] =
     useState<boolean>(false);
@@ -255,41 +318,46 @@ const SA_B1101_603W: React.FC = () => {
   const fetchMainGrid = async (filters: any) => {
     let data: any;
     setLoading(true);
-
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "P_SA_B1101_603W_Q",
+      procedureName: "P_SA_B1002_603W_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
-        "@p_work_type": filters.workType,
+        "@p_work_type": "LIST",
         "@p_orgdiv": filters.orgdiv,
         "@p_frdt": convertDateToStr(filters.frdt),
         "@p_todt": convertDateToStr(filters.todt),
         "@p_quokey": filters.quokey,
         "@p_custcd": filters.custcd,
         "@p_custnm": filters.custnm,
-        "@p_person": filters.person,
-        "@p_contractno": filters.contractno,
-        "@p_project": filters.project,
-        "@p_chkperson": filters.chkperson,
-        "@p_reqdt": convertDateToStr(filters.reqdt),
+        "@p_custprsnnm": filters.custprsnnm,
+        "@p_materialtype": filters.materialtype,
+        "@p_extra_field2": filters.extra_field2,
+        "@p_chkperson": filters.chkpersonnm == "" ? "" : filters.chkperson,
+        "@p_chkpersonnm": filters.chkpersonnm,
+        "@p_designyn": filters.designyn,
+        "@p_quocalyn": filters.quocalyn,
+        "@p_contractyn" : filters.contractyn
       },
     };
-
     try {
+      console.log("parameters",parameters);
+      
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
       data = null;
     }
-
     if (data.isSuccess == true) {
+      console.log("시작",data);
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
         };
       });
+      console.log("rows",rows);
+      
       setMainDataResult((prev) => {
         return {
           data: rows,
@@ -330,6 +398,7 @@ const SA_B1101_603W: React.FC = () => {
     }
   }, [filters]);
 
+
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -340,6 +409,7 @@ const SA_B1101_603W: React.FC = () => {
     setSelectedState(newSelectedState);
   };
 
+    
   //그리드 리셋
   const resetAllGrid = () => {
     setMainDataResult(process([], mainDataState));
@@ -368,6 +438,16 @@ const SA_B1101_603W: React.FC = () => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
+  const setPrsnnumData2 = (data: IPrsnnum) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        chkpersonnm: data.user_name,
+        chkperson: data.user_id,
+      };
+    });
+  };
+
   const search = () => {
     try {
       if (
@@ -376,14 +456,14 @@ const SA_B1101_603W: React.FC = () => {
         convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
         convertDateToStr(filters.frdt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "SA_B1101_603W_001");
+        throw findMessage(messagesData, "SA_B1002_603W_001");
       } else if (
         convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
         convertDateToStr(filters.todt).substring(6, 8) > "31" ||
         convertDateToStr(filters.todt).substring(6, 8) < "01" ||
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
-        throw findMessage(messagesData, "SA_B1101_603W_001");
+        throw findMessage(messagesData, "SA_B1002_603W_001");
       } else {
         resetAllGrid();
         setPage(initialPageState); // 페이지 초기화
@@ -422,7 +502,7 @@ const SA_B1101_603W: React.FC = () => {
   return (
     <>
       <TitleContainer>
-        <Title>계약현황조회</Title>
+        <Title>견적현황조회</Title>
 
         <ButtonContainer>
           {permissions && (
@@ -430,7 +510,7 @@ const SA_B1101_603W: React.FC = () => {
               search={search}
               exportExcel={exportExcel}
               permissions={permissions}
-              pathname="SA_B1101_603W"
+              pathname="SA_B1002_603W"
             />
           )}
         </ButtonContainer>
@@ -439,7 +519,7 @@ const SA_B1101_603W: React.FC = () => {
         <FilterBox>
           <tbody>
             <tr>
-              <th>계약일자</th>
+              <th>견적발행일</th>
               <td>
                 <CommonDateRangePicker
                   value={{
@@ -492,54 +572,80 @@ const SA_B1101_603W: React.FC = () => {
               <th>의뢰자</th>
               <td>
                 <Input
-                  name="person"
+                  name="custprsnnm"
                   type="text"
-                  value={filters.person}
+                  value={filters.custprsnnm}
                   onChange={filterInputChange}
                 />
+              </td>
+              <th>계약확정여부</th>
+              <td>
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="contractyn"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
+                  />
+                )}
               </td>
             </tr>
             <tr>
-              <th>계약번호</th>
+              <th>물질분야</th>
               <td>
-                <Input
-                  name="contractno"
-                  type="text"
-                  value={filters.contractno}
-                  onChange={filterInputChange}
-                />
+                  {customOptionData !== null && (
+                    <CustomOptionComboBox
+                      name="materialtype"
+                      value={filters.materialtype}
+                      customOptionData={customOptionData}
+                      changeData={filterComboBoxChange}
+                    />
+                  )}
               </td>
-              <th>계약명</th>
+              <th>물질상세분야</th>
               <td>
                 <Input
-                  name="project"
+                  name="extra_field2"
                   type="text"
-                  value={filters.project}
+                  value={filters.extra_field2}
                   onChange={filterInputChange}
                 />
               </td>
               <th>영업담당자</th>
               <td>
+                    <Input
+                      name="chkpersonnm"
+                      type="text"
+                      value={filters.chkpersonnm}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        type="button"
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onPrsnnumWndClick2}
+                      />
+                    </ButtonInInput>
+                  </td>
+              <th>디자인입력여부</th>
+              <td>
                 {customOptionData !== null && (
-                  <CustomOptionComboBox
-                    name="chkperson"
-                    value={filters.chkperson}
+                  <CustomOptionRadioGroup
+                    name="designyn"
                     customOptionData={customOptionData}
-                    changeData={filterComboBoxChange}
-                    valueField="user_id"
-                    textField="user_name"
+                    changeData={filterRadioChange}
                   />
                 )}
               </td>
-              <th>청구예정일</th>
+              <th>견적산출여부</th>
               <td>
-                <DatePicker
-                  name="reqdt"
-                  value={filters.reqdt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                  placeholder=""
-                />
+                {customOptionData !== null && (
+                  <CustomOptionRadioGroup
+                    name="quocalyn"
+                    customOptionData={customOptionData}
+                    changeData={filterRadioChange}
+                  />
+                )}
               </td>
             </tr>
           </tbody>
@@ -557,16 +663,16 @@ const SA_B1101_603W: React.FC = () => {
           fileName="계약현황조회"
         >
           <Grid
-            style={{ height: "75vh" }}
+            style={{ height: "70vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
-                chkperson: userListData.find(
-                  (items: any) => items.user_id == row.chkperson
-                )?.user_name,
                 materialtype: materialtypeListData.find(
                   (items: any) => items.sub_code == row.materialtype
                 )?.code_name,
+                chkperson: userListData.find(
+                  (items: any) => items.user_id == row.chkperson
+                )?.user_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
               mainDataState
@@ -655,8 +761,16 @@ const SA_B1101_603W: React.FC = () => {
           modal={true}
         />
       )}
+      {PrsnnumWindowVisible2 && (
+        <PrsnnumWindow
+          setVisible={setPrsnnumWindowVisible2}
+          workType="N"
+          setData={setPrsnnumData2}
+          modal={true}
+        />
+      )}
     </>
   );
 };
 
-export default SA_B1101_603W;
+export default SA_B1002_603W;

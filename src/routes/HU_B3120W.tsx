@@ -178,11 +178,11 @@ const HU_B3120W: React.FC = () => {
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const paytypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU032")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU032")
       );
       fetchQuery(dptcdQueryStr, setdptcdListData);
       fetchQuery(paytypeQueryStr, setPaytypeListData);
@@ -205,7 +205,7 @@ const HU_B3120W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -230,8 +230,8 @@ const HU_B3120W: React.FC = () => {
         ...prev,
         frdt: frdts,
         todt: todt,
-        paytype: defaultOption.find((item: any) => item.id === "paytype")
-          .valueCode,
+        paytype: defaultOption.find((item: any) => item.id == "paytype")
+          ?.valueCode,
       }));
       setFilters2((prev) => ({
         ...prev,
@@ -250,7 +250,7 @@ const HU_B3120W: React.FC = () => {
         prdate: setDefaultDate(customOptionData, "prdate"),
         paytypeCombo: defaultOption.find(
           (item: any) => item.id == "paytypeCombo"
-        ).valueCode,
+        )?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -376,7 +376,7 @@ const HU_B3120W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -448,7 +448,7 @@ const HU_B3120W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -496,7 +496,7 @@ const HU_B3120W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -884,7 +884,7 @@ const HU_B3120W: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -938,10 +938,10 @@ const HU_B3120W: React.FC = () => {
 
     const onChange = () => {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === props.dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == props.dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               chk: !item.chk,
               [EDIT_FIELD]: props.field,
             }
@@ -1155,7 +1155,7 @@ const HU_B3120W: React.FC = () => {
                   cell={CustomCheckBoxCell}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1165,7 +1165,7 @@ const HU_B3120W: React.FC = () => {
                           title={item.caption}
                           width={item.width}
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : undefined
                           }
@@ -1297,7 +1297,7 @@ const HU_B3120W: React.FC = () => {
                     //더블클릭
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1314,7 +1314,7 @@ const HU_B3120W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell2
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell2
@@ -1343,7 +1343,7 @@ const HU_B3120W: React.FC = () => {
                           ? new Date(dateformat(row.payyrmm))
                           : new Date(dateformat("99991231")),
                         paytype: paytypeListData.find(
-                          (item: any) => item.sub_code === row.paytype
+                          (item: any) => item.sub_code == row.paytype
                         )?.code_name,
                         [SELECTED_FIELD]: selectedState3[idGetter3(row)], //선택된 데이터
                       })),
@@ -1376,7 +1376,7 @@ const HU_B3120W: React.FC = () => {
                     //더블클릭
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList3"].map(
+                      customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1393,7 +1393,7 @@ const HU_B3120W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell3
                                   : numberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell3

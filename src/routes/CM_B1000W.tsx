@@ -94,17 +94,17 @@ const CM_B1000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        kind1: defaultOption.find((item: any) => item.id === "kind1").valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
-        planyn: defaultOption.find((item: any) => item.id === "planyn")
-          .valueCode,
-        custperson: defaultOption.find((item: any) => item.id === "custperson")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
-        rtrchk: defaultOption.find((item: any) => item.id === "rtrchk")
-          .valueCode,
+        kind1: defaultOption.find((item: any) => item.id == "kind1")?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
+        planyn: defaultOption.find((item: any) => item.id == "planyn")
+          ?.valueCode,
+        custperson: defaultOption.find((item: any) => item.id == "custperson")
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
+        rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -127,10 +127,10 @@ const CM_B1000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const kindQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA400")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA400")
       );
       const kindQueryStr2 = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA401")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA401")
       );
       fetchQuery(kindQueryStr, setKindListData);
       fetchQuery(kindQueryStr2, setKindListData2);
@@ -153,7 +153,7 @@ const CM_B1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -316,7 +316,7 @@ const CM_B1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -424,7 +424,7 @@ const CM_B1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -755,24 +755,20 @@ const CM_B1000W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"]
-                  .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                  .map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          footerCell={
-                            item.sortOrder === 0
-                              ? subTotalFooterCell
-                              : undefined
-                          }
-                        ></GridColumn>
-                      )
-                  )}
+                customOptionData.menuCustomColumnOptions["grdList2"]?.map(
+                  (item: any, idx: number) =>
+                    item.sortOrder !== -1 && (
+                      <GridColumn
+                        key={idx}
+                        field={item.fieldName}
+                        title={item.caption}
+                        width={item.width}
+                        footerCell={
+                          item.sortOrder == 0 ? subTotalFooterCell : undefined
+                        }
+                      ></GridColumn>
+                    )
+                )}
             </Grid>
           </ExcelExport>
         </GridContainer>
@@ -939,7 +935,7 @@ const CM_B1000W: React.FC = () => {
                     ...row,
                     strday: row.strday.substring(0, 10),
                     kind1: kindListData.find(
-                      (item: any) => item.sub_code === row.kind1
+                      (item: any) => item.sub_code == row.kind1
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
@@ -971,33 +967,31 @@ const CM_B1000W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]
-                    .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                    .map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              checkField.includes(item.fieldName)
-                                ? CheckBoxReadOnlyCell
-                                : centerField.includes(item.fieldName)
-                                ? CenterCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder === 0
-                                ? mainTotalFooterCell
-                                : item.sortOrder === 6
-                                ? gridSumQtyFooterCell2
-                                : undefined
-                            }
-                          ></GridColumn>
-                        )
-                    )}
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            checkField.includes(item.fieldName)
+                              ? CheckBoxReadOnlyCell
+                              : centerField.includes(item.fieldName)
+                              ? CenterCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : item.sortOrder == 6
+                              ? gridSumQtyFooterCell2
+                              : undefined
+                          }
+                        ></GridColumn>
+                      )
+                  )}
               </Grid>
             </ExcelExport>
           </GridContainer>

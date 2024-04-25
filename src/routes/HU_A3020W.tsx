@@ -97,10 +97,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "payitemkind" ? "L_HU042" : field === "taxcd" ? "L_HU029" : "";
+    field == "payitemkind" ? "L_HU042" : field == "taxcd" ? "L_HU029" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -118,7 +118,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   const field = props.field ?? "";
   const bizComponentIdVal = field == "fraction" ? "R_fraction" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -267,7 +267,7 @@ const HU_A3020W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -300,7 +300,7 @@ const HU_A3020W: React.FC = () => {
       });
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.payitemcd == filters.find_row_value);
 
@@ -349,7 +349,7 @@ const HU_A3020W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -382,7 +382,7 @@ const HU_A3020W: React.FC = () => {
       });
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters2.find_row_value === ""
+          filters2.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.payitemcd == filters2.find_row_value);
 
@@ -604,7 +604,7 @@ const HU_A3020W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -714,7 +714,7 @@ const HU_A3020W: React.FC = () => {
       )
     ) {
       const newData = mainDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -871,7 +871,7 @@ const HU_A3020W: React.FC = () => {
     try {
       const dataItem = mainDataResult.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
@@ -911,7 +911,7 @@ const HU_A3020W: React.FC = () => {
       };
 
       if (valid == true) {
-        if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
+        if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
         dataItem.forEach((item: any, idx: number) => {
           const {
             rowstatus = "",
@@ -1063,7 +1063,7 @@ const HU_A3020W: React.FC = () => {
     try {
       const dataItem = mainDataResult2.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
@@ -1103,7 +1103,7 @@ const HU_A3020W: React.FC = () => {
       };
 
       if (valid == true) {
-        if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
+        if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
         dataItem.forEach((item: any, idx: number) => {
           const {
             rowstatus = "",
@@ -1284,7 +1284,7 @@ const HU_A3020W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setParaData({
         pgSize: PAGE_SIZE,
         workType: "N",
@@ -1502,7 +1502,7 @@ const HU_A3020W: React.FC = () => {
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1528,7 +1528,7 @@ const HU_A3020W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : undefined
                           }
@@ -1617,7 +1617,7 @@ const HU_A3020W: React.FC = () => {
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1643,7 +1643,7 @@ const HU_A3020W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell2
                               : undefined
                           }

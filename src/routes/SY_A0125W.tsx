@@ -129,6 +129,7 @@ const SY_A0125W: React.FC = () => {
   UseParaPc(setPc);
   const userId = UseGetValueFromSessionItem("user_id");
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight -50;
   let isMobile = deviceWidth <= 1200;
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -155,8 +156,8 @@ const SY_A0125W: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -177,11 +178,11 @@ const SY_A0125W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
       const dtpcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       fetchQuery(dtpcdQueryStr, setDptcdListData);
@@ -205,7 +206,7 @@ const SY_A0125W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -408,7 +409,7 @@ const SY_A0125W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
@@ -587,7 +588,7 @@ const SY_A0125W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -757,7 +758,7 @@ const SY_A0125W: React.FC = () => {
             extendDataItem(item, SUB_ITEMS_FIELD, {
               [EXPANDED_FIELD]: true,
               [EDIT_FIELD]:
-                item[ALL_MENU_DATA_ITEM_KEY] === editItemId
+                item[ALL_MENU_DATA_ITEM_KEY] == editItemId
                   ? editItemField
                   : undefined,
               [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
@@ -886,7 +887,7 @@ const SY_A0125W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "postcd" && field != "user_id") {
       const newData = subDataResult.data.map((item) =>
-        item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
+        item[SUB_DATA_ITEM_KEY] == dataItem[SUB_DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -925,7 +926,7 @@ const SY_A0125W: React.FC = () => {
         Object.getOwnPropertyNames(selectedsubDataState)[0]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -1102,7 +1103,7 @@ const SY_A0125W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") {
+    if (paraDataDeleted.work_type == "D") {
       fetchToDelete();
     }
   }, [paraDataDeleted]);
@@ -1110,12 +1111,12 @@ const SY_A0125W: React.FC = () => {
   const onSaveClick = async () => {
     const dataItem = subDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
     let dataArr: TdataArr = {
       userid_s: [],
       postcd_s: [],
@@ -1164,7 +1165,7 @@ const SY_A0125W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setFilters((prev) => ({
         ...prev,
         find_row_value: "",
@@ -1221,7 +1222,7 @@ const SY_A0125W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
@@ -1246,7 +1247,7 @@ const SY_A0125W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setsubFilters((prev) => ({
         ...prev,
         find_row_value: Object.getOwnPropertyNames(selectedsubDataState)[0],
@@ -1272,14 +1273,72 @@ const SY_A0125W: React.FC = () => {
   const { data, expanded, editItem, editItemField } = allMenuDataResult;
   const editItemId = editItem ? editItem[ALL_MENU_DATA_ITEM_KEY] : null;
 
-
-  
   return (
     <>
       {isMobile ? (
-        <GridContainerWrap >
+        <>
+          <TitleContainer>
+            <Title>부서관리</Title>
+
+            <ButtonContainer>
+              <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                  <tbody>
+                    <tr>
+                      <th>부서코드</th>
+                      <td>
+                        <Input
+                          name="dptcd"
+                          type="text"
+                          value={filters.dptcd}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>부서명</th>
+                      <td>
+                        <Input
+                          name="dptnm"
+                          type="text"
+                          value={filters.dptnm}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>사용자명</th>
+                      <td>
+                        <Input
+                          name="user_name"
+                          type="text"
+                          value={filters.user_name}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>사업장</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="location"
+                            value={filters.location}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </FilterBox>
+              </FilterContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="SY_A0125W"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
           <Swiper
-            className="leading_95_Swiper"
+            className="leading_80_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1287,70 +1346,8 @@ const SY_A0125W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA">
-              <GridContainer style={{ width: `${deviceWidth-30}px`}}>
-                <TitleContainer>
-                  <Title>부서관리</Title>
-
-                  <ButtonContainer>
-                    {permissions && (
-                      <TopButtons
-                        search={search}
-                        exportExcel={exportExcel}
-                        permissions={permissions}
-                        pathname="SY_A0125W"
-                      />
-                    )}
-                  </ButtonContainer>
-                </TitleContainer>
-                <FilterContainer>
-                  <FilterBox
-                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                  >
-                    <tbody>
-                      <tr>
-                        <th>부서코드</th>
-                        <td>
-                          <Input
-                            name="dptcd"
-                            type="text"
-                            value={filters.dptcd}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>부서명</th>
-                        <td>
-                          <Input
-                            name="dptnm"
-                            type="text"
-                            value={filters.dptnm}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>사용자명</th>
-                        <td>
-                          <Input
-                            name="user_name"
-                            type="text"
-                            value={filters.user_name}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>사업장</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="location"
-                              value={filters.location}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FilterBox>
-                </FilterContainer>
+            <SwiperSlide key={0} className="leading_PDA_custom">
+              <GridContainer style={{ width: `${deviceWidth - 30}px` }}>
                 <ExcelExport
                   ref={(exporter) => (_export = exporter)}
                   hierarchy={true}
@@ -1358,7 +1355,7 @@ const SY_A0125W: React.FC = () => {
                 >
                   <TreeList
                     style={{
-                      height: "80vh",
+                      height: `${deviceHeight * 0.85}px`,
                       overflow: "auto",
                     }}
                     data={mapTree(data, SUB_ITEMS_FIELD, (item) =>
@@ -1367,7 +1364,7 @@ const SY_A0125W: React.FC = () => {
                           item[ALL_MENU_DATA_ITEM_KEY]
                         ),
                         [EDIT_FIELD]:
-                          item[ALL_MENU_DATA_ITEM_KEY] === editItemId
+                          item[ALL_MENU_DATA_ITEM_KEY] == editItemId
                             ? editItemField
                             : undefined,
                         [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
@@ -1392,7 +1389,7 @@ const SY_A0125W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide
               key={1}
-              className="leading_PDA"
+              className="leading_PDA_custom"
               style={{ display: "flex", flexDirection: "column" }}
             >
               <div
@@ -1414,14 +1411,9 @@ const SY_A0125W: React.FC = () => {
                 </Button>
               </div>
               <GridContainer
-                style={{
-                  minHeight: "68vh",
-                  width: `${deviceWidth - 30}px`,
-                 overflow: "auto",
-                }}
+                style={{ width: `${deviceWidth - 30}px`}}
               >
                 <GridTitleContainer>
-                  <GridTitle>기본정보</GridTitle>
                   <ButtonContainer>
                     <Button
                       onClick={onAddClick2}
@@ -1450,7 +1442,7 @@ const SY_A0125W: React.FC = () => {
                 </GridTitleContainer>
                 <FormBoxWrap
                   border={true}
-                  style={{ minHeight: "60vh", width: `${deviceWidth - 30}px` }}
+                  style={{ height: `${deviceHeight  * 0.75}px`, width: `${deviceWidth - 30}px`, overflow: "scroll", }}
                 >
                   <FormBox>
                     <tbody>
@@ -1556,12 +1548,12 @@ const SY_A0125W: React.FC = () => {
                   fileName="부서관리"
                 >
                   <Grid
-                    style={{ height:"40vh"  }}
+                    style={{ height: "40vh" }}
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
                         postcd: postcdListData.find(
-                          (item: any) => item.sub_code === row.postcd
+                          (item: any) => item.sub_code == row.postcd
                         )?.code_name,
                         [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
                       })),
@@ -1608,7 +1600,7 @@ const SY_A0125W: React.FC = () => {
                     {customOptionData !== null &&
                       customOptionData.menuCustomColumnOptions[
                         "grdAllList"
-                      ].map(
+                      ]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1618,7 +1610,7 @@ const SY_A0125W: React.FC = () => {
                               title={item.caption}
                               width={item.width}
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? subTotalFooterCell
                                   : undefined
                               }
@@ -1630,7 +1622,7 @@ const SY_A0125W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
           </Swiper>
-        </GridContainerWrap>
+        </>
       ) : (
         <>
           <TitleContainer>
@@ -1714,7 +1706,7 @@ const SY_A0125W: React.FC = () => {
                         item[ALL_MENU_DATA_ITEM_KEY]
                       ),
                       [EDIT_FIELD]:
-                        item[ALL_MENU_DATA_ITEM_KEY] === editItemId
+                        item[ALL_MENU_DATA_ITEM_KEY] == editItemId
                           ? editItemField
                           : undefined,
                       [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
@@ -1875,7 +1867,7 @@ const SY_A0125W: React.FC = () => {
                     subDataResult.data.map((row) => ({
                       ...row,
                       postcd: postcdListData.find(
-                        (item: any) => item.sub_code === row.postcd
+                        (item: any) => item.sub_code == row.postcd
                       )?.code_name,
                       [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
                     })),
@@ -1920,7 +1912,7 @@ const SY_A0125W: React.FC = () => {
                     editable={false}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdAllList"].map(
+                    customOptionData.menuCustomColumnOptions["grdAllList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -1930,7 +1922,7 @@ const SY_A0125W: React.FC = () => {
                             title={item.caption}
                             width={item.width}
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? subTotalFooterCell
                                 : undefined
                             }

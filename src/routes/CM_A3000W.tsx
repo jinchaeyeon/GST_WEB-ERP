@@ -188,9 +188,9 @@ const CM_A3000W: React.FC = () => {
         ...prev,
         recdt_s: setDefaultDate(customOptionData, "recdt_s"),
         recdt_e: setDefaultDate(customOptionData, "recdt_e"),
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
         isSearch: true,
       }));
     }
@@ -212,7 +212,7 @@ const CM_A3000W: React.FC = () => {
     if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
 
@@ -236,7 +236,7 @@ const CM_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -387,7 +387,7 @@ const CM_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -502,7 +502,7 @@ const CM_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true && data.tables.length != 0) {
+    if (data.isSuccess == true && data.tables.length != 0) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -638,7 +638,7 @@ const CM_A3000W: React.FC = () => {
   //그리드 조회
   const fetchAttdatnumGrid = async () => {
     let data: any;
-    if (attachmentNumber === "") return false;
+    if (attachmentNumber == "") return false;
     const parameters = {
       attached: "list?attachmentNumber=" + attachmentNumber,
     };
@@ -693,7 +693,7 @@ const CM_A3000W: React.FC = () => {
   };
 
   const handleFileUpload = async (files: FileList | null) => {
-    if (files === null) return false;
+    if (files == null) return false;
 
     let newAttachmentNumber = "";
     const promises = [];
@@ -834,7 +834,7 @@ const CM_A3000W: React.FC = () => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
     const user = userListData.find(
-      (item: any) => item.user_name === selectedRowData.person
+      (item: any) => item.user_name == selectedRowData.person
     )?.user_id;
 
     if (selectedRowData.attdatnum == "") {
@@ -887,7 +887,7 @@ const CM_A3000W: React.FC = () => {
             extendDataItem(item, SUB_ITEMS_FIELD, {
               [EXPANDED_FIELD]: true,
               [EDIT_FIELD]:
-                item[ALL_MENU_DATA_ITEM_KEY] === editItemId
+                item[ALL_MENU_DATA_ITEM_KEY] == editItemId
                   ? editItemField
                   : undefined,
               [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
@@ -1060,7 +1060,7 @@ const CM_A3000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (infomation.workType === "D") {
+    if (infomation.workType == "D") {
       fetchSaved();
     }
   }, [infomation]);
@@ -1096,7 +1096,7 @@ const CM_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setValues2(false);
       if (infomation.workType == "D") {
         const isLastDataDeleted =
@@ -1272,7 +1272,7 @@ const CM_A3000W: React.FC = () => {
     const changeCheck = () => {
       const newData = attDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -1322,10 +1322,10 @@ const CM_A3000W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = attDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               chk:
                 typeof item.chk == "boolean"
                   ? item.chk
@@ -1468,7 +1468,7 @@ const CM_A3000W: React.FC = () => {
                     item[ALL_MENU_DATA_ITEM_KEY]
                   ),
                   [EDIT_FIELD]:
-                    item[ALL_MENU_DATA_ITEM_KEY] === editItemId
+                    item[ALL_MENU_DATA_ITEM_KEY] == editItemId
                       ? editItemField
                       : undefined,
                   [SELECTED_FIELD]: selectedState[idGetter(item)], //선택된 데이터
@@ -1504,7 +1504,7 @@ const CM_A3000W: React.FC = () => {
                 subDataResult.data.map((row) => ({
                   ...row,
                   person: userListData.find(
-                    (item: any) => item.user_id === row.person
+                    (item: any) => item.user_id == row.person
                   )?.user_name,
                   [SELECTED_FIELD]: selectedsubDataState[idGetter2(row)],
                 })),
@@ -1539,7 +1539,7 @@ const CM_A3000W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1549,9 +1549,9 @@ const CM_A3000W: React.FC = () => {
                         title={item.caption}
                         width={item.width}
                         className={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? "readonly"
-                            : item.sortOrder === 1
+                            : item.sortOrder == 1
                             ? "readonly"
                             : undefined
                         }
@@ -1561,7 +1561,7 @@ const CM_A3000W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? subTotalFooterCell : undefined
+                          item.sortOrder == 0 ? subTotalFooterCell : undefined
                         }
                       />
                     )
@@ -1684,7 +1684,7 @@ const CM_A3000W: React.FC = () => {
                           attDataResult.data.map((row) => ({
                             ...row,
                             person: userListData.find(
-                              (item: any) => item.user_id === row.person
+                              (item: any) => item.user_id == row.person
                             )?.user_name,
                             insert_time: convertDateToStrWithTime2(
                               new Date(row.insert_time)

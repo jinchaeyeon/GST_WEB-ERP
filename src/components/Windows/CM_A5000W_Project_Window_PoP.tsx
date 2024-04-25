@@ -176,26 +176,26 @@ const KendoWindow = ({
     if (bizComponentData.length > 0) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const quotypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA016")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SA016")
       );
 
       const quostsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA004")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SA004")
       );
 
       const materialtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA001_603"
+          (item: any) => item.bizComponentId == "L_SA001_603"
         )
       );
 
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
 
@@ -224,7 +224,7 @@ const KendoWindow = ({
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -318,7 +318,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 

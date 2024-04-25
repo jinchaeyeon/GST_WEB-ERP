@@ -104,7 +104,7 @@ const RowRenderForDragging = (properties: any) => {
       setTimeout(() => {
         const activeElement = document.activeElement;
 
-        if (activeElement === null) return false;
+        if (activeElement == null) return false;
         if (activeElement.className.indexOf("k-calendar") < 0) {
           props.render();
         }
@@ -135,27 +135,27 @@ const CustomComboBoxCell = (props: TreeListCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "path"
+    field == "path"
       ? "L_SYS1205_1"
-      : field === "location"
+      : field == "location"
       ? "L_BA002"
-      : field === "position"
+      : field == "position"
       ? "L_BA028"
-      : field === "dptcd"
+      : field == "dptcd"
       ? "L_dptcd_001"
-      : field === "postcd"
+      : field == "postcd"
       ? "L_HU005"
-      : field === "opengb"
+      : field == "opengb"
       ? "L_BA410"
       : "";
 
   const fieldName =
-    field === "path"
+    field == "path"
       ? { valueField: "code", textField: "name" }
       : { valueField: undefined, textField: undefined };
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -247,15 +247,15 @@ const Page: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        cboOrgdiv: defaultOption.find((item: any) => item.id === "cboOrgdiv")
-          .valueCode,
+        cboOrgdiv: defaultOption.find((item: any) => item.id == "cboOrgdiv")
+          ?.valueCode,
         cboLocation: defaultOption.find(
-          (item: any) => item.id === "cboLocation"
-        ).valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
+          (item: any) => item.id == "cboLocation"
+        )?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         user_category: defaultOption.find(
-          (item: any) => item.id === "user_category"
-        ).valueCode,
+          (item: any) => item.id == "user_category"
+        )?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -440,7 +440,7 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -472,7 +472,7 @@ const Page: React.FC = () => {
           };
         });
         const selectedRow =
-          detailfilter.find_row_value === ""
+          detailfilter.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) => row[DATA_ITEM_KEY] == detailfilter.find_row_value
@@ -525,7 +525,7 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -635,7 +635,7 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -747,7 +747,7 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -780,7 +780,7 @@ const Page: React.FC = () => {
         // 앱 메뉴 (최상위 메뉴) 없을 시 데이터 세팅
         // 드래그앤드롭 사용 시 그리드 내 데이터 최소 1개 필요함
 
-        const appMenuData = rows.find((item: any) => item.ParentKeyID === "");
+        const appMenuData = rows.find((item: any) => item.ParentKeyID == "");
 
         const appMenuRow = [
           {
@@ -807,7 +807,7 @@ const Page: React.FC = () => {
         );
 
         setAllMenuDataResult((prev: any) => {
-          if (prev.length === 0) {
+          if (prev.length == 0) {
             return { ...prev, data: appMenuDataTree };
           } else {
             return prev;
@@ -1006,11 +1006,11 @@ const Page: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
 
       const userCategoryQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SYS005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SYS005")
       );
 
       fetchQuery(postcdQueryStr, setPostcdListData);
@@ -1034,7 +1034,7 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -1071,7 +1071,7 @@ const Page: React.FC = () => {
   const enterEdit2 = (dataItem: any, field: string) => {
     if (field == "chk_yn") {
       const newData = detailDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1157,11 +1157,11 @@ const Page: React.FC = () => {
 
     const dataItem: { [name: string]: any } = flatData.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     type TData = {
       row_state_s: string[];
@@ -1297,7 +1297,7 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
@@ -1350,8 +1350,8 @@ const Page: React.FC = () => {
       flatData.forEach((item: any) => delete item[SUB_ITEMS_FIELD]);
 
       const newRowData =
-        dragDataItem["ParentKeyID"] === "" // 최상위 항목 선택시 전체 메뉴 삭제
-          ? flatData.filter((item: any) => item["ParentKeyID"] === "")
+        dragDataItem["ParentKeyID"] == "" // 최상위 항목 선택시 전체 메뉴 삭제
+          ? flatData.filter((item: any) => item["ParentKeyID"] == "")
           : flatData.filter((item: any) => {
               if (
                 item[USER_MENU_DATA_ITEM_KEY] !==
@@ -1388,7 +1388,7 @@ const Page: React.FC = () => {
 
   // 사용자별 메뉴에 데이터 추가
   const handleUserMenuDrop = (e: any) => {
-    if (dragDataItem === null) {
+    if (dragDataItem == null) {
       return false;
     }
 
@@ -1401,13 +1401,13 @@ const Page: React.FC = () => {
     flatAllMenuData.forEach((item: any) => delete item[SUB_ITEMS_FIELD]);
 
     let dragDataItemWithChildren: any[] =
-      dragDataItem["ParentKeyID"] === "" // 최상위 항목 선택시 전체 메뉴 추가
+      dragDataItem["ParentKeyID"] == "" // 최상위 항목 선택시 전체 메뉴 추가
         ? flatAllMenuData
         : flatAllMenuData.filter(
             (item: any) =>
-              item[USER_MENU_DATA_ITEM_KEY] === dragDataItem["ParentKeyID"] ||
-              item["ParentKeyID"] === dragDataItem[USER_MENU_DATA_ITEM_KEY] ||
-              item[USER_MENU_DATA_ITEM_KEY] ===
+              item[USER_MENU_DATA_ITEM_KEY] == dragDataItem["ParentKeyID"] ||
+              item["ParentKeyID"] == dragDataItem[USER_MENU_DATA_ITEM_KEY] ||
+              item[USER_MENU_DATA_ITEM_KEY] ==
                 dragDataItem[USER_MENU_DATA_ITEM_KEY]
           );
 
@@ -1439,7 +1439,7 @@ const Page: React.FC = () => {
 
         const sameKeyData = flatData.find(
           (item: any) =>
-            item[USER_MENU_DATA_ITEM_KEY] ===
+            item[USER_MENU_DATA_ITEM_KEY] ==
             dragDataItem[USER_MENU_DATA_ITEM_KEY]
         );
 
@@ -1547,19 +1547,19 @@ const Page: React.FC = () => {
 
     // 데이터 업데이트
     const updatedUserMenuData =
-      level.length === 1 // 최상위 요소 change 시, 전체 데이터의 rowstatus, field 업데이트
+      level.length == 1 // 최상위 요소 change 시, 전체 데이터의 rowstatus, field 업데이트
         ? flatData.map((item: any) => ({
             ...item,
-            rowstatus: item["rowstatus"] === "N" ? "N" : "U",
+            rowstatus: item["rowstatus"] == "N" ? "N" : "U",
             [field!]: value,
           }))
         : flatData.map(
             (
               item: any // 그 외, change 된 데이터의 rowstatus 업데이트
             ) =>
-              item[USER_MENU_DATA_ITEM_KEY] ===
+              item[USER_MENU_DATA_ITEM_KEY] ==
               dataItem[USER_MENU_DATA_ITEM_KEY]
-                ? { ...item, rowstatus: item["rowstatus"] === "N" ? "N" : "U" }
+                ? { ...item, rowstatus: item["rowstatus"] == "N" ? "N" : "U" }
                 : { ...item }
           );
 
@@ -1576,7 +1576,7 @@ const Page: React.FC = () => {
       dataTree,
       SUB_ITEMS_FIELD,
       (item) =>
-        item[USER_MENU_DATA_ITEM_KEY] === dataItem[USER_MENU_DATA_ITEM_KEY],
+        item[USER_MENU_DATA_ITEM_KEY] == dataItem[USER_MENU_DATA_ITEM_KEY],
       (subItems) =>
         subItems.map((subItem) => ({
           ...subItem,
@@ -1589,7 +1589,7 @@ const Page: React.FC = () => {
     setUserMenuDataResult({
       ...userMenuDataResult,
       data: mapTree(newData, SUB_ITEMS_FIELD, (item) =>
-        dataItem[USER_MENU_DATA_ITEM_KEY] === item[USER_MENU_DATA_ITEM_KEY]
+        dataItem[USER_MENU_DATA_ITEM_KEY] == item[USER_MENU_DATA_ITEM_KEY]
           ? extendDataItem(item, SUB_ITEMS_FIELD, { [field!]: value })
           : item
       ),
@@ -1657,7 +1657,7 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = [];
       setDetailFilter((prev) => ({
         ...prev,
@@ -1760,7 +1760,7 @@ const Page: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         deletedMainRows = [];
         setDetailFilter((prev) => ({
           ...prev,
@@ -1859,7 +1859,7 @@ const Page: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         deletedMainRows = [];
         resetAllGrid();
         setFilters((prev) => ({
@@ -1920,7 +1920,7 @@ const Page: React.FC = () => {
     let valid = true;
     if (field == "chk_org" || field == "chk_tar") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               chk_tar:
@@ -1981,7 +1981,7 @@ const Page: React.FC = () => {
             extendDataItem(item, SUB_ITEMS_FIELD, {
               [EXPANDED_FIELD]: true,
               [EDIT_FIELD]:
-                item[USER_MENU_DATA_ITEM_KEY] === editItemId
+                item[USER_MENU_DATA_ITEM_KEY] == editItemId
                   ? editItemField
                   : undefined,
               [SELECTED_FIELD]: userMenuSelectedState[idGetter2(item)], //선택된 데이터
@@ -1998,7 +1998,7 @@ const Page: React.FC = () => {
             extendDataItem(item, SUB_ITEMS_FIELD, {
               [EXPANDED_FIELD]: true,
               [EDIT_FIELD]:
-                item[ALL_MENU_DATA_ITEM_KEY] === editItemId2
+                item[ALL_MENU_DATA_ITEM_KEY] == editItemId2
                   ? allMenuDataResult.editItemField
                   : undefined,
               [SELECTED_FIELD]: allMenuSelectedState[idGetter2(item)], //선택된 데이터
@@ -2159,10 +2159,10 @@ const Page: React.FC = () => {
                       mainDataResult.data.map((row, idx) => ({
                         ...row,
                         user_category: userCategoryListData.find(
-                          (item: any) => item.sub_code === row.user_category
+                          (item: any) => item.sub_code == row.user_category
                         )?.code_name,
                         postcd: postcdListData.find(
-                          (item: any) => item.sub_code === row.postcd
+                          (item: any) => item.sub_code == row.postcd
                         )?.code_name,
                         [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                       })),
@@ -2212,7 +2212,7 @@ const Page: React.FC = () => {
                       cell={CheckBoxCell}
                     />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"].map(
+                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2222,7 +2222,7 @@ const Page: React.FC = () => {
                               title={item.caption}
                               width={item.width}
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell
                                   : undefined
                               }
@@ -2343,7 +2343,7 @@ const Page: React.FC = () => {
                       cell={CheckBoxCell}
                     />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2353,7 +2353,7 @@ const Page: React.FC = () => {
                               title={item.caption}
                               width={item.width}
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? detailTotalFooterCell
                                   : undefined
                               }
@@ -2421,7 +2421,7 @@ const Page: React.FC = () => {
                           item[USER_MENU_DATA_ITEM_KEY]
                         ),
                         [EDIT_FIELD]:
-                          item[USER_MENU_DATA_ITEM_KEY] === editItemId
+                          item[USER_MENU_DATA_ITEM_KEY] == editItemId
                             ? editItemField
                             : undefined,
                         [SELECTED_FIELD]:
@@ -2628,10 +2628,10 @@ const Page: React.FC = () => {
                     mainDataResult.data.map((row, idx) => ({
                       ...row,
                       user_category: userCategoryListData.find(
-                        (item: any) => item.sub_code === row.user_category
+                        (item: any) => item.sub_code == row.user_category
                       )?.code_name,
                       postcd: postcdListData.find(
-                        (item: any) => item.sub_code === row.postcd
+                        (item: any) => item.sub_code == row.postcd
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                     })),
@@ -2681,7 +2681,7 @@ const Page: React.FC = () => {
                     cell={CheckBoxCell}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -2691,7 +2691,7 @@ const Page: React.FC = () => {
                             title={item.caption}
                             width={item.width}
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell
                                 : undefined
                             }
@@ -2774,7 +2774,7 @@ const Page: React.FC = () => {
                       cell={CheckBoxCell}
                     />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2784,7 +2784,7 @@ const Page: React.FC = () => {
                               title={item.caption}
                               width={item.width}
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? detailTotalFooterCell
                                   : undefined
                               }
@@ -2823,7 +2823,7 @@ const Page: React.FC = () => {
                           item[USER_MENU_DATA_ITEM_KEY]
                         ),
                         [EDIT_FIELD]:
-                          item[USER_MENU_DATA_ITEM_KEY] === editItemId
+                          item[USER_MENU_DATA_ITEM_KEY] == editItemId
                             ? editItemField
                             : undefined,
                         [SELECTED_FIELD]:

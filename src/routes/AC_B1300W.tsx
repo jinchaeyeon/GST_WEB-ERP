@@ -92,8 +92,8 @@ const AC_B1300W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        closeyn: defaultOption.find((item: any) => item.id === "closeyn")
-          .valueCode,
+        closeyn: defaultOption.find((item: any) => item.id == "closeyn")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -185,7 +185,7 @@ const AC_B1300W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 

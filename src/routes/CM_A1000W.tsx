@@ -121,11 +121,11 @@ const CM_A1000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        kind1: defaultOption.find((item: any) => item.id === "kind1").valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
-        planyn: defaultOption.find((item: any) => item.id === "planyn")
-          .valueCode,
+        kind1: defaultOption.find((item: any) => item.id == "kind1")?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
+        planyn: defaultOption.find((item: any) => item.id == "planyn")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -148,13 +148,13 @@ const CM_A1000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const usersQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_USERS")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_USERS")
       );
       const kindQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA400")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA400")
       );
       const custQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_CUSTCD")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_CUSTCD")
       );
       fetchQuery(custQueryStr, setCustListData);
       fetchQuery(usersQueryStr, setUsersListData);
@@ -178,7 +178,7 @@ const CM_A1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -241,11 +241,11 @@ const CM_A1000W: React.FC = () => {
           value == ""
             ? ""
             : defaultOption
-                .find((item: any) => item.id === "custnm")
+                .find((item: any) => item.id == "custnm")
                 .Rows.filter((item: any) => item.custcd == value)[0] !=
               undefined
             ? defaultOption
-                .find((item: any) => item.id === "custnm")
+                .find((item: any) => item.id == "custnm")
                 .Rows.filter((item: any) => item.custcd == value)[0].custcd
             : "",
       }));
@@ -469,7 +469,7 @@ const CM_A1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -502,7 +502,7 @@ const CM_A1000W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) =>
@@ -682,7 +682,7 @@ const CM_A1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (data.tables[0].Rows.length > 0) {
         const rows = data.tables[0].Rows;
 
@@ -1049,7 +1049,7 @@ const CM_A1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const datas = mainDataResult.data.filter(
         (item) =>
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -1083,7 +1083,7 @@ const CM_A1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setWorkType("N");
       setFilters((prev) => ({
@@ -1163,13 +1163,13 @@ const CM_A1000W: React.FC = () => {
       amt: 0,
       attdatnum: "",
       contents: "",
-      custcd: defaultOption.find((item: any) => item.id === "custnm").valueCode,
-      custnm: defaultOption.find((item: any) => item.id === "custnm").valueCode,
+      custcd: defaultOption.find((item: any) => item.id == "custnm")?.valueCode,
+      custnm: defaultOption.find((item: any) => item.id == "custnm")?.valueCode,
       custperson: "",
       datnum: "",
       enddt: filters.todt,
-      endhh: defaultOption.find((item: any) => item.id === "endhh").valueCode,
-      endmm: defaultOption.find((item: any) => item.id === "endmm").valueCode,
+      endhh: defaultOption.find((item: any) => item.id == "endhh")?.valueCode,
+      endmm: defaultOption.find((item: any) => item.id == "endmm")?.valueCode,
       endtime: "",
       exphh: 0,
       expmm: 0,
@@ -1177,8 +1177,8 @@ const CM_A1000W: React.FC = () => {
       finyn: false,
       insert_user_id: "",
       key_id: "",
-      kind1: defaultOption.find((item: any) => item.id === "kind1").valueCode,
-      kind2: defaultOption.find((item: any) => item.id === "kind2").valueCode,
+      kind1: defaultOption.find((item: any) => item.id == "kind1")?.valueCode,
+      kind2: defaultOption.find((item: any) => item.id == "kind2")?.valueCode,
       opengb: "",
       person: "",
       pgmid: "",
@@ -1187,8 +1187,8 @@ const CM_A1000W: React.FC = () => {
       project: "",
       ref_key: "",
       strdt: filters.todt,
-      strhh: defaultOption.find((item: any) => item.id === "strhh").valueCode,
-      strmm: defaultOption.find((item: any) => item.id === "strmm").valueCode,
+      strhh: defaultOption.find((item: any) => item.id == "strhh")?.valueCode,
+      strmm: defaultOption.find((item: any) => item.id == "strmm")?.valueCode,
       strtime: "",
       title: "",
       usehh: 0,
@@ -1215,7 +1215,7 @@ const CM_A1000W: React.FC = () => {
       alert("제목을 입력해주세요.");
     } else {
       const custnm = custListData.find(
-        (item: any) => item.custcd === infomation.custnm
+        (item: any) => item.custcd == infomation.custnm
       )?.custnm;
 
       setParaData((prev) => ({
@@ -1309,9 +1309,9 @@ const CM_A1000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 1;
+        mainDataResult.data.length == 1 && filters.pgNum > 1;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -1350,7 +1350,7 @@ const CM_A1000W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   const questionToDelete = useSysMessage("QuestionToDelete");
@@ -1564,10 +1564,10 @@ const CM_A1000W: React.FC = () => {
                   mainDataResult.data.map((row) => ({
                     ...row,
                     person: usersListData.find(
-                      (item: any) => item.code === row.person
+                      (item: any) => item.code == row.person
                     )?.name,
                     kind1: kindListData.find(
-                      (item: any) => item.sub_code === row.kind1
+                      (item: any) => item.sub_code == row.kind1
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
@@ -1602,33 +1602,31 @@ const CM_A1000W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]
-                    .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                    .map(
-                      (item: any, idx: number) =>
-                        item.sortOrder !== -1 && (
-                          <GridColumn
-                            key={idx}
-                            field={item.fieldName}
-                            title={item.caption}
-                            width={item.width}
-                            cell={
-                              checkField.includes(item.fieldName)
-                                ? CheckBoxReadOnlyCell
-                                : centerField.includes(item.fieldName)
-                                ? CenterCell
-                                : undefined
-                            }
-                            footerCell={
-                              item.sortOrder === 0
-                                ? mainTotalFooterCell
-                                : item.sortOrder === 6
-                                ? gridSumQtyFooterCell2
-                                : undefined
-                            }
-                          ></GridColumn>
-                        )
-                    )}
+                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                    (item: any, idx: number) =>
+                      item.sortOrder !== -1 && (
+                        <GridColumn
+                          key={idx}
+                          field={item.fieldName}
+                          title={item.caption}
+                          width={item.width}
+                          cell={
+                            checkField.includes(item.fieldName)
+                              ? CheckBoxReadOnlyCell
+                              : centerField.includes(item.fieldName)
+                              ? CenterCell
+                              : undefined
+                          }
+                          footerCell={
+                            item.sortOrder == 0
+                              ? mainTotalFooterCell
+                              : item.sortOrder == 6
+                              ? gridSumQtyFooterCell2
+                              : undefined
+                          }
+                        ></GridColumn>
+                      )
+                  )}
               </Grid>
             </ExcelExport>
           </GridContainer>

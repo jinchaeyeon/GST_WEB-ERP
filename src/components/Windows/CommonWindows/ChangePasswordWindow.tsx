@@ -50,15 +50,15 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   const onClose = () => {
     if (
       pwExpInfo &&
-      ((pwExpInfo.useExpiration && pwExpInfo.status === "Expired") ||
-        pwExpInfo.status === "Initial")
+      ((pwExpInfo.useExpiration && pwExpInfo.status == "Expired") ||
+        pwExpInfo.status == "Initial")
     ) {
       alert("비밀번호를 수정 후 저장해주세요.");
       return false;
     }
 
     // 만료 알림 상태의 경우, 로그인 후 최초 한번만 팝업 뜨도록
-    if (pwExpInfo && pwExpInfo.status === "BeforeExpiry") {
+    if (pwExpInfo && pwExpInfo.status == "BeforeExpiry") {
       setPwExpInfo((prev) => ({ ...prev, useExpiration: false }));
     }
     setVisible(false);
@@ -105,13 +105,19 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   const handleSubmit = (dataItem: { [name: string]: any }) => {
     const { old_password, new_password, check_new_password } = dataItem;
 
-    setParaData((prev) => ({
-      ...prev,
-      work_type: "change",
-      old_password,
-      new_password,
-      check_new_password,
-    }));
+    if(new_password != check_new_password) {
+      alert("비밀번호 확인이 다릅니다.");
+    } else if(new_password.length < 4) {
+      alert("비밀번호 최소 4자리를 입력해주세요.")
+    } else {
+      setParaData((prev) => ({
+        ...prev,
+        work_type: "change",
+        old_password,
+        new_password,
+        check_new_password,
+      }));
+    }
   };
 
   useEffect(() => {
@@ -205,7 +211,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
                   color: "#ff6358",
                 }}
               >
-                {pwExpInfo && pwExpInfo.status === "Initial" && (
+                {pwExpInfo && pwExpInfo.status == "Initial" && (
                   <p>- 초기 비밀번호를 변경해주세요.</p>
                 )}
                 <p>

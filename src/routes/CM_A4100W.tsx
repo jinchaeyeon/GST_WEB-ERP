@@ -115,10 +115,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   UseBizComponent("L_sysUserMaster_001", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "person" ? "L_sysUserMaster_001" : "";
+  const bizComponentIdVal = field == "person" ? "L_sysUserMaster_001" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -154,7 +154,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setAttdatnum, setFiles } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -205,7 +205,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -269,8 +269,8 @@ const CM_A4100W: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
         frdt: setDefaultDate(customOptionData, "frdt"),
       }));
     }
@@ -295,11 +295,11 @@ const CM_A4100W: React.FC = () => {
     if (bizComponentData !== null) {
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const edudivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_CM050")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_CM050")
       );
       fetchQuery(personQueryStr, setPersonListData);
       fetchQuery(edudivQueryStr, setEdudivListData);
@@ -322,7 +322,7 @@ const CM_A4100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -495,7 +495,7 @@ const CM_A4100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -527,7 +527,7 @@ const CM_A4100W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.edunum == filters.find_row_value);
 
@@ -660,7 +660,7 @@ const CM_A4100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -692,7 +692,7 @@ const CM_A4100W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.edunum == filters.find_row_value);
 
@@ -841,7 +841,7 @@ const CM_A4100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
       if (subfilters.find_row_value !== "") {
@@ -872,7 +872,7 @@ const CM_A4100W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          subfilters.find_row_value === ""
+          subfilters.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) => row[DATA_ITEM_KEY3] == subfilters.find_row_value
@@ -1393,7 +1393,7 @@ const CM_A4100W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = subDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY3] === dataItem[DATA_ITEM_KEY3]
+        item[DATA_ITEM_KEY3] == dataItem[DATA_ITEM_KEY3]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1558,9 +1558,9 @@ const CM_A4100W: React.FC = () => {
       "@p_edunum": paraDataDeleted.edunum,
       "@p_recdt": convertDateToStr(infomation.recdt),
       "@p_person": personListData.find(
-        (item: any) => item.user_name === infomation.person
+        (item: any) => item.user_name == infomation.person
       )?.user_id,
-      "@p_finyn": infomation.finyn === true ? "Y" : "N",
+      "@p_finyn": infomation.finyn == true ? "Y" : "N",
       "@p_title": infomation.title,
       "@p_contents": infomation.contents,
       "@p_edudiv": infomation.edudiv == undefined ? "" : infomation.edudiv,
@@ -1588,12 +1588,12 @@ const CM_A4100W: React.FC = () => {
       "@p_edunum": infomation.edunum,
       "@p_recdt": convertDateToStr(infomation.recdt),
       "@p_person": personListData.find(
-        (item: any) => item.user_name === infomation.person
+        (item: any) => item.user_name == infomation.person
       )?.user_id,
       "@p_finyn":
         infomation.workType == "N1"
           ? ""
-          : infomation.finyn === true
+          : infomation.finyn == true
           ? "Y"
           : "N",
       "@p_title": infomation.title,
@@ -1614,7 +1614,7 @@ const CM_A4100W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D" || paraDataDeleted.work_type === "D1")
+    if (paraDataDeleted.work_type == "D" || paraDataDeleted.work_type == "D1")
       fetchToDelete();
   }, [paraDataDeleted]);
 
@@ -1636,7 +1636,7 @@ const CM_A4100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let array: any[] = [];
 
       deletedMainRows.map((item: any) => {
@@ -1686,24 +1686,24 @@ const CM_A4100W: React.FC = () => {
 
     const dataItem = subDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (infomation.workType == "" && dataItem.length === 0) {
+    if (infomation.workType == "" && dataItem.length == 0) {
       setInfomation((prev) => ({
         ...prev,
         workType: "N1",
       }));
     }
-    if (infomation.workType == "U" && dataItem.length === 0) {
+    if (infomation.workType == "U" && dataItem.length == 0) {
       setInfomation((prev) => ({
         ...prev,
         workType: "U1",
       }));
     }
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
     let dataArr: TdataArr = {
       row_status_s: [],
       seq_s: [],
@@ -1792,10 +1792,10 @@ const CM_A4100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (tabSelected == 0) {
         const isLastDataDeleted =
-          mainDataResult.data.length === 1 && filters.pgNum > 0;
+          mainDataResult.data.length == 1 && filters.pgNum > 0;
         const findRowIndex = mainDataResult.data.findIndex(
           (row: any) =>
             row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -1827,7 +1827,7 @@ const CM_A4100W: React.FC = () => {
         }
       } else {
         const isLastDataDeleted =
-          mainDataResult2.data.length === 1 && filters.pgNum > 0;
+          mainDataResult2.data.length == 1 && filters.pgNum > 0;
         const findRowIndex = mainDataResult2.data.findIndex(
           (row: any) =>
             row[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
@@ -1917,7 +1917,7 @@ const CM_A4100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
@@ -1963,7 +1963,7 @@ const CM_A4100W: React.FC = () => {
             ...item,
             attdatnum: attdatnum,
             files: files,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : { ...item }
     );
@@ -2169,10 +2169,10 @@ const CM_A4100W: React.FC = () => {
                   mainDataResult.data.map((row) => ({
                     ...row,
                     person: personListData.find(
-                      (item: any) => item.user_id === row.person
+                      (item: any) => item.user_id == row.person
                     )?.user_name,
                     edudiv: edudivListData.find(
-                      (item: any) => item.sub_code === row.edudiv
+                      (item: any) => item.sub_code == row.edudiv
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
@@ -2207,7 +2207,7 @@ const CM_A4100W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -2226,7 +2226,7 @@ const CM_A4100W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : undefined
                           }
@@ -2417,7 +2417,7 @@ const CM_A4100W: React.FC = () => {
                     mainDataResult2.data.map((row) => ({
                       ...row,
                       person: personListData.find(
-                        (item: any) => item.user_id === row.person
+                        (item: any) => item.user_id == row.person
                       )?.user_name,
                       [SELECTED_FIELD]: selectedState2[idGetter2(row)],
                     })),
@@ -2452,7 +2452,7 @@ const CM_A4100W: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -2469,7 +2469,7 @@ const CM_A4100W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell2
                                 : undefined
                             }
@@ -2709,7 +2709,7 @@ const CM_A4100W: React.FC = () => {
                   >
                     <GridColumn field="rowstatus" title=" " width="50px" />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList3"].map(
+                      customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2726,7 +2726,7 @@ const CM_A4100W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? subTotalFooterCell
                                   : undefined
                               }

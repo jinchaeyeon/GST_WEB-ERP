@@ -124,11 +124,11 @@ const CopyWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
-        proccd: defaultOption.find((item: any) => item.id === "proccd")
-          .valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
+        proccd: defaultOption.find((item: any) => item.id == "proccd")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -159,21 +159,21 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
       );
       const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA029")
       );
 
       fetchQuery(itemacntQueryStr, setItemacntListData);
@@ -200,7 +200,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -571,7 +571,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -659,7 +659,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -725,7 +725,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const datas = mainDataResult.data.filter(
         (item: any) => item.num == Object.getOwnPropertyNames(selectedState)[0]
       )[0];
@@ -1105,7 +1105,7 @@ const CopyWindow = ({
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "doqty") {
       const newData = detailDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY3] === dataItem[DATA_ITEM_KEY3]
+        item[DATA_ITEM_KEY3] == dataItem[DATA_ITEM_KEY3]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1346,10 +1346,10 @@ const CopyWindow = ({
               mainDataResult.data.map((row) => ({
                 ...row,
                 person: personListData.find(
-                  (item: any) => item.user_id === row.person
+                  (item: any) => item.user_id == row.person
                 )?.user_name,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -1444,10 +1444,10 @@ const CopyWindow = ({
                 detailDataResult.data.map((row) => ({
                   ...row,
                   qtyunit: qtyunitListData.find(
-                    (item: any) => item.sub_code === row.qtyunit
+                    (item: any) => item.sub_code == row.qtyunit
                   )?.code_name,
                   itemacnt: itemacntListData.find(
-                    (item: any) => item.sub_code === row.itemacnt
+                    (item: any) => item.sub_code == row.itemacnt
                   )?.code_name,
                   [SELECTED_FIELD]: detailselectedState[idGetter2(row)], //선택된 데이터
                 })),
@@ -1508,10 +1508,10 @@ const CopyWindow = ({
                 detailDataResult2.data.map((row) => ({
                   ...row,
                   qtyunit: qtyunitListData.find(
-                    (item: any) => item.sub_code === row.qtyunit
+                    (item: any) => item.sub_code == row.qtyunit
                   )?.code_name,
                   itemacnt: itemacntListData.find(
-                    (item: any) => item.sub_code === row.itemacnt
+                    (item: any) => item.sub_code == row.itemacnt
                   )?.code_name,
                   [SELECTED_FIELD]: detailselectedState2[idGetter3(row)], //선택된 데이터
                 })),
@@ -1621,16 +1621,16 @@ const CopyWindow = ({
               subDataResult.data.map((row) => ({
                 ...row,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
                 itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                  (item: any) => item.sub_code == row.itemacnt
                 )?.code_name,
                 doexdiv: doexdivListData.find(
-                  (item: any) => item.sub_code === row.doexdiv
+                  (item: any) => item.sub_code == row.doexdiv
                 )?.code_name,
                 taxdiv: taxdivListData.find(
-                  (item: any) => item.sub_code === row.taxdiv
+                  (item: any) => item.sub_code == row.taxdiv
                 )?.code_name,
                 reqdt: isValidDate(row.reqdt)
                   ? new Date(dateformat(row.reqdt))

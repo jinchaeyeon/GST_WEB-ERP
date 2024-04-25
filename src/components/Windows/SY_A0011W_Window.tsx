@@ -89,7 +89,7 @@ const KendoWindow = ({
   const processApi = useApi();
 
   useEffect(() => {
-    if (workType === "U" || isCopy === true) {
+    if (workType == "U" || isCopy == true) {
       fetchMain();
     }
   }, []);
@@ -125,7 +125,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const row = data.tables[0].Rows[0];
 
       setInitialVal((prev) => {
@@ -179,8 +179,8 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
-      if (workType === "U") {
+    if (data.isSuccess == true) {
+      if (workType == "U") {
         reloadData("U");
         fetchMain();
       } else {
@@ -219,7 +219,7 @@ const KendoWindow = ({
       user_group_id: initialVal.user_group_id,
       user_group_name: initialVal.user_group_name,
       memo: initialVal.memo,
-      use_yn: initialVal.use_yn === "Y" ? "Y" : "N",
+      use_yn: initialVal.use_yn == "Y" ? "Y" : "N",
     }));
   };
 
@@ -229,7 +229,7 @@ const KendoWindow = ({
 
   return (
     <Window
-      title={workType === "N" ? "사용자그룹 생성" : "사용자그룹 정보"}
+      title={workType == "N" ? "사용자그룹 생성" : "사용자그룹 정보"}
       width={position.width}
       height={position.height}
       onMove={handleMove}

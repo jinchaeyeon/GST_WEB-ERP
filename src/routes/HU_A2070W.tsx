@@ -111,13 +111,13 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "orgdiv" ? "L_BA001" : field === "prsnnum" ? "L_HU250T" : "";
+    field == "orgdiv" ? "L_BA001" : field == "prsnnum" ? "L_HU250T" : "";
 
-  const valueField = field === "prsnnum" ? "prsnnum" : undefined;
-  const textField = field === "prsnnum" ? "prsnnm" : undefined;
+  const valueField = field == "prsnnum" ? "prsnnum" : undefined;
+  const textField = field == "prsnnum" ? "prsnnm" : undefined;
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -203,17 +203,17 @@ const HU_A2070W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        orgdiv: defaultOption.find((item: any) => item.id === "orgdiv")
-          .valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        rtrchk: defaultOption.find((item: any) => item.id === "rtrchk")
-          .valueCode,
-        prsnnum: defaultOption.find((item: any) => item.id === "prsnnum")
-          .valueCode,
-        latechk: defaultOption.find((item: any) => item.id === "latechk")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
+        orgdiv: defaultOption.find((item: any) => item.id == "orgdiv")
+          ?.valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
+          ?.valueCode,
+        prsnnum: defaultOption.find((item: any) => item.id == "prsnnum")
+          ?.valueCode,
+        latechk: defaultOption.find((item: any) => item.id == "latechk")
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
       }));
@@ -234,7 +234,7 @@ const HU_A2070W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const prsnnumQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU250T")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU250T")
       );
 
       fetchQuery(prsnnumQueryStr, setPrsnnumListData);
@@ -257,7 +257,7 @@ const HU_A2070W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -364,7 +364,7 @@ const HU_A2070W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -467,7 +467,7 @@ const HU_A2070W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -554,7 +554,7 @@ const HU_A2070W: React.FC = () => {
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
     const prsnnum = prsnnumListData.find(
-      (item: any) => item.prsnnm === selectedRowData.prsnnum
+      (item: any) => item.prsnnm == selectedRowData.prsnnum
     )?.prsnnum;
     setPage2(initialPageState);
     setFilters2((prev) => ({
@@ -710,7 +710,7 @@ const HU_A2070W: React.FC = () => {
       (field == "dutydt" && dataItem.rowstatus == "N")
     ) {
       const newData = mainDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY2] === dataItem[DATA_ITEM_KEY2]
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -796,7 +796,7 @@ const HU_A2070W: React.FC = () => {
     try {
       const dataItem = mainDataResult2.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
@@ -872,7 +872,7 @@ const HU_A2070W: React.FC = () => {
       };
       if (valid2 == true) {
         if (valid == true) {
-          if (dataItem.length === 0 && deletedMainRows2.length == 0)
+          if (dataItem.length == 0 && deletedMainRows2.length == 0)
             return false;
           dataItem.forEach((item: any, idx: number) => {
             const {
@@ -991,7 +991,7 @@ const HU_A2070W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
@@ -1301,7 +1301,7 @@ const HU_A2070W: React.FC = () => {
                 mainDataResult.data.map((row) => ({
                   ...row,
                   prsnnum: prsnnumListData.find(
-                    (item: any) => item.prsnnum === row.prsnnum
+                    (item: any) => item.prsnnum == row.prsnnum
                   )?.prsnnm,
                   [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                 })),
@@ -1435,7 +1435,7 @@ const HU_A2070W: React.FC = () => {
                 editable={false}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1458,7 +1458,7 @@ const HU_A2070W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 2
+                          item.sortOrder == 2
                             ? mainTotalFooterCell2
                             : undefined
                         }

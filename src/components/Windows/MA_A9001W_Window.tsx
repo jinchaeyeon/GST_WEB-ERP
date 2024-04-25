@@ -115,7 +115,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     mainDataState,
     setMainDataState,
   } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -165,7 +165,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {accountWindowVisible && (
@@ -215,7 +215,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
     mainDataState,
     setMainDataState,
   } = useContext(FormContext2);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -266,7 +266,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {depositWindowVisible && (
@@ -286,7 +286,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   const field = props.field ?? "";
   const bizComponentIdVal = field == "drcrdiv" ? "R_DRCR" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -342,9 +342,9 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -364,7 +364,7 @@ const CopyWindow = ({
               ...item,
               acntcd: acntcd,
               acntnm: acntnm,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
             }
           : {
               ...item,
@@ -389,7 +389,7 @@ const CopyWindow = ({
               acntnumnm: acntsrtnm,
               acntnum: acntsrtnum,
               bankacntnum: bankacntnum,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
             }
           : {
               ...item,
@@ -413,7 +413,7 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const drcrdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC001")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC001")
       );
 
       fetchQuery(drcrdivQueryStr, setDrcrdivListData);
@@ -436,7 +436,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -541,7 +541,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -727,7 +727,7 @@ const CopyWindow = ({
 
     if (valid == true) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,

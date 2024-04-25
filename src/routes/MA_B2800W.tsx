@@ -141,7 +141,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
     </>
@@ -193,16 +193,16 @@ const MA_B2800W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        inkind: defaultOption.find((item: any) => item.id === "inkind")
-          .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
-          .valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
-        doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
-          .valueCode,
-        purdt: defaultOption.find((item: any) => item.id === "purdt").valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        inkind: defaultOption.find((item: any) => item.id == "inkind")
+          ?.valueCode,
+        position: defaultOption.find((item: any) => item.id == "position")
+          ?.valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
+        doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
+          ?.valueCode,
+        purdt: defaultOption.find((item: any) => item.id == "purdt")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -231,16 +231,16 @@ const MA_B2800W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
       );
       fetchQuery(amtunitQueryStr, setAmtunitListData);
       fetchQuery(doexdivQueryStr, setDoexdivListData);
@@ -265,7 +265,7 @@ const MA_B2800W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -395,7 +395,7 @@ const MA_B2800W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -905,7 +905,7 @@ const MA_B2800W: React.FC = () => {
   const enterEdit2 = (dataItem: any, field: string) => {
     if (field == "") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1160,10 +1160,10 @@ const MA_B2800W: React.FC = () => {
                 mainDataResult.data.map((row) => ({
                   ...row,
                   doexdiv: doexdivListData.find(
-                    (item: any) => item.sub_code === row.doexdiv
+                    (item: any) => item.sub_code == row.doexdiv
                   )?.code_name,
                   amtunit: amtunitListData.find(
-                    (item: any) => item.sub_code === row.amtunit
+                    (item: any) => item.sub_code == row.amtunit
                   )?.code_name,
                   finyn: row.finyn == "Y" ? true : false,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],

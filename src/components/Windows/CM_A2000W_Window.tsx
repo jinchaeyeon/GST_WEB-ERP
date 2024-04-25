@@ -172,8 +172,8 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         recdt: setDefaultDate2(customOptionData, "recdt"),
-        rcvperson: defaultOption.find((item: any) => item.id === "rcvperson")
-          .valueCode,
+        rcvperson: defaultOption.find((item: any) => item.id == "rcvperson")
+          ?.valueCode,
         reqdt: setDefaultDate2(customOptionData, "reqdt"),
       }));
     }
@@ -198,11 +198,11 @@ const CopyWindow = ({
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
 
       fetchQuery(postcdQueryStr, setpostcdListData);
@@ -226,7 +226,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -393,7 +393,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -438,7 +438,7 @@ const CopyWindow = ({
   }, [filters]);
 
   useEffect(() => {
-    if (workType === "U" && data != undefined) {
+    if (workType == "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
         attdatnum: data.attdatnum,
@@ -492,11 +492,11 @@ const CopyWindow = ({
   const setCopyData = (data: any) => {
     const dataItem = data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     mainDataResult.data.map((item) => {
       if (item.num > temp) {
@@ -569,11 +569,11 @@ const CopyWindow = ({
       } else {
         const dataItem = mainDataResult.data.filter((item: any) => {
           return (
-            (item.rowstatus === "N" || item.rowstatus === "U") &&
+            (item.rowstatus == "N" || item.rowstatus == "U") &&
             item.rowstatus !== undefined
           );
         });
-        if (dataItem.length === 0) {
+        if (dataItem.length == 0) {
           setParaData((prev: any) => ({
             ...prev,
             workType: workType,
@@ -711,7 +711,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       reloadData(data.returnString);
       setUnsavedName([]);
       if (ParaData.workType == "N") {
@@ -795,7 +795,7 @@ const CopyWindow = ({
       (field == "loadok" && userId == dataItem.user_id)
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -916,7 +916,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "업무지시생성" : "업무지시정보"}
+        title={workType == "N" ? "업무지시생성" : "업무지시정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -1193,10 +1193,10 @@ const CopyWindow = ({
                       ? ""
                       : row.rowstatus,
                   dptcd: dptcdListData.find(
-                    (item: any) => item.dptcd === row.dptcd
+                    (item: any) => item.dptcd == row.dptcd
                   )?.dptnm,
                   postcd: postcdListData.find(
-                    (item: any) => item.sub_code === row.postcd
+                    (item: any) => item.sub_code == row.postcd
                   )?.code_name,
                   chooses:
                     row.chooses == "Y"

@@ -175,7 +175,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -455,7 +455,7 @@ const KendoWindow = ({
   const onSaveClick = () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -471,7 +471,7 @@ const KendoWindow = ({
     if (valid != true) {
       alert("필수값을 채워주세요.");
     } else {
-      if (dataItem.length === 0 && deletedMainRows.length == 0) {
+      if (dataItem.length == 0 && deletedMainRows.length == 0) {
         onClose();
       } else {
         let dataArr: TdataArr = {
@@ -580,7 +580,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = [];
       let sum = 0;
       mainDataResult.data.map((item) => {

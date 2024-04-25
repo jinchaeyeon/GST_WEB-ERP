@@ -700,7 +700,7 @@ const FlowChart = (props) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (Information.attdatnum != "")
         setDeletedAttadatnums([Information.attdatnum]);
 
@@ -764,7 +764,7 @@ const FlowChart = (props) => {
   }
 
   const handleFileUpload = async (files) => {
-    if (files === null) return false;
+    if (files == null) return false;
 
     for (const file of files) {
       if (file.size > 1048576) {
@@ -795,7 +795,7 @@ const FlowChart = (props) => {
   };
 
   const handleFileUpload2 = async (files) => {
-    if (files === null) return false;
+    if (files == null) return false;
 
     for (const file of files) {
       if (file.size > 1048576) {

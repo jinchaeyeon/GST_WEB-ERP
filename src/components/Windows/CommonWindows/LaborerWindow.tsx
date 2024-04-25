@@ -204,7 +204,7 @@ const LaborerWindow = ({ setVisible, setData, modal = false }: IWindow) => {
 
   const onConfirmBtnClick = (props: any) => {
     const selectedData = mainDataResult.data.find(
-      (row: any) => row[DATA_ITEM_KEY] === Object.keys(selectedState)[0]
+      (row: any) => row[DATA_ITEM_KEY] == Object.keys(selectedState)[0]
     );
     selectData(selectedData);
   };

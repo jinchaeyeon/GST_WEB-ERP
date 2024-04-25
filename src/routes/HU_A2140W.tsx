@@ -101,10 +101,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   UseBizComponent("L_HU089", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "stddiv" ? "L_HU089" : "";
+  const bizComponentIdVal = field == "stddiv" ? "L_HU089" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -135,7 +135,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setAttdatnum, setFiles } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -186,7 +186,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -287,7 +287,7 @@ const HU_A2140W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
+        dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -308,15 +308,15 @@ const HU_A2140W: React.FC = () => {
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
 
       const appynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_APPSTS")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_APPSTS")
       );
       fetchQuery(postcdQueryStr, setpostcdListData);
       fetchQuery(dptcdQueryStr, setdptcdListData);
@@ -340,7 +340,7 @@ const HU_A2140W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -454,7 +454,7 @@ const HU_A2140W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -490,7 +490,7 @@ const HU_A2140W: React.FC = () => {
       if (totalRowCnt > 0) {
         // find_row_value 행 선택, find_row_value 없는 경우 첫번째 행 선택
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) =>
@@ -656,7 +656,7 @@ const HU_A2140W: React.FC = () => {
       field != "dptcd"
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -790,7 +790,7 @@ const HU_A2140W: React.FC = () => {
             ...item,
             attdatnum: attdatnum,
             files: files,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -1018,7 +1018,7 @@ const HU_A2140W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
         mainDataResult.data.length == 0 && filters.pgNum > 0;
       let array: any[] = [];
@@ -1105,12 +1105,12 @@ const HU_A2140W: React.FC = () => {
     let valid3 = true;
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     dataItem.map((item) => {
       if (item.prsnnum != userId) {
@@ -1505,13 +1505,13 @@ const HU_A2140W: React.FC = () => {
                       ? ""
                       : row.rowstatus,
                   dptcd: dptcdListData.find(
-                    (item: any) => item.dptcd === row.dptcd
+                    (item: any) => item.dptcd == row.dptcd
                   )?.dptnm,
                   postcd: postcdListData.find(
-                    (item: any) => item.sub_code === row.postcd
+                    (item: any) => item.sub_code == row.postcd
                   )?.code_name,
                   appyn: appynListData.find(
-                    (item: any) => item.code === row.appyn
+                    (item: any) => item.code == row.appyn
                   )?.name,
                   enddate: row.enddate
                     ? new Date(dateformat(row.enddate))
@@ -1570,7 +1570,7 @@ const HU_A2140W: React.FC = () => {
                 cell={CheckBoxCell}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1594,7 +1594,7 @@ const HU_A2140W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 1 ? mainTotalFooterCell : undefined
+                          item.sortOrder == 1 ? mainTotalFooterCell : undefined
                         }
                       />
                     )

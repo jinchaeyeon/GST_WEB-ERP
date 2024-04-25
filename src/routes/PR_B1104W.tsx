@@ -113,8 +113,8 @@ const PR_B1104W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        option: defaultOption.find((item: any) => item.id === "option")
-          .valueCode,
+        option: defaultOption.find((item: any) => item.id == "option")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -136,13 +136,13 @@ const PR_B1104W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
 
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
@@ -167,7 +167,7 @@ const PR_B1104W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -271,7 +271,7 @@ const PR_B1104W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
         orddt: item.orddt == "" ? "" : dateformat2(item.orddt),
@@ -329,7 +329,7 @@ const PR_B1104W: React.FC = () => {
       data2 = null;
     }
 
-    if (data2.isSuccess === true) {
+    if (data2.isSuccess == true) {
       setCardData(data2.tables);
     }
 
@@ -340,7 +340,7 @@ const PR_B1104W: React.FC = () => {
       data3 = null;
     }
 
-    if (data3.isSuccess === true) {
+    if (data3.isSuccess == true) {
       const rows = data3.tables[0].Rows.map(
         (item: { okcnt: number; totcnt: number }) => ({
           ...item,
@@ -366,7 +366,7 @@ const PR_B1104W: React.FC = () => {
       data3 = null;
     }
 
-    if (data3.isSuccess === true) {
+    if (data3.isSuccess == true) {
       const rows = data3.tables[0].Rows;
 
       if (rows.length > 0) {

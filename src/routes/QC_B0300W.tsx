@@ -115,13 +115,13 @@ const QC_B0300W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        qcno: defaultOption.find((item: any) => item.id === "qcno").valueCode,
-        proccd: defaultOption.find((item: any) => item.id === "proccd")
-          .valueCode,
-        inspeccd: defaultOption.find((item: any) => item.id === "inspeccd")
-          .valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        qcno: defaultOption.find((item: any) => item.id == "qcno")?.valueCode,
+        proccd: defaultOption.find((item: any) => item.id == "proccd")
+          ?.valueCode,
+        inspeccd: defaultOption.find((item: any) => item.id == "inspeccd")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -144,10 +144,10 @@ const QC_B0300W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       const inspeccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC100")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_QC100")
       );
 
       fetchQuery(proccdQueryStr, setProccdListData);
@@ -171,7 +171,7 @@ const QC_B0300W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -237,7 +237,7 @@ const QC_B0300W: React.FC = () => {
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
     work_type: "Q",
-    orgdiv: sessionItem.find((sessionItem) => sessionItem.code === "orgdiv")
+    orgdiv: sessionItem.find((sessionItem) => sessionItem.code == "orgdiv")
       ?.value,
     location: "",
     frdt: new Date(),
@@ -286,7 +286,7 @@ const QC_B0300W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const oks = data.tables[0].Rows[0];
       setOk(oks.jgmtText1);
       setOk1(oks.jgmtText2);
@@ -636,10 +636,10 @@ const QC_B0300W: React.FC = () => {
               mainDataResult.data.map((row, idx) => ({
                 ...row,
                 inspeccd: inspeccdListData.find(
-                  (items: any) => items.sub_code === row.inspeccd
+                  (items: any) => items.sub_code == row.inspeccd
                 )?.code_name,
                 proccd: proccdListData.find(
-                  (items: any) => items.sub_code === row.proccd
+                  (items: any) => items.sub_code == row.proccd
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),
@@ -674,7 +674,7 @@ const QC_B0300W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -688,7 +688,7 @@ const QC_B0300W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )

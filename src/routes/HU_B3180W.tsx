@@ -176,8 +176,8 @@ const HU_B3180W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
-        rtrchk: defaultOption.find((item: any) => item.id === "rtrchk")
-          .valueCode,
+        rtrchk: defaultOption.find((item: any) => item.id == "rtrchk")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -221,7 +221,7 @@ const HU_B3180W: React.FC = () => {
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
 
@@ -245,7 +245,7 @@ const HU_B3180W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -309,7 +309,7 @@ const HU_B3180W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 

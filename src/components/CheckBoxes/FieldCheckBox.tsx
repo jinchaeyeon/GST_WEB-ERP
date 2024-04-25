@@ -19,7 +19,7 @@ const DDL: React.FC<TDDL> = ({ fieldRenderProps }: TDDL) => {
 
   return (
     <Checkbox
-      value={value === "Y" || value === true ? true : false}
+      value={value == "Y" || value == true ? true : false}
       valid={valid}
       id={id}
       {...others}

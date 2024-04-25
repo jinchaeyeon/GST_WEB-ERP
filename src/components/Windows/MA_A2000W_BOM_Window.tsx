@@ -95,15 +95,15 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "itemlvl1"
+    field == "itemlvl1"
       ? "L_BA171"
-      : field === "itemlvl2"
+      : field == "itemlvl2"
       ? "L_BA172"
-      : field === "itemlvl3"
+      : field == "itemlvl3"
       ? "L_BA173"
       : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -213,18 +213,18 @@ const CopyWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
-        doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
-        ordsts: defaultOption.find((item: any) => item.id === "ordsts")
-          .valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn2")
-          .valueCode,
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
+        doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
+        ordsts: defaultOption.find((item: any) => item.id == "ordsts")
+          ?.valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn2")
+          ?.valueCode,
+        dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -257,19 +257,19 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
@@ -295,7 +295,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -492,7 +492,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -559,23 +559,23 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
           rowstatus: "N",
           itemacnt: itemacntListData.find(
-            (item: any) => item.sub_code === row.itemacnt
+            (item: any) => item.sub_code == row.itemacnt
           )?.code_name,
           itemlvl1: itemlvl1ListData.find(
-            (item: any) => item.sub_code === row.itemlvl1
+            (item: any) => item.sub_code == row.itemlvl1
           )?.code_name,
           itemlvl2: itemlvl2ListData.find(
-            (item: any) => item.sub_code === row.itemlvl2
+            (item: any) => item.sub_code == row.itemlvl2
           )?.code_name,
           itemlvl3: itemlvl3ListData.find(
-            (item: any) => item.sub_code === row.itemlvl3
+            (item: any) => item.sub_code == row.itemlvl3
           )?.code_name,
         };
       });
@@ -881,17 +881,17 @@ const CopyWindow = ({
         chk: selectRow.chk,
         insiz: selectRow.insiz,
         itemacnt: itemacntListData.find(
-          (item: any) => item.code_name === selectRow.itemacnt
+          (item: any) => item.code_name == selectRow.itemacnt
         )?.sub_code,
         itemcd: selectRow.ItemCD,
         itemlvl1: itemlvl1ListData.find(
-          (item: any) => item.code_name === selectRow.itemlvl1
+          (item: any) => item.code_name == selectRow.itemlvl1
         )?.sub_code,
         itemlvl2: itemlvl2ListData.find(
-          (item: any) => item.code_name === selectRow.itemlvl2
+          (item: any) => item.code_name == selectRow.itemlvl2
         )?.sub_code,
         itemlvl3: itemlvl3ListData.find(
-          (item: any) => item.code_name === selectRow.itemlvl3
+          (item: any) => item.code_name == selectRow.itemlvl3
         )?.sub_code,
         itemnm: selectRow.ItemNM,
         itemno: selectRow.itemno,
@@ -978,7 +978,7 @@ const CopyWindow = ({
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "itemcd" && field != "insiz" && field != "itemnm") {
       const newData = subDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY3] === dataItem[DATA_ITEM_KEY3]
+        item[DATA_ITEM_KEY3] == dataItem[DATA_ITEM_KEY3]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1272,10 +1272,10 @@ const CopyWindow = ({
               subDataResult.data.map((row) => ({
                 ...row,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
                 itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                  (item: any) => item.sub_code == row.itemacnt
                 )?.code_name,
                 [SELECTED_FIELD]: subselectedState[idGetter3(row)], //선택된 데이터
               })),

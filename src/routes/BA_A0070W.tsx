@@ -84,10 +84,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   UseBizComponent("L_BA020", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "amtunit" ? "L_BA020" : "";
+  const bizComponentIdVal = field == "amtunit" ? "L_BA020" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -177,9 +177,9 @@ const BA_A0070W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        site: defaultOption.find((item: any) => item.id === "site").valueCode,
-        amtunit: defaultOption.find((item: any) => item.id === "amtunit")
-          .valueCode,
+        site: defaultOption.find((item: any) => item.id == "site")?.valueCode,
+        amtunit: defaultOption.find((item: any) => item.id == "amtunit")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -197,7 +197,7 @@ const BA_A0070W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const siteQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SA010")
       );
 
       fetchQuery(siteQueryStr, setSiteListData);
@@ -220,7 +220,7 @@ const BA_A0070W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -320,7 +320,7 @@ const BA_A0070W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -419,7 +419,7 @@ const BA_A0070W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -664,7 +664,7 @@ const BA_A0070W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -871,13 +871,13 @@ const BA_A0070W: React.FC = () => {
 
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
     const dataItem2 = mainDataResult.data.filter((item: any) => {
-      return item.rowstatus === "N";
+      return item.rowstatus == "N";
     });
 
     const selectRow = subDataResult.data.filter(
@@ -901,7 +901,7 @@ const BA_A0070W: React.FC = () => {
       alert("기준일과 화폐단위가 둘다 중복됩니다.");
       return false;
     }
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
     let dataArr: TdataArr = {
       basedt: [],
       rowstatus: [],
@@ -975,7 +975,7 @@ const BA_A0070W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted2 =
         subDataResult.data.length == 1 && subfilters.pgNum > 0;
       if (paraData.workType == "SAVE") {
@@ -1339,7 +1339,7 @@ const BA_A0070W: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1350,7 +1350,7 @@ const BA_A0070W: React.FC = () => {
                               width={item.width}
                               cell={DateCell}
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? SubTotalFooterCell
                                   : undefined
                               }
@@ -1481,7 +1481,7 @@ const BA_A0070W: React.FC = () => {
                       editable={false}
                     />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"].map(
+                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1510,7 +1510,7 @@ const BA_A0070W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell
                                   : undefined
                               }
@@ -1582,7 +1582,7 @@ const BA_A0070W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1593,7 +1593,7 @@ const BA_A0070W: React.FC = () => {
                           width={item.width}
                           cell={DateCell}
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? SubTotalFooterCell
                               : undefined
                           }
@@ -1694,7 +1694,7 @@ const BA_A0070W: React.FC = () => {
                   editable={false}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1723,7 +1723,7 @@ const BA_A0070W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : undefined
                           }

@@ -74,7 +74,7 @@ export const InsertImageDialog = (props: any) => {
   if (
     state &&
     state.selection.node &&
-    state.selection.node.type === state.schema.nodes[imageNode]
+    state.selection.node.type == state.schema.nodes[imageNode]
   ) {
     attrs = state.selection.node.attrs;
   }
@@ -149,7 +149,7 @@ export const InsertImageDialog = (props: any) => {
       initialHeight={480}
     >
       <TabStrip selected={selected} onSelect={onTabSelect} animation={false}>
-        {Object.entries(attrs).length === 0 && (
+        {Object.entries(attrs).length == 0 && (
           <TabStripTab title="Upload">
             <div className="k-edit-form-container pt-3 pb-3">
               <div className="k-edit-label">

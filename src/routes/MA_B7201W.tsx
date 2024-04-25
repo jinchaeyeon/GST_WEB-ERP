@@ -119,8 +119,8 @@ const MA_B7201W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        zeroyn: defaultOption.find((item: any) => item.id === "zeroyn")
-          .valueCode,
+        zeroyn: defaultOption.find((item: any) => item.id == "zeroyn")
+          ?.valueCode,
         isSearch: true,
       }));
     }
@@ -156,24 +156,24 @@ const MA_B7201W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
@@ -200,7 +200,7 @@ const MA_B7201W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -407,7 +407,7 @@ const MA_B7201W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -416,16 +416,16 @@ const MA_B7201W: React.FC = () => {
           group_category_name:
             "품목계정" +
             " : " +
-            itemacntListData.find((item: any) => item.sub_code === row.itemacnt)
+            itemacntListData.find((item: any) => item.sub_code == row.itemacnt)
               ?.code_name,
           itemlvl1: itemlvl1ListData.find(
-            (item: any) => item.sub_code === row.itemlvl1
+            (item: any) => item.sub_code == row.itemlvl1
           )?.code_name,
           itemlvl2: itemlvl2ListData.find(
-            (item: any) => item.sub_code === row.itemlvl2
+            (item: any) => item.sub_code == row.itemlvl2
           )?.code_name,
           itemlvl3: itemlvl3ListData.find(
-            (item: any) => item.sub_code === row.itemlvl3
+            (item: any) => item.sub_code == row.itemlvl3
           )?.code_name,
         };
       });
@@ -433,7 +433,7 @@ const MA_B7201W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.itemacnt === filters.find_row_value
+            (row: any) => row.itemacnt == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -549,7 +549,7 @@ const MA_B7201W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -608,7 +608,7 @@ const MA_B7201W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1121,7 +1121,7 @@ const MA_B7201W: React.FC = () => {
               expandField="expanded"
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1136,7 +1136,7 @@ const MA_B7201W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell
@@ -1166,10 +1166,10 @@ const MA_B7201W: React.FC = () => {
                   detailDataResult.data.map((row) => ({
                     ...row,
                     qtyunit: qtyunitListData.find(
-                      (item: any) => item.sub_code === row.qtyunit
+                      (item: any) => item.sub_code == row.qtyunit
                     )?.code_name,
                     person: personListData.find(
-                      (item: any) => item.user_id === row.person
+                      (item: any) => item.user_id == row.person
                     )?.user_name,
                     [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
                   })),
@@ -1203,7 +1203,7 @@ const MA_B7201W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1220,7 +1220,7 @@ const MA_B7201W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? detailTotalFooterCell
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell2
@@ -1249,10 +1249,10 @@ const MA_B7201W: React.FC = () => {
                   detailDataResult2.data.map((row) => ({
                     ...row,
                     qtyunit: qtyunitListData.find(
-                      (item: any) => item.sub_code === row.qtyunit
+                      (item: any) => item.sub_code == row.qtyunit
                     )?.code_name,
                     person: personListData.find(
-                      (item: any) => item.user_id === row.person
+                      (item: any) => item.user_id == row.person
                     )?.user_name,
                     [SELECTED_FIELD]: detailselectedState2[idGetter3(row)],
                   })),
@@ -1286,7 +1286,7 @@ const MA_B7201W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList3"].map(
+                  customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1303,7 +1303,7 @@ const MA_B7201W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? detailTotalFooterCell2
                               : numberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell3

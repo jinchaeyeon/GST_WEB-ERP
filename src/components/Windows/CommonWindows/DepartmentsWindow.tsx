@@ -52,7 +52,7 @@ const DepartmentsWindow = ({
     left: 300,
     top: 100,
     width: isMobile == true ? deviceWidth : 1000,
-    height: 800,
+    height: isMobile == true ? window.innerHeight * 0.9 : 800,
   });
   const DATA_ITEM_KEY = "dptcd";
   const idGetter = getter(DATA_ITEM_KEY);
@@ -181,7 +181,7 @@ const DepartmentsWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 

@@ -52,7 +52,7 @@ interface OrgData {
 // };
 const stringToHashCode = (str: string): number => {
   let hash = 0;
-  if (str.length === 0) return hash;
+  if (str.length == 0) return hash;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
     hash = (hash << 5) - hash + char;
@@ -103,7 +103,7 @@ const App: React.FC<OrgProps> = ({
   profile_img,
 }) => {
   const isProfileNeeded = (postcd: string | undefined) => {
-    return postcd === "이사" || postcd === "PM11";
+    return postcd == "이사" || postcd == "PM11";
   };
 
   return (
@@ -178,7 +178,7 @@ const ORG: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -201,11 +201,11 @@ const ORG: React.FC = () => {
     if (bizComponentData !== null) {
       const dtpcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
       fetchQuery(dtpcdQueryStr, (data: any) => {
         setDptcdListData(data);
@@ -277,7 +277,7 @@ const ORG: React.FC = () => {
 
     try {
       const data = await processApi<any>("procedure", parameters);
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         setInformation(data.tables[0].Rows);
       } else {
         console.log("[에러발생]");
@@ -311,7 +311,7 @@ const ORG: React.FC = () => {
 
       try {
         const data = await processApi<any>("procedure", subparameters);
-        if (data.isSuccess === true) {
+        if (data.isSuccess == true) {
           tempCombinedResult = [...tempCombinedResult, ...data.tables[0].Rows];
         } else {
           console.log("[에러발생]");
@@ -344,7 +344,7 @@ const ORG: React.FC = () => {
         "@p_user_category": picFilters.user_category,
         "@p_user_id": picFilters.user_id,
         "@p_user_name": picFilters.user_name,
-        "@p_rtrchk": picFilters.radRtrchk === "T" ? "%" : picFilters.radRtrchk,
+        "@p_rtrchk": picFilters.radRtrchk == "T" ? "%" : picFilters.radRtrchk,
         "@p_usediv": picFilters.radUsediv,
         "@p_find_row_value": picFilters.find_row_value,
       },
@@ -356,7 +356,7 @@ const ORG: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
 
       const profileImageData = rows.map((row: any) => {
@@ -389,7 +389,7 @@ const ORG: React.FC = () => {
                   className="department"
                   style={{ marginBottom: "80px" }}
                 >
-                  {info.prntdptcd === "" && (
+                  {info.prntdptcd == "" && (
                     <div style={styles.departmentContainer}>
                       <p
                         className="departmentText"
@@ -401,15 +401,15 @@ const ORG: React.FC = () => {
                         {info.dptnm}
                       </p>
                       {combinedResult
-                        .filter((person) => person.dptcd === info.dptcd)
+                        .filter((person) => person.dptcd == info.dptcd)
                         .map((person, personIndex) => {
                           const profileData = profileImg.find(
-                            (item) => item.user_id === person.user_id
+                            (item) => item.user_id == person.user_id
                           );
 
                           return (
                             <div key={personIndex}>
-                              {personIndex === 0 && (
+                              {personIndex == 0 && (
                                 <div
                                   className="connector"
                                   style={{...styles.connector, marginLeft: "50%"}}
@@ -420,7 +420,7 @@ const ORG: React.FC = () => {
                                 postcd={
                                   postcdListData.find(
                                     (item: any) =>
-                                      item.sub_code === person.postcd
+                                      item.sub_code == person.postcd
                                   )?.code_name
                                 }
                                 profile_img={
@@ -438,7 +438,7 @@ const ORG: React.FC = () => {
                     <div style={{ display: "flex", justifyContent: "center" }}>
                     </div>
                     {information
-                      .filter((subInfo) => subInfo.prntdptcd === info.dptcd)
+                      .filter((subInfo) => subInfo.prntdptcd == info.dptcd)
                       .map((subInfo, subIndex, array) => (
                         <div key={subIndex} style={styles.departmentContainer}>
                           {(subIndex !== 0 || array.length > 1) && <div className="vertical-connector" style={styles.connector} />}
@@ -454,14 +454,14 @@ const ORG: React.FC = () => {
                             {subInfo.dptnm}
                           </p>
                           {combinedResult
-                            .filter((person) => person.dptcd === subInfo.dptcd)
+                            .filter((person) => person.dptcd == subInfo.dptcd)
                             .map((person, personIndex) => {
                               const profileData = profileImg.find(
-                                (item) => item.user_id === person.user_id
+                                (item) => item.user_id == person.user_id
                               );
                               return (
                                 <div key={personIndex}>
-                                  {personIndex === 0 && (
+                                  {personIndex == 0 && (
                                     <div
                                       className="connector"
                                       style={{...styles.connector, marginLeft: "50%",}}
@@ -476,7 +476,7 @@ const ORG: React.FC = () => {
                                       postcd={
                                         postcdListData.find(
                                           (item: any) =>
-                                            item.sub_code === person.postcd
+                                            item.sub_code == person.postcd
                                         )?.code_name
                                       }
                                       profile_img={

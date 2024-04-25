@@ -81,7 +81,7 @@ const KendoWindow = ({
             datas = null;
           }
 
-          if (datas.isSuccess === true) {
+          if (datas.isSuccess == true) {
             const rowCount = datas.tables[0].RowCount;
             const row = datas.tables[0].Rows[0];
 

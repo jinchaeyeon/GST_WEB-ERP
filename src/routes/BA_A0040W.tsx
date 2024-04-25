@@ -107,16 +107,16 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "unpitem"
+    field == "unpitem"
       ? "L_BA008"
-      : field === "amtunit"
+      : field == "amtunit"
       ? "L_BA020"
-      : field === "itemacnt"
+      : field == "itemacnt"
       ? "L_BA061"
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -172,6 +172,7 @@ const BA_A0040: React.FC = () => {
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("BA_A0040W", setCustomOptionData);
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
 
   //customOptionData 조회 후 디폴트 값 세팅
@@ -183,10 +184,10 @@ const BA_A0040: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
-          .valueCode,
-        itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
-          .valueCode,
+        raduseyn: defaultOption.find((item: any) => item.id == "raduseyn")
+          ?.valueCode,
+        itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -209,10 +210,10 @@ const BA_A0040: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
 
       fetchQuery(itemacntQueryStr, setItemacntListData);
@@ -236,7 +237,7 @@ const BA_A0040: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -474,7 +475,7 @@ const BA_A0040: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -488,7 +489,7 @@ const BA_A0040: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row[DATA_ITEM_KEY] === filters.find_row_value
+            (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -512,10 +513,10 @@ const BA_A0040: React.FC = () => {
       if (totalRowCnt > 0) {
         // find_row_value 행 선택, find_row_value 없는 경우 첫번째 행 선택
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find(
-                (row: any) => row[DATA_ITEM_KEY] === filters.find_row_value
+                (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
               );
 
         if (selectedRow != undefined) {
@@ -550,11 +551,11 @@ const BA_A0040: React.FC = () => {
             insiz: selectedRow.insiz,
             itemacnt:
               itemacntListData.find(
-                (item: any) => item.sub_code === selectedRow.itemacnt
+                (item: any) => item.sub_code == selectedRow.itemacnt
               )?.code_name == undefined
                 ? selectedRow.itemacnt
                 : itemacntListData.find(
-                    (item: any) => item.sub_code === selectedRow.itemacnt
+                    (item: any) => item.sub_code == selectedRow.itemacnt
                   )?.code_name,
             useyn: selectedRow.useyn == "Y" ? "Y" : "N",
             custcd: selectedRow.custcd,
@@ -640,11 +641,11 @@ const BA_A0040: React.FC = () => {
             insiz: rows[0].insiz,
             itemacnt:
               itemacntListData.find(
-                (item: any) => item.sub_code === rows[0].itemacnt
+                (item: any) => item.sub_code == rows[0].itemacnt
               )?.code_name == undefined
                 ? rows[0].itemacnt
                 : itemacntListData.find(
-                    (item: any) => item.sub_code === rows[0].itemacnt
+                    (item: any) => item.sub_code == rows[0].itemacnt
                   )?.code_name,
             useyn: rows[0].useyn == "Y" ? "Y" : "N",
             custcd: rows[0].custcd,
@@ -801,7 +802,7 @@ const BA_A0040: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -852,7 +853,7 @@ const BA_A0040: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          subfilters.find_row_value === ""
+          subfilters.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) =>
@@ -1503,7 +1504,7 @@ const BA_A0040: React.FC = () => {
     if (mainDataResult.data.length != 0) {
       const items = Object.getOwnPropertyNames(selectedState)[0];
       const data = mainDataResult.data.filter(
-        (item) => item.itemcd === items
+        (item) => item.itemcd == items
       )[0];
       setParaDataDeleted((prev) => ({
         ...prev,
@@ -1693,13 +1694,13 @@ const BA_A0040: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   const onSaveClick = async () => {
     const dataItem = subData2Result.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -1717,7 +1718,7 @@ const BA_A0040: React.FC = () => {
     }
 
     if (!valid) return false;
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
     let dataArr: TdataArr = {
       unpitem: [],
       rowstatus: [],
@@ -1794,10 +1795,10 @@ const BA_A0040: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       // 마지막 페이지의 1개 남은 데이터 삭제 시, 앞 페이지 조회하고, 그 외는 페이지 유지
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 1;
+        mainDataResult.data.length == 1 && filters.pgNum > 1;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -1869,7 +1870,7 @@ const BA_A0040: React.FC = () => {
       data = null;
     }
 
-    if (data && data.isSuccess === true) {
+    if (data && data.isSuccess == true) {
       const { returnString } = data;
       setFilters((prev) => ({
         ...prev,
@@ -1902,7 +1903,7 @@ const BA_A0040: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setsubFilters((prev) => ({
         ...prev,
         find_row_value: data.returnString,
@@ -1996,9 +1997,131 @@ const BA_A0040: React.FC = () => {
   return (
     <>
       {isMobile ? (
-        <GridContainerWrap>
+        <>
+          <TitleContainer>
+            <Title>품목관리</Title>
+
+            <ButtonContainer>
+              <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                  <tbody>
+                    <tr>
+                      <th>품목코드</th>
+                      <td>
+                        <Input
+                          name="itemcd"
+                          type="text"
+                          value={filters.itemcd}
+                          onChange={filterInputChange}
+                        />
+                        <ButtonInInput>
+                          <Button
+                            onClick={onItemWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>품목명</th>
+                      <td>
+                        <Input
+                          name="itemnm"
+                          type="text"
+                          value={filters.itemnm}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>품목계정</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="itemacnt"
+                            value={filters.itemacnt}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>사용여부</th>
+                      <td colSpan={3}>
+                        {customOptionData !== null && (
+                          <CustomOptionRadioGroup
+                            name="raduseyn"
+                            customOptionData={customOptionData}
+                            changeData={filterRadioChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>규격</th>
+                      <td>
+                        <Input
+                          name="insiz"
+                          type="text"
+                          value={filters.insiz}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>사양</th>
+                      <td>
+                        <Input
+                          name="spec"
+                          type="text"
+                          value={filters.spec}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>비고</th>
+                      <td>
+                        <Input
+                          name="remark"
+                          type="text"
+                          value={filters.remark}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>업체코드</th>
+                      <td>
+                        <Input
+                          name="custcd"
+                          type="text"
+                          value={filters.custcd}
+                          onChange={filterInputChange}
+                        />
+                        <ButtonInInput>
+                          <Button
+                            onClick={onCustWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+                      <th>업체명</th>
+                      <td>
+                        <Input
+                          name="custnm"
+                          type="text"
+                          value={filters.custnm}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FilterBox>
+              </FilterContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="BA_A0040W"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
           <Swiper
-            className="leading_95_Swiper"
+            className="leading_80_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -2008,132 +2131,8 @@ const BA_A0040: React.FC = () => {
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`,overflow: "auto" }}
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
-                <TitleContainer>
-                  <Title>품목관리</Title>
-
-                  <ButtonContainer>
-                    {permissions && (
-                      <TopButtons
-                        search={search}
-                        exportExcel={exportExcel}
-                        permissions={permissions}
-                        pathname="BA_A0040W"
-                      />
-                    )}
-                  </ButtonContainer>
-                </TitleContainer>
-                <FilterContainer>
-                  <FilterBox
-                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                  >
-                    <tbody>
-                      <tr>
-                        <th>품목코드</th>
-                        <td>
-                          <Input
-                            name="itemcd"
-                            type="text"
-                            value={filters.itemcd}
-                            onChange={filterInputChange}
-                          />
-                          <ButtonInInput>
-                            <Button
-                              onClick={onItemWndClick}
-                              icon="more-horizontal"
-                              fillMode="flat"
-                            />
-                          </ButtonInInput>
-                        </td>
-                        <th>품목명</th>
-                        <td>
-                          <Input
-                            name="itemnm"
-                            type="text"
-                            value={filters.itemnm}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>품목계정</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="itemacnt"
-                              value={filters.itemacnt}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange}
-                            />
-                          )}
-                        </td>
-                        <th>사용여부</th>
-                        <td colSpan={3}>
-                          {customOptionData !== null && (
-                            <CustomOptionRadioGroup
-                              name="raduseyn"
-                              customOptionData={customOptionData}
-                              changeData={filterRadioChange}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>규격</th>
-                        <td>
-                          <Input
-                            name="insiz"
-                            type="text"
-                            value={filters.insiz}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>사양</th>
-                        <td>
-                          <Input
-                            name="spec"
-                            type="text"
-                            value={filters.spec}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>비고</th>
-                        <td>
-                          <Input
-                            name="remark"
-                            type="text"
-                            value={filters.remark}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>업체코드</th>
-                        <td>
-                          <Input
-                            name="custcd"
-                            type="text"
-                            value={filters.custcd}
-                            onChange={filterInputChange}
-                          />
-                          <ButtonInInput>
-                            <Button
-                              onClick={onCustWndClick}
-                              icon="more-horizontal"
-                              fillMode="flat"
-                            />
-                          </ButtonInInput>
-                        </td>
-                        <th>업체명</th>
-                        <td>
-                          <Input
-                            name="custnm"
-                            type="text"
-                            value={filters.custnm}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FilterBox>
-                </FilterContainer>
                 <GridTitleContainer>
                   <ButtonContainer>
                     <Button
@@ -2169,7 +2168,7 @@ const BA_A0040: React.FC = () => {
                   fileName="품목관리"
                 >
                   <Grid
-                    style={{ height: "75vh" }}
+                    style={{ height: `${deviceHeight * 0.8}px` }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -2213,7 +2212,7 @@ const BA_A0040: React.FC = () => {
                     rowHeight={30}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"].map(
+                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2230,7 +2229,7 @@ const BA_A0040: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell
                                   : undefined
                               }
@@ -2240,8 +2239,12 @@ const BA_A0040: React.FC = () => {
                   </Grid>
                 </ExcelExport>
               </GridContainer>
-              </SwiperSlide>
-            <SwiperSlide key={1} className="leading_PDA_custom" style={{ display: 'flex', flexDirection: 'column' }}>
+            </SwiperSlide>
+            <SwiperSlide
+              key={1}
+              className="leading_PDA_custom"
+              style={{ display: "flex", flexDirection: "column" }}
+            >
               <div
                 style={{
                   display: "flex",
@@ -2260,18 +2263,23 @@ const BA_A0040: React.FC = () => {
                   이전
                 </Button>
               </div>
-              <GridContainer style={{ minHeight: "70vh" ,width: `${deviceWidth-30}px`}}>
-
+              <GridContainer
+                style={{ minHeight: "70vh", width: `${deviceWidth - 30}px` }}
+              >
                 <TabStrip
                   selected={tabSelected}
                   onSelect={handleSelectTab}
                   style={{ width: "100%" }}
                 >
                   <TabStripTab title="상세정보">
-                    <GridContainer
-                      style={{ height: "75vh", overflow:"scroll" }}
-                    >
-                      <FormBoxWrap>
+                    <GridContainer>
+                      <FormBoxWrap
+                        style={{
+                          height: `${deviceHeight * 0.67}px`,
+                          width: "100%",
+                          overflow: "scroll",
+                        }}
+                      >
                         <FormBox>
                           <tbody>
                             <tr>
@@ -2557,9 +2565,7 @@ const BA_A0040: React.FC = () => {
                     </GridContainer>
                   </TabStripTab>
                   <TabStripTab title="단가">
-                    <GridContainer
-                      style={{ height: "75vh" }}
-                    >
+                    <GridContainer>
                       <GridTitleContainer>
                         <ButtonContainer>
                           <Button
@@ -2592,7 +2598,11 @@ const BA_A0040: React.FC = () => {
                         fileName="품목관리"
                       >
                         <Grid
-                          style={{ height: "72vh" }}
+                          style={{
+                            height: `${deviceHeight * 0.63}px`,
+                            width: `${deviceWidth - 30}px`,
+                            overflow: "scroll",
+                          }}
                           data={process(
                             subData2Result.data.map((row) => ({
                               ...row,
@@ -2650,7 +2660,7 @@ const BA_A0040: React.FC = () => {
                           {customOptionData !== null &&
                             customOptionData.menuCustomColumnOptions[
                               "grdList2"
-                            ].map(
+                            ]?.map(
                               (item: any, idx: number) =>
                                 item.sortOrder !== -1 && (
                                   <GridColumn
@@ -2676,7 +2686,7 @@ const BA_A0040: React.FC = () => {
                                         : undefined
                                     }
                                     footerCell={
-                                      item.sortOrder === 0
+                                      item.sortOrder == 0
                                         ? sub2TotalFooterCell
                                         : undefined
                                     }
@@ -2691,7 +2701,7 @@ const BA_A0040: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
           </Swiper>
-        </GridContainerWrap>
+        </>
       ) : (
         <>
           <TitleContainer>
@@ -2897,7 +2907,7 @@ const BA_A0040: React.FC = () => {
                 rowHeight={30}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -2914,7 +2924,7 @@ const BA_A0040: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : undefined
                           }
@@ -3306,7 +3316,7 @@ const BA_A0040: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList2"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -3330,7 +3340,7 @@ const BA_A0040: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? sub2TotalFooterCell
                                     : undefined
                                 }

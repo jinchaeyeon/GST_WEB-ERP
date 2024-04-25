@@ -81,10 +81,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   UseBizComponent("L_BA028", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "position" ? "L_BA028" : "";
+  const bizComponentIdVal = field == "position" ? "L_BA028" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -185,7 +185,7 @@ const CM_A8250W: React.FC = () => {
     if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
 
@@ -209,7 +209,7 @@ const CM_A8250W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -290,7 +290,7 @@ const CM_A8250W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -389,7 +389,7 @@ const CM_A8250W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -607,7 +607,7 @@ const CM_A8250W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "remark3" || field == "rate") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -738,7 +738,7 @@ const CM_A8250W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -807,12 +807,12 @@ const CM_A8250W: React.FC = () => {
   const onSaveClick = async () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
       recdt_s: [],
@@ -860,10 +860,10 @@ const CM_A8250W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (paraData.workType == "D") {
         const isLastDataDeleted =
-          mainDataResult.data.length === 1 && filters.pgNum > 0;
+          mainDataResult.data.length == 1 && filters.pgNum > 0;
         const findRowIndex = mainDataResult.data.findIndex(
           (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
         );
@@ -1114,7 +1114,7 @@ const CM_A8250W: React.FC = () => {
                       ? ""
                       : row.rowstatus,
                   insert_userid: userListData.find(
-                    (item: any) => item.user_id === row.insert_userid
+                    (item: any) => item.user_id == row.insert_userid
                   )?.user_name,
                   insert_time:
                     row.insert_item != undefined
@@ -1164,7 +1164,7 @@ const CM_A8250W: React.FC = () => {
                 editable={false}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1195,7 +1195,7 @@ const CM_A8250W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
                         }
                       />
                     )

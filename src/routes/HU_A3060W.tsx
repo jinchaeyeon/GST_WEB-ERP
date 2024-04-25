@@ -98,18 +98,18 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "paycd"
+    field == "paycd"
       ? "L_HU028"
-      : field === "payitemcd"
+      : field == "payitemcd"
       ? "L_HU130T"
-      : field === "dutycd"
+      : field == "dutycd"
       ? "L_HU033"
-      : field === "dutymngdiv"
+      : field == "dutymngdiv"
       ? "L_HU040"
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
   const textField = field == "payitemcd" ? "payitemnm" : "code_name";
   const valueField = field == "payitemcd" ? "payitemcd" : "sub_code";
@@ -199,9 +199,9 @@ const HU_A3060W: React.FC = () => {
       }));
       setFilters4((prev) => ({
         ...prev,
-        paycd: defaultOption.find((item: any) => item.id === "paycd").valueCode,
-        payitemcd: defaultOption.find((item: any) => item.id === "payitemcd")
-          .valueCode,
+        paycd: defaultOption.find((item: any) => item.id == "paycd")?.valueCode,
+        payitemcd: defaultOption.find((item: any) => item.id == "payitemcd")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -579,7 +579,7 @@ const HU_A3060W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -662,7 +662,7 @@ const HU_A3060W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -782,7 +782,7 @@ const HU_A3060W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -877,7 +877,7 @@ const HU_A3060W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -975,7 +975,7 @@ const HU_A3060W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -1029,7 +1029,7 @@ const HU_A3060W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -1469,7 +1469,7 @@ const HU_A3060W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1503,7 +1503,7 @@ const HU_A3060W: React.FC = () => {
   const enterEdit3_1 = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = mainDataResult3_1.data.map((item) =>
-        item[DATA_ITEM_KEY3_1] === dataItem[DATA_ITEM_KEY3_1]
+        item[DATA_ITEM_KEY3_1] == dataItem[DATA_ITEM_KEY3_1]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1546,7 +1546,7 @@ const HU_A3060W: React.FC = () => {
       field != "text7"
     ) {
       const newData = mainDataResult4.data.map((item) =>
-        item[DATA_ITEM_KEY4] === dataItem[DATA_ITEM_KEY4]
+        item[DATA_ITEM_KEY4] == dataItem[DATA_ITEM_KEY4]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2164,12 +2164,12 @@ const HU_A3060W: React.FC = () => {
   const onSaveClick = () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -2258,12 +2258,12 @@ const HU_A3060W: React.FC = () => {
   const onSaveClick3 = () => {
     const dataItem = mainDataResult3_1.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     const datas = mainDataResult3.data.filter(
       (item) =>
@@ -2348,12 +2348,12 @@ const HU_A3060W: React.FC = () => {
   const onSaveClick4 = () => {
     const dataItem = mainDataResult4.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0 && deletedMainRows4.length == 0) return false;
+    if (dataItem.length == 0 && deletedMainRows4.length == 0) return false;
 
     let dataArr: TdataArr4 = {
       rowstatus_s: [],
@@ -2660,7 +2660,7 @@ const HU_A3060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = [];
       deletedMainRows4 = [];
       resetAllGrid();
@@ -2778,7 +2778,7 @@ const HU_A3060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = [];
       deletedMainRows4 = [];
       resetAllGrid();
@@ -2896,7 +2896,7 @@ const HU_A3060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = [];
       deletedMainRows4 = [];
       resetAllGrid();
@@ -3014,7 +3014,7 @@ const HU_A3060W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = [];
       deletedMainRows4 = [];
       resetAllGrid();
@@ -3144,7 +3144,7 @@ const HU_A3060W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -3314,7 +3314,7 @@ const HU_A3060W: React.FC = () => {
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -3328,7 +3328,7 @@ const HU_A3060W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : undefined
                           }
@@ -3908,7 +3908,7 @@ const HU_A3060W: React.FC = () => {
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList4"].map(
+                  customOptionData.menuCustomColumnOptions["grdList4"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -3926,7 +3926,7 @@ const HU_A3060W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell4
                               : undefined
                           }

@@ -165,7 +165,7 @@ const HU_B2140W: React.FC = () => {
     if (bizComponentData !== null) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(userQueryStr, setUserListData);
@@ -188,7 +188,7 @@ const HU_B2140W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -291,7 +291,7 @@ const HU_B2140W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -343,7 +343,7 @@ const HU_B2140W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -395,7 +395,7 @@ const HU_B2140W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -447,7 +447,7 @@ const HU_B2140W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -848,7 +848,7 @@ const HU_B2140W: React.FC = () => {
                         title={item.caption}
                         width={item.width}
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
                         }
                       />
                     )
@@ -908,7 +908,7 @@ const HU_B2140W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"].map(
+                customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -918,7 +918,7 @@ const HU_B2140W: React.FC = () => {
                         title={item.caption}
                         width={item.width}
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell2
                             : undefined
                         }
@@ -980,7 +980,7 @@ const HU_B2140W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList3"].map(
+                customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -990,7 +990,7 @@ const HU_B2140W: React.FC = () => {
                         title={item.caption}
                         width={item.width}
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell3
                             : undefined
                         }
@@ -1050,7 +1050,7 @@ const HU_B2140W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList4"].map(
+              customOptionData.menuCustomColumnOptions["grdList4"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -1060,7 +1060,7 @@ const HU_B2140W: React.FC = () => {
                       title={item.caption}
                       width={item.width}
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell4 : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell4 : undefined
                       }
                     />
                   )

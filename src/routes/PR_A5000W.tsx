@@ -120,10 +120,10 @@ const PR_A5000W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -151,18 +151,18 @@ const PR_A5000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const fxQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_fxcode")
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
 
       fetchQuery(proccdQueryStr, setProccdListData);
@@ -188,7 +188,7 @@ const PR_A5000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -295,7 +295,7 @@ const PR_A5000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -325,7 +325,7 @@ const PR_A5000W: React.FC = () => {
       if (totalRowCnt > 0) {
         // find_row_value 행 선택, find_row_value 없는 경우 첫번째 행 선택
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) =>
@@ -381,7 +381,7 @@ const PR_A5000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (detailFilters.find_row_value !== "") {
@@ -414,7 +414,7 @@ const PR_A5000W: React.FC = () => {
       });
       if (totalRowCnt > 0) {
         const selectedRow =
-          detailFilters.find_row_value === ""
+          detailFilters.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) =>
@@ -529,7 +529,7 @@ const PR_A5000W: React.FC = () => {
   const enterEdit3 = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -639,7 +639,7 @@ const PR_A5000W: React.FC = () => {
   const enterEdit2 = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = detailDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY2] === dataItem[DATA_ITEM_KEY2]
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -874,7 +874,7 @@ const PR_A5000W: React.FC = () => {
     const dataItem = mainDataResult.data.filter(
       (item: any) => item.chk == true
     );
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     let dataArr: TdataArr = {
       rekey_s: [],
@@ -931,7 +931,7 @@ const PR_A5000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setValues(false);
       setValues2(false);
@@ -1049,7 +1049,7 @@ const PR_A5000W: React.FC = () => {
     const dataItem = detailDataResult.data.filter(
       (item: any) => item.chk == true
     );
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     let dataArr: TdataArr = {
       rekey_s: [],
@@ -1099,7 +1099,7 @@ const PR_A5000W: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values,
         [EDIT_FIELD]: props.field,
       }));
@@ -1124,7 +1124,7 @@ const PR_A5000W: React.FC = () => {
     const changeCheck = () => {
       const newData = detailDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -1249,13 +1249,13 @@ const PR_A5000W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 prodemp: usersListData.find(
-                  (item: any) => item.user_id === row.prodemp
+                  (item: any) => item.user_id == row.prodemp
                 )?.user_name,
                 prodmac: fxListData.find(
-                  (item: any) => item.fxcode === row.prodmac
+                  (item: any) => item.fxcode == row.prodmac
                 )?.fxfull,
                 proccd: proccdListData.find(
-                  (item: any) => item.sub_code === row.proccd
+                  (item: any) => item.sub_code == row.proccd
                 )?.code_name,
                 chk: row.chk == "" ? false : row.chk,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
@@ -1302,7 +1302,7 @@ const PR_A5000W: React.FC = () => {
               cell={CheckBoxCell}
             />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -1316,7 +1316,7 @@ const PR_A5000W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : numberField2.includes(item.fieldName)
                           ? gridSumQtyFooterCell
@@ -1396,7 +1396,7 @@ const PR_A5000W: React.FC = () => {
               detailDataResult.data.map((row) => ({
                 ...row,
                 itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                  (item: any) => item.sub_code == row.itemacnt
                 )?.code_name,
                 chk: row.chk == "" ? false : row.chk,
                 [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
@@ -1442,7 +1442,7 @@ const PR_A5000W: React.FC = () => {
               cell={CheckBoxCell}
             />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList2"].map(
+              customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -1458,7 +1458,7 @@ const PR_A5000W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? detailTotalFooterCell
                           : numberField2.includes(item.fieldName)
                           ? gridSumQtyFooterCell2

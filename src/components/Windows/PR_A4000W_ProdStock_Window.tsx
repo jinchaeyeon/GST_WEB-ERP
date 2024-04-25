@@ -113,7 +113,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
       );
       setFilters((prev) => ({
         ...prev,
-        div: defaultOption.find((item: any) => item.id === "div").valueCode,
+        div: defaultOption.find((item: any) => item.id == "div")?.valueCode,
         isSearch: true,
       }));
     }
@@ -148,23 +148,23 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
     if (bizComponentData !== null) {
       const divQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_PR300200"
+          (item: any) => item.bizComponentId == "L_PR300200"
         )
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
 
       fetchQuery(divQueryStr, setDivListData);
@@ -192,7 +192,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -319,7 +319,7 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -649,22 +649,22 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
-              div: divListData.find((item: any) => item.code === row.div)
+              div: divListData.find((item: any) => item.code == row.div)
                 ?.code_name,
               proccd: proccdListData.find(
-                (item: any) => item.sub_code === row.proccd
+                (item: any) => item.sub_code == row.proccd
               )?.code_name,
               qtyunit: qtyunitListData.find(
-                (item: any) => item.sub_code === row.qtyunit
+                (item: any) => item.sub_code == row.qtyunit
               )?.code_name,
               itemlvl1: itemlvl1ListData.find(
-                (item: any) => item.sub_code === row.itemlvl1
+                (item: any) => item.sub_code == row.itemlvl1
               )?.code_name,
               itemlvl2: itemlvl2ListData.find(
-                (item: any) => item.sub_code === row.itemlvl2
+                (item: any) => item.sub_code == row.itemlvl2
               )?.code_name,
               itemlvl3: itemlvl3ListData.find(
-                (item: any) => item.sub_code === row.itemlvl3
+                (item: any) => item.sub_code == row.itemlvl3
               )?.code_name,
               [SELECTED_FIELD]: selectedState[idGetter(row)], // 선택된 데이터
             })),
@@ -730,22 +730,22 @@ const ProdStockWindow = ({ setVisible, setData, pathname }: IWindow) => {
           data={process(
             keepingDataResult.data.map((row) => ({
               ...row,
-              div: divListData.find((item: any) => item.code === row.div)
+              div: divListData.find((item: any) => item.code == row.div)
                 ?.code_name,
               proccd: proccdListData.find(
-                (item: any) => item.sub_code === row.proccd
+                (item: any) => item.sub_code == row.proccd
               )?.code_name,
               qtyunit: qtyunitListData.find(
-                (item: any) => item.sub_code === row.qtyunit
+                (item: any) => item.sub_code == row.qtyunit
               )?.code_name,
               itemlvl1: itemlvl1ListData.find(
-                (item: any) => item.sub_code === row.itemlvl1
+                (item: any) => item.sub_code == row.itemlvl1
               )?.code_name,
               itemlvl2: itemlvl2ListData.find(
-                (item: any) => item.sub_code === row.itemlvl2
+                (item: any) => item.sub_code == row.itemlvl2
               )?.code_name,
               itemlvl3: itemlvl3ListData.find(
-                (item: any) => item.sub_code === row.itemlvl3
+                (item: any) => item.sub_code == row.itemlvl3
               )?.code_name,
               [SELECTED_FIELD]: keepingSelectedState[keepingIdGetter(row)], // 선택된 데이터
             })),

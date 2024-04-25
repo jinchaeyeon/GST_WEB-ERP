@@ -171,7 +171,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setItemInfo } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
@@ -278,7 +278,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {itemWindowVisible2 && (
@@ -368,25 +368,25 @@ const MA_A3600W: React.FC = () => {
     if (bizComponentData !== null) {
       const itemtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_BA116_280"
+          (item: any) => item.bizComponentId == "L_BA116_280"
         )
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
       fetchQuery(itemtypeQueryStr, setItemtypeListData);
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
@@ -413,7 +413,7 @@ const MA_A3600W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -436,23 +436,23 @@ const MA_A3600W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
-        itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
-          .valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
+        itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
+          ?.valueCode,
       }));
       setFilters2((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
-        itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
-          .valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
+        itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -553,7 +553,7 @@ const MA_A3600W: React.FC = () => {
             itemlvl4: itemInfo.itemlvl4,
             itemlvl5: itemInfo.itemlvl5,
             custitemnm: itemInfo.custitemnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             [EDIT_FIELD]: undefined,
           }
         : {
@@ -587,7 +587,7 @@ const MA_A3600W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
 
@@ -896,7 +896,7 @@ const MA_A3600W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -985,7 +985,7 @@ const MA_A3600W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1382,7 +1382,7 @@ const MA_A3600W: React.FC = () => {
       field == "remark"
     ) {
       const newData = mainDataResult3.data.map((item) =>
-        item[DATA_ITEM_KEY3] === dataItem[DATA_ITEM_KEY3]
+        item[DATA_ITEM_KEY3] == dataItem[DATA_ITEM_KEY3]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1446,7 +1446,7 @@ const MA_A3600W: React.FC = () => {
         });
       } else {
         mainDataResult3.data.map((item: { [x: string]: any; itemcd: any }) => {
-          if (editIndex === item[DATA_ITEM_KEY3]) {
+          if (editIndex == item[DATA_ITEM_KEY3]) {
             fetchItemData(item.itemcd);
           }
         });
@@ -1675,7 +1675,7 @@ const MA_A3600W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1691,7 +1691,7 @@ const MA_A3600W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField2.includes(item.fieldName)
                             ? gridSumQtyFooterCell
@@ -1770,7 +1770,7 @@ const MA_A3600W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"].map(
+                customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1786,7 +1786,7 @@ const MA_A3600W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell2
                             : numberField2.includes(item.fieldName)
                             ? gridSumQtyFooterCell2

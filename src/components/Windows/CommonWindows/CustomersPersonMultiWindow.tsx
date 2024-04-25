@@ -78,7 +78,7 @@ const KendoWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const custdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA026")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA026")
       );
 
       fetchQuery(custdivQueryStr, setCustdivListData);
@@ -101,7 +101,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -245,7 +245,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 

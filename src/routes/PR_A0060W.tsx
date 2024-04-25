@@ -133,7 +133,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setCustcd, setCustnm } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -183,7 +183,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {custWindowVisible && (
@@ -219,7 +219,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setAttdatnum, setFiles } = useContext(FormContext2);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -270,7 +270,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -337,16 +337,16 @@ const PR_A0060: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
-          .valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        fxdiv: defaultOption.find((item: any) => item.id === "fxdiv").valueCode,
-        proccd: defaultOption.find((item: any) => item.id === "proccd")
-          .valueCode,
-        dptcd: defaultOption.find((item: any) => item.id === "dptcd").valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
+        raduseyn: defaultOption.find((item: any) => item.id == "raduseyn")
+          ?.valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv")?.valueCode,
+        proccd: defaultOption.find((item: any) => item.id == "proccd")
+          ?.valueCode,
+        dptcd: defaultOption.find((item: any) => item.id == "dptcd")?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -370,12 +370,12 @@ const PR_A0060: React.FC = () => {
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const personQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_004"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_004"
         )
       );
 
@@ -400,7 +400,7 @@ const PR_A0060: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -452,7 +452,7 @@ const PR_A0060: React.FC = () => {
             ...item,
             custcd: custcd,
             custnm: custnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             [EDIT_FIELD]: undefined,
           }
         : {
@@ -470,7 +470,7 @@ const PR_A0060: React.FC = () => {
   }, [custcd, custnm]);
 
   const fetchCustInfo = async (custcd: string) => {
-    if (custcd === "") return;
+    if (custcd == "") return;
     let data: any;
     let custInfo: null | { custcd: string; custnm: string } = null;
 
@@ -488,7 +488,7 @@ const PR_A0060: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       if (rows.length > 0) {
         custInfo = {
@@ -702,14 +702,14 @@ const PR_A0060: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row[DATA_ITEM_KEY] === filters.find_row_value
+            (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -732,10 +732,10 @@ const PR_A0060: React.FC = () => {
       if (totalRowCnt > 0) {
         // find_row_value 행 선택, find_row_value 없는 경우 첫번째 행 선택
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find(
-                (row: any) => row[DATA_ITEM_KEY] === filters.find_row_value
+                (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
               );
 
         if (selectedRow != undefined) {
@@ -988,7 +988,7 @@ const PR_A0060: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (subfilters.find_row_value !== "") {
@@ -1021,7 +1021,7 @@ const PR_A0060: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          subfilters.find_row_value === ""
+          subfilters.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) =>
@@ -1597,7 +1597,7 @@ const PR_A0060: React.FC = () => {
         });
       } else {
         subDataResult.data.map(async (item) => {
-          if (editIndex === item[SUB_DATA_ITEM_KEY]) {
+          if (editIndex == item[SUB_DATA_ITEM_KEY]) {
             const custcd = await fetchCustInfo(item.custcd);
             if (custcd != null && custcd != undefined) {
               const newData = subDataResult.data.map((item) =>
@@ -1607,7 +1607,7 @@ const PR_A0060: React.FC = () => {
                       ...item,
                       custcd: custcd.custcd,
                       custnm: custcd.custnm,
-                      rowstatus: item.rowstatus === "N" ? "N" : "U",
+                      rowstatus: item.rowstatus == "N" ? "N" : "U",
                       [EDIT_FIELD]: undefined,
                     }
                   : {
@@ -1796,17 +1796,17 @@ const PR_A0060: React.FC = () => {
       "@p_fxno": paraData.fxno,
       "@p_spec": paraData.spec,
       "@p_dptcd":
-        dptcdListData.find((item: any) => item.dptnm === paraData.dptcd)
+        dptcdListData.find((item: any) => item.dptnm == paraData.dptcd)
           ?.dptcd == undefined
           ? ""
-          : dptcdListData.find((item: any) => item.dptnm === paraData.dptcd)
+          : dptcdListData.find((item: any) => item.dptnm == paraData.dptcd)
               ?.dptcd,
       "@p_person":
-        personListData.find((item: any) => item.user_name === paraData.person)
+        personListData.find((item: any) => item.user_name == paraData.person)
           ?.user_id == undefined
           ? ""
           : personListData.find(
-              (item: any) => item.user_name === paraData.person
+              (item: any) => item.user_name == paraData.person
             )?.user_id,
       "@p_place": paraData.place,
       "@p_makedt": isValidDate(paraData.makedt)
@@ -1870,17 +1870,17 @@ const PR_A0060: React.FC = () => {
       "@p_fxno": infomation.fxno,
       "@p_spec": infomation.spec,
       "@p_dptcd":
-        dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
+        dptcdListData.find((item: any) => item.dptnm == infomation.dptcd)
           ?.dptcd == undefined
           ? ""
-          : dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
+          : dptcdListData.find((item: any) => item.dptnm == infomation.dptcd)
               ?.dptcd,
       "@p_person":
-        personListData.find((item: any) => item.user_name === infomation.person)
+        personListData.find((item: any) => item.user_name == infomation.person)
           ?.user_id == undefined
           ? ""
           : personListData.find(
-              (item: any) => item.user_name === infomation.person
+              (item: any) => item.user_name == infomation.person
             )?.user_id,
       "@p_place": infomation.place,
       "@p_makedt":
@@ -1942,17 +1942,17 @@ const PR_A0060: React.FC = () => {
       "@p_fxno": infomation.fxno,
       "@p_spec": infomation.spec,
       "@p_dptcd":
-        dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
+        dptcdListData.find((item: any) => item.dptnm == infomation.dptcd)
           ?.dptcd == undefined
           ? ""
-          : dptcdListData.find((item: any) => item.dptnm === infomation.dptcd)
+          : dptcdListData.find((item: any) => item.dptnm == infomation.dptcd)
               ?.dptcd,
       "@p_person":
-        personListData.find((item: any) => item.user_name === infomation.person)
+        personListData.find((item: any) => item.user_name == infomation.person)
           ?.user_id == undefined
           ? ""
           : personListData.find(
-              (item: any) => item.user_name === infomation.person
+              (item: any) => item.user_name == infomation.person
             )?.user_id,
       "@p_place": infomation.place,
       "@p_makedt":
@@ -1998,7 +1998,7 @@ const PR_A0060: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   const onSaveClick = async () => {
@@ -2018,12 +2018,12 @@ const PR_A0060: React.FC = () => {
       } else {
         const dataItem = subDataResult.data.filter((item: any) => {
           return (
-            (item.rowstatus === "N" || item.rowstatus === "U") &&
+            (item.rowstatus == "N" || item.rowstatus == "U") &&
             item.rowstatus !== undefined
           );
         });
 
-        if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+        if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
         let dataArr: TdataArr = {
           rowstatus: [],
           fxseq_s: [],
@@ -2160,10 +2160,10 @@ const PR_A0060: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       // 마지막 페이지의 1개 남은 데이터 삭제 시, 앞 페이지 조회하고, 그 외는 페이지 유지
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 1;
+        mainDataResult.data.length == 1 && filters.pgNum > 1;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -2244,7 +2244,7 @@ const PR_A0060: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const { returnString } = data;
       setFilters((prev) => ({
         ...prev,
@@ -2272,7 +2272,7 @@ const PR_A0060: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let array: any[] = [];
 
       deletedMainRows.map((item: any) => {
@@ -2363,7 +2363,7 @@ const PR_A0060: React.FC = () => {
             ...item,
             attdatnum: attdatnum,
             files: files,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -2568,10 +2568,10 @@ const PR_A0060: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 dptcd: dptcdListData.find(
-                  (item: any) => item.dptcd === row.dptcd
+                  (item: any) => item.dptcd == row.dptcd
                 )?.dptnm,
                 person: personListData.find(
-                  (item: any) => item.user_id === row.person
+                  (item: any) => item.user_id == row.person
                 )?.user_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -2606,7 +2606,7 @@ const PR_A0060: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -2625,7 +2625,7 @@ const PR_A0060: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : NumberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell
@@ -3046,7 +3046,7 @@ const PR_A0060: React.FC = () => {
                   >
                     <GridColumn field="rowstatus" title=" " width="50px" />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -3067,7 +3067,7 @@ const PR_A0060: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? subTotalFooterCell
                                   : undefined
                               }

@@ -58,6 +58,11 @@ export default function MultiDoughnutChart(props) {
   useEffect(() => {
     if (props.data != null) {
       const propsData = props.data;
+      let sum = 0;
+      propsData.map((item) => {
+        sum += item[props.option]
+      })
+      
       const data = {
         labels: props.label,
         datasets: [
@@ -82,7 +87,7 @@ export default function MultiDoughnutChart(props) {
               weight: "bold",
             },
             formatter: function (value, context) {
-              return numberWithCommas3(value) + "%";
+              return numberWithCommas3(value/sum)*100 + "%";
             },
           },
         },

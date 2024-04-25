@@ -122,15 +122,15 @@ const App: React.FC = () => {
       setDataFilters((prev) => ({
         ...prev,
         cboViewType: defaultOption.find(
-          (item: any) => item.id === "cboViewType"
-        ).valueCode,
+          (item: any) => item.id == "cboViewType"
+        )?.valueCode,
       }));
       setFilters((prev) => ({
         ...prev,
         yyyymm: setDefaultDate(customOptionData, "yyyymm"),
         cboLocation: defaultOption.find(
-          (item: any) => item.id === "cboLocation"
-        ).valueCode,
+          (item: any) => item.id == "cboLocation"
+        )?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -157,7 +157,7 @@ const App: React.FC = () => {
     resetAllGrid();
     setTabSelected(e.selected);
 
-    if (e.selected === 0) {
+    if (e.selected == 0) {
       setGroup([
         {
           field: "group_menu_name",
@@ -170,7 +170,7 @@ const App: React.FC = () => {
         pgNum: 1,
         work_type: "ENTRY",
       }));
-    } else if (e.selected === 1) {
+    } else if (e.selected == 1) {
       setGroup([
         {
           field: "group_menu_name",
@@ -183,7 +183,7 @@ const App: React.FC = () => {
         pgNum: 1,
         work_type: "usage_log",
       }));
-    } else if (e.selected === 2) {
+    } else if (e.selected == 2) {
       setGroup([
         {
           field: "user_id",
@@ -212,7 +212,7 @@ const App: React.FC = () => {
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
 
-    if (name === "cboViewType") {
+    if (name == "cboViewType") {
       setDataFilters((prev) => ({
         ...prev,
         [name]: value,
@@ -311,9 +311,9 @@ const App: React.FC = () => {
     try {
       data = await processApi<any>(
         "procedure",
-        tabSelected === 0
+        tabSelected == 0
           ? dataParameters
-          : tabSelected === 1
+          : tabSelected == 1
           ? programParameters
           : userParameters
       );
@@ -321,7 +321,7 @@ const App: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const usedUserCnt = data.returnString;
       const useTotalRow = data.tables[1].Rows;
@@ -559,7 +559,7 @@ const App: React.FC = () => {
             rowHeight={30}
             resizable={true}
           >
-            {tabSelected === 2 && (
+            {tabSelected == 2 && (
               <GridColumn
                 field="user_name"
                 title="사용자"
@@ -580,7 +580,7 @@ const App: React.FC = () => {
               title="프로그램명"
               width="140px"
               footerCell={
-                tabSelected === 2 ? TitleFooterCell : UsedUserFooterCell
+                tabSelected == 2 ? TitleFooterCell : UsedUserFooterCell
               }
             />
             {tabSelected !== 2 && (
@@ -593,7 +593,7 @@ const App: React.FC = () => {
             )}
             <GridColumn title="일자">{createDateColumn()}</GridColumn>
             <GridColumn
-              field={tabSelected === 0 ? "data_cnt_tt" : "use_cnt_tt"}
+              field={tabSelected == 0 ? "data_cnt_tt" : "use_cnt_tt"}
               title="합계"
               width="120px"
               footerCell={DateFooterCell}
@@ -611,7 +611,7 @@ const App: React.FC = () => {
       array.push(
         <GridColumn
           key={i}
-          field={tabSelected === 0 ? "data_cnt_" + num : "use_cnt_" + num}
+          field={tabSelected == 0 ? "data_cnt_" + num : "use_cnt_" + num}
           title={num}
           width="70px"
           cell={NumberCell}
@@ -713,7 +713,7 @@ const App: React.FC = () => {
                   className="required"
                 />
               </td>
-              {tabSelected === 0 && (
+              {tabSelected == 0 && (
                 <>
                   <th>조회타입</th>
                   <td>
@@ -731,13 +731,13 @@ const App: React.FC = () => {
                   </td>
                 </>
               )}
-              {tabSelected === 1 && (
+              {tabSelected == 1 && (
                 <>
                   <th>전체메뉴</th>
                   <td>
                     <Checkbox
                       name="is_all_menu"
-                      value={programFilters.is_all_menu === "Y" ? true : false}
+                      value={programFilters.is_all_menu == "Y" ? true : false}
                       onChange={programFilterChecBoxChange}
                     />
                   </td>
@@ -746,14 +746,14 @@ const App: React.FC = () => {
                     <Checkbox
                       name="user_groupping"
                       value={
-                        programFilters.user_groupping === "Y" ? true : false
+                        programFilters.user_groupping == "Y" ? true : false
                       }
                       onChange={programFilterChecBoxChange}
                     />
                   </td>
                 </>
               )}
-              {tabSelected === 2 && (
+              {tabSelected == 2 && (
                 <>
                   <th></th>
                   <td></td>

@@ -160,16 +160,16 @@ const MA_A3300W_dajeong: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
-        doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
-          .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
-          .valueCode,
-        inuse: defaultOption.find((item: any) => item.id === "inuse").valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
+        doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
+          ?.valueCode,
+        position: defaultOption.find((item: any) => item.id == "position")
+          ?.valueCode,
+        inuse: defaultOption.find((item: any) => item.id == "inuse")?.valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -205,27 +205,27 @@ const MA_A3300W_dajeong: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
       );
       const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA029")
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const inuseQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_MA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_MA002")
       );
       fetchQuery(amtunitQueryStr, setAmtunitListData);
       fetchQuery(doexdivQueryStr, setDoexdivListData);
@@ -253,7 +253,7 @@ const MA_A3300W_dajeong: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -510,7 +510,7 @@ const MA_A3300W_dajeong: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -625,7 +625,7 @@ const MA_A3300W_dajeong: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
       setDetailDataResult((prev) => {
@@ -690,7 +690,7 @@ const MA_A3300W_dajeong: React.FC = () => {
   }, [detailFilters]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   let gridRef: any = useRef(null);
@@ -886,9 +886,9 @@ const MA_A3300W_dajeong: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -1275,19 +1275,19 @@ const MA_A3300W_dajeong: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 amtunit: amtunitListData.find(
-                  (item: any) => item.sub_code === row.amtunit
+                  (item: any) => item.sub_code == row.amtunit
                 )?.code_name,
                 doexdiv: doexdivListData.find(
-                  (item: any) => item.sub_code === row.doexdiv
+                  (item: any) => item.sub_code == row.doexdiv
                 )?.code_name,
                 taxdiv: taxdivListData.find(
-                  (item: any) => item.sub_code === row.taxdiv
+                  (item: any) => item.sub_code == row.taxdiv
                 )?.code_name,
                 inuse: inuseListData.find(
-                  (item: any) => item.sub_code === row.inuse
+                  (item: any) => item.sub_code == row.inuse
                 )?.code_name,
                 person: usersListData.find(
-                  (item: any) => item.user_id === row.person
+                  (item: any) => item.user_id == row.person
                 )?.user_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -1323,7 +1323,7 @@ const MA_A3300W_dajeong: React.FC = () => {
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -1340,7 +1340,7 @@ const MA_A3300W_dajeong: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : NumberField2.includes(item.fieldName)
                           ? gridSumQtyFooterCell
@@ -1369,10 +1369,10 @@ const MA_A3300W_dajeong: React.FC = () => {
               detailDataResult.data.map((row) => ({
                 ...row,
                 itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                  (item: any) => item.sub_code == row.itemacnt
                 )?.code_name,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
                 [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
               })),
@@ -1406,7 +1406,7 @@ const MA_A3300W_dajeong: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList2"].map(
+              customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -1423,7 +1423,7 @@ const MA_A3300W_dajeong: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 1
+                        item.sortOrder == 1
                           ? detailTotalFooterCell
                           : NumberField2.includes(item.fieldName)
                           ? gridSumQtyFooterCell2

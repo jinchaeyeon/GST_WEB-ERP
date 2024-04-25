@@ -237,28 +237,28 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "relt"
+    field == "relt"
       ? "L_HU020"
-      : field === "schcd"
+      : field == "schcd"
       ? "L_HU009"
-      : field === "dfmyn"
+      : field == "dfmyn"
       ? "L_HU700"
-      : field === "appointcd"
+      : field == "appointcd"
       ? "L_HU062"
-      : field === "dptcd"
+      : field == "dptcd"
       ? "L_dptcd_001"
-      : field === "rnpdiv"
+      : field == "rnpdiv"
       ? "L_HU017"
-      : field === "educd"
+      : field == "educd"
       ? "L_HU090"
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
-  const textField = field === "dptcd" ? "dptnm" : "code_name";
-  const valueField = field === "dptcd" ? "dptcd" : "sub_code";
+  const textField = field == "dptcd" ? "dptnm" : "code_name";
+  const valueField = field == "dptcd" ? "dptcd" : "sub_code";
 
   return bizComponent ? (
     <ComboBoxCell
@@ -279,7 +279,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   const field = props.field ?? "";
   const bizComponentIdVal = field == "sexcd" ? "R_SEXCD" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -380,7 +380,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setAttdatnum, setFiles } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -431,7 +431,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -457,7 +457,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setAttdatnum2, setFiles2 } = useContext(FormContext2);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -508,7 +508,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -534,7 +534,7 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setAttdatnum3, setFiles3 } = useContext(FormContext3);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -585,7 +585,7 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -611,7 +611,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setAttdatnum4, setFiles4 } = useContext(FormContext4);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -662,7 +662,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -688,7 +688,7 @@ const ColumnCommandCell5 = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setAttdatnum5, setFiles5 } = useContext(FormContext5);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -739,7 +739,7 @@ const ColumnCommandCell5 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -765,7 +765,7 @@ const ColumnCommandCell6 = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setAttdatnum6, setFiles6 } = useContext(FormContext6);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -816,7 +816,7 @@ const ColumnCommandCell6 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -842,7 +842,7 @@ const ColumnCommandCell7 = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setAttdatnum7, setFiles7 } = useContext(FormContext7);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -893,7 +893,7 @@ const ColumnCommandCell7 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -919,7 +919,7 @@ const ColumnCommandCell8 = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setAttdatnum8, setFiles8 } = useContext(FormContext8);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -970,7 +970,7 @@ const ColumnCommandCell8 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -1047,7 +1047,7 @@ const CopyWindow = ({
             ...item,
             attdatnum: attdatnum,
             files: files,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -1069,7 +1069,7 @@ const CopyWindow = ({
             ...item,
             attdatnum: attdatnum2,
             files: files2,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -1091,7 +1091,7 @@ const CopyWindow = ({
             ...item,
             attdatnum: attdatnum3,
             files: files3,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -1113,7 +1113,7 @@ const CopyWindow = ({
             ...item,
             attdatnum: attdatnum4,
             files: files4,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -1135,7 +1135,7 @@ const CopyWindow = ({
             ...item,
             attdatnum: attdatnum5,
             files: files5,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -1157,7 +1157,7 @@ const CopyWindow = ({
             ...item,
             attdatnum: attdatnum6,
             files: files6,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -1179,7 +1179,7 @@ const CopyWindow = ({
             ...item,
             attdatnum: attdatnum7,
             files: files7,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -1201,7 +1201,7 @@ const CopyWindow = ({
             ...item,
             attdatnum: attdatnum8,
             files: files8,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -2909,7 +2909,7 @@ const CopyWindow = ({
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "files" && field != "rowstatus") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2944,7 +2944,7 @@ const CopyWindow = ({
   const enterEdit2 = (dataItem: any, field: string) => {
     if (field != "files" && field != "rowstatus") {
       const newData = mainDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY2] === dataItem[DATA_ITEM_KEY2]
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2979,7 +2979,7 @@ const CopyWindow = ({
   const enterEdit3 = (dataItem: any, field: string) => {
     if (field != "files" && field != "rowstatus") {
       const newData = mainDataResult3.data.map((item) =>
-        item[DATA_ITEM_KEY3] === dataItem[DATA_ITEM_KEY3]
+        item[DATA_ITEM_KEY3] == dataItem[DATA_ITEM_KEY3]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -3014,7 +3014,7 @@ const CopyWindow = ({
   const enterEdit4 = (dataItem: any, field: string) => {
     if (field != "files" && field != "rowstatus" && field != "orgdiv") {
       const newData = mainDataResult4.data.map((item) =>
-        item[DATA_ITEM_KEY4] === dataItem[DATA_ITEM_KEY4]
+        item[DATA_ITEM_KEY4] == dataItem[DATA_ITEM_KEY4]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -3049,7 +3049,7 @@ const CopyWindow = ({
   const enterEdit5 = (dataItem: any, field: string) => {
     if (field != "files" && field != "rowstatus") {
       const newData = mainDataResult5.data.map((item) =>
-        item[DATA_ITEM_KEY5] === dataItem[DATA_ITEM_KEY5]
+        item[DATA_ITEM_KEY5] == dataItem[DATA_ITEM_KEY5]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -3084,7 +3084,7 @@ const CopyWindow = ({
   const enterEdit6 = (dataItem: any, field: string) => {
     if (field != "files" && field != "rowstatus") {
       const newData = mainDataResult6.data.map((item) =>
-        item[DATA_ITEM_KEY6] === dataItem[DATA_ITEM_KEY6]
+        item[DATA_ITEM_KEY6] == dataItem[DATA_ITEM_KEY6]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -3119,7 +3119,7 @@ const CopyWindow = ({
   const enterEdit7 = (dataItem: any, field: string) => {
     if (field != "files" && field != "rowstatus") {
       const newData = mainDataResult7.data.map((item) =>
-        item[DATA_ITEM_KEY7] === dataItem[DATA_ITEM_KEY7]
+        item[DATA_ITEM_KEY7] == dataItem[DATA_ITEM_KEY7]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -3154,7 +3154,7 @@ const CopyWindow = ({
   const enterEdit8 = (dataItem: any, field: string) => {
     if (field != "files" && field != "rowstatus") {
       const newData = mainDataResult8.data.map((item) =>
-        item[DATA_ITEM_KEY8] === dataItem[DATA_ITEM_KEY8]
+        item[DATA_ITEM_KEY8] == dataItem[DATA_ITEM_KEY8]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -3565,37 +3565,37 @@ const CopyWindow = ({
       if (workType == "N") {
         setInformation((prev) => ({
           ...prev,
-          abilcd: defaultOption.find((item: any) => item.id === "abilcd")
-            .valueCode,
-          dptcd: defaultOption.find((item: any) => item.id === "dptcd")
-            .valueCode,
-          emptype: defaultOption.find((item: any) => item.id === "emptype")
-            .valueCode,
-          nationcd: defaultOption.find((item: any) => item.id === "nationcd")
-            .valueCode,
-          path: defaultOption.find((item: any) => item.id === "path").valueCode,
-          postcd: defaultOption.find((item: any) => item.id === "postcd")
-            .valueCode,
-          regcd: defaultOption.find((item: any) => item.id === "regcd")
-            .valueCode,
-          rtrrsn: defaultOption.find((item: any) => item.id === "rtrrsn")
-            .valueCode,
-          schcd: defaultOption.find((item: any) => item.id === "schcd")
-            .valueCode,
-          sexcd: defaultOption.find((item: any) => item.id === "sexcd")
-            .valueCode,
-          bircd: defaultOption.find((item: any) => item.id === "bircd")
-            .valueCode,
-          jobcd: defaultOption.find((item: any) => item.id === "jobcd")
-            .valueCode,
-          location: defaultOption.find((item: any) => item.id === "location")
-            .valueCode,
-          paycd: defaultOption.find((item: any) => item.id === "paycd")
-            .valueCode,
-          workgb: defaultOption.find((item: any) => item.id === "workgb")
-            .valueCode,
-          workcls: defaultOption.find((item: any) => item.id === "workcls")
-            .valueCode,
+          abilcd: defaultOption.find((item: any) => item.id == "abilcd")
+            ?.valueCode,
+          dptcd: defaultOption.find((item: any) => item.id == "dptcd")
+            ?.valueCode,
+          emptype: defaultOption.find((item: any) => item.id == "emptype")
+            ?.valueCode,
+          nationcd: defaultOption.find((item: any) => item.id == "nationcd")
+            ?.valueCode,
+          path: defaultOption.find((item: any) => item.id == "path")?.valueCode,
+          postcd: defaultOption.find((item: any) => item.id == "postcd")
+            ?.valueCode,
+          regcd: defaultOption.find((item: any) => item.id == "regcd")
+            ?.valueCode,
+          rtrrsn: defaultOption.find((item: any) => item.id == "rtrrsn")
+            ?.valueCode,
+          schcd: defaultOption.find((item: any) => item.id == "schcd")
+            ?.valueCode,
+          sexcd: defaultOption.find((item: any) => item.id == "sexcd")
+            ?.valueCode,
+          bircd: defaultOption.find((item: any) => item.id == "bircd")
+            ?.valueCode,
+          jobcd: defaultOption.find((item: any) => item.id == "jobcd")
+            ?.valueCode,
+          location: defaultOption.find((item: any) => item.id == "location")
+            ?.valueCode,
+          paycd: defaultOption.find((item: any) => item.id == "paycd")
+            ?.valueCode,
+          workgb: defaultOption.find((item: any) => item.id == "workgb")
+            ?.valueCode,
+          workcls: defaultOption.find((item: any) => item.id == "workcls")
+            ?.valueCode,
         }));
       }
     }
@@ -3614,7 +3614,7 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const orgdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA001")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA001")
       );
       fetchQuery(orgdivQueryStr, setOrgdivListData);
     }
@@ -3636,7 +3636,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -4228,7 +4228,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -4566,7 +4566,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -4640,7 +4640,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -4711,7 +4711,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -4782,7 +4782,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -4853,7 +4853,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -4924,7 +4924,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -4995,7 +4995,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -5066,7 +5066,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -5111,7 +5111,7 @@ const CopyWindow = ({
   };
 
   useEffect(() => {
-    if (workType === "U" && data != undefined) {
+    if (workType == "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
         orgdiv: "01",
@@ -5493,12 +5493,12 @@ const CopyWindow = ({
     } else if (tabSelected == 4) {
       const dataItem = mainDataResult.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
 
-      if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
+      if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
       let valid = true;
       let valid2 = true;
@@ -5691,12 +5691,12 @@ const CopyWindow = ({
     } else if (tabSelected == 5) {
       const dataItem = mainDataResult2.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
 
-      if (dataItem.length === 0 && deletedMainRows2.length == 0) return false;
+      if (dataItem.length == 0 && deletedMainRows2.length == 0) return false;
 
       let valid = true;
 
@@ -5790,12 +5790,12 @@ const CopyWindow = ({
     } else if (tabSelected == 6) {
       const dataItem = mainDataResult3.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
 
-      if (dataItem.length === 0 && deletedMainRows3.length == 0) return false;
+      if (dataItem.length == 0 && deletedMainRows3.length == 0) return false;
 
       let dataArr: TdataArr3 = {
         hu254t_rowstatus_s: [],
@@ -5878,12 +5878,12 @@ const CopyWindow = ({
     } else if (tabSelected == 7) {
       const dataItem = mainDataResult4.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
 
-      if (dataItem.length === 0 && deletedMainRows4.length == 0) return false;
+      if (dataItem.length == 0 && deletedMainRows4.length == 0) return false;
 
       let valid = true;
 
@@ -5979,12 +5979,12 @@ const CopyWindow = ({
     } else if (tabSelected == 8) {
       const dataItem = mainDataResult5.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
 
-      if (dataItem.length === 0 && deletedMainRows5.length == 0) return false;
+      if (dataItem.length == 0 && deletedMainRows5.length == 0) return false;
 
       let valid = true;
 
@@ -6092,12 +6092,12 @@ const CopyWindow = ({
     } else if (tabSelected == 9) {
       const dataItem = mainDataResult6.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
 
-      if (dataItem.length === 0 && deletedMainRows6.length == 0) return false;
+      if (dataItem.length == 0 && deletedMainRows6.length == 0) return false;
 
       let dataArr: TdataArr6 = {
         hu256t_rowstatus_s: [],
@@ -6172,12 +6172,12 @@ const CopyWindow = ({
     } else if (tabSelected == 10) {
       const dataItem = mainDataResult7.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
 
-      if (dataItem.length === 0 && deletedMainRows7.length == 0) return false;
+      if (dataItem.length == 0 && deletedMainRows7.length == 0) return false;
 
       let dataArr: TdataArr7 = {
         hu257t_rowstatus_s: [],
@@ -6270,12 +6270,12 @@ const CopyWindow = ({
     } else if (tabSelected == 11) {
       const dataItem = mainDataResult8.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
 
-      if (dataItem.length === 0 && deletedMainRows8.length == 0) return false;
+      if (dataItem.length == 0 && deletedMainRows8.length == 0) return false;
 
       let valid = true;
 
@@ -6984,7 +6984,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setUnsavedName([]);
 
       deletedMainRows = [];
@@ -7218,7 +7218,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let array: any[] = [];
 
       deletedMainRows.map((item: any) => {
@@ -7356,7 +7356,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let array: any[] = [];
 
       deletedMainRows2.map((item: any) => {
@@ -7484,7 +7484,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let array: any[] = [];
 
       deletedMainRows3.map((item: any) => {
@@ -7613,7 +7613,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let array: any[] = [];
 
       deletedMainRows4.map((item: any) => {
@@ -7742,7 +7742,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let array: any[] = [];
 
       deletedMainRows5.map((item: any) => {
@@ -7871,7 +7871,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let array: any[] = [];
 
       deletedMainRows6.map((item: any) => {
@@ -7998,7 +7998,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let array: any[] = [];
 
       deletedMainRows7.map((item: any) => {
@@ -8128,7 +8128,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let array: any[] = [];
 
       deletedMainRows8.map((item: any) => {
@@ -8306,7 +8306,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "사용자생성" : "사용자수정"}
+        title={workType == "N" ? "사용자생성" : "사용자수정"}
         width={position.width}
         height={position.height}
         onMove={handleMove}

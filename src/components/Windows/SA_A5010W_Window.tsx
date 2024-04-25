@@ -237,7 +237,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setItemInfo } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const [itemWindowVisible2, setItemWindowVisible2] = useState<boolean>(false);
@@ -346,7 +346,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {itemWindowVisible2 && (
@@ -421,15 +421,15 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "itemacnt"
+    field == "itemacnt"
       ? "L_BA061"
-      : field === "qtyunit"
+      : field == "qtyunit"
       ? "L_BA015"
-      : field === "unpcalmeth"
+      : field == "unpcalmeth"
       ? "L_BA019"
       : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
   return bizComponent ? (
     <ComboBoxCell bizComponent={bizComponent} {...props} />
@@ -490,14 +490,14 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        person: defaultOption.find((item: any) => item.id === "person2")
-          .valueCode,
-        doexdiv: defaultOption.find((item: any) => item.id === "doexdiv2")
-          .valueCode,
-        taxdiv: defaultOption.find((item: any) => item.id === "taxdiv2")
-          .valueCode,
-        amtunit: defaultOption.find((item: any) => item.id === "amtunit")
-          .valueCode,
+        person: defaultOption.find((item: any) => item.id == "person2")
+          ?.valueCode,
+        doexdiv: defaultOption.find((item: any) => item.id == "doexdiv2")
+          ?.valueCode,
+        taxdiv: defaultOption.find((item: any) => item.id == "taxdiv2")
+          ?.valueCode,
+        amtunit: defaultOption.find((item: any) => item.id == "amtunit")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -519,7 +519,7 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const custcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_CUST")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_CUST")
       );
       fetchQuery(custcdQueryStr, setCustcdListData);
     }
@@ -603,7 +603,7 @@ const CopyWindow = ({
                 itemlvl4: itemInfo.itemlvl4,
                 itemlvl5: itemInfo.itemlvl5,
                 custitemnm: itemInfo.custitemnm,
-                rowstatus: item.rowstatus === "N" ? "N" : "U",
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
                 unp: unp,
                 amt:
                   item.unpcalmeth == "Q" || item.unpcalmeth == ""
@@ -744,7 +744,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -1370,7 +1370,7 @@ const CopyWindow = ({
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       let unpData: any = rows.filter(
         (items: any) =>
@@ -1399,7 +1399,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
 
       if (rows.length > 0) {
@@ -1702,7 +1702,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -1748,7 +1748,7 @@ const CopyWindow = ({
   }, [filters]);
 
   useEffect(() => {
-    if (workType === "U" && data != undefined) {
+    if (workType == "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
         amt: data.amt,
@@ -2025,7 +2025,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = [];
       setUnsavedAttadatnums([]);
       reload(data.returnString);
@@ -2134,11 +2134,11 @@ const CopyWindow = ({
         if (valid == true) {
           const dataItem = mainDataResult.data.filter((item: any) => {
             return (
-              (item.rowstatus === "N" || item.rowstatus === "U") &&
+              (item.rowstatus == "N" || item.rowstatus == "U") &&
               item.rowstatus !== undefined
             );
           });
-          if (dataItem.length === 0 && deletedMainRows.length == 0) {
+          if (dataItem.length == 0 && deletedMainRows.length == 0) {
             setParaData((prev) => ({
               ...prev,
               workType: workType,
@@ -2450,7 +2450,7 @@ const CopyWindow = ({
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
 
@@ -2810,7 +2810,7 @@ const CopyWindow = ({
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -2833,7 +2833,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "직접판매처리생성" : "직접판매처리정보"}
+        title={workType == "N" ? "직접판매처리생성" : "직접판매처리정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}

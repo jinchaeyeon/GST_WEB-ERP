@@ -169,8 +169,8 @@ const CopyWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        notests: defaultOption.find((item: any) => item.id === "notests")
-          .valueCode,
+        notests: defaultOption.find((item: any) => item.id == "notests")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -192,10 +192,10 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       const mngitemQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC023T")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC023T")
       );
       fetchQuery(proccdQueryStr, setProccdListData);
       fetchQuery(mngitemQueryStr, setMngItemListData);
@@ -218,7 +218,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -331,7 +331,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -588,7 +588,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setParaData({
         pgSize: PAGE_SIZE,
@@ -649,7 +649,7 @@ const CopyWindow = ({
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "chk" || field == "slipamt" || field == "janamt") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -688,7 +688,7 @@ const CopyWindow = ({
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
             ? {
                 ...item,
-                rowstatus: item.rowstatus === "N" ? "N" : "U",
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
                 chk:
                   typeof item.chk == "boolean"
                     ? item.chk
@@ -745,7 +745,7 @@ const CopyWindow = ({
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));

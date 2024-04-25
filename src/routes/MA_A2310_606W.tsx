@@ -121,11 +121,11 @@ const MA_A2310_606W: React.FC = () => {
     if (bizComponentData.length > 0) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       fetchQueryData(userQueryStr, setUserListData);
       fetchQueryData(itemacntQueryStr, setItemacntListData);
@@ -149,7 +149,7 @@ const MA_A2310_606W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -168,7 +168,7 @@ const MA_A2310_606W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -220,7 +220,7 @@ const MA_A2310_606W: React.FC = () => {
   let sessionLocation = sessionItem.find(
     (sessionItem: { code: string }) => sessionItem.code == "location"
   )!.value;
-  if (sessionLocation === "") sessionLocation = "01";
+  if (sessionLocation == "") sessionLocation = "01";
 
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -281,7 +281,7 @@ const MA_A2310_606W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, num: number) => ({
         ...row,
@@ -345,7 +345,7 @@ const MA_A2310_606W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -697,7 +697,7 @@ const MA_A2310_606W: React.FC = () => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -974,7 +974,7 @@ const MA_A2310_606W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setValues2(false);
       resetAllGrid();
       setFilters((prev) => ({
@@ -1043,7 +1043,7 @@ const MA_A2310_606W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1226,7 +1226,7 @@ const MA_A2310_606W: React.FC = () => {
                     (items: any) => items.user_id == row.person
                   )?.user_name,
                   itemacnt: itemacntListData.find(
-                    (item: any) => item.sub_code === row.itemacnt
+                    (item: any) => item.sub_code == row.itemacnt
                   )?.code_name,
                   [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
                 })),
@@ -1272,7 +1272,7 @@ const MA_A2310_606W: React.FC = () => {
                 cell={CheckBoxCell}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1288,7 +1288,7 @@ const MA_A2310_606W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell
@@ -1338,7 +1338,7 @@ const MA_A2310_606W: React.FC = () => {
                 (items: any) => items.user_id == row.person
               )?.user_name,
               itemacnt: itemacntListData.find(
-                (item: any) => item.sub_code === row.itemacnt
+                (item: any) => item.sub_code == row.itemacnt
               )?.code_name,
               [SELECTED_FIELD]: selectedState2[idGetter2(row)], //선택된 데이터
             })),
@@ -1366,7 +1366,7 @@ const MA_A2310_606W: React.FC = () => {
           resizable={true}
         >
           {customOptionData !== null &&
-            customOptionData.menuCustomColumnOptions["grdList"].map(
+            customOptionData.menuCustomColumnOptions["grdList"]?.map(
               (item: any, idx: number) =>
                 item.sortOrder !== -1 && (
                   <GridColumn
@@ -1382,7 +1382,7 @@ const MA_A2310_606W: React.FC = () => {
                         : undefined
                     }
                     footerCell={
-                      item.sortOrder === 0 ? mainTotalFooterCell2 : undefined
+                      item.sortOrder == 0 ? mainTotalFooterCell2 : undefined
                     }
                   />
                 )

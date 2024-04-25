@@ -72,10 +72,10 @@ const BA_B0080W: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
-          .valueCode,
-        amtunit: defaultOption.find((item: any) => item.id === "amtunit")
-          .valueCode,
+        itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
+          ?.valueCode,
+        amtunit: defaultOption.find((item: any) => item.id == "amtunit")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -113,25 +113,25 @@ const BA_B0080W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const outkindQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA004")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA004")
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
 
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
@@ -160,7 +160,7 @@ const BA_B0080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -252,7 +252,7 @@ const BA_B0080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -260,15 +260,15 @@ const BA_B0080W: React.FC = () => {
         const listname = rows.filter((item: { unpitem: any }, i: any) => {
           return (
             rows.findIndex((item2: { unpitem: any }, j: any) => {
-              return item.unpitem === item2.unpitem;
-            }) === i
+              return item.unpitem == item2.unpitem;
+            }) == i
           );
         });
         const result = rows.filter(
           (v: { 품목코드: any }, i: any) =>
             rows.findIndex(
-              (x: { 품목코드: any }) => x.품목코드 === v.품목코드
-            ) === i
+              (x: { 품목코드: any }) => x.품목코드 == v.품목코드
+            ) == i
         );
         rows.map((item: any) => {
           var unps = item.unp;
@@ -292,9 +292,9 @@ const BA_B0080W: React.FC = () => {
           return (
             arr.findIndex(
               (item) =>
-                item.품목코드 === character.품목코드 &&
-                item.unpitem === character.unpitem
-            ) === idx
+                item.품목코드 == character.품목코드 &&
+                item.unpitem == character.unpitem
+            ) == idx
           );
         });
 
@@ -362,7 +362,7 @@ const BA_B0080W: React.FC = () => {
             total: totalRowCnt == -1 ? 0 : totalRowCnt,
           };
         });
-        if (filters.find_row_value === "" && filters.pgNum === 1) {
+        if (filters.find_row_value == "" && filters.pgNum == 1) {
           // 첫번째 행 선택하기
           const firstRowData = rows[0];
           setSelectedState({ [firstRowData[DATA_ITEM_KEY]]: true });
@@ -421,7 +421,7 @@ const BA_B0080W: React.FC = () => {
       if (filters.find_row_value !== "" && mainDataResult.total > 0) {
         const ROW_HEIGHT = 35.56;
         const idx = mainDataResult.data.findIndex(
-          (item) => idGetter(item) === filters.find_row_value
+          (item) => idGetter(item) == filters.find_row_value
         );
 
         const scrollHeight = ROW_HEIGHT * idx;
@@ -435,7 +435,7 @@ const BA_B0080W: React.FC = () => {
       }
       // 스크롤 상단으로 조회가 가능한 경우, 스크롤 핸들이 스크롤 바 최상단에서 떨어져있도록 처리
       // 해당 처리로 사용자가 스크롤 업해서 연속적으로 조회할 수 있도록 함
-      else if (filters.scrollDirrection === "up") {
+      else if (filters.scrollDirrection == "up") {
         gridRef.container.scroll(0, 20);
       }
     }
@@ -461,7 +461,7 @@ const BA_B0080W: React.FC = () => {
   const onMainScrollHandler = (event: GridEvent) => {
     if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
     let pgNumWithGap =
-      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
+      filters.pgNum + (filters.scrollDirrection == "up" ? filters.pgGap : 0);
 
     // 스크롤 최하단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
@@ -476,7 +476,7 @@ const BA_B0080W: React.FC = () => {
     }
 
     pgNumWithGap =
-      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
+      filters.pgNum - (filters.scrollDirrection == "down" ? filters.pgGap : 0);
     // 스크롤 최상단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
       setFilters((prev) => ({
@@ -654,30 +654,30 @@ const BA_B0080W: React.FC = () => {
           fileName="단가조회"
         >
           <Grid
-            style={{ height: "83.5vh" }}
+            style={{ height: "82vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
                 outkind: outkindListData.find(
-                  (item: any) => item.sub_code === row.outkind
+                  (item: any) => item.sub_code == row.outkind
                 )?.code_name,
                 doexdiv: doexdivListData.find(
-                  (item: any) => item.sub_code === row.doexdiv
+                  (item: any) => item.sub_code == row.doexdiv
                 )?.code_name,
                 대분류: itemlvl1ListData.find(
-                  (item: any) => item.sub_code === row.대분류
+                  (item: any) => item.sub_code == row.대분류
                 )?.code_name,
                 중분류: itemlvl2ListData.find(
-                  (item: any) => item.sub_code === row.중분류
+                  (item: any) => item.sub_code == row.중분류
                 )?.code_name,
                 소분류: itemlvl3ListData.find(
-                  (item: any) => item.sub_code === row.소분류
+                  (item: any) => item.sub_code == row.소분류
                 )?.code_name,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
                 품목계정: itemacntListData.find(
-                  (item: any) => item.sub_code === row.품목계정
+                  (item: any) => item.sub_code == row.품목계정
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),

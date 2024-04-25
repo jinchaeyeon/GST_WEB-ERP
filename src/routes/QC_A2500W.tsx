@@ -155,11 +155,11 @@ const QC_A2500W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        gubun: defaultOption.find((item: any) => item.id === "gubun").valueCode,
-        proccd: defaultOption.find((item: any) => item.id === "proccd")
-          .valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        gubun: defaultOption.find((item: any) => item.id == "gubun")?.valueCode,
+        proccd: defaultOption.find((item: any) => item.id == "proccd")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -185,15 +185,15 @@ const QC_A2500W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const causedcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC001")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_QC001")
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       fetchQuery(causedcdQueryStr, setCausedListData);
       fetchQuery(usersQueryStr, setUsersListData);
@@ -217,7 +217,7 @@ const QC_A2500W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -416,7 +416,7 @@ const QC_A2500W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -526,7 +526,7 @@ const QC_A2500W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (detailFilters.find_row_value !== "") {
@@ -620,7 +620,7 @@ const QC_A2500W: React.FC = () => {
   }, [detailFilters]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   let gridRef: any = useRef(null);
@@ -809,9 +809,9 @@ const QC_A2500W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        detailDataResult.data.length === 1 && detailFilters.pgNum > 0;
+        detailDataResult.data.length == 1 && detailFilters.pgNum > 0;
       const findRowIndex = detailDataResult.data.findIndex(
         (row: any) =>
           row.num == Object.getOwnPropertyNames(detailselectedState)[0]
@@ -1153,10 +1153,10 @@ const QC_A2500W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 proccd: proccdListData.find(
-                  (item: any) => item.sub_code === row.proccd
+                  (item: any) => item.sub_code == row.proccd
                 )?.code_name,
                 causedcd: causedcdListData.find(
-                  (item: any) => item.sub_code === row.causedcd
+                  (item: any) => item.sub_code == row.causedcd
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -1191,7 +1191,7 @@ const QC_A2500W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -1207,7 +1207,7 @@ const QC_A2500W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : numberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell
@@ -1249,10 +1249,10 @@ const QC_A2500W: React.FC = () => {
               detailDataResult.data.map((row) => ({
                 ...row,
                 proccd: proccdListData.find(
-                  (item: any) => item.sub_code === row.proccd
+                  (item: any) => item.sub_code == row.proccd
                 )?.code_name,
                 person: usersListData.find(
-                  (item: any) => item.user_id === row.person
+                  (item: any) => item.user_id == row.person
                 )?.user_name,
                 [SELECTED_FIELD]: detailselectedState[idGetter2(row)],
               })),
@@ -1287,7 +1287,7 @@ const QC_A2500W: React.FC = () => {
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList2"].map(
+              customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -1305,7 +1305,7 @@ const QC_A2500W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? detailTotalFooterCell
                           : numberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell2

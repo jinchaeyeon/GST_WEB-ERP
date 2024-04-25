@@ -116,15 +116,15 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "qtyunit"
+    field == "qtyunit"
       ? "L_BA015"
-      : field === "wgtunit"
+      : field == "wgtunit"
       ? "L_BA015"
-      : field === "proccd"
+      : field == "proccd"
       ? "L_PR010"
       : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
   return bizComponent ? (
     <ComboBoxCell bizComponent={bizComponent} {...props} />
@@ -171,8 +171,8 @@ const DetailWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -199,13 +199,13 @@ const DetailWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
       );
       const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA029")
       );
       const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
       );
 
       fetchQuery(doexdivQueryStr, setDoexdivListData);
@@ -230,7 +230,7 @@ const DetailWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -312,7 +312,7 @@ const DetailWindow = ({
   };
 
   const onPlanWndClick = () => {
-    if (workType === "U") {
+    if (workType == "U") {
       alert("상세정보 추가 등록이 불가능합니다. 신규로 등록해주세요.");
       return;
     }
@@ -320,7 +320,7 @@ const DetailWindow = ({
   };
 
   const onStockWndClick = () => {
-    if (workType === "U") {
+    if (workType == "U") {
       alert("상세정보 추가 등록이 불가능합니다. 신규로 등록해주세요.");
       return;
     }
@@ -357,7 +357,7 @@ const DetailWindow = ({
     data.map((item: any) => {
       const newDataItem = {
         [DATA_ITEM_KEY]: ++temp,
-        amt: item.amt === undefined ? "0" : item.amt,
+        amt: item.amt == undefined ? "0" : item.amt,
         chk: item.chk,
         insiz: item.insiz,
         itemacnt: item.itemacnt,
@@ -365,25 +365,25 @@ const DetailWindow = ({
         itemnm: item.itemnm,
         ordkey: item.ordkey,
         ordnum: item.ordnum,
-        ordseq: item.ordseq === undefined ? "0" : item.ordseq,
+        ordseq: item.ordseq == undefined ? "0" : item.ordseq,
         orgdiv: orgdiv,
         qty: item.janqty,
         qtyunit: item.qtyunit,
         remark: "",
-        taxamt: item.taxamt === undefined ? "0" : item.taxamt,
-        totamt: item.totamt === undefined ? "0" : item.totamt,
-        unitwgt: item.unitwgt === undefined ? "0" : item.unitwgt,
-        wgt: item.wgt === undefined ? "0" : item.wgt,
-        unp: item.unp === undefined ? "0" : item.unp,
+        taxamt: item.taxamt == undefined ? "0" : item.taxamt,
+        totamt: item.totamt == undefined ? "0" : item.totamt,
+        unitwgt: item.unitwgt == undefined ? "0" : item.unitwgt,
+        wgt: item.wgt == undefined ? "0" : item.wgt,
+        unp: item.unp == undefined ? "0" : item.unp,
         wgtunit: item.wgtunit,
-        wonamt: item.wonamt === undefined ? "0" : item.wonamt,
+        wonamt: item.wonamt == undefined ? "0" : item.wonamt,
         rowstatus: "N",
         planno: item.planno,
-        planseq: item.planseq === undefined ? "0" : item.planseq,
+        planseq: item.planseq == undefined ? "0" : item.planseq,
         plankey: item.plankey,
         purnum: item.purnum,
-        purseq: item.purseq === undefined ? "0" : item.purseq,
-        dlramt: item.dlramt === undefined ? "0" : item.dlramt,
+        purseq: item.purseq == undefined ? "0" : item.purseq,
+        dlramt: item.dlramt == undefined ? "0" : item.dlramt,
       };
 
       setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
@@ -441,17 +441,17 @@ const DetailWindow = ({
         lotnum: item.lotnum,
         qty: item.now_qty,
         qtyunit: item.qtyunit,
-        unp: item.unp === undefined ? "0" : item.unp,
-        wonamt: item.wonamt === undefined ? "0" : item.wonamt,
-        amt: item.amt === undefined ? "0" : item.amt,
-        taxamt: item.taxamt === undefined ? "0" : item.taxamt,
-        totamt: item.totamt === undefined ? "0" : item.totamt,
-        dlramt: item.dlramt === undefined ? "0" : item.dlramt,
-        ordseq: item.ordseq === undefined ? "0" : item.ordseq,
-        planseq: item.planseq === undefined ? "0" : item.planseq,
-        purseq: item.purseq === undefined ? "0" : item.purseq,
-        wgt: item.wgt === undefined ? "0" : item.wgt,
-        unitwgt: item.unitwgt === undefined ? "0" : item.unitwgt,
+        unp: item.unp == undefined ? "0" : item.unp,
+        wonamt: item.wonamt == undefined ? "0" : item.wonamt,
+        amt: item.amt == undefined ? "0" : item.amt,
+        taxamt: item.taxamt == undefined ? "0" : item.taxamt,
+        totamt: item.totamt == undefined ? "0" : item.totamt,
+        dlramt: item.dlramt == undefined ? "0" : item.dlramt,
+        ordseq: item.ordseq == undefined ? "0" : item.ordseq,
+        planseq: item.planseq == undefined ? "0" : item.planseq,
+        purseq: item.purseq == undefined ? "0" : item.purseq,
+        wgt: item.wgt == undefined ? "0" : item.wgt,
+        unitwgt: item.unitwgt == undefined ? "0" : item.unitwgt,
       };
 
       setSelectedState({ [newDataItem[DATA_ITEM_KEY]]: true });
@@ -533,7 +533,7 @@ const DetailWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -580,7 +580,7 @@ const DetailWindow = ({
   }, [filters]);
 
   useEffect(() => {
-    if (workType === "U" && data != undefined) {
+    if (workType == "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
         purnum: data.purnum,
@@ -798,7 +798,7 @@ const DetailWindow = ({
         if (valid == true) {
           const dataItem = mainDataResult.data.filter((item: any) => {
             return (
-              (item.rowstatus === "N" || item.rowstatus === "U") &&
+              (item.rowstatus == "N" || item.rowstatus == "U") &&
               item.rowstatus !== undefined
             );
           });
@@ -825,7 +825,7 @@ const DetailWindow = ({
             remark: filters.remark,
           }));
 
-          if (dataItem.length === 0 && deletedMainRows.length === 0)
+          if (dataItem.length == 0 && deletedMainRows.length == 0)
             return false;
 
           let rowsArr: TRowsArr = {
@@ -1111,7 +1111,7 @@ const DetailWindow = ({
       field != "qty"
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1239,7 +1239,7 @@ const DetailWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "외주처리생성" : "외주처리정보"}
+        title={workType == "N" ? "외주처리생성" : "외주처리정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -1291,7 +1291,7 @@ const DetailWindow = ({
                     type="text"
                     value={
                       doexdivListData.find(
-                        (item: any) => item.sub_code === filters.doexdiv
+                        (item: any) => item.sub_code == filters.doexdiv
                       )?.code_name
                     }
                     className="readonly"
@@ -1304,7 +1304,7 @@ const DetailWindow = ({
                     type="text"
                     value={
                       amtunitListData.find(
-                        (item: any) => item.sub_code === filters.amtunit
+                        (item: any) => item.sub_code == filters.amtunit
                       )?.code_name
                     }
                     className="readonly"
@@ -1355,7 +1355,7 @@ const DetailWindow = ({
                     type="text"
                     value={
                       taxdivListData.find(
-                        (item: any) => item.sub_code === filters.taxdiv
+                        (item: any) => item.sub_code == filters.taxdiv
                       )?.code_name
                     }
                     className="readonly"

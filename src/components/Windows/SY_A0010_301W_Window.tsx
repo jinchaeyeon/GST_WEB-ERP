@@ -167,7 +167,7 @@ const KendoWindow = ({
     if (bizComponentData.length > 0) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
 
@@ -192,7 +192,7 @@ const KendoWindow = ({
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -316,7 +316,7 @@ const KendoWindow = ({
       )
     ) {
       const newData = detailDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -397,7 +397,7 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if (workType === "U" || isCopy === true) {
+    if (workType == "U" || isCopy == true) {
       fetchMain();
     }
   }, []);
@@ -456,7 +456,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const row = data.tables[0].Rows[0];
 
       setInitialVal((prev) => {
@@ -533,12 +533,12 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
           ...row,
-          rowstatus: workType === "N" ? "N" : "",
+          rowstatus: workType == "N" ? "N" : "",
           extra_field1: row.extra_field1 ?? "",
           extra_field2: row.extra_field2 ?? "",
           extra_field3: row.extra_field3 ?? "",
@@ -774,10 +774,10 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = [];
       setUnsavedName([]);
-      if (workType === "U") {
+      if (workType == "U") {
         reloadData("U", paraData.group_code);
         fetchMain();
       } else {
@@ -804,7 +804,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       // 초기화
       const isLastDataDeleted =
         detailDataResult.data.length == 0 && filters.pgNum > 0;
@@ -845,7 +845,7 @@ const KendoWindow = ({
         }
         detailDataResult.data.forEach((chkItem: any, chkIdx: number) => {
           if (
-            item.sub_code === chkItem.sub_code &&
+            item.sub_code == chkItem.sub_code &&
             idx !== chkIdx &&
             valid == true
           ) {
@@ -882,7 +882,7 @@ const KendoWindow = ({
     }
     const dataItem = detailDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -983,7 +983,7 @@ const KendoWindow = ({
           "@p_group_code": group_code,
           "@p_sub_code": sub_code,
           "@p_code_name": code_name,
-          "@p_system_yn": system_yn === "Y" || system_yn === true ? "Y" : "N",
+          "@p_system_yn": system_yn == "Y" || system_yn == true ? "Y" : "N",
           "@p_extra_field1": extra_field1,
           "@p_extra_field2": extra_field2,
           "@p_extra_field3": extra_field3,
@@ -1001,7 +1001,7 @@ const KendoWindow = ({
           "@p_numref5": numref5,
           "@p_memo": item.memo,
           "@p_sort_seq": sort_seq,
-          "@p_use_yn": use_yn === "Y" || use_yn === true ? "Y" : "N",
+          "@p_use_yn": use_yn == "Y" || use_yn == true ? "Y" : "N",
           "@p_userid": userId,
           "@p_pc": pc,
           "@p_attdatnum_img": null,
@@ -1031,7 +1031,7 @@ const KendoWindow = ({
       attdatnum: attdatnum,
       files: files,
       memo: memo,
-      use_yn: use_yn === "Y" ? "Y" : "N",
+      use_yn: use_yn == "Y" ? "Y" : "N",
     }));
   };
 
@@ -1159,7 +1159,7 @@ const KendoWindow = ({
     const changeCheck = () => {
       const newData = detailDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -1284,7 +1284,7 @@ const KendoWindow = ({
 
   return (
     <Window
-      title={workType === "N" ? "공통코드 생성" : "공통코드 정보"}
+      title={workType == "N" ? "공통코드 생성" : "공통코드 정보"}
       width={position.width}
       height={position.height}
       onMove={handleMove}

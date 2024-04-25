@@ -129,7 +129,7 @@ function App() {
   };
   const onTaskUpdated = (e: TaskUpdatedEvent) => {
     const { values, key } = e;
-    const updatedData = task.find((item) => item.id === key);
+    const updatedData = task.find((item) => item.id == key);
     const {
       start = updatedData?.start,
       end = updatedData?.end,
@@ -198,7 +198,7 @@ function App() {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows1 = data.tables[0].Rows.map((item: TTask) => ({
         ...item,
@@ -283,7 +283,7 @@ function App() {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       fetchMain();
     } else {
       console.log("[에러발생]");

@@ -91,21 +91,21 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "itemlvl1"
+    field == "itemlvl1"
       ? "L_BA010_GST"
-      : field === "itemlvl2"
+      : field == "itemlvl2"
       ? "L_BA011_GST"
-      : field === "itemlvl3"
+      : field == "itemlvl3"
       ? "L_BA012_GST"
-      : field === "DesignPerson"
+      : field == "DesignPerson"
       ? "L_sysUserMaster_001"
-      : field === "DevPerson"
+      : field == "DevPerson"
       ? "L_sysUserMaster_001"
-      : field === "level"
+      : field == "level"
       ? "L_CM000100_002"
       : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   if (bizComponentIdVal == "L_CM000100_002") {
@@ -239,12 +239,12 @@ const CM_A8000W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1")
-          .valueCode,
-        itemlvl2: defaultOption.find((item: any) => item.id === "itemlvl2")
-          .valueCode,
-        itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
-          .valueCode,
+        itemlvl1: defaultOption.find((item: any) => item.id == "itemlvl1")
+          ?.valueCode,
+        itemlvl2: defaultOption.find((item: any) => item.id == "itemlvl2")
+          ?.valueCode,
+        itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
+          ?.valueCode,
       }));
       setFilters1((prev) => ({
         ...prev,
@@ -405,7 +405,7 @@ const CM_A8000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -496,7 +496,7 @@ const CM_A8000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -560,7 +560,7 @@ const CM_A8000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -623,7 +623,7 @@ const CM_A8000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -935,7 +935,7 @@ const CM_A8000W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1221,12 +1221,12 @@ const CM_A8000W: React.FC = () => {
 
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
       valueboxcd_s: [],
@@ -1272,7 +1272,7 @@ const CM_A8000W: React.FC = () => {
       dataArr.fnscore_s.push(fnscore);
       dataArr.level_s.push(level);
       dataArr.exptime_s.push(exptime);
-      dataArr.useyn_s.push(useyn === true ? "Y" : "N");
+      dataArr.useyn_s.push(useyn == true ? "Y" : "N");
       dataArr.remark2_s.push(remark2);
       dataArr.valBasecode_s.push(valBasecode);
       dataArr.absolutedays_s.push(absolutedays);
@@ -1307,7 +1307,7 @@ const CM_A8000W: React.FC = () => {
       dataArr.fnscore_s.push(fnscore);
       dataArr.level_s.push(level);
       dataArr.exptime_s.push(exptime);
-      dataArr.useyn_s.push(useyn === true ? "Y" : "N");
+      dataArr.useyn_s.push(useyn == true ? "Y" : "N");
       dataArr.remark2_s.push(remark2);
       dataArr.valBasecode_s.push(valBasecode);
       dataArr.absolutedays_s.push(absolutedays);
@@ -1344,7 +1344,7 @@ const CM_A8000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
         mainDataResult.data.length == 0 && filters.pgNum > 0;
       if (isLastDataDeleted) {
@@ -1550,7 +1550,7 @@ const CM_A8000W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const totalRowCnt = data.tables[0].TotalRowCount;
         const rows = data.tables[0].Rows.map((row: any) => {
           return {
@@ -1970,7 +1970,7 @@ const CM_A8000W: React.FC = () => {
                 editable={false}
               />
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1999,7 +1999,7 @@ const CM_A8000W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : NumberField2.includes(item.fieldName)
                             ? editNumberFooterCell

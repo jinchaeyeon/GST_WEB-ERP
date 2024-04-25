@@ -30,8 +30,8 @@ const CustomOptionComboBox = ({
     customOptionData.menuCustomDefaultOptions,
     type
   );
-  const dataItem = dataList.find((item: any) => item.id === name);
-  const listData = dataItem.Rows;
+  const dataItem = dataList?.find((item: any) => item.id == name);
+  const listData = dataItem?.Rows;
 
   let newColumns = [];
   let required = false;
@@ -41,7 +41,7 @@ const CustomOptionComboBox = ({
   }
 
   if (dataList) {
-    const columns = dataItem.bizComponentItems;
+    const columns = dataItem?.bizComponentItems;
 
     if (columns) {
       newColumns = columns.map((column: any) => ({
@@ -51,10 +51,20 @@ const CustomOptionComboBox = ({
       }));
 
       newColumns = newColumns.filter((column: any) => column.width !== 0);
+    } 
+
+    if(newColumns.length == 0) {
+      newColumns = [
+        {
+          field: '',
+          header: '',
+          width: '300px',
+        },
+      ]
     }
   }
   const onChangeHandle = (e: ComboBoxChangeEvent) => {
-    let value = e.target.value === null ? "" : e.target.value[valueField];
+    let value = e.target.value == null ? "" : e.target.value[valueField];
     changeData({ name, value, e });
   };
 

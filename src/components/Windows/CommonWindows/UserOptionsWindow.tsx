@@ -129,7 +129,7 @@ const DefaultUseSessioneCell = (props: GridCellProps) => {
   const orgUseSession = dataItem["sys_use_session"];
 
   let value = dataItem[field ?? ""];
-  if (value === "Y" || value === true) {
+  if (value == "Y" || value == true) {
     value = true;
   } else {
     value = false;
@@ -148,10 +148,10 @@ const DefaultUseSessioneCell = (props: GridCellProps) => {
   };
 
   const defaultRendering =
-    valueType !== "Datetime" && orgUseSession === "Y" ? (
+    valueType !== "Datetime" && orgUseSession == "Y" ? (
       <td
         style={
-          value === true
+          value == true
             ? {
                 textAlign: "center",
                 color: "rgba(255 ,99 ,88, 1)",
@@ -167,7 +167,7 @@ const DefaultUseSessioneCell = (props: GridCellProps) => {
       <td aria-colindex={ariaColumnIndex} data-grid-col-index={columnIndex} />
     );
 
-  return render === undefined
+  return render == undefined
     ? null
     : render?.call(undefined, defaultRendering, props);
 };
@@ -181,7 +181,7 @@ const DefaultValueCell = (props: GridCellProps) => {
   const [bizComponentData, setBizComponentData] = useState([]);
   if (bcId) UseBizComponent(bcId, setBizComponentData);
   const bizComponent: any = bizComponentData.find(
-    (item: any) => item.bizComponentId === bcId
+    (item: any) => item.bizComponentId == bcId
   );
 
   const textField = bizComponent
@@ -196,16 +196,16 @@ const DefaultValueCell = (props: GridCellProps) => {
 
   const defaultRendering = (
     <>
-      {bizComponent && valueType === "Lookup" ? (
+      {bizComponent && valueType == "Lookup" ? (
         <ComboBoxCell
           bizComponent={bizComponent}
           textField={textField}
           valueField={valueField}
           {...props}
         />
-      ) : bizComponent && valueType === "Radio" ? (
+      ) : bizComponent && valueType == "Radio" ? (
         <RadioGroupCell bizComponentData={bizComponent} {...props} />
-      ) : valueType === "Text" ? (
+      ) : valueType == "Text" ? (
         <NameCell {...props} />
       ) : (
         <td
@@ -217,7 +217,7 @@ const DefaultValueCell = (props: GridCellProps) => {
     </>
   );
 
-  return render === undefined
+  return render == undefined
     ? null
     : render?.call(undefined, defaultRendering, props);
 };
@@ -233,7 +233,7 @@ const DefaultDateCell = (props: GridCellProps) => {
     onChange,
   } = props;
 
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const valueType = dataItem["value_type"];
   const value = dataItem[field];
 
@@ -255,7 +255,7 @@ const DefaultDateCell = (props: GridCellProps) => {
       aria-colindex={ariaColumnIndex}
       data-grid-col-index={columnIndex}
     >
-      {valueType === "Datetime" ? (
+      {valueType == "Datetime" ? (
         isInEdit ? (
           <NumericTextBox value={value} onChange={handleChange} />
         ) : (
@@ -267,7 +267,7 @@ const DefaultDateCell = (props: GridCellProps) => {
     </td>
   );
 
-  return render === undefined
+  return render == undefined
     ? null
     : render?.call(undefined, defaultRendering, props);
 };
@@ -314,7 +314,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
 
   const loginResult = useRecoilValue(loginResultState);
   const role = loginResult ? loginResult.role : "";
-  const isAdmin = role === "ADMIN";
+  const isAdmin = role == "ADMIN";
   const sessionUserId = UseGetValueFromSessionItem("user_id");
 
   const [pc, setPc] = useState("");
@@ -571,7 +571,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
@@ -600,7 +600,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -627,7 +627,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       fetchControl();
     } else {
       console.log("[오류 발생]");
@@ -647,7 +647,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
 
       setMainColumnDataResult(process(rows, mainColumnDataState));
@@ -666,7 +666,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setMainDefaultDataResult(process(rows, mainDefaultDataState));
     } else {
@@ -681,10 +681,10 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     const selectedRowKeyVal =
       Object.getOwnPropertyNames(mainColumnSelectedState)[0] ?? null;
 
-    if (selectedRowKeyVal === null) return false;
+    if (selectedRowKeyVal == null) return false;
 
     const selectedRowData = mainColumnDataResult.data.find(
-      (item) => item[MAIN_COLUMN_DATA_ITEM_KEY] === selectedRowKeyVal
+      (item) => item[MAIN_COLUMN_DATA_ITEM_KEY] == selectedRowKeyVal
     );
 
     const para = {
@@ -710,7 +710,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
         totalRowsCnt = data[1].RowCount;
         rows = data[1].Rows.map((row: any) => ({
           ...row,
-          fixed: row.fixed === "None" ? "N" : "Y",
+          fixed: row.fixed == "None" ? "N" : "Y",
           hidden: row.sort_order < 0 ? "Y" : "N",
         }));
       } else {
@@ -718,7 +718,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
         totalRowsCnt = data[0].RowCount;
         rows = data[0].Rows.map((row: any) => ({
           ...row,
-          fixed: row.fixed === "None" ? "N" : "Y",
+          fixed: row.fixed == "None" ? "N" : "Y",
           hidden: row.sort_order < 0 ? "Y" : "N",
         }));
       }
@@ -735,11 +735,11 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
       //         add_month: row.custom_add_month,
       //         add_day: row.custom_add_day,
       //         value_lookup: row.custom_value_lookup,
-      //         fixed: row.fixed === "None" ? "N" : "Y",
+      //         fixed: row.fixed == "None" ? "N" : "Y",
       //         hidden: row.sort_order < 0 ? "Y" : "N",
       //       }
       //     : { ...row, sys_use_session: row.use_session,
-      //       fixed: row.fixed === "None" ? "N" : "Y",
+      //       fixed: row.fixed == "None" ? "N" : "Y",
       //       hidden: row.sort_order < 0 ? "Y" : "N", }
       // );
 
@@ -754,7 +754,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
 
   //기본값 상세그리드 조회
   const fetchDetailDefault = async () => {
-    if (defaultDetailInitialVal.option_id === "") {
+    if (defaultDetailInitialVal.option_id == "") {
       return false;
     }
 
@@ -909,15 +909,15 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
-      if (customOptionParaData.work_type === "init") {
+    if (data.isSuccess == true) {
+      if (customOptionParaData.work_type == "init") {
         alert("초기화가 완료되었습니다.");
       } else {
       }
 
-      if (customOptionParaData.type === "Column") {
+      if (customOptionParaData.type == "Column") {
         fetchDetailColumn();
-      } else if (customOptionParaData.type === "Default") {
+      } else if (customOptionParaData.type == "Default") {
         fetchDetailDefault();
       }
     } else {
@@ -1103,11 +1103,11 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
 
   const detailColumnEnterEdit = (dataItem: any, field: string) => {
     const newData = detailColumnDataResult.data.map((item) =>
-      item[DETAIL_COLUMN_DATA_ITEM_KEY] ===
+      item[DETAIL_COLUMN_DATA_ITEM_KEY] ==
       dataItem[DETAIL_COLUMN_DATA_ITEM_KEY]
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             [EDIT_FIELD]: field,
           }
         : { ...item, [EDIT_FIELD]: undefined }
@@ -1136,11 +1136,11 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   };
   const detailDefaultEnterEdit = (dataItem: any, field: string) => {
     const newData = detailDefaultDataResult.data.map((item) =>
-      item[DETAIL_DEFAULT_DATA_ITEM_KEY] ===
+      item[DETAIL_DEFAULT_DATA_ITEM_KEY] ==
       dataItem[DETAIL_DEFAULT_DATA_ITEM_KEY]
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             [EDIT_FIELD]: field,
           }
         : { ...item, [EDIT_FIELD]: undefined }
@@ -1356,9 +1356,9 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
       const { column_id, width, fixed, hidden } = item;
 
       dataArr.column_id.push(column_id);
-      dataArr.sort_order.push(getYn(hidden) === "Y" ? "-1" : String(idx));
+      dataArr.sort_order.push(getYn(hidden) == "Y" ? "-1" : String(idx));
       dataArr.width.push(width);
-      dataArr.fixed.push(getYn(fixed) === "Y" ? "Left" : "None");
+      dataArr.fixed.push(getYn(fixed) == "Y" ? "Left" : "None");
     });
 
     const option_id = Object.getOwnPropertyNames(mainColumnSelectedState)[0];
@@ -1449,14 +1449,14 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     const selectedField = Object.getOwnPropertyNames(selectedState)[0];
 
     const rowData = dataResult.data.find(
-      (row) => row[DATA_ITEM_KEY] === selectedField
+      (row) => row[DATA_ITEM_KEY] == selectedField
     );
 
     const rowIndex = dataResult.data.findIndex(
-      (row) => row[DATA_ITEM_KEY] === selectedField
+      (row) => row[DATA_ITEM_KEY] == selectedField
     );
 
-    if (rowIndex === -1) {
+    if (rowIndex == -1) {
       alert("이동시킬 행을 선택해주세요.");
       return false;
     }
@@ -1467,7 +1467,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     }));
 
     newData.splice(rowIndex, 1);
-    newData.splice(rowIndex + (direction === "UP" ? -1 : 1), 0, rowData);
+    newData.splice(rowIndex + (direction == "UP" ? -1 : 1), 0, rowData);
 
     setDataResult((prev: any) => {
       return {
@@ -1572,11 +1572,11 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete(paraDeleted);
+    if (paraDataDeleted.work_type == "D") fetchToDelete(paraDeleted);
   }, [paraDataDeleted]);
 
   useEffect(() => {
-    if (defaultParaDataDeleted.work_type === "D")
+    if (defaultParaDataDeleted.work_type == "D")
       fetchToDelete(defaultParaDeleted);
   }, [defaultParaDataDeleted]);
 
@@ -1589,7 +1589,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       alert("삭제가 완료되었습니다.");
 
       resetAllGrid();
@@ -1729,7 +1729,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
 
   const onGetControlClick = () => {
     const root = document.getElementById("root");
-    if (root === null) {
+    if (root == null) {
       alert("오류가 발생하였습니다. 새로고침 후 다시 시도해주세요.");
       return false;
     }
@@ -1770,7 +1770,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
       (item: any) => item.dataset.controlName
     );
     controlNameList.forEach((item) => {
-      if (item === "") return;
+      if (item == "") return;
       const controlObj: TControlObj = {
         rowstatus: "N",
         form_id: pathname,
@@ -1849,7 +1849,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
 
     ControlList.forEach((item) => {
       const sameControlData = flatData.find(
-        (orgItem: any) => item.control_name === orgItem.control_name
+        (orgItem: any) => item.control_name == orgItem.control_name
       );
 
       if (sameControlData) {
@@ -1920,7 +1920,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
 
   // 컨트롤 데이터 word_id 업데이트
   const handleControlDrop = (e: any, dataItem: any) => {
-    if (wordDragDataItem === null) {
+    if (wordDragDataItem == null) {
       return false;
     }
 
@@ -1935,10 +1935,10 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     flatData.forEach((item: any) => delete item[subItemsField]);
 
     const newData = flatData.map((item: any) =>
-      item[CONTROL_DATA_ITEM_KEY] === control_name
+      item[CONTROL_DATA_ITEM_KEY] == control_name
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             word_id: wordDragDataItem.word_id,
             word_text: wordDragDataItem.word_text,
           }
@@ -1958,7 +1958,7 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
 
   // 컨트롤 데이터 word_id 삭제
   const handleWordDrop = (e: any, dataItem: any) => {
-    if (controlDragDataItem === null) {
+    if (controlDragDataItem == null) {
       return false;
     }
 
@@ -1973,10 +1973,10 @@ const KendoWindow = ({ setVisible }: TKendoWindow) => {
     flatData.forEach((item: any) => delete item[subItemsField]);
 
     const newData = flatData.map((item: any) =>
-      item[CONTROL_DATA_ITEM_KEY] === control_name
+      item[CONTROL_DATA_ITEM_KEY] == control_name
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             word_id: "",
             word_text: "",
           }

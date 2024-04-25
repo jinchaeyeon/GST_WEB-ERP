@@ -99,14 +99,14 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "colorID"
+    field == "colorID"
       ? "L_APPOINTMENT_COLOR"
-      : field === "kind1"
+      : field == "kind1"
       ? "L_BA400"
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -216,7 +216,7 @@ const CM_A1600: React.FC = () => {
     if (bizComponentData !== null) {
       const colorQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_APPOINTMENT_COLOR"
+          (item: any) => item.bizComponentId == "L_APPOINTMENT_COLOR"
         )
       );
 
@@ -240,7 +240,7 @@ const CM_A1600: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -450,7 +450,7 @@ const CM_A1600: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => ({
         ...row,
@@ -534,7 +534,7 @@ const CM_A1600: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => ({
         ...row,
@@ -620,7 +620,7 @@ const CM_A1600: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let rows = data.tables[0].Rows.map((row: any) => {
         const start = new Date(row.strtime);
         const end = new Date(row.endtime);
@@ -633,7 +633,7 @@ const CM_A1600: React.FC = () => {
           description: row.contents,
           start: start,
           end: end,
-          isAllDay: timeDiff === 8.64e7 ? true : false, // 24시간 차이 시 all day
+          isAllDay: timeDiff == 8.64e7 ? true : false, // 24시간 차이 시 all day
           colorID: colorData.find((item) => item.sub_code == row.colorID),
         };
       });
@@ -681,7 +681,7 @@ const CM_A1600: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let rows = data.tables[0].Rows.map((row: any) => {
         const start = new Date(row.strtime);
         const end = new Date(row.endtime);
@@ -694,7 +694,7 @@ const CM_A1600: React.FC = () => {
           description: row.contents,
           start: start,
           end: end,
-          isAllDay: timeDiff === 8.64e7 ? true : false, // 24시간 차이 시 all day
+          isAllDay: timeDiff == 8.64e7 ? true : false, // 24시간 차이 시 all day
           colorID: colorData.find((item) => item.sub_code == row.colorID),
         };
       });
@@ -1067,7 +1067,7 @@ const CM_A1600: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       ok = true;
       setSchedulerFilter((prev) => ({
         ...prev,
@@ -1115,32 +1115,32 @@ const CM_A1600: React.FC = () => {
       setSchedulerFilter((prev) => ({
         ...prev,
         person:
-          defaultOption.find((item: any) => item.id === "person").useSession ==
+          defaultOption.find((item: any) => item.id == "person").useSession ==
           true
-            ? defaultOption.find((item: any) => item.id === "person")
+            ? defaultOption.find((item: any) => item.id == "person")
                 .sessionItem == "UserId"
               ? sessionUserId
-              : defaultOption.find((item: any) => item.id === "person")
-                  .valueCode
-            : defaultOption.find((item: any) => item.id === "person").valueCode,
-        rdoplandiv: defaultOption.find((item: any) => item.id === "rdoplandiv")
-          .valueCode,
+              : defaultOption.find((item: any) => item.id == "person")
+                  ?.valueCode
+            : defaultOption.find((item: any) => item.id == "person")?.valueCode,
+        rdoplandiv: defaultOption.find((item: any) => item.id == "rdoplandiv")
+          ?.valueCode,
         isSearch: true,
       }));
       setSchedulerFilter2((prev) => ({
         ...prev,
         person:
-          defaultOption.find((item: any) => item.id === "person").useSession ==
+          defaultOption.find((item: any) => item.id == "person").useSession ==
           true
-            ? defaultOption.find((item: any) => item.id === "person")
+            ? defaultOption.find((item: any) => item.id == "person")
                 .sessionItem == "UserId"
               ? sessionUserId
-              : defaultOption.find((item: any) => item.id === "person")
-                  .valueCode
-            : defaultOption.find((item: any) => item.id === "person").valueCode,
+              : defaultOption.find((item: any) => item.id == "person")
+                  ?.valueCode
+            : defaultOption.find((item: any) => item.id == "person")?.valueCode,
         rdoplandiv2: defaultOption.find(
-          (item: any) => item.id === "rdoplandiv2"
-        ).valueCode,
+          (item: any) => item.id == "rdoplandiv2"
+        )?.valueCode,
         isSearch: true,
       }));
 
@@ -1148,16 +1148,16 @@ const CM_A1600: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        rdofinyn: defaultOption.find((item: any) => item.id === "rdofinyn")
-          .valueCode,
+        rdofinyn: defaultOption.find((item: any) => item.id == "rdofinyn")
+          ?.valueCode,
         isSearch: true,
       }));
       setUserFilter((prev) => ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        rdofinyn: defaultOption.find((item: any) => item.id === "rdofinyn")
-          .valueCode,
+        rdofinyn: defaultOption.find((item: any) => item.id == "rdofinyn")
+          ?.valueCode,
         isSearch: true,
       }));
     }
@@ -1184,7 +1184,7 @@ const CM_A1600: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = todoDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1285,7 +1285,7 @@ const CM_A1600: React.FC = () => {
   const enterEdit2 = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = userDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY2] === dataItem[DATA_ITEM_KEY2]
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1393,9 +1393,9 @@ const CM_A1600: React.FC = () => {
       Number(Object.getOwnPropertyNames(todoSelectedState)[0]) ??
       //Number(planDataResult.data[0].idx) ??
       null;
-    if (idx === null) return false;
+    if (idx == null) return false;
     const selectedRowData = todoDataResult.data.find(
-      (item) => item[DATA_ITEM_KEY] === idx
+      (item) => item[DATA_ITEM_KEY] == idx
     );
 
     const newDataItem = {
@@ -1532,12 +1532,12 @@ const CM_A1600: React.FC = () => {
     const dataItem: { [name: string]: any } = todoDataResult.data.filter(
       (item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       }
     );
-    if (dataItem.length === 0 && deletedTodoRows.length === 0) {
+    if (dataItem.length == 0 && deletedTodoRows.length == 0) {
       ok = true;
       return false;
     }
@@ -1613,7 +1613,7 @@ const CM_A1600: React.FC = () => {
           )
         )
       );
-      dataArr.finyn_s.push(finyn === "Y" || finyn === true ? "Y" : "N");
+      dataArr.finyn_s.push(finyn == "Y" || finyn == true ? "Y" : "N");
       dataArr.kind1_s.push(kind1);
       dataArr.custcd_s.push(custcd);
       dataArr.title_s.push(title);
@@ -1770,7 +1770,7 @@ const CM_A1600: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       ok = true;
       setTodoFilter((prev) => ({
         ...prev,
@@ -1974,7 +1974,7 @@ const CM_A1600: React.FC = () => {
   const onSaveClick2 = () => {
     const dataItem = userDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -2027,7 +2027,7 @@ const CM_A1600: React.FC = () => {
     }
 
     if (
-      (dataItem.length === 0 && deletedTodoRows2.length === 0) ||
+      (dataItem.length == 0 && deletedTodoRows2.length == 0) ||
       valid == false
     ) {
       ok = true;
@@ -2402,7 +2402,7 @@ const CM_A1600: React.FC = () => {
                     editable={false}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -2424,7 +2424,7 @@ const CM_A1600: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? todoTotalFooterCell
                                 : undefined
                             }
@@ -2725,7 +2725,7 @@ const CM_A1600: React.FC = () => {
                   editable={false}
                 />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -2749,7 +2749,7 @@ const CM_A1600: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? userTotalFooterCell
                               : undefined
                           }

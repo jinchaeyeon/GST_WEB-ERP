@@ -144,8 +144,8 @@ const BA_A0020_603: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        status: defaultOption.find((item: any) => item.id === "status")
-          .valueCode,
+        status: defaultOption.find((item: any) => item.id == "status")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -177,24 +177,24 @@ const BA_A0020_603: React.FC = () => {
     if (bizComponentData.length > 0) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const statusQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_QC001_603"
+          (item: any) => item.bizComponentId == "L_QC001_603"
         )
       );
 
       const ncrdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC040")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_QC040")
       );
 
       const combytypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC111")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_QC111")
       );
       const userQueryStr2 = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU250T")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU250T")
       );
       fetchQueryData(userQueryStr, setUserListData);
       fetchQueryData(statusQueryStr, setStatusListData);
@@ -221,7 +221,7 @@ const BA_A0020_603: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -514,7 +514,7 @@ const BA_A0020_603: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -629,7 +629,7 @@ const BA_A0020_603: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       const commenttotalRowCnt = data.tables[1].TotalRowCount;
@@ -903,10 +903,10 @@ const BA_A0020_603: React.FC = () => {
             ? ""
             : data.cpmperson
           : cpmperson.user_id,
-      ncrdiv: defaultOption.find((item: any) => item.id === "ncrdiv").valueCode,
-      combytype: defaultOption.find((item: any) => item.id === "combytype")
-        .valueCode,
-      status: defaultOption.find((item: any) => item.id === "status").valueCode,
+      ncrdiv: defaultOption.find((item: any) => item.id == "ncrdiv")?.valueCode,
+      combytype: defaultOption.find((item: any) => item.id == "combytype")
+        ?.valueCode,
+      status: defaultOption.find((item: any) => item.id == "status")?.valueCode,
       chkperson:
         chkperson == undefined
           ? data.chkperson == undefined
@@ -926,16 +926,16 @@ const BA_A0020_603: React.FC = () => {
       ordseq: data.ordseq == undefined ? 0 : data.ordseq,
       devperson:
         data.devperson == undefined
-          ? defaultOption.find((item: any) => item.id === "devperson").valueCode
+          ? defaultOption.find((item: any) => item.id == "devperson")?.valueCode
           : data.devperson,
       apperson:
         data.apperson == undefined
-          ? defaultOption.find((item: any) => item.id === "apperson").valueCode
+          ? defaultOption.find((item: any) => item.id == "apperson")?.valueCode
           : data.apperson,
       chkperson2:
         data.chkperson2 == undefined
-          ? defaultOption.find((item: any) => item.id === "chkperson2")
-              .valueCode
+          ? defaultOption.find((item: any) => item.id == "chkperson2")
+              ?.valueCode
           : data.chkperson2,
       custprsnnm: data.custprsnnm,
       qcdt: null,
@@ -1152,21 +1152,21 @@ const BA_A0020_603: React.FC = () => {
     } else {
       const dataItem = commentDataResult.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
 
       const dataItem2 = commentDataResult2.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
 
       const dataItem3 = commentDataResult3.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
@@ -1372,7 +1372,7 @@ const BA_A0020_603: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (workType == "N" || paraData.workType == "D") {
         setTabSelected(0);
       } else {
@@ -1911,7 +1911,7 @@ const BA_A0020_603: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1926,7 +1926,7 @@ const BA_A0020_603: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : undefined
                           }
@@ -2298,7 +2298,7 @@ const BA_A0020_603: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList2"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <Column
@@ -2410,7 +2410,7 @@ const BA_A0020_603: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdList3"
-                          ].map(
+                          ]?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <Column
@@ -2523,7 +2523,7 @@ const BA_A0020_603: React.FC = () => {
                         {customOptionData !== null &&
                           customOptionData.menuCustomColumnOptions[
                             "grdList4"
-                          ].map(
+                          ]?.map(
                             (item: any, idx: number) =>
                               item.sortOrder !== -1 && (
                                 <Column

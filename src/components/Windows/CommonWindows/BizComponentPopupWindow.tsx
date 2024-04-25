@@ -331,7 +331,7 @@ const KendoWindow = ({
   const onConfirmClick = (props: any) => {
     const rowData = mainDataResult.data.find(
       (row: any) =>
-        !!idGetter && idGetter(row) === Object.keys(selectedState)[0]
+        !!idGetter && idGetter(row) == Object.keys(selectedState)[0]
     );
 
     // 부모로 데이터 전달, 창 닫기

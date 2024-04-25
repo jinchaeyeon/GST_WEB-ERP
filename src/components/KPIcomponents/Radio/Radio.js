@@ -7,7 +7,7 @@ const Radio = (props) => {
     props.option !== null
       ? GetPropertyValueByName(props.option.menuCustomDefaultOptions, "query") //props.option.menuCustomDefaultOptions["query"]
       : null;
-  const dataItem = dataList.find((item) => item.id === props.id);
+  const dataItem = dataList.find((item) => item.id == props.id);
   const listData = dataItem.Rows;
 
   return (
@@ -30,7 +30,7 @@ const Radio = (props) => {
                   name={item.caption}
                   value={item.code}
                   onChange={props.onChange}
-                  checked={props.value === item.code}
+                  checked={props.value == item.code}
                   style={{ paddingTop: "10px" }}
                 />
                 <label

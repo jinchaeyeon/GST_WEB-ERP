@@ -129,8 +129,8 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        causedcd: defaultOption.find((item: any) => item.id === "causedcd")
-          .valueCode,
+        causedcd: defaultOption.find((item: any) => item.id == "causedcd")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -287,7 +287,7 @@ const CopyWindow = ({
   });
 
   useEffect(() => {
-    if (workType === "U" && data != undefined) {
+    if (workType == "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
         workType: workType,
@@ -318,7 +318,7 @@ const CopyWindow = ({
         reseq: data.reseq,
         title: data.title,
       }));
-    } else if (workType === "N" && basicdata != undefined) {
+    } else if (workType == "N" && basicdata != undefined) {
       setFilters((prev) => ({
         ...prev,
         workType: workType,
@@ -474,7 +474,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (workType == "U") {
         reloadData(data.returnString);
       } else {
@@ -529,7 +529,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "NCR생성" : "NCR정보"}
+        title={workType == "N" ? "NCR생성" : "NCR정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}

@@ -148,30 +148,30 @@ const AC_B5080W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA029")
       );
       const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
       );
       const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
       );
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const taxtypeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC014")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC014")
       );
       const inkindQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA003")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA003")
       );
       const inputpathQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC006")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC006")
       );
       fetchQuery(userQueryStr, setUserListData);
       fetchQuery(amtunitQueryStr, setAmtunitListData);
@@ -200,7 +200,7 @@ const AC_B5080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -305,7 +305,7 @@ const AC_B5080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult((prev) => {
@@ -357,7 +357,7 @@ const AC_B5080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -408,7 +408,7 @@ const AC_B5080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -461,7 +461,7 @@ const AC_B5080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult4((prev) => {
@@ -511,7 +511,7 @@ const AC_B5080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -562,7 +562,7 @@ const AC_B5080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -613,7 +613,7 @@ const AC_B5080W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -702,7 +702,7 @@ const AC_B5080W: React.FC = () => {
 
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
-    if (tabSelected === 0) {
+    if (tabSelected == 0) {
       const newSelectedState = getSelectedState({
         event,
         selectedState: selectedState,
@@ -710,7 +710,7 @@ const AC_B5080W: React.FC = () => {
       });
 
       setSelectedState(newSelectedState);
-    } else if (tabSelected === 1) {
+    } else if (tabSelected == 1) {
       const newSelectedState = getSelectedState({
         event,
         selectedState: selectedState2,
@@ -718,7 +718,7 @@ const AC_B5080W: React.FC = () => {
       });
 
       setSelectedState2(newSelectedState);
-    } else if (tabSelected === 2) {
+    } else if (tabSelected == 2) {
       const newSelectedState = getSelectedState({
         event,
         selectedState: selectedState3,
@@ -726,7 +726,7 @@ const AC_B5080W: React.FC = () => {
       });
 
       setSelectedState3(newSelectedState);
-    } else if (tabSelected === 3) {
+    } else if (tabSelected == 3) {
       const newSelectedState = getSelectedState({
         event,
         selectedState: selectedState4,
@@ -734,7 +734,7 @@ const AC_B5080W: React.FC = () => {
       });
 
       setSelectedState4(newSelectedState);
-    } else if (tabSelected === 4) {
+    } else if (tabSelected == 4) {
       const newSelectedState = getSelectedState({
         event,
         selectedState: selectedState5,
@@ -742,7 +742,7 @@ const AC_B5080W: React.FC = () => {
       });
 
       setSelectedState5(newSelectedState);
-    } else if (tabSelected === 5) {
+    } else if (tabSelected == 5) {
       const newSelectedState = getSelectedState({
         event,
         selectedState: selectedState6,
@@ -1194,10 +1194,10 @@ const AC_B5080W: React.FC = () => {
                   mainDataResult.data.map((row) => ({
                     ...row,
                     taxdiv: taxdivListData.find(
-                      (item: any) => item.sub_code === row.taxdiv
+                      (item: any) => item.sub_code == row.taxdiv
                     )?.code_name,
                     qtyunit: qtyunitListData.find(
-                      (item: any) => item.sub_code === row.qtyunit
+                      (item: any) => item.sub_code == row.qtyunit
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
@@ -1232,7 +1232,7 @@ const AC_B5080W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1249,7 +1249,7 @@ const AC_B5080W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 1
+                            item.sortOrder == 1
                               ? mainTotalFooterCell
                               : NumberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell
@@ -1277,16 +1277,16 @@ const AC_B5080W: React.FC = () => {
                   mainDataResult2.data.map((row) => ({
                     ...row,
                     taxtype: taxtypeListData.find(
-                      (item: any) => item.sub_code === row.taxtype
+                      (item: any) => item.sub_code == row.taxtype
                     )?.code_name,
                     doexdiv: doexdivListData.find(
-                      (item: any) => item.sub_code === row.doexdiv
+                      (item: any) => item.sub_code == row.doexdiv
                     )?.code_name,
                     amtunit: amtunitListData.find(
-                      (item: any) => item.sub_code === row.amtunit
+                      (item: any) => item.sub_code == row.amtunit
                     )?.code_name,
                     insert_userid: userListData.find(
-                      (item: any) => item.user_id === row.insert_userid
+                      (item: any) => item.user_id == row.insert_userid
                     )?.user_name,
                     insert_time: convertDateToStrWithTime2(
                       new Date(row.insert_time)
@@ -1324,7 +1324,7 @@ const AC_B5080W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1341,7 +1341,7 @@ const AC_B5080W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 1
+                            item.sortOrder == 1
                               ? mainTotalFooterCell2
                               : NumberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell2
@@ -1369,13 +1369,13 @@ const AC_B5080W: React.FC = () => {
                   mainDataResult3.data.map((row) => ({
                     ...row,
                     taxdiv: taxdivListData.find(
-                      (item: any) => item.sub_code === row.taxdiv
+                      (item: any) => item.sub_code == row.taxdiv
                     )?.code_name,
                     qtyunit: qtyunitListData.find(
-                      (item: any) => item.sub_code === row.qtyunit
+                      (item: any) => item.sub_code == row.qtyunit
                     )?.code_name,
                     insert_userid: userListData.find(
-                      (item: any) => item.user_id === row.insert_userid
+                      (item: any) => item.user_id == row.insert_userid
                     )?.user_name,
                     insert_time: convertDateToStrWithTime2(
                       new Date(row.insert_time)
@@ -1413,7 +1413,7 @@ const AC_B5080W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList3"].map(
+                  customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1430,7 +1430,7 @@ const AC_B5080W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 1
+                            item.sortOrder == 1
                               ? mainTotalFooterCell3
                               : NumberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell3
@@ -1458,19 +1458,19 @@ const AC_B5080W: React.FC = () => {
                   mainDataResult4.data.map((row) => ({
                     ...row,
                     inkind: inkindListData.find(
-                      (item: any) => item.sub_code === row.inkind
+                      (item: any) => item.sub_code == row.inkind
                     )?.code_name,
                     doexdiv: doexdivListData.find(
-                      (item: any) => item.sub_code === row.doexdiv
+                      (item: any) => item.sub_code == row.doexdiv
                     )?.code_name,
                     taxdiv: taxdivListData.find(
-                      (item: any) => item.sub_code === row.taxdiv
+                      (item: any) => item.sub_code == row.taxdiv
                     )?.code_name,
                     qtyunit: qtyunitListData.find(
-                      (item: any) => item.sub_code === row.qtyunit
+                      (item: any) => item.sub_code == row.qtyunit
                     )?.code_name,
                     insert_userid: userListData.find(
-                      (item: any) => item.user_id === row.insert_userid
+                      (item: any) => item.user_id == row.insert_userid
                     )?.user_name,
                     insert_time: convertDateToStrWithTime2(
                       new Date(row.insert_time)
@@ -1508,7 +1508,7 @@ const AC_B5080W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList4"].map(
+                  customOptionData.menuCustomColumnOptions["grdList4"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1525,7 +1525,7 @@ const AC_B5080W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 1
+                            item.sortOrder == 1
                               ? mainTotalFooterCell4
                               : NumberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell4
@@ -1553,10 +1553,10 @@ const AC_B5080W: React.FC = () => {
                   mainDataResult5.data.map((row) => ({
                     ...row,
                     taxtype: taxtypeListData.find(
-                      (item: any) => item.sub_code === row.taxtype
+                      (item: any) => item.sub_code == row.taxtype
                     )?.code_name,
                     insert_userid: userListData.find(
-                      (item: any) => item.user_id === row.insert_userid
+                      (item: any) => item.user_id == row.insert_userid
                     )?.user_name,
                     insert_time: convertDateToStrWithTime2(
                       new Date(row.insert_time)
@@ -1594,7 +1594,7 @@ const AC_B5080W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList5"].map(
+                  customOptionData.menuCustomColumnOptions["grdList5"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1611,7 +1611,7 @@ const AC_B5080W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 1
+                            item.sortOrder == 1
                               ? mainTotalFooterCell5
                               : NumberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell5
@@ -1639,19 +1639,19 @@ const AC_B5080W: React.FC = () => {
                   mainDataResult6.data.map((row) => ({
                     ...row,
                     inkind: inkindListData.find(
-                      (item: any) => item.sub_code === row.inkind
+                      (item: any) => item.sub_code == row.inkind
                     )?.code_name,
                     doexdiv: doexdivListData.find(
-                      (item: any) => item.sub_code === row.doexdiv
+                      (item: any) => item.sub_code == row.doexdiv
                     )?.code_name,
                     taxdiv: taxdivListData.find(
-                      (item: any) => item.sub_code === row.taxdiv
+                      (item: any) => item.sub_code == row.taxdiv
                     )?.code_name,
                     qtyunit: qtyunitListData.find(
-                      (item: any) => item.sub_code === row.qtyunit
+                      (item: any) => item.sub_code == row.qtyunit
                     )?.code_name,
                     insert_userid: userListData.find(
-                      (item: any) => item.user_id === row.insert_userid
+                      (item: any) => item.user_id == row.insert_userid
                     )?.user_name,
                     insert_time: convertDateToStrWithTime2(
                       new Date(row.insert_time)
@@ -1689,7 +1689,7 @@ const AC_B5080W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList6"].map(
+                  customOptionData.menuCustomColumnOptions["grdList6"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1706,7 +1706,7 @@ const AC_B5080W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 1
+                            item.sortOrder == 1
                               ? mainTotalFooterCell6
                               : NumberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell6
@@ -1734,19 +1734,19 @@ const AC_B5080W: React.FC = () => {
                   mainDataResult7.data.map((row) => ({
                     ...row,
                     insert_userid: userListData.find(
-                      (item: any) => item.user_id === row.insert_userid
+                      (item: any) => item.user_id == row.insert_userid
                     )?.user_name,
                     insert_time: convertDateToStrWithTime2(
                       new Date(row.insert_time)
                     ),
                     update_userid: userListData.find(
-                      (item: any) => item.user_id === row.update_userid
+                      (item: any) => item.user_id == row.update_userid
                     )?.user_name,
                     update_time: convertDateToStrWithTime2(
                       new Date(row.update_time)
                     ),
                     inputpath: inputpathListData.find(
-                      (item: any) => item.sub_code === row.inputpath
+                      (item: any) => item.sub_code == row.inputpath
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState7[idGetter(row)],
                   })),
@@ -1781,7 +1781,7 @@ const AC_B5080W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList7"].map(
+                  customOptionData.menuCustomColumnOptions["grdList7"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1798,7 +1798,7 @@ const AC_B5080W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 1
+                            item.sortOrder == 1
                               ? mainTotalFooterCell7
                               : NumberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell7

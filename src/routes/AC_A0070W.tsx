@@ -111,7 +111,7 @@ const ColumnCommandCell = (props: any) => {
     if (popupData) {
       dataItem["mngdata"] = popupData.item1;
       dataItem["mngdatanm"] = popupData.item2;
-      dataItem.rowstatus = dataItem.rowstatus === "N" ? "N" : "U";
+      dataItem.rowstatus = dataItem.rowstatus == "N" ? "N" : "U";
 
       if (onChange) {
         onChange({
@@ -138,7 +138,7 @@ const ColumnCommandCell = (props: any) => {
     }
   }, [popupData]);
 
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -218,7 +218,7 @@ const ColumnCommandCell = (props: any) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {standardWindowVisible && (
@@ -298,7 +298,7 @@ const AC_A0070W: React.FC = () => {
       );
 
       const bizComponent = bizComponentData?.find(
-        (item: any) => item.bizComponentId === "L_AC061" // 회기
+        (item: any) => item.bizComponentId == "L_AC061" // 회기
       );
 
       const today = convertDateToStr(new Date());
@@ -312,10 +312,10 @@ const AC_A0070W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         location:
-          defaultOption?.find((item: any) => item.id === "location")
+          defaultOption?.find((item: any) => item.id == "location")
             ?.valueCode ?? "",
         position:
-          defaultOption?.find((item: any) => item.id === "position")
+          defaultOption?.find((item: any) => item.id == "position")
             ?.valueCode ?? "",
         acntses: acntses,
         isSearch: true,
@@ -576,7 +576,7 @@ const AC_A0070W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = Math.max(data.tables[0].TotalRowCount, 0); // -1인 경우 0 반환
       const rows = data.tables[0].Rows;
 
@@ -727,7 +727,7 @@ const AC_A0070W: React.FC = () => {
     if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
 
     let pgNumWithGap =
-      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
+      filters.pgNum + (filters.scrollDirrection == "up" ? filters.pgGap : 0);
 
     // 스크롤 최하단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
@@ -742,7 +742,7 @@ const AC_A0070W: React.FC = () => {
     }
 
     pgNumWithGap =
-      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
+      filters.pgNum - (filters.scrollDirrection == "down" ? filters.pgGap : 0);
     // 스크롤 최상단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
       setFilters((prev) => ({
@@ -884,7 +884,7 @@ const AC_A0070W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = subDataResult.data.map((item) => {
-        if (detailIdGetter(item) === detailIdGetter(dataItem)) {
+        if (detailIdGetter(item) == detailIdGetter(dataItem)) {
           beforeValue.current = item[field];
 
           return {
@@ -918,7 +918,7 @@ const AC_A0070W: React.FC = () => {
         if (changed) {
           return {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             [EDIT_FIELD]: undefined,
           };
         } else {
@@ -982,7 +982,7 @@ const AC_A0070W: React.FC = () => {
   const onSaveClick = async () => {
     let workType: string;
 
-    workType = selectedState[""] === false ? "N" : "U";
+    workType = selectedState[""] == false ? "N" : "U";
 
     ExecuteSave(workType);
   };
@@ -1351,7 +1351,7 @@ const AC_A0070W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : mainFooterCell
                         }
@@ -1639,7 +1639,7 @@ const AC_A0070W: React.FC = () => {
                               : true
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? detailTotalFooterCell
                               : undefined
                           }

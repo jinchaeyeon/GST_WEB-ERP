@@ -153,9 +153,9 @@ const SA_A2300: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -182,14 +182,14 @@ const SA_A2300: React.FC = () => {
     if (bizComponentData !== null) {
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
 
       fetchQuery(usersQueryStr, setUsersListData);
@@ -214,7 +214,7 @@ const SA_A2300: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -441,7 +441,7 @@ const SA_A2300: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -544,7 +544,7 @@ const SA_A2300: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
@@ -631,7 +631,7 @@ const SA_A2300: React.FC = () => {
   }, [detailFilters]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   let gridRef: any = useRef(null);
@@ -830,9 +830,9 @@ const SA_A2300: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -1171,7 +1171,7 @@ const SA_A2300: React.FC = () => {
                       mainDataResult.data.map((row) => ({
                         ...row,
                         person: usersListData.find(
-                          (item: any) => item.user_id === row.person
+                          (item: any) => item.user_id == row.person
                         )?.user_name,
                         finyn: row.finyn == "Y" ? true : false,
                         [SELECTED_FIELD]: selectedState[idGetter(row)],
@@ -1208,7 +1208,7 @@ const SA_A2300: React.FC = () => {
                   >
                     <GridColumn cell={CommandCell} width="50px" />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"].map(
+                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1226,7 +1226,7 @@ const SA_A2300: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell
                                   : numberField2.includes(item.fieldName)
                                   ? gridSumQtyFooterCell
@@ -1281,10 +1281,10 @@ const SA_A2300: React.FC = () => {
                       detailDataResult.data.map((row) => ({
                         ...row,
                         itemacnt: itemacntListData.find(
-                          (item: any) => item.sub_code === row.itemacnt
+                          (item: any) => item.sub_code == row.itemacnt
                         )?.code_name,
                         qtyunit: qtyunitListData.find(
-                          (item: any) => item.sub_code === row.qtyunit
+                          (item: any) => item.sub_code == row.qtyunit
                         )?.code_name,
                         [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
                       })),
@@ -1318,7 +1318,7 @@ const SA_A2300: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1334,7 +1334,7 @@ const SA_A2300: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? detailTotalFooterCell
                                   : numberField2.includes(item.fieldName)
                                   ? gridSumQtyFooterCell2
@@ -1517,7 +1517,7 @@ const SA_A2300: React.FC = () => {
                   mainDataResult.data.map((row) => ({
                     ...row,
                     person: usersListData.find(
-                      (item: any) => item.user_id === row.person
+                      (item: any) => item.user_id == row.person
                     )?.user_name,
                     finyn: row.finyn == "Y" ? true : false,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
@@ -1554,7 +1554,7 @@ const SA_A2300: React.FC = () => {
               >
                 <GridColumn cell={CommandCell} width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1572,7 +1572,7 @@ const SA_A2300: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : numberField2.includes(item.fieldName)
                               ? gridSumQtyFooterCell
@@ -1602,10 +1602,10 @@ const SA_A2300: React.FC = () => {
                   detailDataResult.data.map((row) => ({
                     ...row,
                     itemacnt: itemacntListData.find(
-                      (item: any) => item.sub_code === row.itemacnt
+                      (item: any) => item.sub_code == row.itemacnt
                     )?.code_name,
                     qtyunit: qtyunitListData.find(
-                      (item: any) => item.sub_code === row.qtyunit
+                      (item: any) => item.sub_code == row.qtyunit
                     )?.code_name,
                     [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
                   })),
@@ -1639,7 +1639,7 @@ const SA_A2300: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -1655,7 +1655,7 @@ const SA_A2300: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? detailTotalFooterCell
                               : numberField2.includes(item.fieldName)
                               ? gridSumQtyFooterCell2

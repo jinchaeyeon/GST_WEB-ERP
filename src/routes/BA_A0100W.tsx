@@ -81,16 +81,16 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "roomdiv"
+    field == "roomdiv"
       ? "L_BA006_603"
-      : field === "animalkind"
+      : field == "animalkind"
       ? "L_BA173"
-      : field === "testpart"
+      : field == "testpart"
       ? "L_BA171"
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -135,12 +135,12 @@ const BA_A0100W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        roomdiv: defaultOption.find((item: any) => item.id === "roomdiv")
-          .valueCode,
-        animalkind: defaultOption.find((item: any) => item.id === "animalkind")
-          .valueCode,
-        testpart: defaultOption.find((item: any) => item.id === "testpart")
-          .valueCode,
+        roomdiv: defaultOption.find((item: any) => item.id == "roomdiv")
+          ?.valueCode,
+        animalkind: defaultOption.find((item: any) => item.id == "animalkind")
+          ?.valueCode,
+        testpart: defaultOption.find((item: any) => item.id == "testpart")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -295,7 +295,7 @@ const BA_A0100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -389,7 +389,7 @@ const BA_A0100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1018,12 +1018,12 @@ const BA_A0100W: React.FC = () => {
   const onSaveClick = async () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
       roomcd_s: [],
@@ -1136,12 +1136,12 @@ const BA_A0100W: React.FC = () => {
   const onSaveClick2 = async () => {
     const dataItem = subDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0 && deletedMainRows2.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows2.length == 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
       roomcd_s: [],
@@ -1230,7 +1230,7 @@ const BA_A0100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (paraData.workType == "LIST_N") {
         const isLastDataDeleted =
           mainDataResult.data.length == 0 && filters.pgNum > 0;
@@ -1575,7 +1575,7 @@ const BA_A0100W: React.FC = () => {
                       editable={false}
                     />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"].map(
+                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1592,7 +1592,7 @@ const BA_A0100W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell
                                   : undefined
                               }
@@ -1723,7 +1723,7 @@ const BA_A0100W: React.FC = () => {
                       editable={false}
                     />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1740,7 +1740,7 @@ const BA_A0100W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? subTotalFooterCell
                                   : numberField.includes(item.fieldName)
                                   ? editNumberFooterCell
@@ -1856,7 +1856,7 @@ const BA_A0100W: React.FC = () => {
                 fileName="동물실관리"
               >
                 <Grid
-                  style={{ height: "83.5vh" }}
+                  style={{ height: "82vh" }}
                   data={process(
                     mainDataResult.data.map((row) => ({
                       ...row,
@@ -1913,7 +1913,7 @@ const BA_A0100W: React.FC = () => {
                     editable={false}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -1930,7 +1930,7 @@ const BA_A0100W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell
                                 : undefined
                             }
@@ -1981,7 +1981,7 @@ const BA_A0100W: React.FC = () => {
                 fileName="동물실관리"
               >
                 <Grid
-                  style={{ height: "83.5vh" }}
+                  style={{ height: "82vh" }}
                   data={process(
                     subDataResult.data.map((row) => ({
                       ...row,
@@ -2029,7 +2029,7 @@ const BA_A0100W: React.FC = () => {
                     editable={false}
                   />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -2046,7 +2046,7 @@ const BA_A0100W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? subTotalFooterCell
                                 : numberField.includes(item.fieldName)
                                 ? editNumberFooterCell

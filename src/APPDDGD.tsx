@@ -324,7 +324,7 @@ const AppInner: React.FC = () => {
 
   const [loginResult] = useRecoilState(loginResultState);
   const role = loginResult ? loginResult.role : "";
-  const isAdmin = role === "ADMIN";
+  const isAdmin = role == "ADMIN";
   const [color, setColor] = useRecoilState(colors);
   const [themecolor, setThemeColor] = useState<string[]>([
     "#2196f3",

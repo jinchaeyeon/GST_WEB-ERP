@@ -178,7 +178,7 @@ const HU_B2120W: React.FC = () => {
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
 
@@ -202,7 +202,7 @@ const HU_B2120W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -325,7 +325,7 @@ const HU_B2120W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -334,7 +334,7 @@ const HU_B2120W: React.FC = () => {
           group_category_name:
             "부서코드" +
             " : " +
-            dptcdListData.find((item: any) => item.dptcd === row.dptcd)?.dptnm,
+            dptcdListData.find((item: any) => item.dptcd == row.dptcd)?.dptnm,
         };
       });
       const newDataState = processWithGroups(rows, group);
@@ -383,7 +383,7 @@ const HU_B2120W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -392,7 +392,7 @@ const HU_B2120W: React.FC = () => {
           group_category_name:
             "부서코드" +
             " : " +
-            dptcdListData.find((item: any) => item.dptcd === row.dptcd)?.dptnm,
+            dptcdListData.find((item: any) => item.dptcd == row.dptcd)?.dptnm,
         };
       });
       const newDataState = processWithGroups(rows, group2);
@@ -682,7 +682,7 @@ const HU_B2120W: React.FC = () => {
                 onPageChange={pageChange}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -692,7 +692,7 @@ const HU_B2120W: React.FC = () => {
                           title={item.caption}
                           width={item.width}
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : undefined
                           }
@@ -745,7 +745,7 @@ const HU_B2120W: React.FC = () => {
                 onPageChange={pageChange2}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -755,7 +755,7 @@ const HU_B2120W: React.FC = () => {
                           title={item.caption}
                           width={item.width}
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell2
                               : undefined
                           }

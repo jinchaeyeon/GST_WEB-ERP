@@ -227,7 +227,7 @@ const SA_B2211_603W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setChartList(rows);
       let array = rows
@@ -236,7 +236,7 @@ const SA_B2211_603W: React.FC = () => {
             item.series ==
             rows.filter(
               (arr: { series: any }, index: any, callback: any[]) =>
-                index === callback.findIndex((t) => t.series === arr.series)
+                index == callback.findIndex((t) => t.series == arr.series)
             )[0].series
         )
         .map((items: { argument: any }) => {
@@ -246,7 +246,7 @@ const SA_B2211_603W: React.FC = () => {
       let array2 = rows
         .filter(
           (arr: { series: any }, index: any, callback: any[]) =>
-            index === callback.findIndex((t) => t.series === arr.series)
+            index == callback.findIndex((t) => t.series == arr.series)
         )
         .map((item: { series: any }) => {
           return item.series;
@@ -275,7 +275,7 @@ const SA_B2211_603W: React.FC = () => {
             item.series ==
             rows.filter(
               (arr: { series: any }, index: any, callback: any[]) =>
-                index === callback.findIndex((t) => t.series === arr.series)
+                index == callback.findIndex((t) => t.series == arr.series)
             )[0].series
         )
         .map((items: { argument: any }) => {
@@ -292,7 +292,7 @@ const SA_B2211_603W: React.FC = () => {
     } catch (error) {
       data2 = null;
     }
-    if (data2.isSuccess === true) {
+    if (data2.isSuccess == true) {
       const rows2 = data2.tables[0].Rows;
       setChartList2(rows2);
       let array3 = rows2
@@ -301,7 +301,7 @@ const SA_B2211_603W: React.FC = () => {
             item.series ==
             rows2.filter(
               (arr: { series: any }, index: any, callback: any[]) =>
-                index === callback.findIndex((t) => t.series === arr.series)
+                index == callback.findIndex((t) => t.series == arr.series)
             )[0].series
         )
         .map((items: { argument: any }) => {
@@ -311,7 +311,7 @@ const SA_B2211_603W: React.FC = () => {
       let array4 = rows2
         .filter(
           (arr: { series: any }, index: any, callback: any[]) =>
-            index === callback.findIndex((t) => t.series === arr.series)
+            index == callback.findIndex((t) => t.series == arr.series)
         )
         .map((item: { series: any }) => {
           return item.series;
@@ -339,7 +339,7 @@ const SA_B2211_603W: React.FC = () => {
             item.series ==
             rows2.filter(
               (arr: { series: any }, index: any, callback: any[]) =>
-                index === callback.findIndex((t) => t.series === arr.series)
+                index == callback.findIndex((t) => t.series == arr.series)
             )[0].series
         )
         .map((items: { argument: any }) => {
@@ -356,7 +356,7 @@ const SA_B2211_603W: React.FC = () => {
     } catch (error) {
       data3 = null;
     }
-    if (data3.isSuccess === true) {
+    if (data3.isSuccess == true) {
       const rows3 = data3.tables[0].Rows;
       setChartList3(rows3);
       let array5 = rows3
@@ -365,7 +365,7 @@ const SA_B2211_603W: React.FC = () => {
             item.series ==
             rows3.filter(
               (arr: { series: any }, index: any, callback: any[]) =>
-                index === callback.findIndex((t) => t.series === arr.series)
+                index == callback.findIndex((t) => t.series == arr.series)
             )[0].series
         )
         .map((items: { argument: any }) => {
@@ -375,7 +375,7 @@ const SA_B2211_603W: React.FC = () => {
       let array6 = rows3
         .filter(
           (arr: { series: any }, index: any, callback: any[]) =>
-            index === callback.findIndex((t) => t.series === arr.series)
+            index == callback.findIndex((t) => t.series == arr.series)
         )
         .map((item: { series: any }) => {
           return item.series;
@@ -403,7 +403,7 @@ const SA_B2211_603W: React.FC = () => {
             item.series ==
             rows3.filter(
               (arr: { series: any }, index: any, callback: any[]) =>
-                index === callback.findIndex((t) => t.series === arr.series)
+                index == callback.findIndex((t) => t.series == arr.series)
             )[0].series
         )
         .map((items: { argument: any }) => {
@@ -421,7 +421,7 @@ const SA_B2211_603W: React.FC = () => {
       data4 = null;
     }
 
-    if (data4.isSuccess === true) {
+    if (data4.isSuccess == true) {
       const rows4 = data4.tables[0].Rows;
 
       setItemList(rows4);
@@ -436,7 +436,7 @@ const SA_B2211_603W: React.FC = () => {
       data5 = null;
     }
 
-    if (data5.isSuccess === true) {
+    if (data5.isSuccess == true) {
       const rows5 = data5.tables[0].Rows;
 
       setItemList2(rows5);
@@ -451,7 +451,7 @@ const SA_B2211_603W: React.FC = () => {
       data6 = null;
     }
 
-    if (data6.isSuccess === true) {
+    if (data6.isSuccess == true) {
       const rows6 = data6.tables[0].Rows;
 
       setItemList3(rows6);

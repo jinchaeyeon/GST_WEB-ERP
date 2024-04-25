@@ -22,11 +22,11 @@ const CHAT_BOT: React.FC = () => {
   const onResponse = useCallback(
     (activity: any) => {
       let newMsg;
-      if (activity.from.id === bot.id) {
+      if (activity.from.id == bot.id) {
         newMsg = {
           text: activity.text,
           author: bot,
-          typing: activity.type === "typing",
+          typing: activity.type == "typing",
           timestamp: new Date(activity.timestamp),
           suggestedActions: parseActions(activity.suggestedActions),
           attachments: activity.attachments ? activity.attachments : [],
@@ -41,7 +41,7 @@ const CHAT_BOT: React.FC = () => {
   }, [onResponse]);
   const аttachmentTemplate = (props: any) => {
     let attachment = props.item;
-    if (attachment.contentType === "application/vnd.microsoft.card.hero") {
+    if (attachment.contentType == "application/vnd.microsoft.card.hero") {
       return (
         <HeroCard
           title={attachment.content.title || attachment.content.text}
@@ -55,7 +55,7 @@ const CHAT_BOT: React.FC = () => {
         />
       );
     } else if (
-      attachment.contentType === "application/vnd.microsoft.card.adaptive"
+      attachment.contentType == "application/vnd.microsoft.card.adaptive"
     ) {
       let adaptiveCard = new AdaptiveCards.AdaptiveCard();
       adaptiveCard.parse(attachment.content);
@@ -71,7 +71,7 @@ const CHAT_BOT: React.FC = () => {
   const parseActions = (actions: any) => {
     if (actions !== undefined) {
       actions.actions.map((action: any) => {
-        if (action.type === "imBack") {
+        if (action.type == "imBack") {
           action.type = "reply";
         }
       });

@@ -110,10 +110,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   UseBizComponent("L_HU092", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "adjdiv" ? "L_HU092" : "";
+  const bizComponentIdVal = field == "adjdiv" ? "L_HU092" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -150,7 +150,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     adjDataState,
     setAdjDataState,
   } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -203,7 +203,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {userWindowVisible && (
@@ -279,19 +279,19 @@ const HU_B4000W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
-        cboPrsnnum: defaultOption.find((item: any) => item.id === "cboPrsnnum")
-          .valueCode,
-        radRtryn: defaultOption.find((item: any) => item.id === "radRtryn")
-          .valueCode,
+        cboPrsnnum: defaultOption.find((item: any) => item.id == "cboPrsnnum")
+          ?.valueCode,
+        radRtryn: defaultOption.find((item: any) => item.id == "radRtryn")
+          ?.valueCode,
       }));
       setAdjFilters((prev) => ({
         ...prev,
         yyyy: setDefaultDate(customOptionData, "yyyy"),
         prsnnum_adj: defaultOption.find(
-          (item: any) => item.id === "prsnnum_adj"
-        ).valueCode,
-        adjdiv: defaultOption.find((item: any) => item.id === "adjdiv")
-          .valueCode,
+          (item: any) => item.id == "prsnnum_adj"
+        )?.valueCode,
+        adjdiv: defaultOption.find((item: any) => item.id == "adjdiv")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -310,7 +310,7 @@ const HU_B4000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const personQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU250T")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU250T")
       );
 
       fetchQuery(personQueryStr, setPersonListData);
@@ -333,7 +333,7 @@ const HU_B4000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -549,7 +549,7 @@ const HU_B4000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -557,7 +557,7 @@ const HU_B4000W: React.FC = () => {
         // find_row_value 행으로 스크롤 이동
         if (grdUserAdj.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row.itemcd === filters.find_row_value
+            (row: any) => row.itemcd == filters.find_row_value
           );
           userAdjRowIndex = findRowIndex;
         }
@@ -576,7 +576,7 @@ const HU_B4000W: React.FC = () => {
       setUserAdjDataResult((prev) => {
         return {
           data: [...data.tables[0].Rows],
-          total: totalRowCnt === -1 ? 0 : totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
 
@@ -656,7 +656,7 @@ const HU_B4000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -684,7 +684,7 @@ const HU_B4000W: React.FC = () => {
       setAdjDetailDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt === -1 ? 0 : totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
 
@@ -741,7 +741,7 @@ const HU_B4000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -769,7 +769,7 @@ const HU_B4000W: React.FC = () => {
       setCommuteDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt === -1 ? 0 : totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
 
@@ -824,7 +824,7 @@ const HU_B4000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -852,7 +852,7 @@ const HU_B4000W: React.FC = () => {
       setJournalDataResult((prev) => {
         return {
           data: rows,
-          total: totalRowCnt === -1 ? 0 : totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
 
@@ -907,7 +907,7 @@ const HU_B4000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -916,7 +916,7 @@ const HU_B4000W: React.FC = () => {
         if (grdAdjRef.current) {
           const findRowIndex = rows.findIndex(
             (row: any) =>
-              row.yyyy + "-" + row.prsnnum + "-" + row.seq ===
+              row.yyyy + "-" + row.prsnnum + "-" + row.seq ==
               adjfilters.find_row_value
           );
           adjRowIndex = findRowIndex;
@@ -936,7 +936,7 @@ const HU_B4000W: React.FC = () => {
       setAdjDataResult((prev) => {
         return {
           data: [...data.tables[0].Rows],
-          total: totalRowCnt === -1 ? 0 : totalRowCnt,
+          total: totalRowCnt == -1 ? 0 : totalRowCnt,
         };
       });
 
@@ -1523,7 +1523,7 @@ const HU_B4000W: React.FC = () => {
     try {
       const dataItem = adjDataResult.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
@@ -1548,7 +1548,7 @@ const HU_B4000W: React.FC = () => {
       });
 
       if (valid == true) {
-        if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+        if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
         let dataArr: TdataArr = {
           rowstatus_s: [],
           yyyy_s: [],
@@ -1716,7 +1716,7 @@ const HU_B4000W: React.FC = () => {
       field == "recdt"
     ) {
       const newData = adjDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY_ADJ] === dataItem[DATA_ITEM_KEY_ADJ]
+        item[DATA_ITEM_KEY_ADJ] == dataItem[DATA_ITEM_KEY_ADJ]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1831,7 +1831,7 @@ const HU_B4000W: React.FC = () => {
             ...item,
             prsnm: prsnnm,
             prsnnum: prsnnum,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -1991,7 +1991,7 @@ const HU_B4000W: React.FC = () => {
                     {customOptionData !== null &&
                       customOptionData.menuCustomColumnOptions[
                         "grdUserAdj"
-                      ].map(
+                      ]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2008,7 +2008,7 @@ const HU_B4000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell
                                   : NumberField.includes(item.fieldName)
                                   ? gridSumQtyFooterCell
@@ -2072,7 +2072,7 @@ const HU_B4000W: React.FC = () => {
                     {customOptionData !== null &&
                       customOptionData.menuCustomColumnOptions[
                         "grdAdjDetail"
-                      ].map(
+                      ]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2089,7 +2089,7 @@ const HU_B4000W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? subTotalFooterCell
                                   : undefined
                               }
@@ -2213,7 +2213,7 @@ const HU_B4000W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdJournalList"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -2228,7 +2228,7 @@ const HU_B4000W: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? subTotalFooterCell3
                                     : undefined
                                 }
@@ -2387,7 +2387,7 @@ const HU_B4000W: React.FC = () => {
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdAdjList"].map(
+                    customOptionData.menuCustomColumnOptions["grdAdjList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -2420,7 +2420,7 @@ const HU_B4000W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? AdjTotalFooterCell
                                 : NumberField.includes(item.fieldName)
                                 ? gridSumQtyFooterCell2

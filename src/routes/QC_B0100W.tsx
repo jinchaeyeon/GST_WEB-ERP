@@ -115,7 +115,7 @@ const QC_B0100W: React.FC = () => {
         ...prev,
         frym: setDefaultDate(customOptionData, "frym"),
         toym: setDefaultDate(customOptionData, "toym"),
-        gubun: defaultOption.find((item: any) => item.id === "gubun").valueCode,
+        gubun: defaultOption.find((item: any) => item.id == "gubun")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -130,7 +130,7 @@ const QC_B0100W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
 
       fetchQuery(proccdQueryStr, setProccdListData);
@@ -153,7 +153,7 @@ const QC_B0100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -226,7 +226,7 @@ const QC_B0100W: React.FC = () => {
         selected == null
           ? ""
           : proccdListData.find(
-              (item: any) => item.code_name === selected.code_name
+              (item: any) => item.code_name == selected.code_name
             )?.sub_code,
       "@p_gubun": filters.gubun,
       "@p_proccdQuery": filters.proccdQuery,
@@ -275,7 +275,7 @@ const QC_B0100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows.map(
         (item: { okcnt: number; totcnt: number }) => ({
           ...item,
@@ -297,7 +297,7 @@ const QC_B0100W: React.FC = () => {
       data2 = null;
     }
 
-    if (data2.isSuccess === true) {
+    if (data2.isSuccess == true) {
       setCardData(data2.tables);
     }
 
@@ -308,7 +308,7 @@ const QC_B0100W: React.FC = () => {
       data3 = null;
     }
 
-    if (data3.isSuccess === true) {
+    if (data3.isSuccess == true) {
       const rows = data3.tables[0].Rows.map(
         (item: { okcnt: number; totcnt: number }) => ({
           ...item,
@@ -339,7 +339,7 @@ const QC_B0100W: React.FC = () => {
       data4 = null;
     }
 
-    if (data4.isSuccess === true) {
+    if (data4.isSuccess == true) {
       const rows = data4.tables[0].Rows;
       setAll({
         okrate: rows[0].badrate,
@@ -360,7 +360,7 @@ const QC_B0100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
       }));
@@ -369,7 +369,7 @@ const QC_B0100W: React.FC = () => {
 
       let objects = rows.filter(
         (arr: { series: any }, index: any, callback: any[]) =>
-          index === callback.findIndex((t) => t.series === arr.series)
+          index == callback.findIndex((t) => t.series == arr.series)
       );
       setStackChartLabel(
         objects.map((item: { series: any }) => {

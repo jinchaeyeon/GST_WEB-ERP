@@ -90,10 +90,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "itemacnt" ? "L_BA061" : field === "qtyunit" ? "L_BA015" : "";
+    field == "itemacnt" ? "L_BA061" : field == "qtyunit" ? "L_BA015" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -281,7 +281,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setItemInfo } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -406,7 +406,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {itemWindowVisible2 && (
@@ -514,7 +514,7 @@ const KendoWindow = ({
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       let unpData: any = rows.filter(
         (items: any) =>
@@ -567,7 +567,7 @@ const KendoWindow = ({
               itemlvl4: itemInfo.itemlvl4,
               itemlvl5: itemInfo.itemlvl5,
               custitemnm: itemInfo.custitemnm,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               unp: unp,
               [EDIT_FIELD]: undefined,
             }
@@ -603,7 +603,7 @@ const KendoWindow = ({
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
 
@@ -750,22 +750,22 @@ const KendoWindow = ({
       setFilters((prev) => {
         return {
           ...prev,
-          doexdiv: defaultOption.find((item: any) => item.id === "doexdiv")
-            .valueCode,
-          taxdiv: defaultOption.find((item: any) => item.id === "taxdiv")
-            .valueCode,
-          location: defaultOption.find((item: any) => item.id === "location")
-            .valueCode,
-          ordtype: defaultOption.find((item: any) => item.id === "ordtype")
-            .valueCode,
-          ordsts: defaultOption.find((item: any) => item.id === "ordsts")
-            .valueCode,
-          dptcd: defaultOption.find((item: any) => item.id === "dptcd")
-            .valueCode,
-          amtunit: defaultOption.find((item: any) => item.id === "amtunit")
-            .valueCode,
-          person: defaultOption.find((item: any) => item.id === "person")
-            .valueCode,
+          doexdiv: defaultOption.find((item: any) => item.id == "doexdiv")
+            ?.valueCode,
+          taxdiv: defaultOption.find((item: any) => item.id == "taxdiv")
+            ?.valueCode,
+          location: defaultOption.find((item: any) => item.id == "location")
+            ?.valueCode,
+          ordtype: defaultOption.find((item: any) => item.id == "ordtype")
+            ?.valueCode,
+          ordsts: defaultOption.find((item: any) => item.id == "ordsts")
+            ?.valueCode,
+          dptcd: defaultOption.find((item: any) => item.id == "dptcd")
+            ?.valueCode,
+          amtunit: defaultOption.find((item: any) => item.id == "amtunit")
+            ?.valueCode,
+          person: defaultOption.find((item: any) => item.id == "person")
+            ?.valueCode,
         };
       });
     }
@@ -809,7 +809,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const row = data.tables[0].Rows[0];
 
       setFilters((prev) => {
@@ -860,7 +860,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -1039,7 +1039,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedRows = []; //초기화
       setUnsavedName([]);
       setValues2(false);
@@ -1112,7 +1112,7 @@ const KendoWindow = ({
 
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -1191,7 +1191,7 @@ const KendoWindow = ({
         bf_qty,
       } = item;
 
-      detailArr.rowstatus_s.push(isCopy === true ? "N" : rowstatus);
+      detailArr.rowstatus_s.push(isCopy == true ? "N" : rowstatus);
       detailArr.chk_s.push(chk == true ? "Y" : chk == false ? "N" : chk);
       detailArr.ordseq_s.push(ordseq);
       detailArr.poregseq_s.push(poregseq);
@@ -1218,7 +1218,7 @@ const KendoWindow = ({
       detailArr.wonamt_s.push(wonamt);
       detailArr.remark_s.push(remark);
       detailArr.pac_s.push(pac);
-      detailArr.finyn_s.push(finyn === true ? "Y" : "N");
+      detailArr.finyn_s.push(finyn == true ? "Y" : "N");
       detailArr.specialunp_s.push(specialunp);
       detailArr.lotnum_s.push(lotnum);
       detailArr.dlvdt_s.push(
@@ -1436,7 +1436,7 @@ const KendoWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const custcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_CUST")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_CUST")
       );
       fetchQuery(custcdQueryStr, setCustcdListData);
     }
@@ -1458,7 +1458,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -2095,7 +2095,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
 
       if (rows.length > 0) {
@@ -2273,7 +2273,7 @@ const KendoWindow = ({
   };
 
   useEffect(() => {
-    if ((workType != "N" || isCopy == true) && isInitSearch === false) {
+    if ((workType != "N" || isCopy == true) && isInitSearch == false) {
       fetchMainGrid();
       fetchGrid();
     }
@@ -2334,7 +2334,7 @@ const KendoWindow = ({
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -2873,7 +2873,7 @@ const KendoWindow = ({
 
   return (
     <Window
-      title={workType === "N" ? "수주생성" : "수주정보"}
+      title={workType == "N" ? "수주생성" : "수주정보"}
       width={position.width}
       height={position.height}
       onMove={handleMove}

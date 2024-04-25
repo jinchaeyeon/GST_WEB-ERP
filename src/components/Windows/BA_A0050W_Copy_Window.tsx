@@ -95,10 +95,10 @@ const KendoWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
-          .valueCode,
-        itemacnt: defaultOption.find((item: any) => item.id === "itemacnt")
-          .valueCode,
+        raduseyn: defaultOption.find((item: any) => item.id == "raduseyn")
+          ?.valueCode,
+        itemacnt: defaultOption.find((item: any) => item.id == "itemacnt")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -326,14 +326,14 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row[DATA_ITEM_KEY] === filters.find_row_value
+            (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -425,7 +425,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -433,7 +433,7 @@ const KendoWindow = ({
         // find_row_value 행으로 스크롤 이동
         if (gridRef2.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row[DATA_ITEM_KEY2] === filters2.find_row_value
+            (row: any) => row[DATA_ITEM_KEY2] == filters2.find_row_value
           );
           targetRowIndex2 = findRowIndex;
         }
@@ -508,7 +508,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (filters3.find_row_value !== "") {
@@ -625,24 +625,24 @@ const KendoWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       const outprocynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA011")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA011")
       );
       const prodempQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const procunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
 
       fetchQuery(proccdQueryStr, setProccdListData);
@@ -670,7 +670,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -1049,7 +1049,7 @@ const KendoWindow = ({
               headerSelectionValue={
                 detailDataResult2.data.findIndex(
                   (item: any) => !selecteddetailState2[idGetter2(item)]
-                ) === -1
+                ) == -1
               }
             />
             <GridColumn
@@ -1074,19 +1074,19 @@ const KendoWindow = ({
             detailDataResult3.data.map((row) => ({
               ...row,
               proccd: proccdListData.find(
-                (items: any) => items.sub_code === row.proccd
+                (items: any) => items.sub_code == row.proccd
               )?.code_name,
               outprocyn: outprocynListData.find(
-                (items: any) => items.sub_code === row.outprocyn
+                (items: any) => items.sub_code == row.outprocyn
               )?.code_name,
               prodemp: prodempListData.find(
-                (items: any) => items.user_id === row.prodemp
+                (items: any) => items.user_id == row.prodemp
               )?.user_name,
               qtyunit: qtyunitListData.find(
-                (items: any) => items.sub_code === row.qtyunit
+                (items: any) => items.sub_code == row.qtyunit
               )?.code_name,
               procunit: procunitListData.find(
-                (items: any) => items.sub_code === row.procunit
+                (items: any) => items.sub_code == row.procunit
               )?.code_name,
               [SELECTED_FIELD]: selecteddetailState3[idGetter3(row)], //선택된 데이터
             })),

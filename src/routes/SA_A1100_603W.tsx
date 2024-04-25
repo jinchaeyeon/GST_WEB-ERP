@@ -149,13 +149,13 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "insert_userid" ? "L_sysUserMaster_001" : "";
+    field == "insert_userid" ? "L_sysUserMaster_001" : "";
 
-  const fieldName = field === "insert_userid" ? "user_name" : undefined;
-  const fieldValue = field === "insert_userid" ? "user_id" : undefined;
+  const fieldName = field == "insert_userid" ? "user_name" : undefined;
+  const fieldValue = field == "insert_userid" ? "user_id" : undefined;
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -254,17 +254,17 @@ const SA_A1100_603W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData.length > 0) {
       const contractgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA037")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA037")
       );
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
 
       const materialtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_SA001_603"
+          (item: any) => item.bizComponentId == "L_SA001_603"
         )
       );
       fetchQueryData(contractgbQueryStr, setcontractgbListData);
@@ -290,7 +290,7 @@ const SA_A1100_603W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -604,10 +604,10 @@ const SA_A1100_603W: React.FC = () => {
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
           materialtype: defaultOption.find(
-            (item: any) => item.id === "materialtype"
-          ).valueCode,
-          chkperson: defaultOption.find((item: any) => item.id === "chkperson")
-            .valueCode,
+            (item: any) => item.id == "materialtype"
+          )?.valueCode,
+          chkperson: defaultOption.find((item: any) => item.id == "chkperson")
+            ?.valueCode,
           isSearch: true,
           find_row_value: queryParams.get("go") as string,
         }));
@@ -617,10 +617,10 @@ const SA_A1100_603W: React.FC = () => {
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
           materialtype: defaultOption.find(
-            (item: any) => item.id === "materialtype"
-          ).valueCode,
-          chkperson: defaultOption.find((item: any) => item.id === "chkperson")
-            .valueCode,
+            (item: any) => item.id == "materialtype"
+          )?.valueCode,
+          chkperson: defaultOption.find((item: any) => item.id == "chkperson")
+            ?.valueCode,
           isSearch: true,
         }));
       }
@@ -732,7 +732,7 @@ const SA_A1100_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -827,7 +827,7 @@ const SA_A1100_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[1].TotalRowCount;
       const rows = data.tables[1].Rows;
 
@@ -941,7 +941,7 @@ const SA_A1100_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1004,7 +1004,7 @@ const SA_A1100_603W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1819,11 +1819,11 @@ const SA_A1100_603W: React.FC = () => {
   const onSaveClick = () => {
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0 && deletedMainRows2.length === 0) {
+    if (dataItem.length == 0 && deletedMainRows2.length == 0) {
       setParaData((prev) => ({
         ...prev,
         workType: "N",
@@ -1908,11 +1908,11 @@ const SA_A1100_603W: React.FC = () => {
   const onSaveClick6 = () => {
     const dataItem = mainDataResult6.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0 && deletedMainRows6.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows6.length == 0) return false;
 
     let dataArr: TdataArr2 = {
       rowstatus_s: [],
@@ -1987,7 +1987,7 @@ const SA_A1100_603W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (ParaData.workType == "D") {
         setDeletedAttadatnums([Information.attdatnum]);
         setTabSelected(0);
@@ -2052,12 +2052,12 @@ const SA_A1100_603W: React.FC = () => {
     const dataItem: { [name: string]: any } = mainDataResult3.data.filter(
       (item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       }
     );
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     type TData = {
       row_status: string[];
@@ -2153,7 +2153,7 @@ const SA_A1100_603W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setSubFilters((prev) => ({
         ...prev,
         workType: "DETAIL",
@@ -2525,7 +2525,7 @@ const SA_A1100_603W: React.FC = () => {
                 resizable={true}
               >
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"].map(
+                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -2542,7 +2542,7 @@ const SA_A1100_603W: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell
                               : NumberField.includes(item.fieldName)
                               ? gridSumQtyFooterCell
@@ -2903,7 +2903,7 @@ const SA_A1100_603W: React.FC = () => {
                   >
                     <GridColumn field="rowstatus" title=" " width="50px" />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList6"].map(
+                      customOptionData.menuCustomColumnOptions["grdList6"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2922,7 +2922,7 @@ const SA_A1100_603W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell6
                                   : NumberField.includes(item.fieldName)
                                   ? editNumberFooterCell6
@@ -3006,7 +3006,7 @@ const SA_A1100_603W: React.FC = () => {
                   >
                     <GridColumn field="rowstatus" title=" " width="50px" />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList3"].map(
+                      customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -3025,7 +3025,7 @@ const SA_A1100_603W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell3
                                   : undefined
                               }
@@ -3139,7 +3139,7 @@ const SA_A1100_603W: React.FC = () => {
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -3158,7 +3158,7 @@ const SA_A1100_603W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell2
                                 : NumberField2.includes(item.fieldName)
                                 ? editNumberFooterCell

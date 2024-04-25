@@ -173,20 +173,20 @@ const SA_B2000: React.FC = () => {
         ymdFrdt: setDefaultDate(customOptionData, "ymdFrdt"),
         ymdTodt: setDefaultDate(customOptionData, "ymdTodt"),
         cboLocation: defaultOption.find(
-          (item: any) => item.id === "cboLocation"
-        ).valueCode,
-        cboDptcd: defaultOption.find((item: any) => item.id === "cboDptcd")
-          .valueCode,
-        cboPerson: defaultOption.find((item: any) => item.id === "cboPerson")
-          .valueCode,
-        cboDoexdiv: defaultOption.find((item: any) => item.id === "cboDoexdiv")
-          .valueCode,
-        cboOrdtype: defaultOption.find((item: any) => item.id === "cboOrdtype")
-          .valueCode,
-        cboOrdsts: defaultOption.find((item: any) => item.id === "cboOrdsts")
-          .valueCode,
-        radFinyn: defaultOption.find((item: any) => item.id === "radFinyn")
-          .valueCode,
+          (item: any) => item.id == "cboLocation"
+        )?.valueCode,
+        cboDptcd: defaultOption.find((item: any) => item.id == "cboDptcd")
+          ?.valueCode,
+        cboPerson: defaultOption.find((item: any) => item.id == "cboPerson")
+          ?.valueCode,
+        cboDoexdiv: defaultOption.find((item: any) => item.id == "cboDoexdiv")
+          ?.valueCode,
+        cboOrdtype: defaultOption.find((item: any) => item.id == "cboOrdtype")
+          ?.valueCode,
+        cboOrdsts: defaultOption.find((item: any) => item.id == "cboOrdsts")
+          ?.valueCode,
+        radFinyn: defaultOption.find((item: any) => item.id == "radFinyn")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -229,35 +229,35 @@ const SA_B2000: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const ordstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SA002")
       );
       const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
       );
       const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA029")
       );
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       const usersQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const departmentQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const finynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_finyn")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_finyn")
       );
 
       fetchQuery(ordstsQueryStr, setOrdstsListData);
@@ -288,7 +288,7 @@ const SA_B2000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -541,7 +541,7 @@ const SA_B2000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -650,7 +650,7 @@ const SA_B2000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -739,7 +739,7 @@ const SA_B2000: React.FC = () => {
   }, [detailFilters]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   let gridRef: any = useRef(null);
@@ -914,7 +914,7 @@ const SA_B2000: React.FC = () => {
       const ordnum = Object.getOwnPropertyNames(selectedState)[0];
 
       const selectedRowData = mainDataResult.data.find(
-        (item) => item.ordnum === ordnum
+        (item) => item.ordnum == ordnum
       );
 
       setDetailFilters((prev) => ({
@@ -942,7 +942,7 @@ const SA_B2000: React.FC = () => {
       const ordnum = Object.getOwnPropertyNames(selectedState)[0];
 
       const data = mainDataResult.data.filter(
-        (item) => item.ordnum === ordnum
+        (item) => item.ordnum == ordnum
       )[0];
 
       setParaDataDeleted((prev) => ({
@@ -964,9 +964,9 @@ const SA_B2000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
       );
@@ -1386,25 +1386,25 @@ const SA_B2000: React.FC = () => {
                         mainDataResult.data.map((row) => ({
                           ...row,
                           ordsts: ordstsListData.find(
-                            (item: any) => item.sub_code === row.ordsts
+                            (item: any) => item.sub_code == row.ordsts
                           )?.code_name,
                           doexdiv: doexdivListData.find(
-                            (item: any) => item.sub_code === row.doexdiv
+                            (item: any) => item.sub_code == row.doexdiv
                           )?.code_name,
                           taxdiv: taxdivListData.find(
-                            (item: any) => item.sub_code === row.taxdiv
+                            (item: any) => item.sub_code == row.taxdiv
                           )?.code_name,
                           location: locationListData.find(
-                            (item: any) => item.sub_code === row.location
+                            (item: any) => item.sub_code == row.location
                           )?.code_name,
                           person: usersListData.find(
-                            (item: any) => item.user_id === row.person
+                            (item: any) => item.user_id == row.person
                           )?.user_name,
                           dptcd: departmentsListData.find(
-                            (item: any) => item.dptcd === row.dptcd
+                            (item: any) => item.dptcd == row.dptcd
                           )?.dptnm,
                           finyn: finynListData.find(
-                            (item: any) => item.code === row.finyn
+                            (item: any) => item.code == row.finyn
                           )?.name,
                           [SELECTED_FIELD]: selectedState[idGetter(row)],
                         })),
@@ -1440,7 +1440,7 @@ const SA_B2000: React.FC = () => {
                     >
                       <GridColumn cell={CommandCell} width="50px" />
                       {customOptionData !== null &&
-                        customOptionData.menuCustomColumnOptions["grdList"].map(
+                        customOptionData.menuCustomColumnOptions["grdList"]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -1508,10 +1508,10 @@ const SA_B2000: React.FC = () => {
                         detailDataResult.data.map((row) => ({
                           ...row,
                           itemacnt: itemacntListData.find(
-                            (item: any) => item.sub_code === row.itemacnt
+                            (item: any) => item.sub_code == row.itemacnt
                           )?.code_name,
                           qtyunit: qtyunitListData.find(
-                            (item: any) => item.sub_code === row.qtyunit
+                            (item: any) => item.sub_code == row.qtyunit
                           )?.code_name,
                           [SELECTED_FIELD]:
                             detailSelectedState[detailIdGetter(row)],
@@ -1548,7 +1548,7 @@ const SA_B2000: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList2"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -1826,25 +1826,25 @@ const SA_B2000: React.FC = () => {
                     mainDataResult.data.map((row) => ({
                       ...row,
                       ordsts: ordstsListData.find(
-                        (item: any) => item.sub_code === row.ordsts
+                        (item: any) => item.sub_code == row.ordsts
                       )?.code_name,
                       doexdiv: doexdivListData.find(
-                        (item: any) => item.sub_code === row.doexdiv
+                        (item: any) => item.sub_code == row.doexdiv
                       )?.code_name,
                       taxdiv: taxdivListData.find(
-                        (item: any) => item.sub_code === row.taxdiv
+                        (item: any) => item.sub_code == row.taxdiv
                       )?.code_name,
                       location: locationListData.find(
-                        (item: any) => item.sub_code === row.location
+                        (item: any) => item.sub_code == row.location
                       )?.code_name,
                       person: usersListData.find(
-                        (item: any) => item.user_id === row.person
+                        (item: any) => item.user_id == row.person
                       )?.user_name,
                       dptcd: departmentsListData.find(
-                        (item: any) => item.dptcd === row.dptcd
+                        (item: any) => item.dptcd == row.dptcd
                       )?.dptnm,
                       finyn: finynListData.find(
-                        (item: any) => item.code === row.finyn
+                        (item: any) => item.code == row.finyn
                       )?.name,
                       [SELECTED_FIELD]: selectedState[idGetter(row)],
                     })),
@@ -1880,7 +1880,7 @@ const SA_B2000: React.FC = () => {
                 >
                   <GridColumn cell={CommandCell} width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -1925,10 +1925,10 @@ const SA_B2000: React.FC = () => {
                     detailDataResult.data.map((row) => ({
                       ...row,
                       itemacnt: itemacntListData.find(
-                        (item: any) => item.sub_code === row.itemacnt
+                        (item: any) => item.sub_code == row.itemacnt
                       )?.code_name,
                       qtyunit: qtyunitListData.find(
-                        (item: any) => item.sub_code === row.qtyunit
+                        (item: any) => item.sub_code == row.qtyunit
                       )?.code_name,
                       [SELECTED_FIELD]:
                         detailSelectedState[detailIdGetter(row)],
@@ -1963,7 +1963,7 @@ const SA_B2000: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn

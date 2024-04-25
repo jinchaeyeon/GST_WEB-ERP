@@ -143,10 +143,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   //보고서구분, 그룹구분, 그룹특성, 품목계정, 내수구분
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "postcd" ? "L_HU005" : "";
+  const bizComponentIdVal = field == "postcd" ? "L_HU005" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -177,7 +177,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setAttdatnum, setFiles } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
@@ -216,7 +216,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -262,7 +262,7 @@ const BA_A0020W_603: React.FC = () => {
             ...item,
             attdatnum: attdatnum,
             files: files,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -467,13 +467,13 @@ const BA_A0020W_603: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const custdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA026")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA026")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA076")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA076")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA077")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA077")
       );
       fetchQuery(custdivQueryStr, setCustdivListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
@@ -497,7 +497,7 @@ const BA_A0020W_603: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -513,8 +513,8 @@ const BA_A0020W_603: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         custdiv: "B",
-        itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
-          .valueCode,
+        itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -804,7 +804,7 @@ const BA_A0020W_603: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -841,7 +841,7 @@ const BA_A0020W_603: React.FC = () => {
         setWorkType("U");
         // find_row_value 행 선택, find_row_value 없는 경우 첫번째 행 선택
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.custcd == filters.find_row_value);
 
@@ -1005,7 +1005,7 @@ const BA_A0020W_603: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -1073,7 +1073,7 @@ const BA_A0020W_603: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -1129,7 +1129,7 @@ const BA_A0020W_603: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
@@ -1652,7 +1652,7 @@ const BA_A0020W_603: React.FC = () => {
 
     if (field != "rowstatus" && valid == true) {
       const newData = mainDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY2] === dataItem[DATA_ITEM_KEY2]
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1693,7 +1693,7 @@ const BA_A0020W_603: React.FC = () => {
 
     if (field != "rowstatus" && valid == true) {
       const newData = mainDataResult3.data.map((item) =>
-        item[DATA_ITEM_KEY3] === dataItem[DATA_ITEM_KEY3]
+        item[DATA_ITEM_KEY3] == dataItem[DATA_ITEM_KEY3]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1734,7 +1734,7 @@ const BA_A0020W_603: React.FC = () => {
 
     if (field != "rowstatus" && valid == true) {
       const newData = mainDataResult4.data.map((item) =>
-        item[DATA_ITEM_KEY4] === dataItem[DATA_ITEM_KEY4]
+        item[DATA_ITEM_KEY4] == dataItem[DATA_ITEM_KEY4]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1929,37 +1929,37 @@ const BA_A0020W_603: React.FC = () => {
       "new"
     );
     setInformation({
-      area: defaultOption.find((item: any) => item.id === "area").valueCode,
+      area: defaultOption.find((item: any) => item.id == "area")?.valueCode,
       custabbr: "",
-      custdiv: defaultOption.find((item: any) => item.id === "custdiv")
-        .valueCode,
+      custdiv: defaultOption.find((item: any) => item.id == "custdiv")
+        ?.valueCode,
       listringyn: true,
-      listringdiv: defaultOption.find((item: any) => item.id === "listringdiv")
-        .valueCode,
-      inunpitem: defaultOption.find((item: any) => item.id === "inunpitem")
-        .valueCode,
-      unpitem: defaultOption.find((item: any) => item.id === "unpitem")
-        .valueCode,
+      listringdiv: defaultOption.find((item: any) => item.id == "listringdiv")
+        ?.valueCode,
+      inunpitem: defaultOption.find((item: any) => item.id == "inunpitem")
+        ?.valueCode,
+      unpitem: defaultOption.find((item: any) => item.id == "unpitem")
+        ?.valueCode,
       custcd: "자동생성",
       custnm: "",
-      bizdiv: defaultOption.find((item: any) => item.id === "bizdiv").valueCode,
+      bizdiv: defaultOption.find((item: any) => item.id == "bizdiv")?.valueCode,
       bizregnum: "",
       repreregno: "",
-      compclass: defaultOption.find((item: any) => item.id === "compclass")
-        .valueCode,
+      compclass: defaultOption.find((item: any) => item.id == "compclass")
+        ?.valueCode,
       comptype: "",
-      countrycd: defaultOption.find((item: any) => item.id === "countrycd")
-        .valueCode,
+      countrycd: defaultOption.find((item: any) => item.id == "countrycd")
+        ?.valueCode,
       groupnm: "",
-      itemlvl1: defaultOption.find((item: any) => item.id === "itemlvl1")
-        .valueCode,
+      itemlvl1: defaultOption.find((item: any) => item.id == "itemlvl1")
+        ?.valueCode,
       ceonm: "",
-      itemlvl3: defaultOption.find((item: any) => item.id === "itemlvl3")
-        .valueCode,
+      itemlvl3: defaultOption.find((item: any) => item.id == "itemlvl3")
+        ?.valueCode,
       address: "",
       address_sub: "",
-      itemlvl2: defaultOption.find((item: any) => item.id === "itemlvl2")
-        .valueCode,
+      itemlvl2: defaultOption.find((item: any) => item.id == "itemlvl2")
+        ?.valueCode,
       files: "",
       attdatnum: "",
       remark: "",
@@ -2371,7 +2371,7 @@ const BA_A0020W_603: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (paraData.workType == "D") {
         let array: any[] = [];
         array.push(information.attdatnum);
@@ -2384,7 +2384,7 @@ const BA_A0020W_603: React.FC = () => {
         setDeletedAttadatnums(array);
         resetAllGrid();
         const isLastDataDeleted =
-          mainDataResult.data.length === 1 && filters.pgNum > 0;
+          mainDataResult.data.length == 1 && filters.pgNum > 0;
         const findRowIndex = mainDataResult.data.findIndex(
           (row: any) =>
             row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -2519,7 +2519,7 @@ const BA_A0020W_603: React.FC = () => {
     let valid = true;
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -2534,7 +2534,7 @@ const BA_A0020W_603: React.FC = () => {
       valid = false;
     }
     if (!valid) return false;
-    if (dataItem.length === 0 && deletedMainRows2.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows2.length == 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
       seq_s: [],
@@ -2631,7 +2631,7 @@ const BA_A0020W_603: React.FC = () => {
     let valid = true;
     const dataItem = mainDataResult3.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -2646,7 +2646,7 @@ const BA_A0020W_603: React.FC = () => {
       valid = false;
     }
     if (!valid) return false;
-    if (dataItem.length === 0 && deletedMainRows3.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows3.length == 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
       seq_s: [],
@@ -2722,7 +2722,7 @@ const BA_A0020W_603: React.FC = () => {
   const onSaveClick4 = () => {
     const dataItem = mainDataResult4.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -2738,7 +2738,7 @@ const BA_A0020W_603: React.FC = () => {
       valid = false;
     }
     if (!valid) return false;
-    if (dataItem.length === 0 && deletedMainRows4.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows4.length == 0) return false;
     let dataArr: TdataArr = {
       rowstatus_s: [],
       seq_s: [],
@@ -2946,13 +2946,13 @@ const BA_A0020W_603: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 custdiv: custdivListData.find(
-                  (item: any) => item.sub_code === row.custdiv
+                  (item: any) => item.sub_code == row.custdiv
                 )?.code_name,
                 itemlvl2: itemlvl2ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl2
+                  (item: any) => item.sub_code == row.itemlvl2
                 )?.code_name,
                 itemlvl3: itemlvl3ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl3
+                  (item: any) => item.sub_code == row.itemlvl3
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -2987,7 +2987,7 @@ const BA_A0020W_603: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -3004,7 +3004,7 @@ const BA_A0020W_603: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )
@@ -3609,7 +3609,7 @@ const BA_A0020W_603: React.FC = () => {
                 >
                   <GridColumn field="rowstatus" title=" " width="50px" />
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList2"].map(
+                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -3632,7 +3632,7 @@ const BA_A0020W_603: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell2
                                 : numberField.includes(item.fieldName)
                                 ? editNumberFooterCell2
@@ -3723,7 +3723,7 @@ const BA_A0020W_603: React.FC = () => {
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList3"].map(
+                  customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -3744,7 +3744,7 @@ const BA_A0020W_603: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell3
                               : numberField.includes(item.fieldName)
                               ? editNumberFooterCell3
@@ -3831,7 +3831,7 @@ const BA_A0020W_603: React.FC = () => {
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList4"].map(
+                  customOptionData.menuCustomColumnOptions["grdList4"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -3850,7 +3850,7 @@ const BA_A0020W_603: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell4
                               : undefined
                           }

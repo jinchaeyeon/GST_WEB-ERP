@@ -83,7 +83,7 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch === false && para != undefined) {
+    if (isInitSearch == false && para != undefined) {
       fetchMainGrid();
       setIsInitSearch(true);
     }

@@ -113,7 +113,7 @@ const PlanWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt2"),
         todt: setDefaultDate(customOptionData, "todt2"),
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -163,22 +163,22 @@ const PlanWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
 
       fetchQuery(itemacntQueryStr, setItemacntListData);
@@ -206,7 +206,7 @@ const PlanWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -351,7 +351,7 @@ const PlanWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -716,22 +716,22 @@ const PlanWindow = ({
             mainDataResult.data.map((row) => ({
               ...row,
               proccd: proccdListData.find(
-                (item: any) => item.sub_code === row.proccd
+                (item: any) => item.sub_code == row.proccd
               )?.code_name,
               qtyunit: qtyunitListData.find(
-                (item: any) => item.sub_code === row.qtyunit
+                (item: any) => item.sub_code == row.qtyunit
               )?.code_name,
               itemlvl1: itemlvl1ListData.find(
-                (item: any) => item.sub_code === row.itemlvl1
+                (item: any) => item.sub_code == row.itemlvl1
               )?.code_name,
               itemlvl2: itemlvl2ListData.find(
-                (item: any) => item.sub_code === row.itemlvl2
+                (item: any) => item.sub_code == row.itemlvl2
               )?.code_name,
               itemlvl3: itemlvl3ListData.find(
-                (item: any) => item.sub_code === row.itemlvl3
+                (item: any) => item.sub_code == row.itemlvl3
               )?.code_name,
               itemacnt: itemacntListData.find(
-                (item: any) => item.sub_code === row.itemacnt
+                (item: any) => item.sub_code == row.itemacnt
               )?.code_name,
               [SELECTED_FIELD]: selectedState[idGetter(row)], // 선택된 데이터
             })),
@@ -812,22 +812,22 @@ const PlanWindow = ({
             keepingDataResult.data.map((row) => ({
               ...row,
               proccd: proccdListData.find(
-                (item: any) => item.sub_code === row.proccd
+                (item: any) => item.sub_code == row.proccd
               )?.code_name,
               qtyunit: qtyunitListData.find(
-                (item: any) => item.sub_code === row.qtyunit
+                (item: any) => item.sub_code == row.qtyunit
               )?.code_name,
               itemlvl1: itemlvl1ListData.find(
-                (item: any) => item.sub_code === row.itemlvl1
+                (item: any) => item.sub_code == row.itemlvl1
               )?.code_name,
               itemlvl2: itemlvl2ListData.find(
-                (item: any) => item.sub_code === row.itemlvl2
+                (item: any) => item.sub_code == row.itemlvl2
               )?.code_name,
               itemlvl3: itemlvl3ListData.find(
-                (item: any) => item.sub_code === row.itemlvl3
+                (item: any) => item.sub_code == row.itemlvl3
               )?.code_name,
               itemacnt: itemacntListData.find(
-                (item: any) => item.sub_code === row.itemacnt
+                (item: any) => item.sub_code == row.itemacnt
               )?.code_name,
               [SELECTED_FIELD]: keepingSelectedState[keepingIdGetter(row)], // 선택된 데이터
             })),

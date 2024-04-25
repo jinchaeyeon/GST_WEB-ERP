@@ -103,7 +103,7 @@ const QC_B0030W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        dtgb: defaultOption.find((item: any) => item.id === "dtgb").valueCode,
+        dtgb: defaultOption.find((item: any) => item.id == "dtgb")?.valueCode,
         isSearch: true,
       }));
     }
@@ -138,21 +138,21 @@ const QC_B0030W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       const prodempQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const prodmacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_fxcode")
       );
       const badcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_QC002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_QC002")
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       fetchQuery(proccdQueryStr, setProccdListData);
       fetchQuery(prodempQueryStr, setProdempListData);
@@ -178,7 +178,7 @@ const QC_B0030W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -391,7 +391,7 @@ const QC_B0030W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -506,7 +506,7 @@ const QC_B0030W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -568,7 +568,7 @@ const QC_B0030W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -972,7 +972,7 @@ const QC_B0030W: React.FC = () => {
       <GridContainer>
         <GridTitleContainer>
           <GridTitle>
-            {filters.dtgb === "A" ? "제품입고내역" : "제품출하내역"}
+            {filters.dtgb == "A" ? "제품입고내역" : "제품출하내역"}
           </GridTitle>
         </GridTitleContainer>
         <ExcelExport
@@ -982,7 +982,7 @@ const QC_B0030W: React.FC = () => {
           }}
           fileName="LOT추적"
         >
-          {filters.dtgb === "A" ? (
+          {filters.dtgb == "A" ? (
             <Grid
               style={{ height: "35vh" }}
               data={process(
@@ -1021,7 +1021,7 @@ const QC_B0030W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1037,7 +1037,7 @@ const QC_B0030W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell
@@ -1086,7 +1086,7 @@ const QC_B0030W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList1"].map(
+                customOptionData.menuCustomColumnOptions["grdList1"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1102,7 +1102,7 @@ const QC_B0030W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? mainTotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell
@@ -1133,16 +1133,16 @@ const QC_B0030W: React.FC = () => {
                 detailDataResult.data.map((row) => ({
                   ...row,
                   proccd: proccdListData.find(
-                    (item: any) => item.sub_code === row.proccd
+                    (item: any) => item.sub_code == row.proccd
                   )?.code_name,
                   prodemp: prodempListData.find(
-                    (item: any) => item.user_id === row.prodemp
+                    (item: any) => item.user_id == row.prodemp
                   )?.user_name,
                   prodmac: prodmacListData.find(
-                    (item: any) => item.sub_code === row.prodmac
+                    (item: any) => item.sub_code == row.prodmac
                   )?.code_name,
                   badcd: badcdListData.find(
-                    (item: any) => item.sub_code === row.badcd
+                    (item: any) => item.sub_code == row.badcd
                   )?.code_name,
                   [SELECTED_FIELD]: detailSelectedState[idGetter2(row)],
                 })),
@@ -1176,7 +1176,7 @@ const QC_B0030W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList2"].map(
+                customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1192,7 +1192,7 @@ const QC_B0030W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? detailTotalFooterCell
                             : numberField.includes(item.fieldName)
                             ? gridSumQtyFooterCell1
@@ -1221,7 +1221,7 @@ const QC_B0030W: React.FC = () => {
                 detailDataResult2.data.map((row) => ({
                   ...row,
                   itemacnt: itemacntListData.find(
-                    (item: any) => item.sub_code === row.itemacnt
+                    (item: any) => item.sub_code == row.itemacnt
                   )?.code_name,
                   [SELECTED_FIELD]: detailSelectedState2[idGetter3(row)],
                 })),
@@ -1255,7 +1255,7 @@ const QC_B0030W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList3"].map(
+                customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn

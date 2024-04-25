@@ -89,7 +89,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   const field = props.field ?? "";
   const bizComponentIdVal = field == "drcrdiv" ? "R_DRCR" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -307,7 +307,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     mainDataState,
     setMainDataState,
   } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -357,7 +357,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {accountWindowVisible && (
@@ -388,7 +388,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
     mainDataState,
     setMainDataState,
   } = useContext(FormContext2);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -437,7 +437,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {custWindowVisible && (
@@ -473,7 +473,7 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
     mainDataState,
     setMainDataState,
   } = useContext(FormContext3);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -524,7 +524,7 @@ const ColumnCommandCell3 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {codeWindowVisible && (
@@ -545,7 +545,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setAttdatnum, setFiles } = useContext(FormContext4);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -596,7 +596,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -683,25 +683,25 @@ const CopyWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        position: defaultOption.find((item: any) => item.id === "position")
-          .valueCode,
-        inoutdiv: defaultOption.find((item: any) => item.id === "inoutdiv")
-          .valueCode,
-        usedptcd: defaultOption.find((item: any) => item.id === "usedptcd")
-          .valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        position: defaultOption.find((item: any) => item.id == "position")
+          ?.valueCode,
+        inoutdiv: defaultOption.find((item: any) => item.id == "inoutdiv")
+          ?.valueCode,
+        usedptcd: defaultOption.find((item: any) => item.id == "usedptcd")
+          ?.valueCode,
         propertykind: defaultOption.find(
-          (item: any) => item.id === "propertykind"
-        ).valueCode,
+          (item: any) => item.id == "propertykind"
+        )?.valueCode,
         evidentialkind: defaultOption.find(
-          (item: any) => item.id === "evidentialkind"
-        ).valueCode,
-        creditcd: defaultOption.find((item: any) => item.id === "creditcd")
-          .valueCode,
+          (item: any) => item.id == "evidentialkind"
+        )?.valueCode,
+        creditcd: defaultOption.find((item: any) => item.id == "creditcd")
+          ?.valueCode,
         reason_intax_deduction: defaultOption.find(
-          (item: any) => item.id === "reason_intax_deduction"
-        ).valueCode,
+          (item: any) => item.id == "reason_intax_deduction"
+        )?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -810,7 +810,7 @@ const CopyWindow = ({
                   soyn: rows.soyn,
                   system_yn: rows.system_yn,
                   useyn: rows.useyn,
-                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
                 }
               : {
                   ...item,
@@ -841,7 +841,7 @@ const CopyWindow = ({
             ...item,
             custcd: custcd,
             custnm: custnm,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -961,7 +961,7 @@ const CopyWindow = ({
                   soyn: rows.soyn,
                   system_yn: rows.system_yn,
                   useyn: rows.useyn,
-                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
                 }
               : {
                   ...item,
@@ -992,7 +992,7 @@ const CopyWindow = ({
             ...item,
             attdatnum: attdatnum,
             files: files,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -1036,13 +1036,13 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const acntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_acntcd")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_acntcd")
       );
       const codeQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC024")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC024")
       );
       const mngitemQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_AC023T")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_AC023T")
       );
       fetchQuery(acntQueryStr, setAcntListData);
       fetchQuery(codeQueryStr, setCodeListData);
@@ -1066,7 +1066,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -1145,7 +1145,7 @@ const CopyWindow = ({
         item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               [name]: convertDateToStr(value),
               [EDIT_FIELD]: name,
             }
@@ -1171,7 +1171,7 @@ const CopyWindow = ({
         item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               [name]: value,
               [EDIT_FIELD]: name,
             }
@@ -1202,7 +1202,7 @@ const CopyWindow = ({
       item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             [name]: value,
             [EDIT_FIELD]: name,
           }
@@ -1317,7 +1317,7 @@ const CopyWindow = ({
       item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             [mng]: data.item1,
             [mng2]: data.item2,
           }
@@ -1344,7 +1344,7 @@ const CopyWindow = ({
       item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             mngdata1: data.notenum,
             mngdatanm1: data.custnm,
             mngdata2: data.pubdt,
@@ -1459,7 +1459,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
       if (filters.find_row_value !== "") {
@@ -1543,15 +1543,15 @@ const CopyWindow = ({
   }, [filters]);
 
   useEffect(() => {
-    if ((worktype === "A" || worktype === "C") && data != undefined) {
+    if ((worktype == "A" || worktype == "C") && data != undefined) {
       setFilters((prev) => ({
         ...prev,
         location: data.location,
         acntdt: toDate(data.acntdt),
         position: data.position,
         inoutdiv: data.inoutdiv,
-        files: worktype === "C" ? "" : data.files,
-        attdatnum: worktype === "C" ? "" : data.attdatnum,
+        files: worktype == "C" ? "" : data.files,
+        attdatnum: worktype == "C" ? "" : data.attdatnum,
         acseq1: data.acseq1,
         ackey: data.ackey,
         actdt: toDate(data.actdt),
@@ -2106,12 +2106,12 @@ const CopyWindow = ({
             let valid = true;
             const dataItem = mainDataResult.data.filter((item: any) => {
               return (
-                (item.rowstatus === "N" || item.rowstatus === "U") &&
+                (item.rowstatus == "N" || item.rowstatus == "U") &&
                 item.rowstatus !== undefined
               );
             });
 
-            if (dataItem.length === 0 && deletedMainRows.length == 0) {
+            if (dataItem.length == 0 && deletedMainRows.length == 0) {
               setParaData((prev) => ({
                 ...prev,
                 workType: worktype,
@@ -2615,7 +2615,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setData(data.returnString);
       setFilters((prev) => ({
         ...prev,
@@ -2852,7 +2852,7 @@ const CopyWindow = ({
         });
       } else if (editedField == "stdrmkcd") {
         mainDataResult.data.map(async (item) => {
-          if (editIndex === item.num) {
+          if (editIndex == item.num) {
             const data = codeListData.find(
               (items: any) => items.stdrmkcd == item.stdrmkcd
             );
@@ -2997,7 +2997,7 @@ const CopyWindow = ({
                         soyn: rows.soyn,
                         system_yn: rows.system_yn,
                         useyn: rows.useyn,
-                        rowstatus: item.rowstatus === "N" ? "N" : "U",
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
                         [EDIT_FIELD]: undefined,
                       }
                     : {
@@ -3023,7 +3023,7 @@ const CopyWindow = ({
         });
       } else {
         mainDataResult.data.map(async (item) => {
-          if (editIndex === item.num) {
+          if (editIndex == item.num) {
             let acntcds = item.acntcds;
             const data = acntListData.find(
               (items: any) => items.acntcd == item.acntcd
@@ -3043,7 +3043,7 @@ const CopyWindow = ({
                       mngitemnm4: item.mngitemnm4,
                       mngitemnm5: item.mngitemnm5,
                       mngitemnm6: item.mngitemnm6,
-                      rowstatus: item.rowstatus === "N" ? "N" : "U",
+                      rowstatus: item.rowstatus == "N" ? "N" : "U",
                       [EDIT_FIELD]: undefined,
                     }
                   : {
@@ -3166,7 +3166,7 @@ const CopyWindow = ({
                         soyn: rows.soyn,
                         system_yn: rows.system_yn,
                         useyn: rows.useyn,
-                        rowstatus: item.rowstatus === "N" ? "N" : "U",
+                        rowstatus: item.rowstatus == "N" ? "N" : "U",
                         [EDIT_FIELD]: undefined,
                       }
                     : {
@@ -3336,9 +3336,9 @@ const CopyWindow = ({
     <>
       <Window
         title={
-          worktype === "N"
+          worktype == "N"
             ? "대체전표생성"
-            : worktype === "C"
+            : worktype == "C"
             ? "대체전표복사"
             : "대체전표정보"
         }

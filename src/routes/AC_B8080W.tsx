@@ -57,10 +57,10 @@ const AC_B8080W: React.FC = () => {
         ...prev,
         reqdt: setDefaultDate(customOptionData, "reqdt"),
         taxyy: setDefaultDate(customOptionData, "taxyy"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        chasu: defaultOption.find((item: any) => item.id === "chasu").valueCode,
-        gisu: defaultOption.find((item: any) => item.id === "gisu").valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        chasu: defaultOption.find((item: any) => item.id == "chasu")?.valueCode,
+        gisu: defaultOption.find((item: any) => item.id == "gisu")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -240,7 +240,7 @@ const AC_B8080W: React.FC = () => {
 
   // 최초 한번만 실행
   useEffect(() => {
-    if (isInitSearch === false && permissions !== null) {
+    if (isInitSearch == false && permissions !== null) {
       fetchMainGrid();
       setIsInitSearch(true);
     }

@@ -136,7 +136,7 @@ const Page: React.FC = () => {
     if (bizComponentData != null) {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQueryData(userQueryStr, setUserListData);
@@ -160,7 +160,7 @@ const Page: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -186,7 +186,7 @@ const Page: React.FC = () => {
 
     return (
       <>
-        {props.rowType === "groupHeader" ? null : (
+        {props.rowType == "groupHeader" ? null : (
           <td className="k-command-cell">
             <Button
               className="k-grid-edit-command"
@@ -374,7 +374,7 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       // 그룹카테고리 리스트
       const totalRowCnt = data.tables[0].TotalRowCount;
 
@@ -386,7 +386,7 @@ const Page: React.FC = () => {
           // find_row_value 행으로 스크롤 이동
           if (gridRef.current) {
             const findRowIndex = rows.findIndex(
-              (row: any) => row.group_code === filters.find_row_value
+              (row: any) => row.group_code == filters.find_row_value
             );
             targetRowIndex = findRowIndex;
           }
@@ -645,7 +645,7 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -655,7 +655,7 @@ const Page: React.FC = () => {
           if (gridRef2.current) {
             const findRowIndex = rows.findIndex(
               (row: any) =>
-                row[DETAIL_DATA_ITEM_KEY] === detailFilters.find_row_value
+                row[DETAIL_DATA_ITEM_KEY] == detailFilters.find_row_value
             );
             targetRowIndex2 = findRowIndex;
           }
@@ -679,7 +679,7 @@ const Page: React.FC = () => {
       });
       if (totalRowCnt > 0) {
         const selectedRow =
-          detailFilters.find_row_value === ""
+          detailFilters.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) =>
@@ -732,7 +732,7 @@ const Page: React.FC = () => {
   }, [selectedState]);
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   useEffect(() => {
@@ -980,7 +980,7 @@ const Page: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       //코멘트 삭제
       let data2: any;
 
@@ -1006,7 +1006,7 @@ const Page: React.FC = () => {
       } catch (error) {
         data2 = null;
       }
-      if (data2.isSuccess === true) {
+      if (data2.isSuccess == true) {
         const rows = data2.tables[0].Rows;
         type TData = {
           row_status: string[];
@@ -1066,7 +1066,7 @@ const Page: React.FC = () => {
           data3 = null;
         }
         const isLastDataDeleted =
-          mainDataResult.data.length === 1 && filters.pgNum > 0;
+          mainDataResult.data.length == 1 && filters.pgNum > 0;
         const findRowIndex = mainDataResult.data.findIndex(
           (row: any) => row.num == Object.getOwnPropertyNames(selectedState)[0]
         );
@@ -1134,7 +1134,7 @@ const Page: React.FC = () => {
   };
 
   const reloadData = (workType: string, groupCode: string | undefined) => {
-    if (workType === "U") {
+    if (workType == "U") {
       // 일반조회
       const rows = mainDataResult.data.filter(
         (item) => Object.getOwnPropertyNames(selectedState)[0] == item.num
@@ -1307,7 +1307,7 @@ const Page: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
                         }
                       />
                     )

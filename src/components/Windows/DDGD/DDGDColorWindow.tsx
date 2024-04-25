@@ -158,7 +158,7 @@ const KendoWindow = ({ setVisible, setData, para, custcd }: IKendoWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       alert("저장되었습니다.");
       setVisible(false);
     } else {

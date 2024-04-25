@@ -237,6 +237,7 @@ import SA_A5010W from "./routes/SA_A5010W";
 import SA_A6000W from "./routes/SA_A6000W";
 import SA_A8000W from "./routes/SA_A8000W";
 import SA_B1000W_603 from "./routes/SA_B1000W_603";
+import SA_B1002_603W from "./routes/SA_B1002_603W";
 import SA_B1101_603W from "./routes/SA_B1101_603W";
 import SA_B2200W from "./routes/SA_B2200W";
 import SA_B2200W_603 from "./routes/SA_B2200W_603";
@@ -393,7 +394,7 @@ const AppInner: React.FC = () => {
 
   const [loginResult] = useRecoilState(loginResultState);
   const role = loginResult ? loginResult.role : "";
-  const isAdmin = role === "ADMIN";
+  const isAdmin = role == "ADMIN";
   const [color, setColor] = useRecoilState(colors);
   const [osstate, setOSState] = useRecoilState(OSState);
   const [themecolor, setThemeColor] = useState<string[]>([
@@ -425,7 +426,7 @@ const AppInner: React.FC = () => {
     if (
       token &&
       userId != "" &&
-      (sessionUserId === "" || sessionUserId == null) &&
+      (sessionUserId == "" || sessionUserId == null) &&
       Link != "" &&
       Link != undefined
     )
@@ -439,8 +440,8 @@ const AppInner: React.FC = () => {
     (sessionItem) => sessionItem.code == "location"
   )!.value;
 
-  if (sessionOrgdiv === "") sessionOrgdiv = "01";
-  if (sessionLocation === "") sessionLocation = "01";
+  if (sessionOrgdiv == "") sessionOrgdiv = "01";
+  if (sessionLocation == "") sessionLocation = "01";
   const processApi = useApi();
   const fetchSessionItem = async () => {
     let data;
@@ -456,11 +457,11 @@ const AppInner: React.FC = () => {
 
       data = await processApi<any>("procedure", para);
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setSessionItem(
           rows
-            .filter((item: any) => item.class === "Session")
+            .filter((item: any) => item.class == "Session")
             .map((item: any) => ({
               code: item.code,
               value: item.value,
@@ -1057,7 +1058,9 @@ const AppInner: React.FC = () => {
       return SA_A1200_603W;
     }else if (str == "SA_B1000W_603") {
       return SA_B1000W_603;
-    } else if (str == "SA_B1101_603W") {
+    } else if (str == "SA_B1002_603W") {
+      return SA_B1002_603W;
+    }else if (str == "SA_B1101_603W") {
       return SA_B1101_603W;
     } else if (str == "SA_B2216W") {
       return SA_B2216W;
@@ -1486,6 +1489,11 @@ const AppInner: React.FC = () => {
                   <AuthRoute
                     path="/SA_B1000W_603"
                     component={SA_B1000W_603}
+                    exact
+                  />
+                  <AuthRoute
+                    path="/SA_B1002_603W"
+                    component={SA_B1002_603W}
                     exact
                   />
                   <AuthRoute

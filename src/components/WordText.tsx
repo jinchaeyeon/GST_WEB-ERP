@@ -11,11 +11,11 @@ const WordText = ({
   controlName: string; // 컨트롤명
   altText?: string; // 컨트롤 데이터 미등록 시 보여줄 기본값 텍스트
 }) => {
-  if (wordInfoData === null) {
+  if (wordInfoData == null) {
     return <span data-control-name={controlName}>{altText ?? ""}</span>;
   }
   const wordData = wordInfoData.find(
-    (item: any) => item.controlName === controlName
+    (item: any) => item.controlName == controlName
   );
 
   return (

@@ -137,33 +137,33 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "class"
+    field == "class"
       ? "L_BA310"
-      : field === "gender"
+      : field == "gender"
       ? "L_SEXCD"
-      : field === "species"
+      : field == "species"
       ? "L_BA320"
-      : field === "owner"
+      : field == "owner"
       ? "L_USERS_EX"
-      : field === "manager"
+      : field == "manager"
       ? "L_USERS_IN"
       : "";
 
   const textField =
-    field === "owner" || field === "manager"
+    field == "owner" || field == "manager"
       ? "name"
-      : field === "gender"
+      : field == "gender"
       ? "name"
       : undefined;
   const valueField =
-    field === "owner" || field === "manager"
+    field == "owner" || field == "manager"
       ? "code"
-      : field === "gender"
+      : field == "gender"
       ? "code"
       : undefined;
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -184,10 +184,10 @@ const CustomRadioCell = (props: GridCellProps) => {
   UseBizComponent("R_BIRCD", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "bircd" ? "R_BIRCD" : "";
+  const bizComponentIdVal = field == "bircd" ? "R_BIRCD" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -251,8 +251,8 @@ const CR_A0040W: React.FC = () => {
       if (!!defaultOption) {
         setFilters((prev) => ({
           ...prev,
-          finyn: defaultOption.find((item: any) => item.id === "finyn")
-            .valueCode,
+          finyn: defaultOption.find((item: any) => item.id == "finyn")
+            ?.valueCode,
         }));
       }
     }
@@ -368,7 +368,7 @@ const CR_A0040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -636,7 +636,7 @@ const CR_A0040W: React.FC = () => {
 
     return (
       <>
-        {render === undefined
+        {render == undefined
           ? null
           : render?.call(undefined, defaultRendering, props)}
       </>
@@ -755,7 +755,7 @@ const CR_A0040W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         returnString = data.returnString;
       } else {
         console.log("[오류 발생]");
@@ -984,7 +984,7 @@ const CR_A0040W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
                         }
                         editable={false}
                       />

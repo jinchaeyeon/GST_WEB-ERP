@@ -186,22 +186,22 @@ const CopyWindow = ({
       setFilters((prev) => ({
         ...prev,
         cboLocation:
-          defaultOption.find((item: any) => item.id === "cboLocation")
-            .valueCode == ""
+          defaultOption.find((item: any) => item.id == "cboLocation")
+            ?.valueCode == ""
             ? "01"
-            : defaultOption.find((item: any) => item.id === "cboLocation")
-                .valueCode,
+            : defaultOption.find((item: any) => item.id == "cboLocation")
+                ?.valueCode,
         cboPerson:
-          defaultOption.find((item: any) => item.id === "cboPerson")
-            .valueCode == ""
+          defaultOption.find((item: any) => item.id == "cboPerson")
+            ?.valueCode == ""
             ? "admin"
-            : defaultOption.find((item: any) => item.id === "cboPerson")
-                .valueCode,
+            : defaultOption.find((item: any) => item.id == "cboPerson")
+                ?.valueCode,
         outuse:
-          defaultOption.find((item: any) => item.id === "outuse").valueCode ==
+          defaultOption.find((item: any) => item.id == "outuse")?.valueCode ==
           ""
             ? "10"
-            : defaultOption.find((item: any) => item.id === "outuse").valueCode,
+            : defaultOption.find((item: any) => item.id == "outuse")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -236,22 +236,22 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
@@ -279,7 +279,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -477,7 +477,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -522,7 +522,7 @@ const CopyWindow = ({
   }, [filters]);
 
   useEffect(() => {
-    if (workType === "U" && data != undefined) {
+    if (workType == "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
         recdt: data.recdt,
@@ -578,7 +578,7 @@ const CopyWindow = ({
   };
 
   const setCopyData2 = (data: any) => {
-    if (data.length === 0) return false;
+    if (data.length == 0) return false;
 
     mainDataResult.data.map((item) => {
       if (item.num > temp) {
@@ -618,12 +618,12 @@ const CopyWindow = ({
   const setCopyData = (data: any) => {
     const dataItem = data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0) return false;
+    if (dataItem.length == 0) return false;
 
     mainDataResult.data.map((item) => {
       if (item.num > temp) {
@@ -746,7 +746,7 @@ const CopyWindow = ({
     if (valid == true) {
       const dataItem = mainDataResult.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
@@ -767,7 +767,7 @@ const CopyWindow = ({
         outuse: filters.outuse,
         reckey: filters.reckey,
       }));
-      if (dataItem.length === 0 && deletedMainRows.length == 0) return false;
+      if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
       let dataArr: TdataArr = {
         rowstatus_s: [],
@@ -1228,7 +1228,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       deletedMainRows = [];
       setUnsavedName([]);
       reload(data.returnString);
@@ -1389,7 +1389,7 @@ const CopyWindow = ({
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "itemcd" && field != "itemnm" && field != "rowstatus") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1473,7 +1473,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "기타출고생성" : "기타출고정보"}
+        title={workType == "N" ? "기타출고생성" : "기타출고정보"}
         width={position.width}
         height={position.height}
         onMove={handleMove}
@@ -1554,12 +1554,12 @@ const CopyWindow = ({
                     type="text"
                     value={
                       locationListData.find(
-                        (items: any) => items.sub_code === filters.cboLocation
+                        (items: any) => items.sub_code == filters.cboLocation
                       )?.code_name == undefined
                         ? "본사"
                         : locationListData.find(
                             (items: any) =>
-                              items.sub_code === filters.cboLocation
+                              items.sub_code == filters.cboLocation
                           )?.code_name
                     }
                     className="readonly"
@@ -1643,19 +1643,19 @@ const CopyWindow = ({
               mainDataResult.data.map((row) => ({
                 ...row,
                 itemacnt: itemacntListData.find(
-                  (items: any) => items.sub_code === row.itemacnt
+                  (items: any) => items.sub_code == row.itemacnt
                 )?.code_name,
                 itemlvl1: itemlvl1ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl1
+                  (item: any) => item.sub_code == row.itemlvl1
                 )?.code_name,
                 itemlvl2: itemlvl2ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl2
+                  (item: any) => item.sub_code == row.itemlvl2
                 )?.code_name,
                 itemlvl3: itemlvl3ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl3
+                  (item: any) => item.sub_code == row.itemlvl3
                 )?.code_name,
                 invunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.invunit
+                  (item: any) => item.sub_code == row.invunit
                 )?.code_name,
                 rowstatus:
                   row.rowstatus == null ||

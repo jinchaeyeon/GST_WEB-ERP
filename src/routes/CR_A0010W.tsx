@@ -252,7 +252,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
     </>
@@ -270,7 +270,7 @@ const EncryptedCell2 = (props: GridCellProps) => {
     className = "",
   } = props;
   const processApi = useApi();
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
   const [loginResult] = useRecoilState(loginResultState);
   const userId = loginResult ? loginResult.userId : "";
@@ -320,7 +320,7 @@ const EncryptedCell2 = (props: GridCellProps) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       alert("정상적으로 처리되었습니다.");
     } else {
       console.log("[에러발생]");
@@ -356,7 +356,7 @@ const EncryptedCell2 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
     </>
@@ -373,27 +373,27 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "user_category"
+    field == "user_category"
       ? "L_SYS005"
-      : field === "location"
+      : field == "location"
       ? "L_BA002"
-      : field === "position"
+      : field == "position"
       ? "L_BA028"
-      : field === "dptcd"
+      : field == "dptcd"
       ? "L_dptcd_001"
-      : field === "postcd"
+      : field == "postcd"
       ? "L_HU005"
-      : field === "opengb"
+      : field == "opengb"
       ? "L_BA410"
-      : field === "orgdiv"
+      : field == "orgdiv"
       ? "L_BA001"
       : "";
 
-  const textField = field === "dptcd" ? "dptnm" : undefined;
-  const valueField = field === "dptcd" ? "dptcd" : undefined;
+  const textField = field == "dptcd" ? "dptnm" : undefined;
+  const valueField = field == "dptcd" ? "dptcd" : undefined;
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -414,10 +414,10 @@ const CustomRadioCell = (props: GridCellProps) => {
   UseBizComponent("R_BIRCD", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "bircd" ? "R_BIRCD" : "";
+  const bizComponentIdVal = field == "bircd" ? "R_BIRCD" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -477,7 +477,7 @@ const CR_A0010W: React.FC = () => {
             ...item,
             profile_image: itemInfo.files,
             url: itemInfo.url,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : { ...item }
     );
@@ -499,7 +499,7 @@ const CR_A0010W: React.FC = () => {
             ...item,
             password: password,
             temp: password,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : { ...item }
     );
@@ -521,13 +521,13 @@ const CR_A0010W: React.FC = () => {
       if (!!defaultOption) {
         setFilters((prev) => ({
           ...prev,
-          cboOrgdiv: defaultOption.find((item: any) => item.id === "cboOrgdiv")
-            .valueCode,
+          cboOrgdiv: defaultOption.find((item: any) => item.id == "cboOrgdiv")
+            ?.valueCode,
           cboLocation: defaultOption.find(
-            (item: any) => item.id === "cboLocation"
-          ).valueCode,
-          radUsediv: defaultOption.find((item: any) => item.id === "radUsediv")
-            .valueCode,
+            (item: any) => item.id == "cboLocation"
+          )?.valueCode,
+          radUsediv: defaultOption.find((item: any) => item.id == "radUsediv")
+            ?.valueCode,
           isSearch: true,
         }));
       }
@@ -625,7 +625,7 @@ const CR_A0010W: React.FC = () => {
         "@p_user_category": filters.user_category,
         "@p_user_id": filters.user_id,
         "@p_user_name": filters.user_name,
-        "@p_rtrchk": filters.radRtrchk === "T" ? "%" : filters.radRtrchk,
+        "@p_rtrchk": filters.radRtrchk == "T" ? "%" : filters.radRtrchk,
         "@p_usediv": filters.radUsediv,
         "@p_find_row_value": filters.find_row_value,
       },
@@ -637,7 +637,7 @@ const CR_A0010W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       if (totalRowCnt > 0) {
@@ -803,7 +803,7 @@ const CR_A0010W: React.FC = () => {
 
   const enterEdit = (dataItem: any, field: string) => {
     const newData = mainDataResult.data.map((item) =>
-      item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+      item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
         ? {
             ...item,
             [EDIT_FIELD]: field,
@@ -833,7 +833,7 @@ const CR_A0010W: React.FC = () => {
         item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -983,11 +983,11 @@ const CR_A0010W: React.FC = () => {
   const onSaveClick = async () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     //검증
     let valid = true;
@@ -1157,7 +1157,7 @@ const CR_A0010W: React.FC = () => {
             "@p_password": password,
             "@p_password_confirm": password_confirm,
             "@p_salt":
-              rowstatus === "N" ? cryptoRandomString({ length: 32 }) : salt,
+              rowstatus == "N" ? cryptoRandomString({ length: 32 }) : salt,
             "@p_user_category": user_category,
             "@p_email": email,
             "@p_tel_no": tel_no,
@@ -1165,22 +1165,22 @@ const CR_A0010W: React.FC = () => {
             "@p_apply_start_date": apply_start_date,
             "@p_apply_end_date": apply_end_date,
             "@p_hold_check_yn":
-              hold_check_yn === "Y" || hold_check_yn === true ? "Y" : "N",
+              hold_check_yn == "Y" || hold_check_yn == true ? "Y" : "N",
             "@p_memo": memo,
             "@p_ip_check_yn":
-              ip_check_yn === "Y" || ip_check_yn === true ? "Y" : "N",
+              ip_check_yn == "Y" || ip_check_yn == true ? "Y" : "N",
             "@p_orgdiv": "01",
             "@p_location": location,
             "@p_dptcd": dptcd,
             "@p_postcd": postcd,
-            "@p_rtrchk": rtrchk === "Y" || rtrchk === true ? "Y" : "N",
-            "@p_usediv": usediv === "Y" || usediv === true ? "Y" : "N",
+            "@p_rtrchk": rtrchk == "Y" || rtrchk == true ? "Y" : "N",
+            "@p_usediv": usediv == "Y" || usediv == true ? "Y" : "N",
             "@p_opengb": opengb,
             "@p_profile_image": profile_image,
             "@p_user_ip": user_ip,
             "@p_birdt": birdt,
             "@p_bircd": bircd,
-            "@p_mbouseyn": mbouseyn === "Y" || mbouseyn === true ? "Y" : "N",
+            "@p_mbouseyn": mbouseyn == "Y" || mbouseyn == true ? "Y" : "N",
             "@p_position": position,
             "@p_home_menu_id": home_menu_id,
             "@p_id": userid,
@@ -1306,7 +1306,7 @@ const CR_A0010W: React.FC = () => {
             data = null;
           }
 
-          if (data.isSuccess === true) {
+          if (data.isSuccess == true) {
             returnString = data.returnString;
           } else {
             console.log("[오류 발생]");
@@ -1597,7 +1597,7 @@ const CR_A0010W: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell
                                 : undefined
                             }

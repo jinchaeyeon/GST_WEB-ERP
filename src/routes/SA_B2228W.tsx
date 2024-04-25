@@ -120,7 +120,7 @@ const SA_B2228W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
 
       setItemList(rows);
@@ -133,7 +133,7 @@ const SA_B2228W: React.FC = () => {
       data2 = null;
     }
 
-    if (data2.isSuccess === true) {
+    if (data2.isSuccess == true) {
       const rows2 = data2.tables[0].Rows;
 
       setAllPanel(rows2[0]);
@@ -146,14 +146,14 @@ const SA_B2228W: React.FC = () => {
       data3 = null;
     }
 
-    if (data3.isSuccess === true) {
+    if (data3.isSuccess == true) {
       const rows3 = data3.tables[0].Rows;
 
       setChartList(rows3);
       let array = rows3
         .filter(
           (arr: { series: any }, index: any, callback: any[]) =>
-            index === callback.findIndex((t) => t.series === arr.series)
+            index == callback.findIndex((t) => t.series == arr.series)
         )
         .map((item: { series: any }) => {
           return item.series;
@@ -165,7 +165,7 @@ const SA_B2228W: React.FC = () => {
             item.series ==
             rows3.filter(
               (arr: { series: any }, index: any, callback: any[]) =>
-                index === callback.findIndex((t) => t.series === arr.series)
+                index == callback.findIndex((t) => t.series == arr.series)
             )[0].series
         )
         .map((items: { argument: any }) => {
@@ -255,29 +255,29 @@ const SA_B2228W: React.FC = () => {
       title: "지난달 계약금액",
       data:
         AllPanel.pastmonth_amt != null
-          ? numberWithCommas3(AllPanel.pastmonth_amt) + "원"
-          : 0 + "원",
+          ? numberWithCommas3(AllPanel.pastmonth_amt) + "억"
+          : 0 + "억",
     },
     {
       title: "이번달 계약금액",
       data:
         AllPanel.month_amt != null
-          ? numberWithCommas3(AllPanel.month_amt) + "원"
-          : 0 + "원",
+          ? numberWithCommas3(AllPanel.month_amt) + "억"
+          : 0 + "억",
     },
     {
       title: "전달대비 증감액",
       data:
         AllPanel.increase_amt != null
-          ? numberWithCommas3(AllPanel.increase_amt) + "원"
-          : 0 + "원",
+          ? numberWithCommas3(AllPanel.increase_amt) + "억"
+          : 0 + "억",
     },
     {
       title: convertDateToStr(filters.frdt).substring(0, 4) + "년 누적계약금액",
       data:
         AllPanel.year_amt != null
-          ? numberWithCommas3(AllPanel.year_amt) + "원"
-          : 0 + "원",
+          ? numberWithCommas3(AllPanel.year_amt) + "억"
+          : 0 + "억",
     },
     {
       title: "당월 최고 매출액 사업부",
@@ -328,7 +328,7 @@ const SA_B2228W: React.FC = () => {
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                   <MultiDoughnutChart
                     data={ItemList}
-                    option={"value"}
+                    option={"amt"}
                     label={ItemList.map((item) => item.testpart)}
                     random={true}
                     colorName={colorName}

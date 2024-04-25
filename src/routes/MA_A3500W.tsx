@@ -245,10 +245,10 @@ const MA_A3500W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        person: defaultOption.find((item: any) => item.id === "person")
-          .valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        person: defaultOption.find((item: any) => item.id == "person")
+          ?.valueCode,
       }));
       setInfomation((prev) => ({
         ...prev,
@@ -301,36 +301,36 @@ const MA_A3500W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const outpgmQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SYS012")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SYS012")
       );
       const purstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_MA036")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_MA036")
       );
       const ordstsQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_SA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SA002")
       );
       const doexdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA005")
       );
       const taxdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA029")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA029")
       );
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       const departmentQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const finynQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_finyn")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_finyn")
       );
 
       fetchQuery(outpgmQueryStr, setOutpgmListData);
@@ -362,7 +362,7 @@ const MA_A3500W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -683,7 +683,7 @@ const MA_A3500W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -777,7 +777,7 @@ const MA_A3500W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       
@@ -848,7 +848,7 @@ const MA_A3500W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -939,7 +939,7 @@ const MA_A3500W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1565,7 +1565,7 @@ const MA_A3500W: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   const fetchToDelete = async () => {
@@ -1577,12 +1577,12 @@ const MA_A3500W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setValues(false);
       setValues2(false);
       setValues3(false);
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -2036,7 +2036,7 @@ const MA_A3500W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setValues(false);
       setValues2(false);
       setValues3(false);
@@ -2150,7 +2150,7 @@ const MA_A3500W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "doqty" || field == "chk") {
       const newData = subDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY2] === dataItem[DATA_ITEM_KEY2]
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2187,7 +2187,7 @@ const MA_A3500W: React.FC = () => {
   const enterEdit2 = (dataItem: any, field: string) => {
     if (field == "doqty" || field == "chk") {
       const newData = BOMDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY4] === dataItem[DATA_ITEM_KEY4]
+        item[DATA_ITEM_KEY4] == dataItem[DATA_ITEM_KEY4]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2224,7 +2224,7 @@ const MA_A3500W: React.FC = () => {
   const enterEdit3 = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2566,13 +2566,13 @@ const MA_A3500W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 itemacnt: itemacntListData.find(
-                  (item: any) => item.sub_code === row.itemacnt
+                  (item: any) => item.sub_code == row.itemacnt
                 )?.code_name,
                 qtyunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.qtyunit
+                  (item: any) => item.sub_code == row.qtyunit
                 )?.code_name,
                 outpgm: outpgmListData.find(
-                  (item: any) => item.sub_code === row.outpgm
+                  (item: any) => item.sub_code == row.outpgm
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
                 chk: row.chk == "" ? false : row.chk,
@@ -2619,7 +2619,7 @@ const MA_A3500W: React.FC = () => {
               cell={CheckBoxCell}
             />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -2635,7 +2635,7 @@ const MA_A3500W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : numberField2.includes(item.fieldName)
                           ? gridSumQtyFooterCell
@@ -2734,7 +2734,7 @@ const MA_A3500W: React.FC = () => {
                       subDataResult.data.map((row) => ({
                         ...row,
                         itemacnt: itemacntListData.find(
-                          (item: any) => item.sub_code === row.itemacnt
+                          (item: any) => item.sub_code == row.itemacnt
                         )?.code_name,
                         chk: row.chk == "" ? false : row.chk,
                         [SELECTED_FIELD]: selectedSubState[idGetter2(row)],
@@ -2781,7 +2781,7 @@ const MA_A3500W: React.FC = () => {
                       cell={CheckBoxCell}
                     />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -2795,7 +2795,7 @@ const MA_A3500W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? subTotalFooterCell
                                   : numberField3.includes(item.fieldName)
                                   ? gridSumQtyFooterCell2
@@ -2866,10 +2866,10 @@ const MA_A3500W: React.FC = () => {
                         BOMDataResult.data.map((row) => ({
                           ...row,
                           itemacnt: itemacntListData.find(
-                            (item: any) => item.sub_code === row.itemacnt
+                            (item: any) => item.sub_code == row.itemacnt
                           )?.code_name,
                           qtyunit: qtyunitListData.find(
-                            (item: any) => item.sub_code === row.qtyunit
+                            (item: any) => item.sub_code == row.qtyunit
                           )?.code_name,
                           [SELECTED_FIELD]: selectedBOMState[idGetter3(row)],
                         })),
@@ -2998,13 +2998,13 @@ const MA_A3500W: React.FC = () => {
                         BOMDataResult2.data.map((row) => ({
                           ...row,
                           itemacnt: itemacntListData.find(
-                            (item: any) => item.sub_code === row.itemacnt
+                            (item: any) => item.sub_code == row.itemacnt
                           )?.code_name,
                           qtyunit: qtyunitListData.find(
-                            (item: any) => item.sub_code === row.qtyunit
+                            (item: any) => item.sub_code == row.qtyunit
                           )?.code_name,
                           outpgm: outpgmListData.find(
-                            (item: any) => item.sub_code === row.outpgm
+                            (item: any) => item.sub_code == row.outpgm
                           )?.code_name,
                           chk: row.chk == "" ? false : row.chk,
                           [SELECTED_FIELD]: selectedBOMState2[idGetter4(row)],
@@ -3053,7 +3053,7 @@ const MA_A3500W: React.FC = () => {
                       {customOptionData !== null &&
                         customOptionData.menuCustomColumnOptions[
                           "grdList2"
-                        ].map(
+                        ]?.map(
                           (item: any, idx: number) =>
                             item.sortOrder !== -1 && (
                               <GridColumn
@@ -3067,7 +3067,7 @@ const MA_A3500W: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? BOMTotalFooterCell2
                                     : numberField2.includes(item.fieldName)
                                     ? gridSumQtyFooterCell3
@@ -3121,34 +3121,34 @@ const MA_A3500W: React.FC = () => {
                 subDataResult2.data.map((row) => ({
                   ...row,
                   ordsts: ordstsListData.find(
-                    (item: any) => item.sub_code === row.ordsts
+                    (item: any) => item.sub_code == row.ordsts
                   )?.code_name,
                   doexdiv: doexdivListData.find(
-                    (item: any) => item.sub_code === row.doexdiv
+                    (item: any) => item.sub_code == row.doexdiv
                   )?.code_name,
                   taxdiv: taxdivListData.find(
-                    (item: any) => item.sub_code === row.taxdiv
+                    (item: any) => item.sub_code == row.taxdiv
                   )?.code_name,
                   location: locationListData.find(
-                    (item: any) => item.sub_code === row.location
+                    (item: any) => item.sub_code == row.location
                   )?.code_name,
                   dptcd: departmentsListData.find(
-                    (item: any) => item.dptcd === row.dptcd
+                    (item: any) => item.dptcd == row.dptcd
                   )?.dptnm,
                   finyn: finynListData.find(
-                    (item: any) => item.code === row.finyn
+                    (item: any) => item.code == row.finyn
                   )?.name,
                   pursts: purstsListData.find(
-                    (item: any) => item.sub_code === row.pursts
+                    (item: any) => item.sub_code == row.pursts
                   )?.code_name,
                   itemacnt: itemacntListData.find(
-                    (item: any) => item.sub_code === row.itemacnt
+                    (item: any) => item.sub_code == row.itemacnt
                   )?.code_name,
                   qtyunit: qtyunitListData.find(
-                    (item: any) => item.sub_code === row.qtyunit
+                    (item: any) => item.sub_code == row.qtyunit
                   )?.code_name,
                   outpgm: outpgmListData.find(
-                    (item: any) => item.sub_code === row.outpgm
+                    (item: any) => item.sub_code == row.outpgm
                   )?.code_name,
                   [SELECTED_FIELD]: selectedSubState2[idGetter5(row)],
                 })),
@@ -3176,7 +3176,7 @@ const MA_A3500W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList3"].map(
+                customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -3190,7 +3190,7 @@ const MA_A3500W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0
+                          item.sortOrder == 0
                             ? subTotalFooterCell2
                             : numberField4.includes(item.fieldName)
                             ? editNumberFooterCell2

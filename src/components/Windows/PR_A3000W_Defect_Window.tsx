@@ -72,10 +72,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   //const field = props.field ?? "";
   // const bizComponentIdVal =
-  //   field === "itemacnt" ? "L_BA061" : field === "qtyunit" ? "L_BA015" : "";
+  //   field == "itemacnt" ? "L_BA061" : field == "qtyunit" ? "L_BA015" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === "L_QC002"
+    (item: any) => item.bizComponentId == "L_QC002"
   );
 
   return bizComponent ? (
@@ -110,7 +110,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
       index: dataItem[FORM_DATA_INDEX],
       value: {
         ...dataItem,
-        rowstatus: dataItem.rowstatus === "N" ? dataItem.rowstatus : "U",
+        rowstatus: dataItem.rowstatus == "N" ? dataItem.rowstatus : "U",
         [EDIT_FIELD]: field,
       },
     });
@@ -260,7 +260,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
     const value = e.currentTarget.innerText;
 
     // 소수점 한개 초과 입력 시 리턴
-    if (value === "." && String(selectedData["badqty"]).includes(".")) {
+    if (value == "." && String(selectedData["badqty"]).includes(".")) {
       return false;
     }
 
@@ -272,7 +272,7 @@ const FormGrid = (fieldArrayRenderProps: FieldArrayRenderProps) => {
           ...selectedData,
           rowstatus: "U",
           badqty:
-            value === "."
+            value == "."
               ? selectedData["badqty"] + value // 소수점 입력시 스트링으로 처리
               : Number(String(selectedData["badqty"]) + value),
         },
@@ -459,7 +459,7 @@ const KendoWindow = ({
     parameters: {
       "@p_work_type": "Q",
       "@p_orgdiv": sessionItem.find(
-        (sessionItem) => sessionItem.code === "orgdiv"
+        (sessionItem) => sessionItem.code == "orgdiv"
       )?.value,
       "@p_rekey": rekey,
     },
@@ -480,7 +480,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -521,10 +521,10 @@ const KendoWindow = ({
     parameters: {
       "@p_work_type": paraData.work_type,
       "@p_orgdiv": sessionItem.find(
-        (sessionItem) => sessionItem.code === "orgdiv"
+        (sessionItem) => sessionItem.code == "orgdiv"
       )?.value,
       "@p_location": sessionItem.find(
-        (sessionItem) => sessionItem.code === "location"
+        (sessionItem) => sessionItem.code == "location"
       )?.value,
       "@p_rekey": paraData.rekey,
       "@p_badcd_s": paraData.badcd_s,
@@ -550,7 +550,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const badqtyArr = paraData.badqty_s
         .split("|")
         .map((item) => Number(item));

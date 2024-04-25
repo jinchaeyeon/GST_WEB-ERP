@@ -145,18 +145,18 @@ const KendoWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       const prodmacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_fxcode")
       );
       const prodempQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       fetchQuery(proccdQueryStr, setProccdListData);
       fetchQuery(prodmacQueryStr, setProdmacListData);
@@ -181,7 +181,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -246,7 +246,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -425,12 +425,12 @@ const KendoWindow = ({
   const onSaveClick = () => {
     const dataItem = mainDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     let rowsArr: TRowsArr = {
       rowstatus: [],
@@ -519,7 +519,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
         mainDataResult.data.length == 0 && filters.pgNum > 0;
 
@@ -569,7 +569,7 @@ const KendoWindow = ({
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values,
         [EDIT_FIELD]: props.field,
       }));
@@ -610,7 +610,7 @@ const KendoWindow = ({
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "chk") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -672,16 +672,16 @@ const KendoWindow = ({
             mainDataResult.data.map((row) => ({
               ...row,
               proccd: proccdListData.find(
-                (items: any) => items.sub_code === row.proccd
+                (items: any) => items.sub_code == row.proccd
               )?.code_name,
               prodemp: prodempListData.find(
-                (items: any) => items.user_id === row.prodemp
+                (items: any) => items.user_id == row.prodemp
               )?.user_name,
               prodmac: prodmacListData.find(
-                (items: any) => items.fxcode === row.prodmac
+                (items: any) => items.fxcode == row.prodmac
               )?.fxfull,
               qtyunit: qtyunitListData.find(
-                (items: any) => items.sub_code === row.qtyunit
+                (items: any) => items.sub_code == row.qtyunit
               )?.code_name,
               [SELECTED_FIELD]: selectedState[idGetter(row)], // 선택된 데이터
             })),

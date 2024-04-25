@@ -93,17 +93,17 @@ const HU_B1020W: React.FC = () => {
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
       const paycdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU028")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU028")
       );
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       fetchQuery(dptcdQueryStr, setDptcdListData);
       fetchQuery(postcdQueryStr, setPostcdListData);
@@ -128,7 +128,7 @@ const HU_B1020W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -187,13 +187,13 @@ const HU_B1020W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
 
-        cboDptcd: defaultOption.find((item: any) => item.id === "cboDptcd")
-          .valueCode,
+        cboDptcd: defaultOption.find((item: any) => item.id == "cboDptcd")
+          ?.valueCode,
         cboLocation: defaultOption.find(
-          (item: any) => item.id === "cboLocation"
-        ).valueCode,
-        cboPaycd: defaultOption.find((item: any) => item.id === "cboPaycd")
-          .valueCode,
+          (item: any) => item.id == "cboLocation"
+        )?.valueCode,
+        cboPaycd: defaultOption.find((item: any) => item.id == "cboPaycd")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -286,7 +286,7 @@ const HU_B1020W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult((prev) => {
@@ -436,16 +436,16 @@ const HU_B1020W: React.FC = () => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 dptcd: dptcdLstsListData.find(
-                  (item: any) => item.dptcd === row.dptcd
+                  (item: any) => item.dptcd == row.dptcd
                 )?.dptnm,
                 postcd: postcdListData.find(
-                  (item: any) => item.sub_code === row.postcd
+                  (item: any) => item.sub_code == row.postcd
                 )?.code_name,
                 paycd: paycdListData.find(
-                  (item: any) => item.sub_code === row.paycd
+                  (item: any) => item.sub_code == row.paycd
                 )?.code_name,
                 location: locationListData.find(
-                  (item: any) => item.sub_code === row.location
+                  (item: any) => item.sub_code == row.location
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)],
               })),
@@ -477,7 +477,7 @@ const HU_B1020W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -492,7 +492,7 @@ const HU_B1020W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
                       }
                     ></GridColumn>
                   )

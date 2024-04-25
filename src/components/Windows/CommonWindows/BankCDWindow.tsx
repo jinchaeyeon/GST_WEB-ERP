@@ -165,7 +165,7 @@ const KendoWindow = ({ setVisible, setData }: IKendoWindow) => {
 
   const onConfirmClick = (props: any) => {
     const rowData = mainDataResult.data.find(
-      (row: any) => row[DATA_ITEM_KEY] === Object.keys(selectedState)[0]
+      (row: any) => row[DATA_ITEM_KEY] == Object.keys(selectedState)[0]
     );
 
     // 부모로 데이터 전달, 창 닫기

@@ -133,7 +133,7 @@ const SY_A0110: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[1].TotalRowCount;
       const rows = data.tables[1].Rows;
 
@@ -403,7 +403,7 @@ const SY_A0110: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdAllList"].map(
+              customOptionData.menuCustomColumnOptions["grdAllList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -413,7 +413,7 @@ const SY_A0110: React.FC = () => {
                       title={item.caption}
                       width={item.width}
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )

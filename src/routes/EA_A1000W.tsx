@@ -96,10 +96,10 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   UseBizComponent("L_EA004", setBizComponentData);
 
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "appline" ? "L_EA004" : "";
+  const bizComponentIdVal = field == "appline" ? "L_EA004" : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -205,23 +205,23 @@ const EA_A1000: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        pgmgb: defaultOption.find((item: any) => item.id === "pgmgb").valueCode,
-        resno: defaultOption.find((item: any) => item.id === "resno").valueCode,
+        pgmgb: defaultOption.find((item: any) => item.id == "pgmgb")?.valueCode,
+        resno: defaultOption.find((item: any) => item.id == "resno")?.valueCode,
       }));
       setFilters2((prev) => ({
         ...prev,
-        pgmgb: defaultOption.find((item: any) => item.id === "pgmgb").valueCode,
-        resno: defaultOption.find((item: any) => item.id === "resno").valueCode,
+        pgmgb: defaultOption.find((item: any) => item.id == "pgmgb")?.valueCode,
+        resno: defaultOption.find((item: any) => item.id == "resno")?.valueCode,
       }));
       setFilters3((prev) => ({
         ...prev,
-        pgmgb: defaultOption.find((item: any) => item.id === "pgmgb").valueCode,
-        resno: defaultOption.find((item: any) => item.id === "resno").valueCode,
+        pgmgb: defaultOption.find((item: any) => item.id == "pgmgb")?.valueCode,
+        resno: defaultOption.find((item: any) => item.id == "resno")?.valueCode,
       }));
       setFilters4((prev) => ({
         ...prev,
-        pgmgb: defaultOption.find((item: any) => item.id === "pgmgb").valueCode,
-        resno: defaultOption.find((item: any) => item.id === "resno").valueCode,
+        pgmgb: defaultOption.find((item: any) => item.id == "pgmgb")?.valueCode,
+        resno: defaultOption.find((item: any) => item.id == "resno")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -250,19 +250,19 @@ const EA_A1000: React.FC = () => {
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       const postcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU005")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU005")
       );
       const resnoQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_004"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_004"
         )
       );
       const appgbQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_EA001")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_EA001")
       );
 
       fetchQuery(postcdQueryStr, setpostcdListData);
@@ -288,7 +288,7 @@ const EA_A1000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -436,7 +436,7 @@ const EA_A1000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -487,7 +487,7 @@ const EA_A1000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -568,7 +568,7 @@ const EA_A1000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -649,7 +649,7 @@ const EA_A1000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -1028,7 +1028,7 @@ const EA_A1000: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "chooses") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1067,7 +1067,7 @@ const EA_A1000: React.FC = () => {
           item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
             ? {
                 ...item,
-                rowstatus: item.rowstatus === "N" ? "N" : "U",
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
                 [EDIT_FIELD]: undefined,
               }
             : {
@@ -1110,7 +1110,7 @@ const EA_A1000: React.FC = () => {
   const enterEdit2 = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = mainDataResult2.data.map((item) =>
-        item[DATA_ITEM_KEY2] === dataItem[DATA_ITEM_KEY2]
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1149,7 +1149,7 @@ const EA_A1000: React.FC = () => {
           item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
             ? {
                 ...item,
-                rowstatus: item.rowstatus === "N" ? "N" : "U",
+                rowstatus: item.rowstatus == "N" ? "N" : "U",
                 [EDIT_FIELD]: undefined,
               }
             : {
@@ -1604,19 +1604,19 @@ const EA_A1000: React.FC = () => {
       };
       const dataItem = mainDataResult2.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
       const dataItem2 = mainDataResult3.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
       const dataItem3 = mainDataResult4.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
@@ -1783,7 +1783,7 @@ const EA_A1000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === false) {
+    if (data.isSuccess == false) {
       alert("결재자가 중복되어 저장할 수 없습니다.");
     } else {
       setFilters((prev) => ({
@@ -1948,7 +1948,7 @@ const EA_A1000: React.FC = () => {
       (row) => row[DATA_ITEM_KEY] == selectedField
     );
 
-    if (rowIndex === -1) {
+    if (rowIndex == -1) {
       alert("이동시킬 행을 선택해주세요.");
       return false;
     }
@@ -1956,29 +1956,29 @@ const EA_A1000: React.FC = () => {
       alert("작성자의 행은 이동 불가능합니다.");
       return false;
     }
-    if (!(rowIndex == 0 && direction === "UP")) {
+    if (!(rowIndex == 0 && direction == "UP")) {
       const newData = dataResult.data.map((item: any) => ({
         ...item,
         [EDIT_FIELD]: undefined,
       }));
       let replaceData = 0;
-      if (direction === "UP" && rowIndex != 0) {
+      if (direction == "UP" && rowIndex != 0) {
         replaceData = dataResult.data[rowIndex - 1].appseq;
       } else {
         replaceData = dataResult.data[rowIndex + 1].appseq;
       }
 
       newData.splice(rowIndex, 1);
-      newData.splice(rowIndex + (direction === "UP" ? -1 : 1), 0, rowData);
-      if (direction === "UP" && rowIndex != 0) {
+      newData.splice(rowIndex + (direction == "UP" ? -1 : 1), 0, rowData);
+      if (direction == "UP" && rowIndex != 0) {
         const newDatas = newData.map((item) =>
-          item[DATA_ITEM_KEY] === rowData[DATA_ITEM_KEY]
+          item[DATA_ITEM_KEY] == rowData[DATA_ITEM_KEY]
             ? {
                 ...item,
                 appseq: replaceData,
                 [EDIT_FIELD]: undefined,
               }
-            : item[DATA_ITEM_KEY] === dataResult.data[rowIndex - 1].num
+            : item[DATA_ITEM_KEY] == dataResult.data[rowIndex - 1].num
             ? {
                 ...item,
                 appseq: rowData.appseq,
@@ -1998,13 +1998,13 @@ const EA_A1000: React.FC = () => {
         });
       } else {
         const newDatas = newData.map((item) =>
-          item[DATA_ITEM_KEY] === rowData[DATA_ITEM_KEY]
+          item[DATA_ITEM_KEY] == rowData[DATA_ITEM_KEY]
             ? {
                 ...item,
                 appseq: replaceData,
                 [EDIT_FIELD]: undefined,
               }
-            : item[DATA_ITEM_KEY] === dataResult.data[rowIndex + 1].num
+            : item[DATA_ITEM_KEY] == dataResult.data[rowIndex + 1].num
             ? {
                 ...item,
                 appseq: rowData.appseq,
@@ -2116,10 +2116,10 @@ const EA_A1000: React.FC = () => {
                 mainDataResult.data.map((row) => ({
                   ...row,
                   dptcd: dptcdListData.find(
-                    (item: any) => item.dptcd === row.dptcd
+                    (item: any) => item.dptcd == row.dptcd
                   )?.dptnm,
                   postcd: postcdListData.find(
-                    (item: any) => item.sub_code === row.postcd
+                    (item: any) => item.sub_code == row.postcd
                   )?.code_name,
                   [SELECTED_FIELD]: selectedState[idGetter(row)],
                 })),
@@ -2159,7 +2159,7 @@ const EA_A1000: React.FC = () => {
               editField={EDIT_FIELD}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdList"].map(
+                customOptionData.menuCustomColumnOptions["grdList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -2181,7 +2181,7 @@ const EA_A1000: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
                         }
                       />
                     )
@@ -2248,16 +2248,16 @@ const EA_A1000: React.FC = () => {
                   mainDataResult2.data.map((row) => ({
                     ...row,
                     dptcd: dptcdListData.find(
-                      (item: any) => item.dptcd === row.dptcd
+                      (item: any) => item.dptcd == row.dptcd
                     )?.dptnm,
                     postcd: postcdListData.find(
-                      (item: any) => item.sub_code === row.postcd
+                      (item: any) => item.sub_code == row.postcd
                     )?.code_name,
                     resno: resnoListData.find(
-                      (item: any) => item.user_id === row.resno
+                      (item: any) => item.user_id == row.resno
                     )?.user_name,
                     appgb: appgbListData.find(
-                      (item: any) => item.sub_code === row.appgb
+                      (item: any) => item.sub_code == row.appgb
                     )?.code_name,
                     rowstatus:
                       row.rowstatus == null ||
@@ -2305,7 +2305,7 @@ const EA_A1000: React.FC = () => {
               >
                 <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList2"].map(
+                  customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                     (item: any, idx: number) =>
                       item.sortOrder !== -1 && (
                         <GridColumn
@@ -2338,7 +2338,7 @@ const EA_A1000: React.FC = () => {
                               : undefined
                           }
                           footerCell={
-                            item.sortOrder === 0
+                            item.sortOrder == 0
                               ? mainTotalFooterCell2
                               : undefined
                           }
@@ -2374,16 +2374,16 @@ const EA_A1000: React.FC = () => {
                     mainDataResult3.data.map((row) => ({
                       ...row,
                       postcd: postcdListData.find(
-                        (item: any) => item.sub_code === row.postcd
+                        (item: any) => item.sub_code == row.postcd
                       )?.code_name,
                       resno: resnoListData.find(
-                        (item: any) => item.user_id === row.resno
+                        (item: any) => item.user_id == row.resno
                       )?.user_name,
                       appgb: appgbListData.find(
-                        (item: any) => item.sub_code === row.appgb
+                        (item: any) => item.sub_code == row.appgb
                       )?.code_name,
                       dptcd: dptcdListData.find(
-                        (item: any) => item.dptcd === row.dptcd
+                        (item: any) => item.dptcd == row.dptcd
                       )?.dptnm,
                       rowstatus:
                         row.rowstatus == null ||
@@ -2425,7 +2425,7 @@ const EA_A1000: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList3"].map(
+                    customOptionData.menuCustomColumnOptions["grdList3"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -2439,7 +2439,7 @@ const EA_A1000: React.FC = () => {
                                 : true
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell3
                                 : undefined
                             }
@@ -2474,16 +2474,16 @@ const EA_A1000: React.FC = () => {
                     mainDataResult4.data.map((row) => ({
                       ...row,
                       postcd: postcdListData.find(
-                        (item: any) => item.sub_code === row.postcd
+                        (item: any) => item.sub_code == row.postcd
                       )?.code_name,
                       resno: resnoListData.find(
-                        (item: any) => item.user_id === row.resno
+                        (item: any) => item.user_id == row.resno
                       )?.user_name,
                       appgb: appgbListData.find(
-                        (item: any) => item.sub_code === row.appgb
+                        (item: any) => item.sub_code == row.appgb
                       )?.code_name,
                       dptcd: dptcdListData.find(
-                        (item: any) => item.dptcd === row.dptcd
+                        (item: any) => item.dptcd == row.dptcd
                       )?.dptnm,
                       rowstatus:
                         row.rowstatus == null ||
@@ -2525,7 +2525,7 @@ const EA_A1000: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList4"].map(
+                    customOptionData.menuCustomColumnOptions["grdList4"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -2539,7 +2539,7 @@ const EA_A1000: React.FC = () => {
                                 : true
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell4
                                 : undefined
                             }

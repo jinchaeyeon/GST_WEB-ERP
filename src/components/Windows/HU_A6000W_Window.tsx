@@ -166,7 +166,7 @@ const CopyWindow = ({
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
       fetchQuery(dptcdQueryStr, setdptcdListData);
@@ -189,7 +189,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -295,39 +295,39 @@ const CopyWindow = ({
       if (workType == "N") {
         setInformation((prev) => ({
           ...prev,
-          abilcd: defaultOption.find((item: any) => item.id === "abilcd")
-            .valueCode,
-          bircd: defaultOption.find((item: any) => item.id === "bircd")
-            .valueCode,
-          dptcd: defaultOption.find((item: any) => item.id === "dptcd")
-            .valueCode,
-          emptype: defaultOption.find((item: any) => item.id === "emptype")
-            .valueCode,
-          gradutype: defaultOption.find((item: any) => item.id === "gradutype")
-            .valueCode,
-          location: defaultOption.find((item: any) => item.id === "location")
-            .valueCode,
-          nationcd: defaultOption.find((item: any) => item.id === "nationcd")
-            .valueCode,
-          paycd: defaultOption.find((item: any) => item.id === "paycd")
-            .valueCode,
+          abilcd: defaultOption.find((item: any) => item.id == "abilcd")
+            ?.valueCode,
+          bircd: defaultOption.find((item: any) => item.id == "bircd")
+            ?.valueCode,
+          dptcd: defaultOption.find((item: any) => item.id == "dptcd")
+            ?.valueCode,
+          emptype: defaultOption.find((item: any) => item.id == "emptype")
+            ?.valueCode,
+          gradutype: defaultOption.find((item: any) => item.id == "gradutype")
+            ?.valueCode,
+          location: defaultOption.find((item: any) => item.id == "location")
+            ?.valueCode,
+          nationcd: defaultOption.find((item: any) => item.id == "nationcd")
+            ?.valueCode,
+          paycd: defaultOption.find((item: any) => item.id == "paycd")
+            ?.valueCode,
           payprovflg: defaultOption.find(
-            (item: any) => item.id === "payprovflg"
-          ).valueCode,
-          payprovyn: defaultOption.find((item: any) => item.id === "payprovyn")
-            .valueCode,
-          postcd: defaultOption.find((item: any) => item.id === "postcd")
-            .valueCode,
-          regcd: defaultOption.find((item: any) => item.id === "regcd")
-            .valueCode,
-          rtrrsn: defaultOption.find((item: any) => item.id === "rtrrsn")
-            .valueCode,
-          schcd: defaultOption.find((item: any) => item.id === "schcd")
-            .valueCode,
-          sexcd: defaultOption.find((item: any) => item.id === "sexcd")
-            .valueCode,
-          workerdiv: defaultOption.find((item: any) => item.id === "workerdiv")
-            .valueCode,
+            (item: any) => item.id == "payprovflg"
+          )?.valueCode,
+          payprovyn: defaultOption.find((item: any) => item.id == "payprovyn")
+            ?.valueCode,
+          postcd: defaultOption.find((item: any) => item.id == "postcd")
+            ?.valueCode,
+          regcd: defaultOption.find((item: any) => item.id == "regcd")
+            ?.valueCode,
+          rtrrsn: defaultOption.find((item: any) => item.id == "rtrrsn")
+            ?.valueCode,
+          schcd: defaultOption.find((item: any) => item.id == "schcd")
+            ?.valueCode,
+          sexcd: defaultOption.find((item: any) => item.id == "sexcd")
+            ?.valueCode,
+          workerdiv: defaultOption.find((item: any) => item.id == "workerdiv")
+            ?.valueCode,
         }));
       }
     }
@@ -369,7 +369,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -514,7 +514,7 @@ const CopyWindow = ({
   }, [filters]);
 
   useEffect(() => {
-    if (workType === "U" && data != undefined) {
+    if (workType == "U" && data != undefined) {
       setFilters((prev) => ({
         ...prev,
         orgdiv: "01",
@@ -744,7 +744,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       setUnsavedName([]);
       setUnsavedAttadatnums([]);
       reload(data.returnString);
@@ -819,7 +819,7 @@ const CopyWindow = ({
   return (
     <>
       <Window
-        title={workType === "N" ? "일용직 인사생성" : "일용직 인사수정"}
+        title={workType == "N" ? "일용직 인사생성" : "일용직 인사수정"}
         width={position.width}
         height={position.height}
         onMove={handleMove}

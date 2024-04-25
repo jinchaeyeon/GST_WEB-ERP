@@ -82,20 +82,20 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "paycd"
+    field == "paycd"
       ? "L_HU028"
-      : field === "workgb"
+      : field == "workgb"
       ? "L_HU075"
-      : field === "workcls"
+      : field == "workcls"
       ? "L_HU076"
-      : field === "stddiv"
+      : field == "stddiv"
       ? "L_HU097"
-      : field === "workdiv"
+      : field == "workdiv"
       ? "L_HU078"
       : "";
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -146,14 +146,14 @@ const HU_A2100W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        stddiv: defaultOption.find((item: any) => item.id === "stddiv")
-          .valueCode,
-        workcls: defaultOption.find((item: any) => item.id === "workcls")
-          .valueCode,
-        workdiv: defaultOption.find((item: any) => item.id === "workdiv")
-          .valueCode,
-        workgb: defaultOption.find((item: any) => item.id === "workgb")
-          .valueCode,
+        stddiv: defaultOption.find((item: any) => item.id == "stddiv")
+          ?.valueCode,
+        workcls: defaultOption.find((item: any) => item.id == "workcls")
+          ?.valueCode,
+        workdiv: defaultOption.find((item: any) => item.id == "workdiv")
+          ?.valueCode,
+        workgb: defaultOption.find((item: any) => item.id == "workgb")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -228,7 +228,7 @@ const HU_A2100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any, idx: number) => ({
         ...row,
@@ -433,7 +433,7 @@ const HU_A2100W: React.FC = () => {
       (field == "workdiv" && dataItem.rowstatus == "N")
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -519,7 +519,7 @@ const HU_A2100W: React.FC = () => {
     try {
       const dataItem = mainDataResult.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
@@ -605,7 +605,7 @@ const HU_A2100W: React.FC = () => {
       };
       if (valid2 == true) {
         if (valid == true) {
-          if (dataItem.length === 0 && deletedMainRows.length == 0)
+          if (dataItem.length == 0 && deletedMainRows.length == 0)
             return false;
           dataItem.forEach((item: any, idx: number) => {
             const {
@@ -741,7 +741,7 @@ const HU_A2100W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
@@ -1001,7 +1001,7 @@ const HU_A2100W: React.FC = () => {
           >
             <GridColumn field="rowstatus" title=" " width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -1020,7 +1020,7 @@ const HU_A2100W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
                       }
                     />
                   )

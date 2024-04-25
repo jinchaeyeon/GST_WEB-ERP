@@ -13,7 +13,7 @@ export const CustomItem = (props) => {
     if (bizComponentData !== null) {
       const colorQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item) => item.bizComponentId === "L_APPOINTMENT_COLOR"
+          (item) => item.bizComponentId == "L_APPOINTMENT_COLOR"
         )
       );
 
@@ -37,7 +37,7 @@ export const CustomItem = (props) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }

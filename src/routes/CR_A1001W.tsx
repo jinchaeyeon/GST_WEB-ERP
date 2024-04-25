@@ -370,7 +370,7 @@ const Page: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus" && field != "class" && field != "custnm") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -626,7 +626,7 @@ const Page: React.FC = () => {
             editField={EDIT_FIELD}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn

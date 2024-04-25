@@ -97,14 +97,14 @@ const AC_B5000W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        inoutdiv: defaultOption.find((item: any) => item.id === "inoutdiv")
-          .valueCode,
-        location: defaultOption.find((item: any) => item.id === "location")
-          .valueCode,
-        taxtype: defaultOption.find((item: any) => item.id === "taxtype")
-          .valueCode,
-        prtyn: defaultOption.find((item: any) => item.id === "prtyn").valueCode,
-        prdiv: defaultOption.find((item: any) => item.id === "prdiv").valueCode,
+        inoutdiv: defaultOption.find((item: any) => item.id == "inoutdiv")
+          ?.valueCode,
+        location: defaultOption.find((item: any) => item.id == "location")
+          ?.valueCode,
+        taxtype: defaultOption.find((item: any) => item.id == "taxtype")
+          ?.valueCode,
+        prtyn: defaultOption.find((item: any) => item.id == "prtyn")?.valueCode,
+        prdiv: defaultOption.find((item: any) => item.id == "prdiv")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -199,7 +199,7 @@ const AC_B5000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -569,35 +569,33 @@ const AC_B5000W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]
-                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                .map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          numberField.includes(item.fieldName)
-                            ? NumberCell
-                            : dateField.includes(item.fieldName)
-                            ? DateCell
-                            : checkField.includes(item.fieldName)
-                            ? CheckBoxReadOnlyCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder === 0
-                            ? mainTotalFooterCell
-                            : numberField.includes(item.fieldName)
-                            ? gridSumQtyFooterCell2
-                            : undefined
-                        }
-                      ></GridColumn>
-                    )
-                )}
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        numberField.includes(item.fieldName)
+                          ? NumberCell
+                          : dateField.includes(item.fieldName)
+                          ? DateCell
+                          : checkField.includes(item.fieldName)
+                          ? CheckBoxReadOnlyCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder == 0
+                          ? mainTotalFooterCell
+                          : numberField.includes(item.fieldName)
+                          ? gridSumQtyFooterCell2
+                          : undefined
+                      }
+                    ></GridColumn>
+                  )
+              )}
           </Grid>
         </ExcelExport>
       </GridContainer>

@@ -26,7 +26,7 @@ const NumberCell = (props: CustomCellProps) => {
     myProp,
     color = "black",
   } = props;
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = dataItem[field];
   if (className.includes("read-only")) {
     isInEdit = false;
@@ -78,7 +78,7 @@ const NumberCell = (props: CustomCellProps) => {
       </td>
     );
 
-  return render === undefined
+  return render == undefined
     ? defaultRendering
     : render?.call(undefined, defaultRendering, props);
 };

@@ -104,9 +104,9 @@ const AC_A3000W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         fxyrmm: setDefaultDate(customOptionData, "fxyrmm"),
-        costgb1: defaultOption.find((item: any) => item.id === "costgb1")
-          .valueCode,
-        fxdiv: defaultOption.find((item: any) => item.id === "fxdiv").valueCode,
+        costgb1: defaultOption.find((item: any) => item.id == "costgb1")
+          ?.valueCode,
+        fxdiv: defaultOption.find((item: any) => item.id == "fxdiv")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -263,7 +263,7 @@ const AC_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -295,7 +295,7 @@ const AC_A3000W: React.FC = () => {
 
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.fxdiv == filters.find_row_value);
         if (selectedRow != undefined) {
@@ -355,7 +355,7 @@ const AC_A3000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
@@ -643,7 +643,7 @@ const AC_A3000W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -658,7 +658,7 @@ const AC_A3000W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : numberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell
@@ -716,7 +716,7 @@ const AC_A3000W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList2"].map(
+              customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -733,7 +733,7 @@ const AC_A3000W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell2
                           : numberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell2

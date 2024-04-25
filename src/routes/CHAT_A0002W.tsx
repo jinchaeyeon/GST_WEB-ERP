@@ -93,10 +93,10 @@ const CHAT_BOT_MNG: React.FC = () => {
     const flatData: any = treeToFlat(state.data, "question", SUB_ITEMS_FIELD);
 
     const newData = flatData.map((item: any) =>
-      item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+      item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
         ? {
             ...item,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
             questions: [],
           }
         : { ...item, questions: [] }
@@ -142,7 +142,7 @@ const CHAT_BOT_MNG: React.FC = () => {
       ...state,
       changes: true,
       data: mapTree(state.data, SUB_ITEMS_FIELD, (item) =>
-        event.dataItem[DATA_ITEM_KEY] === item[DATA_ITEM_KEY]
+        event.dataItem[DATA_ITEM_KEY] == item[DATA_ITEM_KEY]
           ? extendDataItem(item, SUB_ITEMS_FIELD, { [field]: event.value })
           : item
       ),
@@ -178,7 +178,7 @@ const CHAT_BOT_MNG: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: IQnaData, idx: number) => ({
         ...row,
@@ -216,12 +216,12 @@ const CHAT_BOT_MNG: React.FC = () => {
 
     // const dataItem = flatData.filter((item: any) => {
     //   return (
-    //     (item.rowstatus === "N" || item.rowstatus === "U") &&
+    //     (item.rowstatus == "N" || item.rowstatus == "U") &&
     //     item.rowstatus !== undefined
     //   );
     // });
 
-    // if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    // if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
     try {
       let msg = "";
@@ -251,7 +251,7 @@ const CHAT_BOT_MNG: React.FC = () => {
           data = null;
         }
 
-        if (data.isSuccess === true) {
+        if (data.isSuccess == true) {
           msg = data.resultMessage;
         } else {
           console.log("[에러발생]");
@@ -274,7 +274,7 @@ const CHAT_BOT_MNG: React.FC = () => {
           pageNumber: 0,
           pageSize: 0,
           parameters: {
-            "@p_work_type": rowstatus === "N" ? "N" : "U",
+            "@p_work_type": rowstatus == "N" ? "N" : "U",
             "@p_id": id,
             "@p_question": question,
             "@p_parent_question": parent_question,
@@ -291,7 +291,7 @@ const CHAT_BOT_MNG: React.FC = () => {
           data = null;
         }
 
-        if (data.isSuccess === true) {
+        if (data.isSuccess == true) {
           msg = data.resultMessage;
         } else {
           console.log("[에러발생]");
@@ -384,7 +384,7 @@ const CHAT_BOT_MNG: React.FC = () => {
     // 드래그 데이터의 parent_question를 드롭 대상 데이터의 question 값으로 업데이트
     let isValid = true;
     state.data.forEach((item) => {
-      if (item["question"] === "") {
+      if (item["question"] == "") {
         isValid = false;
         return false;
       }
@@ -423,7 +423,7 @@ const CHAT_BOT_MNG: React.FC = () => {
 
     // 드래그 데이터의 parent_question를 드롭 대상 데이터의 question 값으로 수정
     flatData.forEach((item: IQnaData) => {
-      if (item["question"] === childQuestion) {
+      if (item["question"] == childQuestion) {
         item["parent_question"] = parentQuestion;
       }
     });
@@ -486,7 +486,7 @@ const CHAT_BOT_MNG: React.FC = () => {
               selected: selectedState[idGetter(item)],
               [expandField]: expanded.includes(item[DATA_ITEM_KEY]),
               [editField]:
-                item[DATA_ITEM_KEY] === editItemId ? editItemField : undefined,
+                item[DATA_ITEM_KEY] == editItemId ? editItemField : undefined,
             })
           )}
           editField={editField}
@@ -499,7 +499,7 @@ const CHAT_BOT_MNG: React.FC = () => {
           columns={columns.map((column) => ({
             ...column,
             editCell:
-              editItemField === column.field ? column.editCell : undefined,
+              editItemField == column.field ? column.editCell : undefined,
           }))}
           dataItemKey={DATA_ITEM_KEY}
           selectedField={SELECTED_FIELD}

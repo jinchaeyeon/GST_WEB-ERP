@@ -46,7 +46,7 @@ const MultiSelectDrop = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
 
       setListData(rows); //리스트 세팅
@@ -54,7 +54,7 @@ const MultiSelectDrop = ({
   }, []);
 
   const isCustom = (item: Item) => {
-    return item.sub_code === undefined;
+    return item.sub_code == undefined;
   };
   const addKey = (item: Item) => {
     item.sub_code = new Date().getTime();
@@ -66,8 +66,8 @@ const MultiSelectDrop = ({
 
     if (lastItem && isCustom(lastItem)) {
       values.pop();
-      const sameItem = values.find((v) => v.code_name === lastItem.code_name);
-      if (sameItem === undefined) {
+      const sameItem = values.find((v) => v.code_name == lastItem.code_name);
+      if (sameItem == undefined) {
         addKey(lastItem);
         values.push(lastItem);
       }

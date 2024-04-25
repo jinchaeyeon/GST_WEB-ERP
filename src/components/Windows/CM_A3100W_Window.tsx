@@ -33,7 +33,7 @@ export const CustomFormEditor = (props: SchedulerFormEditorProps) => {
     if (bizComponentData !== null) {
       const colorQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_RESOURCE"
+          (item: any) => item.bizComponentId == "L_RESOURCE"
         )
       );
 
@@ -57,7 +57,7 @@ export const CustomFormEditor = (props: SchedulerFormEditorProps) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }

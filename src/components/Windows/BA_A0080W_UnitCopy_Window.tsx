@@ -121,10 +121,10 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
       );
       setFilters((prev) => ({
         ...prev,
-        unpitem: defaultOption.find((item: any) => item.id === "unpitem")
-          .valueCode,
-        unpitem2: defaultOption.find((item: any) => item.id === "unpitem2")
-          .valueCode,
+        unpitem: defaultOption.find((item: any) => item.id == "unpitem")
+          ?.valueCode,
+        unpitem2: defaultOption.find((item: any) => item.id == "unpitem2")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -160,22 +160,22 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const itemacntQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA061")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA061")
       );
       const qtyunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA015")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA015")
       );
       const itemlvl1QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA171")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA171")
       );
       const itemlvl2QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA172")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA172")
       );
       const itemlvl3QueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA173")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA173")
       );
       const amtunitQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA020")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA020")
       );
       fetchQuery(itemlvl1QueryStr, setItemlvl1ListData);
       fetchQuery(itemlvl2QueryStr, setItemlvl2ListData);
@@ -202,7 +202,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -312,7 +312,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -323,7 +323,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
           const findRowIndex = rows.findIndex(
-            (row: any) => row[DATA_ITEM_KEY] === filters.find_row_value
+            (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
           );
           targetRowIndex = findRowIndex;
         }
@@ -444,7 +444,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
     const changeCheck = () => {
       const newData = mainDataResult.data.map((item) => ({
         ...item,
-        rowstatus: item.rowstatus === "N" ? "N" : "U",
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
         chk: !values2,
         [EDIT_FIELD]: props.field,
       }));
@@ -495,7 +495,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field == "chk" && dataItem.overlap != "Y") {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               chk:
@@ -590,7 +590,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
       }
     });
     try {
-      if (newData.length === 0) {
+      if (newData.length == 0) {
         throw findMessage(messagesData, "BA_A0080W_008");
       } else {
         let dataArr: TdataArr = {
@@ -675,7 +675,7 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setParaData({
         workType: "N",
@@ -777,22 +777,22 @@ const CopyWindow = ({ setVisible, modal = false, pathname }: IWindow) => {
               mainDataResult.data.map((row) => ({
                 ...row,
                 itemacnt: itemacntListData.find(
-                  (items: any) => items.sub_code === row.itemacnt
+                  (items: any) => items.sub_code == row.itemacnt
                 )?.code_name,
                 itemlvl1: itemlvl1ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl1
+                  (item: any) => item.sub_code == row.itemlvl1
                 )?.code_name,
                 itemlvl2: itemlvl2ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl2
+                  (item: any) => item.sub_code == row.itemlvl2
                 )?.code_name,
                 itemlvl3: itemlvl3ListData.find(
-                  (item: any) => item.sub_code === row.itemlvl3
+                  (item: any) => item.sub_code == row.itemlvl3
                 )?.code_name,
                 invunit: qtyunitListData.find(
-                  (item: any) => item.sub_code === row.invunit
+                  (item: any) => item.sub_code == row.invunit
                 )?.code_name,
                 amtunit: amtunitListData.find(
-                  (item: any) => item.sub_code === row.amtunit
+                  (item: any) => item.sub_code == row.amtunit
                 )?.code_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
               })),

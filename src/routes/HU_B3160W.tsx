@@ -92,8 +92,8 @@ const HU_B3160W: React.FC = () => {
 
       setFilters((prev) => ({
         ...prev,
-        paytype: defaultOption.find((item: any) => item.id === "paytype")
-          .valueCode,
+        paytype: defaultOption.find((item: any) => item.id == "paytype")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -169,7 +169,7 @@ const HU_B3160W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
       setMainDataResult((prev) => {
@@ -443,7 +443,7 @@ const HU_B3160W: React.FC = () => {
             resizable={true}
           >
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"].map(
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
                 (item: any, idx: number) =>
                   item.sortOrder !== -1 && (
                     <GridColumn
@@ -457,7 +457,7 @@ const HU_B3160W: React.FC = () => {
                           : undefined
                       }
                       footerCell={
-                        item.sortOrder === 0
+                        item.sortOrder == 0
                           ? mainTotalFooterCell
                           : numberField.includes(item.fieldName)
                           ? gridSumQtyFooterCell

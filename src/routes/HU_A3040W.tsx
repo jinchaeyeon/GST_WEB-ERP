@@ -139,7 +139,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
     mainDataState2,
     setMainDataState2,
   } = useContext(FormContext2);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
@@ -178,7 +178,7 @@ const ColumnCommandCell2 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {userWindowVisible && (
@@ -212,7 +212,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
     mainDataState4,
     setMainDataState4,
   } = useContext(FormContext4);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
@@ -251,7 +251,7 @@ const ColumnCommandCell4 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {userWindowVisible && (
@@ -285,7 +285,7 @@ const ColumnCommandCell6 = (props: GridCellProps) => {
     mainDataState6,
     setMainDataState6,
   } = useContext(FormContext6);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const [userWindowVisible, setuserWindowVisible] = useState<boolean>(false);
@@ -325,7 +325,7 @@ const ColumnCommandCell6 = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {userWindowVisible && (
@@ -488,7 +488,7 @@ const HU_A3040W: React.FC = () => {
     if (bizComponentData !== null) {
       const dptcdQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_dptcd_001"
+          (item: any) => item.bizComponentId == "L_dptcd_001"
         )
       );
 
@@ -512,7 +512,7 @@ const HU_A3040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -1114,7 +1114,7 @@ const HU_A3040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
@@ -1182,7 +1182,7 @@ const HU_A3040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1215,7 +1215,7 @@ const HU_A3040W: React.FC = () => {
       });
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.insudt == filters.find_row_value);
 
@@ -1303,7 +1303,7 @@ const HU_A3040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1357,7 +1357,7 @@ const HU_A3040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1390,7 +1390,7 @@ const HU_A3040W: React.FC = () => {
       });
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters3.find_row_value === ""
+          filters3.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.insudt == filters3.find_row_value);
 
@@ -1478,7 +1478,7 @@ const HU_A3040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1532,7 +1532,7 @@ const HU_A3040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -1565,7 +1565,7 @@ const HU_A3040W: React.FC = () => {
       });
       if (totalRowCnt > 0) {
         const selectedRow =
-          filters5.find_row_value === ""
+          filters5.find_row_value == ""
             ? rows[0]
             : rows.find((row: any) => row.insudt == filters5.find_row_value);
 
@@ -1653,7 +1653,7 @@ const HU_A3040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -2643,12 +2643,12 @@ const HU_A3040W: React.FC = () => {
   const onSaveClick2 = () => {
     const dataItem = mainDataResult2.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0 && deletedMainRows2.length == 0) return false;
+    if (dataItem.length == 0 && deletedMainRows2.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -2722,12 +2722,12 @@ const HU_A3040W: React.FC = () => {
   const onSaveClick4 = () => {
     const dataItem = mainDataResult4.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0 && deletedMainRows4.length == 0) return false;
+    if (dataItem.length == 0 && deletedMainRows4.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -2801,12 +2801,12 @@ const HU_A3040W: React.FC = () => {
   const onSaveClick6 = () => {
     const dataItem = mainDataResult6.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
 
-    if (dataItem.length === 0 && deletedMainRows6.length == 0) return false;
+    if (dataItem.length == 0 && deletedMainRows6.length == 0) return false;
 
     let dataArr: TdataArr = {
       rowstatus_s: [],
@@ -2920,11 +2920,11 @@ const HU_A3040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (ParaData.workType == "D") {
         if (tabSelected == 0) {
           const isLastDataDeleted =
-            mainDataResult.data.length === 1 && filters.pgNum > 1;
+            mainDataResult.data.length == 1 && filters.pgNum > 1;
           const findRowIndex = mainDataResult.data.findIndex(
             (row: any) =>
               row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -2961,7 +2961,7 @@ const HU_A3040W: React.FC = () => {
           }));
         } else if (tabSelected == 1) {
           const isLastDataDeleted =
-            mainDataResult3.data.length === 1 && filters3.pgNum > 1;
+            mainDataResult3.data.length == 1 && filters3.pgNum > 1;
           const findRowIndex = mainDataResult3.data.findIndex(
             (row: any) =>
               row[DATA_ITEM_KEY3] ==
@@ -2999,7 +2999,7 @@ const HU_A3040W: React.FC = () => {
           }));
         } else if (tabSelected == 2) {
           const isLastDataDeleted =
-            mainDataResult5.data.length === 1 && filters5.pgNum > 1;
+            mainDataResult5.data.length == 1 && filters5.pgNum > 1;
           const findRowIndex = mainDataResult5.data.findIndex(
             (row: any) =>
               row[DATA_ITEM_KEY5] ==
@@ -3262,7 +3262,7 @@ const HU_A3040W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
 
@@ -3289,7 +3289,7 @@ const HU_A3040W: React.FC = () => {
                   prsnnm: prsnnm2,
                   prsnnum: prsnnum2,
                   dptcd: dptcd2,
-                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
                 }
               : {
                   ...item,
@@ -3316,7 +3316,7 @@ const HU_A3040W: React.FC = () => {
                   prsnnm: prsnnm2,
                   prsnnum: prsnnum2,
                   dptcd: dptcd2,
-                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
                 }
               : {
                   ...item,
@@ -3357,7 +3357,7 @@ const HU_A3040W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
 
@@ -3433,7 +3433,7 @@ const HU_A3040W: React.FC = () => {
                   prsnnm: prsnnm4,
                   prsnnum: prsnnum4,
                   dptcd: dptcd4,
-                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
                 }
               : {
                   ...item,
@@ -3460,7 +3460,7 @@ const HU_A3040W: React.FC = () => {
                   prsnnm: prsnnm4,
                   prsnnum: prsnnum4,
                   dptcd: dptcd4,
-                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
                 }
               : {
                   ...item,
@@ -3501,7 +3501,7 @@ const HU_A3040W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         const rowCount = data.tables[0].RowCount;
 
@@ -3514,7 +3514,7 @@ const HU_A3040W: React.FC = () => {
                   prsnnm: prsnnm6,
                   prsnnum: prsnnum6,
                   dptcd: dptcd6,
-                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
                 }
               : {
                   ...item,
@@ -3541,7 +3541,7 @@ const HU_A3040W: React.FC = () => {
                   prsnnm: prsnnm6,
                   prsnnum: prsnnum6,
                   dptcd: dptcd6,
-                  rowstatus: item.rowstatus === "N" ? "N" : "U",
+                  rowstatus: item.rowstatus == "N" ? "N" : "U",
                 }
               : {
                   ...item,
@@ -3662,7 +3662,7 @@ const HU_A3040W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
@@ -3975,7 +3975,7 @@ const HU_A3040W: React.FC = () => {
                   >
                     <GridColumn field="rowstatus" title=" " width="50px" />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList2"].map(
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -3992,7 +3992,7 @@ const HU_A3040W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell2
                                   : numberField2.includes(item.fieldName)
                                   ? editNumberFooterCell2
@@ -4176,7 +4176,7 @@ const HU_A3040W: React.FC = () => {
                   >
                     <GridColumn field="rowstatus" title=" " width="50px" />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList4"].map(
+                      customOptionData.menuCustomColumnOptions["grdList4"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -4193,7 +4193,7 @@ const HU_A3040W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell4
                                   : numberField2.includes(item.fieldName)
                                   ? editNumberFooterCell4
@@ -4377,7 +4377,7 @@ const HU_A3040W: React.FC = () => {
                   >
                     <GridColumn field="rowstatus" title=" " width="50px" />
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList6"].map(
+                      customOptionData.menuCustomColumnOptions["grdList6"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -4394,7 +4394,7 @@ const HU_A3040W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell6
                                   : numberField2.includes(item.fieldName)
                                   ? editNumberFooterCell6

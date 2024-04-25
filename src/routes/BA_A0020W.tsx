@@ -255,7 +255,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setAttdatnum, setFiles } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : "";
 
   const handleChange = (e: InputChangeEvent) => {
@@ -306,7 +306,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
 
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {attachmentsWindowVisible && (
@@ -374,9 +374,9 @@ const BA_A0020: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
+        raduseyn: defaultOption.find((item: any) => item.id == "raduseyn")
           .valueCode,
-        custdiv: defaultOption.find((item: any) => item.id === "custdiv")
+        custdiv: defaultOption.find((item: any) => item.id == "custdiv")
           .valueCode,
       }));
     }
@@ -400,10 +400,10 @@ const BA_A0020: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const custdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA026")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA026")
       );
       const BizdivQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA027")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA027")
       );
 
       fetchQuery(custdivQueryStr, setCustdivListData);
@@ -427,7 +427,7 @@ const BA_A0020: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -679,7 +679,7 @@ const BA_A0020: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -712,7 +712,7 @@ const BA_A0020: React.FC = () => {
       if (totalRowCnt > 0) {
         // find_row_value 행 선택, find_row_value 없는 경우 첫번째 행 선택
         const selectedRow =
-          filters.find_row_value === ""
+          filters.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) => row[DATA_ITEM_KEY] == filters.find_row_value
@@ -975,11 +975,11 @@ const BA_A0020: React.FC = () => {
         "@p_custnm": subfilters.custnm,
         "@p_custdiv":
           custdivListData.find(
-            (item: any) => item.code_name === subfilters.custdiv
+            (item: any) => item.code_name == subfilters.custdiv
           )?.sub_code == undefined
             ? ""
             : custdivListData.find(
-                (item: any) => item.code_name === subfilters.custdiv
+                (item: any) => item.code_name == subfilters.custdiv
               )?.sub_code,
         "@p_bizregnum": subfilters.bizregnum,
         "@p_ceonm": subfilters.ceonm,
@@ -994,7 +994,7 @@ const BA_A0020: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
@@ -1032,11 +1032,11 @@ const BA_A0020: React.FC = () => {
       if (totalRowCnt > 0) {
         // find_row_value 행 선택, find_row_value 없는 경우 첫번째 행 선택
         const selectedRow =
-          subfilters.find_row_value === ""
+          subfilters.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) =>
-                  row[SUB_DATA_ITEM_KEY] === subfilters.find_row_value
+                  row[SUB_DATA_ITEM_KEY] == subfilters.find_row_value
               );
         if (selectedRow != undefined) {
           setSelectedsubDataState({ [selectedRow[SUB_DATA_ITEM_KEY]]: true });
@@ -1078,11 +1078,11 @@ const BA_A0020: React.FC = () => {
         "@p_custnm": subfilters2.custnm,
         "@p_custdiv":
           custdivListData.find(
-            (item: any) => item.code_name === subfilters2.custdiv
+            (item: any) => item.code_name == subfilters2.custdiv
           )?.sub_code == undefined
             ? ""
             : custdivListData.find(
-                (item: any) => item.code_name === subfilters2.custdiv
+                (item: any) => item.code_name == subfilters2.custdiv
               )?.sub_code,
         "@p_bizregnum": subfilters2.bizregnum,
         "@p_ceonm": subfilters2.ceonm,
@@ -1096,7 +1096,7 @@ const BA_A0020: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows;
 
@@ -1135,11 +1135,11 @@ const BA_A0020: React.FC = () => {
       if (totalRowCnt > 0) {
         // find_row_value 행 선택, find_row_value 없는 경우 첫번째 행 선택
         const selectedRow =
-          subfilters2.find_row_value === ""
+          subfilters2.find_row_value == ""
             ? rows[0]
             : rows.find(
                 (row: any) =>
-                  row[SUB_DATA_ITEM_KEY2] === subfilters2.find_row_value
+                  row[SUB_DATA_ITEM_KEY2] == subfilters2.find_row_value
               );
         if (selectedRow != undefined) {
           setSelectedsubDataState2({ [selectedRow[SUB_DATA_ITEM_KEY2]]: true });
@@ -1274,11 +1274,11 @@ const BA_A0020: React.FC = () => {
       custnm: selectedRowData.custnm,
       custdiv:
         custdivListData.find(
-          (item: any) => item.code_name === selectedRowData.custdiv
+          (item: any) => item.code_name == selectedRowData.custdiv
         )?.sub_code == undefined
           ? selectedRowData.custdiv
           : custdivListData.find(
-              (item: any) => item.code_name === selectedRowData.custdiv
+              (item: any) => item.code_name == selectedRowData.custdiv
             )?.sub_code,
       custabbr: selectedRowData.custabbr,
       compnm_eng: selectedRowData.compnm_eng,
@@ -1291,11 +1291,11 @@ const BA_A0020: React.FC = () => {
       address: selectedRowData.address,
       bizdiv:
         bizdivListData.find(
-          (item: any) => item.code_name === selectedRowData.bizdiv
+          (item: any) => item.code_name == selectedRowData.bizdiv
         )?.sub_code == undefined
           ? selectedRowData.bizdiv
           : bizdivListData.find(
-              (item: any) => item.code_name === selectedRowData.bizdiv
+              (item: any) => item.code_name == selectedRowData.bizdiv
             )?.sub_code,
       repreregno: selectedRowData.repreregno,
       address_eng: selectedRowData.address_eng,
@@ -1779,7 +1779,7 @@ const BA_A0020: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus" && field != "files" && field != "custprsncd") {
       const newData = subDataResult.data.map((item) =>
-        item[SUB_DATA_ITEM_KEY] === dataItem[SUB_DATA_ITEM_KEY]
+        item[SUB_DATA_ITEM_KEY] == dataItem[SUB_DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -1814,7 +1814,7 @@ const BA_A0020: React.FC = () => {
   const enterEdit2 = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = subDataResult2.data.map((item) =>
-        item[SUB_DATA_ITEM_KEY2] === dataItem[SUB_DATA_ITEM_KEY2]
+        item[SUB_DATA_ITEM_KEY2] == dataItem[SUB_DATA_ITEM_KEY2]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -2060,7 +2060,7 @@ const BA_A0020: React.FC = () => {
     if (mainDataResult.total > 0) {
       const items = Object.getOwnPropertyNames(selectedState)[0];
       const data = mainDataResult.data.filter(
-        (item) => item.custcd === items
+        (item) => item.custcd == items
       )[0];
 
       setParaDataDeleted((prev) => ({
@@ -2162,19 +2162,19 @@ const BA_A0020: React.FC = () => {
       "@p_custnm": paraData.custnm,
       "@p_custdiv":
         custdivListData.find(
-          (item: any) => item.code_name === infomation.custdiv
+          (item: any) => item.code_name == infomation.custdiv
         )?.sub_code == undefined
           ? ""
           : custdivListData.find(
-              (item: any) => item.code_name === infomation.custdiv
+              (item: any) => item.code_name == infomation.custdiv
             )?.sub_code,
       "@p_custabbr": paraData.custabbr,
       "@p_bizdiv":
-        bizdivListData.find((item: any) => item.code_name === infomation.bizdiv)
+        bizdivListData.find((item: any) => item.code_name == infomation.bizdiv)
           ?.sub_code == undefined
           ? ""
           : bizdivListData.find(
-              (item: any) => item.code_name === infomation.bizdiv
+              (item: any) => item.code_name == infomation.bizdiv
             )?.sub_code,
       "@p_bizregnum": paraData.bizregnum,
       "@p_ceonm": paraData.ceonm,
@@ -2338,19 +2338,19 @@ const BA_A0020: React.FC = () => {
       "@p_custnm": infomation.custnm,
       "@p_custdiv":
         custdivListData.find(
-          (item: any) => item.code_name === infomation.custdiv
+          (item: any) => item.code_name == infomation.custdiv
         )?.sub_code == undefined
           ? infomation.custdiv
           : custdivListData.find(
-              (item: any) => item.code_name === infomation.custdiv
+              (item: any) => item.code_name == infomation.custdiv
             )?.sub_code,
       "@p_custabbr": infomation.custabbr,
       "@p_bizdiv":
-        bizdivListData.find((item: any) => item.code_name === infomation.bizdiv)
+        bizdivListData.find((item: any) => item.code_name == infomation.bizdiv)
           ?.sub_code == undefined
           ? infomation.bizdiv
           : bizdivListData.find(
-              (item: any) => item.code_name === infomation.bizdiv
+              (item: any) => item.code_name == infomation.bizdiv
             )?.sub_code,
       "@p_bizregnum": infomation.bizregnum,
       "@p_ceonm": infomation.ceonm,
@@ -2421,14 +2421,14 @@ const BA_A0020: React.FC = () => {
   };
 
   useEffect(() => {
-    if (paraDataDeleted.work_type === "D") fetchToDelete();
+    if (paraDataDeleted.work_type == "D") fetchToDelete();
   }, [paraDataDeleted]);
 
   const onSaveClick = async () => {
     let valid = true;
     const dataItem = subDataResult.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -2443,7 +2443,7 @@ const BA_A0020: React.FC = () => {
       valid = false;
     }
     if (!valid) return false;
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
     let dataArr: TdataArr = {
       rowstatus: [],
       remark_s: [],
@@ -2598,7 +2598,7 @@ const BA_A0020: React.FC = () => {
     let valid = true;
     const dataItem = subDataResult2.data.filter((item: any) => {
       return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
+        (item.rowstatus == "N" || item.rowstatus == "U") &&
         item.rowstatus !== undefined
       );
     });
@@ -2619,7 +2619,7 @@ const BA_A0020: React.FC = () => {
 
     if (!valid) return false;
 
-    if (dataItem.length === 0 && deletedMainRows2.length === 0) return false;
+    if (dataItem.length == 0 && deletedMainRows2.length == 0) return false;
     let dataArr: TdataArr2 = {
       rowstatus: [],
       remark_s: [],
@@ -2775,7 +2775,7 @@ const BA_A0020: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       let array: any[] = [];
       array.push(infomation.attdatnum);
       subDataResult.data.map((item) => {
@@ -2785,7 +2785,7 @@ const BA_A0020: React.FC = () => {
       setDeletedAttadatnums(array);
       resetAllGrid();
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
 
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
@@ -2875,7 +2875,7 @@ const BA_A0020: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const { returnString } = data;
       setFilters((prev) => ({
         ...prev,
@@ -2903,7 +2903,7 @@ const BA_A0020: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       if (paraData.workType == "CustPerson") {
         const isLastDataDeleted =
           subDataResult.data.length == 0 && subfilters.pgNum > 0;
@@ -3167,7 +3167,7 @@ const BA_A0020: React.FC = () => {
             ...item,
             attdatnum: attdatnum,
             files: files,
-            rowstatus: item.rowstatus === "N" ? "N" : "U",
+            rowstatus: item.rowstatus == "N" ? "N" : "U",
           }
         : {
             ...item,
@@ -3197,7 +3197,7 @@ const BA_A0020: React.FC = () => {
       async (accPromise, item) => {
         const acc = await accPromise;
 
-        if (!item.address || item.address.trim() === "") {
+        if (!item.address || item.address.trim() == "") {
           // 주소가 비어있는 경우, 변환 없이 현재 아이템을 결과에 추가하지 않음
           return acc;
         }
@@ -3452,11 +3452,11 @@ const BA_A0020: React.FC = () => {
             custnm: item.custnm,
             custdiv:
               custdivListData.find(
-                (items: any) => items.code_name === item.custdiv
+                (items: any) => items.code_name == item.custdiv
               )?.sub_code == undefined
                 ? item.custdiv
                 : custdivListData.find(
-                    (items: any) => items.code_name === item.custdiv
+                    (items: any) => items.code_name == item.custdiv
                   )?.sub_code,
             custabbr: item.custabbr,
             compnm_eng: item.compnm_eng,
@@ -3469,11 +3469,11 @@ const BA_A0020: React.FC = () => {
             address: item.address,
             bizdiv:
               bizdivListData.find(
-                (items: any) => items.code_name === item.bizdiv
+                (items: any) => items.code_name == item.bizdiv
               )?.sub_code == undefined
                 ? item.bizdiv
                 : bizdivListData.find(
-                    (items: any) => items.code_name === item.bizdiv
+                    (items: any) => items.code_name == item.bizdiv
                   )?.sub_code,
             repreregno: item.repreregno,
             address_eng: item.address_eng,
@@ -3687,10 +3687,10 @@ const BA_A0020: React.FC = () => {
                         mainDataResult.data.map((row) => ({
                           ...row,
                           custdiv: custdivListData.find(
-                            (item: any) => item.sub_code === row.custdiv
+                            (item: any) => item.sub_code == row.custdiv
                           )?.code_name,
                           bizdiv: bizdivListData.find(
-                            (item: any) => item.sub_code === row.bizdiv
+                            (item: any) => item.sub_code == row.bizdiv
                           )?.code_name,
                           [SELECTED_FIELD]: selectedState[idGetter(row)],
                         })),
@@ -3740,7 +3740,7 @@ const BA_A0020: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? mainTotalFooterCell
                                     : undefined
                                 }
@@ -4496,7 +4496,7 @@ const BA_A0020: React.FC = () => {
                                           : undefined
                                       }
                                       footerCell={
-                                        item.sortOrder === 0
+                                        item.sortOrder == 0
                                           ? subTotalFooterCell
                                           : undefined
                                       }
@@ -4631,7 +4631,7 @@ const BA_A0020: React.FC = () => {
                                         : undefined
                                     }
                                     footerCell={
-                                      item.sortOrder === 0
+                                      item.sortOrder == 0
                                         ? subTotalFooterCell2
                                         : NumberField.includes(item.fieldName)
                                         ? editNumberFooterCell
@@ -4680,10 +4680,10 @@ const BA_A0020: React.FC = () => {
                     mainDataResult.data.map((row) => ({
                       ...row,
                       custdiv: custdivListData.find(
-                        (item: any) => item.sub_code === row.custdiv
+                        (item: any) => item.sub_code == row.custdiv
                       )?.code_name,
                       bizdiv: bizdivListData.find(
-                        (item: any) => item.sub_code === row.bizdiv
+                        (item: any) => item.sub_code == row.bizdiv
                       )?.code_name,
                       [SELECTED_FIELD]: selectedState[idGetter(row)],
                     })),
@@ -4733,7 +4733,7 @@ const BA_A0020: React.FC = () => {
                                 : undefined
                             }
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell
                                 : undefined
                             }
@@ -5445,7 +5445,7 @@ const BA_A0020: React.FC = () => {
                                       : undefined
                                   }
                                   footerCell={
-                                    item.sortOrder === 0
+                                    item.sortOrder == 0
                                       ? subTotalFooterCell
                                       : undefined
                                   }
@@ -5576,7 +5576,7 @@ const BA_A0020: React.FC = () => {
                                     : undefined
                                 }
                                 footerCell={
-                                  item.sortOrder === 0
+                                  item.sortOrder == 0
                                     ? subTotalFooterCell2
                                     : NumberField.includes(item.fieldName)
                                     ? editNumberFooterCell

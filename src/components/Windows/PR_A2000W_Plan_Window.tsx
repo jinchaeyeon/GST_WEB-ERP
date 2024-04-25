@@ -101,7 +101,7 @@ const KendoWindow = ({
       );
       setFilters((prev) => ({
         ...prev,
-        finyn: defaultOption.find((item: any) => item.id === "finyn").valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -125,15 +125,15 @@ const KendoWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       const prodempQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const prodmacQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_fxcode")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_fxcode")
       );
 
       fetchQuery(proccdQueryStr, setProccdListData);
@@ -158,7 +158,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -304,7 +304,7 @@ const KendoWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -533,13 +533,13 @@ const KendoWindow = ({
               mainDataResult.data.map((row) => ({
                 ...row,
                 proccd: proccdListData.find(
-                  (item: any) => item.sub_code === row.proccd
+                  (item: any) => item.sub_code == row.proccd
                 )?.code_name,
                 prodmac: prodmacListData.find(
-                  (item: any) => item.fxcode === row.prodmac
+                  (item: any) => item.fxcode == row.prodmac
                 )?.fxfull,
                 prodemp: prodempListData.find(
-                  (item: any) => item.user_id === row.prodemp
+                  (item: any) => item.user_id == row.prodemp
                 )?.user_name,
                 [SELECTED_FIELD]: selectedState[idGetter(row)], // 선택된 데이터
               })),

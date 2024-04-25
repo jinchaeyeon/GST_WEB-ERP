@@ -75,23 +75,23 @@ const CustomComboBoxCell = (props: GridCellProps) => {
 
   const field = props.field ?? "";
   const bizComponentIdVal =
-    field === "class"
+    field == "class"
       ? "L_BA310"
-      : field === "gender"
+      : field == "gender"
       ? "L_SEXCD"
-      : field === "species"
+      : field == "species"
       ? "L_BA320"
-      : field === "owner"
+      : field == "owner"
       ? "L_USERS_EX"
       : "";
 
   const textField =
-    field === "owner" ? "name" : field === "gender" ? "name" : undefined;
+    field == "owner" ? "name" : field == "gender" ? "name" : undefined;
   const valueField =
-    field === "owner" ? "code" : field === "gender" ? "code" : undefined;
+    field == "owner" ? "code" : field == "gender" ? "code" : undefined;
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -246,7 +246,7 @@ const CR_A0020W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -443,7 +443,7 @@ const CR_A0020W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
         mainDataResult.data.length == 1 && filters.pgNum > 0;
 
@@ -503,7 +503,7 @@ const CR_A0020W: React.FC = () => {
 
     return (
       <>
-        {render === undefined
+        {render == undefined
           ? null
           : render?.call(undefined, defaultRendering, props)}
       </>
@@ -551,7 +551,7 @@ const CR_A0020W: React.FC = () => {
     // });
 
     const bizComponent: any = bizComponentData.find(
-      (item: any) => item.bizComponentId === "L_BA310"
+      (item: any) => item.bizComponentId == "L_BA310"
     );
 
     let isSuccess: boolean = true;
@@ -608,7 +608,7 @@ const CR_A0020W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         returnString = data.returnString;
       } else {
         console.log("[오류 발생]");
@@ -810,7 +810,7 @@ const CR_A0020W: React.FC = () => {
                         headerCell={undefined}
                         className={undefined}
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
                         }
                         editable={false}
                       />

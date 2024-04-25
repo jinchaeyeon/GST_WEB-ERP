@@ -100,9 +100,9 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   UseBizComponent("L_sysUserMaster_001", setBizComponentData);
   //사용자
   const field = props.field ?? "";
-  const bizComponentIdVal = field === "person" ? "L_sysUserMaster_001" : "";
+  const bizComponentIdVal = field == "person" ? "L_sysUserMaster_001" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -138,7 +138,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
     className = "",
   } = props;
   const { setBool, setKey } = useContext(FormContext);
-  let isInEdit = field === dataItem.inEdit;
+  let isInEdit = field == dataItem.inEdit;
   const value = field && dataItem[field] ? dataItem[field] : 0;
 
   const [badWindowVisible, setBadWindowVisible] = useState<boolean>(false);
@@ -171,7 +171,7 @@ const ColumnCommandCell = (props: GridCellProps) => {
   );
   return (
     <>
-      {render === undefined
+      {render == undefined
         ? null
         : render?.call(undefined, defaultRendering, props)}
       {badWindowVisible && (
@@ -194,7 +194,7 @@ const CustomRadioCell = (props: GridCellProps) => {
   const field = props.field ?? "";
   const bizComponentIdVal = field == "qcdecision" ? "R_MA034" : "";
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -309,11 +309,11 @@ const QC_A6000: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       fetchQuery(proccdQueryStr, setProccdListData);
@@ -337,7 +337,7 @@ const QC_A6000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -413,7 +413,7 @@ const QC_A6000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -694,7 +694,7 @@ const QC_A6000: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAllGrid();
       setFilters((prev) => ({
         ...prev,
@@ -776,7 +776,7 @@ const QC_A6000: React.FC = () => {
       field == "badqty"
     ) {
       const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] === dataItem[DATA_ITEM_KEY]
+        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
           ? {
               ...item,
               [EDIT_FIELD]: field,
@@ -814,7 +814,7 @@ const QC_A6000: React.FC = () => {
         item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               [EDIT_FIELD]: undefined,
             }
           : {
@@ -994,12 +994,12 @@ const QC_A6000: React.FC = () => {
     try {
       const dataItem = mainDataResult.data.filter((item: any) => {
         return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
           item.rowstatus !== undefined
         );
       });
 
-      if (dataItem.length === 0) return false;
+      if (dataItem.length == 0) return false;
 
       let valid = true;
 
@@ -1207,7 +1207,7 @@ const QC_A6000: React.FC = () => {
                       ? ""
                       : row.rowstatus,
                   prodemp: usersListData.find(
-                    (item: any) => item.user_id === row.prodemp
+                    (item: any) => item.user_id == row.prodemp
                   )?.user_name,
                   qcdt: row.qcdt
                     ? new Date(dateformat(row.qcdt))

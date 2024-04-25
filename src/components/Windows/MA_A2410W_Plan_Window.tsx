@@ -112,10 +112,10 @@ const CopyWindow = ({
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        finyn: defaultOption.find((item: any) => item.id === "finyn_plan")
-          .valueCode,
-        proccd: defaultOption.find((item: any) => item.id === "proccd")
-          .valueCode,
+        finyn: defaultOption.find((item: any) => item.id == "finyn_plan")
+          ?.valueCode,
+        proccd: defaultOption.find((item: any) => item.id == "proccd")
+          ?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -135,7 +135,7 @@ const CopyWindow = ({
   useEffect(() => {
     if (bizComponentData !== null) {
       const proccdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_PR010")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_PR010")
       );
 
       fetchQuery(proccdQueryStr, setProccdListData);
@@ -158,7 +158,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -394,7 +394,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -476,7 +476,7 @@ const CopyWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].RowCount;
       const rows = data.tables[0].Rows.map((row: any) => {
         return {
@@ -885,7 +885,7 @@ const CopyWindow = ({
                   mainDataResult.data.map((row) => ({
                     ...row,
                     proccd: proccdListData.find(
-                      (item: any) => item.sub_code === row.proccd
+                      (item: any) => item.sub_code == row.proccd
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
@@ -1042,7 +1042,7 @@ const CopyWindow = ({
               subDataResult.data.map((row) => ({
                 ...row,
                 proccd: proccdListData.find(
-                  (item: any) => item.sub_code === row.proccd
+                  (item: any) => item.sub_code == row.proccd
                 )?.code_name,
                 [SELECTED_FIELD]: subselectedState[idGetter3(row)], //선택된 데이터
               })),

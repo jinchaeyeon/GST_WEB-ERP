@@ -24,7 +24,7 @@ export const ThreeNumberceil = (number: number) => {
 
 // 숫자 3자리마다 컴마를 추가하여 반환, 3자리에서 반올림
 export const numberWithCommas4 = (num: string) => {
-  if (typeof num === "string") {
+  if (typeof num == "string") {
     return ThreeNumberceil(parseInt(num))
       .toString()
       .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -35,7 +35,7 @@ export const numberWithCommas4 = (num: string) => {
 
 // 숫자 3자리마다 컴마를 추가하여 반환, 3자리에서 반올림
 export const numberWithCommas3 = (num: number) => {
-  if (typeof num === "number") {
+  if (typeof num == "number") {
     return ThreeNumberceil(num)
       .toString()
       .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -116,7 +116,7 @@ export const toDate = (date_str: string) => {
 
 //Date 타입 인수를 8자리 YYYYMMDD string로 날짜 변환하여 반환 (ex. => 20220101)
 export const convertDateToStr = (date: Date | null) => {
-  if (date === null) return "";
+  if (date == null) return "";
 
   const year = date.getFullYear();
   const month = ("0" + (1 + date.getMonth())).slice(-2);
@@ -246,7 +246,7 @@ export const convertMilliSecondsToTimeStr = (secs: number) => {
 
 // 숫자 3자리마다 컴마를 추가하여 반환
 export const numberWithCommas = (num: number) => {
-  if (typeof num === "number") {
+  if (typeof num == "number") {
     //소수점 제외
     let numWithCommas = num.toString().split(".");
     return (
@@ -282,7 +282,7 @@ export const UseCommonQuery = (queryStr: string, setListData: any) => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -291,7 +291,7 @@ export const UseCommonQuery = (queryStr: string, setListData: any) => {
 
 //messages API 데이터에서 ID가 매칭되는 메시지를 찾아서 반환
 export const findMessage = (messagesData: any, id: string) => {
-  const messageItem = messagesData.find((item: any) => item.messageId === id);
+  const messageItem = messagesData.find((item: any) => item.messageId == id);
   return messageItem ? messageItem.message : "";
 };
 
@@ -331,7 +331,7 @@ export const GetPropertyValueByName = (target: any, name: string) => {
   );
   const propertyValue = propertyName ? target[propertyName] : undefined;
 
-  return propertyValue;
+  return propertyValue == undefined ? [] : propertyValue;
 };
 
 //현재 경로를 받아서 커스텀 옵션 조회 후 결과값을 반환
@@ -351,7 +351,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
 
     let userId = "";
     const userIdObj = sessionItem.find(
-      (sessionItem) => sessionItem.code === "user_id"
+      (sessionItem) => sessionItem.code == "user_id"
     );
     if (userIdObj) {
       userId = userIdObj.value;
@@ -381,18 +381,18 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
       // sessionItem 데이터 있고 지정된 value 값이 없는 경우, 세션 값 참조하여 value 업데이트
       if (newOptionsData) {
         newOptionsData.forEach((optionsItem: any) => {
-          if (optionsItem.sessionItem !== "" && optionsItem.valueCode === "") {
+          if (optionsItem.sessionItem !== "" && optionsItem.valueCode == "") {
             optionsItem.valueCode = sessionItem.find(
-              (sessionItem) => sessionItem.code === optionsItem.sessionItem
+              (sessionItem) => sessionItem.code == optionsItem.sessionItem
             )?.value;
           }
         });
       }
       if (queryOptionsData) {
         queryOptionsData.forEach((optionsItem: any) => {
-          if (optionsItem.sessionItem !== "" && optionsItem.valueCode === "") {
+          if (optionsItem.sessionItem !== "" && optionsItem.valueCode == "") {
             optionsItem.valueCode = sessionItem.find(
-              (sessionItem) => sessionItem.code === optionsItem.sessionItem
+              (sessionItem) => sessionItem.code == optionsItem.sessionItem
             )?.value;
           }
         });
@@ -409,7 +409,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
   const fetchBizComponentData = useCallback(async (customOptionData: any) => {
     let data: any;
 
-    if (Object.keys(customOptionData.menuCustomDefaultOptions).length === 0) {
+    if (Object.keys(customOptionData.menuCustomDefaultOptions).length == 0) {
       setListData(customOptionData);
       return false;
     }
@@ -444,7 +444,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
 
     const bizComponentId = bizComponentIdArr.toString();
 
-    if (bizComponentId === "") {
+    if (bizComponentId == "") {
       console.log(
         "비즈니스 컴포넌트 ID 등록이 안 된 사용자 옵션 기본값이 존재함"
       );
@@ -467,7 +467,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
       data.forEach((bcItem: any) => {
         if (queryOptionsData) {
           queryOptionsData.forEach((defaultItem: any) => {
-            if (bcItem.bizComponentId === defaultItem.bizComponentId) {
+            if (bcItem.bizComponentId == defaultItem.bizComponentId) {
               defaultItem["query"] = (
                 bcItem["querySelect"] +
                 " " +
@@ -482,7 +482,7 @@ export const UseCustomOption = (pathname: string, setListData: any) => {
         }
         if (newOptionsData) {
           newOptionsData.forEach((defaultItem: any) => {
-            if (bcItem.bizComponentId === defaultItem.bizComponentId) {
+            if (bcItem.bizComponentId == defaultItem.bizComponentId) {
               defaultItem["query"] = (
                 bcItem["querySelect"] +
                 " " +
@@ -623,12 +623,12 @@ export const chkScrollHandler = (
   const e = event.nativeEvent;
   let chk = false;
 
-  if (totalNumber === undefined) {
+  if (totalNumber == undefined) {
     console.log("[scrollHandler check!] grid 'total' property를 입력하세요.");
     return false;
   }
 
-  if (dirrection === "down") {
+  if (dirrection == "down") {
     if (
       e.target.scrollTop + 10 >=
         e.target.scrollHeight - e.target.clientHeight &&
@@ -637,7 +637,7 @@ export const chkScrollHandler = (
       chk = true;
     }
   } else {
-    if (e.target.scrollTop === 0 && totalNumber > 0 && PgNum > 1) {
+    if (e.target.scrollTop == 0 && totalNumber > 0 && PgNum > 1) {
       chk = true;
     }
   }
@@ -684,7 +684,7 @@ export const getAcntQuery = (para: any) => {
 //선택된 드롭다운리스트 값 (ex. {sub_code: "test", code_name:"test"} )을 인자로 받아서 빈 값(ex. {sub_code: "", code_name: ""} )인지 체크
 //=> 빈 값인 경우 false 반환
 export const checkIsDDLValid = (value: object) => {
-  return JSON.stringify(value) === JSON.stringify(COM_CODE_DEFAULT_VALUE) ||
+  return JSON.stringify(value) == JSON.stringify(COM_CODE_DEFAULT_VALUE) ||
     !value
     ? false
     : true;
@@ -693,13 +693,13 @@ export const checkIsDDLValid = (value: object) => {
 // 선택된 콤보박스의 객체 값 (ex. {sub_code: "test", code_name:"test"} )와 비교 객체(ex. {sub_code: "", code_name: ""} ) 를 인자로 받아서 일치하는 값인지 체크
 //=> 빈 값인 경우 false 반환
 export const checkIsObjValid = (value: object, comparisonValue: object) => {
-  return JSON.stringify(value) === JSON.stringify(comparisonValue) || !value
+  return JSON.stringify(value) == JSON.stringify(comparisonValue) || !value
     ? false
     : true;
 };
 
 export const handleKeyPressSearch = (e: any, search: any) => {
-  if (e.key === "Enter") {
+  if (e.key == "Enter") {
     search();
   }
 };
@@ -713,7 +713,7 @@ export const getGridItemChangedData = (
   let field = event.field || "";
   event.dataItem[field] = event.value;
   let newData = dataResult.data.map((item: any) => {
-    if (item[DATA_ITEM_KEY] === event.dataItem[DATA_ITEM_KEY]) {
+    if (item[DATA_ITEM_KEY] == event.dataItem[DATA_ITEM_KEY]) {
       item[field] = event.value;
     }
 
@@ -724,7 +724,7 @@ export const getGridItemChangedData = (
     newData = newData.map((item: any) => {
       const result =
         item.inEdit &&
-        typeof event.value === "object" &&
+        typeof event.value == "object" &&
         !Array.isArray(event.value) &&
         event.value !== null
           ? {
@@ -752,7 +752,7 @@ export const setDefaultDate = (customOptionData: any, id: string) => {
     GetPropertyValueByName(
       customOptionData.menuCustomDefaultOptions,
       "query"
-    )?.find((item: any) => item.id === id) ?? undefined;
+    )?.find((item: any) => item.id == id) ?? undefined;
 
   const addYear = date ? date.addYear : 0;
   const addMonth = date ? date.addMonth : 0;
@@ -771,7 +771,7 @@ export const setDefaultDate2 = (customOptionData: any, id: string) => {
   const date = GetPropertyValueByName(
     customOptionData.menuCustomDefaultOptions,
     "new"
-  ).find((item: any) => item.id === id);
+  ).find((item: any) => item.id == id);
 
   const addYear = date ? date.addYear : 0;
   const addMonth = date ? date.addMonth : 0;
@@ -804,7 +804,7 @@ export const minValidator = (value: any) => (value > 0 ? "" : "*필수입력");
 export const getCodeFromValue = (value: any, valueField?: string) => {
   const code = !value
     ? ""
-    : typeof value === "string" || typeof value === "number"
+    : typeof value == "string" || typeof value == "number"
     ? value
     : value[valueField ?? "sub_code"];
   return code;
@@ -812,12 +812,12 @@ export const getCodeFromValue = (value: any, valueField?: string) => {
 
 // "Y" or "N" 반환
 export const getYn = (value: string | boolean) => {
-  return value === "Y" || value === true ? "Y" : "N";
+  return value == "Y" || value == true ? "Y" : "N";
 };
 
 // true or false 반환
 export const getBooleanFromYn = (value: string | boolean) => {
-  return value === "Y" || value === true ? true : false;
+  return value == "Y" || value == true ? true : false;
 };
 
 // 선택된 행 중 첫번째 행의 데이터를 반환
@@ -830,9 +830,9 @@ export const getSelectedFirstData = (
 ) => {
   const selectedRowKeyVal: number =
     Number(Object.getOwnPropertyNames(selectedState)[0]) ?? null;
-  if (selectedRowKeyVal === null) return false;
+  if (selectedRowKeyVal == null) return false;
   const selectedRowData = data.find(
-    (item) => item[DATA_ITEM_KEY] === selectedRowKeyVal
+    (item) => item[DATA_ITEM_KEY] == selectedRowKeyVal
   );
   return selectedRowData;
 };
@@ -892,7 +892,7 @@ export const UseGetValueFromSessionItem = (code: string) => {
     code == "UserID" ? "user_id" : code == "UserName" ? "user_name" : code;
 
   if (sessionItem) {
-    return sessionItem.find((sessionItem) => sessionItem.code === codes)!.value;
+    return sessionItem.find((sessionItem) => sessionItem.code == codes)!.value;
   } else {
     console.log("sessionItem 오류");
     return "";
@@ -1001,7 +1001,7 @@ export const useGeoLocation = () => {
 
 // 유효한 날짜인 경우 true 반환
 export const isValidDate = (value: any) => {
-  if (typeof value === "string" && value.length === 8) {
+  if (typeof value == "string" && value.length == 8) {
     value = new Date(dateformat(value));
   }
   return !isNaN(value) && value instanceof Date;
@@ -1031,7 +1031,7 @@ export const useSysMessage = (key: TSysMessageKey) => {
   const [loginResult] = useRecoilState(loginResultState);
 
   if (loginResult) {
-    if (loginResult.langCode === "ko-KR") {
+    if (loginResult.langCode == "ko-KR") {
       return messageKoKr[key];
     } else {
       return messageEnUs[key];
@@ -1047,7 +1047,7 @@ export const useSysCaption = (key: TSysCaptionKey) => {
   const [loginResult] = useRecoilState(loginResultState);
 
   if (loginResult) {
-    if (loginResult.langCode === "ko-KR") {
+    if (loginResult.langCode == "ko-KR") {
       return captionKoKr[key];
     } else {
       return captionEnUs[key];

@@ -85,11 +85,11 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   let vField: string;
   let tField: string;
 
-  if (field === "mngitemcd") {
+  if (field == "mngitemcd") {
     bizComponentIdVal = "L_AC023T";
     vField = "mngitemcd";
     tField = "mngitemnm";
-  } else if (field === "reportgb") {
+  } else if (field == "reportgb") {
     bizComponentIdVal = "L_AC062";
     vField = "sub_code";
     tField = "code_name";
@@ -100,7 +100,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   }
 
   const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId === bizComponentIdVal
+    (item: any) => item.bizComponentId == bizComponentIdVal
   );
 
   return bizComponent ? (
@@ -146,10 +146,10 @@ const AC_A0030W: React.FC = () => {
       setFilters((prev) => ({
         ...prev,
         useyn:
-          defaultOption?.find((item: any) => item.id === "useyn")?.valueCode ??
+          defaultOption?.find((item: any) => item.id == "useyn")?.valueCode ??
           "Y",
         acntses:
-          defaultOption?.find((item: any) => item.id === "acntsts")
+          defaultOption?.find((item: any) => item.id == "acntsts")
             ?.valueCode ?? "",
         isSearch: true,
       }));
@@ -477,7 +477,7 @@ const AC_A0030W: React.FC = () => {
     } catch (error) {
       data = null;
     }
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = Math.max(data.tables[0].TotalRowCount, 0); // -1인 경우 0 반환
       const rows = data.tables[0].Rows;
 
@@ -616,7 +616,7 @@ const AC_A0030W: React.FC = () => {
     if (filters.isSearch) return false; // 한꺼번에 여러번 조회 방지
 
     let pgNumWithGap =
-      filters.pgNum + (filters.scrollDirrection === "up" ? filters.pgGap : 0);
+      filters.pgNum + (filters.scrollDirrection == "up" ? filters.pgGap : 0);
 
     // 스크롤 최하단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE)) {
@@ -633,7 +633,7 @@ const AC_A0030W: React.FC = () => {
     }
 
     pgNumWithGap =
-      filters.pgNum - (filters.scrollDirrection === "down" ? filters.pgGap : 0);
+      filters.pgNum - (filters.scrollDirrection == "down" ? filters.pgGap : 0);
     // 스크롤 최상단 이벤트
     if (chkScrollHandler(event, pgNumWithGap, PAGE_SIZE, "up")) {
       setFilters((prev) => ({
@@ -819,10 +819,10 @@ const AC_A0030W: React.FC = () => {
   const enterEdit = (dataItem: any, field: string) => {
     if (field != "rowstatus" && field != "files") {
       const newData = subDataResult.data.map((item) =>
-        detailIdGetter(item) === detailIdGetter(dataItem)
+        detailIdGetter(item) == detailIdGetter(dataItem)
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               [EDIT_FIELD]: field,
             }
           : {
@@ -843,10 +843,10 @@ const AC_A0030W: React.FC = () => {
   const enterEdit2 = (dataItem: any, field: string) => {
     if (field != "rowstatus") {
       const newData = subDataResult2.data.map((item) =>
-        item[SUB_DATA_ITEM_KEY2] === dataItem[SUB_DATA_ITEM_KEY2]
+        item[SUB_DATA_ITEM_KEY2] == dataItem[SUB_DATA_ITEM_KEY2]
           ? {
               ...item,
-              rowstatus: item.rowstatus === "N" ? "N" : "U",
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
               [EDIT_FIELD]: field,
             }
           : {
@@ -1048,7 +1048,7 @@ const AC_A0030W: React.FC = () => {
   const saveList = async () => {
     let workType: string;
 
-    workType = selectedState[""] === false ? "N" : "U";
+    workType = selectedState[""] == false ? "N" : "U";
 
     ExecuteSave(workType);
   };
@@ -1167,7 +1167,7 @@ const AC_A0030W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       filters.find_row_value = data.returnString;
       setMainDataResult(process([], mainDataState));
       setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true, pgGap: 0 }));
@@ -1251,7 +1251,7 @@ const AC_A0030W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       retrieveDetail2();
     } else {
       console.log("[오류 발생]");
@@ -1359,7 +1359,7 @@ const AC_A0030W: React.FC = () => {
               resizable={true}
             >
               {customOptionData !== null &&
-                customOptionData.menuCustomColumnOptions["grdHeaderList"].map(
+                customOptionData.menuCustomColumnOptions["grdHeaderList"]?.map(
                   (item: any, idx: number) =>
                     item.sortOrder !== -1 && (
                       <GridColumn
@@ -1374,7 +1374,7 @@ const AC_A0030W: React.FC = () => {
                             : undefined
                         }
                         footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
+                          item.sortOrder == 0 ? mainTotalFooterCell : undefined
                         }
                       />
                     )
@@ -1423,7 +1423,7 @@ const AC_A0030W: React.FC = () => {
                     <tr>
                       <th>계정코드</th>
                       <td>
-                        {selectedState[""] === false ? (
+                        {selectedState[""] == false ? (
                           <Input
                             name="acntcd"
                             type="text"
@@ -1764,7 +1764,7 @@ const AC_A0030W: React.FC = () => {
                     {customOptionData !== null &&
                       customOptionData.menuCustomColumnOptions[
                         "grdDetailList"
-                      ].map(
+                      ]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1791,7 +1791,7 @@ const AC_A0030W: React.FC = () => {
                                   : undefined
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? detailTotalFooterCell
                                   : undefined
                               }
@@ -1938,7 +1938,7 @@ const AC_A0030W: React.FC = () => {
                                   : true
                               }
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? finTotalFooterCell
                                   : undefined
                               }

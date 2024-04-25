@@ -88,7 +88,7 @@ const HU_A6000W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const abilcdQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_HU006")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_HU006")
       );
       fetchQuery(abilcdQueryStr, setAbilcdListDate);
     }
@@ -111,7 +111,7 @@ const HU_A6000W: React.FC = () => {
         data = null;
       }
 
-      if (data.isSuccess === true) {
+      if (data.isSuccess == true) {
         const rows = data.tables[0].Rows;
         setListData(rows);
       }
@@ -131,7 +131,7 @@ const HU_A6000W: React.FC = () => {
       );
       setFilters((prev) => ({
         ...prev,
-        rtryn: defaultOption.find((item: any) => item.id === "rtryn").valueCode,
+        rtryn: defaultOption.find((item: any) => item.id == "rtryn")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -283,7 +283,7 @@ const HU_A6000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -498,9 +498,9 @@ const HU_A6000W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 0;
+        mainDataResult.data.length == 1 && filters.pgNum > 0;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -686,27 +686,25 @@ const HU_A6000W: React.FC = () => {
           >
             <GridColumn cell={CommandCell} width="50px" />
             {customOptionData !== null &&
-              customOptionData.menuCustomColumnOptions["grdList"]
-                .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
-                .map(
-                  (item: any, idx: number) =>
-                    item.sortOrder !== -1 && (
-                      <GridColumn
-                        key={idx}
-                        field={item.fieldName}
-                        title={item.caption}
-                        width={item.width}
-                        cell={
-                          dateField.includes(item.fieldName)
-                            ? DateCell
-                            : undefined
-                        }
-                        footerCell={
-                          item.sortOrder === 0 ? mainTotalFooterCell : undefined
-                        }
-                      ></GridColumn>
-                    )
-                )}
+              customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                (item: any, idx: number) =>
+                  item.sortOrder !== -1 && (
+                    <GridColumn
+                      key={idx}
+                      field={item.fieldName}
+                      title={item.caption}
+                      width={item.width}
+                      cell={
+                        dateField.includes(item.fieldName)
+                          ? DateCell
+                          : undefined
+                      }
+                      footerCell={
+                        item.sortOrder == 0 ? mainTotalFooterCell : undefined
+                      }
+                    ></GridColumn>
+                  )
+              )}
           </Grid>
         </ExcelExport>
       </GridContainer>

@@ -139,7 +139,7 @@ const SY_A0500W: React.FC = () => {
   useEffect(() => {
     if (bizComponentData !== null) {
       const locationQueryStr = getQueryFromBizComponent(
-        bizComponentData.find((item: any) => item.bizComponentId === "L_BA002")
+        bizComponentData.find((item: any) => item.bizComponentId == "L_BA002")
       );
       fetchQuery(locationQueryStr, setLocationListData);
     }
@@ -161,7 +161,7 @@ const SY_A0500W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const rows = data.tables[0].Rows;
       setListData(rows);
     }
@@ -469,7 +469,7 @@ const SY_A0500W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
 
@@ -600,7 +600,7 @@ const SY_A0500W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const totalRowCnt = data.tables[1].TotalRowCount;
       const rows = data.tables[1].Rows;
 
@@ -1062,7 +1062,7 @@ const SY_A0500W: React.FC = () => {
           data = null;
         }
 
-        if (data.isSuccess === true) {
+        if (data.isSuccess == true) {
           for (let i = 0; i < detailDataResult.data.length; i++) {
             await SaveDetail(detailDataResult.data[i]);
           }
@@ -1125,9 +1125,9 @@ const SY_A0500W: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       const isLastDataDeleted =
-        mainDataResult.data.length === 1 && filters.pgNum > 1;
+        mainDataResult.data.length == 1 && filters.pgNum > 1;
       const findRowIndex = mainDataResult.data.findIndex(
         (row: any) =>
           row[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
@@ -1305,7 +1305,7 @@ const SY_A0500W: React.FC = () => {
                     resizable={true}
                   >
                     {customOptionData !== null &&
-                      customOptionData.menuCustomColumnOptions["grdList"].map(
+                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
                         (item: any, idx: number) =>
                           item.sortOrder !== -1 && (
                             <GridColumn
@@ -1315,7 +1315,7 @@ const SY_A0500W: React.FC = () => {
                               title={item.caption}
                               width={item.width}
                               footerCell={
-                                item.sortOrder === 0
+                                item.sortOrder == 0
                                   ? mainTotalFooterCell
                                   : undefined
                               }
@@ -1490,7 +1490,7 @@ const SY_A0500W: React.FC = () => {
                   resizable={true}
                 >
                   {customOptionData !== null &&
-                    customOptionData.menuCustomColumnOptions["grdList"].map(
+                    customOptionData.menuCustomColumnOptions["grdList"]?.map(
                       (item: any, idx: number) =>
                         item.sortOrder !== -1 && (
                           <GridColumn
@@ -1500,7 +1500,7 @@ const SY_A0500W: React.FC = () => {
                             title={item.caption}
                             width={item.width}
                             footerCell={
-                              item.sortOrder === 0
+                              item.sortOrder == 0
                                 ? mainTotalFooterCell
                                 : undefined
                             }

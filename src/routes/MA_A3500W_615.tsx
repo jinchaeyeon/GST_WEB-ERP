@@ -67,7 +67,7 @@ const MA_A3500W_615: React.FC = () => {
       );
       setInformation((prev) => ({
         ...prev,
-        out: defaultOption.find((item: any) => item.id === "out").valueCode,
+        out: defaultOption.find((item: any) => item.id == "out")?.valueCode,
       }));
     }
   }, [customOptionData]);
@@ -321,7 +321,7 @@ const MA_A3500W_615: React.FC = () => {
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       resetAll();
       setParaData({
         workType: "",
@@ -437,7 +437,7 @@ const MA_A3500W_615: React.FC = () => {
                 <Button
                   onClick={() => {
                     if (
-                      Object.entries(checkDataResult.data).toString() ===
+                      Object.entries(checkDataResult.data).toString() ==
                       Object.entries(mainDataResult.data).toString()
                     ) {
                       setCheckDataResult((prev) => ({
@@ -679,7 +679,7 @@ const MA_A3500W_615: React.FC = () => {
                 <Button
                   onClick={() => {
                     if (
-                      Object.entries(checkDataResult.data).toString() ===
+                      Object.entries(checkDataResult.data).toString() ==
                       Object.entries(mainDataResult.data).toString()
                     ) {
                       setCheckDataResult((prev) => ({

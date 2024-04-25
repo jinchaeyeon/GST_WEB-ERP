@@ -39,7 +39,7 @@ const CustomCheckBoxCell = (props: GridCellProps) => {
     props;
 
   let value = dataItem[field ?? ""];
-  if (value === "Y" || value === true) {
+  if (value == "Y" || value == true) {
     value = true;
   } else {
     value = false;
@@ -67,7 +67,7 @@ const CustomCheckBoxCell = (props: GridCellProps) => {
     </td>
   );
 
-  return render === undefined
+  return render == undefined
     ? defaultRendering
     : render?.call(undefined, defaultRendering, props);
 };
@@ -301,7 +301,7 @@ const AdjustApprovalWindow = ({
     let keys: string[] = [];
     // 체크한 항목 승인
     mainDataResult.data.forEach((row) => {
-      if (row.chk == "Y" || row.chk === true) {
+      if (row.chk == "Y" || row.chk == true) {
         keys.push(row.membership_key);
       }
     });
@@ -336,7 +336,7 @@ const AdjustApprovalWindow = ({
       data = null;
     }
 
-    if (data.isSuccess === true) {
+    if (data.isSuccess == true) {
       alert("승인이 완료되었습니다.");
 
       // 현재 페이지 전부 승인
@@ -501,7 +501,7 @@ const AdjustApprovalWindow = ({
             mainDataResult.data.map((row) => ({
               ...row,
               [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
-              chk: row.chk == "Y" || row.chk === true ? true : false,
+              chk: row.chk == "Y" || row.chk == true ? true : false,
             })),
             mainDataState
           )}
