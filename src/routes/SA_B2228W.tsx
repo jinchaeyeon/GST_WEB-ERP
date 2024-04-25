@@ -328,7 +328,7 @@ const SA_B2228W: React.FC = () => {
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                   <MultiDoughnutChart
                     data={ItemList}
-                    option={"value"}
+                    option={"amt"}
                     label={ItemList.map((item) => item.testpart)}
                     random={true}
                     colorName={colorName}
