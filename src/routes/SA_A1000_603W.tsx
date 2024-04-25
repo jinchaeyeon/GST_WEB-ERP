@@ -11,6 +11,7 @@ import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
 import { DatePicker } from "@progress/kendo-react-dateinputs";
+
 import {
   MultiSelect,
   MultiSelectChangeEvent,
@@ -62,6 +63,7 @@ import {
   TitleContainer,
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
+import CenterCell from "../components/Cells/CenterCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import ComboBoxColorCell from "../components/Cells/ComboBoxColorCell";
 import DateCell from "../components/Cells/DateCell";
@@ -99,6 +101,7 @@ import {
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
+import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
@@ -148,13 +151,15 @@ const dateField = [
   "enddt",
   "recdt",
   "request_date",
-  "concatdt",
-  "agencydt",
+  "cotracdt",
+  "recdt",
+  "pubdt",
 ];
 const RadioField = ["glpyn"];
 const numberField = ["quoseq", "wonamt"];
 const itemField = ["itemcd"];
 const colorField = ["status"];
+const centerField = ["passdt", "quorev", "itemcnt"];
 
 let temp2 = 0;
 let deletedMainRows2: any[] = [];
@@ -171,9 +176,7 @@ const CustomComboBoxCell = (props: GridCellProps) => {
   );
 
   const style =
-    props.dataItem.status == "1"
-      ? { backgroundColor: "#ff0000", color: "white" }
-      : props.dataItem.status == "2"
+    props.dataItem.status == "2"
       ? {
           backgroundColor: "#ffc000",
           color: "white",
@@ -604,7 +607,10 @@ const SA_A1000_603W: React.FC = () => {
           )?.valueCode,
           quotype: defaultOption.find((item: any) => item.id == "quotype")
             ?.valueCode,
-          targetdt: setDefaultDate(customOptionData, "targetdt"),
+          frdt: setDefaultDate(customOptionData, "frdt"),
+          todt: setDefaultDate(customOptionData, "todt"),
+          infrdt: setDefaultDate(customOptionData, "infrdt"),
+          intodt: setDefaultDate(customOptionData, "intodt"),
           find_row_value: queryParams.get("go") as string,
           isSearch: true,
         }));
@@ -616,7 +622,11 @@ const SA_A1000_603W: React.FC = () => {
           )?.valueCode,
           quotype: defaultOption.find((item: any) => item.id == "quotype")
             ?.valueCode,
-          targetdt: setDefaultDate(customOptionData, "targetdt"),
+          frdt: setDefaultDate(customOptionData, "frdt"),
+          todt: setDefaultDate(customOptionData, "todt"),
+          infrdt: setDefaultDate(customOptionData, "infrdt"),
+          intodt: setDefaultDate(customOptionData, "intodt"),
+          isSearch: true,
         }));
       }
     }
@@ -625,7 +635,7 @@ const SA_A1000_603W: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent(
-    "L_SA018_603,L_SA017_603,L_SA016_603L_SA015_603, L_SA014_603, L_SA013_603, L_SA012_603, L_BA016_603, L_SA002, L_BA171, L_BA057, L_Requestgb, L_SA019_603, L_SA001_603, L_SA004, L_SA016, L_CM501_603, L_SA011_603, L_CM500_603, L_sysUserMaster_001",
+    "L_HU005, L_SA018_603,L_SA017_603,L_SA016_603L_SA015_603, L_SA014_603, L_SA013_603, L_SA012_603, L_BA016_603, L_SA002, L_BA171, L_BA057, L_Requestgb, L_SA019_603, L_SA001_603, L_SA004, L_SA016, L_CM501_603, L_SA011_603, L_CM500_603, L_sysUserMaster_001",
     setBizComponentData
   );
   const [materialgbListData, setMaterialgbListData] = React.useState([
@@ -1323,11 +1333,11 @@ const SA_A1000_603W: React.FC = () => {
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    if (name == "cpmpersonnm") {
+    if (name == "smpersonnm") {
       setFilters((prev) => ({
         ...prev,
         [name]: value,
-        cpmperson: value == "" ? "" : prev.cpmperson,
+        smperson: value == "" ? "" : prev.smperson,
       }));
     } else if (name == "custnm") {
       setFilters((prev) => ({
@@ -1364,37 +1374,45 @@ const SA_A1000_603W: React.FC = () => {
   const InputChange = (e: any) => {
     const { value, name } = e.target;
 
-    if (name == "glp1" || name == "guid1") {
+    if (name == "glp1" || name == "guid1" || name == "agency1") {
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "A" : "",
       }));
-    } else if (name == "glp2" || name == "guid2") {
+    } else if (name == "glp2" || name == "guid2"  || name == "agency2") {
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "B" : "",
       }));
-    } else if (name == "glp3" || name == "guid3") {
+    } else if (name == "glp3" || name == "guid3" || name == "agency3") {
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "C" : "",
       }));
-    } else if (name == "glp4" || name == "guid4") {
+    } else if (name == "glp4" || name == "guid4"  || name == "agency4") {
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "D" : "",
       }));
-    } else if (name == "guid5") {
+    } else if (name == "glp5" || name == "guid5"  || name == "agency5") {
       setInformation((prev) => ({
         ...prev,
-        [name]: value == true ? "K" : "",
-        etcguid: value == false ? "" : prev.etcguid,
+        [name]: value == true ? "E" : "",
       }));
-    } else if (name == "glp5") {
+    } else if (name == "etcagencyyn") {
       setInformation((prev) => ({
         ...prev,
-        [name]: value == true ? "K" : "",
-        etcglp: value == false ? "" : prev.etcglp,
+        etcagency: value == false ? "" : " ",
+      }));
+    } else if (name == "etcguidyn") {
+      setInformation((prev) => ({
+        ...prev,
+        etcguid: value == false ? "" : " ",
+      }));
+    } else if (name == "etcglpyn") {
+      setInformation((prev) => ({
+        ...prev,
+        etcglp: value == false ? "" : " ",
       }));
     } else if (name == "translate1" || name == "report1") {
       setInformation((prev) => ({
@@ -1508,9 +1526,14 @@ const SA_A1000_603W: React.FC = () => {
     quorev: 0,
     quoseq: 0,
     status: [],
-    targetdt: new Date(),
-    cpmperson: "",
-    cpmpersonnm: "",
+    extra_field2: "",
+    smperson: "",
+    smpersonnm: "",
+    frdt: new Date(),
+    todt: new Date(),
+    infrdt: new Date(),
+    intodt: new Date(),
+    yn: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -1579,7 +1602,29 @@ const SA_A1000_603W: React.FC = () => {
     custnm: "",
     custprsnnm: "",
     chkperson: "",
+    postcd: "",
+    tel: "",
+    extra_field4: "",
+    email: "",
+    rcvpostcd: "",
+    rcvtel: "",
+    extra_field5: "",
+    rcvemail: "",
+    extra_field3: "",
+    extra_field2: "",
+    materialinfo: "",
+    agency1: "",
+    agency2: "",
+    agency3: "",
+    agency4: "",
+    agency5: "",
+    etcagency: "",
+    reportcnt: 0,
+    transreportcnt: 0,
+    attdatnum: "",
     files: "",
+    assayyn: "",
+    assaydt: null,
     glp1: "",
     glp2: "",
     glp3: "",
@@ -1599,6 +1644,7 @@ const SA_A1000_603W: React.FC = () => {
     ordsts: "",
     person: "",
     person1: "",
+    pubdt: new Date(),
     quodt: new Date(),
     quonum: "",
     quorev: 0,
@@ -1615,6 +1661,7 @@ const SA_A1000_603W: React.FC = () => {
     report4: "",
     report5: "",
     requestgb: "A",
+    rev_reason: "",
     testenddt: null,
     teststdt: null,
     testtype: "",
@@ -1623,7 +1670,6 @@ const SA_A1000_603W: React.FC = () => {
     translate3: "",
     translate4: "",
     translate5: "",
-    validt: null,
   });
 
   const [Information2, setInformation2] = useState<{ [name: string]: any }>({
@@ -1684,10 +1730,14 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": filters.quonum,
         "@p_quorev": filters.quorev,
         "@p_quoseq": filters.quoseq,
-        "@p_targetdt": convertDateToStr(filters.targetdt),
-        "@p_cpmperson": filters.cpmpersonnm == "" ? "" : filters.cpmperson,
-        "@p_cpmpersonnm": filters.cpmpersonnm,
         "@p_status": status,
+        "@p_extra_field2": filters.extra_field2,
+        "@p_smperson": filters.smpersonnm == "" ? "" : filters.smperson,
+        "@p_smpersonnm": filters.smpersonnm,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_in_frdt": convertDateToStr(filters.infrdt),
+        "@p_in_todt": convertDateToStr(filters.intodt),
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -1704,6 +1754,22 @@ const SA_A1000_603W: React.FC = () => {
       // const rows = data.tables[0].Rows;
       const rows = data.tables[0].Rows.map((item: any) => ({
         ...item,
+        feasibility:
+          item.totgrade1 >= 12
+            ? "상"
+            : item.totgrade1 >= 7
+            ? "중"
+            : item.totgrade1 >= 1
+            ? "하"
+            : "",
+        weight:
+          item.totgrade2 >= 7
+            ? "상"
+            : item.totgrade2 >= 4
+            ? "중"
+            : item.totgrade2 >= 1
+            ? "하"
+            : "",
       }));
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
@@ -1811,10 +1877,14 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": filters2.quonum,
         "@p_quorev": filters2.quorev,
         "@p_quoseq": filters.quoseq,
-        "@p_targetdt": convertDateToStr(filters.targetdt),
-        "@p_cpmperson": filters.cpmpersonnm == "" ? "" : filters.cpmperson,
-        "@p_cpmpersonnm": filters.cpmpersonnm,
         "@p_status": "",
+        "@p_extra_field2": filters.extra_field2,
+        "@p_smperson": filters.smpersonnm == "" ? "" : filters.smperson,
+        "@p_smpersonnm": filters.smpersonnm,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_in_frdt": convertDateToStr(filters.infrdt),
+        "@p_in_todt": convertDateToStr(filters.intodt),
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -1837,8 +1907,33 @@ const SA_A1000_603W: React.FC = () => {
           chkperson: row[0].chkperson,
           custcd: row[0].custcd,
           custnm: row[0].custnm,
+          postcd: row[0].postcd,
+          tel: row[0].tel,
+          extra_field4: row[0].extra_field4,
+          email: row[0].email,
+          rcvpostcd: row[0].rcvpostcd,
+          rcvtel: row[0].rcvtel,
+          extra_field5: row[0].extra_field5,
+          rcvemail: row[0].rcvemail,
           custprsnnm: row[0].custprsnnm,
+
+          extra_field3: row[0].extra_field3,
+          extra_field2: row[0].extra_field2,
+          materialinfo: row[0].materialinfo,
+          agency1: row[0].agency1,
+          agency2: row[0].agency2,
+          agency3: row[0].agency3,
+          agency4: row[0].agency4,
+          agency5: row[0].agency5,
+          etcagency: row[0].etcagency,
+          reportcnt: row[0].reportcnt,
+          transreportcnt: row[0].transreportcnt,
+          attdatnum: row[0].attdatnum,
           files: row[0].files,
+          assayyn: row[0].assayyn,
+          assaydt: isValidDate(row[0].assaydt)
+            ? new Date(dateformat(row[0].assaydt))
+            : null,
           glp1: row[0].glp1,
           glp2: row[0].glp2,
           glp3: row[0].glp3,
@@ -1858,6 +1953,9 @@ const SA_A1000_603W: React.FC = () => {
           ordsts: row[0].ordsts,
           person: row[0].person,
           person1: row[0].person1,
+          pubdt: isValidDate(row[0].pubdt)
+            ? new Date(dateformat(row[0].pubdt))
+            : null,
           quodt: toDate(row[0].quodt),
           quonum: row[0].quonum,
           quorev: row[0].quorev,
@@ -1874,6 +1972,7 @@ const SA_A1000_603W: React.FC = () => {
           report4: row[0].report4,
           report5: row[0].report5,
           requestgb: row[0].requestgb,
+          rev_reason: row[0].rev_reason,
           testenddt: isValidDate(row[0].testenddt)
             ? new Date(dateformat(row[0].testenddt))
             : null,
@@ -1886,9 +1985,6 @@ const SA_A1000_603W: React.FC = () => {
           translate3: row[0].translate3,
           translate4: row[0].translate4,
           translate5: row[0].translate5,
-          validt: isValidDate(row[0].validt)
-            ? new Date(dateformat(row[0].validt))
-            : null,
         });
       } else {
         setWorktype("U");
@@ -1897,7 +1993,29 @@ const SA_A1000_603W: React.FC = () => {
           custcd: "",
           custnm: "",
           custprsnnm: "",
+          postcd: "",
+          tel: "",
+          extra_field4: "",
+          email: "",
+          rcvpostcd: "",
+          rcvtel: "",
+          extra_field5: "",
+          rcvemail: "",
+          extra_field3: "",
+          extra_field2: "",
+          materialinfo: "",
+          agency1: "",
+          agency2: "",
+          agency3: "",
+          agency4: "",
+          agency5: "",
+          etcagency: "",
+          reportcnt: 0,
+          transreportcnt: 0,
+          attdatnum: "",
           files: "",
+          assayyn: "",
+          assaydt: null,
           glp1: "",
           glp2: "",
           glp3: "",
@@ -1917,6 +2035,7 @@ const SA_A1000_603W: React.FC = () => {
           ordsts: "",
           person: "",
           person1: "",
+          pubdt: new Date(),
           quodt: new Date(),
           quonum: "",
           quorev: 0,
@@ -1933,6 +2052,7 @@ const SA_A1000_603W: React.FC = () => {
           report4: "",
           report5: "",
           requestgb: "A",
+          rev_reason: "",
           testenddt: null,
           teststdt: null,
           testtype: "",
@@ -1941,7 +2061,6 @@ const SA_A1000_603W: React.FC = () => {
           translate3: "",
           translate4: "",
           translate5: "",
-          validt: null,
         });
       }
 
@@ -1993,9 +2112,9 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": filters3.quonum,
         "@p_quorev": filters3.quorev,
         "@p_quoseq": 0,
-        "@p_targetdt": "",
-        "@p_cpmperson": "",
-        "@p_cpmpersonnm": "",
+        "@p_frdt": "",
+        "@p_smperson": "",
+        "@p_smpersonnm": "",
         "@p_status": "",
         "@p_find_row_value": "",
       },
@@ -2113,9 +2232,9 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": filters4.quonum,
         "@p_quorev": filters4.quorev,
         "@p_quoseq": 0,
-        "@p_targetdt": "",
-        "@p_cpmperson": "",
-        "@p_cpmpersonnm": "",
+        "@p_frdt": "",
+        "@p_smperson": "",
+        "@p_smpersonnm": "",
         "@p_status": "",
         "@p_find_row_value": "",
       },
@@ -2180,9 +2299,9 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": filters5.quonum,
         "@p_quorev": filters5.quorev,
         "@p_quoseq": 0,
-        "@p_targetdt": "",
-        "@p_cpmperson": "",
-        "@p_cpmpersonnm": "",
+        "@p_frdt": "",
+        "@p_smperson": "",
+        "@p_smpersonnm": "",
         "@p_status": "",
         "@p_find_row_value": "",
       },
@@ -2247,9 +2366,9 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": filters6.quonum,
         "@p_quorev": filters6.quorev,
         "@p_quoseq": 0,
-        "@p_targetdt": "",
-        "@p_cpmperson": "",
-        "@p_cpmpersonnm": "",
+        "@p_frdt": "",
+        "@p_smperson": "",
+        "@p_smpersonnm": "",
         "@p_status": "",
         "@p_find_row_value": "",
       },
@@ -2314,9 +2433,9 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": filters7.quonum,
         "@p_quorev": filters7.quorev,
         "@p_quoseq": 0,
-        "@p_targetdt": "",
-        "@p_cpmperson": "",
-        "@p_cpmpersonnm": "",
+        "@p_frdt": "",
+        "@p_smperson": "",
+        "@p_smpersonnm": "",
         "@p_status": "",
         "@p_find_row_value": "",
       },
@@ -2387,9 +2506,9 @@ const SA_A1000_603W: React.FC = () => {
         "@p_quonum": filters8.quonum,
         "@p_quorev": filters8.quorev,
         "@p_quoseq": filters8.quoseq,
-        "@p_targetdt": "",
-        "@p_cpmperson": "",
-        "@p_cpmpersonnm": "",
+        "@p_frdt": "",
+        "@p_smperson": "",
+        "@p_smpersonnm": "",
         "@p_status": "",
         "@p_find_row_value": "",
       },
@@ -3123,7 +3242,30 @@ const SA_A1000_603W: React.FC = () => {
       custcd: "",
       custnm: "",
       custprsnnm: "",
+      postcd: defaultOption.find((item: any) => item.id == "postcd")?.valueCode,
+      tel: "",
+      extra_field4: "",
+      email: "",
+      rcvpostcd: defaultOption.find((item: any) => item.id == "rcvpostcd")
+        ?.valueCode,
+      rcvtel: "",
+      extra_field5: "",
+      rcvemail: "",
+      extra_field3: "",
+      extra_field2: "",
+      materialinfo: "",
+      agency1: "",
+      agency2: "",
+      agency3: "",
+      agency4: "",
+      agency5: "",
+      etcagency: "",
+      reportcnt: 0,
+      transreportcnt: 0,
+      attdatnum: "",
       files: "",
+      assayyn: "",
+      assaydt: null,
       glp1: "",
       glp2: "",
       glp3: "",
@@ -3138,15 +3280,14 @@ const SA_A1000_603W: React.FC = () => {
       etcguid: "",
       materialindt: setDefaultDate2(customOptionData, "materialindt"),
       materialnm: "",
-      materialtype: defaultOption.find(
-        (item: any) => item.id == "materialtype"
-      )?.valueCode,
-      numbering_id: defaultOption.find(
-        (item: any) => item.id == "numbering_id"
-      )?.valueCode,
+      materialtype: defaultOption.find((item: any) => item.id == "materialtype")
+        ?.valueCode,
+      numbering_id: defaultOption.find((item: any) => item.id == "numbering_id")
+        ?.valueCode,
       ordsts: "",
       person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
       person1: "",
+      pubdt: setDefaultDate2(customOptionData, "pubdt"),
       quodt: setDefaultDate2(customOptionData, "quodt"),
       quonum: "",
       quorev: 0,
@@ -3165,6 +3306,7 @@ const SA_A1000_603W: React.FC = () => {
       report5: "",
       requestgb: defaultOption.find((item: any) => item.id == "requestgb")
         ?.valueCode,
+      rev_reason: "",
       testenddt: setDefaultDate2(customOptionData, "testenddt"),
       teststdt: setDefaultDate2(customOptionData, "teststdt"),
       testtype: defaultOption.find((item: any) => item.id == "testtype")
@@ -3174,7 +3316,6 @@ const SA_A1000_603W: React.FC = () => {
       translate3: "",
       translate4: "",
       translate5: "",
-      validt: setDefaultDate2(customOptionData, "validt"),
     });
     resetAllGrid();
     setTabSelected(1);
@@ -3188,14 +3329,32 @@ const SA_A1000_603W: React.FC = () => {
     quorev: 0,
     quoseq: 0,
     quotype: "",
-    quosts: "",
     quodt: "",
     person: "",
+    pubdt: "",
+    rev_reason: "",
     chkperson: "",
     custcd: "",
     custnm: "",
     remark2: "",
+    postcd: "",
+    tel: "",
+    extra_field4: "",
+    email: "",
+    rcvpostcd: "",
+    rcvtel: "",
+    extra_field5: "",
+    rcvemail: "",
+    extra_field3: "",
+    extra_field2: "",
+    materialinfo: "",
     report: "",
+    agency: "",
+    reportcnt: 0,
+    transreportcnt: 0,
+    attdatnum: "",
+    assayyn: "",
+    assaydt: "",
     rcvcustnm: "",
     rcvcustprsnnm: "",
     remark3: "",
@@ -3210,7 +3369,6 @@ const SA_A1000_603W: React.FC = () => {
     custprsnnm: "",
     requestgb: "",
     glpgb: "",
-    validt: "",
     numbering_id: "",
     rowstatus_s: "",
     quoseq_s: "",
@@ -3239,14 +3397,32 @@ const SA_A1000_603W: React.FC = () => {
       "@p_quonum": ParaData.quonum,
       "@p_quorev": ParaData.quorev,
       "@p_quotype": ParaData.quotype,
-      "@p_quosts": ParaData.quosts,
       "@p_quodt": ParaData.quodt,
+      "@p_pubdt": ParaData.pubdt,
+      "@p_rev_reason": ParaData.rev_reason,
       "@p_person": ParaData.person,
       "@p_chkperson": ParaData.chkperson,
       "@p_custcd": ParaData.custcd,
       "@p_custnm": ParaData.custnm,
       "@p_remark2": ParaData.remark2,
+      "@p_postcd": ParaData.postcd,
+      "@p_tel": ParaData.tel,
+      "@p_extra_field4": ParaData.extra_field4,
+      "@p_email": ParaData.email,
+      "@p_rcvpostcd": ParaData.rcvpostcd,
+      "@p_rcvtel": ParaData.rcvtel,
+      "@p_extra_field5": ParaData.extra_field5,
+      "@p_rcvemail": ParaData.rcvemail,
+      "@p_extra_field3": ParaData.extra_field3,
+      "@p_extra_field2": ParaData.extra_field2,
+      "@p_materialinfo": ParaData.materialinfo,
       "@p_report": ParaData.report,
+      "@p_agency": ParaData.agency,
+      "@p_reportcnt": ParaData.reportcnt,
+      "@p_transreportcnt": ParaData.transreportcnt,
+      "@p_attdatnum": ParaData.attdatnum,
+      "@p_assayyn": ParaData.assayyn,
+      "@p_assaydt": ParaData.assaydt,
       "@p_rcvcustnm": ParaData.rcvcustnm,
       "@p_rcvcustprsnnm": ParaData.rcvcustprsnnm,
       "@p_remark3": ParaData.remark3,
@@ -3261,7 +3437,6 @@ const SA_A1000_603W: React.FC = () => {
       "@p_custprsnnm": ParaData.custprsnnm,
       "@p_requestgb": ParaData.requestgb,
       "@p_glpgb": ParaData.glpgb,
-      "@p_validt": ParaData.validt,
       "@p_numbering_id": ParaData.numbering_id,
       "@p_rowstatus_s": ParaData.rowstatus_s,
       "@p_quoseq_s": ParaData.quoseq_s,
@@ -3361,6 +3536,12 @@ const SA_A1000_603W: React.FC = () => {
       ) {
         throw findMessage(messagesData, "SA_A1000_603W_001");
       } else if (
+        Information.requestgb == null ||
+        Information.requestgb == "" ||
+        Information.requestgb == undefined
+      ) {
+        throw findMessage(messagesData, "SA_A1000_603W_001");
+      } else if (
         Information.numbering_id == null ||
         Information.numbering_id == "" ||
         Information.numbering_id == undefined
@@ -3374,6 +3555,19 @@ const SA_A1000_603W: React.FC = () => {
       ) {
         throw findMessage(messagesData, "SA_A1000_603W_001");
       } else {
+        const agency =
+          (Information.agency1 == "" ? "N" : Information.agency1) +
+          "|" +
+          (Information.agency2 == "" ? "N" : Information.agency2) +
+          "|" +
+          (Information.agency3 == "" ? "N" : Information.agency3) +
+          "|" +
+          (Information.agency4 == "" ? "N" : Information.agency4) +
+          "|" +
+          (Information.agency5 == "" ? "N" : Information.agency5) +
+          "|" +
+          Information.etcagency;
+
         const guid =
           (Information.guid1 == "" ? "N" : Information.guid1) +
           "|" +
@@ -3431,13 +3625,35 @@ const SA_A1000_603W: React.FC = () => {
             quorev: Information.quorev,
             quoseq: Information.quorev,
             quotype: Information.quotype,
-            quosts: Information.quosts,
             quodt: convertDateToStr(Information.quodt),
+            pubdt: isValidDate(Information.pubdt)
+              ? convertDateToStr(Information.pubdt)
+              : "",
+            rev_reason: Information.rev_reason,
             person: Information.person,
             chkperson: Information.chkperson,
             custcd: Information.custcd,
             custnm: Information.custnm,
             remark2: Information.remark2,
+            postcd: Information.postcd,
+            tel: Information.tel,
+            extra_field4: Information.extra_field4,
+            email: Information.email,
+            rcvpostcd: Information.rcvpostcd,
+            rcvtel: Information.rcvtel,
+            extra_field5: Information.extra_field5,
+            rcvemail: Information.rcvemail,
+            extra_field3: Information.extra_field3,
+            extra_field2: Information.extra_field2,
+            materialinfo: Information.materialinfo,
+            agency: agency,
+            reportcnt: Information.reportcnt,
+            transreportcnt: Information.transreportcnt,
+            attdatnum: Information.attdatnum,
+            assayyn: Information.assayyn,
+            assaydt: isValidDate(Information.assaydt)
+              ? convertDateToStr(Information.assaydt)
+              : "",
             report: report,
             rcvcustnm: Information.rcvcustnm,
             rcvcustprsnnm: Information.rcvcustprsnnm,
@@ -3457,9 +3673,6 @@ const SA_A1000_603W: React.FC = () => {
             custprsnnm: Information.custprsnnm,
             requestgb: Information.requestgb,
             glpgb: glp,
-            validt: isValidDate(Information.validt)
-              ? convertDateToStr(Information.validt)
-              : "",
             numbering_id: Information.numbering_id,
             rowstatus_s: "",
             quoseq_s: "",
@@ -3537,13 +3750,33 @@ const SA_A1000_603W: React.FC = () => {
             quorev: Information.quorev,
             quoseq: Information.quorev,
             quotype: Information.quotype,
-            quosts: Information.quosts,
             quodt: convertDateToStr(Information.quodt),
             person: Information.person,
+            pubdt: isValidDate(Information.pubdt)
+              ? convertDateToStr(Information.pubdt)
+              : "",
+            rev_reason: Information.rev_reason,
             chkperson: Information.chkperson,
             custcd: Information.custcd,
             custnm: Information.custnm,
             remark2: Information.remark2,
+            postcd: Information.postcd,
+            tel: Information.tel,
+            extra_field4: Information.extra_field4,
+            email: Information.email,
+            rcvpostcd: Information.rcvpostcd,
+            rcvtel: Information.rcvtel,
+            extra_field5: Information.extra_field5,
+            rcvemail: Information.rcvemail,
+            extra_field3: Information.extra_field3,
+            extra_field2: Information.extra_field2,
+            materialinfo: Information.materialinfo,
+            agency: agency,
+            reportcnt: Information.reportcnt,
+            transreportcnt: Information.transreportcnt,
+            attdatnum: Information.attdatnum,
+            assayyn: Information.assayyn,
+            assaydt: Information.assaydt,
             report: report,
             rcvcustnm: Information.rcvcustnm,
             rcvcustprsnnm: Information.rcvcustprsnnm,
@@ -3563,9 +3796,6 @@ const SA_A1000_603W: React.FC = () => {
             custprsnnm: Information.custprsnnm,
             requestgb: Information.requestgb,
             glpgb: glp,
-            validt: isValidDate(Information.validt)
-              ? convertDateToStr(Information.validt)
-              : "",
             numbering_id: Information.numbering_id,
             rowstatus_s: dataArr.rowstatus_s.join("|"),
             quoseq_s: dataArr.quoseq_s.join("|"),
@@ -3615,14 +3845,32 @@ const SA_A1000_603W: React.FC = () => {
         quorev: 0,
         quoseq: 0,
         quotype: "",
-        quosts: "",
         quodt: "",
         person: "",
+        pubdt: "",
         chkperson: "",
         custcd: "",
         custnm: "",
         remark2: "",
+        postcd: "",
+        tel: "",
+        extra_field4: "",
+        email: "",
+        rcvpostcd: "",
+        rcvtel: "",
+        extra_field5: "",
+        rcvemail: "",
+        extra_field3: "",
+        extra_field2: "",
+        materialinfo: "",
+        agency: "",
+        reportcnt: 0,
+        transreportcnt: 0,
+        attdatnum: "",
+        assayyn: "",
+        assaydt: "",
         report: "",
+        rev_reason: "",
         rcvcustnm: "",
         rcvcustprsnnm: "",
         remark3: "",
@@ -3637,7 +3885,6 @@ const SA_A1000_603W: React.FC = () => {
         custprsnnm: "",
         requestgb: "",
         glpgb: "",
-        validt: "",
         numbering_id: "",
         rowstatus_s: "",
         quoseq_s: "",
@@ -3688,13 +3935,31 @@ const SA_A1000_603W: React.FC = () => {
       "@p_quonum": paraDataDeleted.quonum,
       "@p_quorev": paraDataDeleted.quorev,
       "@p_quotype": "",
-      "@p_quosts": "",
       "@p_quodt": "",
+      "@p_pubdt": "",
+      "@p_rev_reason": "",
       "@p_person": "",
       "@p_chkperson": "",
       "@p_custcd": "",
       "@p_custnm": "",
       "@p_remark2": "",
+      "@p_postcd": "",
+      "@p_tel": "",
+      "@p_extra_field4": "",
+      "@p_email": "",
+      "@p_rcvpostcd": "",
+      "@p_rcvtel": "",
+      "@p_extra_field5": "",
+      "@p_rcvemail": "",
+      "@p_extra_field3": "",
+      "@p_extra_field2": "",
+      "@p_materialinfo": "",
+      "@p_agency": "",
+      "@p_reportcnt": 0,
+      "@p_transreportcnt": 0,
+      "@p_attdatnum": "",
+      "@p_assayyn": "",
+      "@p_assaydt": "",
       "@p_report": "",
       "@p_rcvcustnm": "",
       "@p_rcvcustprsnnm": "",
@@ -3710,7 +3975,6 @@ const SA_A1000_603W: React.FC = () => {
       "@p_custprsnnm": "",
       "@p_requestgb": "",
       "@p_glpgb": "",
-      "@p_validt": "",
       "@p_numbering_id": "",
       "@p_rowstatus_s": "",
       "@p_quoseq_s": "",
@@ -3930,8 +4194,8 @@ const SA_A1000_603W: React.FC = () => {
     setFilters((prev: any) => {
       return {
         ...prev,
-        cpmpersonnm: data.user_name,
-        cpmperson: data.user_id,
+        smpersonnm: data.user_name,
+        smperson: data.user_id,
       };
     });
   };
@@ -3989,8 +4253,6 @@ const SA_A1000_603W: React.FC = () => {
                       dataItemKey="sub_code"
                     />
                   </td>
-                  <th>계약여부</th>
-                  <td></td>
                   <th>의뢰유형</th>
                   <td>
                     {customOptionData !== null && (
@@ -4001,18 +4263,6 @@ const SA_A1000_603W: React.FC = () => {
                         changeData={filterComboBoxChange}
                       />
                     )}
-                  </td>
-                </tr>
-                <tr>
-                  <th>계약목표일</th>
-                  <td>
-                    <DatePicker
-                      name="targetdt"
-                      value={filters.targetdt}
-                      format="yyyy-MM-dd"
-                      onChange={filterInputChange}
-                      placeholder=""
-                    />
                   </td>
                   <th>업체명</th>
                   <td>
@@ -4031,6 +4281,8 @@ const SA_A1000_603W: React.FC = () => {
                       />
                     </ButtonInInput>
                   </td>
+                </tr>
+                <tr>
                   <th>물질분야</th>
                   <td>
                     {customOptionData !== null && (
@@ -4042,12 +4294,21 @@ const SA_A1000_603W: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>CS담당자</th>
+                  <th>물질상세분야</th>
                   <td>
                     <Input
-                      name="cpmpersonnm"
+                      name="extra_field2"
                       type="text"
-                      value={filters.cpmpersonnm}
+                      value={filters.extra_field2}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                  <th>영업담당자</th>
+                  <td>
+                    <Input
+                      name="smpersonnm"
+                      type="text"
+                      value={filters.smpersonnm}
                       onChange={filterInputChange}
                     />
                     <ButtonInInput>
@@ -4059,6 +4320,38 @@ const SA_A1000_603W: React.FC = () => {
                       />
                     </ButtonInInput>
                   </td>
+                  <th>계약목표일</th>
+                  <td>
+                    <CommonDateRangePicker
+                      value={{
+                        start: filters.frdt,
+                        end: filters.todt,
+                      }}
+                      onChange={(e: { value: { start: any; end: any } }) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          frdt: e.value.start,
+                          todt: e.value.end,
+                        }))
+                      }
+                    />
+                  </td>
+                  <th>의뢰일자</th>
+                  <td>
+                    <CommonDateRangePicker
+                      value={{
+                        start: filters.infrdt,
+                        end: filters.intodt,
+                      }}
+                      onChange={(e: { value: { start: any; end: any } }) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          infrdt: e.value.start,
+                          intodt: e.value.end,
+                        }))
+                      }
+                    />
+                  </td>
                 </tr>
               </tbody>
             </FilterBox>
@@ -4068,22 +4361,6 @@ const SA_A1000_603W: React.FC = () => {
               <GridTitle>
                 <ButtonContainer style={{ justifyContent: "flex-start" }}>
                   요약정보
-                  <div
-                    style={{
-                      width: "80px",
-                      borderRadius: "2px",
-                      backgroundColor: "#ff0000",
-                      color: "white",
-                      padding: "5px 10px",
-                      textAlign: "center",
-                      marginLeft: "5px",
-                      marginRight: "5px",
-                      fontWeight: 700,
-                      fontSize: "15px",
-                    }}
-                  >
-                    문의
-                  </div>
                   <div
                     style={{
                       width: "80px",
@@ -4132,13 +4409,6 @@ const SA_A1000_603W: React.FC = () => {
                 </ButtonContainer>
               </GridTitle>
               <ButtonContainer>
-                <Button
-                  fillMode="outline"
-                  themeColor={"primary"}
-                  icon="calendar"
-                >
-                  표준일정조회
-                </Button>
                 <Button
                   onClick={onAddClick2}
                   themeColor={"primary"}
@@ -4239,6 +4509,8 @@ const SA_A1000_603W: React.FC = () => {
                           cell={
                             dateField.includes(item.fieldName)
                               ? DateCell
+                              : centerField.includes(item.fieldName)
+                              ? CenterCell
                               : colorField.includes(item.fieldName)
                               ? CustomComboBoxCell
                               : undefined
@@ -4281,25 +4553,21 @@ const SA_A1000_603W: React.FC = () => {
                 <tr>
                   <th>PJT NO.</th>
                   <td>
-                    <div
-                      className="filter-item-wrap"
-                      style={{ width: "100%", display: "flex" }}
-                    >
-                      <Input
-                        name="quonum"
-                        type="text"
-                        value={Information.quonum}
-                        className="readonly"
-                        style={{ width: "70%" }}
-                      />
-                      <Input
-                        name="quorev"
-                        type="number"
-                        value={Information.quorev}
-                        className="readonly"
-                        style={{ width: "30%" }}
-                      />
-                    </div>
+                    <Input
+                      name="quonum"
+                      type="text"
+                      value={Information.quonum}
+                      className="readonly"
+                    />
+                  </td>
+                  <th>REV</th>
+                  <td>
+                    <Input
+                      name="quorev"
+                      type="number"
+                      value={Information.quorev}
+                      className="readonly"
+                    />
                   </td>
                   <th>작성일자</th>
                   <td>
@@ -4312,7 +4580,7 @@ const SA_A1000_603W: React.FC = () => {
                       className="required"
                     />
                   </td>
-                  <th>작성자</th>
+                  <th>등록자</th>
                   <td>
                     {worktype == "N"
                       ? customOptionData !== null && (
@@ -4416,16 +4684,53 @@ const SA_A1000_603W: React.FC = () => {
                           />
                         )}
                   </td>
+                </tr>
+                <tr>
+                  <th>진행단계</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="quosts"
+                        value={Information.quosts}
+                        bizComponentId="L_SA004"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                        disabled={true}
+                      />
+                    )}
+                  </td>
+                  <th>수주상태</th>
+                  <td>
+                    {bizComponentData !== null && (
+                      <BizComponentComboBox
+                        name="ordsts"
+                        value={Information.ordsts}
+                        bizComponentId="L_SA002"
+                        bizComponentData={bizComponentData}
+                        changeData={ComboBoxChange}
+                        disabled={true}
+                      />
+                    )}
+                  </td>
                   <th>견적발행일</th>
-                  <td></td>
-                  <th>견적유효일</th>
                   <td>
                     <DatePicker
-                      name="validt"
-                      value={Information.validt}
+                      name="pubdt"
+                      value={Information.pubdt}
                       format="yyyy-MM-dd"
                       onChange={InputChange}
                       placeholder=""
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th>개정사유</th>
+                  <td colSpan={9}>
+                    <Input
+                      name="rev_reason"
+                      type="number"
+                      value={Information.rev_reason}
+                      onChange={InputChange}
                     />
                   </td>
                 </tr>
@@ -4440,7 +4745,7 @@ const SA_A1000_603W: React.FC = () => {
               <tbody>
                 <tr>
                   <th>업체명</th>
-                  <td>
+                  <td colSpan={5}>
                     <Input
                       name="custnm"
                       type="text"
@@ -4456,14 +4761,22 @@ const SA_A1000_603W: React.FC = () => {
                       />
                     </ButtonInInput>
                   </td>
-                  <th>성명</th>
-                  <Input
-                    name="custprsnnm"
-                    type="text"
-                    value={Information.custprsnnm}
-                    onChange={InputChange}
-                  />
-                  <th>부서/직위</th>
+                  <th></th>
+                  <td></td>
+                  <th></th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>의뢰자</th>
+                  <td>
+                    <Input
+                      name="custprsnnm"
+                      type="text"
+                      value={Information.custprsnnm}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>소속</th>
                   <td>
                     <Input
                       name="remark2"
@@ -4472,6 +4785,65 @@ const SA_A1000_603W: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
+                  <th>직위</th>
+                  <td>
+                    {worktype == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="postcd"
+                            value={Information.postcd}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="postcd"
+                            value={Information.postcd}
+                            bizComponentId="L_HU005"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                  </td>
+                  <th></th>
+                  <td></td>
+                  <th></th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>TEL</th>
+                  <td>
+                    <Input
+                      name="tel"
+                      type="text"
+                      value={Information.tel}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>C.P</th>
+                  <td>
+                    <Input
+                      name="extra_field4"
+                      type="text"
+                      value={Information.extra_field4}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>이메일</th>
+                  <td>
+                    <Input
+                      name="email"
+                      type="text"
+                      value={Information.email}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th></th>
+                  <td></td>
+                  <th></th>
+                  <td></td>
                 </tr>
               </tbody>
             </FormBox>
@@ -4483,8 +4855,8 @@ const SA_A1000_603W: React.FC = () => {
             <FormBox>
               <tbody>
                 <tr>
-                  <th>업체명</th>
-                  <td>
+                  <th>모니터사</th>
+                  <td colSpan={5}>
                     <Input
                       name="rcvcustnm"
                       type="text"
@@ -4500,14 +4872,20 @@ const SA_A1000_603W: React.FC = () => {
                       />
                     </ButtonInInput>
                   </td>
-                  <th>성명</th>
+                  <th></th>
+                  <td></td>
+                  <th></th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>모니터</th>
                   <Input
                     name="rcvcustprsnnm"
                     type="text"
                     value={Information.rcvcustprsnnm}
                     onChange={InputChange}
                   />
-                  <th>부서/직위</th>
+                  <th>소속</th>
                   <td>
                     <Input
                       name="remark3"
@@ -4516,6 +4894,65 @@ const SA_A1000_603W: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
+                  <th>직위</th>
+                  <td>
+                    {worktype == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="rcvpostcd"
+                            value={Information.rcvpostcd}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="rcvpostcd"
+                            value={Information.rcvpostcd}
+                            bizComponentId="L_HU005"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                          />
+                        )}
+                  </td>
+                  <th></th>
+                  <td></td>
+                  <th></th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>TEL</th>
+                  <td>
+                    <Input
+                      name="rcvtel"
+                      type="text"
+                      value={Information.rcvtel}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>C.P</th>
+                  <td>
+                    <Input
+                      name="extra_field5"
+                      type="text"
+                      value={Information.extra_field5}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>이메일</th>
+                  <td>
+                    <Input
+                      name="rcvemail"
+                      type="text"
+                      value={Information.rcvemail}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th></th>
+                  <td></td>
+                  <th></th>
+                  <td></td>
                 </tr>
               </tbody>
             </FormBox>
@@ -4527,7 +4964,7 @@ const SA_A1000_603W: React.FC = () => {
             <FormBox>
               <tbody>
                 <tr>
-                  <th>시험분야</th>
+                  <th>의뢰분야</th>
                   <td>
                     {worktype == "N"
                       ? customOptionData !== null && (
@@ -4549,6 +4986,43 @@ const SA_A1000_603W: React.FC = () => {
                           />
                         )}
                   </td>
+                  <th>의뢰목적</th>
+                  <td>
+                    {worktype == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="requestgb"
+                            value={Information.requestgb}
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentComboBox
+                            name="requestgb"
+                            value={Information.requestgb}
+                            bizComponentId="L_Requestgb"
+                            bizComponentData={bizComponentData}
+                            changeData={ComboBoxChange}
+                            className="required"
+                          />
+                        )}
+                  </td>
+                  <th>적응증</th>
+                  <td colSpan={3}>
+                    <Input
+                      name="extra_field3"
+                      type="text"
+                      value={Information.extra_field3}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th></th>
+                  <td></td>
+                </tr>
+                <tr>
                   <th>물질분야</th>
                   <td>
                     {worktype == "N"
@@ -4571,41 +5045,24 @@ const SA_A1000_603W: React.FC = () => {
                           />
                         )}
                   </td>
-                  <th>시험물질명</th>
+                  <th>물질상세분야</th>
                   <td>
                     <Input
-                      name="materialnm"
+                      name="extra_field2"
                       type="text"
-                      value={Information.materialnm}
+                      value={Information.extra_field2}
                       onChange={InputChange}
                     />
                   </td>
-                  <th>의뢰목적</th>
-                  <td>
-                    {worktype == "N"
-                      ? customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="requestgb"
-                            value={Information.requestgb}
-                            type="new"
-                            customOptionData={customOptionData}
-                            changeData={ComboBoxChange}
-                          />
-                        )
-                      : bizComponentData !== null && (
-                          <BizComponentComboBox
-                            name="requestgb"
-                            value={Information.requestgb}
-                            bizComponentId="L_Requestgb"
-                            bizComponentData={bizComponentData}
-                            changeData={ComboBoxChange}
-                          />
-                        )}
+                  <th>물질정보</th>
+                  <td colSpan={3}>
+                    <Input
+                      name="materialinfo"
+                      type="text"
+                      value={Information.materialinfo}
+                      onChange={InputChange}
+                    />
                   </td>
-                </tr>
-                <tr>
-                  <th>허가기관</th>
-                  <td></td>
                   <th>물질입고예정일</th>
                   <td>
                     <DatePicker
@@ -4617,44 +5074,116 @@ const SA_A1000_603W: React.FC = () => {
                       className="required"
                     />
                   </td>
-                  <th>시험시작요청일</th>
-                  <td>
-                    <DatePicker
-                      name="teststdt"
-                      value={Information.teststdt}
-                      format="yyyy-MM-dd"
+                </tr>
+
+                <tr>
+                  <th>시험물질명</th>
+                  <td colSpan={5}>
+                    <Input
+                      name="materialnm"
+                      type="text"
+                      value={Information.materialnm}
                       onChange={InputChange}
-                      placeholder=""
-                    />
-                  </td>
-                  <th>시험종료요청일</th>
-                  <td>
-                    <DatePicker
-                      name="testenddt"
-                      value={Information.testenddt}
-                      format="yyyy-MM-dd"
-                      onChange={InputChange}
-                      placeholder=""
                     />
                   </td>
                 </tr>
                 <tr>
-                  <th>가이드라인</th>
-                  <td colSpan={5}>
+                  <th>허가기관</th>
+                  <td>
                     <Checkbox
-                      title="식약처"
+                      title="MFDS"
+                      name="agency1"
+                      label={"MFDS"}
+                      value={Information.agency1 == "A" ? true : false}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <td>
+                    <Checkbox
+                      title="NIER"
+                      name="agency2"
+                      label={"NIER"}
+                      value={Information.agency2 == "B" ? true : false}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <td>
+                    <Checkbox
+                      title="APQA"
+                      name="agency3"
+                      label={"APQA"}
+                      value={Information.agency3 == "C" ? true : false}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <td>
+                    <Checkbox
+                      title="RDA"
+                      name="agency4"
+                      label={"RDA"}
+                      value={Information.agency4 == "D" ? true : false}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <td>
+                    <Checkbox
+                      title="FDA"
+                      name="agency5"
+                      label={"FDA"}
+                      value={Information.agency5 == "E" ? true : false}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <td>
+                    <Checkbox
+                      title="기타"
+                      name="etcagencyyn"
+                      label={"기타"}
+                      value={Information.etcagency != "" ? true : false}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <td>
+                    {Information.etcagency != "" ? (
+                      <Input
+                        name="etcagency"
+                        type="text"
+                        value={Information.etcagency}
+                        onChange={InputChange}
+                      />
+                    ) : (
+                      <Input
+                        name="etcagency"
+                        type="text"
+                        value={Information.etcagency}
+                        className="readonly"
+                      />
+                    )}
+                  </td>
+                  <th></th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>가이드라인</th>
+                  <td>
+                    <Checkbox
+                      title="MFDS"
                       name="guid1"
-                      label={"식약처"}
+                      label={"MFDS"}
                       value={Information.guid1 == "A" ? true : false}
                       onChange={InputChange}
                     />
+                  </td>
+                  <td>
                     <Checkbox
-                      title="국립환경과학원"
+                      title="ICH"
                       name="guid2"
-                      label={"국립환경과학원"}
+                      label={"ICH"}
                       value={Information.guid2 == "B" ? true : false}
                       onChange={InputChange}
                     />
+                  </td>
+                  <td>
                     <Checkbox
                       title="OECD"
                       name="guid3"
@@ -4662,24 +5191,36 @@ const SA_A1000_603W: React.FC = () => {
                       value={Information.guid3 == "C" ? true : false}
                       onChange={InputChange}
                     />
+                  </td>
+                  <td>
                     <Checkbox
-                      title="농진청"
+                      title="FDA"
                       name="guid4"
-                      label={"농진청"}
+                      label={"FDA"}
                       value={Information.guid4 == "D" ? true : false}
                       onChange={InputChange}
                     />
+                  </td>
+                  <td>
                     <Checkbox
-                      title="기타"
+                      title="APQA"
                       name="guid5"
-                      label={"기타"}
-                      value={Information.guid5 == "K" ? true : false}
+                      label={"APQA"}
+                      value={Information.guid5 == "E" ? true : false}
                       onChange={InputChange}
                     />
                   </td>
-                  <th>기타 입력</th>
                   <td>
-                    {Information.guid5 == "K" ? (
+                    <Checkbox
+                      title="기타"
+                      name="etcguidyn"
+                      label={"기타"}
+                      value={Information.etcguid != "" ? true : false}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <td>
+                    {Information.etcguid != ""  ? (
                       <Input
                         name="etcguid"
                         type="text"
@@ -4695,49 +5236,67 @@ const SA_A1000_603W: React.FC = () => {
                       />
                     )}
                   </td>
+                  <th></th>
+                  <td></td>
                 </tr>
                 <tr>
-                  <th>GLP</th>
-                  <td colSpan={5}>
+                  <th>GLP기준</th>
+                  <td>
                     <Checkbox
-                      title="식약처"
+                      title="MFDS"
                       name="glp1"
-                      label={"식약처"}
+                      label={"MFDS"}
                       value={Information.glp1 == "A" ? true : false}
                       onChange={InputChange}
                     />
+                  </td>
+                  <td>
                     <Checkbox
-                      title="국립환경과학원"
+                      title="OECD"
                       name="glp2"
-                      label={"국립환경과학원"}
+                      label={"OECD"}
                       value={Information.glp2 == "B" ? true : false}
                       onChange={InputChange}
                     />
+                  </td>
+                  <td>
                     <Checkbox
-                      title="OECD"
+                      title="FDA"
                       name="glp3"
-                      label={"OECD"}
+                      label={"FDA"}
                       value={Information.glp3 == "C" ? true : false}
                       onChange={InputChange}
                     />
+                  </td>
+                  <td>
                     <Checkbox
-                      title="농진청"
+                      title="NIER"
                       name="glp4"
-                      label={"농진청"}
+                      label={"NIER"}
                       value={Information.glp4 == "D" ? true : false}
                       onChange={InputChange}
                     />
+                  </td>
+                  <td>
                     <Checkbox
-                      title="기타"
+                      title="RDA"
                       name="glp5"
-                      label={"기타"}
-                      value={Information.glp5 == "K" ? true : false}
+                      label={"RDA"}
+                      value={Information.glp5 == "E" ? true : false}
                       onChange={InputChange}
                     />
                   </td>
-                  <th>기타 입력</th>
                   <td>
-                    {Information.glp5 == "K" ? (
+                    <Checkbox
+                      title="기타"
+                      name="etcglpyn"
+                      label={"기타"}
+                      value={Information.etcglp != "" ? true : false}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <td>
+                    {Information.etcglp != ""  ? (
                       <Input
                         name="etcglp"
                         type="text"
@@ -4753,9 +5312,54 @@ const SA_A1000_603W: React.FC = () => {
                       />
                     )}
                   </td>
+                  <th></th>
+                  <td></td>
                 </tr>
                 <tr>
-                  <th>원문보고서</th>
+                  <th>최종보고서</th>
+                  <td>
+                    <Checkbox
+                      title="한국어"
+                      name="report1"
+                      label={"한국어"}
+                      value={Information.report1 == "K" ? true : false}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <td>
+                    <Checkbox
+                      title="영어"
+                      name="report2"
+                      label={"영어"}
+                      value={Information.report2 == "E" ? true : false}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <td>
+                    <Checkbox
+                      title="일본어"
+                      name="report3"
+                      label={"일본어"}
+                      value={Information.report3 == "J" ? true : false}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <td>
+                    <Checkbox
+                      title="제본"
+                      name="report5"
+                      label={"제본"}
+                      value={Information.report5 == "B" ? true : false}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>제본수</th>
+                  <td></td>
+                  <th></th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>번역보고서</th>
                   <td colSpan={5}>
                     <Checkbox
                       title="국문"
@@ -4793,48 +5397,8 @@ const SA_A1000_603W: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
-                  <th></th>
+                  <th>제본수</th>
                   <td></td>
-                </tr>
-                <tr>
-                  <th>기본보고서</th>
-                  <td colSpan={5}>
-                    <Checkbox
-                      title="국문"
-                      name="report1"
-                      label={"국문"}
-                      value={Information.report1 == "K" ? true : false}
-                      onChange={InputChange}
-                    />
-                    <Checkbox
-                      title="영문"
-                      name="report2"
-                      label={"영문"}
-                      value={Information.report2 == "E" ? true : false}
-                      onChange={InputChange}
-                    />
-                    <Checkbox
-                      title="한문"
-                      name="report3"
-                      label={"한문"}
-                      value={Information.report3 == "J" ? true : false}
-                      onChange={InputChange}
-                    />
-                    <Checkbox
-                      title="PDF"
-                      name="report4"
-                      label={"PDF"}
-                      value={Information.report4 == "P" ? true : false}
-                      onChange={InputChange}
-                    />
-                    <Checkbox
-                      title="제본"
-                      name="report5"
-                      label={"제본"}
-                      value={Information.report5 == "B" ? true : false}
-                      onChange={InputChange}
-                    />
-                  </td>
                   <th></th>
                   <td></td>
                 </tr>
@@ -4848,6 +5412,42 @@ const SA_A1000_603W: React.FC = () => {
                       onChange={InputChange}
                     />
                   </td>
+                  <th></th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>첨부파일</th>
+                  <td colSpan={7}></td>
+                  <th></th>
+                  <td></td>
+                </tr>
+                <tr>
+                  <th>시험시작요청일</th>
+                  <td>
+                    <DatePicker
+                      name="teststdt"
+                      value={Information.teststdt}
+                      format="yyyy-MM-dd"
+                      onChange={InputChange}
+                      placeholder=""
+                    />
+                  </td>
+                  <th>시험종료요청일</th>
+                  <td>
+                    <DatePicker
+                      name="testenddt"
+                      value={Information.testenddt}
+                      format="yyyy-MM-dd"
+                      onChange={InputChange}
+                      placeholder=""
+                    />
+                  </td>
+                  <th>분석법 필요여부</th>
+                  <td></td>
+                  <th>분석법 제공예정일</th>
+                  <td></td>
+                  <th></th>
+                  <td></td>
                 </tr>
               </tbody>
             </FormBox>
