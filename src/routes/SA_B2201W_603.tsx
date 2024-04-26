@@ -59,18 +59,9 @@ import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2201W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
-
-const dateField = [
-  "orddt",
-  "contractno",
-  "chkperson",
-  "materialtype",
-];
 const DateField = ["orddt"];
 const numberField = ["cnt", "amt","conamt", "stramt", "janamt"];
 const numberField2 = [ "amt", "stramt", "janamt"];
-
-
 
 const SA_B2201W_603: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -707,7 +698,7 @@ const SA_B2201W_603: React.FC = () => {
                   name="contractno"
                   type="text"
                   value={filters.contractno}
-                  className="readonly"
+                  onChange={filterInputChange}
                 />
               </td>
               <th>업체명</th>
@@ -839,7 +830,7 @@ const SA_B2201W_603: React.FC = () => {
                         title={item.caption}
                         width={item.width}
                         cell={
-                          dateField.includes(item.fieldName)
+                          DateField.includes(item.fieldName)
                             ? DateCell
                             : numberField.includes(item.fieldName)
                             ? NumberCell
@@ -919,8 +910,6 @@ const SA_B2201W_603: React.FC = () => {
                         cell={
                           numberField.includes(item.fieldName)
                             ? NumberCell
-                            : DateField.includes(item.fieldName)
-                            ? DateCell
                             : undefined
                         }
                         footerCell={

@@ -26,6 +26,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import {
+  GetPropertyValueByName,
   UseCustomOption,
   UseGetValueFromSessionItem,
   UseMessages,
@@ -69,6 +70,23 @@ const MA_B1000W_603: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("MA_B1000W_603", setCustomOptionData);
+  //customOptionData 조회 후 디폴트 값 세팅
+  useEffect(() => {
+    if (customOptionData !== null) {
+      const defaultOption = GetPropertyValueByName(
+        customOptionData.menuCustomDefaultOptions,
+        "query"
+      );
+
+      setFilters((prev) => ({
+        ...prev,
+        frdt: setDefaultDate(customOptionData, "frdt"),
+        todt: setDefaultDate(customOptionData, "todt"),
+        isSearch: true,
+      }));
+    }
+  }, [customOptionData]);
+
   const orgdiv = UseGetValueFromSessionItem("orgdiv");
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
@@ -99,9 +117,8 @@ const MA_B1000W_603: React.FC = () => {
     ordcustcd: "",
     ordcustnm: "",
     itemnm: "",
-
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -208,7 +225,7 @@ const MA_B1000W_603: React.FC = () => {
       setFilters((prev) => ({ ...prev, isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData]);
 
   //그리드 리셋
   const resetAllGrid = () => {

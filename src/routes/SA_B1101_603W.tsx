@@ -631,7 +631,7 @@ const SA_B1101_603W: React.FC = () => {
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
-          pathname="SA_B1101W_603"
+          pathname="SA_B1101_603W"
         />
       )}
       {gridList.map((grid: TGrid) =>
