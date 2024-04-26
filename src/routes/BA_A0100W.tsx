@@ -104,6 +104,7 @@ const BA_A0100W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight -50;
   let isMobile = deviceWidth <= 1200;
 
   const setLoading = useSetRecoilState(isLoading);
@@ -1406,7 +1407,7 @@ const BA_A0100W: React.FC = () => {
   return (
     <>
       {isMobile ? (
-        <GridContainerWrap>
+        <>
           <Swiper
             className="leading_95_Swiper"
             onSwiper={(swiper) => {
@@ -1754,7 +1755,7 @@ const BA_A0100W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
           </Swiper>
-        </GridContainerWrap>
+        </>
       ) : (
         <>
           <TitleContainer>

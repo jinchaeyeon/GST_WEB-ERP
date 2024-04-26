@@ -101,6 +101,7 @@ let targetRowIndex2: null | number = null;
 const BA_A0070W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight -50;
   let isMobile = deviceWidth <= 1200;
 
   const setLoading = useSetRecoilState(isLoading);
@@ -1279,7 +1280,7 @@ const BA_A0070W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA">
+            <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer
                 style={{ width: `${deviceWidth - 30}px`,overflow: "auto" }}
               >
@@ -1303,7 +1304,7 @@ const BA_A0070W: React.FC = () => {
                   fileName="환율관리"
                 >
                   <Grid
-                    style={{ height: "72vh" }}
+                    style={{ height: `${deviceHeight * 0.75}px` }}
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
@@ -1363,7 +1364,7 @@ const BA_A0070W: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide
               key={1}
-              className="leading_PDA"
+              className="leading_PDA_custom"
               style={{ display: "flex", flexDirection: "column" }}
             >
               <div
@@ -1386,14 +1387,12 @@ const BA_A0070W: React.FC = () => {
               </div>
               <GridContainer
                 style={{
-                  minHeight: "70vh",
                   width: `${deviceWidth - 30}px`,
                  overflow: "auto",
                 }}
               >
                 <GridTitleContainer>
-                  <GridTitle>상세정보</GridTitle>
-                  <ButtonContainer style={{ marginTop: "5px" }}>
+                  <ButtonContainer style={{ paddingTop: "5px" }}>
                     <Button
                       onClick={onAddClick}
                       themeColor={"primary"}
@@ -1424,7 +1423,7 @@ const BA_A0070W: React.FC = () => {
                   fileName="환율관리"
                 >
                   <Grid
-                    style={{ height: "83.5vh" }}
+                    style={{ height: `${deviceHeight * 0.7}px` }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
