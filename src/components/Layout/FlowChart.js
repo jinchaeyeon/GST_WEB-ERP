@@ -881,6 +881,7 @@ const FlowChart = (props) => {
       {isMobile ? (
         <Swiper
           className="leading_63_Swiper"
+          autoHeight={true}
           onSwiper={(swiper) => {
             setSwiper(swiper);
           }}
