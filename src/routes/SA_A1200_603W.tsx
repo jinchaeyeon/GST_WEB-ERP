@@ -878,7 +878,6 @@ const SA_A1200_603W: React.FC = () => {
                   <td>
                     <Input
                       name="quokey"
-                      name="quokey"
                       type="text"
                       value={filters.quokey}
                       onChange={InputChange}
