@@ -430,7 +430,7 @@ const SA_A1200_603W: React.FC = () => {
     cotracdt: "",
     find_row_value: "",
     pgNum: 1,
-    contractno: "",
+    contractno: "", 
     isSearch: true,
     pgSize: PAGE_SIZE,
   });
@@ -660,7 +660,7 @@ const SA_A1200_603W: React.FC = () => {
       totgrade1: totgrade1,
       totgrade2: totgrade2,
       level1: selectedRowData.feasibility,
-      level2: selectedRowData.feasibility,
+      level2: selectedRowData.weight,
       pgNum: 1,
       isSearch: true,
     }));
@@ -668,16 +668,14 @@ const SA_A1200_603W: React.FC = () => {
     setSubFilters((prev) => ({
       ...prev,
       contractno: selectedRowData.contractno,
-      isSearch: false,
+      isSearch: true,
     }));
-
     setTabSelected(1);
   };
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-    console.log(value, name);
     if (name == "custnm") {
       setFilters((prev) => ({
         ...prev,
@@ -783,7 +781,6 @@ const SA_A1200_603W: React.FC = () => {
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
   const filterRadioChange = (e: any) => {
     const { name, value } = e;
-    console.log(name, ": ", value);
     setFilters((prev) => ({
       ...prev,
       finyn: value,
@@ -800,29 +797,17 @@ const SA_A1200_603W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
-      const queryParams = new URLSearchParams(location.search);
       const defaultOption = GetPropertyValueByName(
         customOptionData.menuCustomDefaultOptions,
         "query"
       );
-      if (queryParams.has("go")) {
-        history.replace({}, "");
-        setFilters((prev) => ({
-          ...prev,
-          chkperson: defaultOption.find((item: any) => item.id === "chkperson")
-            ?.valueCode,
-          isSearch: true,
-          find_row_value: queryParams.get("go") as string,
-        }));
-      } else {
-        setFilters((prev) => ({
-          ...prev,
-          chkperson: defaultOption.find((item: any) => item.id === "chkperson")
-            ?.valueCode,
-          isSearch: true,
-        }));
-      }
-    }
+      setFilters((prev) => ({
+        ...prev,
+        chkperson: defaultOption.find((item: any) => item.id === "chkperson")
+          ?.valueCode,    
+            
+      }));
+    } 
   }, [customOptionData]);
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
@@ -2021,7 +2006,7 @@ const SA_A1200_603W: React.FC = () => {
                   <th>PJT NO.</th>
                   <td>
                     <Input
-                      name="quonum"
+                      name="quokey"
                       type="text"
                       value={filters.quokey}
                       onChange={InputChange}
@@ -2114,7 +2099,7 @@ const SA_A1200_603W: React.FC = () => {
                       defaultValue={0}
                       onChange={InputChange}
                     />
-                    ~ 
+                    ~
                     <NumericTextBox
                       name="endt"
                       width={90}
@@ -2472,7 +2457,7 @@ const SA_A1200_603W: React.FC = () => {
                         style={{
                           textAlign: "center",
                         }}
-                        value={Information2.level}
+                        value={Information2.level2}
                         className="readonly"
                       />
                     </td>
@@ -2492,7 +2477,7 @@ const SA_A1200_603W: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th>견적차수</th>
+                      <th style={{ textAlign: "right"}}>견적차수</th>
                       <td>
                         <Input
                           name="quorev"
@@ -2504,7 +2489,7 @@ const SA_A1200_603W: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                      <th>견적제출일</th>
+                      <th style={{ textAlign: "right"}}>견적제출일</th>
                       <td>
                         <DatePicker
                           name="quodt"
@@ -2513,7 +2498,7 @@ const SA_A1200_603W: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                      <th>활동차수</th>
+                      <th style={{ textAlign: "right"}}>활동차수</th>
                       <td>
                         <Input
                           name="commnetcnt"
@@ -2525,7 +2510,7 @@ const SA_A1200_603W: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                      <th>계약목표일</th>
+                      <th style={{ textAlign: "right"}}>계약목표일</th>
                       <td>
                         <DatePicker
                           name="quodt"
@@ -2535,7 +2520,7 @@ const SA_A1200_603W: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                      <th>경과기간</th>
+                      <th style={{ textAlign: "right"}}>경과기간</th>
                       <td>
                         <Input
                           name="passdt"
