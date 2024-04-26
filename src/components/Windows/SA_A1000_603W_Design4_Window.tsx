@@ -141,17 +141,14 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
         "@p_quonum": item.quonum,
         "@p_quorev": item.quorev,
         "@p_quoseq": item.quoseq,
-        "@p_targetdt":
-          filters.targetdt == undefined
-            ? ""
-            : convertDateToStr(filters.targetdt),
-        "@p_cpmperson":
-          filters.cpmpersonnm == "" || filters.cpmpersonnm == undefined
-            ? ""
-            : filters.cpmperson,
-        "@p_cpmpersonnm":
-          filters.cpmpersonnm == undefined ? "" : filters.cpmpersonnm,
         "@p_status": "",
+        "@p_extra_field2": "",
+        "@p_smperson": "",
+        "@p_smpersonnm": "",
+        "@p_frdt": "",
+        "@p_todt": "",
+        "@p_in_frdt": "",
+        "@p_in_todt": "",
         "@p_find_row_value": filters.find_row_value,
       },
     };

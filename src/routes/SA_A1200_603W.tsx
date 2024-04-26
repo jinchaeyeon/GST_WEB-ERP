@@ -45,6 +45,7 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  convertDateToStrWithTime,
   dateformat,
   dateformat2,
   getGridItemChangedData,
@@ -67,6 +68,7 @@ import TopButtons from "../components/Buttons/TopButtons";
 import CenterCell from "../components/Cells/CenterCell";
 import ComboBoxCell from "../components/Cells/ComboBoxCell";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
+import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import {
   COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
@@ -87,6 +89,7 @@ import {
   unsavedNameState,
 } from "../store/atoms";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
+import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 
 type TdataArr = {
   rowstatus_s: string[];
@@ -114,8 +117,8 @@ const DATA_ITEM_KEY2 = "num";
 const DATA_ITEM_KEY3 = "num";
 const DATA_ITEM_KEY6 = "num";
 let targetRowIndex: null | number = null;
-const DateField = ["quodt", "cotracdt"];
-const NumberField = ["passdt"];
+const DateField = ["quodt", "cotracdt", "recdt", "quorev"];
+const NumberField = ["passdt", "seq"];
 
 const NumberField2 = ["wonamt", "taxamt", "amt", "totamt"];
 
@@ -230,6 +233,11 @@ const SA_A1200_603W: React.FC = () => {
       pgNum: 1,
     }));
   };
+  const [projectWindowVisible, setProjectWindowVisible] =
+    useState<boolean>(false);
+  const onProejctWndClick = () => {
+    setProjectWindowVisible(true);
+  };
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
   const onAttachmentsWndClick = () => {
@@ -238,12 +246,18 @@ const SA_A1200_603W: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent(
-    "L_sysUserMaster_001, L_SA001_603, L_BA037, L_SA012_603, L_SA013_603, L_SA014_603, L_SA015_603, L_SA016_603, L_SA017_603, L_SA018_603",
+    "L_sysUserMaster_001, L_SA001_603, L_BA037, L_SA012_603, L_SA013_603, L_SA014_603, L_SA015_603, L_SA016_603, L_SA017_603, L_SA018_603, R_YESNOALL, L_LEVEL_603",
     setBizComponentData
   );
 
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
+  ]);
+  const [feasibilityListData, setFeasibilityListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [weightListData, setWeightListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
   ]);
   const [contractgbListData, setcontractgbListData] = useState([
     COM_CODE_DEFAULT_VALUE,
@@ -281,6 +295,18 @@ const SA_A1200_603W: React.FC = () => {
       const userQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId === "L_sysUserMaster_001"
+        )
+      );
+
+      const feasibilityQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_LEVEL_603"
+        )
+      );
+
+      const weightQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId === "L_LEVEL_603"
         )
       );
 
@@ -330,6 +356,8 @@ const SA_A1200_603W: React.FC = () => {
       fetchQueryData(contractgbQueryStr, setcontractgbListData);
       fetchQueryData(userQueryStr, setUserListData);
       fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
+      fetchQueryData(feasibilityQueryStr, setFeasibilityListData);
+      fetchQueryData(weightQueryStr, setWeightListData);
 
       //상세정보
       fetchQueryData(materialgbQueryStr, setMaterialgbListData);
@@ -377,8 +405,12 @@ const SA_A1200_603W: React.FC = () => {
     custprsnnm: "",
     chkperson: "",
     finyn: "%",
-    quodt: "",
-    cotracdt: "",
+    quodt: new Date(),
+    cotracdt: new Date(),
+    feasibility: "",
+    weight: "",
+    stdt: 0,
+    endt: 0,
     find_row_value: "",
     pgNum: 1,
     isSearch: true,
@@ -386,13 +418,19 @@ const SA_A1200_603W: React.FC = () => {
   });
 
   const [subFilters, setSubFilters] = useState<{ [name: string]: any }>({
-    workType: "",
     orgdiv: "01",
     location: "01",
-    contractno: "",
-    groupgb: "A",
+    quokey: "",
+    custnm: "",
+    custcd: "",
+    custprsnnm: "",
+    chkperson: "",
+    finyn: "%",
+    quodt: new Date(),
+    cotracdt: "",
     find_row_value: "",
     pgNum: 1,
+    contractno: "",
     isSearch: true,
     pgSize: PAGE_SIZE,
   });
@@ -471,6 +509,11 @@ const SA_A1200_603W: React.FC = () => {
     level1: "",
     level2: "",
     chkperson: "",
+    quorev: "",
+    quodt: "",
+    passdt: "",
+    commentcnt: "",
+    seq: "",
   });
 
   // 삭제할 첨부파일 리스트를 담는 함수
@@ -541,6 +584,15 @@ const SA_A1200_603W: React.FC = () => {
   );
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
 
+  const setProjectData = (data: any) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        quokey: data.quokey,
+      };
+    });
+  };
+
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
@@ -594,6 +646,10 @@ const SA_A1200_603W: React.FC = () => {
       amtgb: selectedRowData.amtgb,
       addordgb: selectedRowData.addordgb,
       relationgb: selectedRowData.relationgb,
+      quorev: selectedRowData.quorev,
+      quodt: selectedRowData.quodt,
+      passdt: selectedRowData.passdt,
+      seq: selectedRowData.seq,
       grade1: grade1,
       grade2: grade2,
       grade3: grade3,
@@ -603,18 +659,25 @@ const SA_A1200_603W: React.FC = () => {
       grade7: grade7,
       totgrade1: totgrade1,
       totgrade2: totgrade2,
-      level1: level1,
-      level2: level2,
+      level1: selectedRowData.feasibility,
+      level2: selectedRowData.feasibility,
       pgNum: 1,
       isSearch: true,
     }));
+
+    setSubFilters((prev) => ({
+      ...prev,
+      contractno: selectedRowData.contractno,
+      isSearch: false,
+    }));
+
     setTabSelected(1);
   };
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const InputChange = (e: any) => {
     const { value, name } = e.target;
-
+    console.log(value, name);
     if (name == "custnm") {
       setFilters((prev) => ({
         ...prev,
@@ -638,6 +701,15 @@ const SA_A1200_603W: React.FC = () => {
     }));
   };
 
+  //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
+  const filterComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    setFilters((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const ComboBoxChange = (e: any) => {
     const { name, value } = e;
@@ -708,6 +780,16 @@ const SA_A1200_603W: React.FC = () => {
     }
   };
 
+  //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
+  const filterRadioChange = (e: any) => {
+    const { name, value } = e;
+    console.log(name, ": ", value);
+    setFilters((prev) => ({
+      ...prev,
+      finyn: value,
+    }));
+  };
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SA_A1200_603W", setCustomOptionData);
@@ -753,6 +835,20 @@ const SA_A1200_603W: React.FC = () => {
     }
   }, [filters]);
 
+  //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
+  useEffect(() => {
+    if (subFilters.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(subFilters);
+      setSubFilters((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      })); // 한번만 조회되도록
+      fetchSubGrid2(deepCopiedFilters);
+    }
+  }, [subFilters]);
+
   let gridRef: any = useRef(null);
 
   useEffect(() => {
@@ -777,65 +873,20 @@ const SA_A1200_603W: React.FC = () => {
     setMainDataResult3(process([], mainDataState3));
     setMainDataResult6(process([], mainDataState6));
   };
-  // modifiedRows 생성 함수
-  const createFeasibilityRows = (row: any) => {
-    const materialgbScore =
-      materialgbListData.find((items: any) => items.sub_code == row.materialgb)
-        ?.numref1 ?? 0;
-    const assaygbegbScore =
-      assaygbeListData.find((items: any) => items.sub_code == row.assaygbe)
-        ?.numref1 ?? 0;
-    const startschgbScore =
-      startschgbListData.find((items: any) => items.sub_code == row.startschgb)
-        ?.numref1 ?? 0;
-    const financegbScore =
-      financegbListData.find((items: any) => items.sub_code == row.financegb)
-        ?.numref1 ?? 0;
 
-    const totgrade1 =
-      materialgbScore + assaygbegbScore + startschgbScore + financegbScore;
-
-    let feasibility: string = "";
-
-    if (totgrade1 >= 12) {
-      feasibility = "상";
-    } else if (totgrade1 >= 7) {
-      feasibility = "중";
-    } else if (totgrade1 >= 1) {
-      feasibility = "하";
-    } else {
-      feasibility = "";
+  function getLevelToString(input: string): string {
+    // 입력 문자열에 따라서 적절한 기간을 반환합니다.
+    switch (input) {
+      case "A":
+        return "상";
+      case "B":
+        return "중";
+      case "C":
+        return "하";
+      default:
+        return "";
     }
-    return feasibility;
-  };
-
-  const createWeightRows = (row: any) => {
-    const amtgbScore =
-      amtgbListData.find((items: any) => items.sub_code == row.amtgb)
-        ?.numref1 ?? 0;
-    const addordgbScore =
-      addordgbListData.find((items: any) => items.sub_code == row.addordgb)
-        ?.numref1 ?? 0;
-    const relationgbScore =
-      financegbListData.find((items: any) => items.sub_code == row.relationgb)
-        ?.numref1 ?? 0;
-
-    const totgrade2 = amtgbScore + addordgbScore + relationgbScore;
-
-    let weight: string = "";
-
-    if (totgrade2 >= 7) {
-      weight = "상";
-    } else if (totgrade2 >= 4) {
-      weight = "중";
-    } else if (totgrade2 >= 1) {
-      weight = "하";
-    } else {
-      weight = "";
-    }
-
-    return weight;
-  };
+  }
 
   //그리드 데이터 조회
   const fetchMainGrid = async (filters: any) => {
@@ -857,8 +908,12 @@ const SA_A1200_603W: React.FC = () => {
         "@p_custprsnnm": filters.custprsnnm,
         "@p_chkperson": filters.chkperson,
         "@p_finyn": filters.finyn,
-        "@p_quodt": filters.quodt,
-        "@p_cotracdt": filters.cotracdt,
+        "@p_quodt": convertDateToStr(filters.quodt),
+        "@p_cotracdt": convertDateToStr(filters.cotracdt),
+        "@p_feasibility": filters.feasibility,
+        "@p_weight": filters.weight,
+        "@p_stdt": filters.stdt,
+        "@p_endt": filters.endt,
         "@p_find_row_value": filters.find_row_value,
       },
     };
@@ -872,7 +927,7 @@ const SA_A1200_603W: React.FC = () => {
     if (data.isSuccess === true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      console.log(rows);
+
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
@@ -893,67 +948,8 @@ const SA_A1200_603W: React.FC = () => {
         }
       }
 
-      const modifiedRows = rows.map((row: IGradeData) => {
-        const materialgbScore =
-          materialgbListData.find(
-            (items: any) => items.sub_code == row.materialgb
-          )?.numref1 ?? 0;
-        const assaygbegbScore =
-          assaygbeListData.find((items: any) => items.sub_code == row.assaygbe)
-            ?.numref1 ?? 0;
-        const startschgbScore =
-          startschgbListData.find(
-            (items: any) => items.sub_code == row.startschgb
-          )?.numref1 ?? 0;
-        const financegbScore =
-          financegbListData.find(
-            (items: any) => items.sub_code == row.financegb
-          )?.numref1 ?? 0;
-
-        const amtgbScore =
-          amtgbListData.find((items: any) => items.sub_code == row.amtgb)
-            ?.numref1 ?? 0;
-        const addordgbScore =
-          addordgbListData.find((items: any) => items.sub_code == row.addordgb)
-            ?.numref1 ?? 0;
-        const relationgbScore =
-          financegbListData.find(
-            (items: any) => items.sub_code == row.relationgb
-          )?.numref1 ?? 0;
-
-        const totgrade1 =
-          materialgbScore + assaygbegbScore + startschgbScore + financegbScore;
-
-        const totgrade2 = amtgbScore + addordgbScore + relationgbScore;
-
-        let feasibility: string = "";
-        let weight: string = "";
-
-        if (totgrade1 >= 12) {
-          feasibility = "상";
-        } else if (totgrade1 >= 7) {
-          feasibility = "중";
-        } else if (totgrade1 >= 1) {
-          feasibility = "하";
-        } else {
-          feasibility = "";
-        }
-
-        if (totgrade2 >= 7) {
-          weight = "상";
-        } else if (totgrade2 >= 4) {
-          weight = "중";
-        } else if (totgrade2 >= 1) {
-          weight = "하";
-        } else {
-          weight = "";
-        }
-
-        return { ...row, feasibility, weight };
-      });
-
       setMainDataResult({
-        data: modifiedRows,
+        data: rows,
         total: totalRowCnt == -1 ? 0 : totalRowCnt,
       });
 
@@ -1001,6 +997,86 @@ const SA_A1200_603W: React.FC = () => {
       skip: page.skip,
       take: initialPageState.take,
     });
+  };
+
+  function formatDateToDateString(number: number): Date {
+    // 숫자를 문자열로 변환 후 8자리로 포맷팅
+    const dateString = String(number).padStart(8, "0");
+
+    // 연, 월, 일 추출
+    const year = dateString.slice(0, 4);
+    const month = dateString.slice(4, 6);
+    const day = dateString.slice(6, 8);
+
+    // Date 객체를 생성하여 반환
+    return new Date(`${year}-${month}-${day}`);
+  }
+
+  //그리드 데이터 조회 - 계약성사관리 코멘트
+  const fetchSubGrid2 = async (subFilters: any) => {
+    let data: any;
+    setLoading(true);
+
+    //조회프로시저  파라미터
+    const parameters2: Iparameters = {
+      procedureName: "P_SA_A1100_603W_Q",
+      pageNumber: subFilters.pgNum,
+      pageSize: subFilters.pgSize,
+      parameters: {
+        "@p_work_type": "COMMENT",
+        "@p_orgdiv": filters.orgdiv,
+        "@p_location": filters.location,
+        "@p_frdt": "",
+        "@p_todt": "",
+        "@p_quokey": filters.quokey,
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_custprsnnm": filters.custprsnnm,
+        "@p_contractno": subFilters.contractno,
+        "@p_project": "",
+        "@p_chkperson": filters.chkperson,
+        "@p_materialtype": "",
+        "@p_extra_field2": "",
+        "@p_find_row_value": filters.find_row_value,
+        "@p_groupgb": "",
+      },
+    };
+    try {
+      data = await processApi<any>("procedure", parameters2);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const totalRowCnt = data.tables[0].TotalRowCount;
+      const rows = data.tables[0].Rows;
+
+      setMainDataResult3({
+        data: rows,
+        total: totalRowCnt == -1 ? 0 : totalRowCnt,
+      });
+
+      setInformation2((prev) => ({
+        ...prev,
+        commentcnt: totalRowCnt == -1 ? 0 : totalRowCnt,
+      }));
+      setLoading(false);
+      if (totalRowCnt > 0) {
+        setSelectedState3({ [rows[0][DATA_ITEM_KEY3]]: true });
+      }
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setSubFilters2((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
   };
 
   const pageChange2 = (event: GridPageChangeEvent) => {
@@ -1624,103 +1700,8 @@ const SA_A1200_603W: React.FC = () => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
-  const onMainSortChange2 = (e: any) => {
-    setMainDataState2((prev) => ({ ...prev, sort: e.sort }));
-  };
-
   const onMainSortChange3 = (e: any) => {
     setMainDataState3((prev) => ({ ...prev, sort: e.sort }));
-  };
-
-  const onMainSortChange6 = (e: any) => {
-    setMainDataState6((prev) => ({ ...prev, sort: e.sort }));
-  };
-
-  const onAddClick = () => {
-    mainDataResult3.data.map((item) => {
-      if (item[DATA_ITEM_KEY3] > temp) {
-        temp = item[DATA_ITEM_KEY3];
-      }
-    });
-
-    const newDataItem = {
-      [DATA_ITEM_KEY3]: ++temp,
-      comment: "",
-      id: "",
-      insert_userid: userId,
-      recdt: convertDateToStr(new Date()),
-      seq: 0,
-      rowstatus: "N",
-    };
-    setSelectedState3({ [newDataItem[DATA_ITEM_KEY3]]: true });
-    setMainDataResult3((prev) => {
-      return {
-        data: [newDataItem, ...prev.data],
-        total: prev.total + 1,
-      };
-    });
-  };
-
-  const onAddClick6 = () => {
-    mainDataResult6.data.map((item) => {
-      if (item[DATA_ITEM_KEY6] > temp6) {
-        temp6 = item[DATA_ITEM_KEY6];
-      }
-    });
-
-    const newDataItem = {
-      [DATA_ITEM_KEY6]: ++temp6,
-      orgdiv: "01",
-      payment: "",
-      seq: 0,
-      paydt: convertDateToStr(new Date()),
-      amt: 0,
-      remark: "",
-      rowstatus: "N",
-    };
-    setSelectedState6({ [newDataItem[DATA_ITEM_KEY6]]: true });
-    setMainDataResult6((prev) => {
-      return {
-        data: [newDataItem, ...prev.data],
-        total: prev.total + 1,
-      };
-    });
-  };
-
-  const onDeleteClick = (e: any) => {
-    let newData: any[] = [];
-    let Object3: any[] = [];
-    let Object2: any[] = [];
-    let data;
-    mainDataResult3.data.forEach((item: any, index: number) => {
-      if (!selectedState3[item[DATA_ITEM_KEY3]]) {
-        newData.push(item);
-        Object2.push(index);
-      } else {
-        if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = item;
-          newData2.rowstatus = "D";
-          deletedMainRows.push(newData2);
-        }
-        Object3.push(index);
-      }
-    });
-
-    if (Math.min(...Object3) < Math.min(...Object2)) {
-      data = mainDataResult3.data[Math.min(...Object2)];
-    } else {
-      data = mainDataResult3.data[Math.min(...Object3) - 1];
-    }
-
-    setMainDataResult3((prev) => ({
-      data: newData,
-      total: prev.total - Object3.length,
-    }));
-    if (Object3.length > 0) {
-      setSelectedState3({
-        [data != undefined ? data[DATA_ITEM_KEY3] : newData[0]]: true,
-      });
-    }
   };
 
   const [ParaData, setParaData] = useState({
@@ -1853,72 +1834,6 @@ const SA_A1200_603W: React.FC = () => {
     // }
   };
 
-  const onSaveClick6 = () => {
-    const dataItem = mainDataResult6.data.filter((item: any) => {
-      return (
-        (item.rowstatus === "N" || item.rowstatus === "U") &&
-        item.rowstatus !== undefined
-      );
-    });
-    if (dataItem.length === 0 && deletedMainRows6.length === 0) return false;
-
-    let dataArr: TdataArr2 = {
-      rowstatus_s: [],
-      seq_s: [],
-      payment_s: [],
-      amt_s: [],
-      paydt_s: [],
-      remark_s: [],
-    };
-
-    dataItem.forEach((item: any, idx: number) => {
-      const {
-        rowstatus = "",
-        seq = "",
-        payment = "",
-        amt = "",
-        paydt = "",
-        remark = "",
-      } = item;
-
-      dataArr.rowstatus_s.push(rowstatus);
-      dataArr.seq_s.push(seq);
-      dataArr.payment_s.push(payment);
-      dataArr.amt_s.push(amt);
-      dataArr.paydt_s.push(paydt);
-      dataArr.remark_s.push(remark);
-    });
-
-    deletedMainRows6.forEach((item: any, idx: number) => {
-      const {
-        rowstatus = "",
-        seq = "",
-        payment = "",
-        amt = "",
-        paydt = "",
-        remark = "",
-      } = item;
-
-      dataArr.rowstatus_s.push("D");
-      dataArr.seq_s.push(seq);
-      dataArr.payment_s.push(payment);
-      dataArr.amt_s.push(amt);
-      dataArr.paydt_s.push(paydt);
-      dataArr.remark_s.push(remark);
-    });
-
-    setParaData((prev) => ({
-      ...prev,
-      workType: "PAYMENT",
-      rowstatus_s: dataArr.rowstatus_s.join("|"),
-      seq_s: dataArr.seq_s.join("|"),
-      payment_s: dataArr.payment_s.join("|"),
-      amt_s: dataArr.amt_s.join("|"),
-      paydt_s: dataArr.paydt_s.join("|"),
-      remark_s: dataArr.remark_s.join("|"),
-    }));
-  };
-
   useEffect(() => {
     if (ParaData.workType != "") {
       fetchTodoGridSaved();
@@ -1992,70 +1907,6 @@ const SA_A1200_603W: React.FC = () => {
     setLoading(false);
   };
 
-  const onSaveClick3 = () => {
-    const dataItem: { [name: string]: any } = mainDataResult3.data.filter(
-      (item: any) => {
-        return (
-          (item.rowstatus === "N" || item.rowstatus === "U") &&
-          item.rowstatus !== undefined
-        );
-      }
-    );
-    if (dataItem.length === 0 && deletedMainRows.length === 0) return false;
-
-    type TData = {
-      row_status: string[];
-      id: string[];
-      seq: string[];
-      recdt: string[];
-      comment: string[];
-      user_id: string[];
-    };
-
-    let dataArr: TData = {
-      row_status: [],
-      id: [],
-      comment: [],
-      seq: [],
-      recdt: [],
-      user_id: [],
-    };
-
-    dataItem.forEach((item: any, idx: number) => {
-      const { comment, rowstatus, id = "", seq, recdt, insert_userid } = item;
-
-      dataArr.comment.push(comment);
-      dataArr.id.push(id);
-      dataArr.row_status.push(rowstatus);
-      dataArr.seq.push(seq);
-      dataArr.recdt.push(recdt);
-      dataArr.user_id.push(insert_userid);
-    });
-
-    deletedMainRows.forEach((item: any, idx: number) => {
-      const { comment, id = "", seq, recdt, insert_userid } = item;
-
-      dataArr.row_status.push("D");
-      dataArr.comment.push(comment);
-      dataArr.id.push(id);
-      dataArr.seq.push(seq);
-      dataArr.recdt.push(recdt);
-      dataArr.user_id.push(insert_userid);
-    });
-
-    setParaDataSaved((prev) => ({
-      ...prev,
-      work_type: "save",
-      row_status: dataArr.row_status.join("|"),
-      comment: dataArr.comment.join("|"),
-      id: dataArr.id.join("|"),
-      seq: dataArr.seq.join("|"),
-      recdt: dataArr.recdt.join("|"),
-      user_id: dataArr.user_id.join("|"),
-      ref_key: subFilters.contractno,
-    }));
-  };
-
   const [paraDataSaved, setParaDataSaved] = useState({
     work_type: "",
     row_status: "",
@@ -2126,144 +1977,6 @@ const SA_A1200_603W: React.FC = () => {
     if (paraDataSaved.work_type !== "") fetchTodoGridSaved2();
   }, [paraDataSaved]);
 
-  const onCopyClick = () => {
-    mainDataResult2.data.map((item) => {
-      if (item.num > temp2) {
-        temp2 = item.num;
-      }
-    });
-
-    if (mainDataResult2.total > 0) {
-      const selectRow = mainDataResult2.data.filter(
-        (item) => item.num == Object.getOwnPropertyNames(selectedState2)[0]
-      )[0];
-
-      const newDataItem = {
-        [DATA_ITEM_KEY2]: ++temp2,
-        amt: selectRow.amt,
-        contractgb: "B",
-        contractno: selectRow.contractno,
-        itemcd: selectRow.itemcd,
-        itemnm: selectRow.itemnm,
-        ordnum: selectRow.ordnum,
-        qty_t: selectRow.qty_t,
-        quonum: selectRow.quonum,
-        quorev: selectRow.quorev,
-        quoseq: selectRow.quoseq,
-        recdt: selectRow.recdt,
-        remark: selectRow.remark,
-        seq: temp2,
-        taxamt: selectRow.taxamt,
-        testnum: selectRow.testnum,
-        totamt: selectRow.totamt,
-        totqty: selectRow.totqty,
-        week_b: selectRow.week_b,
-        week_r: selectRow.week_r,
-        wonamt: selectRow.wonamt,
-        rowstatus: "N",
-      };
-
-      setMainDataResult2((prev) => {
-        return {
-          data: [newDataItem, ...prev.data],
-          total: prev.total + 1,
-        };
-      });
-      setSelectedState2({ [newDataItem[DATA_ITEM_KEY2]]: true });
-    } else {
-      alert("복사할 데이터가 없습니다.");
-    }
-  };
-
-  const onDeleteClick2 = (e: any) => {
-    let newData: any[] = [];
-    let Object: any[] = [];
-    let Object2: any[] = [];
-    let data;
-    mainDataResult2.data.forEach((item: any, index: number) => {
-      if (!selectedState2[item[DATA_ITEM_KEY2]]) {
-        newData.push(item);
-        Object2.push(index);
-      } else {
-        if (item.contractgb == "A") {
-          alert("계약된 건은 행 삭제가 불가능합니다.");
-          newData.push(item);
-          Object2.push(index);
-        } else {
-          if (!item.rowstatus || item.rowstatus != "N") {
-            const newData2 = item;
-            newData2.rowstatus = "D";
-            deletedMainRows2.push(newData2);
-          }
-          Object.push(index);
-        }
-      }
-    });
-
-    if (Math.min(...Object) < Math.min(...Object2)) {
-      data = mainDataResult2.data[Math.min(...Object2)];
-    } else {
-      data = mainDataResult2.data[Math.min(...Object) - 1];
-    }
-
-    setMainDataResult2((prev) => ({
-      data: newData,
-      total: prev.total - Object.length,
-    }));
-    if (Object.length > 0) {
-      setSelectedState2({
-        [data != undefined ? data[DATA_ITEM_KEY2] : newData[0]]: true,
-      });
-    }
-  };
-
-  const onDeleteClick6 = (e: any) => {
-    let newData: any[] = [];
-    let Object: any[] = [];
-    let Object2: any[] = [];
-    let data;
-    mainDataResult6.data.forEach((item: any, index: number) => {
-      if (!selectedState6[item[DATA_ITEM_KEY6]]) {
-        newData.push(item);
-        Object2.push(index);
-      } else {
-        if (!item.rowstatus || item.rowstatus != "N") {
-          const newData2 = item;
-          newData2.rowstatus = "D";
-          deletedMainRows6.push(newData2);
-        }
-        Object.push(index);
-      }
-    });
-
-    if (Math.min(...Object) < Math.min(...Object2)) {
-      data = mainDataResult6.data[Math.min(...Object2)];
-    } else {
-      data = mainDataResult6.data[Math.min(...Object) - 1];
-    }
-
-    setMainDataResult6((prev) => ({
-      data: newData,
-      total: prev.total - Object.length,
-    }));
-    if (Object.length > 0) {
-      setSelectedState6({
-        [data != undefined ? data[DATA_ITEM_KEY6] : newData[0]]: true,
-      });
-    }
-  };
-
-  const onDeleteClick3 = (e: any) => {
-    if (!window.confirm("계약 삭제 하시겠습니까?")) {
-      return false;
-    }
-
-    setParaData((prev) => ({
-      ...prev,
-      workType: "D",
-    }));
-  };
-
   const getAttachmentsData = (data: IAttachmentData) => {
     if (!Information.attdatnum) {
       setUnsavedAttadatnums((prev) => [...prev, data.attdatnum]);
@@ -2313,6 +2026,13 @@ const SA_A1200_603W: React.FC = () => {
                       value={filters.quokey}
                       onChange={InputChange}
                     />
+                    <ButtonInInput>
+                      <Button
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onProejctWndClick}
+                      />
+                    </ButtonInInput>
                   </td>
                   <th>업체명</th>
                   <td>
@@ -2349,46 +2069,82 @@ const SA_A1200_603W: React.FC = () => {
                         customOptionData={customOptionData}
                         textField="user_name"
                         valueField="user_id"
-                        changeData={ComboBoxChange}
+                        changeData={filterComboBoxChange}
                       />
                     )}
                   </td>
                   <th>계약여부</th>
-                  <td></td>
-                  <th>PJT 실패 여부</th>
-                  <td></td>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionRadioGroup
+                        name="raduseyn"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
                 </tr>
                 <tr>
                   <th>계약목표일</th>
                   <td>
                     <DatePicker
-                      name="date"
-                      // value={filters.quodt}
+                      name="quodt"
+                      value={filters.quodt}
                       format="yyyy-MM-dd"
                       onChange={InputChange}
-                      className="required"
                       placeholder=""
                     />
                   </td>
                   <th>의뢰일자</th>
                   <td>
                     <DatePicker
-                      name="date"
-                      // value={filters.cotracdt}
+                      name="cotracdt"
+                      value={filters.cotracdt}
                       format="yyyy-MM-dd"
                       onChange={InputChange}
-                      className="required"
                       placeholder=""
                     />
                   </td>
                   <th>경과기간</th>
-                  <td></td>
+                  <td>
+                    <NumericTextBox
+                      name="stdt"
+                      width={90}
+                      value={filters.stdt}
+                      defaultValue={0}
+                      onChange={InputChange}
+                    />
+                    ~ 
+                    <NumericTextBox
+                      name="endt"
+                      width={90}
+                      value={filters.endt}
+                      defaultValue={0}
+                      onChange={InputChange}
+                    />
+                  </td>
                   <th>Feasibility</th>
-                  <td></td>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="feasibility"
+                        value={filters.feasibility}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
                   <th>Weight</th>
-                  <td></td>
-                  <th>실패유형</th>
-                  <td></td>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="weight"
+                        value={filters.weight}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
                 </tr>
               </tbody>
             </FilterBox>
@@ -2409,8 +2165,8 @@ const SA_A1200_603W: React.FC = () => {
                     chkperson: userListData.find(
                       (items: any) => items.user_id == row.chkperson
                     )?.user_name,
-                    feasibility: createFeasibilityRows(row),
-                    weight: createWeightRows(row),
+                    feasibility: getLevelToString(row.feasibility),
+                    weight: getLevelToString(row.weight),
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
                   mainDataState
@@ -2619,7 +2375,7 @@ const SA_A1200_603W: React.FC = () => {
                   </tr>
                 </tbody>
               </FormBox>
-              <FormBox style={{ width: "100%" }}>                
+              <FormBox style={{ width: "100%" }}>
                 <GridTitleContainer>
                   <GridTitle>Weight</GridTitle>
                 </GridTitleContainer>
@@ -2716,7 +2472,7 @@ const SA_A1200_603W: React.FC = () => {
                         style={{
                           textAlign: "center",
                         }}
-                        value={Information2.level2}
+                        value={Information2.level}
                         className="readonly"
                       />
                     </td>
@@ -2732,158 +2488,135 @@ const SA_A1200_603W: React.FC = () => {
               border={true}
               style={{ display: isMobile ? "block" : "flex" }}
             >
-              <FormBox>
-                <GridTitleContainer>
-                  <GridTitle>Feasibility</GridTitle>
-                </GridTitleContainer>
-                <tbody>
-                  <tr>
-                    <th>견적차수</th>
-                    <td><Input
-                        name="level1"
-                        type="text"
-                        style={{
-                          textAlign: "center",
-                        }}
-                        value="4"
-                        className="readonly"
-                      />
-                    </td>
-                    <th>견적제출일</th>
-                    <td><Input
-                        name="level1"
-                        type="text"
-                        style={{
-                          textAlign: "center",
-                        }}
-                        value="4"
-                        className="readonly"
-                      /></td>
-                  </tr>                  
-                </tbody>
-                <tbody>
-                  <tr>
-                    <th>물질확보여부</th>
-                    <td>
-                      <BizComponentComboBox
-                        name="materialgb"
-                        value={Information2.materialgb}
-                        bizComponentId="L_SA012_603"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        name="grade1"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(Information2.grade1)}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>분석법 보유 여부</th>
-                    <td>
-                      <BizComponentComboBox
-                        name="assaygbe"
-                        value={Information2.assaygbe}
-                        bizComponentId="L_SA013_603"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        name="grade2"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(Information2.grade2)}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>시작예정</th>
-                    <td>
-                      <BizComponentComboBox
-                        name="startschgb"
-                        value={Information2.startschgb}
-                        bizComponentId="L_SA014_603"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        name="grade3"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(Information2.grade3)}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>재무/투자현황</th>
-                    <td>
-                      <BizComponentComboBox
-                        name="financegb"
-                        value={Information2.financegb}
-                        bizComponentId="L_SA015_603"
-                        bizComponentData={bizComponentData}
-                        changeData={ComboBoxChange}
-                      />
-                    </td>
-                    <td>
-                      <Input
-                        name="grade4"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(Information2.grade4)}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>합계</th>
-                    <td colSpan={2}>
-                      <Input
-                        name="totgrade1"
-                        type="number"
-                        style={{
-                          textAlign: "right",
-                        }}
-                        value={numberWithCommas3(Information2.totgrade1)}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>결과</th>
-                    <td colSpan={2}>
-                      <Input
-                        name="level1"
-                        type="text"
-                        style={{
-                          textAlign: "center",
-                        }}
-                        value={Information2.level1}
-                        className="readonly"
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </FormBox>              
+              <GridContainer style={{ flexDirection: "column" }}>
+                <FormBox>
+                  <tbody>
+                    <tr>
+                      <th>견적차수</th>
+                      <td>
+                        <Input
+                          name="quorev"
+                          type="text"
+                          style={{
+                            textAlign: "center",
+                          }}
+                          value={Information2.quorev}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>견적제출일</th>
+                      <td>
+                        <DatePicker
+                          name="quodt"
+                          value={formatDateToDateString(Information2.quodt)}
+                          format="yyyy-MM-dd"
+                          className="readonly"
+                        />
+                      </td>
+                      <th>활동차수</th>
+                      <td>
+                        <Input
+                          name="commnetcnt"
+                          type="text"
+                          style={{
+                            textAlign: "center",
+                          }}
+                          value={Information2.commentcnt}
+                          className="readonly"
+                        />
+                      </td>
+                      <th>계약목표일</th>
+                      <td>
+                        <DatePicker
+                          name="quodt"
+                          value={formatDateToDateString(Information2.quodt)}
+                          format="yyyy-MM-dd"
+                          placeholder=""
+                          className="readonly"
+                        />
+                      </td>
+                      <th>경과기간</th>
+                      <td>
+                        <Input
+                          name="passdt"
+                          type="text"
+                          style={{
+                            textAlign: "center",
+                          }}
+                          value={Information2.passdt}
+                          className="readonly"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </FormBox>
+                <GridContainer>
+                  <Grid
+                    data={process(
+                      mainDataResult3.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                      })),
+                      mainDataState3
+                    )}
+                    {...mainDataState3}
+                    onDataStateChange={onMainDataStateChange3}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY3}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange3}
+                    fixedScroll={true}
+                    total={mainDataResult3.total}
+                    skip={page3.skip}
+                    take={page3.take}
+                    pageable={true}
+                    onPageChange={pageChange3}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange3}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    onItemChange={ongrdDetailItemChange2}
+                    cellRender={customCellRender2}
+                    rowRender={customRowRender2}
+                    editField={EDIT_FIELD}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList2"]?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                DateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : customField.includes(item.fieldName)
+                                  ? CustomComboBoxCell
+                                  : centerField.includes(item.fieldName)
+                                  ? CenterCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell3
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                  </Grid>
+                </GridContainer>
+              </GridContainer>
             </FormBoxWrap>
           </GridContainerWrap>
         </TabStripTab>
@@ -2894,6 +2627,14 @@ const SA_A1200_603W: React.FC = () => {
           workType={"N"}
           setData={setCustData}
           modal={true}
+        />
+      )}
+      {projectWindowVisible && (
+        <ProjectsWindow
+          setVisible={setProjectWindowVisible}
+          setData={setProjectData}
+          modal={true}
+          pathname="SA_A1200W_603"
         />
       )}
       {attachmentsWindowVisible && (
