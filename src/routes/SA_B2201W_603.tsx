@@ -127,7 +127,6 @@ const SA_B2201W_603: React.FC = () => {
 
   const setLoading = useSetRecoilState(isLoading);
 
-  const location = useLocation();
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -373,8 +372,6 @@ const SA_B2201W_603: React.FC = () => {
       },
     };
     try {
-      console.log("parameters", parameters);
-
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
       data = null;
@@ -397,7 +394,6 @@ const SA_B2201W_603: React.FC = () => {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
           setDetailFilters((prev) => ({
             ...prev,
-            location: rows[0].location,
             quonum: rows[0].quonum,
             isSearch: true,
             pgNum: 1,
@@ -448,9 +444,7 @@ const SA_B2201W_603: React.FC = () => {
       },
     };
 
-    try {
-      console.log("detailParameters", detailParameters);
-
+    try {      
       data = await processApi<any>("procedure", detailParameters);
     } catch (error) {
       data = null;
@@ -459,8 +453,6 @@ const SA_B2201W_603: React.FC = () => {
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      console.log("detailrows", rows);
-
       setDetailDataResult((prev) => {
         return {
           data: rows,
@@ -524,11 +516,9 @@ const SA_B2201W_603: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-    console.log("123",selectedRowData);
     
     setDetailFilters((prev) => ({
       ...prev,
-      quorev: selectedRowData.quorev,
       quonum: selectedRowData.quonum,
       pgNum: 1,
       find_row_value: "",
