@@ -68,6 +68,7 @@ let targetRowIndex: null | number = null;
 
 const AC_A0000W: React.FC = () => {
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
   const [swiper, setSwiper] = useState<SwiperCore>();
 
@@ -928,9 +929,44 @@ const AC_A0000W: React.FC = () => {
   return (
     <>
       {isMobile ? (
-        <GridContainerWrap>
+        <>
+          <TitleContainer>
+            <Title>법인기본</Title>
+
+            <ButtonContainer>
+              <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                  <tbody>
+                    <tr>
+                      <th>사업장</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="location"
+                            value={filters.location}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </FilterBox>
+              </FilterContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="AC_A0000W"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
           <Swiper
-            className="leading_95_Swiper"
+            className="leading_80_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -940,45 +976,8 @@ const AC_A0000W: React.FC = () => {
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`,overflow: "auto" }}
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
-                <TitleContainer>
-                  <Title>법인기본</Title>
-
-                  <ButtonContainer>
-                    {permissions && (
-                      <TopButtons
-                        search={search}
-                        exportExcel={exportExcel}
-                        permissions={permissions}
-                        pathname="AC_A0000W"
-                      />
-                    )}
-                  </ButtonContainer>
-                </TitleContainer>
-                <FilterContainer>
-                  <FilterBox
-                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                  >
-                    <tbody>
-                      <tr>
-                        <th>사업장</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="location"
-                              value={filters.location}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange}
-                            />
-                          )}
-                        </td>
-                        <th></th>
-                        <td></td>
-                      </tr>
-                    </tbody>
-                  </FilterBox>
-                </FilterContainer>
                 <GridTitleContainer>
                   <ButtonContainer>
                     <Button
@@ -1014,7 +1013,7 @@ const AC_A0000W: React.FC = () => {
                   fileName="법인기본"
                 >
                   <Grid
-                    style={{ height: "70vh" }}
+                    style={{ height: `${deviceHeight * 0.8}px` }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1110,13 +1109,15 @@ const AC_A0000W: React.FC = () => {
                 </Button>
               </div>
               <GridContainer
-                style={{
-                  minHeight: "70vh",
-                  width: `${deviceWidth - 30}px`,
-                 overflow: "auto",
-                }}
+                style={{ width: `${deviceWidth - 30}px`}}
               >
-                <FormBoxWrap border={true}>
+                <FormBoxWrap border={true}
+                style={{
+                  height: `${deviceHeight * 0.8}px`,
+                  width: "100%",
+                  overflow: "scroll",
+                }}
+                >
                   <FormBox>
                     <tbody>
                       <tr>
@@ -1461,7 +1462,7 @@ const AC_A0000W: React.FC = () => {
               </GridContainer>
             </SwiperSlide>
           </Swiper>
-        </GridContainerWrap>
+        </>
       ) : (
         <>
           <TitleContainer>

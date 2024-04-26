@@ -878,6 +878,7 @@ const SA_A1200_603W: React.FC = () => {
                   <td>
                     <Input
                       name="quokey"
+                      name="quokey"
                       type="text"
                       value={filters.quokey}
                       onChange={InputChange}
@@ -1368,7 +1369,7 @@ const SA_A1200_603W: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th>견적차수</th>
+                      <th style={{ textAlign: "right"}}>견적차수</th>
                       <td>
                         <Input
                           name="quorev"
@@ -1380,7 +1381,7 @@ const SA_A1200_603W: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                      <th>견적제출일</th>
+                      <th style={{ textAlign: "right"}}>견적제출일</th>
                       <td>
                         <Input
                           name="submitdt"
@@ -1392,7 +1393,7 @@ const SA_A1200_603W: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                      <th>활동차수</th>
+                      <th style={{ textAlign: "right"}}>활동차수</th>
                       <td>
                         <Input
                           name="seq"
@@ -1404,7 +1405,7 @@ const SA_A1200_603W: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                      <th>계약목표일</th>
+                      <th style={{ textAlign: "right"}}>계약목표일</th>
                       <td>
                         <Input
                           name="conplandt"
@@ -1416,7 +1417,7 @@ const SA_A1200_603W: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                      <th>경과기간</th>
+                      <th style={{ textAlign: "right"}}>경과기간</th>
                       <td>
                         <Input
                           name="passdt"

@@ -343,6 +343,7 @@ const BA_A0020: React.FC = () => {
   const [page2, setPage2] = useState(initialPageState);
   const [page3, setPage3] = useState(initialPageState);
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight -50;
   let isMobile = deviceWidth <= 1200;
 
   // 삭제할 첨부파일 리스트를 담는 함수
@@ -3641,7 +3642,7 @@ const BA_A0020: React.FC = () => {
       {isMobile ? (
         <GridContainerWrap>
           <Swiper
-            className="leading_80_Swiper"
+            className="leading_78_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -3649,7 +3650,7 @@ const BA_A0020: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="leading_PDA">
+            <SwiperSlide key={0} className="leading_PDA_custom">
               <GridContainer
                 style={{ width: `${deviceWidth - 30}px`,overflow: "auto" }}
               >
@@ -3674,7 +3675,7 @@ const BA_A0020: React.FC = () => {
                   {showMap ? (
                     <div
                       style={{
-                        height: "72vh",
+                        height: `${deviceHeight * 0.75}px` ,
                         marginTop: "5px",
                         width: `${deviceWidth - 30}px`,
                       }}
@@ -3682,7 +3683,7 @@ const BA_A0020: React.FC = () => {
                     ></div>
                   ) : (
                     <Grid
-                      style={{ height: "72vh", width: `${deviceWidth - 30}px` }}
+                      style={{ height: `${deviceHeight * 0.75}px` , width: `${deviceWidth - 30}px` }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -3754,7 +3755,7 @@ const BA_A0020: React.FC = () => {
             </SwiperSlide>
             <SwiperSlide
               key={1}
-              className="leading_PDA"
+              className="leading_PDA_costom"
               style={{ display: "flex", flexDirection: "column" }}
             >
               <div
@@ -3777,9 +3778,7 @@ const BA_A0020: React.FC = () => {
               </div>
               <GridContainer
                 style={{
-                  minHeight: "70vh",
                   width: `${deviceWidth - 30}px`,
-                 overflow: "auto",
                 }}
               >
                 <TabStrip
@@ -3789,7 +3788,6 @@ const BA_A0020: React.FC = () => {
                 >
                   <TabStripTab title="상세정보">
                     <GridTitleContainer>
-                      <GridTitle>상세정보</GridTitle>
                       <ButtonContainer>
                         <Button
                           onClick={onAddClick2}
@@ -3817,7 +3815,11 @@ const BA_A0020: React.FC = () => {
                       </ButtonContainer>
                     </GridTitleContainer>
                     <FormBoxWrap
-                      style={{ height: isMobile ? "100%" : "71.5vh" }}
+                      style={{
+                        height: `${deviceHeight * 0.67}px`,
+                        width: "100%",
+                        overflow: "scroll",
+                      }}
                     >
                       <FormBox>
                         <tbody>
@@ -4408,7 +4410,7 @@ const BA_A0020: React.FC = () => {
                           fileName="업체관리"
                         >
                           <Grid
-                            style={{ height: "71.5vh" }}
+                            style={{ height: `${deviceHeight * 0.52}px` }}
                             data={process(
                               subDataResult.data.map((row) => ({
                                 ...row,
@@ -4546,7 +4548,7 @@ const BA_A0020: React.FC = () => {
                         fileName="업체관리"
                       >
                         <Grid
-                          style={{ height: "71.5vh" }}
+                          style={{ height: `${deviceHeight * 0.52}px` }}
                           data={process(
                             subDataResult2.data.map((row) => ({
                               ...row,

@@ -85,6 +85,11 @@ const monthField = [
 ];
 
 const CM_B8100W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight -50;
+
+  let isMobile = deviceWidth <= 1200;
+
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -445,7 +450,7 @@ const CM_B8100W: React.FC = () => {
           fileName="사용자별 근무현황"
         >
           <Grid
-            style={{ height: "81.6vh" }}
+            style={{ height: isMobile? `${deviceHeight * 0.75}px` : "81.6vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

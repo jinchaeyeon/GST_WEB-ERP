@@ -354,7 +354,10 @@ input.readonly {
   width: 100% !important;
   height: 90vh !important;
 }
-
+.leading_78_Swiper {
+  width: 100% !important;
+  height: 78vh !important;
+}
 .leading_75_Swiper {
   width: 100% !important;
   height: 75vh !important;
