@@ -33,6 +33,7 @@ import {
   Checkbox,
   Input,
   InputChangeEvent,
+  NumericTextBox,
   TextArea,
 } from "@progress/kendo-react-inputs";
 import { TabStrip, TabStripTab } from "@progress/kendo-react-layout";
@@ -46,7 +47,7 @@ import React, {
   useState,
 } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   ButtonContainer,
   ButtonInGridInput,
@@ -104,6 +105,7 @@ import {
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
+import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
@@ -112,7 +114,14 @@ import SA_A1000_603W_Design3_Window from "../components/Windows/SA_A1000_603W_De
 import SA_A1000_603W_Design4_Window from "../components/Windows/SA_A1000_603W_Design4_Window";
 import SA_A1000_603W_Design_Window from "../components/Windows/SA_A1000_603W_Design_Window";
 import { useApi } from "../hooks/api";
-import { isLoading } from "../store/atoms";
+import { IAttachmentData } from "../hooks/interfaces";
+import {
+  deletedAttadatnumsState,
+  deletedNameState,
+  isLoading,
+  unsavedAttadatnumsState,
+  unsavedNameState,
+} from "../store/atoms";
 import { gridList } from "../store/columns/SA_A1000_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
@@ -525,6 +534,16 @@ const SA_A1000_603W: React.FC = () => {
   const [editIndex, setEditIndex] = useState<number | undefined>();
   const [editedField, setEditedField] = useState("");
   const [worktype, setWorktype] = useState<"N" | "U">("U");
+  const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
+
+  const [unsavedName, setUnsavedName] = useRecoilState(unsavedNameState);
+
+  const [deletedName, setDeletedName] = useRecoilState(deletedNameState);
+
+  // 서버 업로드는 되었으나 DB에는 저장안된 첨부파일 리스트
+  const [unsavedAttadatnums, setUnsavedAttadatnums] = useRecoilState(
+    unsavedAttadatnumsState
+  );
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_A1000_603W", setMessagesData);
@@ -1234,6 +1253,9 @@ const SA_A1000_603W: React.FC = () => {
   const search = () => {
     resetAllGrid();
     setTabSelected(0);
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+    }
     setFilters((prev: any) => ({
       ...prev,
       isSearch: true,
@@ -1261,6 +1283,10 @@ const SA_A1000_603W: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const handleSelectTab = (e: any) => {
+    if (unsavedName.length > 0) {
+      setDeletedName(unsavedName);
+      setUnsavedAttadatnums([]);
+    }
     if (e.selected == 0) {
       setFilters((prev) => ({
         ...prev,
@@ -1379,7 +1405,7 @@ const SA_A1000_603W: React.FC = () => {
         ...prev,
         [name]: value == true ? "A" : "",
       }));
-    } else if (name == "glp2" || name == "guid2"  || name == "agency2") {
+    } else if (name == "glp2" || name == "guid2" || name == "agency2") {
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "B" : "",
@@ -1389,12 +1415,12 @@ const SA_A1000_603W: React.FC = () => {
         ...prev,
         [name]: value == true ? "C" : "",
       }));
-    } else if (name == "glp4" || name == "guid4"  || name == "agency4") {
+    } else if (name == "glp4" || name == "guid4" || name == "agency4") {
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "D" : "",
       }));
-    } else if (name == "glp5" || name == "guid5"  || name == "agency5") {
+    } else if (name == "glp5" || name == "guid5" || name == "agency5") {
       setInformation((prev) => ({
         ...prev,
         [name]: value == true ? "E" : "",
@@ -1429,15 +1455,17 @@ const SA_A1000_603W: React.FC = () => {
         ...prev,
         [name]: value == true ? "J" : "",
       }));
-    } else if (name == "translate4" || name == "report4") {
+    } else if (name == "report4") {
       setInformation((prev) => ({
         ...prev,
-        [name]: value == true ? "P" : "",
+        [name]: value == true ? "T" : "",
+        report5: value == false ? "" : " ",
       }));
-    } else if (name == "report5" || name == "translate5") {
+    } else if (name == "translate4") {
       setInformation((prev) => ({
         ...prev,
-        [name]: value == true ? "B" : "",
+        [name]: value == true ? "T" : "",
+        translate5: value == false ? "" : " ",
       }));
     } else {
       setInformation((prev) => ({
@@ -1459,7 +1487,8 @@ const SA_A1000_603W: React.FC = () => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [custWindowVisible3, setCustWindowVisible3] = useState<boolean>(false);
-
+  const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
+    useState<boolean>(false);
   const onCustWndClick = () => {
     setCustWindowVisible(true);
   };
@@ -1468,6 +1497,20 @@ const SA_A1000_603W: React.FC = () => {
   };
   const onCustWndClick3 = () => {
     setCustWindowVisible3(true);
+  };
+  const onAttachmentsWndClick = () => {
+    setAttachmentsWindowVisible(true);
+  };
+  const getAttachmentsData = (data: IAttachmentData) => {
+    setInformation((prev) => {
+      return {
+        ...prev,
+        attdatnum: data.attdatnum,
+        files:
+          data.original_name +
+          (data.rowCount > 1 ? " 등 " + String(data.rowCount) + "건" : ""),
+      };
+    });
   };
   interface ICustData {
     address: string;
@@ -3832,6 +3875,11 @@ const SA_A1000_603W: React.FC = () => {
       if (worktype == "N") {
         setTabSelected(0);
       }
+
+      if (ParaData.workType == "D") {
+        setDeletedAttadatnums([Information.attdatnum]);
+      }
+      setUnsavedName([]);
       setFilters((prev) => ({
         ...prev,
         find_row_value: data.returnString,
@@ -5220,7 +5268,7 @@ const SA_A1000_603W: React.FC = () => {
                     />
                   </td>
                   <td>
-                    {Information.etcguid != ""  ? (
+                    {Information.etcguid != "" ? (
                       <Input
                         name="etcguid"
                         type="text"
@@ -5296,7 +5344,7 @@ const SA_A1000_603W: React.FC = () => {
                     />
                   </td>
                   <td>
-                    {Information.etcglp != ""  ? (
+                    {Information.etcglp != "" ? (
                       <Input
                         name="etcglp"
                         type="text"
@@ -5346,59 +5394,106 @@ const SA_A1000_603W: React.FC = () => {
                   </td>
                   <td>
                     <Checkbox
-                      title="제본"
-                      name="report5"
-                      label={"제본"}
-                      value={Information.report5 == "B" ? true : false}
+                      title="기타"
+                      name="report4"
+                      label={"기타"}
+                      value={Information.report4 == "T" ? true : false}
                       onChange={InputChange}
                     />
                   </td>
+                  <td>
+                    {Information.report4 == "T" ? (
+                      <Input
+                        name="report5"
+                        type="text"
+                        value={Information.report5}
+                        onChange={InputChange}
+                      />
+                    ) : (
+                      <Input
+                        name="report5"
+                        type="text"
+                        value={Information.report5}
+                        className="readonly"
+                      />
+                    )}
+                  </td>
                   <th>제본수</th>
-                  <td></td>
+                  <td>
+                    <NumericTextBox
+                      name="reportcnt"
+                      value={Information.reportcnt}
+                      format={"0"}
+                      onChange={InputChange}
+                    />
+                  </td>
                   <th></th>
                   <td></td>
                 </tr>
                 <tr>
                   <th>번역보고서</th>
-                  <td colSpan={5}>
+                  <td>
                     <Checkbox
-                      title="국문"
+                      title="한국어"
                       name="translate1"
-                      label={"국문"}
+                      label={"한국어"}
                       value={Information.translate1 == "K" ? true : false}
                       onChange={InputChange}
                     />
+                  </td>
+                  <td>
                     <Checkbox
-                      title="영문"
+                      title="영어"
                       name="translate2"
-                      label={"영문"}
+                      label={"영어"}
                       value={Information.translate2 == "E" ? true : false}
                       onChange={InputChange}
                     />
+                  </td>
+                  <td>
                     <Checkbox
-                      title="일문"
+                      title="일본어"
                       name="translate3"
-                      label={"일문"}
+                      label={"일본어"}
                       value={Information.translate3 == "J" ? true : false}
                       onChange={InputChange}
                     />
+                  </td>
+                  <td>
                     <Checkbox
-                      title="PDF"
+                      title="기타"
                       name="translate4"
-                      label={"PDF"}
-                      value={Information.translate4 == "P" ? true : false}
-                      onChange={InputChange}
-                    />
-                    <Checkbox
-                      title="제본"
-                      name="translate5"
-                      label={"제본"}
-                      value={Information.translate5 == "B" ? true : false}
+                      label={"기타"}
+                      value={Information.translate4 == "T" ? true : false}
                       onChange={InputChange}
                     />
                   </td>
+                  <td>
+                    {Information.translate4 == "T" ? (
+                      <Input
+                        name="translate5"
+                        type="text"
+                        value={Information.translate5}
+                        onChange={InputChange}
+                      />
+                    ) : (
+                      <Input
+                        name="translate5"
+                        type="text"
+                        value={Information.translate5}
+                        className="readonly"
+                      />
+                    )}
+                  </td>
                   <th>제본수</th>
-                  <td></td>
+                  <td>
+                    <NumericTextBox
+                      name="transreportcnt"
+                      value={Information.transreportcnt}
+                      format={"0"}
+                      onChange={InputChange}
+                    />
+                  </td>
                   <th></th>
                   <td></td>
                 </tr>
@@ -5417,7 +5512,24 @@ const SA_A1000_603W: React.FC = () => {
                 </tr>
                 <tr>
                   <th>첨부파일</th>
-                  <td colSpan={7}></td>
+                  <td colSpan={7}>
+                    <td>
+                      <Input
+                        name="files"
+                        type="text"
+                        value={Information.files}
+                        className="readonly"
+                      />
+                      <ButtonInInput>
+                        <Button
+                          type={"button"}
+                          onClick={onAttachmentsWndClick}
+                          icon="more-horizontal"
+                          fillMode="flat"
+                        />
+                      </ButtonInInput>
+                    </td>
+                  </td>
                   <th></th>
                   <td></td>
                 </tr>
@@ -6367,6 +6479,14 @@ const SA_A1000_603W: React.FC = () => {
           setVisible={setPrsnnumWindowVisible}
           workType="N"
           setData={setPrsnnumData}
+          modal={true}
+        />
+      )}
+      {attachmentsWindowVisible && (
+        <AttachmentsWindow
+          setVisible={setAttachmentsWindowVisible}
+          setData={getAttachmentsData}
+          para={Information.attdatnum}
           modal={true}
         />
       )}

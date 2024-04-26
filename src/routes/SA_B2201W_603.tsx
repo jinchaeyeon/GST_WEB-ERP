@@ -103,7 +103,7 @@ const SA_B2201W_603: React.FC = () => {
       take: initialPageState.take,
     });
   };
-
+ 
   const pageChange2 = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -121,7 +121,7 @@ const SA_B2201W_603: React.FC = () => {
 
   const processApi = useApi();
   const DATA_ITEM_KEY = "num";
-  const DETAIL_DATA_ITEM_KEY = "ordseq";
+  const DETAIL_DATA_ITEM_KEY = "num";
   const idGetter = getter(DATA_ITEM_KEY);
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
 
@@ -403,6 +403,9 @@ const SA_B2201W_603: React.FC = () => {
             pgNum: 1,
           }));
         
+      } else {
+        setPage2(initialPageState)
+        setDetailDataResult(process([], detailDataState));
       }
     } else {
       console.log("[오류 발생]");
@@ -456,7 +459,7 @@ const SA_B2201W_603: React.FC = () => {
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
-      console.log("detailrows", data);
+      console.log("detailrows", rows);
 
       setDetailDataResult((prev) => {
         return {
@@ -867,7 +870,7 @@ const SA_B2201W_603: React.FC = () => {
             ref={(exporter) => {
               _export2 = exporter;
             }}
-            fileName="수주처리"
+            fileName="수주잔고조회"
           >
             <Grid
               style={{ height: "78vh" }}
@@ -891,6 +894,8 @@ const SA_B2201W_603: React.FC = () => {
               fixedScroll={true}
               total={detailDataResult.total}
               pageable={true}
+              skip={page2.skip}
+              take={page2.take}
               onPageChange={pageChange2}
               //원하는 행 위치로 스크롤 기능
               rowHeight={30}
@@ -937,7 +942,7 @@ const SA_B2201W_603: React.FC = () => {
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
-          pathname="SA_AB1101W_603"
+          pathname="SA_B2201W_603"
         />
       )}
       {gridList.map((grid: TGrid) =>
