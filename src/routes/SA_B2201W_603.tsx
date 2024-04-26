@@ -58,19 +58,20 @@ import { ICustData } from "../hooks/interfaces";
 import { isLoading } from "../store/atoms";
 import { gridList } from "../store/columns/SA_B2201W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
-import { useHistory, useLocation } from "react-router-dom";
+
 
 const dateField = [
   "orddt",
   "contractno",
-  "custnm",
-  "custprsnnm",
   "chkperson",
   "materialtype",
 ];
-const numberField = ["cnt", "conamt", "stramt", "janamt"];
-const numberField2 = ["conamt", "stramt", "janamt"];
+const DateField = ["orddt"];
+const numberField = ["cnt", "amt","conamt", "stramt", "janamt"];
+const numberField2 = [ "amt", "stramt", "janamt"];
+
+
+
 const SA_B2201W_603: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
@@ -178,14 +179,17 @@ const SA_B2201W_603: React.FC = () => {
   };
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   //   물질분류, 영업담당자
-  UseBizComponent("L_SA001_603, L_sysUserMaster_001", setBizComponentData);
+  UseBizComponent("L_SA001_603, L_sysUserMaster_001, L_SA002", setBizComponentData);
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
   const [materialtypeListData, setMaterialtypeListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-
+  const [ordstsListData, setOrdstsListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  
   useEffect(() => {
     if (bizComponentData.length > 0) {
       const userQueryStr = getQueryFromBizComponent(
@@ -193,12 +197,15 @@ const SA_B2201W_603: React.FC = () => {
           (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
-
+      const ordstsQueryStr = getQueryFromBizComponent(
+        bizComponentData.find((item: any) => item.bizComponentId == "L_SA002")
+      );
       const materialtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
           (item: any) => item.bizComponentId == "L_SA001_603"
         )
       );
+      fetchQueryData(ordstsQueryStr, setOrdstsListData);
       fetchQueryData(userQueryStr, setUserListData);
       fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
     }
@@ -354,7 +361,7 @@ const SA_B2201W_603: React.FC = () => {
     setLoading(true);
     //조회조건 파라미터
     const parameters: Iparameters = {
-      procedureName: "SA_B2201W_603",
+      procedureName: "SA_B2201W_603_Q",
       pageNumber: filters.pgNum,
       pageSize: filters.pgSize,
       parameters: {
@@ -426,7 +433,7 @@ const SA_B2201W_603: React.FC = () => {
     setLoading(true);
 
     const detailParameters: Iparameters = {
-      procedureName: "SA_B2201W_603",
+      procedureName: "SA_B2201W_603_Q",
       pageNumber: detailFilters.pgNum,
       pageSize: detailFilters.pgSize,
       parameters: {
@@ -867,6 +874,9 @@ const SA_B2201W_603: React.FC = () => {
               data={process(
                 detailDataResult.data.map((row) => ({
                   ...row,
+                  ordsts: ordstsListData.find(
+                    (item: any) => item.sub_code == row.ordsts
+                  )?.code_name,
                   [SELECTED_FIELD]: detailSelectedState[detailIdGetter(row)],
                 })),
                 detailDataState
@@ -909,7 +919,7 @@ const SA_B2201W_603: React.FC = () => {
                         cell={
                           numberField.includes(item.fieldName)
                             ? NumberCell
-                            : dateField.includes(item.fieldName)
+                            : DateField.includes(item.fieldName)
                             ? DateCell
                             : undefined
                         }
