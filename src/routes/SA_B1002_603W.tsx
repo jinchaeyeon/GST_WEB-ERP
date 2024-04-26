@@ -655,7 +655,7 @@ const SA_B1002_603W: React.FC = () => {
           ref={(exporter) => {
             _export = exporter;
           }}
-          fileName="계약현황조회"
+          fileName="견적현황조회"
         >
           <Grid
             style={{ height: "70vh" }}
@@ -732,7 +732,7 @@ const SA_B1002_603W: React.FC = () => {
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
           modal={true}
-          pathname="SA_AB1101W_603"
+          pathname="SA_B1002_603W"
         />
       )}
       {gridList.map((grid: TGrid) =>

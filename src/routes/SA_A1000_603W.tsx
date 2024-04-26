@@ -103,6 +103,8 @@ import {
   SELECTED_FIELD,
 } from "../components/CommonString";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
+import BizComponentRadioGroup from "../components/RadioGroups/BizComponentRadioGroup";
+import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
@@ -654,7 +656,7 @@ const SA_A1000_603W: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent(
-    "L_HU005, L_SA018_603,L_SA017_603,L_SA016_603L_SA015_603, L_SA014_603, L_SA013_603, L_SA012_603, L_BA016_603, L_SA002, L_BA171, L_BA057, L_Requestgb, L_SA019_603, L_SA001_603, L_SA004, L_SA016, L_CM501_603, L_SA011_603, L_CM500_603, L_sysUserMaster_001",
+    "R_YN4, L_HU005, L_SA018_603,L_SA017_603,L_SA016_603L_SA015_603, L_SA014_603, L_SA013_603, L_SA012_603, L_BA016_603, L_SA002, L_BA171, L_BA057, L_Requestgb, L_SA019_603, L_SA001_603, L_SA004, L_SA016, L_CM501_603, L_SA011_603, L_CM500_603, L_sysUserMaster_001",
     setBizComponentData
   );
   const [materialgbListData, setMaterialgbListData] = React.useState([
@@ -1476,6 +1478,15 @@ const SA_A1000_603W: React.FC = () => {
   };
 
   const ComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    setInformation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const RadioChange = (e: any) => {
     const { name, value } = e;
 
     setInformation((prev) => ({
@@ -3307,8 +3318,9 @@ const SA_A1000_603W: React.FC = () => {
       transreportcnt: 0,
       attdatnum: "",
       files: "",
-      assayyn: "",
-      assaydt: null,
+      assayyn: defaultOption.find((item: any) => item.id == "assayyn")
+        ?.valueCode,
+      assaydt: setDefaultDate2(customOptionData, "assaydt"),
       glp1: "",
       glp2: "",
       glp3: "",
@@ -3646,7 +3658,7 @@ const SA_A1000_603W: React.FC = () => {
           "|" +
           (Information.translate4 == "" ? "N" : Information.translate4) +
           "|" +
-          (Information.translate5 == "" ? "N" : Information.translate5);
+          Information.translate5;
 
         const report =
           (Information.report1 == "" ? "N" : Information.report1) +
@@ -3657,7 +3669,7 @@ const SA_A1000_603W: React.FC = () => {
           "|" +
           (Information.report4 == "" ? "N" : Information.report4) +
           "|" +
-          (Information.report5 == "" ? "N" : Information.report5);
+          Information.report5;
 
         if (dataItem.length == 0 && deletedMainRows2.length == 0) {
           setParaData({
@@ -3819,7 +3831,9 @@ const SA_A1000_603W: React.FC = () => {
             transreportcnt: Information.transreportcnt,
             attdatnum: Information.attdatnum,
             assayyn: Information.assayyn,
-            assaydt: Information.assaydt,
+            assaydt: isValidDate(Information.assaydt)
+              ? convertDateToStr(Information.assaydt)
+              : "",
             report: report,
             rcvcustnm: Information.rcvcustnm,
             rcvcustprsnnm: Information.rcvcustprsnnm,
@@ -5418,7 +5432,7 @@ const SA_A1000_603W: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>제본수</th>
+                  <td>제본수</td>
                   <td>
                     <NumericTextBox
                       name="reportcnt"
@@ -5485,7 +5499,7 @@ const SA_A1000_603W: React.FC = () => {
                       />
                     )}
                   </td>
-                  <th>제본수</th>
+                  <td>제본수</td>
                   <td>
                     <NumericTextBox
                       name="transreportcnt"
@@ -5513,22 +5527,20 @@ const SA_A1000_603W: React.FC = () => {
                 <tr>
                   <th>첨부파일</th>
                   <td colSpan={7}>
-                    <td>
-                      <Input
-                        name="files"
-                        type="text"
-                        value={Information.files}
-                        className="readonly"
+                    <Input
+                      name="files"
+                      type="text"
+                      value={Information.files}
+                      className="readonly"
+                    />
+                    <ButtonInInput>
+                      <Button
+                        type={"button"}
+                        onClick={onAttachmentsWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
                       />
-                      <ButtonInInput>
-                        <Button
-                          type={"button"}
-                          onClick={onAttachmentsWndClick}
-                          icon="more-horizontal"
-                          fillMode="flat"
-                        />
-                      </ButtonInInput>
-                    </td>
+                    </ButtonInInput>
                   </td>
                   <th></th>
                   <td></td>
@@ -5555,9 +5567,36 @@ const SA_A1000_603W: React.FC = () => {
                     />
                   </td>
                   <th>분석법 필요여부</th>
-                  <td></td>
+                  <td>
+                    {worktype == "N"
+                      ? customOptionData !== null && (
+                          <CustomOptionRadioGroup
+                            name="assayyn"
+                            type="new"
+                            customOptionData={customOptionData}
+                            changeData={RadioChange}
+                          />
+                        )
+                      : bizComponentData !== null && (
+                          <BizComponentRadioGroup
+                            name="assayyn"
+                            value={Information.assayyn}
+                            bizComponentId="R_YN4"
+                            bizComponentData={bizComponentData}
+                            changeData={RadioChange}
+                          />
+                        )}
+                  </td>
                   <th>분석법 제공예정일</th>
-                  <td></td>
+                  <td>
+                    <DatePicker
+                      name="assaydt"
+                      value={Information.assaydt}
+                      format="yyyy-MM-dd"
+                      onChange={InputChange}
+                      placeholder=""
+                    />
+                  </td>
                   <th></th>
                   <td></td>
                 </tr>
