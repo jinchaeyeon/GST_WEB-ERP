@@ -48,8 +48,8 @@ export const gridList: Array<TGrid> = [
         width: 150,
       },
       {
-        id: "col_extra_field1_list",
-        field: "extra_field1",
+        id: "col_seq_list",
+        field: "seq",
         caption: "활동차수",
         width: 150,
       },
@@ -64,19 +64,31 @@ export const gridList: Array<TGrid> = [
         field: "weight",
         caption: "Weight",
         width: 120,
+      },      
+    ],
+  },
+  {
+    // 코멘트
+    gridName: "grdList2",
+    columns: [
+      {
+        id: "col_num_com",
+        field: "num",
+        caption: "활동차수",
+        width: 100,
       },
       {
-        id: "col_extra_field2_list",
-        field: "extra_field2",
-        caption: "PJT 실패 여부",
+        id: "col_recdt_com",
+        field: "recdt",
+        caption: "활동날짜",
         width: 120,
       },
       {
-        id: "col_materialnm_list",
-        field: "materialnm",
-        caption: "실패유형",
-        width: 150,
-      },      
+        id: "col_comment_com",
+        field: "comment",
+        caption: "활동내역",
+        width: 200,
+      },
     ],
   },
 ];
