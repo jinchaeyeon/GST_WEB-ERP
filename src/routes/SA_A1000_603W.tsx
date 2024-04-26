@@ -167,7 +167,19 @@ const dateField = [
   "pubdt",
 ];
 const RadioField = ["glpyn"];
-const numberField = ["quoseq", "wonamt"];
+const numberField = [
+  "quoseq",
+  "quounp",
+  "margin",
+  "marginamt",
+  "discount",
+  "discountamt",
+  "finalquowonamt",
+  "week_b",
+  "week_r",
+  "qty_t",
+  "totqty",
+];
 const itemField = ["itemcd"];
 const colorField = ["status"];
 const centerField = ["passdt", "quorev", "itemcnt"];
@@ -1590,7 +1602,7 @@ const SA_A1000_603W: React.FC = () => {
     yn: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   const [filters2, setFilters2] = useState({
@@ -2158,19 +2170,23 @@ const SA_A1000_603W: React.FC = () => {
         "@p_work_type": "CONTRACT",
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
-        "@p_custcd": "",
-        "@p_custnm": "",
-        "@p_finyn": "",
-        "@p_quotype": "",
-        "@p_materialtype": "",
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_finyn": filters.finyn,
+        "@p_quotype": filters.quotype,
+        "@p_materialtype": filters.materialtype,
         "@p_quonum": filters3.quonum,
         "@p_quorev": filters3.quorev,
-        "@p_quoseq": 0,
-        "@p_frdt": "",
-        "@p_smperson": "",
-        "@p_smpersonnm": "",
+        "@p_quoseq": filters.quoseq,
         "@p_status": "",
-        "@p_find_row_value": "",
+        "@p_extra_field2": filters.extra_field2,
+        "@p_smperson": filters.smpersonnm == "" ? "" : filters.smperson,
+        "@p_smpersonnm": filters.smpersonnm,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_in_frdt": convertDateToStr(filters.infrdt),
+        "@p_in_todt": convertDateToStr(filters.intodt),
+        "@p_find_row_value": filters.find_row_value,
       },
     };
 
@@ -2278,19 +2294,23 @@ const SA_A1000_603W: React.FC = () => {
         "@p_work_type": "COUNSEL",
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
-        "@p_custcd": "",
-        "@p_custnm": "",
-        "@p_finyn": "",
-        "@p_quotype": "",
-        "@p_materialtype": "",
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_finyn": filters.finyn,
+        "@p_quotype": filters.quotype,
+        "@p_materialtype": filters.materialtype,
         "@p_quonum": filters4.quonum,
         "@p_quorev": filters4.quorev,
-        "@p_quoseq": 0,
-        "@p_frdt": "",
-        "@p_smperson": "",
-        "@p_smpersonnm": "",
+        "@p_quoseq": filters.quoseq,
         "@p_status": "",
-        "@p_find_row_value": "",
+        "@p_extra_field2": filters.extra_field2,
+        "@p_smperson": filters.smpersonnm == "" ? "" : filters.smperson,
+        "@p_smpersonnm": filters.smpersonnm,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_in_frdt": convertDateToStr(filters.infrdt),
+        "@p_in_todt": convertDateToStr(filters.intodt),
+        "@p_find_row_value": filters.find_row_value,
       },
     };
 
@@ -2345,19 +2365,23 @@ const SA_A1000_603W: React.FC = () => {
         "@p_work_type": "CONSULT",
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
-        "@p_custcd": "",
-        "@p_custnm": "",
-        "@p_finyn": "",
-        "@p_quotype": "",
-        "@p_materialtype": "",
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_finyn": filters.finyn,
+        "@p_quotype": filters.quotype,
+        "@p_materialtype": filters.materialtype,
         "@p_quonum": filters5.quonum,
         "@p_quorev": filters5.quorev,
-        "@p_quoseq": 0,
-        "@p_frdt": "",
-        "@p_smperson": "",
-        "@p_smpersonnm": "",
+        "@p_quoseq": filters.quoseq,
         "@p_status": "",
-        "@p_find_row_value": "",
+        "@p_extra_field2": filters.extra_field2,
+        "@p_smperson": filters.smpersonnm == "" ? "" : filters.smperson,
+        "@p_smpersonnm": filters.smpersonnm,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_in_frdt": convertDateToStr(filters.infrdt),
+        "@p_in_todt": convertDateToStr(filters.intodt),
+        "@p_find_row_value": filters.find_row_value,
       },
     };
 
@@ -2412,19 +2436,23 @@ const SA_A1000_603W: React.FC = () => {
         "@p_work_type": "QUOTATION",
         "@p_orgdiv": filters.orgdiv,
         "@p_location": filters.location,
-        "@p_custcd": "",
-        "@p_custnm": "",
-        "@p_finyn": "",
-        "@p_quotype": "",
-        "@p_materialtype": "",
+        "@p_custcd": filters.custnm == "" ? "" : filters.custcd,
+        "@p_custnm": filters.custnm,
+        "@p_finyn": filters.finyn,
+        "@p_quotype": filters.quotype,
+        "@p_materialtype": filters.materialtype,
         "@p_quonum": filters6.quonum,
         "@p_quorev": filters6.quorev,
-        "@p_quoseq": 0,
-        "@p_frdt": "",
-        "@p_smperson": "",
-        "@p_smpersonnm": "",
+        "@p_quoseq": filters.quoseq,
         "@p_status": "",
-        "@p_find_row_value": "",
+        "@p_extra_field2": filters.extra_field2,
+        "@p_smperson": filters.smpersonnm == "" ? "" : filters.smperson,
+        "@p_smpersonnm": filters.smpersonnm,
+        "@p_frdt": convertDateToStr(filters.frdt),
+        "@p_todt": convertDateToStr(filters.todt),
+        "@p_in_frdt": convertDateToStr(filters.infrdt),
+        "@p_in_todt": convertDateToStr(filters.intodt),
+        "@p_find_row_value": filters.find_row_value,
       },
     };
 
@@ -2643,13 +2671,13 @@ const SA_A1000_603W: React.FC = () => {
 
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
-    if (filters.isSearch && permissions !== null) {
+    if (filters.isSearch && permissions !== null && customOptionData !== null) {
       const _ = require("lodash");
       const deepCopiedFilters = _.cloneDeep(filters);
       setFilters((prev) => ({ ...prev, find_row_value: "", isSearch: false })); // 한번만 조회되도록
       fetchMainGrid(deepCopiedFilters);
     }
-  }, [filters, permissions]);
+  }, [filters, permissions, customOptionData]);
 
   useEffect(() => {
     if (filters2.isSearch) {
@@ -2882,6 +2910,27 @@ const SA_A1000_603W: React.FC = () => {
   const gridSumQtyFooterCell6 = (props: GridFooterCellProps) => {
     let sum = 0;
     mainDataResult6.data.forEach((item) =>
+      props.field !== undefined ? (sum = item["total_" + props.field]) : ""
+    );
+    if (sum != undefined) {
+      var parts = sum.toString().split(".");
+
+      return parts[0] != "NaN" ? (
+        <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
+          {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+            (parts[1] ? "." + parts[1] : "")}
+        </td>
+      ) : (
+        <td></td>
+      );
+    } else {
+      return <td></td>;
+    }
+  };
+
+  const gridSumQtyFooterCell7 = (props: GridFooterCellProps) => {
+    let sum = 0;
+    mainDataResult7.data.forEach((item) =>
       props.field !== undefined ? (sum = item["total_" + props.field]) : ""
     );
     if (sum != undefined) {
@@ -3890,8 +3939,12 @@ const SA_A1000_603W: React.FC = () => {
         setTabSelected(0);
       }
 
-      if (ParaData.workType == "D") {
-        setDeletedAttadatnums([Information.attdatnum]);
+      if (
+        ParaData.workType == "REV" ||
+        ParaData.workType == "DesTran" ||
+        ParaData.workType == "DesTran_d"
+      ) {
+        alert("처리되었습니다.");
       }
       setUnsavedName([]);
       setFilters((prev) => ({
@@ -4068,6 +4121,7 @@ const SA_A1000_603W: React.FC = () => {
       const isLastDataDeleted =
         mainDataResult.data.length == 1 && filters.pgNum > 0;
       setTabSelected(0);
+      setDeletedAttadatnums([Information.attdatnum]);
       if (isLastDataDeleted) {
         setPage({
           skip:
@@ -4187,10 +4241,6 @@ const SA_A1000_603W: React.FC = () => {
     return (
       <Card
         style={{
-          backgroundImage: `url(/proccd.jpg)`,
-          backgroundPosition: "center right",
-          backgroundSize: "auto 250%",
-          backgroundRepeat: "no-repeat",
           opacity: 0.9,
           height: "9.5vh",
           backgroundColor:
@@ -4260,6 +4310,36 @@ const SA_A1000_603W: React.FC = () => {
         smperson: data.user_id,
       };
     });
+  };
+
+  const onRevClick = () => {
+    setParaData((prev) => ({
+      ...prev,
+      workType: "REV",
+      orgdiv: "01",
+      quonum: Information.quonum,
+      quorev: Information.quorev,
+    }));
+  };
+
+  const onPlanClick = () => {
+    setParaData((prev) => ({
+      ...prev,
+      workType: "DesTran",
+      orgdiv: "01",
+      quonum: Information.quonum,
+      quorev: Information.quorev,
+    }));
+  };
+
+  const onPlanDeleteClick = () => {
+    setParaData((prev) => ({
+      ...prev,
+      workType: "DesTran_d",
+      orgdiv: "01",
+      quonum: Information.quonum,
+      quorev: Information.quorev,
+    }));
   };
 
   return (
@@ -4431,6 +4511,7 @@ const SA_A1000_603W: React.FC = () => {
                       color: "white",
                       padding: "5px 10px",
                       textAlign: "center",
+                      marginLeft: "5px",
                       marginRight: "5px",
                       fontWeight: 700,
                       fontSize: "15px",
@@ -4596,6 +4677,30 @@ const SA_A1000_603W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle></GridTitle>
             <ButtonContainer>
+              <Button
+                onClick={onRevClick}
+                themeColor={"primary"}
+                icon="track-changes"
+                disabled={worktype == "N" ? true : false}
+              >
+                리비전
+              </Button>
+              <Button
+                onClick={onPlanClick}
+                themeColor={"primary"}
+                icon="track-changes-accept"
+                disabled={worktype == "N" ? true : false}
+              >
+                계획요청
+              </Button>
+              <Button
+                onClick={onPlanDeleteClick}
+                themeColor={"primary"}
+                icon="track-changes-reject"
+                disabled={worktype == "N" ? true : false}
+              >
+                계획요청취소
+              </Button>
               <Button
                 onClick={onSaveClick2}
                 fillMode="outline"
@@ -5740,13 +5845,13 @@ const SA_A1000_603W: React.FC = () => {
           </FormBoxWrap>
         </TabStripTab>
         <TabStripTab
-          title="계약가능성 관리"
+          title="상세이력"
           disabled={mainDataResult.total == 0 ? true : false}
         >
           <GridContainerWrap>
-            <GridContainer width="60%">
+            <GridContainer width="50%">
               <GridTitleContainer>
-                <GridTitle>계약가능성 관리</GridTitle>
+                <GridTitle>상세이력</GridTitle>
               </GridTitleContainer>
               <FormBoxWrap
                 border={true}
@@ -6048,7 +6153,7 @@ const SA_A1000_603W: React.FC = () => {
                 </FormBox>
               </FormBoxWrap>
             </GridContainer>
-            <GridContainer width={`calc(40% - ${GAP}px)`}>
+            <GridContainer width={`calc(50% - ${GAP}px)`}>
               <GridTitleContainer>
                 <GridTitle>상담</GridTitle>
               </GridTitleContainer>
@@ -6062,7 +6167,7 @@ const SA_A1000_603W: React.FC = () => {
                     fileName="프로젝트관리"
                   >
                     <Grid
-                      style={{ height: "20vh" }}
+                      style={{ height: "30vh" }}
                       data={process(
                         mainDataResult4.data.map((row) => ({
                           ...row,
@@ -6141,7 +6246,7 @@ const SA_A1000_603W: React.FC = () => {
                     fileName="프로젝트관리"
                   >
                     <Grid
-                      style={{ height: "20vh" }}
+                      style={{ height: "30vh" }}
                       data={process(
                         mainDataResult5.data.map((row) => ({
                           ...row,
@@ -6226,7 +6331,7 @@ const SA_A1000_603W: React.FC = () => {
                     fileName="프로젝트관리"
                   >
                     <Grid
-                      style={{ height: "20vh" }}
+                      style={{ height: "30vh" }}
                       data={process(
                         mainDataResult6.data.map((row) => ({
                           ...row,
@@ -6373,6 +6478,8 @@ const SA_A1000_603W: React.FC = () => {
                             footerCell={
                               item.sortOrder == 0
                                 ? mainTotalFooterCell7
+                                : numberField.includes(item.fieldName)
+                                ? gridSumQtyFooterCell7
                                 : undefined
                             }
                           />
