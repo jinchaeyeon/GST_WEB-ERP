@@ -248,7 +248,7 @@ const SA_B2201W_603: React.FC = () => {
   const [detailFilters, setDetailFilters] = useState({
     pgSize: PAGE_SIZE,
     quonum: "",
-    quorev: 0,
+    quorev: 1,
     pgNum: 1,
     isSearch: true,
   });
@@ -518,6 +518,7 @@ const SA_B2201W_603: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       quonum: selectedRowData.quonum,
+      quorev: selectedRowData.quorev,
       pgNum: 1,
       find_row_value: "",
       isSearch: true,
