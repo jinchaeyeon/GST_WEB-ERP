@@ -30,8 +30,8 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_quodt_list",
-        field: "quodt",
+        id: "col_conplandt_list",
+        field: "conplandt",
         caption: "계약목표일",
         width: 120,
       },
@@ -42,8 +42,8 @@ export const gridList: Array<TGrid> = [
         width: 120,
       },
       {
-        id: "col_cotracdt_list",
-        field: "cotracdt",
+        id: "col_contradt_list",
+        field: "contradt",
         caption: "계약일",
         width: 150,
       },
