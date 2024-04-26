@@ -244,12 +244,14 @@ export const useApi = () => {
                     )
                   );
                 } else if(!token) {
-                  reject(
-                    new Error(
-                      "토큰이 만기되었습니다. 다시 로그인부탁드립니다."
-                    )
-                  );
-                  window.location.href = "/"
+                  if(window.location.href != "/") {
+                    reject(
+                      new Error(
+                        "토큰이 만기되었습니다. 다시 로그인부탁드립니다."
+                      )
+                    );
+                    window.location.href = "/"
+                  }
                 } else {
                   reject(res.data);
                 }
@@ -353,12 +355,14 @@ export const useApi = () => {
                   )
                 );
               } else if(!token) {
-                reject(
-                  new Error(
-                    "토큰이 만기되었습니다. 다시 로그인부탁드립니다."
-                  )
-                );
-                window.location.href = "/"
+                if(window.location.href != "/") {
+                  reject(
+                    new Error(
+                      "토큰이 만기되었습니다. 다시 로그인부탁드립니다."
+                    )
+                  );
+                  window.location.href = "/"
+                }
               } else {
                 reject(res.data);
               }
