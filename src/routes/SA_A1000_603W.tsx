@@ -5054,12 +5054,14 @@ const SA_A1000_603W: React.FC = () => {
                 </tr>
                 <tr>
                   <th>모니터</th>
-                  <Input
-                    name="rcvcustprsnnm"
-                    type="text"
-                    value={Information.rcvcustprsnnm}
-                    onChange={InputChange}
-                  />
+                  <td>
+                    <Input
+                      name="rcvcustprsnnm"
+                      type="text"
+                      value={Information.rcvcustprsnnm}
+                      onChange={InputChange}
+                    />
+                  </td>
                   <th>소속</th>
                   <td>
                     <Input
