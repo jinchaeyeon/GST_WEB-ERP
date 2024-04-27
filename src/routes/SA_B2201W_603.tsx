@@ -371,7 +371,6 @@ const SA_B2201W_603: React.FC = () => {
     };
     try {
       data = await processApi<any>("procedure", parameters);
-      console.log("parameters",parameters);
       
     } catch (error) {
       data = null;
@@ -383,7 +382,6 @@ const SA_B2201W_603: React.FC = () => {
           ...row,
         };
       });
-      console.log("rows",rows);
       
       setMainDataResult((prev) => {
         return {
@@ -448,17 +446,13 @@ const SA_B2201W_603: React.FC = () => {
 
     try {      
       data = await processApi<any>("procedure", detailParameters);
-      console.log("detailParameters",detailParameters);
-      
     } catch (error) {
       data = null;
     }
 
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;
-      console.log("drows",rows);
-      
+      const rows = data.tables[0].Rows;      
       setDetailDataResult((prev) => {
         return {
           data: rows,
