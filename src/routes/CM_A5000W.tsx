@@ -1215,6 +1215,12 @@ const CM_A5000W: React.FC = () => {
         convertDateToStr(filters.todt).substring(6, 8).length != 2
       ) {
         throw findMessage(messagesData, "CM_A5000W_001");
+      } else if (
+        filters.dtgb1 == "" ||
+        filters.dtgb1 == undefined ||
+        filters.dtgb1 == null
+      ) {
+        throw findMessage(messagesData, "CM_A5000W_006");
       } else {
         setTabSelected(0);
         resetAllGrid();

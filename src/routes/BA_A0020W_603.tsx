@@ -3112,6 +3112,7 @@ const BA_A0020W_603: React.FC = () => {
                             type="new"
                             customOptionData={customOptionData}
                             changeData={ComboBoxChange}
+                            className="required"
                           />
                         )
                       : bizComponentData !== null && (
@@ -3121,6 +3122,7 @@ const BA_A0020W_603: React.FC = () => {
                             bizComponentId="L_BA008"
                             bizComponentData={bizComponentData}
                             changeData={ComboBoxChange}
+                            className="required"
                           />
                         )}
                   </td>

@@ -42,14 +42,16 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseMessages,
   UseParaPc,
   UsePermissions,
   convertDateToStr,
   convertDateToStrWithTime2,
+  findMessage,
   getQueryFromBizComponent,
   setDefaultDate,
   toDate,
-  useSysMessage,
+  useSysMessage
 } from "../components/CommonFunction";
 import {
   COM_CODE_DEFAULT_VALUE,
@@ -132,7 +134,9 @@ const BA_A0020_603: React.FC = () => {
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("QC_A2500_603W", setCustomOptionData);
-
+  //메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages("QC_A2500_603W", setMessagesData);
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
@@ -790,14 +794,34 @@ const BA_A0020_603: React.FC = () => {
   };
 
   const search = () => {
-    setTabSelected(0);
-    resetAllGrid();
-    setFilters((prev: any) => ({
-      ...prev,
-      pgNum: 1,
-      find_row_value: "",
-      isSearch: true,
-    }));
+    try {
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "QC_A2500_603W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "QC_A2500_603W_001");
+      } else {
+        setTabSelected(0);
+        resetAllGrid();
+        setFilters((prev: any) => ({
+          ...prev,
+          pgNum: 1,
+          find_row_value: "",
+          isSearch: true,
+        }));
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const handleSelectTab = (e: any) => {

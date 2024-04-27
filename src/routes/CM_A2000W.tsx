@@ -638,6 +638,8 @@ const CM_A2000W: React.FC = () => {
                     value={filters.person}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
+                    textField="user_name"
+                    valueField="user_id"
                   />
                 )}
               </td>
@@ -649,6 +651,8 @@ const CM_A2000W: React.FC = () => {
                     value={filters.rcvperson}
                     customOptionData={customOptionData}
                     changeData={filterComboBoxChange}
+                    textField="user_name"
+                    valueField="user_id"
                   />
                 )}
               </td>

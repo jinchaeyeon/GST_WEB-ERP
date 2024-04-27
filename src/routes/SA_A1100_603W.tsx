@@ -42,11 +42,13 @@ import {
   UseBizComponent,
   UseCustomOption,
   UseGetValueFromSessionItem,
+  UseMessages,
   UseParaPc,
   UsePermissions,
   convertDateToStr,
   dateformat,
   dateformat2,
+  findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
   numberWithCommas,
@@ -192,7 +194,8 @@ const SA_A1100_603W: React.FC = () => {
   const [page3, setPage3] = useState(initialPageState);
   const [page6, setPage6] = useState(initialPageState);
   const [checked, setChecked] = useState(false);
-
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages("SA_A1100_603W", setMessagesData);
   interface ICustData {
     address: string;
     custcd: string;
@@ -1149,15 +1152,31 @@ const SA_A1100_603W: React.FC = () => {
 
   const search = () => {
     try {
-      resetAllGrid();
-      setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
-      setTabSelected(0);
-      setChecked(false);
-      if (unsavedName.length > 0) {
-        setDeletedName(unsavedName);
-      }
-      if (unsavedAttadatnums.length > 0) {
-        setDeletedAttadatnums(unsavedAttadatnums);
+      if (
+        convertDateToStr(filters.frdt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.frdt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.frdt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.frdt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A1100_603W_001");
+      } else if (
+        convertDateToStr(filters.todt).substring(0, 4) < "1997" ||
+        convertDateToStr(filters.todt).substring(6, 8) > "31" ||
+        convertDateToStr(filters.todt).substring(6, 8) < "01" ||
+        convertDateToStr(filters.todt).substring(6, 8).length != 2
+      ) {
+        throw findMessage(messagesData, "SA_A1100_603W_001");
+      } else {
+        resetAllGrid();
+        setFilters((prev) => ({ ...prev, pgNum: 1, isSearch: true }));
+        setTabSelected(0);
+        setChecked(false);
+        if (unsavedName.length > 0) {
+          setDeletedName(unsavedName);
+        }
+        if (unsavedAttadatnums.length > 0) {
+          setDeletedAttadatnums(unsavedAttadatnums);
+        }
       }
     } catch (e) {
       alert(e);
@@ -2615,7 +2634,7 @@ const SA_A1100_603W: React.FC = () => {
                       </td>
                     </tr>
                     <tr>
-                      <th>물질세부분야</th>
+                      <th>물질상세분야</th>
                       <td>
                         <Input
                           name="extra_field2"

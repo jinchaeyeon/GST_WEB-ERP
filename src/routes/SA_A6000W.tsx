@@ -50,6 +50,7 @@ import {
   UseParaPc,
   UsePermissions,
   convertDateToStr,
+  findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
@@ -463,7 +464,7 @@ const SA_A6000W: React.FC = () => {
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
-    if(name == "yyyy") {
+    if (name == "yyyy") {
       deletedMainRows = [];
     }
 
@@ -1214,18 +1215,26 @@ const SA_A6000W: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
-    setTabSelected(0);
-    setFilters((prev: any) => ({
-      ...prev,
-      pgNum: 1,
-      isSearch: true,
-    }));
-    setFilters2((prev: any) => ({
-      ...prev,
-      pgNum: 1,
-      isSearch: true,
-    }));
+    try {
+      if (convertDateToStr(filters.yyyy).substring(0, 4) < "1997") {
+        throw findMessage(messagesData, "SA_A6000W_001");
+      } else {
+        resetAllGrid();
+        setTabSelected(0);
+        setFilters((prev: any) => ({
+          ...prev,
+          pgNum: 1,
+          isSearch: true,
+        }));
+        setFilters2((prev: any) => ({
+          ...prev,
+          pgNum: 1,
+          isSearch: true,
+        }));
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const onMainItemChange = (event: GridItemChangeEvent) => {

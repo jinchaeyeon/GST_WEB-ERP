@@ -87,19 +87,19 @@ export const gridList: Array<TGrid> = [
         id: "col_designyn_quo",
         field: "designyn",
         caption: "디자인 입력여부",
-        width: 80,
+        width: 120,
       },
       {
         id: "col_quocalyn",
         field: "quocalyn",
         caption: "견적산출여부",
-        width: 80,
+        width: 120,
       },
       {
         id: "col_contractyn",
         field: "contractyn",
         caption: "계약확정여부",
-        width: 80,
+        width: 120,
       },
       {
         id: "col_cotracdt",

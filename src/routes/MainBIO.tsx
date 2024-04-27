@@ -642,7 +642,7 @@ const Main: React.FC = () => {
                     answeryn: "답변여부",
                   }}
                   title={"컨설팅 요청 및 답변"}
-                  width={[150, 120, 200, 100]}
+                  width={[150, 120, 150, 150]}
                   key="num"
                   selection={selected2}
                   onSelectionChange={(e: any) => {
