@@ -371,6 +371,8 @@ const SA_B2201W_603: React.FC = () => {
     };
     try {
       data = await processApi<any>("procedure", parameters);
+      console.log("parameters",parameters);
+      
     } catch (error) {
       data = null;
     }
@@ -381,6 +383,8 @@ const SA_B2201W_603: React.FC = () => {
           ...row,
         };
       });
+      console.log("rows",rows);
+      
       setMainDataResult((prev) => {
         return {
           data: rows,
@@ -444,6 +448,8 @@ const SA_B2201W_603: React.FC = () => {
 
     try {      
       data = await processApi<any>("procedure", detailParameters);
+      console.log("detailParameters",detailParameters);
+      
     } catch (error) {
       data = null;
     }
@@ -451,6 +457,8 @@ const SA_B2201W_603: React.FC = () => {
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
       const rows = data.tables[0].Rows;
+      console.log("drows",rows);
+      
       setDetailDataResult((prev) => {
         return {
           data: rows,
@@ -518,7 +526,6 @@ const SA_B2201W_603: React.FC = () => {
     setDetailFilters((prev) => ({
       ...prev,
       quonum: selectedRowData.quonum,
-      quorev: selectedRowData.quorev,
       pgNum: 1,
       find_row_value: "",
       isSearch: true,
