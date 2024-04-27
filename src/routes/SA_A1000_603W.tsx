@@ -151,6 +151,7 @@ interface IPrsnnum {
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
+const DATA_ITEM_KEY3 = "num";
 const DATA_ITEM_KEY4 = "num";
 const DATA_ITEM_KEY5 = "num";
 const DATA_ITEM_KEY6 = "num";
@@ -525,6 +526,7 @@ const CustomRadioCell = (props: GridCellProps) => {
 const SA_A1000_603W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const idGetter2 = getter(DATA_ITEM_KEY2);
+  const idGetter3 = getter(DATA_ITEM_KEY3);
   const idGetter4 = getter(DATA_ITEM_KEY4);
   const idGetter5 = getter(DATA_ITEM_KEY5);
   const idGetter6 = getter(DATA_ITEM_KEY6);
@@ -536,7 +538,6 @@ const SA_A1000_603W: React.FC = () => {
   UseParaPc(setPc);
 
   let gridRef: any = useRef(null);
-  let gridRef3: any = useRef(null);
   const userId = UseGetValueFromSessionItem("user_id");
   const [step, setStep] = React.useState(-1);
   const setLoading = useSetRecoilState(isLoading);
@@ -668,7 +669,7 @@ const SA_A1000_603W: React.FC = () => {
   // 비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   UseBizComponent(
-    "R_YN4, L_HU005, L_SA018_603,L_SA017_603,L_SA016_603L_SA015_603, L_SA014_603, L_SA013_603, L_SA012_603, L_BA016_603, L_SA002, L_BA171, L_BA057, L_Requestgb, L_SA019_603, L_SA001_603, L_SA004, L_SA016, L_CM501_603, L_SA011_603, L_CM500_603, L_sysUserMaster_001",
+    "R_YN4, L_HU005, L_SA018_603,L_SA017_603,L_SA016_603,L_SA015_603, L_SA014_603, L_SA013_603, L_SA012_603, L_BA016_603, L_SA002, L_BA171, L_BA057, L_Requestgb, L_SA019_603, L_SA001_603, L_SA004, L_SA016, L_CM501_603, L_SA011_603, L_CM500_603, L_sysUserMaster_001",
     setBizComponentData
   );
   const [materialgbListData, setMaterialgbListData] = React.useState([
@@ -853,6 +854,7 @@ const SA_A1000_603W: React.FC = () => {
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
+  const [page3, setPage3] = useState(initialPageState);
   const [page4, setPage4] = useState(initialPageState);
   const [page5, setPage5] = useState(initialPageState);
   const [page6, setPage6] = useState(initialPageState);
@@ -883,6 +885,21 @@ const SA_A1000_603W: React.FC = () => {
     }));
 
     setPage2({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
+  const pageChange3 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters3((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage3({
       skip: page.skip,
       take: initialPageState.take,
     });
@@ -957,6 +974,9 @@ const SA_A1000_603W: React.FC = () => {
   const [mainDataState2, setMainDataState2] = useState<State>({
     sort: [],
   });
+  const [mainDataState3, setMainDataState3] = useState<State>({
+    sort: [],
+  });
   const [mainDataState4, setMainDataState4] = useState<State>({
     sort: [],
   });
@@ -985,6 +1005,10 @@ const SA_A1000_603W: React.FC = () => {
   const [mainDataResult2, setMainDataResult2] = useState<DataResult>(
     process([], mainDataState2)
   );
+  const [mainDataResult3, setMainDataResult3] = useState<DataResult>(
+    process([], mainDataState3)
+  );
+
   const [mainDataResult4, setMainDataResult4] = useState<DataResult>(
     process([], mainDataState4)
   );
@@ -1013,6 +1037,9 @@ const SA_A1000_603W: React.FC = () => {
   const [selectedState2, setSelectedState2] = useState<{
     [id: string]: boolean | number[];
   }>({});
+  const [selectedState3, setSelectedState3] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
   const [selectedState4, setSelectedState4] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -1023,6 +1050,9 @@ const SA_A1000_603W: React.FC = () => {
     [id: string]: boolean | number[];
   }>({});
   const [selectedState7, setSelectedState7] = useState<{
+    [id: string]: boolean | number[];
+  }>({});
+  const [selectedState9, setSelectedState9] = useState<{
     [id: string]: boolean | number[];
   }>({});
   const [projectWindowVisible, setProjectWindowVisible] =
@@ -1086,17 +1116,20 @@ const SA_A1000_603W: React.FC = () => {
       }
     }
     //추후 계약가능성관리 하단 그리드 생기면 변경필요
-    if (_export4 !== null && _export4 !== undefined) {
+    if (_export3 !== null && _export3 !== undefined) {
       if (tabSelected == 2) {
+        const optionsGridThree = _export3.workbookOptions();
         const optionsGridFour = _export4.workbookOptions();
         const optionsGridFive = _export5.workbookOptions();
         const optionsGridSix = _export6.workbookOptions();
-        optionsGridFour.sheets[1] = optionsGridFive.sheets[0];
-        optionsGridFour.sheets[2] = optionsGridSix.sheets[0];
-        optionsGridFour.sheets[0].title = "상담";
-        optionsGridFour.sheets[1].title = "컨설팅";
-        optionsGridFour.sheets[2].title = "견적";
-        _export4.save(optionsGridFour);
+        optionsGridThree.sheets[1] = optionsGridFour.sheets[0];
+        optionsGridThree.sheets[2] = optionsGridFive.sheets[0];
+        optionsGridThree.sheets[3] = optionsGridSix.sheets[0];
+        optionsGridThree.sheets[0].title = "코멘트";
+        optionsGridThree.sheets[1].title = "상담";
+        optionsGridThree.sheets[2].title = "컨설팅";
+        optionsGridThree.sheets[3].title = "견적";
+        _export3.save(optionsGridThree);
       }
     }
     if (_export7 !== null && _export7 !== undefined) {
@@ -1281,12 +1314,14 @@ const SA_A1000_603W: React.FC = () => {
   const resetAllGrid = () => {
     setPage(initialPageState);
     setPage2(initialPageState);
+    setPage3(initialPageState);
     setPage4(initialPageState);
     setPage5(initialPageState);
     setPage6(initialPageState);
     setPage7(initialPageState);
     setMainDataResult(process([], mainDataState));
     setMainDataResult2(process([], mainDataState2));
+    setMainDataResult3(process([], mainDataState));
     setMainDataResult4(process([], mainDataState4));
     setMainDataResult5(process([], mainDataState5));
     setMainDataResult6(process([], mainDataState6));
@@ -1758,6 +1793,11 @@ const SA_A1000_603W: React.FC = () => {
     totgrade2: 0,
     level1: "",
     level2: "",
+    quorev: "",
+    conplandt: "",
+    submitdt: "",
+    seq: 0,
+    passdt: 0,
   });
 
   function getName(data: { sub_code: string }[]) {
@@ -2217,7 +2257,14 @@ const SA_A1000_603W: React.FC = () => {
             ? "하"
             : "",
       }));
-
+      const totalRowCnt2 = data.tables[1].RowCount;
+      const rows2 = data.tables[1].Rows;
+      const totalRowCnt3 = data.tables[2].RowCount;
+      const rows3 = data.tables[2].Rows;
+      setMainDataResult3({
+        data: rows3,
+        total: totalRowCnt3 == -1 ? 0 : totalRowCnt3,
+      });
       if (totalRowCnt > 0) {
         setInformation2({
           addordgb: rows[0].addordgb,
@@ -2239,7 +2286,13 @@ const SA_A1000_603W: React.FC = () => {
           totgrade2: rows[0].totgrade2,
           level1: rows[0].level1,
           level2: rows[0].level2,
+          quorev: rows2[0].quorev,
+          conplandt: rows2[0].conplandt,
+          submitdt: rows2[0].submitdt,
+          seq: rows2[0].seq,
+          passdt: rows2[0].passdt,
         });
+        setSelectedState3({ [rows3[0][DATA_ITEM_KEY3]]: true });
       } else {
         setInformation2({
           addordgb: "",
@@ -2261,6 +2314,11 @@ const SA_A1000_603W: React.FC = () => {
           totgrade2: 0,
           level1: "",
           level2: "",
+          quorev: "",
+          conplandt: "",
+          submitdt: "",
+          seq: 0,
+          passdt: 0,
         });
       }
     } else {
@@ -2802,7 +2860,9 @@ const SA_A1000_603W: React.FC = () => {
   const onMainDataStateChange2 = (event: GridDataStateChangeEvent) => {
     setMainDataState2(event.dataState);
   };
-
+  const onMainDataStateChange3 = (event: GridDataStateChangeEvent) => {
+    setMainDataState3(event.dataState);
+  };
   const onMainDataStateChange4 = (event: GridDataStateChangeEvent) => {
     setMainDataState4(event.dataState);
   };
@@ -2825,6 +2885,9 @@ const SA_A1000_603W: React.FC = () => {
 
   const onMainSortChange2 = (e: any) => {
     setMainDataState2((prev) => ({ ...prev, sort: e.sort }));
+  };
+  const onMainSortChange3 = (e: any) => {
+    setMainDataState3((prev) => ({ ...prev, sort: e.sort }));
   };
 
   const onMainSortChange4 = (e: any) => {
@@ -2866,7 +2929,17 @@ const SA_A1000_603W: React.FC = () => {
       </td>
     );
   };
-
+  const mainTotalFooterCell3 = (props: GridFooterCellProps) => {
+    var parts = mainDataResult3.total.toString().split(".");
+    return (
+      <td colSpan={props.colSpan} style={props.style}>
+        총{" "}
+        {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+          (parts[1] ? "." + parts[1] : "")}
+        건
+      </td>
+    );
+  };
   const mainTotalFooterCell4 = (props: GridFooterCellProps) => {
     var parts = mainDataResult4.total.toString().split(".");
     return (
@@ -2973,6 +3046,14 @@ const SA_A1000_603W: React.FC = () => {
       dataItemKey: DATA_ITEM_KEY2,
     });
     setSelectedState2(newSelectedState);
+  };
+  const onSelectionChange3 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState,
+      dataItemKey: DATA_ITEM_KEY,
+    });
+    setSelectedState3(newSelectedState);
   };
 
   const onSelectionChange4 = (event: GridSelectionChangeEvent) => {
@@ -6162,6 +6243,158 @@ const SA_A1000_603W: React.FC = () => {
                   </tbody>
                 </FormBox>
               </FormBoxWrap>
+
+              <GridTitleContainer>
+                <GridTitle>계약성사관리</GridTitle>
+              </GridTitleContainer>
+              <FormBoxWrap
+                border={true}
+                style={{ display: isMobile ? "block" : "flex" }}
+              >
+                <GridContainer style={{ flexDirection: "column" }}>
+                  <FormBox>
+                    <tbody>
+                      <tr>
+                        <th style={{ textAlign: "right" }}>견적차수</th>
+                        <td>
+                          <Input
+                            name="quorev"
+                            type="text"
+                            style={{
+                              textAlign: "center",
+                            }}
+                            value={Information2.quorev}
+                            className="readonly"
+                          />
+                        </td>
+                        <th style={{ textAlign: "right" }}>견적제출일</th>
+                        <td>
+                          <Input
+                            name="submitdt"
+                            type="text"
+                            style={{
+                              textAlign: "center",
+                            }}
+                            value={dateformat2(Information2.submitdt)}
+                            className="readonly"
+                          />
+                        </td>
+                        <th style={{ textAlign: "right" }}>활동차수</th>
+                        <td>
+                          <Input
+                            name="seq"
+                            type="text"
+                            style={{
+                              textAlign: "center",
+                            }}
+                            value={Information2.seq}
+                            className="readonly"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <th style={{ textAlign: "right" }}>계약목표일</th>
+                        <td>
+                          <Input
+                            name="conplandt"
+                            type="text"
+                            style={{
+                              textAlign: "center",
+                            }}
+                            value={dateformat2(Information2.conplandt)}
+                            className="readonly"
+                          />
+                        </td>
+                        <th style={{ textAlign: "right" }}>경과기간</th>
+                        <td>
+                          <Input
+                            name="passdt"
+                            type="text"
+                            style={{
+                              textAlign: "center",
+                            }}
+                            value={Information2.passdt}
+                            className="readonly"
+                          />
+                        </td>
+                        <th></th>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </FormBox>
+                </GridContainer>
+              </FormBoxWrap>
+              <GridContainer>
+                <ExcelExport
+                  data={mainDataResult3.data}
+                  ref={(exporter) => {
+                    _export3 = exporter;
+                  }}
+                  fileName="계약가능성관리"
+                >
+                  <GridTitleContainer>
+                    <GridTitle>코멘트</GridTitle>
+                  </GridTitleContainer>
+                  <Grid
+                    style={{ height: "58.5vh" }}
+                    data={process(
+                      mainDataResult3.data.map((row) => ({
+                        ...row,
+                        [SELECTED_FIELD]: selectedState3[idGetter3(row)],
+                      })),
+                      mainDataState3
+                    )}
+                    {...mainDataState3}
+                    onDataStateChange={onMainDataStateChange3}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY3}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange3}
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult3.total}
+                    skip={page3.skip}
+                    take={page3.take}
+                    pageable={true}
+                    onPageChange={pageChange3}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange3}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList3"]?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                dateField.includes(item.fieldName)
+                                  ? DateCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder === 0
+                                  ? mainTotalFooterCell3
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
             </GridContainer>
             <GridContainer width={`calc(50% - ${GAP}px)`}>
               <GridTitleContainer>

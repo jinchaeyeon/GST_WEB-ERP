@@ -186,6 +186,30 @@ export const gridList: Array<TGrid> = [
     ],
   },
   {
+    // 코멘트
+    gridName: "grdList3",
+    columns: [
+      {
+        id: "col_num_com",
+        field: "num",
+        caption: "활동차수",
+        width: 100,
+      },
+      {
+        id: "col_recdt_com",
+        field: "recdt",
+        caption: "활동날짜",
+        width: 120,
+      },
+      {
+        id: "col_comment_com",
+        field: "comment",
+        caption: "활동내역",
+        width: 200,
+      },
+    ],
+  },
+  {
     // 요약정보
     gridName: "grdList4",
     columns: [

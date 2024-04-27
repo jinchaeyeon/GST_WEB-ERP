@@ -127,7 +127,7 @@ const CommonComboBox = ({
         changeData({ name, values });
       }
     } else {
-      changeData({ name, value });
+      changeData({ name, value, e });
     }
   };
 

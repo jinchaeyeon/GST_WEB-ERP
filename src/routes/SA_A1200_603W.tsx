@@ -7,6 +7,7 @@ import {
   GridColumn,
   GridDataStateChangeEvent,
   GridFooterCellProps,
+  GridItemChangeEvent,
   GridPageChangeEvent,
   GridRowDoubleClickEvent,
   GridSelectionChangeEvent,
@@ -39,6 +40,7 @@ import {
   UsePermissions,
   convertDateToStr,
   dateformat2,
+  getGridItemChangedData,
   getQueryFromBizComponent,
   numberWithCommas3,
   setDefaultDate,
@@ -54,11 +56,13 @@ import TopButtons from "../components/Buttons/TopButtons";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
 import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
+  EDIT_FIELD,
   PAGE_SIZE,
-  SELECTED_FIELD
+  SELECTED_FIELD,
 } from "../components/CommonString";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { isLoading } from "../store/atoms";
@@ -66,8 +70,8 @@ import { isLoading } from "../store/atoms";
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
 let targetRowIndex: null | number = null;
-const DateField = ["conplandt", "contradt"];
-const NumberField = ["passdt", "seq"];
+const DateField = ["conplandt", "contradt", "recdt"];
+const NumberField = ["passdt", "seq", "num"];
 
 let temp = 0;
 let deletedMainRows: any = [];
@@ -220,7 +224,7 @@ const SA_A1200_603W: React.FC = () => {
     endt: 0,
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     pgSize: PAGE_SIZE,
   });
 
@@ -228,7 +232,7 @@ const SA_A1200_603W: React.FC = () => {
   const [filters2, setFilters2] = useState({
     quokey: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
     pgSize: PAGE_SIZE,
   });
 
@@ -305,14 +309,13 @@ const SA_A1200_603W: React.FC = () => {
   const onRowDoubleClick = (event: GridRowDoubleClickEvent) => {
     const selectedRowData = event.dataItem;
     setSelectedState({ [selectedRowData[DATA_ITEM_KEY]]: true });
-
+    setTabSelected(1);
     setFilters2((prev) => ({
       ...prev,
       quokey: selectedRowData.quokey,
       isSearch: true,
       pgNum: 1,
     }));
-    setTabSelected(1);
   };
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
@@ -333,15 +336,6 @@ const SA_A1200_603W: React.FC = () => {
     }
   };
 
-  const InfoInputChange = (e: any) => {
-    const { value, name } = e.target;
-
-    setInformation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
   const filterComboBoxChange = (e: any) => {
     const { name, value } = e;
@@ -353,7 +347,216 @@ const SA_A1200_603W: React.FC = () => {
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
-  const ComboBoxChange = (e: any) => {};
+  const ComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    if (name == "materialgb") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        grade1: e.e.value.numref1 == undefined ? 0 : e.e.value.numref1,
+        totgrade1:
+          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+          prev.grade2 +
+          prev.grade3 +
+          prev.grade4,
+        result1:
+          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+            prev.grade2 +
+            prev.grade3 +
+            prev.grade4 >=
+          12
+            ? "상"
+            : (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                prev.grade2 +
+                prev.grade3 +
+                prev.grade4 >=
+              7
+            ? "중"
+            : (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                prev.grade2 +
+                prev.grade3 +
+                prev.grade4 >
+              1
+            ? "하"
+            : "",
+      }));
+    } else if (name == "assaygbe") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        grade2: e.e.value.numref1 == undefined ? 0 : e.e.value.numref1,
+        totgrade1:
+          prev.grade1 +
+          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+          prev.grade3 +
+          prev.grade4,
+        result1:
+          prev.grade1 +
+            (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+            prev.grade3 +
+            prev.grade4 >=
+          12
+            ? "상"
+            : prev.grade1 +
+                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                prev.grade3 +
+                prev.grade4 >=
+              7
+            ? "중"
+            : prev.grade1 +
+                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                prev.grade3 +
+                prev.grade4 >
+              1
+            ? "하"
+            : "",
+      }));
+    } else if (name == "startschgb") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        grade3: e.e.value.numref1 == undefined ? 0 : e.e.value.numref1,
+        totgrade1:
+          prev.grade1 +
+          prev.grade2 +
+          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+          prev.grade4,
+        result1:
+          prev.grade1 +
+            prev.grade2 +
+            (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+            prev.grade4 >=
+          12
+            ? "상"
+            : prev.grade1 +
+                prev.grade2 +
+                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                prev.grade4 >=
+              7
+            ? "중"
+            : prev.grade1 +
+                prev.grade2 +
+                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                prev.grade4 >
+              1
+            ? "하"
+            : "",
+      }));
+    } else if (name == "financegb") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        grade4: e.e.value.numref1 == undefined ? 0 : e.e.value.numref1,
+        totgrade1:
+          prev.grade1 +
+          prev.grade2 +
+          prev.grade3 +
+          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1),
+        result1:
+          prev.grade1 +
+            prev.grade2 +
+            prev.grade3 +
+            (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) >=
+          12
+            ? "상"
+            : prev.grade1 +
+                prev.grade2 +
+                prev.grade3 +
+                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) >=
+              7
+            ? "중"
+            : prev.grade1 +
+                prev.grade2 +
+                prev.grade3 +
+                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) >
+              1
+            ? "하"
+            : "",
+      }));
+    } else if (name == "amtgb") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        grade5: e.e.value.numref1 == undefined ? 0 : e.e.value.numref1,
+        totgrade2:
+          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+          prev.grade6 +
+          prev.grade7,
+        result2:
+          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+            prev.grade6 +
+            prev.grade7 >=
+          7
+            ? "상"
+            : (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                prev.grade6 +
+                prev.grade7 >=
+              4
+            ? "중"
+            : (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                prev.grade6 +
+                prev.grade7 >
+              1
+            ? "하"
+            : "",
+      }));
+    } else if (name == "addordgb") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        grade6: e.e.value.numref1 == undefined ? 0 : e.e.value.numref1,
+        totgrade2:
+          prev.grade5 +
+          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+          prev.grade7,
+        result2:
+          prev.grade5 +
+            (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+            prev.grade7 >=
+          7
+            ? "상"
+            : prev.grade5 +
+                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                prev.grade7 >=
+              4
+            ? "중"
+            : prev.grade5 +
+                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) +
+                prev.grade7 >
+              1
+            ? "하"
+            : "",
+      }));
+    } else if (name == "relationgb") {
+      setInformation((prev) => ({
+        ...prev,
+        [name]: value,
+        grade7: e.e.value.numref1 == undefined ? 0 : e.e.value.numref1,
+        totgrade2:
+          prev.grade5 +
+          prev.grade6 +
+          (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1),
+        result2:
+          prev.grade5 +
+            prev.grade6 +
+            (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) >=
+          7
+            ? "상"
+            : prev.grade5 +
+                prev.grade6 +
+                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) >=
+              4
+            ? "중"
+            : prev.grade5 +
+                prev.grade6 +
+                (e.e.value.numref1 == undefined ? 0 : e.e.value.numref1) >
+              1
+            ? "하"
+            : "",
+      }));
+    }
+  };
 
   //조회조건 Radio Group Change 함수 => 사용자가 선택한 라디오버튼 값을 조회 파라미터로 세팅
   const filterRadioChange = (e: any) => {
@@ -562,8 +765,14 @@ const SA_A1200_603W: React.FC = () => {
       const rows = data.tables[0].Rows;
       const totalRowCnt2 = data.tables[1].RowCount;
       const rows2 = data.tables[1].Rows;
+      const totalRowCnt3 = data.tables[2].RowCount;
+      const rows3 = data.tables[2].Rows;
+      setMainDataResult2({
+        data: rows3,
+        total: totalRowCnt3 == -1 ? 0 : totalRowCnt3,
+      });
 
-      if (totalRowCnt > 0) {
+      if(totalRowCnt > 0) {
         setInformation({
           addordgb: rows[0].addordgb,
           amtgb: rows[0].amtgb,
@@ -576,19 +785,19 @@ const SA_A1200_603W: React.FC = () => {
           grade5: rows[0].grade5,
           grade6: rows[0].grade6,
           grade7: rows[0].grade7,
-          materialgb: rows[0].grade7,
-          orgdiv: rows[0].grade7,
+          materialgb: rows[0].materialgb,
+          orgdiv: rows[0].orgdiv,
           relationgb: rows[0].relationgb,
           startschgb: rows[0].startschgb,
           totgrade1: rows[0].totgrade1,
           totgrade2: rows[0].totgrade2,
           result1: rows[0].result1,
           result2: rows[0].result2,
-          quorev: rows[1].quorev,
-          conplandt: rows[1].conplandt,
-          submitdt: rows[1].submitdt,
-          seq: rows[1].seq,
-          passdt: rows[1].passdt,
+          quorev: rows2[0].quorev,
+          conplandt: rows2[0].conplandt,
+          submitdt: rows2[0].submitdt,
+          seq: rows2[0].seq,
+          passdt: rows2[0].passdt,
         });
       } else {
         setInformation({
@@ -617,6 +826,9 @@ const SA_A1200_603W: React.FC = () => {
           seq: 0,
           passdt: 0,
         });
+      }
+      if (totalRowCnt3 > 0) {
+        setSelectedState2({ [rows3[0][DATA_ITEM_KEY2]]: true });
       }
     } else {
       console.log("[오류 발생]");
@@ -652,6 +864,21 @@ const SA_A1200_603W: React.FC = () => {
     });
   };
 
+  const pageChange2 = (event: GridPageChangeEvent) => {
+    const { page } = event;
+
+    setFilters2((prev) => ({
+      ...prev,
+      pgNum: Math.floor(page.skip / initialPageState.take) + 1,
+      isSearch: true,
+    }));
+
+    setPage2({
+      skip: page.skip,
+      take: initialPageState.take,
+    });
+  };
+
   //메인 그리드 선택 이벤트 => 디테일 그리드 조회
   const onSelectionChange = (event: GridSelectionChangeEvent) => {
     const newSelectedState = getSelectedState({
@@ -671,6 +898,17 @@ const SA_A1200_603W: React.FC = () => {
       isSearch: true,
       pgNum: 1,
     }));
+  };
+
+  //메인 그리드 선택 이벤트 => 디테일 그리드 조회
+  const onSelectionChange2 = (event: GridSelectionChangeEvent) => {
+    const newSelectedState = getSelectedState({
+      event,
+      selectedState: selectedState2,
+      dataItemKey: DATA_ITEM_KEY2,
+    });
+
+    setSelectedState2(newSelectedState);
   };
 
   const [tabSelected, setTabSelected] = React.useState(0);
@@ -788,7 +1026,7 @@ const SA_A1200_603W: React.FC = () => {
 
   const [ParaData, setParaData] = useState({
     workType: "",
-    quonum: "",
+    quokey: "",
     materialgb: "",
     assaygbe: "",
     startschgb: "",
@@ -806,7 +1044,7 @@ const SA_A1200_603W: React.FC = () => {
       "@p_work_type": ParaData.workType,
       "@p_orgdiv": "01",
       "@p_location": "01",
-      "@p_quonum": ParaData.quonum,
+      "@p_quokey": ParaData.quokey,
       "@p_materialgb": ParaData.materialgb,
       "@p_assaygbe": ParaData.assaygbe,
       "@p_startschgb": ParaData.startschgb,
@@ -816,11 +1054,37 @@ const SA_A1200_603W: React.FC = () => {
       "@p_relationgb": ParaData.relationgb,
       "@p_userid": userId,
       "@p_pc": pc,
-      "@p_form_id": "SA_A1100_603W",
+      "@p_form_id": "SA_A1200_603W",
     },
   };
 
-  const onSaveClick = () => {};
+  const onSaveClick = () => {
+    if (
+      Information.amtgb == "" ||
+      Information.addordgb == "" ||
+      Information.relationgb == "" ||
+      Information.financegb == "" ||
+      Information.startschgb == "" ||
+      Information.assaygbe == "" ||
+      Information.materialgb == ""
+    ) {
+      alert("필수값을 채워주세요");
+      return false;
+    }
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "N",
+      quokey: filters2.quokey,
+      materialgb: Information.materialgb,
+      assaygbe: Information.assaygbe,
+      startschgb: Information.startschgb,
+      financegb: Information.financegb,
+      amtgb: Information.amtgb,
+      addordgb: Information.addordgb,
+      relationgb: Information.relationgb,
+    }));
+  };
 
   useEffect(() => {
     if (ParaData.workType != "") {
@@ -839,6 +1103,12 @@ const SA_A1200_603W: React.FC = () => {
       data = null;
     }
     if (data.isSuccess === true) {
+      deletedMainRows = [];
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+      }));
     } else {
       console.log("[오류 발생]");
       console.log(data);
@@ -847,6 +1117,302 @@ const SA_A1200_603W: React.FC = () => {
       }
     }
     setLoading(false);
+  };
+
+  const onAddClick = () => {
+    mainDataResult2.data.map((item) => {
+      if (item[DATA_ITEM_KEY2] > temp) {
+        temp = item[DATA_ITEM_KEY2];
+      }
+    });
+
+    const newDataItem = {
+      [DATA_ITEM_KEY2]: ++temp,
+      comment: "",
+      id: "",
+      insert_userid: userId,
+      recdt: convertDateToStr(new Date()),
+      seq: 0,
+      rowstatus: "N",
+    };
+    setSelectedState2({ [newDataItem[DATA_ITEM_KEY2]]: true });
+    setMainDataResult2((prev) => {
+      return {
+        data: [newDataItem, ...prev.data],
+        total: prev.total + 1,
+      };
+    });
+  };
+
+  const onDeleteClick = (e: any) => {
+    let newData: any[] = [];
+    let Object3: any[] = [];
+    let Object2: any[] = [];
+    let data;
+    mainDataResult2.data.forEach((item: any, index: number) => {
+      if (!selectedState2[item[DATA_ITEM_KEY2]]) {
+        newData.push(item);
+        Object2.push(index);
+      } else {
+        if (!item.rowstatus || item.rowstatus != "N") {
+          const newData2 = item;
+          newData2.rowstatus = "D";
+          deletedMainRows.push(newData2);
+        }
+        Object3.push(index);
+      }
+    });
+
+    if (Math.min(...Object3) < Math.min(...Object2)) {
+      data = mainDataResult2.data[Math.min(...Object2)];
+    } else {
+      data = mainDataResult2.data[Math.min(...Object3) - 1];
+    }
+
+    setMainDataResult2((prev) => ({
+      data: newData,
+      total: prev.total - Object3.length,
+    }));
+    if (Object3.length > 0) {
+      setSelectedState2({
+        [data != undefined ? data[DATA_ITEM_KEY2] : newData[0]]: true,
+      });
+    }
+  };
+
+  const onSaveClick3 = () => {
+    const dataItem: { [name: string]: any } = mainDataResult2.data.filter(
+      (item: any) => {
+        return (
+          (item.rowstatus == "N" || item.rowstatus == "U") &&
+          item.rowstatus !== undefined
+        );
+      }
+    );
+    if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
+
+    type TData = {
+      row_status: string[];
+      id: string[];
+      seq: string[];
+      recdt: string[];
+      comment: string[];
+      user_id: string[];
+    };
+
+    let dataArr: TData = {
+      row_status: [],
+      id: [],
+      comment: [],
+      seq: [],
+      recdt: [],
+      user_id: [],
+    };
+
+    dataItem.forEach((item: any, idx: number) => {
+      const { comment, rowstatus, id = "", seq, recdt, insert_userid } = item;
+
+      dataArr.comment.push(comment);
+      dataArr.id.push(id);
+      dataArr.row_status.push(rowstatus);
+      dataArr.seq.push(seq);
+      dataArr.recdt.push(recdt);
+      dataArr.user_id.push(insert_userid);
+    });
+
+    deletedMainRows.forEach((item: any, idx: number) => {
+      const { comment, id = "", seq, recdt, insert_userid } = item;
+
+      dataArr.row_status.push("D");
+      dataArr.comment.push(comment);
+      dataArr.id.push(id);
+      dataArr.seq.push(seq);
+      dataArr.recdt.push(recdt);
+      dataArr.user_id.push(insert_userid);
+    });
+
+    setParaDataSaved((prev) => ({
+      ...prev,
+      work_type: "save",
+      row_status: dataArr.row_status.join("|"),
+      comment: dataArr.comment.join("|"),
+      id: dataArr.id.join("|"),
+      seq: dataArr.seq.join("|"),
+      recdt: dataArr.recdt.join("|"),
+      user_id: dataArr.user_id.join("|"),
+      ref_key: filters2.quokey,
+    }));
+  };
+
+  const [paraDataSaved, setParaDataSaved] = useState({
+    work_type: "",
+    row_status: "",
+    id: "",
+    seq: "",
+    recdt: "",
+    comment: "",
+    user_id: "",
+    ref_key: "",
+  });
+
+  const paraSaved: Iparameters = {
+    procedureName: "sys_sav_comments",
+    pageNumber: 0,
+    pageSize: 0,
+    parameters: {
+      "@p_work_type": paraDataSaved.work_type,
+      "@p_row_status": paraDataSaved.row_status,
+      "@p_id": paraDataSaved.id,
+      "@p_seq": paraDataSaved.seq,
+      "@p_recdt": paraDataSaved.recdt,
+      "@p_comment": paraDataSaved.comment,
+      "@p_user_id": paraDataSaved.user_id,
+      "@p_form_id": "SA_A1200_603W",
+      "@p_table_id": "SA050T",
+      "@p_orgdiv": "01",
+      "@p_ref_key": paraDataSaved.ref_key,
+      "@p_exec_pc": pc,
+    },
+  };
+
+  const fetchTodoGridSaved2 = async () => {
+    let data: any;
+
+    setLoading(true);
+
+    try {
+      data = await processApi<any>("procedure", paraSaved);
+    } catch (error) {
+      data = null;
+    }
+    if (data.isSuccess == true) {
+      deletedMainRows = [];
+      setFilters2((prev) => ({
+        ...prev,
+        isSearch: true,
+        pgNum: 1,
+      }));
+      setParaDataSaved((prev) => ({ ...prev, work_type: "" }));
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+      if (data.resultMessage != undefined) {
+        alert(data.resultMessage);
+      }
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (paraDataSaved.work_type !== "") fetchTodoGridSaved2();
+  }, [paraDataSaved]);
+
+  const ongrdDetailItemChange2 = (event: GridItemChangeEvent) => {
+    setMainDataState2((prev) => ({ ...prev, sort: [] }));
+    getGridItemChangedData(
+      event,
+      mainDataResult2,
+      setMainDataResult2,
+      DATA_ITEM_KEY2
+    );
+  };
+
+  const customCellRender2 = (td: any, props: any) => (
+    <CellRender
+      originalProps={props}
+      td={td}
+      enterEdit={enterEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const customRowRender2 = (tr: any, props: any) => (
+    <RowRender
+      originalProps={props}
+      tr={tr}
+      exitEdit={exitEdit2}
+      editField={EDIT_FIELD}
+    />
+  );
+
+  const enterEdit2 = (dataItem: any, field: string) => {
+    if (field != "rowstatus" && field != "recdt" && field != "num") {
+      const newData = mainDataResult2.data.map((item) =>
+        item[DATA_ITEM_KEY2] == dataItem[DATA_ITEM_KEY2]
+          ? {
+              ...item,
+              [EDIT_FIELD]: field,
+            }
+          : { ...item, [EDIT_FIELD]: undefined }
+      );
+
+      setTempResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      setTempResult2((prev) => {
+        return {
+          data: mainDataResult2.data,
+          total: prev.total,
+        };
+      });
+    }
+  };
+
+  const exitEdit2 = () => {
+    if (tempResult2.data != mainDataResult2.data) {
+      const newData = mainDataResult2.data.map((item) =>
+        item[DATA_ITEM_KEY2] == Object.getOwnPropertyNames(selectedState2)[0]
+          ? {
+              ...item,
+              rowstatus: item.rowstatus == "N" ? "N" : "U",
+              [EDIT_FIELD]: undefined,
+            }
+          : {
+              ...item,
+              [EDIT_FIELD]: undefined,
+            }
+      );
+
+      setTempResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    } else {
+      const newData = mainDataResult2.data.map((item) => ({
+        ...item,
+        [EDIT_FIELD]: undefined,
+      }));
+      setTempResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+    }
   };
 
   return (
@@ -1368,7 +1934,7 @@ const SA_A1200_603W: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
-                      <th style={{ textAlign: "right"}}>견적차수</th>
+                      <th style={{ textAlign: "right" }}>견적차수</th>
                       <td>
                         <Input
                           name="quorev"
@@ -1380,7 +1946,7 @@ const SA_A1200_603W: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                      <th style={{ textAlign: "right"}}>견적제출일</th>
+                      <th style={{ textAlign: "right" }}>견적제출일</th>
                       <td>
                         <Input
                           name="submitdt"
@@ -1392,7 +1958,7 @@ const SA_A1200_603W: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                      <th style={{ textAlign: "right"}}>활동차수</th>
+                      <th style={{ textAlign: "right" }}>활동차수</th>
                       <td>
                         <Input
                           name="seq"
@@ -1404,7 +1970,7 @@ const SA_A1200_603W: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                      <th style={{ textAlign: "right"}}>계약목표일</th>
+                      <th style={{ textAlign: "right" }}>계약목표일</th>
                       <td>
                         <Input
                           name="conplandt"
@@ -1416,7 +1982,7 @@ const SA_A1200_603W: React.FC = () => {
                           className="readonly"
                         />
                       </td>
-                      <th style={{ textAlign: "right"}}>경과기간</th>
+                      <th style={{ textAlign: "right" }}>경과기간</th>
                       <td>
                         <Input
                           name="passdt"
@@ -1433,6 +1999,103 @@ const SA_A1200_603W: React.FC = () => {
                 </FormBox>
               </GridContainer>
             </FormBoxWrap>
+            <GridContainer>
+              <ExcelExport
+                data={mainDataResult2.data}
+                ref={(exporter) => {
+                  _export2 = exporter;
+                }}
+                fileName="계약가능성관리"
+              >
+                <GridTitleContainer>
+                  <GridTitle>코멘트</GridTitle>
+                  <ButtonContainer>
+                    <Button
+                      onClick={onAddClick}
+                      themeColor={"primary"}
+                      icon="plus"
+                      title="행 추가"
+                    ></Button>
+                    <Button
+                      onClick={onDeleteClick}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="minus"
+                      title="행 삭제"
+                    ></Button>
+                    <Button
+                      onClick={onSaveClick3}
+                      fillMode="outline"
+                      themeColor={"primary"}
+                      icon="save"
+                      title="저장"
+                    ></Button>
+                  </ButtonContainer>
+                </GridTitleContainer>
+                <Grid
+                  style={{ height: "25vh" }}
+                  data={process(
+                    mainDataResult2.data.map((row) => ({
+                      ...row,
+                      [SELECTED_FIELD]: selectedState2[idGetter2(row)],
+                    })),
+                    mainDataState2
+                  )}
+                  {...mainDataState2}
+                  onDataStateChange={onMainDataStateChange2}
+                  //선택 기능
+                  dataItemKey={DATA_ITEM_KEY2}
+                  selectedField={SELECTED_FIELD}
+                  selectable={{
+                    enabled: true,
+                    mode: "single",
+                  }}
+                  onSelectionChange={onSelectionChange2}
+                  //스크롤 조회 기능
+                  fixedScroll={true}
+                  total={mainDataResult2.total}
+                  skip={page2.skip}
+                  take={page2.take}
+                  pageable={true}
+                  onPageChange={pageChange2}
+                  //정렬기능
+                  sortable={true}
+                  onSortChange={onMainSortChange2}
+                  //컬럼순서조정
+                  reorderable={true}
+                  //컬럼너비조정
+                  resizable={true}
+                  onItemChange={ongrdDetailItemChange2}
+                  cellRender={customCellRender2}
+                  rowRender={customRowRender2}
+                  editField={EDIT_FIELD}
+                >
+                  {customOptionData !== null &&
+                    customOptionData.menuCustomColumnOptions["grdList2"]?.map(
+                      (item: any, idx: number) =>
+                        item.sortOrder !== -1 && (
+                          <GridColumn
+                            key={idx}
+                            id={item.id}
+                            field={item.fieldName}
+                            title={item.caption}
+                            width={item.width}
+                            cell={
+                              DateField.includes(item.fieldName)
+                                ? DateCell
+                                : undefined
+                            }
+                            footerCell={
+                              item.sortOrder === 0
+                                ? mainTotalFooterCell2
+                                : undefined
+                            }
+                          />
+                        )
+                    )}
+                </Grid>
+              </ExcelExport>
+            </GridContainer>
           </GridContainerWrap>
         </TabStripTab>
       </TabStrip>
