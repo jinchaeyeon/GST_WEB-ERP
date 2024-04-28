@@ -145,6 +145,8 @@ const CM_A7000W: React.FC = () => {
 
   const [projectWindowVisible, setProjectWindowVisible] =
     useState<boolean>(false);
+    const [searcProjectWindowVisible, setSearchProjectWindowVisible] =
+    useState<boolean>(false);
 
   const [attachmentsWindowVisiblePb, setAttachmentsWindowVisiblePb] =
     useState<boolean>(false);
@@ -186,6 +188,9 @@ const CM_A7000W: React.FC = () => {
 
   const onProjectWndClick = () => {
     setProjectWindowVisible(true);
+  };
+  const onSearchProjectWndClick = () => {
+    setSearchProjectWindowVisible(true);
   };
 
   //비즈니스 컴포넌트 조회
@@ -304,6 +309,14 @@ const CM_A7000W: React.FC = () => {
         telno: "",
         phoneno: "",
         email: "",
+      };
+    });
+  };
+  const setSearchProjectData = (data: any) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        ref_key: data.quokey,
       };
     });
   };
@@ -1534,6 +1547,13 @@ const CM_A7000W: React.FC = () => {
                       value={filters.ref_key}
                       onChange={filterInputChange}
                     />
+                     <ButtonInInput>
+                          <Button
+                            icon="more-horizontal"
+                            fillMode="flat"
+                            onClick={onSearchProjectWndClick}
+                          />
+                        </ButtonInInput>
                   </td>
                 </tr>
                 <tr>
@@ -2231,6 +2251,14 @@ const CM_A7000W: React.FC = () => {
         <ProjectsWindow
           setVisible={setProjectWindowVisible}
           setData={setProjectData}
+          modal={true}
+          pathname="CM_A7000W"
+        />
+      )}
+      {searcProjectWindowVisible && (
+        <ProjectsWindow
+          setVisible={setSearchProjectWindowVisible}
+          setData={setSearchProjectData}
           modal={true}
           pathname="CM_A7000W"
         />
