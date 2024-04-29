@@ -1,7 +1,6 @@
 import { DataResult, State, process } from "@progress/kendo-data-query";
 import { Button } from "@progress/kendo-react-buttons";
 import { getter } from "@progress/kendo-react-common";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
@@ -99,7 +98,8 @@ const SA_B1101_603W: React.FC = () => {
         ...prev,
         frdt: setDefaultDate(customOptionData, "frdt"),
         todt: setDefaultDate(customOptionData, "todt"),
-        reqdt: setDefaultDate(customOptionData, "reqdt"),
+        reqdtstr: setDefaultDate(customOptionData, "reqdtstr"),
+        reqdtend: setDefaultDate(customOptionData, "reqdtend"),
         chkperson: defaultOption.find((item: any) => item.id == "chkperson")
           ?.valueCode,
         isSearch: true,
@@ -179,7 +179,8 @@ const SA_B1101_603W: React.FC = () => {
     contractno: "",
     project: "",
     chkperson: "",
-    reqdt: new Date(),
+    reqdtstr: new Date(),
+    reqdtend: new Date(),
     pgNum: 1,
     isSearch: true,
     pgSize: PAGE_SIZE,
@@ -274,13 +275,13 @@ const SA_B1101_603W: React.FC = () => {
         "@p_contractno": filters.contractno,
         "@p_project": filters.project,
         "@p_chkperson": filters.chkperson,
-        "@p_reqdt": convertDateToStr(filters.reqdt),
+        "@p_reqdtstr": convertDateToStr(filters.reqdtstr),
+        "@p_reqdtend": convertDateToStr(filters.reqdtend),
       },
     };
 
     try {
       data = await processApi<any>("procedure", parameters);
-      console.log(convertDateToStr(filters.reqdt));
     } catch (error) {
       data = null;
     }
@@ -535,12 +536,18 @@ const SA_B1101_603W: React.FC = () => {
               </td>
               <th>청구예정일</th>
               <td>
-                <DatePicker
-                  name="reqdt"
-                  value={filters.reqdt}
-                  format="yyyy-MM-dd"
-                  onChange={filterInputChange}
-                  placeholder=""
+                <CommonDateRangePicker
+                  value={{
+                    start: filters.reqdtstr,
+                    end: filters.reqdtend,
+                  }}
+                  onChange={(e: { value: { start: any; end: any } }) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      reqdtstr: e.value.start,
+                      reqdtend: e.value.end,
+                    }))
+                  }
                 />
               </td>
             </tr>
