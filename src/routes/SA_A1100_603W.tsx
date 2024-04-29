@@ -78,6 +78,7 @@ import {
 } from "../components/CommonString";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWindow";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import { IAttachmentData } from "../hooks/interfaces";
@@ -544,6 +545,15 @@ const SA_A1100_603W: React.FC = () => {
         [name]: value,
       }));
     }
+  };
+
+  const filtersComboBoxChange = (e: any) => {
+    const { name, value } = e;
+
+    setInformation((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   //조회조건 ComboBox Change 함수 => 사용자가 선택한 콤보박스 값을 조회 파라미터로 세팅
@@ -2355,6 +2365,21 @@ const SA_A1100_603W: React.FC = () => {
     });
   };
 
+  const [projectWindowVisible, setProjectWindowVisible] =
+    useState<boolean>(false);
+  const onProjectWndClick = () => {
+    setProjectWindowVisible(true);
+  };
+
+  const setProjectData = (data: any) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        quokey: data.quokey,
+      };
+    });
+  };
+
   return (
     <>
       <TitleContainer>
@@ -2405,6 +2430,13 @@ const SA_A1100_603W: React.FC = () => {
                       value={filters.quokey}
                       onChange={InputChange}
                     />
+                    <ButtonInInput>
+                      <Button
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onProjectWndClick}
+                      />
+                    </ButtonInInput>
                   </td>
                   <th>업체명</th>
                   <td>
@@ -2463,7 +2495,7 @@ const SA_A1100_603W: React.FC = () => {
                         customOptionData={customOptionData}
                         textField="user_name"
                         valueField="user_id"
-                        changeData={ComboBoxChange}
+                        changeData={filtersComboBoxChange}
                       />
                     )}
                   </td>
@@ -2474,7 +2506,7 @@ const SA_A1100_603W: React.FC = () => {
                         name="materialtype"
                         value={filters.materialtype}
                         customOptionData={customOptionData}
-                        changeData={ComboBoxChange}
+                        changeData={filtersComboBoxChange}
                       />
                     )}
                   </td>
@@ -3206,6 +3238,14 @@ const SA_A1100_603W: React.FC = () => {
           setData={getAttachmentsData}
           para={Information.attdatnum}
           modal={true}
+        />
+      )}
+      {projectWindowVisible && (
+        <ProjectsWindow
+          setVisible={setProjectWindowVisible}
+          setData={setProjectData}
+          modal={true}
+          pathname="SA_A1100_603W"
         />
       )}
       {gridList.map((grid: TGrid) =>

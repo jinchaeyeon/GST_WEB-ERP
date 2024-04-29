@@ -29,7 +29,6 @@ import {
 import TopButtons from "../components/Buttons/TopButtons";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
-import CustomOptionComboBox from "../components/ComboBoxes/CustomOptionComboBox";
 import {
   GetPropertyValueByName,
   UseBizComponent,
@@ -39,6 +38,7 @@ import {
   convertDateToStr,
   findMessage,
   getQueryFromBizComponent,
+  handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
 import {
@@ -60,8 +60,8 @@ import { gridList } from "../store/columns/SA_B2201W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 const DateField = ["orddt"];
-const numberField = ["cnt", "amt","conamt", "stramt", "janamt"];
-const numberField2 = [ "amt", "stramt", "janamt"];
+const numberField = ["cnt", "amt", "conamt", "stramt", "janamt"];
+const numberField2 = ["amt", "stramt", "janamt"];
 
 const SA_B2201W_603: React.FC = () => {
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -95,7 +95,7 @@ const SA_B2201W_603: React.FC = () => {
       take: initialPageState.take,
     });
   };
- 
+
   const pageChange2 = (event: GridPageChangeEvent) => {
     const { page } = event;
 
@@ -118,7 +118,6 @@ const SA_B2201W_603: React.FC = () => {
   const detailIdGetter = getter(DETAIL_DATA_ITEM_KEY);
 
   const setLoading = useSetRecoilState(isLoading);
-
 
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
@@ -155,7 +154,7 @@ const SA_B2201W_603: React.FC = () => {
     setDetailSelectedState(newSelectedState);
   };
 
-   //엑셀 내보내기
+  //엑셀 내보내기
   let _export: any;
   let _export2: any;
   const exportExcel = () => {
@@ -170,7 +169,10 @@ const SA_B2201W_603: React.FC = () => {
   };
   const [bizComponentData, setBizComponentData] = useState<any>([]);
   //   물질분류, 영업담당자
-  UseBizComponent("L_SA001_603, L_sysUserMaster_001, L_SA002", setBizComponentData);
+  UseBizComponent(
+    "L_SA001_603, L_sysUserMaster_001, L_SA002",
+    setBizComponentData
+  );
   const [userListData, setUserListData] = useState([
     { user_id: "", user_name: "" },
   ]);
@@ -180,7 +182,7 @@ const SA_B2201W_603: React.FC = () => {
   const [ordstsListData, setOrdstsListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
-  
+
   useEffect(() => {
     if (bizComponentData.length > 0) {
       const userQueryStr = getQueryFromBizComponent(
@@ -253,7 +255,6 @@ const SA_B2201W_603: React.FC = () => {
     isSearch: true,
   });
 
-
   const filterInputChange = (e: any) => {
     const { value, name } = e.target;
 
@@ -268,12 +269,6 @@ const SA_B2201W_603: React.FC = () => {
         ...prev,
         [name]: value,
         chkperson: value == "" ? "" : prev.chkperson,
-      }));
-    } else if (name == "custprsnnm") {
-      setFilters((prev) => ({
-        ...prev,
-        [name]: value,
-        custprsnnm: value == "" ? "" : prev.custprsnnm,
       }));
     } else {
       setFilters((prev) => ({
@@ -296,7 +291,7 @@ const SA_B2201W_603: React.FC = () => {
 
   const [projectWindowVisible, setProjectWindowVisible] =
     useState<boolean>(false);
-  const onProejctWndClick = () => {
+  const onProjectWndClick = () => {
     setProjectWindowVisible(true);
   };
 
@@ -309,7 +304,7 @@ const SA_B2201W_603: React.FC = () => {
     setFilters((prev: any) => {
       return {
         ...prev,
-        quokey: data.quokey,
+        quonum: data.quonum,
       };
     });
   };
@@ -371,7 +366,6 @@ const SA_B2201W_603: React.FC = () => {
     };
     try {
       data = await processApi<any>("procedure", parameters);
-      
     } catch (error) {
       data = null;
     }
@@ -382,7 +376,7 @@ const SA_B2201W_603: React.FC = () => {
           ...row,
         };
       });
-      
+
       setMainDataResult((prev) => {
         return {
           data: rows,
@@ -390,17 +384,16 @@ const SA_B2201W_603: React.FC = () => {
         };
       });
       if (totalRowCnt > 0) {
-
-          setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
-          setDetailFilters((prev) => ({
-            ...prev,
-            quonum: rows[0].quonum,
-            isSearch: true,
-            pgNum: 1,
-          }));
-        
+        setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
+        setDetailFilters((prev) => ({
+          ...prev,
+          quonum: rows[0].quonum,
+          quorev: rows[0].quorev,
+          isSearch: true,
+          pgNum: 1,
+        }));
       } else {
-        setPage2(initialPageState)
+        setPage2(initialPageState);
         setDetailDataResult(process([], detailDataState));
       }
     } else {
@@ -444,7 +437,7 @@ const SA_B2201W_603: React.FC = () => {
       },
     };
 
-    try {      
+    try {
       data = await processApi<any>("procedure", detailParameters);
     } catch (error) {
       data = null;
@@ -452,7 +445,7 @@ const SA_B2201W_603: React.FC = () => {
 
     if (data.isSuccess == true) {
       const totalRowCnt = data.tables[0].TotalRowCount;
-      const rows = data.tables[0].Rows;      
+      const rows = data.tables[0].Rows;
       setDetailDataResult((prev) => {
         return {
           data: rows,
@@ -461,9 +454,7 @@ const SA_B2201W_603: React.FC = () => {
       });
 
       if (totalRowCnt > 0) {
-
-          setDetailSelectedState({ [rows[0][DETAIL_DATA_ITEM_KEY]]: true });
-        
+        setDetailSelectedState({ [rows[0][DETAIL_DATA_ITEM_KEY]]: true });
       }
     }
     setDetailFilters((prev) => ({
@@ -516,10 +507,11 @@ const SA_B2201W_603: React.FC = () => {
 
     const selectedIdx = event.startRowIndex;
     const selectedRowData = event.dataItems[selectedIdx];
-    
+
     setDetailFilters((prev) => ({
       ...prev,
       quonum: selectedRowData.quonum,
+      quorev: selectedRowData.quorev,
       pgNum: 1,
       find_row_value: "",
       isSearch: true,
@@ -675,7 +667,7 @@ const SA_B2201W_603: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterContainer>
-        <FilterBox>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>PJT NO.</th>
@@ -690,7 +682,7 @@ const SA_B2201W_603: React.FC = () => {
                   <Button
                     icon="more-horizontal"
                     fillMode="flat"
-                    onClick={onProejctWndClick}
+                    onClick={onProjectWndClick}
                   />
                 </ButtonInInput>
               </td>
