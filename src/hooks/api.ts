@@ -243,7 +243,8 @@ export const useApi = () => {
                       "일치하는 로그인 정보를 찾을 수 없습니다.\r\n올바른 회사코드, 아이디, 비밀번호를 입력해주세요."
                     )
                   );
-                } else if(!token) {
+                } 
+                else if(!token) {
                   if(window.location.href != "/") {
                     reject(
                       new Error(
@@ -252,7 +253,8 @@ export const useApi = () => {
                     );
                     window.location.href = "/"
                   }
-                } else {
+                }
+                 else {
                   reject(res.data);
                 }
               })
@@ -354,7 +356,8 @@ export const useApi = () => {
                     "일치하는 로그인 정보를 찾을 수 없습니다.\r\n올바른 회사코드, 아이디, 비밀번호를 입력해주세요."
                   )
                 );
-              } else if(!token) {
+              } 
+              else if(!token) {
                 if(window.location.href != "/") {
                   reject(
                     new Error(
@@ -363,7 +366,8 @@ export const useApi = () => {
                   );
                   window.location.href = "/"
                 }
-              } else {
+              } 
+              else {
                 reject(res.data);
               }
             })
@@ -394,6 +398,11 @@ axiosInstance.interceptors.response.use(
       errResponseStatus = error.response.status;
       errResponseURL = error.request.responseURL;
     } catch (e) {}
+
+    // 로그인 페이지에서는 토큰 만료 로직을 실행하지 않음
+    if (errResponseURL.includes("auth/login")) {
+      return Promise.reject(error);
+    }
 
     if (errResponseStatus == 401 && !errResponseURL.includes("auth/login")) {
       if (!isTokenRefreshing) {
