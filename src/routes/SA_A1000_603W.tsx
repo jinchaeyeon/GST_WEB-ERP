@@ -183,7 +183,9 @@ const numberField = [
 ];
 const itemField = ["itemcd"];
 const colorField = ["status"];
-const centerField = ["passdt", "quorev", "itemcnt"];
+const centerField = ["passdt", "quorev", "itemcnt",];
+const centerField2 = [ "status"];
+
 const percentField = ["rate"];
 
 let temp2 = 0;
@@ -6734,6 +6736,8 @@ const SA_A1000_603W: React.FC = () => {
                                 ? NumberCell
                                 : percentField.includes(item.fieldName)
                                 ? CustomPercentCell
+                                : centerField2.includes(item.fieldName)
+                                ? CenterCell
                                 : undefined
                             }
                             footerCell={
