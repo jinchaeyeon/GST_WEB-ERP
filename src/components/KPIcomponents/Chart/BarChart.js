@@ -105,6 +105,7 @@ export default function BarChart(props) {
             display: true,
             font: {
               weight: "bold",
+              size: 14
             },
             formatter: function (value, context) {
               return numberWithCommas3(value);

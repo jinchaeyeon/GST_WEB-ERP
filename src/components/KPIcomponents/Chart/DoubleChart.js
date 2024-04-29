@@ -68,6 +68,7 @@ export default function DoubleChart(props) {
             },
             font: {
               weight: "bold",
+              size: 14
             },
             formatter: function (value, context) {
               return numberWithCommas3(value);
