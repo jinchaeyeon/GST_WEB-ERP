@@ -172,12 +172,13 @@ const KendoWindow = ({
   //비즈니스 컴포넌트 조회
   const [bizComponentData, setBizComponentData] = useState<any>(null);
   UseBizComponent(
-    "L_CM500_603_Q, L_CM501_603, L_CM502_603",
+    "L_CM500_603_Q, L_CM501_603, L_CM502_603, L_SA001_603, L_CM503_603, L_sysUserMaster_001",
     setBizComponentData
   );
   // 의약품상세분류, 문의 분야
 
-  const [meditypeListData, setMeditypeListData] = React.useState([
+  // 물질분야
+  const [materialtypeListData, setMaterialtypeListData] = useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
   const [requireListData, setRequireListData] = React.useState([
@@ -186,11 +187,22 @@ const KendoWindow = ({
   const [statusListData, setStatusListData] = React.useState([
     COM_CODE_DEFAULT_VALUE,
   ]);
+  const [completion_methodListData, setCompletion_methodListData] = useState([
+    COM_CODE_DEFAULT_VALUE,
+  ]);
+  const [userListData, setUserListData] = useState([
+    { user_id: "", user_name: "" },
+  ]);
   useEffect(() => {
     if (bizComponentData !== null) {
-      const meditypeQueryStr = getQueryFromBizComponent(
+      const materialtypeQueryStr = getQueryFromBizComponent(
         bizComponentData.find(
-          (item: any) => item.bizComponentId == "L_CM501_603"
+          (item: any) => item.bizComponentId == "L_SA001_603"
+        )
+      );
+      const userQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_sysUserMaster_001"
         )
       );
       const statusQueryStr = getQueryFromBizComponent(
@@ -203,9 +215,18 @@ const KendoWindow = ({
           (item: any) => item.bizComponentId == "L_CM502_603"
         )
       );
+      const completion_methodQueryStr = getQueryFromBizComponent(
+        bizComponentData.find(
+          (item: any) => item.bizComponentId == "L_CM503_603"
+        )
+      );
+      fetchQueryData(userQueryStr, setUserListData);
+
       fetchQueryData(statusQueryStr, setStatusListData);
-      fetchQueryData(meditypeQueryStr, setMeditypeListData);
+      fetchQueryData(materialtypeQueryStr, setMaterialtypeListData);
       fetchQueryData(requireQueryStr, setRequireListData);
+      fetchQueryData(completion_methodQueryStr, setCompletion_methodListData);
+
     }
   }, [bizComponentData]);
 
@@ -323,7 +344,7 @@ const KendoWindow = ({
       return {
         ...prev,
         customer_code: data.custcd,
-        customernm: data.custnm,
+        custnm: data.custnm,
       };
     });
   };
@@ -721,8 +742,17 @@ const KendoWindow = ({
           data={process(
             mainDataResult.data.map((row) => ({
               ...row,
-              requrie_type: requireListData.find(
-                (items: any) => items.sub_code == row.requrie_type
+              person: userListData.find(
+                (items: any) => items.user_id == row.person
+              )?.user_name,
+              require_type: requireListData.find(
+                (items: any) => items.sub_code == row.require_type
+              )?.code_name,
+              materialtype: materialtypeListData.find(
+                (items: any) => items.sub_code == row.materialtype
+              )?.code_name,
+              completion_method: completion_methodListData.find(
+                (items: any) => items.sub_code == row.completion_method
               )?.code_name,
               [SELECTED_FIELD]: selectedState[idGetter(row)], //선택된 데이터
             })),
