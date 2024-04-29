@@ -15,7 +15,9 @@ import {
   GetPropertyValueByName,
   ThreeNumberceil,
   UseCustomOption,
+  UseMessages,
   convertDateToStr,
+  findMessage,
   numberWithCommas3,
   setDefaultDate,
 } from "../components/CommonFunction";
@@ -95,6 +97,10 @@ const SA_B2226W: React.FC = () => {
     }, []); // Empty array ensures that effect is only run on mount
     return windowSize;
   }
+
+   //메시지 조회
+   const [messagesData, setMessagesData] = React.useState<any>(null);
+   UseMessages("SA_B2226W", setMessagesData);
 
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
@@ -265,10 +271,14 @@ const SA_B2226W: React.FC = () => {
 
   useEffect(() => {
     if (filters.isSearch && customOptionData != null) {
-      setFilters((prev) => ({
-        ...prev,
-        isSearch: false,
-      }));
+      if (filters.frdt != null) {
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: false,
+        }));
+      } else {
+        alert(findMessage(messagesData, "SA_B2226W_001"));
+      }
       fetchMainGrid();
     }
   }, [filters]);
