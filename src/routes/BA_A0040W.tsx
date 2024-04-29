@@ -4,6 +4,7 @@ import { getter } from "@progress/kendo-react-common";
 import { ExcelExport } from "@progress/kendo-react-excel-export";
 import {
   Grid,
+  GridCell,
   GridCellProps,
   GridColumn,
   GridDataStateChangeEvent,
@@ -65,6 +66,7 @@ import {
 import {
   COM_CODE_DEFAULT_VALUE,
   EDIT_FIELD,
+  GAP,
   PAGE_SIZE,
   SELECTED_FIELD,
 } from "../components/CommonString";
@@ -87,6 +89,7 @@ import {
 } from "../store/atoms";
 import { gridList } from "../store/columns/BA_A0040W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import saveAs from "file-saver";
 
 var index = 0;
 
@@ -259,6 +262,9 @@ const BA_A0040: React.FC = () => {
   const [subData2Result, setSubData2Result] = useState<DataResult>(
     process([], subData2State)
   );
+  const [subData2Result2, setSubData2Result2] = useState<DataResult>(
+    process([], subData2State)
+  );
   const [tempResult, setTempResult] = useState<DataResult>(
     process([], tempState)
   );
@@ -278,6 +284,8 @@ const BA_A0040: React.FC = () => {
 
   const [tabSelected, setTabSelected] = React.useState(0);
   const [workType, setWorkType] = useState<string>("U");
+
+  const [imgBase64, setImgBase64] = useState<string[]>([]);
 
   //조회조건 Input Change 함수 => 사용자가 Input에 입력한 값을 조회 파라미터로 세팅
   const filterInputChange = (e: any) => {
@@ -394,6 +402,12 @@ const BA_A0040: React.FC = () => {
     auto: "Y",
   });
 
+  const [infomation2, setInfomation2] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "IMAGE",
+    itemcd: "",
+  });
+
   //조회조건 초기값
   const [filters, setFilters] = useState({
     pgSize: PAGE_SIZE,
@@ -436,6 +450,25 @@ const BA_A0040: React.FC = () => {
     itemlvl1: "",
     itemlvl2: "",
     itemlvl3: "",
+    find_row_value: "",
+    pgNum: 1,
+    isSearch: false,
+  });
+
+  const [subfilters2, setsubFilters2] = useState({
+    pgSize: PAGE_SIZE,
+    workType: "IMAGE",
+    itemcd: "",
+    itemnm: "",
+    insiz: "",
+    itemacnt: "",
+    useyn: "",
+    custcd: "",
+    custnm: "",
+    itemcd_s: "",
+    spec: "",
+    location: "",
+    remark: "",
     find_row_value: "",
     pgNum: 1,
     isSearch: false,
@@ -543,6 +576,24 @@ const BA_A0040: React.FC = () => {
             pgNum: 1,
             isSearch: true,
           }));
+          setsubFilters2((prev) => ({
+            ...prev,
+            workType: "IMAGE",
+            itemcd: selectedRow.itemcd,
+            itemnm: selectedRow.itemnm,
+            insiz: selectedRow.insiz,
+            itemacnt: selectedRow.itemacnt,
+            useyn: selectedRow.useyn,
+            custcd: selectedRow.custcd,
+            custnm: selectedRow.custnm,
+            itemcd_s: "",
+            spec: selectedRow.spec,
+            location: selectedRow.location,
+            remark: selectedRow.remark,
+            find_row_value: "",
+            pgNum: 1,
+            isSearch: true,
+          }));
           setInfomation({
             pgSize: PAGE_SIZE,
             workType: "U",
@@ -609,6 +660,11 @@ const BA_A0040: React.FC = () => {
             files: selectedRow.files,
             auto: selectedRow.auto,
           });
+          setInfomation2({
+            pgSize: PAGE_SIZE,
+            workType: "IMAGE",
+            itemcd: selectedRow.itemcd,
+          });
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
           setsubFilters((prev) => ({
@@ -629,6 +685,24 @@ const BA_A0040: React.FC = () => {
             itemlvl1: rows[0].itemlvl1,
             itemlvl2: rows[0].itemlvl2,
             itemlvl3: rows[0].itemlvl3,
+            find_row_value: "",
+            pgNum: 1,
+            isSearch: true,
+          }));
+          setsubFilters((prev) => ({
+            ...prev,
+            workType: "IMAGE",
+            itemcd: rows[0].itemcd,
+            itemnm: rows[0].itemnm,
+            insiz: rows[0].insiz,
+            itemacnt: rows[0].itemacnt,
+            useyn: rows[0].useyn,
+            custcd: rows[0].custcd,
+            custnm: rows[0].custnm,
+            itemcd_s: "",
+            spec: rows[0].spec,
+            location: rows[0].location,
+            remark: rows[0].remark,
             find_row_value: "",
             pgNum: 1,
             isSearch: true,
@@ -696,6 +770,11 @@ const BA_A0040: React.FC = () => {
             procday: rows[0].procday,
             files: rows[0].files,
             auto: rows[0].auto,
+          });
+          setInfomation2({
+            pgSize: PAGE_SIZE,
+            workType: "U",
+            itemcd: rows[0].itemcd,
           });
         }
       } else {
@@ -889,6 +968,177 @@ const BA_A0040: React.FC = () => {
     setLoading(false);
   };
 
+  const fetchSubGrid2 = async (subfilters: any) => {
+    //if (!permissions?.view) return;
+    let data: any;
+    //조회조건 파라미터
+    const subparameters: Iparameters = {
+      procedureName: "P_BA_A0040W_Q",
+      pageNumber: subfilters2.pgNum,
+      pageSize: subfilters2.pgSize,
+      parameters: {
+        "@p_work_type": subfilters2.workType,
+        "@p_itemcd": subfilters2.itemcd,
+        "@p_itemnm": subfilters2.itemnm,
+        "@p_insiz": subfilters2.insiz,
+        "@p_itemacnt": subfilters2.itemacnt,
+        "@p_useyn": subfilters2.useyn,
+        "@p_custcd": subfilters2.custcd,
+        "@p_custnm": subfilters2.custnm,
+        "@p_itemcd_s": subfilters2.itemcd_s,
+        "@p_spec": subfilters2.spec,
+        "@p_remark": subfilters2.remark,
+        "@p_find_row_value": subfilters2.find_row_value,
+      },
+    };
+
+    setLoading(true);
+    try {
+      data = await processApi<any>("procedure", subparameters);
+      console.log(data);
+    } catch (error) {
+      data = null;
+    }
+
+    if (data.isSuccess == true) {
+      const rows = data.tables[0].Rows;
+
+      let images: string[] = [];
+      let image1 = rows[0].attdatnum_img;
+      let image2 = rows[0].attdatnum_img2;
+      if (image1 != null) {
+        if (
+          image1.slice(0, 1) == "0" &&
+          image1.slice(1, 2) == "x" &&
+          image1 != undefined
+        ) {
+          images.push(image1.toString());
+        } else {
+          images.push("data:image/png;base64," + image1);
+        }
+      }
+      if (image2 != null) {
+        if (
+          image2.slice(0, 1) == "0" &&
+          image2.slice(1, 2) == "x" &&
+          image2 != undefined
+        ) {
+          images.push(image2.toString());
+        } else {
+          images.push("data:image/png;base64," + image2);
+        }
+      }
+      setImgBase64(images);
+    } else {
+      console.log("[오류 발생]");
+      console.log(data);
+    }
+    // 필터 isSearch false처리, pgNum 세팅
+    setsubFilters2((prev) => ({
+      ...prev,
+      pgNum:
+        data && data.hasOwnProperty("pageNumber")
+          ? data.pageNumber
+          : prev.pgNum,
+      isSearch: false,
+    }));
+    setLoading(false);
+  };
+
+  const onAttWndClick2 = () => {
+    const uploadInput = document.getElementById("uploadAttachment");
+    uploadInput!.click();
+  };
+
+  const gridData = [{ id: 1, image: imgBase64[0] }];
+  const gridData2 = [{ id: 1, image: imgBase64[1] }];
+
+  const imgCell = ({
+    tdProps,
+    dataItem,
+  }: {
+    tdProps?: any;
+    dataItem?: any;
+  }) => {
+    const downloadImage = (imageDataUrl: string, filename: string) => {
+      const link = document.createElement("a");
+      link.href = imageDataUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+    const imageDataUrl = imgBase64[0];
+
+    const hasImage = imgBase64[0] != null;
+
+    return (
+      <>
+        <img
+          src={imageDataUrl}
+          width="100%"
+          height="400%"
+          className="contact-img"
+        />
+        {hasImage && (
+          <div style={{ textAlign: "center", margin: "5px 0 5px 0" }}>
+            <Button
+              onClick={() => downloadImage(imageDataUrl, "image_1.png")}
+              themeColor={"primary"}
+              fillMode={"outline"}
+              icon={"download"}
+            >
+              다운로드
+            </Button>
+          </div>
+        )}
+      </>
+    );
+  };
+
+  const imgCell2 = ({
+    tdProps,
+    dataItem,
+  }: {
+    tdProps?: any;
+    dataItem?: any;
+  }) => {
+    const downloadImage = (imageDataUrl: string, filename: string) => {
+      const link = document.createElement("a");
+      link.href = imageDataUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
+
+    const imageDataUrl = imgBase64[1];
+    const hasImage = imgBase64[1] != null;
+
+    return (
+      <>
+        <img
+          src={imageDataUrl}
+          width="100%"
+          height="400%"
+          className="contact-img"
+        />
+        {hasImage && (
+          <div style={{ textAlign: "center", margin: "5px 0 5px 0" }}>
+            <Button
+              onClick={() => downloadImage(imageDataUrl, "image_2.png")}
+              themeColor={"primary"}
+              fillMode={"outline"}
+              icon={"download"}
+            >
+              다운로드
+            </Button>
+          </div>
+        )}
+      </>
+    );
+  };
+
   //조회조건 사용자 옵션 디폴트 값 세팅 후 최초 한번만 실행
   useEffect(() => {
     if (
@@ -920,6 +1170,21 @@ const BA_A0040: React.FC = () => {
       fetchSubGrid(deepCopiedFilters);
     }
   }, [subfilters]);
+
+  useEffect(() => {
+    if (subfilters2.isSearch) {
+      const _ = require("lodash");
+      const deepCopiedFilters = _.cloneDeep(subfilters);
+
+      setsubFilters2((prev) => ({
+        ...prev,
+        find_row_value: "",
+        isSearch: false,
+      }));
+
+      fetchSubGrid2(deepCopiedFilters);
+    }
+  }, [subfilters2]);
 
   useEffect(() => {
     // targetRowIndex 값 설정 후 그리드 데이터 업데이트 시 해당 위치로 스크롤 이동
@@ -1030,6 +1295,28 @@ const BA_A0040: React.FC = () => {
       isSearch: true,
       pgNum: 1,
       find_row_value: "",
+    }));
+    setInfomation2({
+      pgSize: PAGE_SIZE,
+      workType: "IMAGE",
+      itemcd: selectedRowData.itemcd,
+    });
+    setsubFilters2((prev) => ({
+      ...prev,
+      itemcd: selectedRowData.itemcd,
+      itemnm: selectedRowData.itemnm,
+      insiz: selectedRowData.insiz,
+      itemacnt: selectedRowData.itemacnt,
+      useyn: selectedRowData.useyn,
+      custcd: selectedRowData.custcd,
+      custnm: selectedRowData.custnm,
+      itemcd_s: "",
+      spec: selectedRowData.spec,
+      location: selectedRowData.location,
+      remark: selectedRowData.remark,
+      find_row_value: "",
+      pgNum: 1,
+      isSearch: true,
     }));
     if (swiper && isMobile) {
       swiper.slideTo(1);
@@ -2697,6 +2984,49 @@ const BA_A0040: React.FC = () => {
                       </ExcelExport>
                     </GridContainer>
                   </TabStripTab>
+                  <TabStripTab title="이미지">
+                    <GridContainer>
+                      <FormBoxWrap
+                        style={{
+                          height: `${deviceHeight * 0.67}px`,
+                          width: "100%",
+                          overflow: "scroll",
+                        }}
+                      >
+                        <GridContainer width={`calc(20% - ${GAP}px)`}>
+                          <GridContainer>
+                            <Grid
+                              style={{
+                                height: "fit-content",
+                              }}
+                              data={gridData}
+                            >
+                              <GridColumn
+                                field="image"
+                                title="이미지 1"
+                                cell={imgCell}
+                              />
+                            </Grid>
+                          </GridContainer>
+
+                          <GridContainer>
+                            <Grid
+                              style={{
+                                height: "fit-content",
+                              }}
+                              data={gridData2}
+                            >
+                              <GridColumn
+                                field="image"
+                                title="이미지 2"
+                                cell={imgCell2}
+                              />
+                            </Grid>
+                          </GridContainer>
+                        </GridContainer>
+                       </FormBoxWrap>
+                    </GridContainer>
+                  </TabStripTab>
                 </TabStrip>
               </GridContainer>
             </SwiperSlide>
@@ -2855,85 +3185,117 @@ const BA_A0040: React.FC = () => {
                 </Button>
               </ButtonContainer>
             </GridTitleContainer>
-            <ExcelExport
-              data={mainDataResult.data}
-              ref={(exporter) => {
-                _export = exporter;
-              }}
-              fileName="품목관리"
-            >
-              <Grid
-                style={{ height: "42vh" }}
-                data={process(
-                  mainDataResult.data.map((row) => ({
-                    ...row,
-                    itemacnt: itemacntListData.find(
-                      (item: any) => item.sub_code == row.itemacnt
-                    )?.code_name,
-                    invunit: qtyunitListData.find(
-                      (item: any) => item.sub_code == row.invunit
-                    )?.code_name,
-                    [SELECTED_FIELD]: selectedState[idGetter(row)],
-                  })),
-                  mainDataState
-                )}
-                {...mainDataState}
-                onDataStateChange={onMainDataStateChange}
-                //선택 기능
-                dataItemKey={DATA_ITEM_KEY}
-                selectedField={SELECTED_FIELD}
-                selectable={{
-                  enabled: true,
-                  mode: "single",
-                }}
-                onSelectionChange={onSelectionChange}
-                //정렬기능
-                sortable={true}
-                onSortChange={onMainSortChange}
-                //컬럼순서조정
-                reorderable={true}
-                //컬럼너비조정
-                resizable={true}
-                //페이지 처리
-                //스크롤 조회 기능
-                fixedScroll={true}
-                total={mainDataResult.total}
-                skip={page.skip}
-                take={page.take}
-                pageable={true}
-                onPageChange={pageChange}
-                //원하는 행 위치로 스크롤 기능
-                ref={gridRef}
-                rowHeight={30}
-              >
-                {customOptionData !== null &&
-                  customOptionData.menuCustomColumnOptions["grdList"]?.map(
-                    (item: any, idx: number) =>
-                      item.sortOrder !== -1 && (
-                        <GridColumn
-                          key={idx}
-                          id={item.id}
-                          field={item.fieldName}
-                          title={item.caption}
-                          width={item.width}
-                          cell={
-                            CheckField.includes(item.fieldName)
-                              ? CheckBoxCell
-                              : NumberField.includes(item.fieldName)
-                              ? NumberCell
-                              : undefined
-                          }
-                          footerCell={
-                            item.sortOrder == 0
-                              ? mainTotalFooterCell
-                              : undefined
-                          }
-                        />
-                      )
-                  )}
-              </Grid>
-            </ExcelExport>
+            <GridContainerWrap>
+              <GridContainer width="80%">
+                <ExcelExport
+                  data={mainDataResult.data}
+                  ref={(exporter) => {
+                    _export = exporter;
+                  }}
+                  fileName="품목관리"
+                >
+                  <Grid
+                    style={{ height: "42vh" }}
+                    data={process(
+                      mainDataResult.data.map((row) => ({
+                        ...row,
+                        itemacnt: itemacntListData.find(
+                          (item: any) => item.sub_code == row.itemacnt
+                        )?.code_name,
+                        invunit: qtyunitListData.find(
+                          (item: any) => item.sub_code == row.invunit
+                        )?.code_name,
+                        [SELECTED_FIELD]: selectedState[idGetter(row)],
+                      })),
+                      mainDataState
+                    )}
+                    {...mainDataState}
+                    onDataStateChange={onMainDataStateChange}
+                    //선택 기능
+                    dataItemKey={DATA_ITEM_KEY}
+                    selectedField={SELECTED_FIELD}
+                    selectable={{
+                      enabled: true,
+                      mode: "single",
+                    }}
+                    onSelectionChange={onSelectionChange}
+                    //정렬기능
+                    sortable={true}
+                    onSortChange={onMainSortChange}
+                    //컬럼순서조정
+                    reorderable={true}
+                    //컬럼너비조정
+                    resizable={true}
+                    //페이지 처리
+                    //스크롤 조회 기능
+                    fixedScroll={true}
+                    total={mainDataResult.total}
+                    skip={page.skip}
+                    take={page.take}
+                    pageable={true}
+                    onPageChange={pageChange}
+                    //원하는 행 위치로 스크롤 기능
+                    ref={gridRef}
+                    rowHeight={30}
+                  >
+                    {customOptionData !== null &&
+                      customOptionData.menuCustomColumnOptions["grdList"]?.map(
+                        (item: any, idx: number) =>
+                          item.sortOrder !== -1 && (
+                            <GridColumn
+                              key={idx}
+                              id={item.id}
+                              field={item.fieldName}
+                              title={item.caption}
+                              width={item.width}
+                              cell={
+                                CheckField.includes(item.fieldName)
+                                  ? CheckBoxCell
+                                  : NumberField.includes(item.fieldName)
+                                  ? NumberCell
+                                  : undefined
+                              }
+                              footerCell={
+                                item.sortOrder == 0
+                                  ? mainTotalFooterCell
+                                  : undefined
+                              }
+                            />
+                          )
+                      )}
+                  </Grid>
+                </ExcelExport>
+              </GridContainer>
+              <GridContainer width={`calc(20% - ${GAP}px)`}>
+                <GridContainer>
+                  <Grid
+                    style={{
+                      height: "20.7vh",
+                    }}
+                    data={gridData}
+                  >
+                    <GridColumn field="image" title="이미지 1" cell={imgCell} />
+                  </Grid>
+                </GridContainer>
+
+                <GridContainer>
+                  <Grid
+                    style={{
+                      height: "20.7vh",
+                    }}
+                    data={gridData2}
+                  >
+                    <GridColumn
+                      field="image"
+                      title="이미지 2"
+                      cell={imgCell2}
+                    />
+                  </Grid>
+                </GridContainer>
+              </GridContainer>
+            </GridContainerWrap>
           </GridContainer>
+
           <GridContainer>
             <TabStrip
               selected={tabSelected}
