@@ -691,6 +691,22 @@ const CM_A2000W: React.FC = () => {
           </tbody>
         </FilterBox>
       </FilterContainer>
+      <GridTitleContainer>
+        <GridTitle>요약정보</GridTitle>
+        <ButtonContainer>
+          <Button onClick={onAddClick} themeColor={"primary"} icon="file-add">
+            업무지시생성
+          </Button>
+          <Button
+            onClick={onDeleteClick}
+            icon="delete"
+            fillMode="outline"
+            themeColor={"primary"}
+          >
+            업무지시삭제
+          </Button>
+        </ButtonContainer>
+      </GridTitleContainer>
       <GridContainer>
         <ExcelExport
           data={mainDataResult.data}
@@ -699,26 +715,6 @@ const CM_A2000W: React.FC = () => {
           }}
           fileName="업무지시요청"
         >
-          <GridTitleContainer>
-            <GridTitle>요약정보</GridTitle>
-            <ButtonContainer>
-              <Button
-                onClick={onAddClick}
-                themeColor={"primary"}
-                icon="file-add"
-              >
-                업무지시생성
-              </Button>
-              <Button
-                onClick={onDeleteClick}
-                icon="delete"
-                fillMode="outline"
-                themeColor={"primary"}
-              >
-                업무지시삭제
-              </Button>
-            </ButtonContainer>
-          </GridTitleContainer>
           <Grid
             style={{ height: "76vh" }}
             data={process(

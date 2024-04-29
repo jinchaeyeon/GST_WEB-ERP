@@ -70,7 +70,7 @@ const numberField = [
 const numberField2 = ["qty", "outqty", "saleqty", "amt", "wonamt", "taxamt"];
 
 let targetRowIndex: null | number = null;
-const SA_B2200: React.FC = () => {
+const SA_B2200: React.FC = () => {  
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -79,6 +79,11 @@ const SA_B2200: React.FC = () => {
   UsePermissions(setPermissions);
   const [loginResult] = useRecoilState(loginResultState);
   const companyCode = loginResult ? loginResult.companyCode : "";
+
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
+  let isMobile = deviceWidth <= 1200;
+
   //메시지 조회
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_B2200W", setMessagesData);
@@ -729,7 +734,7 @@ const SA_B2200: React.FC = () => {
             <GridTitle>요약정보</GridTitle>
           </GridTitleContainer>
           <Grid
-            style={{ height: "76vh" }}
+            style={{ height: isMobile? `${deviceHeight * 0.8 - 30}px` : "76vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

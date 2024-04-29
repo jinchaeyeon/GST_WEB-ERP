@@ -39,6 +39,7 @@ import {
   convertDateToStr,
   findMessage,
   getQueryFromBizComponent,
+  handleKeyPressSearch,
   setDefaultDate,
 } from "../components/CommonFunction";
 import {
@@ -279,6 +280,7 @@ const SA_B1101_603W: React.FC = () => {
 
     try {
       data = await processApi<any>("procedure", parameters);
+      console.log(convertDateToStr(filters.reqdt));
     } catch (error) {
       data = null;
     }
@@ -436,7 +438,7 @@ const SA_B1101_603W: React.FC = () => {
         </ButtonContainer>
       </TitleContainer>
       <FilterContainer>
-        <FilterBox>
+        <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
           <tbody>
             <tr>
               <th>계약일자</th>
