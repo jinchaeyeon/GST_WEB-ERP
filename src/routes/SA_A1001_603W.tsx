@@ -67,6 +67,7 @@ import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioG
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import EmailWindow from "../components/Windows/CommonWindows/EmailWindow";
+import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import SA_A1000_603W_Design2_Window from "../components/Windows/SA_A1000_603W_Design2_Window";
 import SA_A1000_603W_Design3_Window from "../components/Windows/SA_A1000_603W_Design3_Window";
@@ -498,6 +499,15 @@ const SA_A1001_603W: React.FC = () => {
       };
     });
   };
+  const setProjectData = (data: any) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        quonum: data.quonum,
+      };
+    });
+  };
+
   const [mainDataState, setMainDataState] = useState<State>({
     sort: [],
   });
@@ -925,6 +935,12 @@ const SA_A1001_603W: React.FC = () => {
 
   const [emailWindowVisible, setEmailWindowVisible] = useState<boolean>(false);
   const [printWindowVisible, setPrintWindowVisible] = useState<boolean>(false);
+  const [projectWindowVisible, setProjectWindowVisible] =
+    useState<boolean>(false);
+  
+  const onProjectWndClick = () => {
+    setProjectWindowVisible(true);
+  };
 
   const onSendEmail = () => {
     setEmailWindowVisible(true);
@@ -1529,6 +1545,13 @@ const SA_A1001_603W: React.FC = () => {
                       value={filters.quonum}
                       onChange={filterInputChange}
                     />
+                    <ButtonInInput>
+                      <Button
+                        icon="more-horizontal"
+                        fillMode="flat"
+                        onClick={onProjectWndClick}
+                      />
+                    </ButtonInInput>
                   </td>
                   <th>업체코드</th>
                   <td>
@@ -2003,6 +2026,14 @@ const SA_A1001_603W: React.FC = () => {
           workType={"N"}
           setData={setCustData}
           modal={true}
+        />
+      )}
+      {projectWindowVisible && (
+        <ProjectsWindow
+          setVisible={setProjectWindowVisible}
+          setData={setProjectData}
+          modal={true}
+          pathname="CM_A7000W"
         />
       )}
       {emailWindowVisible && (
