@@ -431,8 +431,8 @@ const CM_A5000W: React.FC = () => {
       attdatnum: "",
       files: "",
       ref_document_id: "",
-      person: "",
-      recdt: null,
+      person: userId,
+      recdt: new Date(),
     });
   };
 
@@ -548,9 +548,12 @@ const CM_A5000W: React.FC = () => {
         attdatnum: selectedRowData.answer_attdatnum,
         files: selectedRowData.answer_files,
         ref_document_id: selectedRowData.ref_document_id,
-        person: selectedRowData.person == null ? "" : selectedRowData.person,
+        person:
+          selectedRowData.person == null ? userId : selectedRowData.person,
         recdt:
-          selectedRowData.recdt == null ? null : toDate(selectedRowData.recdt),
+          selectedRowData.recdt == null
+            ? new Date()
+            : toDate(selectedRowData.recdt),
       });
       fetchHtmlDocument(selectedRowData);
     }
@@ -746,8 +749,8 @@ const CM_A5000W: React.FC = () => {
     attdatnum: "",
     files: "",
     ref_document_id: "", //답변
-    person: "",
-    recdt: null,
+    person: userId,
+    recdt: new Date(),
   });
 
   function getName(data: { sub_code: string }[]) {
@@ -981,8 +984,8 @@ const CM_A5000W: React.FC = () => {
           attdatnum: "",
           files: "",
           ref_document_id: "",
-          person: "",
-          recdt: null,
+          person: userId,
+          recdt: new Date(),
         });
       }
     } else {
@@ -1182,8 +1185,8 @@ const CM_A5000W: React.FC = () => {
       attdatnum: "",
       files: "",
       ref_document_id: "",
-      person: "",
-      recdt: null,
+      person: userId,
+      recdt: new Date(),
     });
   };
 
@@ -1323,9 +1326,11 @@ const CM_A5000W: React.FC = () => {
       attdatnum: selectedRowData.answer_attdatnum,
       files: selectedRowData.answer_files,
       ref_document_id: selectedRowData.ref_document_id,
-      person: selectedRowData.person == null ? "" : selectedRowData.person,
+      person: selectedRowData.person == null ? userId : selectedRowData.person,
       recdt:
-        selectedRowData.recdt == null ? null : toDate(selectedRowData.recdt),
+        selectedRowData.recdt == null
+          ? new Date()
+          : toDate(selectedRowData.recdt),
     });
     fetchHtmlDocument(selectedRowData);
   };
@@ -1607,9 +1612,8 @@ const CM_A5000W: React.FC = () => {
       project: "",
       request_date: setDefaultDate2(customOptionData, "request_date"),
       finexpdt: setDefaultDate2(customOptionData, "finexpdt"),
-      require_type: defaultOption.find(
-        (item: any) => item.id == "require_type"
-      )?.valueCode,
+      require_type: defaultOption.find((item: any) => item.id == "require_type")
+        ?.valueCode,
       completion_method: defaultOption.find(
         (item: any) => item.id == "completion_method"
       )?.valueCode,
@@ -1617,17 +1621,15 @@ const CM_A5000W: React.FC = () => {
       customer_code: "",
       customernm: "",
       title: "",
-      is_emergency: defaultOption.find(
-        (item: any) => item.id == "is_emergency"
-      )?.valueCode,
+      is_emergency: defaultOption.find((item: any) => item.id == "is_emergency")
+        ?.valueCode,
       quotestnum: "",
       testnum: "",
       attdatnum: "",
       files: "",
       ref_document_id: "",
-      materialtype: defaultOption.find(
-        (item: any) => item.id == "materialtype"
-      )?.valueCode,
+      materialtype: defaultOption.find((item: any) => item.id == "materialtype")
+        ?.valueCode,
       extra_field2: "",
       custprsnnm: "",
     });
@@ -1636,8 +1638,12 @@ const CM_A5000W: React.FC = () => {
       attdatnum: "",
       files: "",
       ref_document_id: "",
-      person: defaultOption.find((item: any) => item.id == "person")?.valueCode,
-      recdt: null,
+      person:
+        defaultOption.find((item: any) => item.id == "person")?.valueCode ==
+        undefined
+          ? userId
+          : defaultOption.find((item: any) => item.id == "person")?.valueCode,
+      recdt: new Date(),
     });
   };
 
@@ -2565,24 +2571,6 @@ const CM_A5000W: React.FC = () => {
                 <FormBox>
                   <tbody>
                     <tr>
-                      <td>
-                        <Button
-                          onClick={() => {
-                            if (workType != "N") {
-                              setInformation2((prev) => ({
-                                ...prev,
-                                recdt: new Date(),
-                                person: userId,
-                              }));
-                            }
-                          }}
-                          fillMode="outline"
-                          themeColor={"primary"}
-                          icon="gear"
-                        >
-                          자동셋팅
-                        </Button>
-                      </td>
                       <th>답변일</th>
                       <td>
                         {workType == "N" ? (
