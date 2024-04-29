@@ -64,6 +64,10 @@ const SA_B2410: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
 
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
+  let isMobile = deviceWidth <= 1200;
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
 
@@ -759,7 +763,8 @@ const SA_B2410: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-      <GridContainer style={{ paddingBottom: "15px" }}>
+      <GridContainer 
+        style={{ paddingBottom: "15px" }}>
         <GridTitleContainer>
           <GridTitle>요약정보</GridTitle>
         </GridTitleContainer>
@@ -771,7 +776,7 @@ const SA_B2410: React.FC = () => {
           fileName="출고현황"
         >
           <Grid
-            style={{ height: "72.5vh" }}
+            style={{ height: isMobile? `${deviceHeight * 0.8 - 30}px` : "72.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
