@@ -26,18 +26,6 @@ const PaginatorTable = (props) => {
   const header = (
     <div className="flex flex-wrap align-items-center justify-content-between gap-2">
       <span className="text-xl text-900 font-bold">{props.title}</span>
-      {props.filters != false ? (
-        <span className="p-input-icon-left">
-          <i className="pi pi-search" />
-          <InputText
-            value={globalFilterValue}
-            onChange={onGlobalFilterChange}
-            placeholder="Keyword Search"
-          />
-        </span>
-      ) : (
-        ""
-      )}
     </div>
   );
 

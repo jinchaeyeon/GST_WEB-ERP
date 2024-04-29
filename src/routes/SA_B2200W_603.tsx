@@ -47,7 +47,7 @@ import {
 } from "../components/CommonString";
 import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
-import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
+import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import ItemsWindow from "../components/Windows/CommonWindows/ItemsWindow";
 import { useApi } from "../hooks/api";
@@ -487,6 +487,20 @@ const SA_B2200W_603: React.FC = () => {
     setMainDataState((prev) => ({ ...prev, sort: e.sort }));
   };
 
+  const [projectWindowVisible, setProjectWindowVisible] =
+    useState<boolean>(false);
+  const onProjectWndClick = () => {
+    setProjectWindowVisible(true);
+  };
+
+  const setProjectData = (data: any) => {
+    setFilters((prev: any) => {
+      return {
+        ...prev,
+        project: data.quonum,
+      };
+    });
+  };
   return (
     <>
       <TitleContainer>
@@ -615,6 +629,13 @@ const SA_B2200W_603: React.FC = () => {
                   value={filters.project}
                   onChange={filterInputChange}
                 />
+                <ButtonInInput>
+                  <Button
+                    icon="more-horizontal"
+                    fillMode="flat"
+                    onClick={onProjectWndClick}
+                  />
+                </ButtonInInput>
               </td>
               <th>수주번호</th>
               <td>
@@ -725,7 +746,14 @@ const SA_B2200W_603: React.FC = () => {
           modal={true}
         />
       )}
-
+      {projectWindowVisible && (
+        <ProjectsWindow
+          setVisible={setProjectWindowVisible}
+          setData={setProjectData}
+          modal={true}
+          pathname="SA_B2200W_603"
+        />
+      )}
       {gridList.map((grid: TGrid) =>
         grid.columns.map((column: TColumn) => (
           <div
