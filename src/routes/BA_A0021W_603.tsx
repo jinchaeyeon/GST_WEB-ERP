@@ -38,8 +38,10 @@ import {
   GetPropertyValueByName,
   UseBizComponent,
   UseCustomOption,
+  UseMessages,
   UsePermissions,
   convertDateToStr,
+  findMessage,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas3,
@@ -99,6 +101,8 @@ const BA_A0021W_603: React.FC = () => {
   const idGetter4 = getter(DATA_ITEM_KEY4);
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages("BA_A0021W_603", setMessagesData);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   const [page, setPage] = useState(initialPageState);
   const [page2, setPage2] = useState(initialPageState);
@@ -317,13 +321,21 @@ const BA_A0021W_603: React.FC = () => {
   };
 
   const search = () => {
-    resetAllGrid();
-    setFilters((prev: any) => ({
-      ...prev,
-      pgNum: 1,
-      find_row_value: "",
-      isSearch: true,
-    }));
+    try {
+      if (convertDateToStr(filters.yyyy).substring(0, 4) < "1997") {
+        throw findMessage(messagesData, "BA_A0021W_603_001");
+      } else {
+        resetAllGrid();
+        setFilters((prev: any) => ({
+          ...prev,
+          pgNum: 1,
+          find_row_value: "",
+          isSearch: true,
+        }));
+      }
+    } catch (e) {
+      alert(e);
+    }
   };
 
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
@@ -1039,6 +1051,7 @@ const BA_A0021W_603: React.FC = () => {
                       onChange={filterInputChange}
                       placeholder=""
                       calendar={YearCalendar}
+                      className="required"
                     />
                   </td>
                   <th>업체코드</th>
