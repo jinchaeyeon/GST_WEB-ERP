@@ -184,6 +184,7 @@ const numberField = [
 const itemField = ["itemcd"];
 const colorField = ["status"];
 const centerField = ["passdt", "quorev", "itemcnt"];
+const percentField = ["rate"];
 
 let temp2 = 0;
 let deletedMainRows2: any[] = [];
@@ -522,6 +523,21 @@ const CustomRadioCell = (props: GridCellProps) => {
     <td />
   );
 };
+
+const CustomPercentCell = (props: GridCellProps) => {
+  const field = props.field ?? "";
+  const value = props.dataItem[field];
+  return (
+    <td
+      style={{ textAlign: "right" }}
+      aria-colindex={props.ariaColumnIndex}
+      data-grid-col-index={props.columnIndex}
+    >
+      {value}%
+    </td>
+  );
+};
+
 
 const SA_A1000_603W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
@@ -6716,6 +6732,8 @@ const SA_A1000_603W: React.FC = () => {
                             cell={
                               numberField.includes(item.fieldName)
                                 ? NumberCell
+                                : percentField.includes(item.fieldName)
+                                ? CustomPercentCell
                                 : undefined
                             }
                             footerCell={
