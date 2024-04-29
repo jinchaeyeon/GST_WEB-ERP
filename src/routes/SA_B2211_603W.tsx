@@ -13,7 +13,7 @@ import {
   Title,
   TitleContainer,
 } from "../CommonStyled";
-import { GetPropertyValueByName, UseCustomOption, UsePermissions, convertDateToStr, setDefaultDate } from "../components/CommonFunction";
+import { GetPropertyValueByName, UseCustomOption, UseMessages, UsePermissions, convertDateToStr, findMessage, setDefaultDate } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
 import LineBarChart from "../components/KPIcomponents/Chart/LineBarChart";
 import MultiDoughnutChart from "../components/KPIcomponents/Chart/MultiDoughnutChart";
@@ -32,6 +32,10 @@ const SA_B2211_603W: React.FC = () => {
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
   const search = () => {};
+  
+  //폼 메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages("SA_B2211_603W", setMessagesData);
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SA_B2211_603W", setCustomOptionData);
   useEffect(() => {
@@ -143,11 +147,15 @@ const SA_B2211_603W: React.FC = () => {
 
   useEffect(() => {
     if (filters.isSearch) {
-      setFilters((prev) => ({
-        ...prev,
-        isSearch: false,
-      }));
-      fetchMainGrid();
+      if (filters.frdt != null) {
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: false,
+        }));
+        fetchMainGrid();
+      } else {
+        alert(findMessage(messagesData, "SA_B2211_603W_001"));
+      }
     }
   }, [filters]);
 

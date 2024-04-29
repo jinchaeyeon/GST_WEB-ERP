@@ -10,7 +10,9 @@ import { ButtonContainer, Title, TitleContainer } from "../CommonStyled";
 import {
   GetPropertyValueByName,
   UseCustomOption,
+  UseMessages,
   convertDateToStr,
+  findMessage,
   setDefaultDate,
 } from "../components/CommonFunction";
 import { PAGE_SIZE } from "../components/CommonString";
@@ -32,6 +34,11 @@ const SA_B2216W: React.FC = () => {
   let isMobile = deviceWidth <= 1200;
   const processApi = useApi();
   const setLoading = useSetRecoilState(isLoading);
+
+  //폼 메시지 조회
+  const [messagesData, setMessagesData] = React.useState<any>(null);
+  UseMessages("SA_B2216W", setMessagesData);
+
   //커스텀 옵션 조회
   const [customOptionData, setCustomOptionData] = React.useState<any>(null);
   UseCustomOption("SA_B2216W", setCustomOptionData);
@@ -241,11 +248,24 @@ const SA_B2216W: React.FC = () => {
 
   useEffect(() => {
     if (filters.isSearch) {
-      setFilters((prev) => ({
-        ...prev,
-        isSearch: false,
-      }));
-      fetchMainGrid();
+      if (filters.frdt != null) { 
+          setFilters((prev) => ({
+            ...prev,
+            isSearch: false,
+          }));
+          fetchMainGrid();
+        } else {
+        alert(findMessage(messagesData, "SA_B2216W_001"));
+      }       
+      if (filters.mm != null) {
+        setFilters((prev) => ({
+          ...prev,
+          isSearch: false,
+        }));
+        fetchMainGrid();
+      } else {
+        alert(findMessage(messagesData, "SA_B2216W_002"));
+      }     
     }
   }, [filters]);
 
