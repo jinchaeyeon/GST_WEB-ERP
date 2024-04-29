@@ -1110,10 +1110,10 @@ const BA_A0040: React.FC = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    };     
-  
+    };
+
     const imageDataUrl = imgBase64[1];
-    const hasImage = imgBase64[1] != null;   
+    const hasImage = imgBase64[1] != null;
 
     return (
       <>
@@ -2982,6 +2982,49 @@ const BA_A0040: React.FC = () => {
                             )}
                         </Grid>
                       </ExcelExport>
+                    </GridContainer>
+                  </TabStripTab>
+                  <TabStripTab title="이미지">
+                    <GridContainer>
+                      <FormBoxWrap
+                        style={{
+                          height: `${deviceHeight * 0.67}px`,
+                          width: "100%",
+                          overflow: "scroll",
+                        }}
+                      >
+                        <GridContainer width={`calc(20% - ${GAP}px)`}>
+                          <GridContainer>
+                            <Grid
+                              style={{
+                                height: "fit-content",
+                              }}
+                              data={gridData}
+                            >
+                              <GridColumn
+                                field="image"
+                                title="이미지 1"
+                                cell={imgCell}
+                              />
+                            </Grid>
+                          </GridContainer>
+
+                          <GridContainer>
+                            <Grid
+                              style={{
+                                height: "fit-content",
+                              }}
+                              data={gridData2}
+                            >
+                              <GridColumn
+                                field="image"
+                                title="이미지 2"
+                                cell={imgCell2}
+                              />
+                            </Grid>
+                          </GridContainer>
+                        </GridContainer>
+                       </FormBoxWrap>
                     </GridContainer>
                   </TabStripTab>
                 </TabStrip>

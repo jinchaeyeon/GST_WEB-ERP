@@ -104,7 +104,7 @@ const BA_A0100W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
 
   let deviceWidth = window.innerWidth;
-  let deviceHeight = window.innerHeight -50;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
 
   const setLoading = useSetRecoilState(isLoading);
@@ -1408,8 +1408,72 @@ const BA_A0100W: React.FC = () => {
     <>
       {isMobile ? (
         <>
+          <TitleContainer>
+            <Title>동물실관리</Title>
+
+            <ButtonContainer>
+              <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                  <tbody>
+                    <tr>
+                      <th>룸번호</th>
+                      <td>
+                        <Input
+                          name="roomnum"
+                          type="text"
+                          value={filters.roomnum}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                      <th>구분</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="roomdiv"
+                            value={filters.roomdiv}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>동물종</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="animalkind"
+                            value={filters.animalkind}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th>시험파트</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="testpart"
+                            value={filters.testpart}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  </tbody>
+                </FilterBox>
+              </FilterContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="BA_A0100W"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
           <Swiper
-            className="leading_95_Swiper"
+            className="leading_80_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -1418,99 +1482,33 @@ const BA_A0100W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
+              <GridTitleContainer>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick}
+                    themeColor={"primary"}
+                    icon="plus"
+                    title="행 추가"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                  ></Button>
+                  <Button
+                    onClick={onSaveClick}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    title="저장"
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
               <GridContainer
-                style={{ width: `${deviceWidth - 30}px`,overflow: "auto" }}
+                style={{ width: `${deviceWidth - 30}px`, overflow: "auto" }}
               >
-                <TitleContainer>
-                  <Title>동물실관리</Title>
-
-                  <ButtonContainer>
-                    {permissions && (
-                      <TopButtons
-                        search={search}
-                        exportExcel={exportExcel}
-                        permissions={permissions}
-                        pathname="BA_A0100W"
-                      />
-                    )}
-                  </ButtonContainer>
-                </TitleContainer>
-                <FilterContainer>
-                  <FilterBox
-                    onKeyPress={(e) => handleKeyPressSearch(e, search)}
-                  >
-                    <tbody>
-                      <tr>
-                        <th>룸번호</th>
-                        <td>
-                          <Input
-                            name="roomnum"
-                            type="text"
-                            value={filters.roomnum}
-                            onChange={filterInputChange}
-                          />
-                        </td>
-                        <th>구분</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="roomdiv"
-                              value={filters.roomdiv}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange}
-                            />
-                          )}
-                        </td>
-                        <th>동물종</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="animalkind"
-                              value={filters.animalkind}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange}
-                            />
-                          )}
-                        </td>
-                        <th>시험파트</th>
-                        <td>
-                          {customOptionData !== null && (
-                            <CustomOptionComboBox
-                              name="testpart"
-                              value={filters.testpart}
-                              customOptionData={customOptionData}
-                              changeData={filterComboBoxChange}
-                            />
-                          )}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </FilterBox>
-                </FilterContainer>
-                <GridTitleContainer>
-                  <ButtonContainer>
-                    <Button
-                      onClick={onAddClick}
-                      themeColor={"primary"}
-                      icon="plus"
-                      title="행 추가"
-                    ></Button>
-                    <Button
-                      onClick={onDeleteClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                      title="행 삭제"
-                    ></Button>
-                    <Button
-                      onClick={onSaveClick}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      title="저장"
-                    ></Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
                 <ExcelExport
                   data={mainDataResult.data}
                   ref={(exporter) => {
@@ -1519,7 +1517,7 @@ const BA_A0100W: React.FC = () => {
                   fileName="동물실관리"
                 >
                   <Grid
-                    style={{ height: "74vh" }}
+                    style={{ height: `${deviceHeight * 0.78}px` }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1630,44 +1628,43 @@ const BA_A0100W: React.FC = () => {
                   이전
                 </Button>
               </div>
+
+              <GridTitleContainer>
+                <ButtonContainer>
+                  <Button
+                    onClick={onAddClick3}
+                    themeColor={"primary"}
+                    icon="file-add"
+                  >
+                    일괄생성
+                  </Button>
+                  <Button
+                    onClick={onAddClick2}
+                    themeColor={"primary"}
+                    icon="plus"
+                    title="행 추가"
+                  ></Button>
+                  <Button
+                    onClick={onDeleteClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="minus"
+                    title="행 삭제"
+                  ></Button>
+                  <Button
+                    onClick={onSaveClick2}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    icon="save"
+                    title="저장"
+                  ></Button>
+                </ButtonContainer>
+              </GridTitleContainer>
               <GridContainer
                 style={{
-                  minHeight: "65vh",
                   width: `${deviceWidth - 30}px`,
-                 overflow: "auto",
                 }}
               >
-                <GridTitleContainer>
-                  <ButtonContainer>
-                    <Button
-                      onClick={onAddClick3}
-                      themeColor={"primary"}
-                      icon="file-add"
-                    >
-                      일괄생성
-                    </Button>
-                    <Button
-                      onClick={onAddClick2}
-                      themeColor={"primary"}
-                      icon="plus"
-                      title="행 추가"
-                    ></Button>
-                    <Button
-                      onClick={onDeleteClick2}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="minus"
-                      title="행 삭제"
-                    ></Button>
-                    <Button
-                      onClick={onSaveClick2}
-                      fillMode="outline"
-                      themeColor={"primary"}
-                      icon="save"
-                      title="저장"
-                    ></Button>
-                  </ButtonContainer>
-                </GridTitleContainer>
                 <ExcelExport
                   data={subDataResult.data}
                   ref={(exporter) => {
@@ -1676,7 +1673,7 @@ const BA_A0100W: React.FC = () => {
                   fileName="동물실관리"
                 >
                   <Grid
-                    style={{ height: "83.5vh" }}
+                    style={{ height: `${deviceHeight * 0.73}px` }}
                     data={process(
                       subDataResult.data.map((row) => ({
                         ...row,
