@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { CLOSED_GNV_WIDTH, GNV_WIDTH } from "./components/CommonString";
 import loginBgSrc from "./img/login_bg.png";
 import logoDDGD from "./img/login_ddgd.png";
+import logoBIO from "./img/Biotoxtech.png";
 import logoWEBERP from "./img/login_web_erp.png";
 import logoSrc from "./img/logo.png";
 import processStsSrc from "./img/process_16.png";
@@ -1108,7 +1109,9 @@ export const Logo = styled.div<TLogo>`
     props.name == "GST WEB"
       ? logoWEBERP
       : props.name == "CRM_DDGD"
-      ? logoDDGD
+      ? logoDDGD  
+      : props.name == "BIO"
+      ? logoBIO
       : logoWEBERP});
   background-size: contain;
   background-repeat: no-repeat;
