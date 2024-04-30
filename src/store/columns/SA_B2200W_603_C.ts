@@ -32,13 +32,13 @@ export const gridList: Array<TGrid> = [
         id: "col_testnum",
         field: "testnum",
         caption: "시험번호",
-        width: 150,
+        width: 130,
       },
       {
         id: "col_quotestnum",
         field: "quotestnum",
         caption: "예약번호",
-        width: 150,
+        width: 120,
       },
       {
         id: "col_exdlvdt2",
@@ -69,7 +69,7 @@ export const gridList: Array<TGrid> = [
         id: "col_custcd",
         field: "custcd",
         caption: "업체코드",
-        width: 150,
+        width: 100,
       },
       {
         id: "col_custnm",
@@ -123,7 +123,7 @@ export const gridList: Array<TGrid> = [
         id: "col_contracamt",
         field: "contracamt",
         caption: "계약금액",
-        width: 100,
+        width: 130,
       },
       {
         id: "col_remark",

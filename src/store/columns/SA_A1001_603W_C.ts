@@ -14,7 +14,7 @@ export const gridList: Array<TGrid> = [
         id: "col_quorev",
         field: "quorev",
         caption: "REV",
-        width: 100,
+        width: 80,
       },
       {
         id: "col_custnm",
@@ -32,7 +32,7 @@ export const gridList: Array<TGrid> = [
         id: "col_materialtype",
         field: "materialtype",
         caption: "물질분야",
-        width: 120,
+        width: 100,
       },
       {
         id: "col_extra_field2",
@@ -50,31 +50,31 @@ export const gridList: Array<TGrid> = [
         id: "col_designcnt",
         field: "designcnt",
         caption: "디자인 입력수",
-        width: 100,
+        width: 110,
       },
       {
         id: "col_quocalyn",
         field: "quocalyn",
         caption: "견적산출여부",
-        width: 120,
+        width: 110,
       },
       {
         id: "col_contractyn",
         field: "contractyn",
         caption: "계약확정여부",
-        width: 120,
+        width: 110,
       },
       {
         id: "col_quounp",
         field: "quounp",
         caption: "견적원가",
-        width: 100,
+        width: 130,
       },
       {
         id: "col_margin",
         field: "margin",
         caption: "마진률",
-        width: 100,
+        width: 90,
       },
       {
         id: "col_marginamt",
@@ -86,7 +86,7 @@ export const gridList: Array<TGrid> = [
         id: "col_discount",
         field: "discount",
         caption: "할인률",
-        width: 100,
+        width: 90,
       },
       {
         id: "col_discountamt",
@@ -98,7 +98,7 @@ export const gridList: Array<TGrid> = [
         id: "col_finalquowonamt",
         field: "finalquowonamt",
         caption: "최종견적금액",
-        width: 100,
+        width: 130,
       },
       {
         id: "col_person",
