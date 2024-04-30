@@ -105,6 +105,7 @@ const SA_A5010W: React.FC = () => {
   const companyCode = loginResult ? loginResult.companyCode : "";
 
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
@@ -1249,7 +1250,7 @@ const SA_A5010W: React.FC = () => {
       </FilterContainer>
 
       <Swiper
-        className="leading_80_Swiper"
+        className="leading_78_Swiper"
         onSwiper={(swiper) => {
           setSwiper(swiper);
         }}
@@ -1257,8 +1258,8 @@ const SA_A5010W: React.FC = () => {
           index = swiper.activeIndex;
         }}
       >
-        <SwiperSlide key={0} className="swiper-slide">
-          <GridContainer className="leading_80_Swiper">
+        <SwiperSlide key={0} className="leading_PDA_custom">
+          <GridContainer style={{ height: "100%" }}>
             <GridTitleContainer>
               <GridTitle>요약정보</GridTitle>
               <ButtonContainer>
@@ -1287,7 +1288,10 @@ const SA_A5010W: React.FC = () => {
               fileName="직접판매처리"
             >
               <Grid
-                style={{ height: "71.5vh" }}
+                style={{
+                  height: `${deviceHeight * 0.8 - 50}px`,
+                  width: "90vw",
+                }}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,
@@ -1364,8 +1368,8 @@ const SA_A5010W: React.FC = () => {
           </GridContainer>
         </SwiperSlide>
 
-        <SwiperSlide key={1} className="swiper-slide">
-          <GridContainer className="leading_80_Swiper" style={{ paddingBottom: "15px" }}>
+        <SwiperSlide key={1} className="leading_PDA_custom">
+          <GridContainer style={{ height: "100%" }}>
             <GridTitleContainer>
               <GridTitle>상세정보</GridTitle>
             </GridTitleContainer>
@@ -1397,7 +1401,10 @@ const SA_A5010W: React.FC = () => {
               fileName="직접판매처리"
             >
               <Grid
-                style={{ height: "71.5vh" }}
+                style={{
+                  height: `${deviceHeight * 0.8 - 50}px`,
+                  width: "90vw",
+                }}
                 data={process(
                   detailDataResult.data.map((row) => ({
                     ...row,

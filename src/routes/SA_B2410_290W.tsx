@@ -91,6 +91,10 @@ const SA_B2410: React.FC = () => {
   const detailId2Getter = getter(DETAIL_DATA_ITEM_KEY2);
   const processApi = useApi();
 
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
+  let isMobile = deviceWidth <= 1200;
+
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
   UsePermissions(setPermissions);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
@@ -1375,18 +1379,14 @@ const SA_B2410: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="swiper-slide">
-              <GridContainer
-                className="leading_PDA_container"
-                style={{ width: "100%" }}
-              >
+            <SwiperSlide key={0} className="leading_PDA_custom">
+              <GridContainer style={{ width: "100%", height: "100%" }}>
                 <TabStrip
                   selected={tabSelected}
                   onSelect={handleSelectTab}
-                  style={{ width: "100%" }}
                 >
                   <TabStripTab title="업체별">
-                    <GridContainer width="100%">
+                    <GridContainer>
                       <ExcelExport
                         data={mainDataResult.data}
                         ref={(exporter) => {
@@ -1395,7 +1395,7 @@ const SA_B2410: React.FC = () => {
                         fileName="판매현황"
                       >
                         <Grid
-                          style={{ height: "71vh" }}
+                          style={{ height: `${deviceHeight * 0.7}px` }}
                           data={process(
                             mainDataResult.data.map((row) => ({
                               ...row,
@@ -1462,7 +1462,7 @@ const SA_B2410: React.FC = () => {
                     </GridContainer>
                   </TabStripTab>
                   <TabStripTab title="품목별">
-                    <GridContainer width="100%">
+                    <GridContainer style={{ width: "100%", height: "100%" }}>
                       <ExcelExport
                         data={mainDataResult.data}
                         ref={(exporter) => {
@@ -1471,7 +1471,7 @@ const SA_B2410: React.FC = () => {
                         fileName="판매현황"
                       >
                         <Grid
-                          style={{ height: "71vh" }}
+                          style={{ height: `${deviceHeight * 0.7}px` }}
                           data={process(
                             mainDataResult.data.map((row) => ({
                               ...row,
@@ -1542,7 +1542,7 @@ const SA_B2410: React.FC = () => {
                   </TabStripTab>
                   <TabStripTab title="일자별">
                     <GridContainerWrap>
-                      <GridContainer width={`70%`}>
+                      <GridContainer style={{ width: "100%", height: "100%" }}>
                         <ExcelExport
                           data={mainDataResult.data}
                           ref={(exporter) => {
@@ -1551,7 +1551,7 @@ const SA_B2410: React.FC = () => {
                           fileName="판매현황"
                         >
                           <Grid
-                            style={{ height: "34vh" }}
+                            style={{ height: `${deviceHeight * 0.334}px` }}
                             data={process(
                               mainDataResult.data.map((row) => ({
                                 ...row,
@@ -1616,7 +1616,7 @@ const SA_B2410: React.FC = () => {
                           </Grid>
                         </ExcelExport>
                       </GridContainer>
-                      <GridContainer width={`calc(30% - ${GAP}px)`}>
+                      <GridContainer style={{ width: "100%", height: "100%" }}>
                         <ExcelExport
                           data={detail2DataResult.data}
                           ref={(exporter) => {
@@ -1625,7 +1625,7 @@ const SA_B2410: React.FC = () => {
                           fileName="판매현황"
                         >
                           <Grid
-                            style={{ height: "34vh" }}
+                            style={{ height: `${deviceHeight * 0.33}px` }}
                             data={process(
                               detail2DataResult.data.map((row) => ({
                                 ...row,
@@ -1698,10 +1698,9 @@ const SA_B2410: React.FC = () => {
                 </TabStrip>
               </GridContainer>
             </SwiperSlide>
-            <SwiperSlide key={1} className="leading_PDA">
+            <SwiperSlide key={1} className="leading_PDA_custom">
               <GridContainer
-                style={{
-                  marginTop: "10px",
+                style={{                
                   paddingBottom: "20px",
                   width: "100%",
                 }}
@@ -1723,6 +1722,7 @@ const SA_B2410: React.FC = () => {
                       width: "100%",
                     }}
                   >
+                    <ButtonContainer>
                     <Button
                       onClick={() => {
                         if (swiper) {
@@ -1735,9 +1735,10 @@ const SA_B2410: React.FC = () => {
                     >
                       이전
                     </Button>
+                    </ButtonContainer>
                   </div>
                   <Grid
-                    style={{ height: "69vh" }}
+                    style={{ height: `${deviceHeight * 0.72}px` }}
                     data={process(
                       detail1DataResult.data.map((row) => ({
                         ...row,
