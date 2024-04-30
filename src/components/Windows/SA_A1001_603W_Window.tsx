@@ -36,7 +36,7 @@ const SA_A1001_603W_Window = ({
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: isMobile == true ? deviceWidth : 830,
+    width: isMobile == true ? deviceWidth : 1300,
     height: 900,
   });
   const [menulist, setMenuList] = useRecoilState(menuList);
@@ -118,6 +118,7 @@ const SA_A1001_603W_Window = ({
       <div
         style={{
           height: position.height - 220,
+          width: position.width - 50 ,
           marginBottom: "10px",
         }}
       >
