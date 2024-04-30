@@ -65,8 +65,6 @@ import {
 } from "../CommonStyled";
 import TopButtons from "../components/Buttons/TopButtons";
 import CenterCell from "../components/Cells/CenterCell";
-import ComboBoxCell from "../components/Cells/ComboBoxCell";
-import ComboBoxColorCell from "../components/Cells/ComboBoxColorCell";
 import DateCell from "../components/Cells/DateCell";
 import NumberCell from "../components/Cells/NumberCell";
 import RadioGroupCell from "../components/Cells/RadioGroupCell";
@@ -191,52 +189,36 @@ const percentField = ["rate"];
 let temp2 = 0;
 let deletedMainRows2: any[] = [];
 
-const CustomComboBoxCell = (props: GridCellProps) => {
-  const [bizComponentData, setBizComponentData] = useState([]);
-  UseBizComponent("L_SA011_603", setBizComponentData);
+const CustomColorCell = (props: GridCellProps) => {
+  const { ariaColumnIndex, columnIndex, dataItem, field = "" } = props;
 
-  const field = props.field ?? "";
-  const bizComponentIdVal = field == "status" ? "L_SA011_603" : "";
-
-  const bizComponent = bizComponentData.find(
-    (item: any) => item.bizComponentId == bizComponentIdVal
-  );
-
-  const style =
-    props.dataItem.status == "2"
+  const styles =
+    props.dataItem.status == "의뢰"
       ? {
           backgroundColor: "#ffc000",
           color: "white",
         }
-      : props.dataItem.status == "3"
+      : props.dataItem.status == "견적"
       ? {
           backgroundColor: "#70ad47",
           color: "white",
         }
-      : props.dataItem.status == "4"
+      : props.dataItem.status == "계약"
       ? {
           backgroundColor: "#0070c0",
           color: "white",
         }
       : {};
 
-  if (bizComponentIdVal == "L_SA011_603") {
-    return bizComponent ? (
-      <ComboBoxColorCell
-        bizComponent={bizComponent}
-        styles={style}
-        {...props}
-      />
-    ) : (
-      <td />
-    );
-  } else {
-    return bizComponent ? (
-      <ComboBoxCell bizComponent={bizComponent} {...props} />
-    ) : (
-      <td />
-    );
-  }
+  return (
+    <td
+      aria-colindex={ariaColumnIndex}
+      data-grid-col-index={columnIndex}
+      style={styles}
+    >
+      {dataItem[field]}
+    </td>
+  );
 };
 
 export const FormContext = createContext<{
@@ -1010,9 +992,6 @@ const SA_A1000_603W: React.FC = () => {
   const [mainDataState8, setMainDataState8] = useState<State>({
     sort: [],
   });
-  const [tempState, setTempState] = useState<State>({
-    sort: [],
-  });
   const [tempState2, setTempState2] = useState<State>({
     sort: [],
   });
@@ -1041,9 +1020,6 @@ const SA_A1000_603W: React.FC = () => {
   );
   const [mainDataResult8, setMainDataResult8] = useState<DataResult>(
     process([], mainDataState8)
-  );
-  const [tempResult, setTempResult] = useState<DataResult>(
-    process([], tempState)
   );
   const [tempResult2, setTempResult2] = useState<DataResult>(
     process([], tempState2)
@@ -3133,16 +3109,6 @@ const SA_A1000_603W: React.FC = () => {
     setTabSelected(1);
   };
 
-  const onItemChange = (event: GridItemChangeEvent) => {
-    setMainDataState((prev) => ({ ...prev, sort: [] }));
-    getGridItemChangedData(
-      event,
-      mainDataResult,
-      setMainDataResult,
-      DATA_ITEM_KEY
-    );
-  };
-
   const onItemChange2 = (event: GridItemChangeEvent) => {
     setMainDataState2((prev) => ({ ...prev, sort: [] }));
     getGridItemChangedData(
@@ -3153,29 +3119,11 @@ const SA_A1000_603W: React.FC = () => {
     );
   };
 
-  const customCellRender = (td: any, props: any) => (
-    <CellRender
-      originalProps={props}
-      td={td}
-      enterEdit={enterEdit}
-      editField={EDIT_FIELD}
-    />
-  );
-
   const customCellRender2 = (td: any, props: any) => (
     <CellRender
       originalProps={props}
       td={td}
       enterEdit={enterEdit2}
-      editField={EDIT_FIELD}
-    />
-  );
-
-  const customRowRender = (tr: any, props: any) => (
-    <RowRender
-      originalProps={props}
-      tr={tr}
-      exitEdit={exitEdit}
       editField={EDIT_FIELD}
     />
   );
@@ -3188,39 +3136,6 @@ const SA_A1000_603W: React.FC = () => {
       editField={EDIT_FIELD}
     />
   );
-
-  const enterEdit = (dataItem: any, field: string) => {
-    if (field == "status") {
-      const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] == dataItem[DATA_ITEM_KEY]
-          ? {
-              ...item,
-              [EDIT_FIELD]: field,
-            }
-          : { ...item, [EDIT_FIELD]: undefined }
-      );
-
-      setTempResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    } else {
-      setTempResult((prev) => {
-        return {
-          data: mainDataResult.data,
-          total: prev.total,
-        };
-      });
-    }
-  };
 
   const enterEdit2 = (dataItem: any, field: string) => {
     if (
@@ -3259,53 +3174,6 @@ const SA_A1000_603W: React.FC = () => {
       setTempResult2((prev) => {
         return {
           data: mainDataResult2.data,
-          total: prev.total,
-        };
-      });
-    }
-  };
-
-  const exitEdit = () => {
-    if (tempResult.data != mainDataResult.data) {
-      const newData = mainDataResult.data.map((item) =>
-        item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
-          ? {
-              ...item,
-              rowstatus: item.rowstatus == "N" ? "N" : "U",
-              [EDIT_FIELD]: undefined,
-            }
-          : {
-              ...item,
-              [EDIT_FIELD]: undefined,
-            }
-      );
-
-      setTempResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-    } else {
-      const newData = mainDataResult.data.map((item) => ({
-        ...item,
-        [EDIT_FIELD]: undefined,
-      }));
-      setTempResult((prev) => {
-        return {
-          data: newData,
-          total: prev.total,
-        };
-      });
-      setMainDataResult((prev) => {
-        return {
-          data: newData,
           total: prev.total,
         };
       });
@@ -3666,55 +3534,26 @@ const SA_A1000_603W: React.FC = () => {
     },
   };
 
-  const onSaveClick = () => {
-    const dataItem = mainDataResult.data.filter((item: any) => {
-      return (
-        (item.rowstatus == "N" || item.rowstatus == "U") &&
-        item.rowstatus !== undefined
-      );
-    });
+  const onChangeStatus = () => {
+    if (!window.confirm("견적 상태로 업데이트 하시겠습니까?")) {
+      return false;
+    }
 
-    if (dataItem.length == 0) return false;
+    if (mainDataResult.total > 0) {
+      const data = mainDataResult.data.filter(
+        (item) =>
+          item[DATA_ITEM_KEY] == Object.getOwnPropertyNames(selectedState)[0]
+      )[0];
 
-    try {
-      let valid = true;
-      dataItem.map((item) => {
-        if (item.status == "") {
-          valid = false;
-        }
-      });
-
-      if (valid != true) {
-        throw findMessage(messagesData, "SA_A1000_603W_002");
-      } else {
-        let dataArr: TdataArr2 = {
-          quonum_s: [],
-          quorev_s: [],
-          progress_status_s: [],
-        };
-
-        dataItem.forEach((item: any, idx: number) => {
-          const { quonum = "", quorev = "", status = "" } = item;
-
-          dataArr.quonum_s.push(quonum);
-          dataArr.quorev_s.push(quorev);
-          dataArr.progress_status_s.push(status);
-        });
-
-        setParaData((prev) => ({
-          ...prev,
-          workType: "STATE",
-          orgdiv: "01",
-          quonum_s: dataArr.quonum_s.join("|"),
-          quorev_s: dataArr.quorev_s.join("|"),
-          progress_status_s: dataArr.progress_status_s.join("|"),
-          userid: userId,
-          pc: pc,
-          form_id: "SA_A1000_603W",
-        }));
-      }
-    } catch (e) {
-      alert(e);
+      setParaData((prev) => ({
+        ...prev,
+        workType: "FINISH",
+        orgdiv: data.orgdiv,
+        quonum: data.quonum,
+        quorev: data.quorev,
+      }));
+    } else {
+      alert("데이터가 없습니다.");
     }
   };
 
@@ -4049,7 +3888,8 @@ const SA_A1000_603W: React.FC = () => {
       if (
         ParaData.workType == "REV" ||
         ParaData.workType == "DesTran" ||
-        ParaData.workType == "DesTran_d"
+        ParaData.workType == "DesTran_d" ||
+        ParaData.workType == "FINISH"
       ) {
         alert("처리되었습니다.");
       }
@@ -4675,12 +4515,12 @@ const SA_A1000_603W: React.FC = () => {
                   삭제
                 </Button>
                 <Button
-                  onClick={onSaveClick}
+                  onClick={onChangeStatus}
                   fillMode="outline"
                   themeColor={"primary"}
-                  icon="save"
+                  icon="print"
                 >
-                  저장
+                  견적서 출력
                 </Button>
               </ButtonContainer>
             </GridTitleContainer>
@@ -4707,6 +4547,9 @@ const SA_A1000_603W: React.FC = () => {
                     )?.user_name,
                     materialtype: materialtypeListData.find(
                       (items: any) => items.sub_code == row.materialtype
+                    )?.code_name,
+                    status: statusListData2.find(
+                      (items: any) => items.sub_code == row.status
                     )?.code_name,
                     [SELECTED_FIELD]: selectedState[idGetter(row)],
                   })),
@@ -4740,12 +4583,7 @@ const SA_A1000_603W: React.FC = () => {
                 reorderable={true}
                 //컬럼너비조정
                 resizable={true}
-                onItemChange={onItemChange}
-                cellRender={customCellRender}
-                rowRender={customRowRender}
-                editField={EDIT_FIELD}
               >
-                <GridColumn field="rowstatus" title=" " width="50px" />
                 {customOptionData !== null &&
                   customOptionData.menuCustomColumnOptions["grdList"]?.map(
                     (item: any, idx: number) =>
@@ -4762,7 +4600,7 @@ const SA_A1000_603W: React.FC = () => {
                               : centerField.includes(item.fieldName)
                               ? CenterCell
                               : colorField.includes(item.fieldName)
-                              ? CustomComboBoxCell
+                              ? CustomColorCell
                               : undefined
                           }
                           footerCell={

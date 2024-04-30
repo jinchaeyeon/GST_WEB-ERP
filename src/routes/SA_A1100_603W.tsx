@@ -375,6 +375,8 @@ const SA_A1100_603W: React.FC = () => {
     cotracdt: new Date(),
     attdatnum: "",
     files: "",
+    quonum: "",
+    quorev: 0,
   });
   // 삭제할 첨부파일 리스트를 담는 함수
   const setDeletedAttadatnums = useSetRecoilState(deletedAttadatnumsState);
@@ -871,6 +873,8 @@ const SA_A1100_603W: React.FC = () => {
           cotracdt: toDate(data.tables[0].Rows[0].cotracdt),
           attdatnum: data.tables[0].Rows[0].attdatnum,
           files: data.tables[0].Rows[0].files,
+          quonum: data.tables[0].Rows[0].quonum,
+          quorev: data.tables[0].Rows[0].quorev,
         }));
       } else {
         setInformation((prev) => ({
@@ -893,6 +897,8 @@ const SA_A1100_603W: React.FC = () => {
           cotracdt: new Date(),
           attdatnum: "",
           files: "",
+          quonum: "",
+          quorev: 0,
         }));
       }
       setMainDataResult2({
@@ -1796,6 +1802,8 @@ const SA_A1100_603W: React.FC = () => {
 
   const [ParaData, setParaData] = useState({
     workType: "",
+    quonum: "",
+    quorev: 0,
     rowstatus_s: "",
     wonamt_s: "",
     taxamt_s: "",
@@ -1817,6 +1825,8 @@ const SA_A1100_603W: React.FC = () => {
     parameters: {
       "@p_work_type": ParaData.workType,
       "@p_orgdiv": "01",
+      "@p_quonum": ParaData.quonum,
+      "@p_quorev": ParaData.quorev,
       "@p_contractno": subFilters.contractno,
       "@p_location": "01",
       "@p_project": Information.project,
@@ -1921,6 +1931,8 @@ const SA_A1100_603W: React.FC = () => {
       setParaData((prev) => ({
         ...prev,
         workType: "N",
+        quonum: "",
+        quorev: 0,
         rowstatus_s: dataArr.rowstatus_s.join("|"),
         seq_s: dataArr.seq_s.join("|"),
         wonamt_s: dataArr.wonamt_s.join("|"),
@@ -1991,6 +2003,8 @@ const SA_A1100_603W: React.FC = () => {
     setParaData((prev) => ({
       ...prev,
       workType: "PAYMENT",
+      quonum: "",
+      quorev: 0,
       rowstatus_s: dataArr.rowstatus_s.join("|"),
       seq_s: dataArr.seq_s.join("|"),
       payment_s: dataArr.payment_s.join("|"),
@@ -2019,6 +2033,14 @@ const SA_A1100_603W: React.FC = () => {
     if (data.isSuccess == true) {
       if (ParaData.workType == "D") {
         setDeletedAttadatnums([Information.attdatnum]);
+        setTabSelected(0);
+        setFilters((prev) => ({
+          ...prev,
+          pgNum: 1,
+          isSearch: true,
+        }));
+      } else if(ParaData.workType == "FINISH") {
+        alert("완료처리되었습니다.");
         setTabSelected(0);
         setFilters((prev) => ({
           ...prev,
@@ -2054,6 +2076,8 @@ const SA_A1100_603W: React.FC = () => {
       }
       setParaData({
         workType: "",
+        quonum: "",
+        quorev: 0,
         rowstatus_s: "",
         wonamt_s: "",
         taxamt_s: "",
@@ -2378,6 +2402,19 @@ const SA_A1100_603W: React.FC = () => {
         quokey: data.quokey,
       };
     });
+  };
+
+  const onChangeStatus = () => {
+    if (!window.confirm("계약 완료처리를 하시겠습니까?")) {
+      return false;
+    }
+
+    setParaData((prev) => ({
+      ...prev,
+      workType: "FINISH",
+      quonum: Information.quonum,
+      quorev: Information.quorev,
+    }));
   };
 
   return (
@@ -3125,10 +3162,17 @@ const SA_A1100_603W: React.FC = () => {
                     onClick={onSaveClick}
                     fillMode="outline"
                     themeColor={"primary"}
-                    icon="save"
                     disabled={subFilters.groupgb == "B" ? true : false}
                   >
                     저장
+                  </Button>
+                  <Button
+                    onClick={onChangeStatus}
+                    fillMode="outline"
+                    themeColor={"primary"}
+                    disabled={subFilters.groupgb == "B" ? true : false}
+                  >
+                    계약완료
                   </Button>
                 </ButtonContainer>
               </GridTitleContainer>
