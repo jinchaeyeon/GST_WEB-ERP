@@ -110,6 +110,7 @@ let workType: string = "";
 
 const CR_A0020W: React.FC = () => {
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
 
   const setLoading = useSetRecoilState(isLoading);
@@ -742,7 +743,7 @@ const CR_A0020W: React.FC = () => {
             )}
           </GridTitleContainer>
           <Grid
-            style={{ height: isMobile ? "70vh" :"81.5vh" }}
+            style={{ height: isMobile ? `${deviceHeight * 0.65}px` :"81.5vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,

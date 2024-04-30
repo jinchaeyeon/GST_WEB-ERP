@@ -107,6 +107,7 @@ const SA_B2221: React.FC = () => {
   const [page3, setPage3] = useState(initialPageState);
   const [swiper, setSwiper] = useState<SwiperCore>();
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
   var index = 0;
   const MAX_CHARACTERS = 6;
@@ -619,17 +620,7 @@ const SA_B2221: React.FC = () => {
             </Title>
 
             <ButtonContainer>
-              {permissions && (
-                <TopButtons
-                  search={search}
-                  exportExcel={exportExcel}
-                  permissions={permissions}
-                  pathname="SA_B2221W"
-                />
-              )}
-            </ButtonContainer>
-          </TitleContainer>
-          <FilterContainer>
+            <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
@@ -708,14 +699,30 @@ const SA_B2221: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="SA_B2221W"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
+       
           <TabStrip
             selected={tabSelected}
             onSelect={handleSelectTab}
-            style={{ height: "80vh", width: "100%", paddingBottom: "20px" }}
+            style={{
+              height: `${deviceHeight * 0.87}px`,
+              width: "100%",
+              paddingBottom: "15px",
+            }}
           >
             <TabStripTab title="전체">
               <GridContainerWrap flexDirection="column">
                 <Swiper
+                  className="leading_67_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -723,8 +730,8 @@ const SA_B2221: React.FC = () => {
                     index = swiper.activeIndex;
                   }}
                 >
-                  <SwiperSlide key={0} className="swiper-slide">
-                    <GridContainer className="leading_70_Swiper" height="35vh">
+                  <SwiperSlide key={0} className="leading_PDA_custom">
+                    <GridContainer style={{ width: "100%", height: "100%" }}>
                       <ButtonContainer style={{ paddingBottom: "10px" }}>
                         <Button
                           onClick={() => {
@@ -743,7 +750,10 @@ const SA_B2221: React.FC = () => {
                             ? DDGDcolorList
                             : WebErpcolorList
                         }
-                        style={{ height: "60vh" }}
+                        style={{
+                          height: `${deviceHeight * 0.65}px`,
+                          width: "100%",
+                        }}
                       >
                         <ChartValueAxis>
                           <ChartValueAxisItem
@@ -778,7 +788,7 @@ const SA_B2221: React.FC = () => {
                       </Chart>
                     </GridContainer>
                   </SwiperSlide>
-                  <SwiperSlide key={1} className="swiper-slide">
+                  <SwiperSlide key={1} className="leading_PDA_custom">
                     <GridContainer className="leading_70_Swiper" width={"100%"}>
                       <ButtonContainer style={{ paddingBottom: "10px" }}>
                         <Button
@@ -799,7 +809,7 @@ const SA_B2221: React.FC = () => {
                         fileName="수주집계(품목)"
                       >
                         <Grid
-                          style={{ height: "64vh" }}
+                          style={{ height: `${deviceHeight * 0.65}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -873,6 +883,7 @@ const SA_B2221: React.FC = () => {
             <TabStripTab title="월별">
               <GridContainerWrap flexDirection="column">
                 <Swiper
+                  className="leading_67_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -880,8 +891,8 @@ const SA_B2221: React.FC = () => {
                     index = swiper.activeIndex;
                   }}
                 >
-                  <SwiperSlide key={0} className="swiper-slide">
-                    <GridContainer className="leading_70_Swiper" width={"100%"}>
+                  <SwiperSlide key={0} className="leading_PDA_custom">
+                    <GridContainer style={{ width: "100%", height: "100%" }}>
                       <ButtonContainer style={{ paddingBottom: "10px" }}>
                         <Button
                           onClick={() => {
@@ -901,7 +912,7 @@ const SA_B2221: React.FC = () => {
                         fileName="수주집계(품목)"
                       >
                         <Grid
-                          style={{ height: "63vh" }}
+                          style={{ height: `${deviceHeight * 0.65}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -972,11 +983,8 @@ const SA_B2221: React.FC = () => {
                   <GridContainerWrap
                     style={{ height: isMobile ? "" : "36.5vh" }}
                   >
-                    <SwiperSlide key={1} className="swiper-slide">
-                      <GridContainer
-                        className="leading_70_Swiper"
-                        width={"70%"}
-                      >
+                    <SwiperSlide key={1} className="leading_PDA_custom">
+                      <GridContainer style={{ width: "100%", height: "100%" }}>
                         <ButtonContainer
                           style={{
                             paddingBottom: "10px",
@@ -1003,7 +1011,12 @@ const SA_B2221: React.FC = () => {
                             도넛차트 보기
                           </Button>
                         </ButtonContainer>
-                        <Chart style={{ height: !isMobile ? "100%" : "60vh" }}>
+                        <Chart
+                          style={{
+                            height: `${deviceHeight * 0.65}px`,
+                            width: "100%",
+                          }}
+                        >
                           <ChartValueAxis>
                             <ChartValueAxisItem
                               labels={{
@@ -1044,8 +1057,8 @@ const SA_B2221: React.FC = () => {
                         </Chart>
                       </GridContainer>
                     </SwiperSlide>
-                    <SwiperSlide key={2} className="swiper-slide">
-                      <GridContainer className="leading_70_Swiper" width="30%">
+                    <SwiperSlide key={2} className="leading_PDA_custom">
+                      <GridContainer style={{ width: "100%", height: "100%" }}>
                         <div
                           style={{
                             display: "flex",
@@ -1093,6 +1106,7 @@ const SA_B2221: React.FC = () => {
             <TabStripTab title="분기별">
               <GridContainerWrap flexDirection="column">
               <Swiper
+                  className="leading_67_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -1100,8 +1114,8 @@ const SA_B2221: React.FC = () => {
                     index = swiper.activeIndex;
                   }}
                 >
-                <SwiperSlide key={0} className="swiper-slide">
-                <GridContainer className="leading_70_Swiper" width={"100%"}>
+                <SwiperSlide key={0} className="leading_PDA_custom">
+                <GridContainer style={{ width: "100%", height: "100%" }}>
                 <ButtonContainer style={{ paddingBottom: "10px" }}>
                         <Button
                           onClick={() => {
@@ -1121,7 +1135,7 @@ const SA_B2221: React.FC = () => {
                     fileName="수주집계(품목)"
                   >
                     <Grid
-                      style={{ height: "62vh" }}
+                      style={{ height: `${deviceHeight * 0.65}px` }}
                       data={process(
                         gridDataResult.data.map((row) => ({
                           ...row,
@@ -1244,9 +1258,9 @@ const SA_B2221: React.FC = () => {
                   </ExcelExport>
                 </GridContainer>
                 </SwiperSlide>
-                <GridContainerWrap style={{ height: isMobile ? "" : "61vh" }}>
-                <SwiperSlide key={1} className="swiper-slide">      
-                  <GridContainer className="leading_70_Swiper" width={"60%"}>
+                <GridContainerWrap>
+                <SwiperSlide key={1} className="leading_PDA_custom">
+                  <GridContainer style={{ width: "100%", height: "100%" }}>
                   <ButtonContainer
                           style={{
                             paddingBottom: "10px",
@@ -1274,7 +1288,11 @@ const SA_B2221: React.FC = () => {
                           </Button>
                         </ButtonContainer>
 
-                    <Chart style={{ height: !isMobile ? "100%" : "60vh" }}>
+                    <Chart
+                      style={{
+                        height: `${deviceHeight * 0.65}px`,
+                        width: "100%",
+                      }}>
                       <ChartValueAxis>
                         <ChartValueAxisItem
                           labels={{
@@ -1343,8 +1361,8 @@ const SA_B2221: React.FC = () => {
                     </Chart>
                   </GridContainer>
                   </SwiperSlide>
-                  <SwiperSlide key={2} className="swiper-slide">
-                  <GridContainer className="leading_70_Swiper" width={"40%"}>
+                  <SwiperSlide key={2} className="leading_PDA_custom">
+                  <GridContainer style={{ width: "100%", height: "100%" }}>
                   <div
                           style={{
                             display: "flex",

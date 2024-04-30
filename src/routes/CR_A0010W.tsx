@@ -428,6 +428,10 @@ const CustomRadioCell = (props: GridCellProps) => {
 };
 
 const CR_A0010W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
+
+  let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const processApi = useApi();
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1497,7 +1501,7 @@ const CR_A0010W: React.FC = () => {
               fileName="고객관리"
             >
               <Grid
-                style={{ height: "77.8vh" }}
+                style={{ height: isMobile ? `${deviceHeight * 0.65}px` : "77.8vh", width: isMobile ? `${deviceWidth - 30}px` : "100%"}}
                 data={process(
                   mainDataResult.data.map((row) => ({
                     ...row,

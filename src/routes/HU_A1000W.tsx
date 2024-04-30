@@ -189,6 +189,7 @@ let targetRowIndex: null | number = null;
 const HU_A1000W: React.FC = () => {
   const [swiper, setSwiper] = useState<SwiperCore>();
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
 
   const [permissions, setPermissions] = useState<TPermissions | null>(null);
@@ -1635,17 +1636,7 @@ const HU_A1000W: React.FC = () => {
                 <TitleContainer>
                   <Title>인사관리</Title>
                   <ButtonContainer>
-                    {permissions && (
-                      <TopButtons
-                        search={search}
-                        exportExcel={exportExcel}
-                        permissions={permissions}
-                        pathname="HU_A1000W"
-                      />
-                    )}
-                  </ButtonContainer>
-                </TitleContainer>
-                <FilterContainer>
+                  <FilterContainer>
                   <FilterBox
                     onKeyPress={(e) => handleKeyPressSearch(e, search)}
                   >
@@ -1703,8 +1694,19 @@ const HU_A1000W: React.FC = () => {
                     </tbody>
                   </FilterBox>
                 </FilterContainer>
+                    {permissions && (
+                      <TopButtons
+                        search={search}
+                        exportExcel={exportExcel}
+                        permissions={permissions}
+                        pathname="HU_A1000W"
+                      />
+                    )}
+                  </ButtonContainer>
+                </TitleContainer>
+                
                 <GridTitleContainer>
-                  <ButtonContainer>
+                  <ButtonContainer style={{marginBottom:"5px"}}>
                     <Button
                       onClick={() => setShowMap(!showMap)}
                       themeColor={"primary"}
@@ -1717,6 +1719,8 @@ const HU_A1000W: React.FC = () => {
                     >
                       {showOrg ? "리스트 보기" : "조직도 보기"}
                     </Button>
+                    </ButtonContainer>
+                    <ButtonContainer>
                     <Button
                       onClick={onAddClick}
                       themeColor={"primary"}
@@ -1737,7 +1741,7 @@ const HU_A1000W: React.FC = () => {
 
                 {showMap ? (
                   <div
-                    style={{ height: "72vh", marginTop: "5px" }}
+                    style={{ height: isMobile ? `${deviceHeight * 0.73}px` : "72vh", marginTop: "5px" }}
                     id="map"
                   ></div>
                 ) : showOrg ? (
@@ -1751,7 +1755,7 @@ const HU_A1000W: React.FC = () => {
                     fileName="인사관리"
                   >
                     <Grid
-                      style={{ height: "72vh" }}
+                      style={{ height: isMobile ? `${deviceHeight * 0.73}px` : "72vh" }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,

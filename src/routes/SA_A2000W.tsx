@@ -1135,7 +1135,7 @@ const SA_B2000: React.FC = () => {
           <TitleContainer>
             <Title>수주처리</Title>
 
-            <ButtonContainer>             
+            <ButtonContainer>
               {permissions && (
                 <TopButtons
                   search={search}
@@ -1343,9 +1343,7 @@ const SA_B2000: React.FC = () => {
             }}
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
-              <GridContainer 
-                style={{ height: "100%" }}
-              >
+              <GridContainer style={{ height: "100%" }}>
                 <GridTitleContainer>
                   <GridTitle>요약정보</GridTitle>
                   <ButtonContainer>
@@ -1382,7 +1380,10 @@ const SA_B2000: React.FC = () => {
                   fileName="수주처리"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.8 - 50}px`, width: "90vw" }}
+                    style={{
+                      height: `${deviceHeight * 0.8 - 50}px`,
+                      width: "90vw",
+                    }}
                     data={process(
                       mainDataResult.data.map((row) => ({
                         ...row,
@@ -1472,9 +1473,7 @@ const SA_B2000: React.FC = () => {
             </SwiperSlide>
 
             <SwiperSlide key={1} className="leading_PDA_custom">
-              <GridContainer
-                style={{ height: "100%" }}
-              >
+              <GridContainer style={{ height: "100%" }}>
                 <GridTitleContainer>
                   <GridTitle>상세정보</GridTitle>
                 </GridTitleContainer>
@@ -1485,18 +1484,20 @@ const SA_B2000: React.FC = () => {
                     width: "100%",
                   }}
                 >
-                  <Button
-                    onClick={() => {
-                      if (swiper) {
-                        swiper.slideTo(0);
-                      }
-                    }}
-                    icon="arrow-left"
-                    themeColor={"primary"}
-                    fillMode={"outline"}
-                  >
-                    이전
-                  </Button>
+                  <ButtonContainer>
+                    <Button
+                      onClick={() => {
+                        if (swiper) {
+                          swiper.slideTo(0);
+                        }
+                      }}
+                      icon="arrow-left"
+                      themeColor={"primary"}
+                      fillMode={"outline"}
+                    >
+                      이전
+                    </Button>
+                  </ButtonContainer>
                 </div>
                 <ExcelExport
                   data={detailDataResult.data}
@@ -1506,7 +1507,10 @@ const SA_B2000: React.FC = () => {
                   fileName="수주처리"
                 >
                   <Grid
-                    style={{ height: `${deviceHeight * 0.8 - 50}px`, width: "90vw" }}
+                    style={{
+                      height: `${deviceHeight * 0.8 - 50}px`,
+                      width: "90vw",
+                    }}
                     data={process(
                       detailDataResult.data.map((row) => ({
                         ...row,
