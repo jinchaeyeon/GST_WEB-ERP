@@ -71,10 +71,6 @@ const Main: React.FC = () => {
   const userName = loginResult ? loginResult.userName : "";
   UseBizComponent("L_APPOINTMENT_COLOR", setBizComponentData);
 
-  const [windowVisible, setWindowVisible] = useState<boolean>(false);
-  const onMessengerClick = () => {
-    setWindowVisible(true);
-  };
   const [osstate, setOSState] = useRecoilState(OSState);
 
   //그리드 데이터 스테이트
@@ -172,7 +168,6 @@ const Main: React.FC = () => {
         ...prev,
         isSearch: true,
       }));
-      dataApi();
     }
   }, [customOptionData]);
 
@@ -467,98 +462,14 @@ const Main: React.FC = () => {
     );
   };
 
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    let polling = setInterval(() => {
-      dataApi();
-    }, 30000);
-
-    // 페이지에 벗어날 경우 polling X
-    return () => {
-      clearInterval(polling);
-    };
-  }, []);
-
-  //그리드 조회
-  const dataApi = async () => {
-    let data: any;
-    //조회조건 파라미터
-    const parameters: Iparameters = {
-      procedureName: "sys_sel_messenger",
-      pageNumber: 1,
-      pageSize: PAGE_SIZE,
-      parameters: {
-        "@p_work_type": "new_slip",
-        "@p_user_id": userId,
-      },
-    };
-    try {
-      data = await processApi<any>("procedure", parameters);
-    } catch (error) {
-      data = null;
-    }
-
-    if (data.isSuccess == true) {
-      const totalRowCnt = data.tables[0].RowCount;
-      const rows = data.tables[0].Rows.map((item: any) => ({
-        ...item,
-      }));
-      if (totalRowCnt > 0) {
-        setCount(rows[0].new_slip_count);
-      } else {
-        setCount(0);
-      }
-    } else {
-      console.log("[오류 발생]");
-      console.log(data);
-    }
-    // 필터 isSearch false처리, pgNum 세팅
-  };
-
   return (
     <>
       <GridContainerWrap>
         <GridContainer width="55%">
           <GridContainer style={{ marginTop: "20px" }}>
             <GridMui container spacing={2}>
-              <GridMui item xs={12} sm={6} md={4} lg={4} xl={4}>
-                <CardPrime
-                  style={{
-                    height: "140px",
-                    width: "100%",
-                    marginRight: "15px",
-                    backgroundColor: "white",
-                    color: "black",
-                  }}
-                  title={`${userName}님, 환영합니다.`}
-                >
-                  {count == 0 ? (
-                    <div style={{ float: "right" }}>
-                      <Button
-                        onClick={onMessengerClick}
-                        icon="email"
-                        themeColor={"primary"}
-                        title="쪽지"
-                      ></Button>
-                    </div>
-                  ) : (
-                    <BadgeContainer style={{ float: "right" }}>
-                      <Button
-                        onClick={onMessengerClick}
-                        icon="email"
-                        themeColor={"primary"}
-                        title="쪽지"
-                      ></Button>
-                      <Badge themeColor={"primary"} fillMode={"outline"}>
-                        {count}
-                      </Badge>
-                    </BadgeContainer>
-                  )}
-                </CardPrime>
-              </GridMui>
               {cardOption.map((item) => (
-                <GridMui item xs={12} sm={6} md={4} lg={4} xl={4}>
+                <GridMui item xs={12} sm={6} md={6} lg={6} xl={6}>
                   <Card
                     title={item.title}
                     data={item.data}
@@ -657,13 +568,6 @@ const Main: React.FC = () => {
           </GridContainer>
         </GridContainer>
       </GridContainerWrap>
-      {windowVisible && (
-        <MessengerWindow
-          setVisible={setWindowVisible}
-          reload={() => dataApi()}
-          modal={true}
-        />
-      )}
     </>
   );
 };

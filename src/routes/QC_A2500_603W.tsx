@@ -150,6 +150,7 @@ const BA_A0020_603: React.FC = () => {
         todt: setDefaultDate(customOptionData, "todt"),
         status: defaultOption.find((item: any) => item.id == "status")
           ?.valueCode,
+        isSearch: true
       }));
     }
   }, [customOptionData]);
@@ -437,7 +438,7 @@ const BA_A0020_603: React.FC = () => {
     datnum: "",
     find_row_value: "",
     pgNum: 1,
-    isSearch: true,
+    isSearch: false,
   });
 
   //조회조건 초기값

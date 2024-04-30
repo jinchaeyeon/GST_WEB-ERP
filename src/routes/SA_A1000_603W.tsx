@@ -3463,6 +3463,7 @@ const SA_A1000_603W: React.FC = () => {
     userid: "",
     pc: "",
     form_id: "",
+    testtype: "",
   });
 
   const para: Iparameters = {
@@ -3516,6 +3517,7 @@ const SA_A1000_603W: React.FC = () => {
       "@p_custprsnnm": ParaData.custprsnnm,
       "@p_requestgb": ParaData.requestgb,
       "@p_glpgb": ParaData.glpgb,
+      "@p_testtype": ParaData.testtype,
       "@p_numbering_id": ParaData.numbering_id,
       "@p_rowstatus_s": ParaData.rowstatus_s,
       "@p_quoseq_s": ParaData.quoseq_s,
@@ -3719,6 +3721,7 @@ const SA_A1000_603W: React.FC = () => {
             teststdt: isValidDate(Information.teststdt)
               ? convertDateToStr(Information.teststdt)
               : "",
+            testtype: Information.testtype,
             remark: Information.remark,
             custprsnnm: Information.custprsnnm,
             requestgb: Information.requestgb,
@@ -3844,6 +3847,7 @@ const SA_A1000_603W: React.FC = () => {
             teststdt: isValidDate(Information.teststdt)
               ? convertDateToStr(Information.teststdt)
               : "",
+            testtype: Information.testtype,
             remark: Information.remark,
             custprsnnm: Information.custprsnnm,
             requestgb: Information.requestgb,
@@ -3947,6 +3951,7 @@ const SA_A1000_603W: React.FC = () => {
         custprsnnm: "",
         requestgb: "",
         glpgb: "",
+        testtype: "",
         numbering_id: "",
         rowstatus_s: "",
         quoseq_s: "",
@@ -4037,6 +4042,7 @@ const SA_A1000_603W: React.FC = () => {
       "@p_custprsnnm": "",
       "@p_requestgb": "",
       "@p_glpgb": "",
+      "@p_testtype": "",
       "@p_numbering_id": "",
       "@p_rowstatus_s": "",
       "@p_quoseq_s": "",
@@ -6351,6 +6357,9 @@ const SA_A1000_603W: React.FC = () => {
                           ...row,
                           user_id: userListData.find(
                             (items: any) => items.user_id == row.user_id
+                          )?.user_name,
+                          ans_person: userListData.find(
+                            (items: any) => items.user_id == row.ans_person
                           )?.user_name,
                           medicine_type: meditypeListData.find(
                             (items: any) => items.sub_code == row.medicine_type

@@ -2151,29 +2151,31 @@ const CM_A7000W: React.FC = () => {
                       <Button
                         themeColor={"primary"}
                         onClick={() => {
-                          detailDataResult.data.map((item) => {
-                            if (item.num > temp) {
-                              temp = item.num;
-                            }
-                          });
-                          
-                          const newDataItem = {
-                            [DATA_ITEM_KEY]: ++temp,
-                            prsnnm: information2.user_name,
-                            rowstatus: "N",
-                          };
-                          setSelectedState2({
-                            [newDataItem[DATA_ITEM_KEY2]]: true,
-                          });
-                          setDetailDataResult((prev) => {
-                            return {
-                              data: [newDataItem, ...prev.data],
-                              total: prev.total + 1,
+                          if(information2.user_name != "") {
+                            detailDataResult.data.map((item) => {
+                              if (item.num > temp) {
+                                temp = item.num;
+                              }
+                            });
+                            
+                            const newDataItem = {
+                              [DATA_ITEM_KEY]: ++temp,
+                              prsnnm: information2.user_name,
+                              rowstatus: "N",
                             };
-                          });
-                          setInformation2({
-                            user_name: "",
-                          });
+                            setSelectedState2({
+                              [newDataItem[DATA_ITEM_KEY2]]: true,
+                            });
+                            setDetailDataResult((prev) => {
+                              return {
+                                data: [newDataItem, ...prev.data],
+                                total: prev.total + 1,
+                              };
+                            });
+                            setInformation2({
+                              user_name: "",
+                            });
+                          }
                         }}
                       >
                         등록

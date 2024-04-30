@@ -65,9 +65,9 @@ import FilterContainer from "../components/Containers/FilterContainer";
 import CommonDateRangePicker from "../components/DateRangePicker/CommonDateRangePicker";
 import CustomOptionRadioGroup from "../components/RadioGroups/CustomOptionRadioGroup";
 import { CellRender, RowRender } from "../components/Renderers/Renderers";
+import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import CustomersWindow from "../components/Windows/CommonWindows/CustomersWindow";
 import EmailWindow from "../components/Windows/CommonWindows/EmailWindow";
-import ProjectsWindow from "../components/Windows/CM_A7000W_Project_Window";
 import PrsnnumWindow from "../components/Windows/CommonWindows/PrsnnumWindow";
 import SA_A1000_603W_Design2_Window from "../components/Windows/SA_A1000_603W_Design2_Window";
 import SA_A1000_603W_Design3_Window from "../components/Windows/SA_A1000_603W_Design3_Window";
@@ -214,9 +214,8 @@ const SA_A1001_603W: React.FC = () => {
           rev: defaultOption.find((item: any) => item.id == "rev")?.valueCode,
           quocalyn: defaultOption.find((item: any) => item.id == "quocalyn")
             ?.valueCode,
-          contractyn: defaultOption.find(
-            (item: any) => item.id == "contractyn"
-          )?.valueCode,
+          contractyn: defaultOption.find((item: any) => item.id == "contractyn")
+            ?.valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
           isSearch: true,
@@ -230,9 +229,8 @@ const SA_A1001_603W: React.FC = () => {
           )?.valueCode,
           quocalyn: defaultOption.find((item: any) => item.id == "quocalyn")
             ?.valueCode,
-          contractyn: defaultOption.find(
-            (item: any) => item.id == "contractyn"
-          )?.valueCode,
+          contractyn: defaultOption.find((item: any) => item.id == "contractyn")
+            ?.valueCode,
           rev: defaultOption.find((item: any) => item.id == "rev")?.valueCode,
           frdt: setDefaultDate(customOptionData, "frdt"),
           todt: setDefaultDate(customOptionData, "todt"),
@@ -937,7 +935,7 @@ const SA_A1001_603W: React.FC = () => {
   const [printWindowVisible, setPrintWindowVisible] = useState<boolean>(false);
   const [projectWindowVisible, setProjectWindowVisible] =
     useState<boolean>(false);
-  
+
   const onProjectWndClick = () => {
     setProjectWindowVisible(true);
   };
@@ -1423,36 +1421,28 @@ const SA_A1001_603W: React.FC = () => {
               rowstatus: item.rowstatus == "N" ? "N" : "U",
               marginamt:
                 editedField == "margin"
-                  ? item.quounp * (item.margin / 100) + item.quounp
+                  ? item.quounp * (item.margin / 100)
                   : item.marginamt == 0
-                  ? item.quounp
+                  ? 0
                   : item.marginamt,
               discountamt:
                 editedField == "discount"
-                  ? (item.marginamt == 0 ? item.quounp : item.marginamt) -
-                    (item.marginamt == 0 ? item.quounp : item.marginamt) *
-                      (item.discount / 100)
-                  : editedField == "margin"
-                  ? item.quounp * (item.margin / 100) +
-                    item.quounp -
-                    (item.quounp * (item.margin / 100) + item.quounp) *
-                      (item.discount / 100)
-                  : editedField == "marginamt"
-                  ? item.marginamt - item.marginamt * (item.discount / 100)
+                  ? item.quounp * (item.discount / 100)
+                  : item.discountamt == 0
+                  ? 0
                   : item.discountamt,
               finalquowonamt:
-                editedField == "discount"
-                  ? (item.marginamt == 0 ? item.quounp : item.marginamt) -
-                    (item.marginamt == 0 ? item.quounp : item.marginamt) *
-                      (item.discount / 100)
-                  : editedField == "margin"
-                  ? item.quounp * (item.margin / 100) +
-                    item.quounp -
-                    (item.quounp * (item.margin / 100) + item.quounp) *
-                      (item.discount / 100)
-                  : editedField == "marginamt"
-                  ? item.marginamt - item.marginamt * (item.discount / 100)
-                  : item.discountamt,
+                item.quounp +
+                (editedField == "margin"
+                  ? item.quounp * (item.margin / 100)
+                  : item.marginamt == 0
+                  ? 0
+                  : item.marginamt) -
+                (editedField == "discount"
+                  ? item.quounp * (item.discount / 100)
+                  : item.discountamt == 0
+                  ? 0
+                  : item.discountamt),
               [EDIT_FIELD]: undefined,
             }
           : {

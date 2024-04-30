@@ -60,9 +60,9 @@ export default function MultiDoughnutChart(props) {
       const propsData = props.data;
       let sum = 0;
       propsData.map((item) => {
-        sum += item[props.option]
-      })
-      
+        sum += item[props.option];
+      });
+
       const data = {
         labels: props.label,
         datasets: [
@@ -87,7 +87,9 @@ export default function MultiDoughnutChart(props) {
               weight: "bold",
             },
             formatter: function (value, context) {
-              return numberWithCommas3(value/sum)*100 + "%";
+              return sum == 0
+                ? 0 + "%"
+                : numberWithCommas3(value / sum) * 100 + "%";
             },
           },
         },

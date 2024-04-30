@@ -169,7 +169,7 @@ const CopyWindow = ({ setVisible, filters, item, modal = false }: IWindow) => {
     }
 
     if (data.isSuccess == true) {
-      const totalRowCnt = data.tables[0].TotalRowCount;
+      const totalRowCnt = data.tables[1].TotalRowCount;
       const rows = data.tables[0].Rows;
       const rows2 = data.tables[1].Rows;
       const rows3 = data.tables[4].Rows;
