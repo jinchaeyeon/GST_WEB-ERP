@@ -20,7 +20,7 @@ type IWindow = {
   modal?: boolean;
 };
 
-const SA_A1001_603W_Window = ({
+const SA_A1000_603W_Window = ({
   setVisible,
   quonum,
   quorev,
@@ -69,7 +69,7 @@ const SA_A1001_603W_Window = ({
     setLoading(true);
 
     const parameters = {
-      para: "document-json?id=S2023744A53",
+      para: "document-json?id=S202452F7E0", //70번: S20243218C8 / 90번 S202452F7E0
       "@p_orgdiv": "01",
       "@p_quonum": quonum,
       "@p_quorev": quorev,
@@ -104,7 +104,7 @@ const SA_A1001_603W_Window = ({
 
   return (
     <Window
-      title={"견적서출력"}
+      title={"시험의뢰서출력"}
       width={position.width}
       height={position.height}
       onMove={handleMove}
@@ -113,7 +113,7 @@ const SA_A1001_603W_Window = ({
       modal={modal}
     >
       <TitleContainer>
-        <Title>견적서</Title>
+        <Title>시험의뢰서</Title>
       </TitleContainer>
       <div
         style={{
@@ -134,4 +134,4 @@ const SA_A1001_603W_Window = ({
   );
 };
 
-export default SA_A1001_603W_Window;
+export default SA_A1000_603W_Window;
