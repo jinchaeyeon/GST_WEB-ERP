@@ -872,7 +872,7 @@ const PanelBarNavContainer = (props: any) => {
           <Gnv isMobileMenuOpend={isMobileMenuOpend} theme={"#2289c3"}>
             <AppName theme={"#2289c3"} onClick={() => setIsMenuOpend(false)}>
               {companyCode == "2302BA03" ? (
-                <Logo size="32px" name={"BIO"} />
+                <Logo size="120px" name={"BIO"} />
               ) : (
                 <>
                   <Logo size="32px" name={"GST WEB"} />
