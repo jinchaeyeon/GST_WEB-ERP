@@ -105,6 +105,7 @@ const SA_B2000: React.FC = () => {
   UseParaPc(setPc);
   const initialPageState = { skip: 0, take: PAGE_SIZE };
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
@@ -1335,7 +1336,7 @@ const SA_B2000: React.FC = () => {
           </FilterContainer>
           <GridContainerWrap>
             <Swiper
-              className="leading_80_Swiper"
+              className="leading_78_Swiper"
               onSwiper={(swiper) => {
                 setSwiper(swiper);
               }}
@@ -1343,8 +1344,8 @@ const SA_B2000: React.FC = () => {
                 index = swiper.activeIndex;
               }}
             >
-              <SwiperSlide key={0} className="swiper-slide">
-                <GridContainer className="leading_80_Swiper" width={`50%`}>
+              <SwiperSlide key={0} className="leading_PDA_custom">
+                <GridContainer style={{ height: "100%" }}>
                   <GridTitleContainer>
                     <GridTitle>요약정보</GridTitle>
                     <ButtonContainer>
@@ -1381,7 +1382,10 @@ const SA_B2000: React.FC = () => {
                     fileName="수주처리"
                   >
                     <Grid
-                      style={{ height: "72.5vh" }}
+                      style={{
+                        height: `${deviceHeight * 0.8 - 50}px`,
+                        width: "90vw",
+                      }}
                       data={process(
                         mainDataResult.data.map((row) => ({
                           ...row,
@@ -1470,8 +1474,8 @@ const SA_B2000: React.FC = () => {
                 </GridContainer>
               </SwiperSlide>
 
-              <SwiperSlide key={1} className="swiper-slide">
-                <GridContainer className="leading_80_Swiper" width={`calc(50% - ${GAP}px)`}>
+              <SwiperSlide key={1} className="leading_PDA_custom">
+                <GridContainer style={{ height: "100%" }}>
                   <GridTitleContainer>
                     <GridTitle>상세정보</GridTitle>
                   </GridTitleContainer>
@@ -1503,7 +1507,10 @@ const SA_B2000: React.FC = () => {
                     fileName="수주처리"
                   >
                     <Grid
-                      style={{ height: "72.8vh" }}
+                      style={{
+                        height: `${deviceHeight * 0.8 - 50}px`,
+                        width: "90vw",
+                      }}
                       data={process(
                         detailDataResult.data.map((row) => ({
                           ...row,

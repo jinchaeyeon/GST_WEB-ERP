@@ -612,7 +612,7 @@ const SA_B3000W: React.FC = () => {
   const labelContent = (props: any) => {
     let formatedNumber = Number(props.percentage).toLocaleString(undefined, {
       style: "percent",
-      minimumFractionDigits: 3, //소수점
+      minimumFractionDigits: isMobile ? 1 : 3, //소수점
     });
     return `${props.dataItem.mm} : ${formatedNumber}`;
   };
@@ -790,7 +790,6 @@ const SA_B3000W: React.FC = () => {
             <TabStripTab title="전체">
               <GridContainerWrap>
                 <Swiper
-                  className="leading_60_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -799,7 +798,7 @@ const SA_B3000W: React.FC = () => {
                   }}
                 >
                   <SwiperSlide key={0} className="leading_PDA_custom">
-                    <GridContainer>
+                    <GridContainer style={{ width: "100%", height: "100%" }}>
                       <ButtonContainer style={{ paddingBottom: "10px" }}>
                         <Button
                           onClick={() => {
@@ -881,7 +880,7 @@ const SA_B3000W: React.FC = () => {
                           </Button>
                         </ButtonContainer>
                         <Grid
-                          style={{ height: `${deviceHeight * 0.62}px` }}
+                          style={{ height: `${deviceHeight * 0.65}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -958,7 +957,6 @@ const SA_B3000W: React.FC = () => {
 
             <TabStripTab title="월별">
               <Swiper
-                className="leading_60_Swiper"
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
                 }}
@@ -974,9 +972,7 @@ const SA_B3000W: React.FC = () => {
                   }}
                 >
                   <SwiperSlide key={0} className="leading_PDA_custom">
-                    <GridContainer 
-                      style={{ width: "100%" }}
-                    >
+                    <GridContainer style={{ width: "100%", height: "100%" }}>
                       <ExcelExport
                         data={gridDataResult.data}
                         ref={(exporter) => {
@@ -996,7 +992,7 @@ const SA_B3000W: React.FC = () => {
                           </Button>
                         </ButtonContainer>
                         <Grid
-                          style={{ height: `${deviceHeight * 0.7 - 15}px` }}
+                          style={{ height: `${deviceHeight * 0.65}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -1092,14 +1088,9 @@ const SA_B3000W: React.FC = () => {
                       </ExcelExport>
                     </GridContainer>
                   </SwiperSlide>
-                  <GridContainerWrap
-                    style={{ height: isMobile ? "" : "36.5vh" }}
-                  >
-                    <SwiperSlide key={1} className="swiper-slide">
-                      <GridContainer
-                        className="leading_60_Swiper"
-                        width={"70%"}
-                      >
+                  <GridContainerWrap>
+                    <SwiperSlide key={1} className="leading_PDA_custom">
+                      <GridContainer style={{ width: "100%", height: "100%" }}>
                         <ButtonContainer
                           style={{
                             paddingBottom: "10px",
@@ -1127,7 +1118,12 @@ const SA_B3000W: React.FC = () => {
                             도넛차트 보기
                           </Button>
                         </ButtonContainer>
-                        <Chart style={{ height: !isMobile ? "100%" : `${deviceHeight * 0.7 - 15}px` }}>
+                        <Chart
+                          style={{
+                            height: `${deviceHeight * 0.65}px`,
+                            width: "100%",
+                          }}
+                        >
                           {/* <ChartTitle text="Units sold" /> */}
                           <ChartValueAxis>
                             <ChartValueAxisItem
@@ -1171,8 +1167,8 @@ const SA_B3000W: React.FC = () => {
                         </Chart>
                       </GridContainer>
                     </SwiperSlide>
-                    <SwiperSlide key={2} className="swiper-slide">
-                      <GridContainer className="leading_60_Swiper" width="30%">
+                    <SwiperSlide key={2} className="leading_PDA_custom">
+                      <GridContainer style={{ width: "100%", height: "100%" }}>
                         <ButtonContainer
                           style={{
                             display: "flex",
@@ -1190,7 +1186,7 @@ const SA_B3000W: React.FC = () => {
                             차트보기
                           </Button>
                         </ButtonContainer>
-                        <Chart style={{ height: !isMobile ? "100%" : "" }}>
+                        <Chart>
                           <ChartTitle text="월별 매출 금액 비율(%)" />
                           <ChartTooltip render={quarterDonutRenderTooltip2} />
                           <ChartLegend visible={false} position="bottom" />
@@ -1227,8 +1223,8 @@ const SA_B3000W: React.FC = () => {
                 }}
               >
                 <GridContainerWrap>
-                  <SwiperSlide key={0} className="swiper-slide">
-                    <GridContainer className="leading_70_Swiper" width={"100%"}>
+                  <SwiperSlide key={0} className="leading_PDA_custom">
+                    <GridContainer style={{ width: "100%", height: "100%" }}>
                       <ButtonContainer style={{ paddingBottom: "10px" }}>
                         <Button
                           onClick={() => {
@@ -1248,7 +1244,7 @@ const SA_B3000W: React.FC = () => {
                         fileName="매출집계(업체)"
                       >
                         <Grid
-                          style={{ height: "64vh" }}
+                          style={{ height: `${deviceHeight * 0.65}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -1426,11 +1422,8 @@ const SA_B3000W: React.FC = () => {
                   <GridContainerWrap
                     style={{ height: isMobile ? "" : "36.5vh" }}
                   >
-                    <SwiperSlide key={1} className="swiper-slide">
-                      <GridContainer
-                        className="leading_70_Swiper"
-                        width={"60%"}
-                      >
+                    <SwiperSlide key={1} className="leading_PDA_custom">
+                      <GridContainer style={{ width: "100%", height: "100%" }}>
                         <ButtonContainer
                           style={{
                             paddingBottom: "10px",
@@ -1458,7 +1451,11 @@ const SA_B3000W: React.FC = () => {
                             도넛차트 보기
                           </Button>
                         </ButtonContainer>
-                        <Chart style={{ height: !isMobile ? "100%" : "60vh" }}>
+                        <Chart 
+                          style={{
+                            height: `${deviceHeight * 0.65}px`,
+                            width: "100%",
+                          }}>
                           {/* <ChartTitle text="Units sold" /> */}
                           <ChartValueAxis>
                             <ChartValueAxisItem
@@ -1529,11 +1526,8 @@ const SA_B3000W: React.FC = () => {
                         </Chart>
                       </GridContainer>
                     </SwiperSlide>
-                    <SwiperSlide key={2} className="swiper-slide">
-                      <GridContainer
-                        className="leading_70_Swiper"
-                        width={"40%"}
-                      >
+                    <SwiperSlide key={2} className="leading_PDA_custom">
+                      <GridContainer style={{ width: "100%", height: "100%" }}>
                         <ButtonContainer
                           style={{
                             display: "flex",
@@ -1553,7 +1547,6 @@ const SA_B3000W: React.FC = () => {
                         </ButtonContainer>
                         <Chart style={{ height: !isMobile ? "100%" : "" }}>
                           <ChartTitle text="분기별 매출 금액 비율(%)" />
-
                           <ChartTooltip render={quarterDonutRenderTooltip} />
                           <ChartLegend visible={false} position="bottom" />
                           <ChartSeries>
@@ -1606,8 +1599,8 @@ const SA_B3000W: React.FC = () => {
                 }}
               >
                 <GridContainerWrap>
-                  <SwiperSlide key={0} className="swiper-slide">
-                    <GridContainer className="leading_70_Swiper" width={"100%"}>
+                  <SwiperSlide key={0} className="leading_PDA_custom">
+                    <GridContainer style={{ width: "100%", height: "100%" }}>
                       <ButtonContainer style={{ paddingBottom: "10px" }}>
                         <Button
                           onClick={() => {
@@ -1627,7 +1620,7 @@ const SA_B3000W: React.FC = () => {
                         fileName="매출집계(업체)"
                       >
                         <Grid
-                          style={{ height: "64vh" }}
+                          style={{ height: `${deviceHeight * 0.65}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -1879,14 +1872,9 @@ const SA_B3000W: React.FC = () => {
                       </ExcelExport>
                     </GridContainer>
                   </SwiperSlide>
-                  <GridContainerWrap
-                    style={{ height: isMobile ? "" : "36.5vh" }}
-                  >
-                    <SwiperSlide key={1} className="swiper-slide">
-                      <GridContainer
-                        className="leading_70_Swiper"
-                        width={"60%"}
-                      >
+                  <GridContainerWrap>
+                    <SwiperSlide key={1} className="leading_PDA_custom">
+                      <GridContainer style={{ width: "100%" }}>
                         <ButtonContainer
                           style={{
                             paddingBottom: "10px",
@@ -1998,11 +1986,8 @@ const SA_B3000W: React.FC = () => {
                       </GridContainer>
                     </SwiperSlide>
 
-                    <SwiperSlide key={2} className="swiper-slide">
-                      <GridContainer
-                        className="leading_70_Swiper"
-                        width={"40%"}
-                      >
+                    <SwiperSlide key={2} className="leading_PDA_custom">
+                      <GridContainer style={{ width: "100%", height: "100%" }}>
                         <ButtonContainer
                           style={{
                             display: "flex",

@@ -123,6 +123,7 @@ const SA_B3100W: React.FC = () => {
   const [page3, setPage3] = useState(initialPageState);
   const [page4, setPage4] = useState(initialPageState);
   let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
   let isMobile = deviceWidth <= 1200;
 
   const [messagesData, setMessagesData] = React.useState<any>(null);
@@ -680,6 +681,77 @@ const SA_B3100W: React.FC = () => {
             <Title>매출집계(품목)</Title>
 
             <ButtonContainer>
+              <FilterContainer>
+                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+                  <tbody>
+                    <tr>
+                      <th data-control-name="lblYyyy">기준년도</th>
+                      <td>
+                        <DatePicker
+                          name="yyyy"
+                          value={filters.yyyy}
+                          format="yyyy"
+                          onChange={filterInputChange}
+                          calendar={YearCalendar}
+                          className="required"
+                          placeholder=""
+                        />
+                      </td>
+                      <th data-control-name="lblImcd">품목코드</th>
+                      <td>
+                        <Input
+                          name="itemcd"
+                          type="text"
+                          value={filters.itemcd}
+                          onChange={filterInputChange}
+                        />
+                        <ButtonInInput>
+                          <Button
+                            onClick={onItemWndClick}
+                            icon="more-horizontal"
+                            fillMode="flat"
+                          />
+                        </ButtonInInput>
+                      </td>
+
+                      <th data-control-name="lblItemnm">품목명</th>
+                      <td>
+                        <Input
+                          name="itemnm"
+                          type="text"
+                          value={filters.itemnm}
+                          onChange={filterInputChange}
+                        />
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>품목계정</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CustomOptionComboBox
+                            name="itemacnt"
+                            value={filters.itemacnt}
+                            customOptionData={customOptionData}
+                            changeData={filterComboBoxChange}
+                          />
+                        )}
+                      </td>
+                      <th data-control-name="lblAmtdiv">단위</th>
+                      <td>
+                        {customOptionData !== null && (
+                          <CommonRadioGroup
+                            name="rdoAmtdiv"
+                            customOptionData={customOptionData}
+                            changeData={filterRadioChange}
+                          />
+                        )}
+                      </td>
+                      <th></th>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </FilterBox>
+              </FilterContainer>
               {permissions && (
                 <TopButtons
                   search={search}
@@ -690,81 +762,15 @@ const SA_B3100W: React.FC = () => {
               )}
             </ButtonContainer>
           </TitleContainer>
-          <FilterContainer>
-            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-              <tbody>
-                <tr>
-                  <th data-control-name="lblYyyy">기준년도</th>
-                  <td>
-                    <DatePicker
-                      name="yyyy"
-                      value={filters.yyyy}
-                      format="yyyy"
-                      onChange={filterInputChange}
-                      calendar={YearCalendar}
-                      className="required"
-                      placeholder=""
-                    />
-                  </td>
-                  <th data-control-name="lblImcd">품목코드</th>
-                  <td>
-                    <Input
-                      name="itemcd"
-                      type="text"
-                      value={filters.itemcd}
-                      onChange={filterInputChange}
-                    />
-                    <ButtonInInput>
-                      <Button
-                        onClick={onItemWndClick}
-                        icon="more-horizontal"
-                        fillMode="flat"
-                      />
-                    </ButtonInInput>
-                  </td>
 
-                  <th data-control-name="lblItemnm">품목명</th>
-                  <td>
-                    <Input
-                      name="itemnm"
-                      type="text"
-                      value={filters.itemnm}
-                      onChange={filterInputChange}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th>품목계정</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CustomOptionComboBox
-                        name="itemacnt"
-                        value={filters.itemacnt}
-                        customOptionData={customOptionData}
-                        changeData={filterComboBoxChange}
-                      />
-                    )}
-                  </td>
-                  <th data-control-name="lblAmtdiv">단위</th>
-                  <td>
-                    {customOptionData !== null && (
-                      <CommonRadioGroup
-                        name="rdoAmtdiv"
-                        customOptionData={customOptionData}
-                        changeData={filterRadioChange}
-                      />
-                    )}
-                  </td>
-                  <th></th>
-                  <td></td>
-                </tr>
-              </tbody>
-            </FilterBox>
-          </FilterContainer>
           <TabStrip
             selected={tabSelected}
             onSelect={handleSelectTab}
-            style={{ height: "80vh", width: "100%", paddingBottom: "15px" }}
+            style={{
+              height: `${deviceHeight * 0.87}px`,
+              width: "100%",
+              paddingBottom: "15px",
+            }}
           >
             <TabStripTab title="전체">
               <GridContainerWrap flexDirection="column">
@@ -776,11 +782,8 @@ const SA_B3100W: React.FC = () => {
                     index = swiper.activeIndex;
                   }}
                 >
-                  <SwiperSlide key={0} className="swiper-slide">
-                    <GridContainer
-                      className="leading_70_Swiper"
-                      height="100%"
-                    >
+                  <SwiperSlide key={0} className="leading_PDA_custom">
+                    <GridContainer style={{ width: "100%", height: "100%" }}>
                       <ButtonContainer style={{ paddingBottom: "10px" }}>
                         <Button
                           onClick={() => {
@@ -799,7 +802,10 @@ const SA_B3100W: React.FC = () => {
                             ? DDGDcolorList
                             : WebErpcolorList
                         }
-                        style={{ height: "60vh" }}
+                        style={{
+                          height: `${deviceHeight * 0.65}px`,
+                          width: "100%",
+                        }}
                       >
                         <ChartValueAxis>
                           <ChartValueAxisItem
@@ -837,11 +843,8 @@ const SA_B3100W: React.FC = () => {
                       </Chart>
                     </GridContainer>
                   </SwiperSlide>
-                  <SwiperSlide key={1} className="swiper-slide">
-                    <GridContainer
-                      className="leading_70_Swiper"
-                      width={"100%"}
-                    >
+                  <SwiperSlide key={1} className="leading_PDA_custom">
+                    <GridContainer style={{ width: "100%", height: "100%" }}>
                       <ExcelExport
                         data={gridDataResult.data}
                         ref={(exporter) => {
@@ -861,7 +864,7 @@ const SA_B3100W: React.FC = () => {
                           </Button>
                         </ButtonContainer>
                         <Grid
-                          style={{ height: "63vh" }}
+                          style={{ height: `${deviceHeight * 0.65}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -936,20 +939,18 @@ const SA_B3100W: React.FC = () => {
               </GridContainerWrap>
             </TabStripTab>
             <TabStripTab title="월별">
-              <GridContainerWrap flexDirection="column">
-                <Swiper
-                  onSwiper={(swiper) => {
-                    setSwiper(swiper);
-                  }}
-                  onActiveIndexChange={(swiper) => {
-                    index = swiper.activeIndex;
-                  }}
-                >
-                  <SwiperSlide key={0} className="swiper-slide">
-                    <GridContainer
-                      className="leading_70_Swiper"
-                      width={"100%"}
-                    >
+              <Swiper
+                className="leading_67_Swiper"
+                onSwiper={(swiper) => {
+                  setSwiper(swiper);
+                }}
+                onActiveIndexChange={(swiper) => {
+                  index = swiper.activeIndex;
+                }}
+              >
+                <GridContainerWrap flexDirection="column">
+                  <SwiperSlide key={0} className="leading_PDA_custom">
+                    <GridContainer style={{ width: "100%", height: "100%" }}>
                       <ButtonContainer style={{ paddingBottom: "10px" }}>
                         <Button
                           onClick={() => {
@@ -969,7 +970,7 @@ const SA_B3100W: React.FC = () => {
                         fileName="매출집계(풀목)"
                       >
                         <Grid
-                          style={{ height: "63vh" }}
+                          style={{ height: `${deviceHeight * 0.65}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -1065,14 +1066,9 @@ const SA_B3100W: React.FC = () => {
                       </ExcelExport>
                     </GridContainer>
                   </SwiperSlide>
-                  <GridContainerWrap
-                    style={{ height: isMobile ? "" : "36.5vh" }}
-                  >
-                    <SwiperSlide key={1} className="swiper-slide">
-                      <GridContainer
-                        className="leading_70_Swiper"
-                        width={"70%"}
-                      >
+                  <GridContainerWrap>
+                    <SwiperSlide key={1} className="leading_PDA_custom">
+                      <GridContainer style={{ width: "100%", height: "100%" }}>
                         <ButtonContainer
                           style={{
                             paddingBottom: "10px",
@@ -1099,7 +1095,7 @@ const SA_B3100W: React.FC = () => {
                             도넛차트 보기
                           </Button>
                         </ButtonContainer>
-                        <Chart style={{ height: !isMobile ? "100%" : "60vh" }}>
+                        <Chart style={{ height: `${deviceHeight * 0.65}px` }}>
                           <ChartValueAxis>
                             <ChartValueAxisItem
                               labels={{
@@ -1142,11 +1138,8 @@ const SA_B3100W: React.FC = () => {
                         </Chart>
                       </GridContainer>
                     </SwiperSlide>
-                    <SwiperSlide key={2} className="swiper-slide">
-                      <GridContainer
-                        className="leading_70_Swiper"
-                        width="30%"
-                      >
+                    <SwiperSlide key={2} className="leading_PDA_custom">
+                      <GridContainer style={{ width: "100%", height: "100%" }}>
                         <div
                           style={{
                             display: "flex",
@@ -1166,7 +1159,7 @@ const SA_B3100W: React.FC = () => {
                             </Button>
                           </ButtonContainer>
                         </div>
-                        <Chart style={{ height: !isMobile ? "100%" : "" }}>
+                        <Chart>
                           <ChartTitle text="월별 매출 금액 비율(%)" />
                           <ChartTooltip render={quarterDonutRenderTooltip2} />
                           <ChartLegend visible={false} position="bottom" />
@@ -1189,12 +1182,13 @@ const SA_B3100W: React.FC = () => {
                       </GridContainer>
                     </SwiperSlide>
                   </GridContainerWrap>
-                </Swiper>
-              </GridContainerWrap>
+                </GridContainerWrap>
+              </Swiper>
             </TabStripTab>
             <TabStripTab title="분기별">
               <GridContainerWrap flexDirection="column">
                 <Swiper
+                  className="leading_67_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -1202,11 +1196,8 @@ const SA_B3100W: React.FC = () => {
                     index = swiper.activeIndex;
                   }}
                 >
-                  <SwiperSlide key={0} className="swiper-slide">
-                    <GridContainer
-                      className="leading_70_Swiper"
-                      width={"100%"}
-                    >
+                  <SwiperSlide key={0} className="leading_PDA_custom">
+                    <GridContainer style={{ width: "100%", height: "100%" }}>
                       <ButtonContainer style={{ paddingBottom: "10px" }}>
                         <Button
                           onClick={() => {
@@ -1226,7 +1217,7 @@ const SA_B3100W: React.FC = () => {
                         fileName="매출집계(풀목)"
                       >
                         <Grid
-                          style={{ height: "62vh" }}
+                          style={{ height: `${deviceHeight * 0.65}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -1299,9 +1290,7 @@ const SA_B3100W: React.FC = () => {
                                         title={"금액"}
                                         cell={NumberCell}
                                         field={
-                                          item.caption == "전기"
-                                            ? "jm1"
-                                            : "dm1"
+                                          item.caption == "전기" ? "jm1" : "dm1"
                                         }
                                         footerCell={gridSumQtyFooterCell}
                                         width={item.width}
@@ -1322,9 +1311,7 @@ const SA_B3100W: React.FC = () => {
                                         title={"금액"}
                                         cell={NumberCell}
                                         field={
-                                          item.caption == "전기"
-                                            ? "jm2"
-                                            : "dm2"
+                                          item.caption == "전기" ? "jm2" : "dm2"
                                         }
                                         footerCell={gridSumQtyFooterCell}
                                         width={item.width}
@@ -1345,9 +1332,7 @@ const SA_B3100W: React.FC = () => {
                                         title={"금액"}
                                         cell={NumberCell}
                                         field={
-                                          item.caption == "전기"
-                                            ? "jm3"
-                                            : "dm3"
+                                          item.caption == "전기" ? "jm3" : "dm3"
                                         }
                                         footerCell={gridSumQtyFooterCell}
                                         width={item.width}
@@ -1368,9 +1353,7 @@ const SA_B3100W: React.FC = () => {
                                         title={"금액"}
                                         cell={NumberCell}
                                         field={
-                                          item.caption == "전기"
-                                            ? "jm4"
-                                            : "dm4"
+                                          item.caption == "전기" ? "jm4" : "dm4"
                                         }
                                         footerCell={gridSumQtyFooterCell}
                                         width={item.width}
@@ -1412,11 +1395,8 @@ const SA_B3100W: React.FC = () => {
                   <GridContainerWrap
                     style={{ height: isMobile ? "" : "36.5vh" }}
                   >
-                    <SwiperSlide key={1} className="swiper-slide">
-                      <GridContainer
-                        className="leading_70_Swiper"
-                        width={"60%"}
-                      >
+                    <SwiperSlide key={1} className="leading_PDA_custom">
+                      <GridContainer style={{ width: "100%", height: "100%" }}>
                         <ButtonContainer
                           style={{
                             paddingBottom: "10px",
@@ -1444,7 +1424,12 @@ const SA_B3100W: React.FC = () => {
                             도넛차트 보기
                           </Button>
                         </ButtonContainer>
-                        <Chart style={{ height: !isMobile ? "100%" : "62vh" }}>
+                        <Chart 
+                          style={{
+                            height: `${deviceHeight * 0.65}px`,
+                            width: "100%",
+                          }}
+                        >
                           <ChartValueAxis>
                             <ChartValueAxisItem
                               labels={{
@@ -1518,11 +1503,8 @@ const SA_B3100W: React.FC = () => {
                         </Chart>
                       </GridContainer>
                     </SwiperSlide>
-                    <SwiperSlide key={2} className="swiper-slide">
-                      <GridContainer
-                        className="leading_70_Swiper"
-                        width={"40%"}
-                      >
+                    <SwiperSlide key={2} className="leading_PDA_custom">
+                      <GridContainer style={{ width: "100%", height: "100%" }}>
                         <ButtonContainer
                           style={{
                             display: "flex",
@@ -1540,7 +1522,7 @@ const SA_B3100W: React.FC = () => {
                             차트 보기
                           </Button>
                         </ButtonContainer>
-                        <Chart style={{ height: !isMobile ? "100%" : "" }}>
+                        <Chart>
                           <ChartTitle text="분기별 매출 금액 비율(%)" />
 
                           <ChartTooltip render={quarterDonutRenderTooltip} />
@@ -1587,6 +1569,7 @@ const SA_B3100W: React.FC = () => {
             <TabStripTab title="5년분석">
               <GridContainerWrap flexDirection="column">
                 <Swiper
+                  className="leading_67_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -1594,11 +1577,8 @@ const SA_B3100W: React.FC = () => {
                     index = swiper.activeIndex;
                   }}
                 >
-                  <SwiperSlide key={0} className="swiper-slide">
-                    <GridContainer
-                      className="leading_70_Swiper"
-                      width={"100%"}
-                    >
+                  <SwiperSlide key={0} className="leading_PDA_custom">
+                    <GridContainer style={{ width: "100%", height: "100%" }}>
                       <ButtonContainer style={{ paddingBottom: "10px" }}>
                         <Button
                           onClick={() => {
@@ -1618,7 +1598,7 @@ const SA_B3100W: React.FC = () => {
                         fileName="매출집계(풀목)"
                       >
                         <Grid
-                          style={{ height: "63vh" }}
+                          style={{ height: `${deviceHeight * 0.65}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -1870,14 +1850,9 @@ const SA_B3100W: React.FC = () => {
                       </ExcelExport>
                     </GridContainer>
                   </SwiperSlide>
-                  <GridContainerWrap
-                    style={{ height: isMobile ? "" : "36.5vh" }}
-                  >
-                    <SwiperSlide key={1} className="swiper-slide">
-                      <GridContainer
-                        className="leading_70_Swiper"
-                        width={"60%"}
-                      >
+                  <GridContainerWrap>
+                    <SwiperSlide key={1} className="leading_PDA_custom">
+                      <GridContainer style={{ width: "100%", height: "100%" }}>
                         <ButtonContainer
                           style={{
                             paddingBottom: "10px",
@@ -1905,7 +1880,12 @@ const SA_B3100W: React.FC = () => {
                             도넛차트 보기
                           </Button>
                         </ButtonContainer>
-                        <Chart style={{ height: !isMobile ? "100%" : "60vh" }}>
+                        <Chart 
+                           style={{
+                            height: `${deviceHeight * 0.65}px`,
+                            width: "100%",
+                          }}
+                        >
                           <ChartValueAxis>
                             <ChartValueAxisItem
                               labels={{
@@ -1987,11 +1967,8 @@ const SA_B3100W: React.FC = () => {
                         </Chart>
                       </GridContainer>
                     </SwiperSlide>
-                    <SwiperSlide key={2} className="swiper-slide">
-                      <GridContainer
-                        className="leading_70_Swiper"
-                        width={"100%"}
-                      >
+                    <SwiperSlide key={2} className="leading_PDA_custom">
+                      <GridContainer style={{ width: "100%", height: "100%" }}>
                         <div
                           style={{
                             display: "flex",
@@ -2009,7 +1986,7 @@ const SA_B3100W: React.FC = () => {
                             차트 보기
                           </Button>
                         </div>
-                        <Chart style={{ height: !isMobile ? "100%" : "" }}>
+                        <Chart>
                           <ChartTitle text="연도별 매출 금액 비율(%)" />
                           <ChartTooltip render={quarterDonutRenderTooltip} />
                           <ChartLegend visible={false} position="bottom" />
@@ -2603,9 +2580,7 @@ const SA_B3100W: React.FC = () => {
                                   title={"합계"}
                                   cell={NumberCell}
                                   field={
-                                    item.caption == "전기"
-                                      ? "jtotal"
-                                      : "dtotal"
+                                    item.caption == "전기" ? "jtotal" : "dtotal"
                                   }
                                   footerCell={gridSumQtyFooterCell}
                                   width={item.width}

@@ -63,8 +63,6 @@ import SwiperCore from "swiper";
 import "swiper/css";
 import { Button } from "@progress/kendo-react-buttons";
 
-let deviceWidth = window.innerWidth;
-let isMobile = deviceWidth <= 1200;
 const DATA_ITEM_KEY = "num";
 const numberField: string[] = [
   "qty01",
@@ -90,7 +88,9 @@ const SA_B3101W: React.FC = () => {
   UsePermissions(setPermissions);
   const [messagesData, setMessagesData] = React.useState<any>(null);
   UseMessages("SA_B3101W", setMessagesData);
-
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
+  let isMobile = deviceWidth <= 1200;
   var index = 0;
   const [swiper, setSwiper] = useState<SwiperCore>();
 
@@ -438,7 +438,7 @@ const SA_B3101W: React.FC = () => {
           </FilterContainer>
 
           <Swiper
-            className="leading_80_Swiper"
+            className="leading_78_Swiper"
             onSwiper={(swiper) => {
               setSwiper(swiper);
             }}
@@ -446,13 +446,14 @@ const SA_B3101W: React.FC = () => {
               index = swiper.activeIndex;
             }}
           >
-            <SwiperSlide key={0} className="swiper-slide">
-              <GridContainer
-                className="leading_80_Swiper"
-                style={{ height: "35vh", width: "100%" }}
-              >
+            <SwiperSlide key={0} className="leading_PDA_custom">
+              <GridContainer style={{ height: "100%" }}>
                 <GridTitle>차트</GridTitle>
-                <Chart style={{ height: !isMobile ? "100%" : "60vh" }}>
+                <Chart
+                  style={{
+                    height: `${deviceHeight * 0.65}px`,
+                    width: "100%",
+                  }}>
                   <ChartLegend position="top" orientation="horizontal" />
                   <ChartValueAxis>
                     <ChartValueAxisItem
@@ -494,8 +495,8 @@ const SA_B3101W: React.FC = () => {
               }}
               fileName="매입매출현황"
             >
-              <SwiperSlide key={1} className="swiper-slide">
-                <GridContainer className="leading_80_Swiper">
+              <SwiperSlide key={1} className="leading_PDA_custom">
+                <GridContainer style={{ width: "100%", height: "100%" }}>
                   <GridTitle>상세정보</GridTitle>
                   <div
                   style={{
@@ -518,7 +519,10 @@ const SA_B3101W: React.FC = () => {
                   </Button>
                 </div>
                   <Grid
-                    style={{ height: "71.5vh" }}
+                    style={{
+                      height: `${deviceHeight * 0.8 - 50}px`,
+                      width: "90vw",
+                    }}
                     data={gridDataResult.data}
                     {...gridDataState}
                     onDataStateChange={onGridDataStateChange}

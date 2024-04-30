@@ -1031,7 +1031,7 @@ export const useSysMessage = (key: TSysMessageKey) => {
   const [loginResult] = useRecoilState(loginResultState);
 
   if (loginResult) {
-    if (loginResult.langCode == "ko-KR") {
+    if (loginResult.defaultCulture == "ko-KR") {
       return messageKoKr[key];
     } else {
       return messageEnUs[key];

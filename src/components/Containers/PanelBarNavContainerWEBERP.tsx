@@ -350,10 +350,9 @@ const PanelBarNavContainer = (props: any) => {
         });
       });
 
-    let valid = menus
-    .filter((menu: any) => menu.formId == "Home").length > 0;
+    let valid = menus.filter((menu: any) => menu.formId == "Home").length > 0;
 
-    if(valid != true) {
+    if (valid != true) {
       paths.push({
         path: "/Home",
         menuName: "HOME",
@@ -872,8 +871,14 @@ const PanelBarNavContainer = (props: any) => {
         {isMenuOpend ? (
           <Gnv isMobileMenuOpend={isMobileMenuOpend} theme={"#2289c3"}>
             <AppName theme={"#2289c3"} onClick={() => setIsMenuOpend(false)}>
-              <Logo size="32px" name={"GST WEB"} />
-              {webTitle}
+              {companyCode == "2302BA03" ? (
+                <Logo size="120px" name={"BIO"} />
+              ) : (
+                <>
+                  <Logo size="32px" name={"GST WEB"} />
+                  {webTitle}
+                </>
+              )}
             </AppName>
             {companyCode == "2302BA03" ? (
               <>
