@@ -368,7 +368,7 @@ export const FormBox = styled.table`
     vertical-align: middle;
     padding-right: 10px;
     padding-left: 7px;
-    text-align: left;
+    text-align: right;
   }
   tr td {
     /* background-color: #ffffff;
