@@ -397,6 +397,7 @@ const SA_B3100W: React.FC = () => {
         workType == "5year"
       ) {
         const totalRowCnt2 = data.tables[0].TotalRowCount;
+        console.log("total: " + totalRowCnt2);
         setGridDataResult((prev) => {
           return {
             data: rows,
