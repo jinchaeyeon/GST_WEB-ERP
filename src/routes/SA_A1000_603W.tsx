@@ -113,6 +113,7 @@ import SA_A1000_603W_Design2_Window from "../components/Windows/SA_A1000_603W_De
 import SA_A1000_603W_Design3_Window from "../components/Windows/SA_A1000_603W_Design3_Window";
 import SA_A1000_603W_Design4_Window from "../components/Windows/SA_A1000_603W_Design4_Window";
 import SA_A1000_603W_Design_Window from "../components/Windows/SA_A1000_603W_Design_Window";
+import SA_A1000_603W_Window from "../components/Windows/SA_A1000_603W_Window";
 import { useApi } from "../hooks/api";
 import { IAttachmentData } from "../hooks/interfaces";
 import {
@@ -181,8 +182,8 @@ const numberField = [
 ];
 const itemField = ["itemcd"];
 const colorField = ["status"];
-const centerField = ["passdt", "quorev", "itemcnt",];
-const centerField2 = [ "status"];
+const centerField = ["passdt", "quorev", "itemcnt"];
+const centerField2 = ["status"];
 
 const percentField = ["rate"];
 
@@ -521,7 +522,6 @@ const CustomPercentCell = (props: GridCellProps) => {
     </td>
   );
 };
-
 
 const SA_A1000_603W: React.FC = () => {
   const idGetter = getter(DATA_ITEM_KEY);
@@ -1539,6 +1539,7 @@ const SA_A1000_603W: React.FC = () => {
   const [custWindowVisible, setCustWindowVisible] = useState<boolean>(false);
   const [custWindowVisible2, setCustWindowVisible2] = useState<boolean>(false);
   const [custWindowVisible3, setCustWindowVisible3] = useState<boolean>(false);
+  const [printWindowVisible, setPrintWindowVisible] = useState<boolean>(false);
   const [attachmentsWindowVisible, setAttachmentsWindowVisible] =
     useState<boolean>(false);
   const onCustWndClick = () => {
@@ -1552,6 +1553,9 @@ const SA_A1000_603W: React.FC = () => {
   };
   const onAttachmentsWndClick = () => {
     setAttachmentsWindowVisible(true);
+  };
+  const onPrint = () => {
+    setPrintWindowVisible(true);
   };
   const getAttachmentsData = (data: IAttachmentData) => {
     setInformation((prev) => {
@@ -3463,6 +3467,7 @@ const SA_A1000_603W: React.FC = () => {
     userid: "",
     pc: "",
     form_id: "",
+    testtype: "",
   });
 
   const para: Iparameters = {
@@ -3516,6 +3521,7 @@ const SA_A1000_603W: React.FC = () => {
       "@p_custprsnnm": ParaData.custprsnnm,
       "@p_requestgb": ParaData.requestgb,
       "@p_glpgb": ParaData.glpgb,
+      //"@p_testtype": ParaData.testtype,
       "@p_numbering_id": ParaData.numbering_id,
       "@p_rowstatus_s": ParaData.rowstatus_s,
       "@p_quoseq_s": ParaData.quoseq_s,
@@ -3719,6 +3725,7 @@ const SA_A1000_603W: React.FC = () => {
             teststdt: isValidDate(Information.teststdt)
               ? convertDateToStr(Information.teststdt)
               : "",
+            testtype: Information.testtype,
             remark: Information.remark,
             custprsnnm: Information.custprsnnm,
             requestgb: Information.requestgb,
@@ -3844,6 +3851,7 @@ const SA_A1000_603W: React.FC = () => {
             teststdt: isValidDate(Information.teststdt)
               ? convertDateToStr(Information.teststdt)
               : "",
+            testtype: Information.testtype,
             remark: Information.remark,
             custprsnnm: Information.custprsnnm,
             requestgb: Information.requestgb,
@@ -3947,6 +3955,7 @@ const SA_A1000_603W: React.FC = () => {
         custprsnnm: "",
         requestgb: "",
         glpgb: "",
+        testtype: "",
         numbering_id: "",
         rowstatus_s: "",
         quoseq_s: "",
@@ -4037,6 +4046,7 @@ const SA_A1000_603W: React.FC = () => {
       "@p_custprsnnm": "",
       "@p_requestgb": "",
       "@p_glpgb": "",
+      //"@p_testtype": "",
       "@p_numbering_id": "",
       "@p_rowstatus_s": "",
       "@p_quoseq_s": "",
@@ -4622,6 +4632,14 @@ const SA_A1000_603W: React.FC = () => {
           <GridTitleContainer>
             <GridTitle></GridTitle>
             <ButtonContainer>
+              <Button
+                themeColor={"primary"}
+                onClick={onPrint}
+                icon="print"
+                disabled={worktype == "N" ? true : false}
+              >
+                시험의뢰서 출력
+              </Button>
               <Button
                 onClick={onRevClick}
                 themeColor={"primary"}
@@ -6352,6 +6370,9 @@ const SA_A1000_603W: React.FC = () => {
                           user_id: userListData.find(
                             (items: any) => items.user_id == row.user_id
                           )?.user_name,
+                          ans_person: userListData.find(
+                            (items: any) => items.user_id == row.ans_person
+                          )?.user_name,
                           medicine_type: meditypeListData.find(
                             (items: any) => items.sub_code == row.medicine_type
                           )?.code_name,
@@ -6699,6 +6720,38 @@ const SA_A1000_603W: React.FC = () => {
                     Object.getOwnPropertyNames(selectedState2)[0]
                 )[0]
               : ""
+          }
+          modal={true}
+        />
+      )}
+      {printWindowVisible && (
+        <SA_A1000_603W_Window
+          setVisible={setPrintWindowVisible}
+          quonum={
+            mainDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0] != undefined
+              ? mainDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0].quonum
+              : ""
+          }
+          quorev={
+            mainDataResult.data.filter(
+              (item) =>
+                item[DATA_ITEM_KEY] ==
+                Object.getOwnPropertyNames(selectedState)[0]
+            )[0] != undefined
+              ? mainDataResult.data.filter(
+                  (item) =>
+                    item[DATA_ITEM_KEY] ==
+                    Object.getOwnPropertyNames(selectedState)[0]
+                )[0].quorev
+              : 0
           }
           modal={true}
         />

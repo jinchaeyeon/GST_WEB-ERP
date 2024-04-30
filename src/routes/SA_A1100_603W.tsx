@@ -594,6 +594,29 @@ const SA_A1100_603W: React.FC = () => {
           total: prev.total,
         };
       });
+    } else {
+      const newData = mainDataResult2.data.map((item) => ({
+        ...item,
+        wonamt: ThreeNumberceil(item.amt),
+        taxamt: ThreeNumberceil(ThreeNumberceil(item.amt) * 0.1),
+        totamt:
+          ThreeNumberceil(item.amt) +
+          ThreeNumberceil(ThreeNumberceil(item.amt) * 0.1),
+        rowstatus: item.rowstatus == "N" ? "N" : "U",
+      }));
+
+      setTempResult((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
+      setMainDataResult2((prev) => {
+        return {
+          data: newData,
+          total: prev.total,
+        };
+      });
     }
   };
 
@@ -2039,7 +2062,7 @@ const SA_A1100_603W: React.FC = () => {
           pgNum: 1,
           isSearch: true,
         }));
-      } else if(ParaData.workType == "FINISH") {
+      } else if (ParaData.workType == "FINISH") {
         alert("완료처리되었습니다.");
         setTabSelected(0);
         setFilters((prev) => ({

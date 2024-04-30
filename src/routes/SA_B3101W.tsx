@@ -258,7 +258,7 @@ const SA_B3101W: React.FC = () => {
       fetchGrid("LIST");
     }
   }, [filters, permissions]);
-  console.log(gridDataResult);
+
   //그리드 리셋
   const resetGrid = () => {
     setGridDataResult(process([], gridDataState));
@@ -327,7 +327,6 @@ const SA_B3101W: React.FC = () => {
     );
     if (sum != undefined) {
       var parts = sum.toString().split(".");
-
       return parts[0] != "NaN" ? (
         <td colSpan={props.colSpan} style={{ textAlign: "right" }}>
           {parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
@@ -447,7 +446,7 @@ const SA_B3101W: React.FC = () => {
             }}
           >
             <SwiperSlide key={0} className="leading_PDA_custom">
-              <GridContainer style={{ height: "100%" }}>
+              <GridContainer style={{ height: "100%", width: "100%" }}>
                 <GridTitle>차트</GridTitle>
                 <Chart
                   style={{
@@ -538,6 +537,7 @@ const SA_B3101W: React.FC = () => {
                     fixedScroll={true}
                     total={gridDataResult.total}
                     onScroll={onGridScrollHandler}
+                    pageable={true}
                     //정렬기능
                     sortable={true}
                     onSortChange={onGridSortChange}
