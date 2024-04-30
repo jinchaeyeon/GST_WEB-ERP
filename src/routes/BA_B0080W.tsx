@@ -50,6 +50,10 @@ let list: any[] = [];
 const DATA_ITEM_KEY = "num";
 
 const BA_B0080W: React.FC = () => {
+  let deviceWidth = window.innerWidth;
+  let deviceHeight = window.innerHeight - 50;
+
+  let isMobile = deviceWidth <= 1200;
   const setLoading = useSetRecoilState(isLoading);
   const idGetter = getter(DATA_ITEM_KEY);
   const processApi = useApi();
@@ -642,9 +646,11 @@ const BA_B0080W: React.FC = () => {
         </FilterBox>
       </FilterContainer>
 
-      <GridContainer>
+      <GridContainer
+        style={{ width: isMobile ? `${deviceWidth - 30}px` : "100%" }}
+      >
         <GridTitleContainer>
-          <GridTitle>요약정보</GridTitle>
+          {isMobile ? null : <GridTitle>요약정보</GridTitle>}
         </GridTitleContainer>
         <ExcelExport
           data={mainDataResult.data}
@@ -654,7 +660,7 @@ const BA_B0080W: React.FC = () => {
           fileName="단가조회"
         >
           <Grid
-            style={{ height: "82vh" }}
+            style={{ height: isMobile ? `${deviceHeight * 0.75}px` : "82vh" }}
             data={process(
               mainDataResult.data.map((row) => ({
                 ...row,
