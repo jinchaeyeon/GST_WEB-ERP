@@ -84,7 +84,6 @@ const SA_A5000W_615: React.FC = () => {
   });
 
   useEffect(() => {
-    console.log(Information);
     if (Information.isSearch && Information.str != "") {
       setFilters((prev) => ({
         ...prev,
@@ -187,7 +186,13 @@ const SA_A5000W_615: React.FC = () => {
       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-
+  var audio = new Audio("/Correct 9.mp3");
+  var audio2 = new Audio("/Notice 6.mp3");
+  audio.load();
+  audio2.load();
+  // 볼륨 설정
+  audio.volume = 1;
+  audio2.volume = 1;
   //요약정보 조회
   const fetchMainGrid = async (filters: any) => {
     let data: any;
@@ -249,12 +254,15 @@ const SA_A5000W_615: React.FC = () => {
         });
 
         if (valid == true) {
+          audio.play();
           array.map((items) => {
             setMainDataResult((prev) => ({
               data: [...prev.data, items],
               total: prev.total + 1,
             }));
           });
+        } else {
+          audio2.play();
         }
         setInformation((prev) => ({
           ...prev,
@@ -264,6 +272,7 @@ const SA_A5000W_615: React.FC = () => {
         })); // 한번만 조회되도록
         barcode = "";
       } else {
+        audio2.play();
         setTitle(data.resultMessage);
         setOpen(true);
         setInformation((prev) => ({ ...prev, str: "", isSearch: false })); // 한번만 조회되도록
@@ -317,6 +326,7 @@ const SA_A5000W_615: React.FC = () => {
         });
 
         if (valid == true) {
+          audio.play();
           const datas = mainDataResult.data.map((items) => {
             if (
               items.ordnum == Information.ordnum &&
@@ -346,6 +356,8 @@ const SA_A5000W_615: React.FC = () => {
               total: prev.total + 1,
             }));
           });
+        } else {
+          audio2.play();
         }
         setInformation((prev) => ({
           ...prev,
@@ -355,6 +367,7 @@ const SA_A5000W_615: React.FC = () => {
         })); // 한번만 조회되도록
         barcode = "";
       } else {
+        audio2.play();
         setTitle(data.resultMessage);
         setOpen(true);
         setInformation((prev) => ({ ...prev, str: "", isSearch: false })); // 한번만 조회되도록
@@ -443,6 +456,7 @@ const SA_A5000W_615: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
+      alert("저장되었습니다.");
       resetAll();
       setParaData({
         workType: "",

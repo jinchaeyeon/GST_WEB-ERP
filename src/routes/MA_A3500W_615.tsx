@@ -192,7 +192,13 @@ const MA_A3500W_615: React.FC = () => {
       fetchMainGrid(deepCopiedFilters);
     }
   }, [filters]);
-
+  var audio = new Audio("/Correct 9.mp3");
+  var audio2 = new Audio("/Notice 6.mp3");
+  audio.load();
+  audio2.load();
+  // 볼륨 설정
+  audio.volume = 1;
+  audio2.volume = 1;
   //요약정보 조회
   const fetchMainGrid = async (filters: any) => {
     let data: any;
@@ -232,9 +238,11 @@ const MA_A3500W_615: React.FC = () => {
         (item) => item.scanno == newItem.scanno
       )[0];
       if (checkData != undefined) {
+        audio2.play();
         setTitle("이미 존재하는 데이터입니다.");
         setOpen(true);
       } else {
+        audio.play();
         setMainDataResult((prev) => ({
           data: [...prev.data, newItem],
           total: prev.total + 1,
@@ -247,6 +255,7 @@ const MA_A3500W_615: React.FC = () => {
       setInformation((prev) => ({ ...prev, str: "", isSearch: false })); // 한번만 조회되도록
       barcode = "";
     } else {
+      audio2.play();
       setTitle(data.resultMessage);
       setOpen(true);
       setInformation((prev) => ({ ...prev, str: "", isSearch: false })); // 한번만 조회되도록
@@ -322,6 +331,7 @@ const MA_A3500W_615: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
+      alert("저장되었습니다.")
       resetAll();
       setParaData({
         workType: "",

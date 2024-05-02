@@ -4179,6 +4179,17 @@ const SA_A1000_603W: React.FC = () => {
     );
   };
 
+  const onLinkChange4 = () => {
+    const origin = window.location.origin;
+    window.open(
+      origin +
+        `/SA_A1200_603W?go=` +
+        Information.quonum +
+        "-" +
+        Information.quorev
+    );
+  };
+
   const customizedMarker = (props: StepIconProps) => {
     const { active, completed } = props;
 
@@ -5817,6 +5828,15 @@ const SA_A1000_603W: React.FC = () => {
             <GridContainer width="50%">
               <GridTitleContainer>
                 <GridTitle>상세이력</GridTitle>
+                <ButtonContainer>
+                  <Button
+                    themeColor={"primary"}
+                    fillMode={"solid"}
+                    onClick={() => onLinkChange4()}
+                  >
+                    이동
+                  </Button>
+                </ButtonContainer>
               </GridTitleContainer>
               <FormBoxWrap
                 border={true}

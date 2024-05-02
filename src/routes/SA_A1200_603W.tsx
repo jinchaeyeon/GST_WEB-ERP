@@ -51,6 +51,7 @@ import { gridList } from "../store/columns/SA_A1200_603W_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
 
 import { bytesToBase64 } from "byte-base64";
+import { useHistory, useLocation } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import TopButtons from "../components/Buttons/TopButtons";
 import BizComponentComboBox from "../components/ComboBoxes/BizComponentComboBox";
@@ -98,29 +99,59 @@ const SA_A1200_603W: React.FC = () => {
   //customOptionData 조회 후 디폴트 값 세팅
   useEffect(() => {
     if (customOptionData !== null) {
+      const queryParams = new URLSearchParams(location.search);
       const defaultOption = GetPropertyValueByName(
         customOptionData.menuCustomDefaultOptions,
         "query"
       );
-      setFilters((prev) => ({
-        ...prev,
-        chkperson: defaultOption.find((item: any) => item.id === "chkperson")
-          ?.valueCode,
-        raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
-          ?.valueCode,
-        feasibility: defaultOption.find(
-          (item: any) => item.id === "feasibility"
-        )?.valueCode,
-        weight: defaultOption.find((item: any) => item.id === "weight")
-          ?.valueCode,
-        quodtstr: setDefaultDate(customOptionData, "quodtstr"),
-        quodtend: setDefaultDate(customOptionData, "quodtend"),
-        cotracdtstr: setDefaultDate(customOptionData, "cotracdtstr"),
-        cotracdtend: setDefaultDate(customOptionData, "cotracdtend"),
-        stdt: defaultOption.find((item: any) => item.id === "stdt")?.valueCode,
-        endt: defaultOption.find((item: any) => item.id === "endt")?.valueCode,
-        isSearch: true,
-      }));
+
+      if (queryParams.has("go")) {
+        history.replace({}, "");
+        setFilters((prev) => ({
+          ...prev,
+          chkperson: defaultOption.find((item: any) => item.id === "chkperson")
+            ?.valueCode,
+          raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
+            ?.valueCode,
+          feasibility: defaultOption.find(
+            (item: any) => item.id === "feasibility"
+          )?.valueCode,
+          weight: defaultOption.find((item: any) => item.id === "weight")
+            ?.valueCode,
+          quodtstr: setDefaultDate(customOptionData, "quodtstr"),
+          quodtend: setDefaultDate(customOptionData, "quodtend"),
+          cotracdtstr: setDefaultDate(customOptionData, "cotracdtstr"),
+          cotracdtend: setDefaultDate(customOptionData, "cotracdtend"),
+          stdt: defaultOption.find((item: any) => item.id === "stdt")
+            ?.valueCode,
+          endt: defaultOption.find((item: any) => item.id === "endt")
+            ?.valueCode,
+          find_row_value: queryParams.get("go") as string,
+          isSearch: true,
+        }));
+      } else {
+        setFilters((prev) => ({
+          ...prev,
+          chkperson: defaultOption.find((item: any) => item.id === "chkperson")
+            ?.valueCode,
+          raduseyn: defaultOption.find((item: any) => item.id === "raduseyn")
+            ?.valueCode,
+          feasibility: defaultOption.find(
+            (item: any) => item.id === "feasibility"
+          )?.valueCode,
+          weight: defaultOption.find((item: any) => item.id === "weight")
+            ?.valueCode,
+          quodtstr: setDefaultDate(customOptionData, "quodtstr"),
+          quodtend: setDefaultDate(customOptionData, "quodtend"),
+          cotracdtstr: setDefaultDate(customOptionData, "cotracdtstr"),
+          cotracdtend: setDefaultDate(customOptionData, "cotracdtend"),
+          stdt: defaultOption.find((item: any) => item.id === "stdt")
+            ?.valueCode,
+          endt: defaultOption.find((item: any) => item.id === "endt")
+            ?.valueCode,
+          isSearch: true,
+        }));
+      }
     }
   }, [customOptionData]);
 
@@ -262,7 +293,8 @@ const SA_A1200_603W: React.FC = () => {
     seq: 0,
     passdt: 0,
   });
-
+  const history = useHistory();
+  const location = useLocation();
   const [selectedState, setSelectedState] = useState<{
     [id: string]: boolean | number[];
   }>({});
@@ -638,7 +670,7 @@ const SA_A1200_603W: React.FC = () => {
         "@p_find_row_value": filters.find_row_value,
       },
     };
-
+  
     try {
       data = await processApi<any>("procedure", parameters);
     } catch (error) {
@@ -772,7 +804,7 @@ const SA_A1200_603W: React.FC = () => {
         total: totalRowCnt3 == -1 ? 0 : totalRowCnt3,
       });
 
-      if(totalRowCnt > 0) {
+      if (totalRowCnt > 0) {
         setInformation({
           addordgb: rows[0].addordgb,
           amtgb: rows[0].amtgb,

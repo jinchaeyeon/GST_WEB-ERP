@@ -153,7 +153,6 @@ const MA_A2300_615_PDAW: React.FC = () => {
       ...prev,
       [name]: value,
     }));
-    
   };
   const filterInputChange2 = (e: any) => {
     const { value, name } = e.target;
@@ -346,11 +345,19 @@ const MA_A2300_615_PDAW: React.FC = () => {
       fetchMainGrid2(deepCopiedFilters);
     }
   }, [filters2]);
+  var audio = new Audio("/Correct 9.mp3");
+  var audio2 = new Audio("/Notice 6.mp3");
+  audio.load();
+  audio2.load();
+  // 볼륨 설정
+  audio.volume = 1;
+  audio2.volume = 1;
 
   useEffect(() => {
     if (state == "1") {
       if (Information.isSearch && Information.str != "") {
         if (Information.heatno == "") {
+          audio.play();
           setInformation((prev) => ({
             ...prev,
             heatno: prev.str,
@@ -369,9 +376,11 @@ const MA_A2300_615_PDAW: React.FC = () => {
           )[0];
 
           if (checkData != undefined) {
+            audio2.play();
             setTitle("이미 존재하는 데이터입니다.");
             setOpen(true);
           } else {
+            audio.play();
             setMainDataResult((prev) => ({
               data: [...prev.data, newItem],
               total: prev.total + 1,
@@ -388,6 +397,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
     } else {
       if (Information.isSearch && Information.str != "") {
         if (Information.heatno == "") {
+          audio.play();
           setInformation((prev) => ({
             ...prev,
             heatno: prev.str,
@@ -405,9 +415,11 @@ const MA_A2300_615_PDAW: React.FC = () => {
           )[0];
 
           if (checkData != undefined) {
+            audio2.play();
             setTitle("이미 존재하는 데이터입니다.");
             setOpen(true);
           } else {
+            audio.play();
             setMainDataResult((prev) => ({
               data: [...prev.data, newItem],
               total: prev.total + 1,
@@ -463,8 +475,6 @@ const MA_A2300_615_PDAW: React.FC = () => {
       }
     }
   });
-
-  
 
   const onCheckClick = (datas: any) => {
     const data = checkDataResult.data.filter(
@@ -595,6 +605,7 @@ const MA_A2300_615_PDAW: React.FC = () => {
     }
 
     if (data.isSuccess == true) {
+      alert("저장되었습니다.");
       resetAll();
       setParaData({
         workType: "",
@@ -604,7 +615,6 @@ const MA_A2300_615_PDAW: React.FC = () => {
         heatno_s: "",
         barcode_s: "",
       });
-
       setFilters((prev) => ({
         ...prev,
         isSearch: true,
@@ -716,7 +726,12 @@ const MA_A2300_615_PDAW: React.FC = () => {
         {open ? (
           <Alert
             severity="error"
-            style={{ position: "absolute", zIndex: "99999", width: "100%", marginTop: "15px" }}
+            style={{
+              position: "absolute",
+              zIndex: "99999",
+              width: "100%",
+              marginTop: "15px",
+            }}
             action={
               <IconButton
                 aria-label="close"
