@@ -15,6 +15,10 @@ code {
 
 iframe#webpack-dev-server-client-overlay{display:none!important}
 
+.rpv-core__inner-page {
+  padding: 0px !important;
+}
+
 .k-grid tr.k-alt {
   background-color: #0000000a !important;
 }
