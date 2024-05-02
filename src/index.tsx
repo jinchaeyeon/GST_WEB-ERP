@@ -1,3 +1,4 @@
+import { Worker } from "@react-pdf-viewer/core";
 import "primeflex/primeflex.css";
 import "primeicons/primeicons.css"; // icons
 import "primereact/resources/primereact.css"; // core css
@@ -39,7 +40,9 @@ root.render(
     <RecoilRoot>
       <HelmetProvider>
         <BrowserRouter>
-          {defaultTheme == "yellow" ? <APPDDGD /> : <APPWEBERP />}
+          <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+            {defaultTheme == "yellow" ? <APPDDGD /> : <APPWEBERP />}
+          </Worker>
         </BrowserRouter>
       </HelmetProvider>
     </RecoilRoot>

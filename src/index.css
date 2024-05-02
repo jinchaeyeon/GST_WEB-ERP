@@ -219,10 +219,6 @@ input.readonly {
   width: 100% !important;
 }
 
-.pg-viewer-wrapper {
-  overflow: hidden !important;
-}
-
 .swiper-button-next {
   color: gray !important;
   right: 0px !important;

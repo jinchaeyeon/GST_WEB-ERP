@@ -74,7 +74,7 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
       const blob = new Blob([byteArray], {
         type: "application/pdf",
       });
-      setUrl(URL.createObjectURL(blob));
+      setUrl(URL.createObjectURL(blob) + "#view=fit");
     } else {
       setUrl("");
     }
@@ -108,7 +108,7 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
             marginTop: "10px",
           }}
         >
-          {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+          {url != "" ? <FileViewers fileUrl={url} /> : ""}
         </div>
         <BottomContainer>
           <ButtonContainer>

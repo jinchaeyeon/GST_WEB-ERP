@@ -927,7 +927,7 @@ const HU_A6020W: React.FC = () => {
           const blob = new Blob([byteArray], {
             type: "application/pdf",
           });
-          setUrl(URL.createObjectURL(blob));
+          setUrl(URL.createObjectURL(blob) + "#view=fit");
         } else {
           setUrl("");
         }
@@ -1055,7 +1055,7 @@ const HU_A6020W: React.FC = () => {
           const blob = new Blob([byteArray], {
             type: "application/pdf",
           });
-          setUrl2(URL.createObjectURL(blob));
+          setUrl2(URL.createObjectURL(blob) + "#view=fit");
         } else {
           setUrl2("");
         }
@@ -2275,8 +2275,7 @@ FROM HU072T WHERE paycd = '4'`;
 
       if (valid2 == true) {
         if (valid == true) {
-          if (dataItem.length == 0 && deletedMainRows.length == 0)
-            return false;
+          if (dataItem.length == 0 && deletedMainRows.length == 0) return false;
 
           let dataArr: TdataArr = {
             rowstatus_s: [],
@@ -2993,7 +2992,7 @@ FROM HU072T WHERE paycd = '4'`;
               marginBottom: "10px",
             }}
           >
-            {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+            {url != "" ? <FileViewers fileUrl={url} /> : ""}
           </div>
         </TabStripTab>
         <TabStripTab title="일용직 개인명세서">
@@ -3115,7 +3114,7 @@ FROM HU072T WHERE paycd = '4'`;
                   marginBottom: "10px",
                 }}
               >
-                {url2 != "" ? <FileViewers file={url2} type="pdf" /> : ""}
+                {url2 != "" ? <FileViewers fileUrl={url2} /> : ""}
               </div>
             </GridContainer>
           </GridContainerWrap>

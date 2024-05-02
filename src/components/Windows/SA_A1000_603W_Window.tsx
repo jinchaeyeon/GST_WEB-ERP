@@ -69,7 +69,7 @@ const SA_A1000_603W_Window = ({
     setLoading(true);
 
     const parameters = {
-      para: "document-json?id=S202452F7E0", //70번: S20243218C8 / 90번 S202452F7E0
+      para: "document-json?id=S20243218C8", //70번(바이오): S20243218C8 / 90번 S202452F7E0
       "@p_orgdiv": "01",
       "@p_quonum": quonum,
       "@p_quorev": quorev,
@@ -89,7 +89,7 @@ const SA_A1000_603W_Window = ({
       }
       const byteArray = new Uint8Array(byteNumbers);
       const blob = new Blob([byteArray], { type: "application/pdf" });
-      setUrl(URL.createObjectURL(blob));
+      setUrl(URL.createObjectURL(blob) + "#view=fit");
     } else {
       //데이터 없을 경우
       setUrl("");
@@ -122,7 +122,7 @@ const SA_A1000_603W_Window = ({
           marginBottom: "10px",
         }}
       >
-        {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+        {url != "" ? <FileViewers fileUrl={url} /> : ""}
       </div>
       <BottomContainer>
         <ButtonContainer>

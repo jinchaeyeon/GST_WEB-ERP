@@ -172,7 +172,7 @@ const AC_B8080W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl(URL.createObjectURL(blob));
+        setUrl(URL.createObjectURL(blob) + "#view=fit");
       } else {
         setUrl("");
       }
@@ -227,7 +227,7 @@ const AC_B8080W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl2(URL.createObjectURL(blob));
+        setUrl2(URL.createObjectURL(blob) + "#view=fit");
       } else {
         setUrl2("");
       }
@@ -387,7 +387,7 @@ const AC_B8080W: React.FC = () => {
                 marginBottom: "10px",
               }}
             >
-              {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+              {url != "" ? <FileViewers fileUrl={url} /> : ""}
             </div>
           </GridContainer>
         </TabStripTab>
@@ -399,7 +399,7 @@ const AC_B8080W: React.FC = () => {
                 marginBottom: "10px",
               }}
             >
-              {url2 != "" ? <FileViewers file={url2} type="pdf" /> : ""}
+              {url2 != "" ? <FileViewers fileUrl={url2} /> : ""}
             </div>
           </GridContainer>
         </TabStripTab>

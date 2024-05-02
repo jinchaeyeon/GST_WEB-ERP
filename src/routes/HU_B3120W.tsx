@@ -568,7 +568,7 @@ const HU_B3120W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl(URL.createObjectURL(blob));
+        setUrl(URL.createObjectURL(blob) + "#view=fit");
       } else {
         setUrl("");
       }
@@ -1453,7 +1453,7 @@ const HU_B3120W: React.FC = () => {
                   marginBottom: "10px",
                 }}
               >
-                {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+                {url != "" ? <FileViewers fileUrl={url} /> : ""}
               </div>
             </TabStripTab>
           </TabStrip>

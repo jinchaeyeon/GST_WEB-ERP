@@ -659,7 +659,7 @@ const AC_B5060W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl(URL.createObjectURL(blob));
+        setUrl(URL.createObjectURL(blob) + "#view=fit");
       } else {
         setUrl("");
       }
@@ -713,7 +713,7 @@ const AC_B5060W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl(URL.createObjectURL(blob));
+        setUrl(URL.createObjectURL(blob) + "#view=fit");
       } else {
         setUrl("");
       }
@@ -766,7 +766,7 @@ const AC_B5060W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl(URL.createObjectURL(blob));
+        setUrl(URL.createObjectURL(blob) + "#view=fit");
       } else {
         setUrl("");
       }
@@ -820,7 +820,7 @@ const AC_B5060W: React.FC = () => {
         const blob = new Blob([byteArray], {
           type: "application/pdf",
         });
-        setUrl(URL.createObjectURL(blob));
+        setUrl(URL.createObjectURL(blob) + "#view=fit");
       } else {
         setUrl("");
       }
@@ -1352,7 +1352,7 @@ const AC_B5060W: React.FC = () => {
                 marginBottom: "10px",
               }}
             >
-              {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+              {url != "" ? <FileViewers fileUrl={url} /> : ""}
             </div>
           </GridContainer>
         </TabStripTab>
@@ -1574,7 +1574,7 @@ const AC_B5060W: React.FC = () => {
               marginBottom: "10px",
             }}
           >
-            {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+            {url != "" ? <FileViewers fileUrl={url} /> : ""}
           </div>
         </TabStripTab>
         <TabStripTab title="신용카드등수취금액">
@@ -1584,7 +1584,7 @@ const AC_B5060W: React.FC = () => {
               marginBottom: "10px",
             }}
           >
-            {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+            {url != "" ? <FileViewers fileUrl={url} /> : ""}
           </div>
         </TabStripTab>
         <TabStripTab title="공제받지못할매입세액명세서">
@@ -1594,7 +1594,7 @@ const AC_B5060W: React.FC = () => {
               marginBottom: "10px",
             }}
           >
-            {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
+            {url != "" ? <FileViewers fileUrl={url} /> : ""}
           </div>
         </TabStripTab>
       </TabStrip>
