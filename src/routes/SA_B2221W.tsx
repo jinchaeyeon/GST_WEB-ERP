@@ -722,7 +722,7 @@ const SA_B2221: React.FC = () => {
             <TabStripTab title="전체">
               <GridContainerWrap flexDirection="column">
                 <Swiper
-                  className="leading_67_Swiper"
+                  className="leading_65_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -883,7 +883,7 @@ const SA_B2221: React.FC = () => {
             <TabStripTab title="월별">
               <GridContainerWrap flexDirection="column">
                 <Swiper
-                  className="leading_67_Swiper"
+                  className="leading_65_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -1106,7 +1106,7 @@ const SA_B2221: React.FC = () => {
             <TabStripTab title="분기별">
               <GridContainerWrap flexDirection="column">
               <Swiper
-                  className="leading_67_Swiper"
+                  className="leading_65_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}

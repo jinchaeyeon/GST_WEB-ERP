@@ -671,102 +671,6 @@ const SA_B3000W: React.FC = () => {
             <Title>매출집계(업체)</Title>
 
             <ButtonContainer>
-              <FilterContainer>
-                <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
-                  <tbody>
-                    <tr>
-                      <th data-control-name="lblYyyy">기준년도</th>
-                      <td>
-                        <DatePicker
-                          name="yyyy"
-                          value={filters.yyyy}
-                          format="yyyy"
-                          onChange={filterInputChange}
-                          calendar={YearCalendar}
-                          className="required"
-                          placeholder=""
-                        />
-                      </td>
-
-                      <th data-control-name="lblDiv">업체구분</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="cboDiv"
-                            value={filters.cboDiv}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                            textField="name"
-                            valueField="code"
-                          />
-                        )}
-                      </td>
-                      <th data-control-name="lblCustcd">업체코드</th>
-                      <td>
-                        <Input
-                          name="custcd"
-                          type="text"
-                          value={filters.custcd}
-                          onChange={filterInputChange}
-                        />
-                        <ButtonInInput>
-                          <Button
-                            onClick={onCustWndClick}
-                            icon="more-horizontal"
-                            fillMode="flat"
-                          />
-                        </ButtonInInput>
-                      </td>
-
-                      <th data-control-name="lblCustnm">업체명</th>
-                      <td>
-                        <Input
-                          name="custnm"
-                          type="text"
-                          value={filters.custnm}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <th data-control-name="lblLocation">사업장</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CustomOptionComboBox
-                            name="cboLocation"
-                            value={filters.cboLocation}
-                            customOptionData={customOptionData}
-                            changeData={filterComboBoxChange}
-                          />
-                        )}
-                      </td>
-
-                      <th data-control-name="lblBnatur">재질</th>
-                      <td>
-                        <Input
-                          name="txtBnatur"
-                          type="text"
-                          value={filters.txtBnatur}
-                          onChange={filterInputChange}
-                        />
-                      </td>
-
-                      <th data-control-name="lblAmtdiv">단위</th>
-                      <td>
-                        {customOptionData !== null && (
-                          <CommonRadioGroup
-                            name="rdoAmtdiv"
-                            customOptionData={customOptionData}
-                            changeData={filterRadioChange}
-                          />
-                        )}
-                      </td>
-                      <th></th>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </FilterBox>
-              </FilterContainer>
               {permissions && (
                 <TopButtons
                   search={search}
@@ -778,11 +682,108 @@ const SA_B3000W: React.FC = () => {
             </ButtonContainer>
           </TitleContainer>
 
+          <FilterContainer>
+            <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
+              <tbody>
+                <tr>
+                  <th data-control-name="lblYyyy">기준년도</th>
+                  <td>
+                    <DatePicker
+                      name="yyyy"
+                      value={filters.yyyy}
+                      format="yyyy"
+                      onChange={filterInputChange}
+                      calendar={YearCalendar}
+                      className="required"
+                      placeholder=""
+                    />
+                  </td>
+
+                  <th data-control-name="lblDiv">업체구분</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="cboDiv"
+                        value={filters.cboDiv}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                        textField="name"
+                        valueField="code"
+                      />
+                    )}
+                  </td>
+                  <th data-control-name="lblCustcd">업체코드</th>
+                  <td>
+                    <Input
+                      name="custcd"
+                      type="text"
+                      value={filters.custcd}
+                      onChange={filterInputChange}
+                    />
+                    <ButtonInInput>
+                      <Button
+                        onClick={onCustWndClick}
+                        icon="more-horizontal"
+                        fillMode="flat"
+                      />
+                    </ButtonInInput>
+                  </td>
+
+                  <th data-control-name="lblCustnm">업체명</th>
+                  <td>
+                    <Input
+                      name="custnm"
+                      type="text"
+                      value={filters.custnm}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th data-control-name="lblLocation">사업장</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CustomOptionComboBox
+                        name="cboLocation"
+                        value={filters.cboLocation}
+                        customOptionData={customOptionData}
+                        changeData={filterComboBoxChange}
+                      />
+                    )}
+                  </td>
+
+                  <th data-control-name="lblBnatur">재질</th>
+                  <td>
+                    <Input
+                      name="txtBnatur"
+                      type="text"
+                      value={filters.txtBnatur}
+                      onChange={filterInputChange}
+                    />
+                  </td>
+
+                  <th data-control-name="lblAmtdiv">단위</th>
+                  <td>
+                    {customOptionData !== null && (
+                      <CommonRadioGroup
+                        name="rdoAmtdiv"
+                        customOptionData={customOptionData}
+                        changeData={filterRadioChange}
+                      />
+                    )}
+                  </td>
+                  <th></th>
+                  <td></td>
+                </tr>
+              </tbody>
+            </FilterBox>
+          </FilterContainer>
+
           <TabStrip
             selected={tabSelected}
             onSelect={handleSelectTab}
             style={{
-              height: `${deviceHeight * 0.87}px`,
+              height: `${deviceHeight * 0.847}px`,
               width: "100%",
               paddingBottom: "15px",
             }}
@@ -790,6 +791,7 @@ const SA_B3000W: React.FC = () => {
             <TabStripTab title="전체">
               <GridContainerWrap>
                 <Swiper
+                  className="leading_65_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -818,7 +820,7 @@ const SA_B3000W: React.FC = () => {
                             : WebErpcolorList
                         }
                         style={{
-                          height: `${deviceHeight * 0.65}px`,
+                          height: `${deviceHeight * 0.63}px`,
                           width: "100%",
                         }}
                       >
@@ -880,7 +882,7 @@ const SA_B3000W: React.FC = () => {
                           </Button>
                         </ButtonContainer>
                         <Grid
-                          style={{ height: `${deviceHeight * 0.65}px` }}
+                          style={{ height: `${deviceHeight * 0.63}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -957,6 +959,7 @@ const SA_B3000W: React.FC = () => {
 
             <TabStripTab title="월별">
               <Swiper
+                className="leading_65_Swiper"
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
                 }}
@@ -992,7 +995,7 @@ const SA_B3000W: React.FC = () => {
                           </Button>
                         </ButtonContainer>
                         <Grid
-                          style={{ height: `${deviceHeight * 0.65}px` }}
+                          style={{ height: `${deviceHeight * 0.63}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -1120,7 +1123,7 @@ const SA_B3000W: React.FC = () => {
                         </ButtonContainer>
                         <Chart
                           style={{
-                            height: `${deviceHeight * 0.65}px`,
+                            height: `${deviceHeight * 0.63}px`,
                             width: "100%",
                           }}
                         >
@@ -1215,6 +1218,7 @@ const SA_B3000W: React.FC = () => {
 
             <TabStripTab title="분기별">
               <Swiper
+                className="leading_65_Swiper"
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
                 }}
@@ -1244,7 +1248,7 @@ const SA_B3000W: React.FC = () => {
                         fileName="매출집계(업체)"
                       >
                         <Grid
-                          style={{ height: `${deviceHeight * 0.65}px` }}
+                          style={{ height: `${deviceHeight * 0.63}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -1451,11 +1455,12 @@ const SA_B3000W: React.FC = () => {
                             도넛차트 보기
                           </Button>
                         </ButtonContainer>
-                        <Chart 
+                        <Chart
                           style={{
-                            height: `${deviceHeight * 0.65}px`,
+                            height: `${deviceHeight * 0.63}px`,
                             width: "100%",
-                          }}>
+                          }}
+                        >
                           {/* <ChartTitle text="Units sold" /> */}
                           <ChartValueAxis>
                             <ChartValueAxisItem
@@ -1591,6 +1596,7 @@ const SA_B3000W: React.FC = () => {
 
             <TabStripTab title="5년분석">
               <Swiper
+                className="leading_65_Swiper"
                 onSwiper={(swiper) => {
                   setSwiper(swiper);
                 }}
@@ -1620,7 +1626,7 @@ const SA_B3000W: React.FC = () => {
                         fileName="매출집계(업체)"
                       >
                         <Grid
-                          style={{ height: `${deviceHeight * 0.65}px` }}
+                          style={{ height: `${deviceHeight * 0.63}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -1902,7 +1908,7 @@ const SA_B3000W: React.FC = () => {
                             도넛차트 보기
                           </Button>
                         </ButtonContainer>
-                        <Chart style={{ height: !isMobile ? "100%" : "62vh" }}>
+                        <Chart style={{ height: `${deviceHeight * 0.63}px`, }}>
                           {/* <ChartTitle text="Units sold" /> */}
                           <ChartValueAxis>
                             <ChartValueAxisItem
