@@ -36,7 +36,7 @@ const SA_A1001_603W_Window = ({
   const [position, setPosition] = useState<IWindowPosition>({
     left: 300,
     top: 100,
-    width: isMobile == true ? deviceWidth : 1300,
+    width: isMobile == true ? deviceWidth : 1000,
     height: 900,
   });
   const [menulist, setMenuList] = useRecoilState(menuList);
@@ -116,9 +116,15 @@ const SA_A1001_603W_Window = ({
       <TitleContainer>
         <Title>견적서</Title>
       </TitleContainer>
-      
+      <div
+        style={{
+          height: position.height - 220,
+          width: position.width - 40,
+          marginBottom: "10px",
+        }}
+      >
         {url != "" ? <FileViewers file={url} type="pdf" /> : ""}
-      
+      </div>
       <BottomContainer>
         <ButtonContainer>
           <Button themeColor={"primary"} fillMode={"outline"} onClick={onClose}>

@@ -867,6 +867,7 @@ const HelpWindow = ({ setVisible, modal = false }: IWindow) => {
       onResize={handleResize}
       onClose={onClose}
       modal={modal}
+      className="print-hidden"
     >
       <TitleContainer>
         <Title>메뉴얼</Title>

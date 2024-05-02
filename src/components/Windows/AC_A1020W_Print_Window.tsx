@@ -99,6 +99,7 @@ const CopyWindow = ({ setVisible, para, modal = false }: IWindow) => {
         onResize={handleResize}
         onClose={onClose}
         modal={modal}
+        className="print-hidden"
       >
         <div
           style={{

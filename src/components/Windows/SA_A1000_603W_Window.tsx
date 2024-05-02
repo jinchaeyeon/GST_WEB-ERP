@@ -111,6 +111,7 @@ const SA_A1000_603W_Window = ({
       onResize={handleResize}
       onClose={onClose}
       modal={modal}
+      className="print-hidden"
     >
       <TitleContainer>
         <Title>시험의뢰서</Title>
