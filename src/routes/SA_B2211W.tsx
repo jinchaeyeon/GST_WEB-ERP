@@ -441,7 +441,7 @@ const SA_B2211W: React.FC = () => {
     });
 
     setSelectedState(newSelectedState);
-    
+
     if (swiper) {
       swiper.slideTo(0);
     }
@@ -622,7 +622,18 @@ const SA_B2211W: React.FC = () => {
                 : "수주집계(업체)"}
             </Title>
             <ButtonContainer>
-            <FilterContainer>
+              {permissions && (
+                <TopButtons
+                  search={search}
+                  exportExcel={exportExcel}
+                  permissions={permissions}
+                  pathname="SA_B2211W"
+                />
+              )}
+            </ButtonContainer>
+          </TitleContainer>
+
+          <FilterContainer>
             <FilterBox onKeyPress={(e) => handleKeyPressSearch(e, search)}>
               <tbody>
                 <tr>
@@ -705,22 +716,12 @@ const SA_B2211W: React.FC = () => {
               </tbody>
             </FilterBox>
           </FilterContainer>
-              {permissions && (
-                <TopButtons
-                  search={search}
-                  exportExcel={exportExcel}
-                  permissions={permissions}
-                  pathname="SA_B2211W"
-                />
-              )}
-            </ButtonContainer>
-          </TitleContainer>
 
           <TabStrip
             selected={tabSelected}
             onSelect={handleSelectTab}
             style={{
-              height: `${deviceHeight * 0.87}px`,
+              height: `${deviceHeight * 0.847}px`,
               width: "100%",
               paddingBottom: "15px",
             }}
@@ -728,7 +729,7 @@ const SA_B2211W: React.FC = () => {
             <TabStripTab title="전체">
               <GridContainerWrap flexDirection="column">
                 <Swiper
-                  className="leading_67_Swiper"
+                  className="leading_65_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -757,7 +758,7 @@ const SA_B2211W: React.FC = () => {
                             : WebErpcolorList
                         }
                         style={{
-                          height: `${deviceHeight * 0.65}px`,
+                          height: `${deviceHeight * 0.63}px`,
                           width: "100%",
                         }}
                       >
@@ -818,7 +819,7 @@ const SA_B2211W: React.FC = () => {
                         fileName="수주집계(업체)"
                       >
                         <Grid
-                          style={{ height: `${deviceHeight * 0.65}px` }}
+                          style={{ height: `${deviceHeight * 0.63}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -895,7 +896,7 @@ const SA_B2211W: React.FC = () => {
             <TabStripTab title="월별">
               <GridContainerWrap flexDirection="column">
                 <Swiper
-                  className="leading_67_Swiper"
+                  className="leading_65_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -924,7 +925,7 @@ const SA_B2211W: React.FC = () => {
                           </Button>
                         </ButtonContainer>
                         <Grid
-                          style={{ height: `${deviceHeight * 0.65}px` }}
+                          style={{ height: `${deviceHeight * 0.63}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -1026,7 +1027,7 @@ const SA_B2211W: React.FC = () => {
                         </ButtonContainer>
                         <Chart
                           style={{
-                            height: `${deviceHeight * 0.65}px`,
+                            height: `${deviceHeight * 0.63}px`,
                             width: "100%",
                           }}
                         >
@@ -1122,7 +1123,7 @@ const SA_B2211W: React.FC = () => {
             <TabStripTab title="분기별">
               <GridContainerWrap flexDirection="column">
                 <Swiper
-                  className="leading_67_Swiper"
+                  className="leading_65_Swiper"
                   onSwiper={(swiper) => {
                     setSwiper(swiper);
                   }}
@@ -1151,7 +1152,7 @@ const SA_B2211W: React.FC = () => {
                         fileName="수주집계(업체)"
                       >
                         <Grid
-                          style={{ height: `${deviceHeight * 0.65}px` }}
+                          style={{ height: `${deviceHeight * 0.63}px` }}
                           data={process(
                             gridDataResult.data.map((row) => ({
                               ...row,
@@ -1306,11 +1307,12 @@ const SA_B2211W: React.FC = () => {
                             도넛차트 보기
                           </Button>
                         </ButtonContainer>
-                        <Chart 
+                        <Chart
                           style={{
-                            height: `${deviceHeight * 0.65}px`,
+                            height: `${deviceHeight * 0.63}px`,
                             width: "100%",
-                          }}>
+                          }}
+                        >
                           {/* <ChartTitle text="Units sold" /> */}
                           <ChartValueAxis>
                             <ChartValueAxisItem
@@ -1907,36 +1909,28 @@ const SA_B2211W: React.FC = () => {
                                 <GridColumn
                                   title={"1/4분기"}
                                   cell={NumberCell}
-                                  field={
-                                    item.caption == "전기" ? "jm1" : "dm1"
-                                  }
+                                  field={item.caption == "전기" ? "jm1" : "dm1"}
                                   footerCell={gridSumQtyFooterCell}
                                   width={item.width}
                                 />
                                 <GridColumn
                                   title={"2/4분기"}
                                   cell={NumberCell}
-                                  field={
-                                    item.caption == "전기" ? "jm2" : "dm2"
-                                  }
+                                  field={item.caption == "전기" ? "jm2" : "dm2"}
                                   footerCell={gridSumQtyFooterCell}
                                   width={item.width}
                                 />
                                 <GridColumn
                                   title={"3/4분기"}
                                   cell={NumberCell}
-                                  field={
-                                    item.caption == "전기" ? "jm3" : "dm3"
-                                  }
+                                  field={item.caption == "전기" ? "jm3" : "dm3"}
                                   footerCell={gridSumQtyFooterCell}
                                   width={item.width}
                                 />
                                 <GridColumn
                                   title={"4/4분기"}
                                   cell={NumberCell}
-                                  field={
-                                    item.caption == "전기" ? "jm4" : "dm4"
-                                  }
+                                  field={item.caption == "전기" ? "jm4" : "dm4"}
                                   footerCell={gridSumQtyFooterCell}
                                   width={item.width}
                                 />
@@ -1944,9 +1938,7 @@ const SA_B2211W: React.FC = () => {
                                   title={"합계"}
                                   cell={NumberCell}
                                   field={
-                                    item.caption == "전기"
-                                      ? "jtotal"
-                                      : "dtotal"
+                                    item.caption == "전기" ? "jtotal" : "dtotal"
                                   }
                                   footerCell={gridSumQtyFooterCell}
                                   width={item.width}

@@ -34,11 +34,13 @@ import {
   UsePermissions,
   convertDateToStr,
   dateformat,
+  dateformat2,
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
   numberWithCommas,
+  toDate,
   useSysMessage,
 } from "../components/CommonFunction";
 import {
@@ -85,6 +87,7 @@ import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWi
 import { IAttachmentData } from "../hooks/interfaces";
 import { gridList } from "../store/columns/BA_A0020W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -628,6 +631,12 @@ const BA_A0020W_603: React.FC = () => {
       faxnum: "",
       email: "",
       auto: true,
+      compnm_eng: "",
+      zipcode: "",
+      bnkinfo: "",
+      bankacntuser: "",
+      bankacnt: "",
+      estbdt: "",
     });
   };
 
@@ -670,6 +679,11 @@ const BA_A0020W_603: React.FC = () => {
         ...prev,
         [name]: value,
         repreregno: "",
+      }));
+    } else if (name == "estbdt") {
+      setInformation((prev: any) => ({
+        ...prev,
+        estbdt: convertDateToStr(value),
       }));
     } else {
       setInformation((prev: any) => ({
@@ -775,6 +789,12 @@ const BA_A0020W_603: React.FC = () => {
     faxnum: "",
     email: "",
     auto: true,
+    compnm_eng: "",
+    zipcode: "",
+    bnkinfo: "",
+    bankacntuser: "",
+    bankacnt: "",
+    estbdt: "",
   });
 
   //그리드 데이터 조회
@@ -810,7 +830,7 @@ const BA_A0020W_603: React.FC = () => {
         ...item,
         listringyn: item.listringyn == "Y" ? true : false,
       }));
-
+      console.log(rows);
       if (filters.find_row_value !== "") {
         // find_row_value 행으로 스크롤 이동
         if (gridRef.current) {
@@ -901,6 +921,12 @@ const BA_A0020W_603: React.FC = () => {
             faxnum: selectedRow.faxnum,
             email: selectedRow.email,
             auto: true,
+            compnm_eng: selectedRow.compnm_eng,
+            zipcode: selectedRow.zipcode,
+            bnkinfo: selectedRow.bnkinfo,
+            bankacntuser: selectedRow.bankacntuser,
+            bankacnt: selectedRow.bankacnt,
+            estbdt: selectedRow.estbdt !== "" ? toDate(selectedRow.estbdt) : null,
           });
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
@@ -958,6 +984,12 @@ const BA_A0020W_603: React.FC = () => {
             faxnum: rows[0].faxnum,
             email: rows[0].email,
             auto: true,
+            compnm_eng: rows[0].compnm_eng,
+            zipcode: rows[0].zipcode,
+            bnkinfo: rows[0].bnkinfo,
+            bankacntuser: rows[0].bankacntuser,
+            bankacnt: rows[0].bankacnt,
+            estbdt: rows[0].estbdt !== "" ? toDate(rows[0].estbdt) : null,
           });
         }
       } else {
@@ -1415,6 +1447,12 @@ const BA_A0020W_603: React.FC = () => {
       faxnum: selectedRowData.faxnum,
       email: selectedRowData.email,
       auto: true,
+      compnm_eng: selectedRowData.compnm_eng,
+      zipcode: selectedRowData.zipcode,
+      bnkinfo: selectedRowData.bnkinfo,
+      bankacntuser: selectedRowData.bankacntuser,
+      bankacnt: selectedRowData.bankacnt,
+      estbdt: selectedRowData.estbdt !== "" ? toDate(selectedRowData.estbdt) : null,
     });
   };
 
@@ -1968,6 +2006,12 @@ const BA_A0020W_603: React.FC = () => {
       faxnum: "",
       email: "",
       auto: true,
+      compnm_eng: "",
+      zipcode: "",
+      bnkinfo: "",
+      bankacntuser: "",
+      bankacnt: "",
+      estbdt: "",
     });
   };
 
@@ -2225,6 +2269,12 @@ const BA_A0020W_603: React.FC = () => {
         faxnum: information.faxnum,
         email: information.email,
         useyn: "Y",
+        compnm_eng: information.compnm_eng,
+        zipcode: information.zipcode,
+        bnkinfo: information.bnkinfo,
+        bankacntuser: information.bankacntuser,
+        bankacnt: information.bankacnt,
+        estbdt: information.estbdt,
       }));
     }
   };
@@ -2260,6 +2310,12 @@ const BA_A0020W_603: React.FC = () => {
     phonenum: "",
     faxnum: "",
     email: "",
+    compnm_eng: "",
+    zipcode: "",
+    bnkinfo: "",
+    bankacntuser: "",
+    bankacnt: "",
+    estbdt: "",
 
     rowstatus_s: "",
 
@@ -2324,6 +2380,12 @@ const BA_A0020W_603: React.FC = () => {
       "@p_phonenum": paraData.phonenum,
       "@p_faxnum": paraData.faxnum,
       "@p_email": paraData.email,
+      "@p_compnm_eng": paraData.compnm_eng,
+	    "@p_zipcode":	paraData.zipcode,
+	    "@p_bnkinfo":	paraData.bnkinfo,
+	    "@p_bankacntuser": paraData.bankacntuser,
+	    "@p_bankacnt": paraData.bankacnt,
+	    "@p_estbdt": paraData.estbdt,
 
       /* 재무 */
       "@p_seq_s": paraData.seq_s,
@@ -2460,6 +2522,12 @@ const BA_A0020W_603: React.FC = () => {
         phonenum: "",
         faxnum: "",
         email: "",
+        compnm_eng: "",
+        zipcode: "",
+        bnkinfo: "",
+        bankacntuser: "",
+        bankacnt: "",
+        estbdt: "",
 
         rowstatus_s: "",
 
@@ -3038,10 +3106,11 @@ const BA_A0020W_603: React.FC = () => {
                   <th>업체명</th>
                   <td>
                     <Input
-                      name="custabbr"
+                      name="custnm"
                       type="text"
-                      value={information.custabbr}
+                      value={information.custnm}
                       onChange={InputChange}
+                      className="required"
                     />
                   </td>
                   <th>구분</th>
@@ -3102,6 +3171,15 @@ const BA_A0020W_603: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
+                  <th>영문회사명</th>
+                  <td>
+                    <Input
+                      name="compnm_eng"
+                      type="text"
+                      value={information.compnm_eng}
+                      onChange={InputChange}
+                    />
+                  </td>
                   <th>매입단가항목</th>
                   <td>
                     {workType == "N"
@@ -3215,16 +3293,6 @@ const BA_A0020W_603: React.FC = () => {
                         </td>
                       </>
                     )}
-                  </td>
-                  <th>업체명</th>
-                  <td>
-                    <Input
-                      name="custnm"
-                      type="text"
-                      value={information.custnm}
-                      onChange={InputChange}
-                      className="required"
-                    />
                   </td>
                 </tr>
                 <tr>
@@ -3395,12 +3463,21 @@ const BA_A0020W_603: React.FC = () => {
                   </td>
                 </tr>
                 <tr>
-                  <th>TEL</th>
+                  <th>우편번호</th>
                   <td>
                     <Input
                       name="phonenum"
                       type="text"
                       value={information.phonenum}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>TEL</th>
+                  <td>
+                    <Input
+                      name="zipcode"
+                      type="text"
+                      value={information.zipcode}
                       onChange={InputChange}
                     />
                   </td>
@@ -3489,6 +3566,45 @@ const BA_A0020W_603: React.FC = () => {
                             changeData={ComboBoxChange}
                           />
                         )}
+                  </td>
+                  <th>개업년월일</th>
+                  <td>
+                    <DatePicker
+                      name="estbdt"
+                      format="yyyy-MM-dd"
+                      value={information.estbdt}
+                      onChange={InputChange}
+                      placeholder=""
+                    />                    
+                  </td>
+                </tr>
+                <tr>
+                  <th>은행정보</th>
+                  <td>
+                    <Input
+                      name="bnkinfo"
+                      type="text"
+                      value={information.bnkinfo}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>예금주</th>
+                  <td>
+                    <Input
+                      name="bankacntuser"
+                      type="text"
+                      value={information.bankacntuser}
+                      onChange={InputChange}
+                    />
+                  </td>
+                  <th>계좌번호</th>
+                  <td>
+                    <Input
+                      name="bankacnt"
+                      type="text"
+                      value={information.bankacnt}
+                      onChange={InputChange}
+                    />
                   </td>
                 </tr>
                 <tr>
