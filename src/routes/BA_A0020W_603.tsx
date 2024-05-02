@@ -34,13 +34,13 @@ import {
   UsePermissions,
   convertDateToStr,
   dateformat,
-  dateformat2,
   findMessage,
   getGridItemChangedData,
   getQueryFromBizComponent,
   handleKeyPressSearch,
+  isValidDate,
   numberWithCommas,
-  toDate,
+  setDefaultDate2,
   useSysMessage,
 } from "../components/CommonFunction";
 import {
@@ -61,6 +61,7 @@ import {
 } from "../store/atoms";
 
 import { DataResult, State, getter, process } from "@progress/kendo-data-query";
+import { DatePicker } from "@progress/kendo-react-dateinputs";
 import {
   Grid,
   GridCellProps,
@@ -87,7 +88,6 @@ import AttachmentsWindow from "../components/Windows/CommonWindows/AttachmentsWi
 import { IAttachmentData } from "../hooks/interfaces";
 import { gridList } from "../store/columns/BA_A0020W_603_C";
 import { Iparameters, TColumn, TGrid, TPermissions } from "../store/types";
-import { DatePicker } from "@progress/kendo-react-dateinputs";
 
 const DATA_ITEM_KEY = "num";
 const DATA_ITEM_KEY2 = "num";
@@ -636,7 +636,7 @@ const BA_A0020W_603: React.FC = () => {
       bnkinfo: "",
       bankacntuser: "",
       bankacnt: "",
-      estbdt: "",
+      estbdt: null,
     });
   };
 
@@ -679,11 +679,6 @@ const BA_A0020W_603: React.FC = () => {
         ...prev,
         [name]: value,
         repreregno: "",
-      }));
-    } else if (name == "estbdt") {
-      setInformation((prev: any) => ({
-        ...prev,
-        estbdt: convertDateToStr(value),
       }));
     } else {
       setInformation((prev: any) => ({
@@ -758,7 +753,7 @@ const BA_A0020W_603: React.FC = () => {
     isSearch: true,
   });
 
-  const [information, setInformation] = useState<any>({
+  const [information, setInformation] = useState<{ [name: string]: any }>({
     area: "",
     custabbr: "",
     custdiv: "B",
@@ -794,7 +789,7 @@ const BA_A0020W_603: React.FC = () => {
     bnkinfo: "",
     bankacntuser: "",
     bankacnt: "",
-    estbdt: "",
+    estbdt: null,
   });
 
   //그리드 데이터 조회
@@ -926,7 +921,9 @@ const BA_A0020W_603: React.FC = () => {
             bnkinfo: selectedRow.bnkinfo,
             bankacntuser: selectedRow.bankacntuser,
             bankacnt: selectedRow.bankacnt,
-            estbdt: selectedRow.estbdt !== "" ? toDate(selectedRow.estbdt) : null,
+            estbdt: isValidDate(selectedRow.estbdt)
+              ? new Date(dateformat(selectedRow.estbdt))
+              : null,
           });
         } else {
           setSelectedState({ [rows[0][DATA_ITEM_KEY]]: true });
@@ -989,7 +986,9 @@ const BA_A0020W_603: React.FC = () => {
             bnkinfo: rows[0].bnkinfo,
             bankacntuser: rows[0].bankacntuser,
             bankacnt: rows[0].bankacnt,
-            estbdt: rows[0].estbdt !== "" ? toDate(rows[0].estbdt) : null,
+            estbdt: isValidDate(rows[0].estbdt)
+              ? new Date(dateformat(rows[0].estbdt))
+              : null,
           });
         }
       } else {
@@ -1452,7 +1451,9 @@ const BA_A0020W_603: React.FC = () => {
       bnkinfo: selectedRowData.bnkinfo,
       bankacntuser: selectedRowData.bankacntuser,
       bankacnt: selectedRowData.bankacnt,
-      estbdt: selectedRowData.estbdt !== "" ? toDate(selectedRowData.estbdt) : null,
+      estbdt: isValidDate(selectedRowData.estbdt)
+        ? new Date(dateformat(selectedRowData.estbdt))
+        : null,
     });
   };
 
@@ -2011,7 +2012,7 @@ const BA_A0020W_603: React.FC = () => {
       bnkinfo: "",
       bankacntuser: "",
       bankacnt: "",
-      estbdt: "",
+      estbdt: setDefaultDate2(customOptionData, "estbdt"),
     });
   };
 
@@ -2274,7 +2275,10 @@ const BA_A0020W_603: React.FC = () => {
         bnkinfo: information.bnkinfo,
         bankacntuser: information.bankacntuser,
         bankacnt: information.bankacnt,
-        estbdt: information.estbdt,
+        estbdt:
+          information.estbdt == null
+            ? ""
+            : convertDateToStr(information.estbdt),
       }));
     }
   };
@@ -2381,11 +2385,11 @@ const BA_A0020W_603: React.FC = () => {
       "@p_faxnum": paraData.faxnum,
       "@p_email": paraData.email,
       "@p_compnm_eng": paraData.compnm_eng,
-	    "@p_zipcode":	paraData.zipcode,
-	    "@p_bnkinfo":	paraData.bnkinfo,
-	    "@p_bankacntuser": paraData.bankacntuser,
-	    "@p_bankacnt": paraData.bankacnt,
-	    "@p_estbdt": paraData.estbdt,
+      "@p_zipcode": paraData.zipcode,
+      "@p_bnkinfo": paraData.bnkinfo,
+      "@p_bankacntuser": paraData.bankacntuser,
+      "@p_bankacnt": paraData.bankacnt,
+      "@p_estbdt": paraData.estbdt,
 
       /* 재무 */
       "@p_seq_s": paraData.seq_s,
@@ -3575,7 +3579,7 @@ const BA_A0020W_603: React.FC = () => {
                       value={information.estbdt}
                       onChange={InputChange}
                       placeholder=""
-                    />                    
+                    />
                   </td>
                 </tr>
                 <tr>
