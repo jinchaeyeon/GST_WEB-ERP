@@ -118,6 +118,7 @@ const SA_A1001_603W_Window = ({
       <div
         style={{
           height: position.height - 220,
+          width: position.width - 40 ,
           marginBottom: "10px",
         }}
       >
